@@ -50,11 +50,12 @@ mixin userDialog()
                             el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Nuisance
                             el-tag.x-tag-troll(v-if="userDialog.ref.$isProbableTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Almost Nuisance
                             el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")  {{ $t('dialog.user.tags.vrchat_team') }}
-                            el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
                             el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
                             el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Android
                             el-tag.x-tag-platform-ios(v-else-if="userDialog.ref.last_platform === 'ios'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                             el-tag.x-tag-platform-other(v-else-if="userDialog.ref.last_platform" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ userDialog.ref.last_platform }}
+                            el-tag.x-tag-age-verification(v-if="userDialog.ref.ageVerificationStatus && userDialog.ref.ageVerificationStatus !== 'hidden'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ userDialog.ref.ageVerificationStatus }}
+                            el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
                             el-tag.name(v-if="userDialog.ref.$customTag" type="info" effect="plain" size="mini" v-text="userDialog.ref.$customTag" :style="{'color':userDialog.ref.$customTagColour, 'border-color':userDialog.ref.$customTagColour}" style="margin-right:5px;margin-top:5px")
                         div(style="margin-top:5px")
                             span(v-text="userDialog.ref.statusDescription" style="font-size:12px")

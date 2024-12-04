@@ -7036,7 +7036,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.addFriendship = function (id) {
-        if (!this.friendLogInitStatus || this.friendLog.has(id)) {
+        if (!this.friendLogInitStatus || this.friendLog.has(id) || id === API.currentUser.id) {
             return;
         }
         var ref = API.cachedUsers.get(id);

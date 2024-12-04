@@ -8,6 +8,10 @@ class Database {
     async initUserTables(userId) {
         Database.userId = userId;
         Database.userPrefix = userId.replaceAll('-', '').replaceAll('_', '');
+        // Fix escape, add underscore if prefix starts with a number
+        if (Database.userPrefix.match(/^\d/)) {
+            Database.userPrefix = '_' + Database.userPrefix;
+        }
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER, group_name TEXT)`
         );
