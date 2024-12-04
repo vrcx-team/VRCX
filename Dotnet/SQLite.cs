@@ -1125,25 +1125,45 @@ namespace SQLite
 			return cmd.ExecuteQueryScalars<T> ().ToList ();
 		}
 
-		/// <summary>
-		/// Creates a SQLiteCommand given the command text (SQL) with arguments. Place a '?'
-		/// in the command text for each of the arguments and then executes that command.
-		/// It returns each row of the result using the mapping automatically generated for
-		/// the given type.
-		/// </summary>
-		/// <param name="query">
-		/// The fully escaped SQL.
-		/// </param>
-		/// <param name="args">
-		/// Arguments to substitute for the occurences of '?' in the query.
-		/// </param>
-		/// <returns>
-		/// An enumerable with one result for each row returned by the query.
-		/// The enumerator (retrieved by calling GetEnumerator() on the result of this method)
-		/// will call sqlite3_step on each call to MoveNext, so the database
-		/// connection must remain open for the lifetime of the enumerator.
-		/// </returns>
-		public IEnumerable<T> DeferredQuery<T> (string query, params object[] args) where T : new()
+        /// <summary>
+        /// Creates a SQLiteCommand given the command text (SQL) with arguments. Place a '?'
+        /// in the command text for each of the arguments and then executes that command.
+        /// It returns each row as an array of object primitives.
+        /// </summary>
+        /// <param name="query">
+        /// The fully escaped SQL.
+        /// </param>
+        /// <param name="args">
+        /// Arguments to substitute for the occurences of '?' in the query.
+        /// </param>
+        /// <returns>
+        /// An enumerable with one object array for each row.
+        /// </returns>
+        public List<object[]> QueryScalars(string query, params object[] args)
+        {
+            var cmd = CreateCommand(query, args);
+            return cmd.ExecuteQueryScalars().ToList();
+        }
+
+        /// <summary>
+        /// Creates a SQLiteCommand given the command text (SQL) with arguments. Place a '?'
+        /// in the command text for each of the arguments and then executes that command.
+        /// It returns each row of the result using the mapping automatically generated for
+        /// the given type.
+        /// </summary>
+        /// <param name="query">
+        /// The fully escaped SQL.
+        /// </param>
+        /// <param name="args">
+        /// Arguments to substitute for the occurences of '?' in the query.
+        /// </param>
+        /// <returns>
+        /// An enumerable with one result for each row returned by the query.
+        /// The enumerator (retrieved by calling GetEnumerator() on the result of this method)
+        /// will call sqlite3_step on each call to MoveNext, so the database
+        /// connection must remain open for the lifetime of the enumerator.
+        /// </returns>
+        public IEnumerable<T> DeferredQuery<T> (string query, params object[] args) where T : new()
 		{
 			var cmd = CreateCommand (query, args);
 			return cmd.ExecuteDeferredQuery<T> ();
@@ -3211,6 +3231,39 @@ namespace SQLite
 			}
 		}
 
+		public IEnumerable<object[]> ExecuteQueryScalars ()
+		{
+            if (_conn.Trace) {
+                _conn.Tracer?.Invoke("Executing Query: " + this);
+            }
+            var stmt = Prepare ();
+            try {
+				int columnCount = SQLite3.ColumnCount (stmt);
+                if (SQLite3.ColumnCount (stmt) < 1) {
+                    throw new InvalidOperationException ("QueryScalars should return at least one column");
+                }
+                while (SQLite3.Step(stmt) == SQLite3.Result.Row) {
+					var row = new object[columnCount];
+					for (int i = 0; i < columnCount; i++) {
+                        var colType = SQLite3.ColumnType (stmt, i);
+						var type = colType switch
+                        {
+                            SQLite3.ColType.Integer => typeof(int),
+                            SQLite3.ColType.Float => typeof(double),
+                            SQLite3.ColType.Text => typeof(string),
+                            SQLite3.ColType.Blob => typeof(byte[]),
+                            SQLite3.ColType.Null or _ => null
+                        };
+                        row[i] = ReadCol (stmt, i, colType, type);
+                    }
+					yield return row;
+                }
+            }
+            finally {
+                Finalize(stmt);
+            }
+        }
+
 		public void Bind (string name, object val)
 		{
 			_bindings.Add (new Binding {
@@ -3267,6 +3320,8 @@ namespace SQLite
 
 		internal static void BindParameter (Sqlite3Statement stmt, int index, object value, bool storeDateTimeAsTicks, string dateTimeStringFormat, bool storeTimeSpanAsTicks)
 		{
+			// TODO: the amount of ifs in this chain is painful // optimize if
+			// this turns out to be a perf bottleneck
 			if (value == null) {
 				SQLite3.BindNull (stmt, index);
 			}
