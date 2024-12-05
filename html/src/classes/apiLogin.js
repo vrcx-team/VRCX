@@ -374,14 +374,7 @@ export default class extends baseClass {
                                                                     .saveCredentials,
                                                             cipher: pwd
                                                         }).then(() => {
-                                                            this.loginForm.username =
-                                                                '';
-                                                            this.loginForm.password =
-                                                                '';
-                                                            this.loginForm.endpoint =
-                                                                '';
-                                                            this.loginForm.websocket =
-                                                                '';
+                                                            this.$refs.loginForm.resetFields();
                                                         });
                                                     });
                                             });
@@ -399,10 +392,7 @@ export default class extends baseClass {
                                 saveCredentials: this.loginForm.saveCredentials
                             })
                                 .then(() => {
-                                    this.loginForm.username = '';
-                                    this.loginForm.password = '';
-                                    this.loginForm.endpoint = '';
-                                    this.loginForm.websocket = '';
+                                    this.$refs.loginForm.resetFields();
                                 })
                                 .finally(() => {
                                     this.loginForm.loading = false;
