@@ -55,9 +55,12 @@
 ;--------------------------------
 ;Pages
 
+    !define MUI_PAGE_CUSTOMFUNCTION_PRE SkipIfUpgrade
     !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
-    !define MUI_PAGE_CUSTOMFUNCTION_PRE dirPre
+
+    !define MUI_PAGE_CUSTOMFUNCTION_PRE SkipIfUpgrade
     !insertmacro MUI_PAGE_DIRECTORY
+
     !insertmacro MUI_PAGE_INSTFILES
 
     ;------------------------------
@@ -72,6 +75,8 @@
     !define MUI_FINISHPAGE_SHOWREADME
     !define MUI_FINISHPAGE_SHOWREADME_TEXT "Create desktop shortcut"
     !define MUI_FINISHPAGE_SHOWREADME_FUNCTION createDesktopShortcut
+
+    !define MUI_PAGE_CUSTOMFUNCTION_PRE SkipIfUpgrade
     !insertmacro MUI_PAGE_FINISH
 
     !insertmacro MUI_UNPAGE_CONFIRM
@@ -89,33 +94,43 @@
 ;--------------------------------
 ;Functions
 
-Function dirPre
-    StrCmp $upgradeInstallation "true" 0 +2
+Function SkipIfUpgrade
+    StrCmp $upgradeInstallation 0 noUpgrade
         Abort
+    noUpgrade:
 FunctionEnd
 
 Function .onInit
-    StrCpy $upgradeInstallation "false"
+    StrCpy $upgradeInstallation 0
 
     ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString"
-    StrCmp $R0 "" done
+    StrCmp $R0 "" notInstalled
+        StrCpy $upgradeInstallation 1
+    notInstalled:
 
     ; If VRCX is already running, display a warning message
+    loop:
     StrCpy $1 "VRCX.exe"
     nsProcess::_FindProcess "$1"
     Pop $R1
     ${If} $R1 = 0
         MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is still running. $\n$\nClick `OK` to kill the running process or `Cancel` to cancel this installer." /SD IDOK IDCANCEL cancel
             nsExec::ExecToStack "taskkill /IM VRCX.exe"
+    ${Else}
+        Goto done
     ${EndIf}
+    Sleep 1000
+    Goto loop
 
-    MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is already installed. $\n$\nClick `OK` to upgrade the existing installation or `Cancel` to cancel this upgrade." /SD IDOK IDCANCEL cancel
-        Goto next
     cancel:
         Abort
-    next:
-        StrCpy $upgradeInstallation "true"
     done:
+FunctionEnd
+
+Function .onInstSuccess
+    ${If} $upgradeInstallation = 1
+        Call launchVRCX
+    ${EndIf}
 FunctionEnd
 
 Function createDesktopShortcut
@@ -131,20 +146,18 @@ FunctionEnd
 ;Installer Sections
 
 Section "Install" SecInstall
-
-    StrCmp $upgradeInstallation "true" 0 noupgrade
+    StrCmp $upgradeInstallation 0 noUpgrade
         DetailPrint "Uninstall previous version..."
         ExecWait '"$INSTDIR\Uninstall.exe" /S _?=$INSTDIR'
         Delete $INSTDIR\Uninstall.exe
-        Goto afterupgrade
-
-    noupgrade:
+        Goto afterUpgrade
+    noUpgrade:
 
     inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe
     ExecWait "$TEMP\vcredist_x64.exe /install /quiet /norestart"
     Delete "$TEMP\vcredist_x64.exe"
 
-    afterupgrade:
+    afterUpgrade:
 
     SetOutPath "$INSTDIR"
 
@@ -162,9 +175,10 @@ Section "Install" SecInstall
 
     ${GetParameters} $R2
     ${GetOptions} $R2 /SKIP_SHORTCUT= $3
-    StrCmp $3 "true" +3
-    CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
-    ApplicationID::Set "$SMPROGRAMS\VRCX.lnk" "VRCX"
+    StrCmp $3 "true" noShortcut
+        CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
+        ApplicationID::Set "$SMPROGRAMS\VRCX.lnk" "VRCX"
+    noShortcut:
 
     WriteRegStr HKCU "Software\Classes\vrcx" "" "URL:vrcx"
     WriteRegStr HKCU "Software\Classes\vrcx" "FriendlyTypeName" "VRCX"
@@ -173,12 +187,6 @@ Section "Install" SecInstall
     WriteRegStr HKCU "Software\Classes\vrcx\shell" "" "open"
     WriteRegStr HKCU "Software\Classes\vrcx\shell\open" "FriendlyAppName" "VRCX"
     WriteRegStr HKCU "Software\Classes\vrcx\shell\open\command" "" '"$INSTDIR\VRCX.exe" /uri="%1" /params="%2 %3 %4"'
-
-    ${If} ${Silent}
-        SetOutPath $INSTDIR
-        ShellExecAsUser::ShellExecAsUser "" "$INSTDIR\VRCX.exe" ""
-    ${EndIf}
-
 SectionEnd
 
 ;--------------------------------
