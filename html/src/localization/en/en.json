@@ -571,6 +571,11 @@
                 "friend_no": "Friend No.{number}",
                 "vrchat_team": "VRChat Team"
             },
+            "badges": {
+                "assigned": "Assigned",
+                "hidden": "Hidden",
+                "showcased": "Showcased"
+            },
             "actions": {
                 "favorite_tooltip": "Add to favorites",
                 "unfavorite_tooltip": "Remove from favorites",

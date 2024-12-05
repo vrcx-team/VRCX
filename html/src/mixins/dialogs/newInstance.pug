@@ -1,6 +1,6 @@
 mixin newInstance()
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" :title="$t('dialog.new_instance.header')" width="650px")
-        el-tabs(type="card" v-model="newInstanceDialog.selectedTab")
+        el-tabs(type="card" v-model="newInstanceDialog.selectedTab" @tab-click="newInstanceTabClick")
             el-tab-pane(:label="$t('dialog.new_instance.normal')")
                 el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="150px")
                     el-form-item(:label="$t('dialog.new_instance.access_type')")
