@@ -84,6 +84,16 @@ mixin settingsTab()
                     +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
                     div.options-container-item
+                        span.name {{ $t('view.settings.general.application.disable_gpu_acceleration') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
+                                i.el-icon-warning
+                        el-switch(v-model="disableGpuAcceleration" @change="saveVRCXWindowOption")
+                    div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.general.application.disable_vr_overlay_gpu_acceleration') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
+                                i.el-icon-warning
+                        el-switch(v-model="disableVrOverlayGpuAcceleration" @change="saveVRCXWindowOption")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
                 //- General | Favorite
                 +simpleSettingsCategory("view.settings.general.favorites.header")
@@ -96,6 +106,9 @@ mixin settingsTab()
                 //- General | Game Log
                 div.options-container
                     span.header {{ $t('view.settings.general.logging.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.advanced.advanced.cache_debug.udon_exception_logging') }}
+                        el-switch(v-model="udonExceptionLogging" @change="saveOpenVROption")
                     div.options-container-item
                         span.name(style="min-width:225px") {{ $t('view.settings.general.logging.resource_load') }}
                         el-switch(v-model="logResourceLoad" @change="saveLoggingOptions")
@@ -342,6 +355,9 @@ mixin settingsTab()
                                 span {{ getTTSVoiceName() }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames') }}
+                        el-switch(v-model="notificationTTSNickName" @change="saveOpenVROption" :disabled="notificationTTS === 'Never'")
             //- Wrist Overlay Tab
             el-tab-pane(:label="$t('view.settings.category.wrist_overlay')")
                 //- Wrist Overlay | SteamVR Wrist Overlay
@@ -467,6 +483,16 @@ mixin settingsTab()
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.local_world_persistence.description') }}
                         el-switch(v-model="disableWorldDatabase" :active-value="false" :inactive-value="true" @change="saveVRCXWindowOption")
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.header') }}
+                        el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')")
+                            i.el-icon-info
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.description') }}
+                        el-switch(v-model="saveInstancePrints" @change="saveVRCXWindowOption")
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.description') }}
+                        el-switch(v-model="saveInstanceStickers" @change="saveVRCXWindowOption")
                 //- Advanced | Remote Avatar Database
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
@@ -562,7 +588,6 @@ mixin settingsTab()
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.cache_debug.header') }}
                     br
-                    +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}
                         el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")
@@ -583,7 +608,6 @@ mixin settingsTab()
                         el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") {{ $t('view.settings.advanced.advanced.cache_debug.clear_cache') }}
                         el-button(size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency") {{ $t('view.settings.advanced.advanced.cache_debug.auto_clear_cache') }}
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") {{ $t('view.settings.advanced.advanced.cache_debug.download_history') }}
                         el-button(size="small" icon="el-icon-tickets" @click="showConsole") {{ $t('view.settings.advanced.advanced.cache_debug.show_console') }}
                 //- Advanced | VRCX Table Stats
                 div.options-container

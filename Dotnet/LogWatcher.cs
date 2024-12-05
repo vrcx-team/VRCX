@@ -259,7 +259,8 @@ namespace VRCX
                                     ParseFailedToJoin(fileInfo, logContext, line, offset) ||
                                     ParseInstanceResetWarning(fileInfo, logContext, line, offset) ||
                                     ParseVoteKickInitiation(fileInfo, logContext, line, offset) ||
-                                    ParseVoteKickSuccess(fileInfo, logContext, line, offset))
+                                    ParseVoteKickSuccess(fileInfo, logContext, line, offset) ||
+                                    ParseStickerSpawn(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -278,8 +279,9 @@ namespace VRCX
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                logger.Warn("Failed to parse log file: {0} {1}", fileInfo.FullName, ex.Message);
             }
         }
 
@@ -405,8 +407,9 @@ namespace VRCX
             // 2021.09.02 00:02:12 Log        -  [Behaviour] Destination set: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:15609~private(usr_032383a7-748c-4fb2-94e4-bcb928e5de6b)~nonce(72CC87D420C1D49AEFFBEE8824C84B2DF0E38678E840661E)
             // 2021.09.02 00:49:15 Log        -  [Behaviour] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
             // 2022.08.13 18:57:00 Log        -  [Behaviour] OnLeftRoom
+            // 2024.11.22 15:32:28 Log        -  [Behaviour] Successfully left room
 
-            if (line.Contains("[Behaviour] OnLeftRoom"))
+            if (line.Contains("[Behaviour] Successfully left room"))
             {
                 AppendLog(new[]
                 {
@@ -1263,6 +1266,32 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "event",
                 line[index..]
+            });
+
+            return true;
+        }
+
+        private bool ParseStickerSpawn(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            var index = line.IndexOf("[StickersManager] User ");
+            if (index == -1 || !line.Contains("file_") || !line.Contains("spawned sticker"))
+                return false;
+
+            string info = line.Substring(index + 23);
+
+            var (userId, displayName) = ParseUserInfo(info);
+
+            var fileIdIndex = info.IndexOf("file_");
+            string fileId = info.Substring(fileIdIndex);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "sticker-spawn",
+                userId,
+                displayName,
+                fileId,
             });
 
             return true;

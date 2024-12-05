@@ -61,14 +61,14 @@ mixin currentUser()
 
     //- dialog: Gallery/VRCPlusIcons
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" :title="$t('dialog.gallery_icons.header')" width="100%")
-        span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }}
-        br
-        br
         el-tabs(type="card" ref="galleryTabs")
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                br
+                br
                 el-button-group
                     el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -78,12 +78,15 @@ mixin currentUser()
                     .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setProfilePicOverride(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }")
                         img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                     div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-picture-outline" circle)
                         el-button(type="default" @click="deleteGalleryImage(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 2048x2048px (1:1)
+                br
+                br
                 el-button-group
                     el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -93,12 +96,15 @@ mixin currentUser()
                     .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setVRCPlusIcon(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }")
                         img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                     div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-picture-outline" circle)
                         el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogEmojisLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1024x1024px (1:1)
+                br
+                br
                 el-button-group(style="margin-right:10px")
                     el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -119,10 +125,11 @@ mixin currentUser()
                     el-checkbox(v-model="emojiAnimLoopPingPong" style="margin-left:10px;margin-right:10px")
                         span {{ $t('dialog.gallery_icons.emoji_loop_pingpong') }}
                     br
+                    br
                     span {{ $t('dialog.gallery_icons.flipbook_info') }}
                 br
                 .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                    .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)") 
+                    .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))") 
                         template(v-if="image.frames")
                             .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)")
                         template(v-else)
@@ -134,12 +141,15 @@ mixin currentUser()
                         span(v-if="image.frames" style="margin-right:5px") {{ image.frames }}frames
                     br
                     div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))" size="mini" icon="el-icon-picture-outline" circle)
                         el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogStickersLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.stickers') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ stickerTable.length }}/9
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeSticker" id="StickerUploadButton" style="display:none")
+                input(type="file" accept="image/*" @change="onFileChangeSticker" id="StickerUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1024x1024px (1:1)
+                br
+                br
                 el-button-group
                     el-button(type="default" size="small" @click="refreshStickerTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayStickerUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -148,5 +158,32 @@ mixin currentUser()
                     .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)") 
                         img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                     div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-picture-outline" circle)
                         el-button(type="default" @click="deleteSticker(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogPrintsLoading")
+                span(slot="label") {{ $t('dialog.gallery_icons.prints') }}
+                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ printTable.length }}/64
+                input(type="file" accept="image/*" @change="onFileChangePrint" id="PrintUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1920x1080px (16:9)
+                br
+                br
+                el-button-group
+                    el-button(type="default" size="small" @click="refreshPrintTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
+                    el-button(type="default" size="small" @click="displayPrintUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                el-input(type="textarea" v-model="printUploadNote" size="mini" rows="1" resize="none" maxlength="32" style="margin-left:10px;width:300px" :placeholder="$t('dialog.gallery_icons.note')")
+                br
+                .x-friend-item(v-for="image in printTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
+                    .vrcplus-icon(style="overflow:hidden" @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))") 
+                        img.avatar(v-lazy="image.files.image")
+                    div(style="margin-top:5px;width:208px")
+                        span.x-ellipsis(v-if="image.note" v-text="image.note" style="display:block")
+                        span(v-else style="display:block") &nbsp;
+                        location.x-ellipsis(v-if="image.worldId" :location="image.worldId" :hint="image.worldName" style="display:block")
+                        span(v-else style="display:block") &nbsp;
+                        display-name.x-ellipsis(v-if="image.authorId" :userid="image.authorId" :hint="image.authorName" style="color:#909399;font-family:monospace;display:block")
+                        span(v-else style="font-family:monospace;display:block") &nbsp;
+                        span.x-ellipsis(v-if="image.createdAt" style="color:#909399;font-family:monospace;font-size:11px;display:block") {{ image.createdAt | formatDate('long') }}
+                        span(v-else style="display:block") &nbsp;
+                    div(style="float:right")
+                        el-button(type="default" @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))" size="mini" icon="el-icon-picture-outline" circle)
+                        el-button(type="default" @click="deletePrint(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")

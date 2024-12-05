@@ -200,7 +200,7 @@ namespace VRCX
                 }
             }
             var imageData = options["imageData"] as string;
-            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData));
+            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false);
             string fileFormKey = "image";
             string fileName = "image.png";
             string fileMimeType = "image/png";
@@ -256,7 +256,6 @@ namespace VRCX
             if (options.TryGetValue("postData", out object postDataObject))
             {
                 var jsonPostData = (JObject)JsonConvert.DeserializeObject((string)postDataObject);
-                Dictionary<string, string> postData = new Dictionary<string, string>();
                 string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
                 if (jsonPostData != null)
                 {
@@ -269,7 +268,8 @@ namespace VRCX
                 }
             }
             var imageData = options["imageData"] as string;
-            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData));
+            var matchingDimensions = options["matchingDimensions"] as bool? ?? false;
+            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), matchingDimensions);
 
             string fileFormKey = "file";
             string fileName = "blob";
@@ -292,6 +292,59 @@ namespace VRCX
             await requestStream.WriteAsync(newlineBytes, 0, newlineBytes.Length);
             byte[] endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
             await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
+            requestStream.Close();
+        }
+        
+        private static async Task PrintImageUpload(HttpWebRequest request, IDictionary<string, object> options)
+        {
+            if (ProxySet)
+                request.Proxy = Proxy;
+
+            request.AutomaticDecompression = DecompressionMethods.All;
+            request.Method = "POST";
+            var boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
+            var requestStream = request.GetRequestStream();
+            var imageData = options["imageData"] as string;
+            var fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false, 1920, 1080);
+            const string fileFormKey = "image";
+            const string fileName = "image";
+            const string fileMimeType = "image/png";
+            var fileSize = fileToUpload.Length;
+            const string headerTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\nContent-Length: {4}\r\n";
+            var header = string.Format(headerTemplate, boundary, fileFormKey, fileName, fileMimeType, fileSize);
+            var headerBytes = Encoding.UTF8.GetBytes(header);
+            await requestStream.WriteAsync(headerBytes);
+            var newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+            await requestStream.WriteAsync(newlineBytes);
+            using (var fileStream = new MemoryStream(fileToUpload))
+            {
+                var buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    await requestStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                }
+                fileStream.Close();
+            }
+            const string textContentType = "text/plain; charset=utf-8";
+            const string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\nContent-Type: {2}\r\nContent-Length: {3}\r\n\r\n{4}\r\n";
+            await requestStream.WriteAsync(newlineBytes);
+            if (options.TryGetValue("postData", out var postDataObject))
+            {
+                var jsonPostData = JsonConvert.DeserializeObject<Dictionary<string, string>>(postDataObject.ToString());
+                if (jsonPostData != null)
+                {
+                    foreach (var (key, value) in jsonPostData)
+                    {
+                        var section = string.Format(formDataTemplate, boundary, key, textContentType, value.Length, value);
+                        var sectionBytes = Encoding.UTF8.GetBytes(section);
+                        await requestStream.WriteAsync(sectionBytes);
+                    }
+                }
+            }
+            var endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
+            await requestStream.WriteAsync(endBytes);
             requestStream.Close();
         }
 
@@ -363,6 +416,11 @@ namespace VRCX
                 if (options.TryGetValue("uploadImageLegacy", out _))
                 {
                     await LegacyImageUpload(request, options);
+                }
+                
+                if (options.TryGetValue("uploadImagePrint", out _))
+                {
+                    await PrintImageUpload(request, options);
                 }
 
                 try

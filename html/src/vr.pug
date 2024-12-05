@@ -59,7 +59,7 @@ html
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
                                             span.spin ▶️
-                                            span.name(v-text="feed.displayName" style="margin-left:20px")
+                                            span.name(v-text="feed.displayName" style="margin-left:30px")
                                 div(v-else-if="feed.type === 'Location'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra

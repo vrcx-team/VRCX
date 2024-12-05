@@ -90,21 +90,28 @@
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites",
-                "new_group": "New Group"
+                "new_group": "New Group",
+                "refresh": "Refresh",
+                "cancel_refresh": "Cancel Refresh"
             },
             "avatars": {
                 "header": "Avatars",
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites (Requires VRC+)",
-                "new_group": "New Group"
+                "new_group": "New Group",
+                "refresh": "Refresh",
+                "cancel_refresh": "Cancel Refresh"
             },
-            "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
-            "bulk_unfavorite_selection": "Bulk Unfavorite Selection",
+            "edit_mode": "Edit Mode",
+            "copy": "Copy",
+            "clear": "Clear",
+            "bulk_unfavorite": "Bulk Unfavorite",
             "refresh_tooltip": "Refresh all favorites",
             "export": "Export",
             "import": "Import",
             "move_tooltip": "Move",
+            "copy_tooltip": "Copy",
             "unfavorite_tooltip": "Unfavorite",
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
@@ -218,6 +225,10 @@
                     "startup": "Start at Windows startup",
                     "minimized": "Start minimized",
                     "tray": "Minimize to tray when closing",
+                    "disable_gpu_acceleration": "Disable GPU Acceleration",
+                    "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, breaks SteamVR overlay, may fix issues with UI, requires restarting VRCX",
+                    "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "VR Overlay GPU acceleration can cause VRCX to crash or cause VRAM memory leaks, requires restarting VRCX",
                     "proxy": "Proxy settings"
                 },
                 "favorites": {
@@ -355,7 +366,8 @@
                         "when_to_play_game_closed": "Game Closed",
                         "when_to_play_game_running": "Game Running",
                         "when_to_play_always": "Always",
-                        "tts_voice": "TTS Voice"
+                        "tts_voice": "TTS Voice",
+                        "use_memo_nicknames": "Use Memo Nicknames"
                     }
                 }
             },
@@ -424,6 +436,15 @@
                         "header": "Local World Persistence",
                         "description": "Localhost webserver (requires restart)"
                     },
+                    "save_instance_prints_to_file": {
+                        "header": "Save Instance Prints To File",
+                        "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
+                        "description": "Save spawned prints to your VRChat Pictures folder"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "Save Instance Stickers To File",
+                        "description": "Save placed stickers to your VRChat Pictures folder"
+                    },
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",
@@ -473,7 +494,6 @@
                         "instance_cache": "Instance cache:",
                         "clear_cache": "Clear Cache",
                         "auto_clear_cache": "Auto Clear Cache",
-                        "download_history": "Download History",
                         "show_console": "Show Console"
                     },
                     "sqlite_table_size": {
@@ -550,6 +570,11 @@
             "tags": {
                 "friend_no": "Friend No.{number}",
                 "vrchat_team": "VRChat Team"
+            },
+            "badges": {
+                "assigned": "Assigned",
+                "hidden": "Hidden",
+                "showcased": "Showcased"
             },
             "actions": {
                 "favorite_tooltip": "Add to favorites",
@@ -637,9 +662,19 @@
             "groups": {
                 "header": "Groups",
                 "total_count": "Total {count}",
+                "sort_by": "Sort by:",
+                "edit_mode": "Edit Mode",
+                "exit_edit_mode": "Exit Edit Mode",
+                "hold_shift": "Hold shift to leave without confirmation",
                 "own_groups": "Own Groups",
                 "mutual_groups": "Mutual Groups",
-                "groups": "Groups"
+                "groups": "Groups",
+                "sorting": {
+                    "alphabetical": "Alphabetical",
+                    "members": "Members",
+                    "in_game": "In-Game Order"
+                },
+                "leave_group_tooltip": "Leave Group"
             },
             "worlds": {
                 "header": "Worlds",
@@ -695,6 +730,7 @@
                 "favorites_tooltip": "Favorites",
                 "refresh": "Refresh",
                 "new_instance": "New Instance",
+                "new_instance_and_self_invite": "New Instance and Self Invite",
                 "make_home": "Make Home",
                 "reset_home": "Reset Home",
                 "show_previous_instances": "Show Previous Instances",
@@ -706,6 +742,7 @@
                 "change_preview": "Change Youtube Preview",
                 "change_tags": "Change Tags",
                 "change_image": "Change Image",
+                "change_allowed_video_player_domains": "Change Allowed Video Player Domains",
                 "download_package": "Download Unity Package",
                 "publish_to_labs": "Publish To Labs",
                 "unpublish": "Unpublish",
@@ -1243,11 +1280,12 @@
         },
         "gallery_icons": {
             "header": "Manage Photos, Icons, Emojis and Stickers",
-            "description": "Recommended image size: 1200x900px (4:3)",
+            "recommended_image_size": "Recommended image size",
             "gallery": "Photos",
             "icons": "Icons",
             "emojis": "Emojis",
             "stickers": "Stickers",
+            "prints": "Prints",
             "refresh": "Refresh",
             "upload": "Upload",
             "clear": "Clear",
@@ -1256,7 +1294,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
+            "note": "Note"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
@@ -1389,6 +1428,11 @@
             "default_emojis": "Default Emojis",
             "cancel": "Cancel",
             "send": "Send"
+        },
+        "allowed_video_player_domains": {
+            "header": "Allowed Video Player Domains",
+            "add_domain": "Add Domain",
+            "save": "Save"
         }
     },
     "prompt": {

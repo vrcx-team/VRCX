@@ -195,6 +195,8 @@ export default class extends baseClass {
                     accountDeletionDate: null,
                     accountDeletionLog: null,
                     activeFriends: [],
+                    ageVerificationStatus: '',
+                    ageVerified: false,
                     allowAvatarCopying: false,
                     badges: [],
                     bio: '',

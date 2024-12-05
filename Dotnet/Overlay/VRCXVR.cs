@@ -23,9 +23,9 @@ using Device4 = SharpDX.Direct3D11.Device4;
 
 namespace VRCX
 {
-    public class VRCXVR
+    public class VRCXVR : VRCXVRInterface
     {
-        public static VRCXVR Instance;
+        public static VRCXVRInterface Instance;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly float[] _rotation = { 0f, 0f, 0f };
         private static readonly float[] _translation = { 0f, 0f, 0f };
@@ -33,8 +33,8 @@ namespace VRCX
         private static readonly float[] _translationRight = { 7f / 100f, -5f / 100f, 6f / 100f };
         private static readonly float[] _rotationLeft = { 90f * (float)(Math.PI / 180f), 90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
         private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
-        public static OffScreenBrowser _wristOverlay;
-        public static OffScreenBrowser _hmdOverlay;
+        private static OffScreenBrowser _wristOverlay;
+        private static OffScreenBrowser _hmdOverlay;
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
         private bool _active;
@@ -55,7 +55,6 @@ namespace VRCX
         private bool _wristOverlayActive;
         private bool _wristOverlayWasActive;
         
-        public bool IsHmdAfk { get; private set; }
 
         static VRCXVR()
         {
@@ -74,12 +73,12 @@ namespace VRCX
 
         // NOTE
         // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
-        internal void Init()
+        public override void Init()
         {
             _thread.Start();
         }
 
-        internal void Exit()
+        public override void Exit()
         {
             var thread = _thread;
             _thread = null;
@@ -87,7 +86,7 @@ namespace VRCX
             thread?.Join();
         }
 
-        public void Restart()
+        public override void Restart()
         {
             Exit();
             Instance = new VRCXVR();
@@ -327,7 +326,7 @@ namespace VRCX
             _device?.Dispose();
         }
 
-        public void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
+        public override void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
             _active = active;
             _hmdOverlayActive = hmdOverlay;
@@ -352,13 +351,13 @@ namespace VRCX
             _wristOverlayWasActive = _wristOverlayActive;
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
             _wristOverlay.Reload();
             _hmdOverlay.Reload();
         }
 
-        public string[][] GetDevices()
+        public override string[][] GetDevices()
         {
             _deviceListLock.EnterReadLock();
             try
@@ -371,7 +370,7 @@ namespace VRCX
             }
         }
 
-        internal void UpdateDevices(CVRSystem system, ref uint overlayIndex)
+        private void UpdateDevices(CVRSystem system, ref uint overlayIndex)
         {
             _deviceListLock.EnterWriteLock();
             try
@@ -832,6 +831,22 @@ namespace VRCX
             }
 
             return err;
+        }
+        
+        public override void ExecuteVrFeedFunction(string function, string json)
+        {
+            if (_wristOverlay == null) return;
+            // if (_wristOverlay.IsLoading)
+            //     Restart();
+            _wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
+        }
+
+        public override void ExecuteVrOverlayFunction(string function, string json)
+        {
+            if (_hmdOverlay == null) return;
+            // if (_hmdOverlay.IsLoading)
+            //     Restart();
+            _hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
         }
     }
 }

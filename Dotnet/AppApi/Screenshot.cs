@@ -12,6 +12,8 @@ namespace VRCX
 {
     public partial class AppApi
     {
+        private static bool dialogOpen;
+        
         /// <summary>
         /// Adds metadata to a PNG screenshot file and optionally renames the file to include the specified world ID.
         /// </summary>

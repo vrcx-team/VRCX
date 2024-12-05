@@ -5,6 +5,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -71,8 +72,8 @@ namespace VRCX
                 return 0; // it's cooked
             
             try {
-                var versionHexString = hexString.Substring(16, 8); // 16..24
-                var variantVersionHexString = hexString.Substring(24, 8); // 24..32
+                var variantVersionHexString = hexString.Substring(16, 8); // 16..24
+                var versionHexString = hexString.Substring(24, 8); // 24..32
                 var versionBytes = new byte[4];
                 var variantVersionBytes = new byte[4];
                 for (var i = 0; i < 4; i++)
@@ -276,17 +277,19 @@ namespace VRCX
         /// <summary>
         /// Removes empty directories from the VRChat cache directory and deletes old versions of cached asset bundles.
         /// </summary>
-        public void SweepCache()
+        public List<string> SweepCache()
         {
+            var output = new List<string>();
             var cachePath = GetVRChatCacheLocation();
             if (!Directory.Exists(cachePath))
-                return;
+                return output;
             var directories = new DirectoryInfo(cachePath);
             var cacheDirectories = directories.GetDirectories();
             foreach (var cacheDirectory in cacheDirectories)
             {
+                // var versionDirectories = cacheDirectory.GetDirectories().OrderBy(d => ReverseHexToDecimal(d.Name)).ToArray();
                 var versionDirectories =
-                    cacheDirectory.GetDirectories().OrderBy(d => ReverseHexToDecimal(d.Name)).ToArray();
+                    cacheDirectory.GetDirectories().OrderBy(d => d.LastWriteTime).ToArray();
                 for (var index = 0; index < versionDirectories.Length; index++)
                 {
                     var versionDirectory = versionDirectories[index];
@@ -303,11 +306,14 @@ namespace VRCX
                         continue; // skip locked version
                     
                     versionDirectory.Delete(true);
+                    output.Add($"{cacheDirectory.Name}\\{versionDirectory.Name}");
                 }
 
                 if (cacheDirectory.GetDirectories().Length + cacheDirectory.GetFiles().Length == 0)
                     cacheDirectory.Delete(); // delete empty directory
             }
+
+            return output;
         }
 
         /// <summary>

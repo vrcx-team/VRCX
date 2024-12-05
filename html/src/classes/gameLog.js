@@ -1,6 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import gameLogService from '../service/gamelog.js';
 import configRepository from '../repository/config.js';
+import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 
 export default class extends baseClass {
@@ -39,7 +40,7 @@ export default class extends baseClass {
             if (this.gameLogDisabled) {
                 return;
             }
-            var userId = gameLog.userId;
+            var userId = String(gameLog.userId || '');
             if (!userId && gameLog.displayName) {
                 for (var ref of API.cachedUsers.values()) {
                     if (ref.displayName === gameLog.displayName) {
@@ -257,6 +258,25 @@ export default class extends baseClass {
                     // if (!userId) {
                     //     break;
                     // }
+
+                    if (!$app.saveInstancePrints) {
+                        break;
+                    }
+                    try {
+                        var printId = '';
+                        var url = new URL(gameLog.url);
+                        if (
+                            url.pathname.substring(0, 14) === '/api/1/prints/'
+                        ) {
+                            var pathArray = url.pathname.split('/');
+                            printId = pathArray[4];
+                        }
+                        if (printId && printId.length === 41) {
+                            $app.trySavePrintToFile(printId);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
                     break;
                 case 'avatar-change':
                     var ref = this.lastLocation.playerList.get(userId);
@@ -384,6 +404,13 @@ export default class extends baseClass {
                     //     data: gameLog.data
                     // };
                     // database.addGamelogEventToDatabase(entry);
+                    break;
+                case 'sticker-spawn':
+                    if (!$app.saveInstanceStickers) {
+                        break;
+                    }
+
+                    $app.trySaveStickerToFile(gameLog.displayName, gameLog.fileId);
                     break;
             }
             if (entry) {

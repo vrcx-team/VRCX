@@ -1,6 +1,6 @@
 {
     "language": "简体中文 (zh_CN)",
-    "translator": "flower_elf",
+    "translator": "flower_elf,Yingxue",
     "nav_tooltip": {
         "feed": "好友动态",
         "game_log": "游戏日志",
@@ -27,7 +27,7 @@
                 "password": "密码",
                 "saveCredentials": "保存登录数据",
                 "devEndpoint": "使用测试接口",
-                "endpoint": "Endpoint",
+                "endpoint": "接口地址",
                 "websocket": "WebSocket"
             }
         },
@@ -59,11 +59,11 @@
             "world": {
                 "header": "世界",
                 "category": "按类别搜索",
-                "community_lab": "包含社区实验室"
+                "community_lab": "包含社区实验室里的世界"
             },
             "avatar": {
                 "header": "模型",
-                "search_provider": "搜索提供方",
+                "search_provider": "结果提供方",
                 "refresh_tooltip": "刷新搜索结果",
                 "result_count": "{count} 个搜索结果",
                 "all": "所有",
@@ -90,21 +90,28 @@
                 "search": "搜索",
                 "vrchat_favorites": "VRChat 上的收藏",
                 "local_favorites": "本地收藏（需要VRC+，游戏内不可见）",
-                "new_group": "创建新的收藏夹"
+                "new_group": "创建新的收藏夹",
+                "refresh": "刷新",
+                "cancel_refresh": "清除缓存"
             },
             "avatars": {
                 "header": "模型",
                 "search": "搜索",
                 "vrchat_favorites": "VRChat 上的收藏",
                 "local_favorites": "本地收藏（需要VRC+，游戏内不可见）",
-                "new_group": "创建新的收藏夹"
+                "new_group": "创建新的收藏夹",
+                "refresh": "刷新",
+                "cancel_refresh": "清除缓存"
             },
-            "bulk_unfavorite_mode": "批量删除模式",
-            "bulk_unfavorite_selection": "取消收藏已选择的世界/模型",
-            "refresh_tooltip": "刷新所有收藏夹",
+            "edit_mode": "编辑模式",
+            "copy": "复制",
+            "clear": "清除",
+            "bulk_unfavorite": "批量取消收藏",
+            "refresh_tooltip": "刷新所有收藏",
             "export": "导出",
             "import": "导入",
             "move_tooltip": "移动",
+            "copy_tooltip": "复制",
             "unfavorite_tooltip": "取消收藏",
             "visibility_tooltip": "更改可见性",
             "rename_tooltip": "重命名",
@@ -180,7 +187,7 @@
             "invite_request_response_messages": "对加入请求的快捷回复",
             "past_display_names": "使用过的昵称",
             "config_json": "API 端点返回的 JSON 信息",
-            "current_user_json": "当前账户的 JSON 信息",
+            "current_user_json": "当前账号的 JSON 信息",
             "feedback": "举报提交记录",
             "refresh_tooltip": "刷新",
             "clear_results_tooltip": "清除结果"
@@ -191,7 +198,7 @@
                 "general": "通用",
                 "appearance": "外观",
                 "notifications": "通知",
-                "wrist_overlay": "手腕叠加层",
+                "wrist_overlay": "手腕叠加界面",
                 "discord_presence": "Discord 状态面板",
                 "advanced": "高级"
             },
@@ -207,17 +214,21 @@
                 "vrcx_updater": {
                     "header": "VRCX 更新设置",
                     "change_build": "更改版本",
-                    "auto_update": "自动更新",
+                    "update_action": "自动更新",
                     "auto_update_off": "关闭",
                     "auto_update_notify": "显示通知",
                     "auto_update_download": "自动下载",
                     "change_log": "更新日志"
                 },
                 "application": {
-                    "header": "程序首选项",
+                    "header": "首选项",
                     "startup": "在 Windows 启动时自动启动",
                     "minimized": "以最小化的形式启动",
                     "tray": "最小化到系统托盘",
+                    "disable_gpu_acceleration": "禁用 GPU 加速",
+                    "disable_gpu_acceleration_tooltip": "仅在你“知道自己在做什么”时才应更改此选项，这可能会导致 SteamVR 叠加界面出现问题，但如果你遇到 UI 显示问题，可以试试关闭这个，重启 VRCX 生效",
+                    "disable_vr_overlay_gpu_acceleration": "禁用 VR 叠加界面的GPU加速",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "GPU 加速可能导致 VRCX 崩溃或显存泄漏，如果你遇到了问题，请尝试打开此选项，重启 VRCX 生效",
                     "proxy": "代理服务器设置"
                 },
                 "favorites": {
@@ -225,7 +236,7 @@
                     "group_placeholder": "选择分组"
                 },
                 "logging": {
-                    "header": "日志记录",
+                    "header": "日志",
                     "resource_load": "显示世界内Udon网络资源的加载详情",
                     "empty_avatar": "不在动态里记录模型名称"
                 },
@@ -247,7 +258,7 @@
                 },
                 "legal_notice": {
                     "header": "法律声明",
-                    "info": "VRCX 是一个提供VRChat好友管理的辅助应用程序。这个程序使用非官方的 VRChat API (VRCSDK)。",
+                    "info": "VRCX 是一个提供VRChat好友管理的辅助应用。这个程序使用非官方的 VRChat API (VRCSDK)。",
                     "disclaimer1": "VRCX 不受 VRChat 的认可，也不反映 VRChat &任何正式参与制作或管理 VRChat 的人员/团体的观点或意见。VRChat 是 VRChat Inc. 的商标。 VRChat © VRChat Inc.",
                     "disclaimer2": "pypy 和 Natsumi 不对使用 VRCX 引起的任何问题负责。使用时请自负风险！",
                     "open_source_software_notice": "开放源代码软件许可"
@@ -317,7 +328,7 @@
                 },
                 "friend_log": {
                     "header": "好友日志",
-                    "hide_unfriends": "隐藏 Unfriends 事件"
+                    "hide_unfriends": "隐藏 Unfriends (删/被删好友) 事件"
                 }
             },
             "notifications": {
@@ -326,8 +337,8 @@
                     "notification_filter": "通知筛选器",
                     "steamvr_notifications": {
                         "header": "SteamVR 通知",
-                        "steamvr_overlay": "SteamVR 叠加层",
-                        "overlay_notifications": "叠加层通知",
+                        "steamvr_overlay": "SteamVR 叠加界面",
+                        "overlay_notifications": "叠加界面通知",
                         "notification_position": "通知位置",
                         "xsoverlay_notifications": "XSOverlay 通知",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
@@ -355,24 +366,25 @@
                         "when_to_play_game_closed": "游戏关闭时",
                         "when_to_play_game_running": "游戏运行时",
                         "when_to_play_always": "总是",
-                        "tts_voice": "TTS 语音样式"
+                        "tts_voice": "TTS 语音样式",
+                        "use_memo_nicknames": "使用备忘录昵称"
                     }
                 }
             },
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
-                    "header": "SteamVR 手腕叠加层",
+                    "header": "SteamVR 手腕叠加界面",
                     "description": "* 当 VRChat 运行时它会自动运行",
                     "grip": "握持：Vive 或其它控制器的握持键、Oculus X/A 按键",
                     "menu": "菜单：Vive 菜单键、Index B、Oculus Y/B 按键",
-                    "steamvr_overlay": "SteamVR 叠加层",
-                    "wrist_feed_overlay": "手腕动态叠加层",
+                    "steamvr_overlay": "SteamVR 叠加界面",
+                    "wrist_feed_overlay": "手腕动态叠加界面",
                     "hide_private_worlds": "隐藏私人世界",
                     "start_overlay_with": "随.....一并启动",
-                    "overlay_button": "叠加层按键",
+                    "overlay_button": "叠加界面按键",
                     "overlay_button_grip": "握持",
                     "overlay_button_menu": "菜单",
-                    "display_overlay_on": "叠加层显示位置",
+                    "display_overlay_on": "叠加界面显示位置",
                     "display_overlay_on_left": "左手",
                     "display_overlay_on_right": "右手",
                     "display_overlay_on_both": "双手",
@@ -388,10 +400,10 @@
             "discord_presence": {
                 "discord_presence": {
                     "header": "Discord 状态面板",
-                    "description": "* 仅在 VRChat 运行时有效",
+                    "description": "* 仅在 VRChat 运行时生效",
                     "enable": "启用",
                     "enable_tooltip": "建议在 VRChat 的 config.json 中停用原生的 Discord 状态面板来防止冲突",
-                    "instance_type_player_count": "显示房间种类和人数",
+                    "instance_type_player_count": "显示房间类型和人数",
                     "join_button": "在面板上显示加入按钮(仅限公开房间)",
                     "show_details_in_private": "在私人房间时显示房间信息",
                     "show_images": "显示世界缩略图"
@@ -424,6 +436,15 @@
                         "header": "世界数据持久化",
                         "description": "启用世界数据持久化存储功能(需要重启)"
                     },
+                    "save_instance_prints_to_file": {
+                        "header": "将房间内的“拍立得”照片保存到本地文件",
+                        "header_tooltip": "需要使用 \"--enable-sdk-log-levels\" 启动选项启动VRChat",
+                        "description": "将生成的“拍立得”图片保存到您的 VRChat 图片文件夹中"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "将房间内的表情贴纸保存到本地文件",
+                        "description": "将房间内的表情贴纸保存到 VRChat 的图片文件夹中"
+                    },
                     "remote_database": {
                         "header": "模型数据库",
                         "enable": "启用",
@@ -433,18 +454,18 @@
                         "header": "Youtube API",
                         "enable": "启用",
                         "youtube_api_key": "Youtube API 密钥",
-                        "enable_tooltip": "获取视频标题以供日志记录时使用，并获取进度条的时间"
+                        "enable_tooltip": "获取视频标题以供日志记录使用，会一并获取进度条的时间"
                     },
                     "video_progress_pie": {
-                        "header": "视频进度圆饼叠加层",
+                        "header": "视频进度圆饼叠加界面",
                         "enable": "启用",
-                        "enable_tooltip": "需要启用 SteamVR 叠加层选项",
+                        "enable_tooltip": "需要启用 SteamVR 叠加界面选项",
                         "dance_world_only": "仅在舞蹈类房间显示"
                     },
                     "screenshot_helper": {
                         "header": "截图助手",
                         "description": "在游戏拍摄的照片的元数据中添加世界ID/世界名称",
-                        "description_tooltip": "不幸的是，Windows并不支持直接查看PNG元数据(很多东西都不支持查看这玩意)，但你可以使用exiftool等命令行工具、png查看器或十六进制编辑器来查看它们。",
+                        "description_tooltip": "不幸的是，Windows 并不支持直接查看 PNG 元数据(很多东西都不支持查看这玩意)，但你可以使用 exiftool 等命令行工具、png查看器或十六进制编辑器来查看它们。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
                         "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。",
@@ -453,16 +474,16 @@
                     "app_launcher": {
                         "header": "应用启动器",
                         "folder": "打开启动文件夹",
-                        "folder_tooltip": "如果要在VRChat启动时一并启动一些APP，请将其快捷方式放在这个文件夹中.",
+                        "folder_tooltip": "如果要在 VRChat 启动时一并启动一些APP，请将其快捷方式放在这个文件夹中.",
                         "enable": "启用",
-                        "auto_close": "在VRChat关闭后自动关闭这些APP"
+                        "auto_close": "在 VRChat 关闭后自动关闭这些APP"
                     },
                     "cache_debug": {
                         "header": "VRCX 缓存/调试选项",
                         "udon_exception_logging": "显示 Udon 错误日志",
-                        "gpu_fix": "修复 SteamVR 叠加层显示问题",
+                        "gpu_fix": "修复 SteamVR 叠加界面显示问题",
                         "gpu_fix_notice": "(需要重启)",
-                        "gpu_fix_warning": "只有在 SteamVR 叠加层异常并且你有2张显卡的情况下才需要启用这个选项。",
+                        "gpu_fix_warning": "只有在 SteamVR 叠加界面异常并且你有2张显卡的情况下才需要启用这个选项。",
                         "disable_gamelog": "关闭游戏日志",
                         "disable_gamelog_notice": "(可能会弄坏很多东西！)",
                         "user_cache": "用户缓存：",
@@ -473,7 +494,6 @@
                         "instance_cache": "房间信息缓存:",
                         "clear_cache": "清除缓存",
                         "auto_clear_cache": "自动清除缓存",
-                        "download_history": "下载记录",
                         "show_console": "显示界面调试工具"
                     },
                     "sqlite_table_size": {
@@ -494,11 +514,11 @@
                     }
                 },
                 "photon": {
-                    "header": "Photon 记录叠加层",
+                    "header": "Photon 日志叠加界面",
                     "event_hud": {
                         "header": "Photon 事件 HUD",
                         "enable": "启用",
-                        "enable_tooltip": "需要启用 SteamVR 叠加层选项",
+                        "enable_tooltip": "需要启用 SteamVR 叠加界面选项",
                         "filter": "筛选器",
                         "filter_favorites": "星标好友",
                         "filter_friends": "好友",
@@ -508,7 +528,7 @@
                     "timeout_hud": {
                         "header": "用户超时 HUD",
                         "enable": "启用",
-                        "enable_tooltip": "需要启用 SteamVR 叠加层选项",
+                        "enable_tooltip": "需要启用 SteamVR 叠加界面选项",
                         "filter": "筛选器",
                         "filter_favorites": "星标好友",
                         "filter_friends": "好友",
@@ -560,7 +580,7 @@
                 "request_invite": "申请加入",
                 "request_invite_with_message": "发送带消息的加入申请",
                 "invite_to_group": "邀请加入群组",
-                "send_boop": "Send Boop",
+                "send_boop": "发送 Boop",
                 "manage_gallery_icon": "管理相册 / 图标",
                 "accept_friend_request": "接受好友申请",
                 "decline_friend_request": "拒绝好友申请",
@@ -578,6 +598,8 @@
                 "moderation_show_avatar": "显示模型",
                 "moderation_enable_avatar_interaction": "开启模型互动",
                 "moderation_disable_avatar_interaction": "关闭模型互动",
+                "moderation_enable_chatbox": "取消聊天框静音",
+                "moderation_disable_chatbox": "聊天框静音",
                 "edit_status": "社交状态",
                 "edit_language": "语言",
                 "edit_bio": "自我介绍",
@@ -613,7 +635,7 @@
                 "offline_for": "离线时长",
                 "last_activity": "最后活动",
                 "last_login": "最后登录",
-                "date_joined": "账户创建日期",
+                "date_joined": "账号创建日期",
                 "friended": "添加为好友的时间",
                 "unfriended": "解除好友的时间",
                 "avatar_cloning": "是否允许克隆模型",
@@ -633,15 +655,25 @@
                 "close_instance": "关闭该房间"
             },
             "groups": {
-                "header": "加入的群组",
-                "total_count": "总共有 {count} 个群组",
-                "own_groups": "拥有群组",
+                "header": "群组",
+                "total_count": "总共 {count} 个",
+                "sort_by": "排序方式：",
+                "edit_mode": "编辑模式",
+                "exit_edit_mode": "退出编辑模式",
+                "hold_shift": "按住Shift键可在不确认的情况下退出",
+                "own_groups": "拥有的群组",
                 "mutual_groups": "共同群组",
-                "groups": "群组"
+                "groups": "群组",
+                "sorting": {
+                    "alphabetical": "按字母顺序",
+                    "members": "按成员数",
+                    "in_game": "按游戏内顺序"
+                },
+                "leave_group_tooltip": "离开群组"
             },
             "worlds": {
                 "header": "创建的世界",
-                "total_count": "总共 {count}",
+                "total_count": "总共 {count} 个",
                 "sort_by": "排序方式:",
                 "order_by": "顺序:",
                 "sorting": {
@@ -661,7 +693,7 @@
             },
             "avatars": {
                 "header": "创建的模型",
-                "total_count": "总共 {count}",
+                "total_count": "总共 {count} 个",
                 "sort_by_name": "按名称排序",
                 "sort_by_update": "按更新时间排序",
                 "all": "所有",
@@ -677,6 +709,8 @@
                 "public": "公开",
                 "private": "私人",
                 "avatar_scaling_disabled": "已关闭模型缩放功能",
+                "focus_view_disabled": "焦点视图已禁用",
+                "stickers_disabled": "贴纸已禁用",
                 "future_proofing": "Future Proofing",
                 "labs": "社区实验室",
                 "cache": "缓存",
@@ -691,6 +725,7 @@
                 "favorites_tooltip": "收藏此内容",
                 "refresh": "刷新",
                 "new_instance": "创建新房间",
+                "new_instance_and_self_invite": "创建新房间并邀请自己",
                 "make_home": "设为出生点",
                 "reset_home": "重置出生点为默认",
                 "show_previous_instances": "显示加入过的房间",
@@ -702,9 +737,11 @@
                 "change_preview": "更改 YouTube 预览",
                 "change_tags": "更改标签",
                 "change_image": "更改图片",
+                "change_allowed_video_player_domains": "更改允许在视频播放器使用的域名",
                 "download_package": "下载 Unity Package",
                 "publish_to_labs": "发布到社区实验室",
                 "unpublish": "取消公开",
+                "delete_persistent_data": "删除在此世界保存的持久化数据",
                 "delete": "删除"
             },
             "instances": {
@@ -880,7 +917,7 @@
             "members": {
                 "header": "成员",
                 "all_members": "成员列表",
-                "friends_only": "好友",
+                "friends_only": "成员列表(仅显示好友)",
                 "load_more": "载入更多……",
                 "sort_by": "排序设置:",
                 "sorting": {
@@ -1005,10 +1042,10 @@
             "delete_old_cache": "从缓存中删除无效数据",
             "sweep_cache": "清理缓存",
             "max_cache_size": "最大缓存大小 [GB] (至少 20GB)",
-            "cache_expiry_delay": "缓存保存时长 [日] (至少 30 天)",
+            "cache_expiry_delay": "缓存保存时长 [天] (至少 30 天)",
             "cache_directory": "缓存文件夹位置",
             "picture_directory": "截图文件夹位置",
-            "fpv_steadycam_fov": "第一人称镜头FOV度数",
+            "fpv_steadycam_fov": "第一人称镜头的FOV",
             "camera_resolution": "相机分辨率",
             "screenshot_resolution": "屏幕截图分辨率",
             "picture_sort_by_date": "将图片按日期分类到文件夹中",
@@ -1027,6 +1064,8 @@
         "set_world_tags": {
             "header": "设置世界标签",
             "avatar_scaling_disabled": "关闭模型缩放功能",
+            "focus_view_disabled": "禁用焦点视图",
+            "stickers_disabled": "禁用贴纸",
             "enable_debugging": "为其他人启用世界调试菜单",
             "author_tags": "作者添加的标签(以逗号分隔)",
             "content_tags": "内容警告标签(以逗号分隔)",
@@ -1062,7 +1101,7 @@
         "vrcx_updater": {
             "header": "VRCX 更新",
             "latest_version": "VRCX 已是最新版本",
-            "ready_for_update": "已准备好安装更新，重启 VRCX 以应用更新",
+            "ready_for_update": "现已准备好安装更新，重启 VRCX 以开始安装",
             "download": "下载",
             "install": "安装"
         },
@@ -1073,7 +1112,7 @@
             "short_url_notice": "短链接会在一段时间后过期",
             "location": "地点",
             "copy_tooltip": "复制到剪贴板",
-            "start_as_desktop": "以桌面模式启动(不使用 VR)",
+            "start_as_desktop": "以桌面模式启动游戏(不使用 VR)",
             "info": "信息",
             "invite": "邀请",
             "launch": "启动"
@@ -1167,7 +1206,7 @@
         },
         "invite_to_group": {
             "header": "邀请好友加入群组",
-            "description": "请不要滥用邀请功能，短时间内邀请大量用户加入群组会导致你的账户被封禁。",
+            "description": "请不要滥用邀请功能，短时间内邀请大量用户加入群组会导致你的账号被封禁。",
             "choose_group_placeholder": "选择群组",
             "groups": "群组",
             "choose_friends_placeholder": "选择好友",
@@ -1235,11 +1274,13 @@
             "send": "发送"
         },
         "gallery_icons": {
-            "header": "相册和图标",
-            "description": "推荐图片尺寸：1200 像素 x 900 像素",
+            "header": "管理照片、图标、表情和贴纸",
+            "recommended_image_size": "推荐的图片尺寸",
             "gallery": "相册",
             "icons": "图标",
             "emojis": "Emojis(表情包)",
+            "stickers": "贴纸",
+            "prints": "打印",
             "refresh": "刷新",
             "upload": "上传",
             "clear": "清除",
@@ -1248,7 +1289,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "帧数:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）"
+            "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）",
+            "note": "备注"
         },
         "change_content_image": {
             "avatar": "更改模型封面",
@@ -1267,7 +1309,7 @@
         },
         "change_log": {
             "header": "更新日志",
-            "description": "考虑捐赠一下，以支持VRCX的未来发展",
+            "description": "考虑捐赠一下，以支持 VRCX的未来发展",
             "close": "关闭",
             "donate": "捐赠支持",
             "github": "在GitHub上查看"
@@ -1375,12 +1417,17 @@
         },
         "boop_dialog": {
             "header": "Boop",
-            "emoji_manager": "Emoji Manager",
-            "select_emoji": "Select Emoji",
-            "my_emojis": "My Emojis",
-            "default_emojis": "Default Emojis",
-            "cancel": "Cancel",
-            "send": "Send"
+            "emoji_manager": "表情管理",
+            "select_emoji": "选择表情",
+            "my_emojis": "我的表情",
+            "default_emojis": "默认表情",
+            "cancel": "取消",
+            "send": "发送"
+        },
+        "allowed_video_player_domains": {
+            "header": "允许在视频播放器使用的域名",
+            "add_domain": "添加域名",
+            "save": "保存"
         }
     },
     "prompt": {
@@ -1471,14 +1518,14 @@
             }
         },
         "notification_timeout": {
-            "header": "通知显示时间",
+            "header": "通知显示时长",
             "description": "输入秒数",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的秒数"
         },
         "overlay_message_timeout": {
-            "header": "消息叠加层显示时间",
+            "header": "消息在叠加界面显示的时长",
             "description": "输入秒数",
             "cancel": "取消",
             "ok": "确定",
@@ -1556,11 +1603,11 @@
             }
         },
         "change_table_size": {
-            "header": "最大显示记录",
+            "header": "最大读取记录数",
             "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能 (默认值：1000)",
             "cancel": "取消",
             "save": "保存",
-            "input_error": "请输入有效的行数"
+            "input_error": "请输入有效的数量"
         },
         "photon_lobby_timeout": {
             "header": "用户超时阀值",
@@ -1676,7 +1723,7 @@
             "lastSeen": "最后见面",
             "lastActivity": "最后活动",
             "lastLogin": "最后登录",
-            "dateJoined": "账户创建于",
+            "dateJoined": "账号创建于",
             "unfriend": "解除好友"
         },
         "profile": {

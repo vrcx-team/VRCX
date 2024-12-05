@@ -20,7 +20,8 @@ mixin previousInstances()
                 template(v-once #default="scope")
                     el-button(type="text" icon="el-icon-info" size="mini" @click="showLaunchDialog(scope.row.location)")
                     el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
-                    el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogUserInstance(scope.row)")
+                    el-button(v-if="shiftHeld" style="color:#f56c6c" type="text" icon="el-icon-close" size="mini" @click="deleteGameLogUserInstance(scope.row)")
+                    el-button(v-else type="text" icon="el-icon-close" size="mini" @click="deleteGameLogUserInstancePrompt(scope.row)")
 
     //- dialog Table: Previous Instances World
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" :title="$t('dialog.previous_instances.header')" width="1000px")
@@ -42,7 +43,8 @@ mixin previousInstances()
             el-table-column(:label="$t('table.previous_instances.action')" width="90" align="right")
                 template(v-once #default="scope")
                     el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
-                    el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogWorldInstance(scope.row)")
+                    el-button(v-if="shiftHeld" style="color:#f56c6c" type="text" icon="el-icon-close" size="mini" @click="deleteGameLogWorldInstance(scope.row)")
+                    el-button(v-else type="text" icon="el-icon-close" size="mini" @click="deleteGameLogWorldInstancePrompt(scope.row)")
 
     //- dialog Table: Previous Instance Info
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstanceInfoDialog" :visible.sync="previousInstanceInfoDialog.visible" :title="$t('dialog.previous_instances.info')" width="800px")

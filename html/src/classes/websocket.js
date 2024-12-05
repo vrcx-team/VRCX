@@ -1,6 +1,6 @@
 import * as workerTimers from 'worker-timers';
 import Noty from 'noty';
-import { baseClass, $app, API, $t } from './baseClass.js';
+import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -262,12 +262,28 @@ export default class extends baseClass {
                     break;
 
                 case 'friend-online':
+                    // Where is instanceId, travelingToWorld, travelingToInstance?
+                    // More JANK, what a mess
+                    var $location = $utils.parseLocation(content.location);
+                    var $travelingToLocation = $utils.parseLocation(
+                        content.travelingToLocation
+                    );
                     if (content?.user?.id) {
                         this.$emit('USER', {
                             json: {
+                                id: content.userId,
+                                platform: content.platform,
+                                state: 'online',
+
                                 location: content.location,
+                                worldId: content.worldId,
+                                instanceId: $location.instanceId,
                                 travelingToLocation:
                                     content.travelingToLocation,
+                                travelingToWorld: $travelingToLocation.worldId,
+                                travelingToInstance:
+                                    $travelingToLocation.instanceId,
+
                                 ...content.user
                             },
                             params: {
@@ -289,7 +305,20 @@ export default class extends baseClass {
                 case 'friend-active':
                     if (content?.user?.id) {
                         this.$emit('USER', {
-                            json: content.user,
+                            json: {
+                                id: content.userId,
+                                platform: content.platform,
+                                state: 'active',
+
+                                location: 'offline',
+                                worldId: 'offline',
+                                instanceId: 'offline',
+                                travelingToLocation: 'offline',
+                                travelingToWorld: 'offline',
+                                travelingToInstance: 'offline',
+
+                                ...content.user
+                            },
                             params: {
                                 userId: content.userId
                             }
@@ -307,9 +336,19 @@ export default class extends baseClass {
                     break;
 
                 case 'friend-offline':
-                    this.$emit('FRIEND:STATE', {
+                    // more JANK, hell yeah
+                    this.$emit('USER', {
                         json: {
-                            state: 'offline'
+                            id: content.userId,
+                            platform: content.platform,
+                            state: 'offline',
+
+                            location: 'offline',
+                            worldId: 'offline',
+                            instanceId: 'offline',
+                            travelingToLocation: 'offline',
+                            travelingToWorld: 'offline',
+                            travelingToInstance: 'offline'
                         },
                         params: {
                             userId: content.userId
@@ -327,6 +366,10 @@ export default class extends baseClass {
                     break;
 
                 case 'friend-location':
+                    var $location = $utils.parseLocation(content.location);
+                    var $travelingToLocation = $utils.parseLocation(
+                        content.travelingToLocation
+                    );
                     if (!content?.user?.id) {
                         var ref = this.cachedUsers.get(content.userId);
                         if (typeof ref !== 'undefined') {
@@ -334,8 +377,14 @@ export default class extends baseClass {
                                 json: {
                                     ...ref,
                                     location: content.location,
+                                    worldId: content.worldId,
+                                    instanceId: $location.instanceId,
                                     travelingToLocation:
-                                        content.travelingToLocation
+                                        content.travelingToLocation,
+                                    travelingToWorld:
+                                        $travelingToLocation.worldId,
+                                    travelingToInstance:
+                                        $travelingToLocation.instanceId
                                 },
                                 params: {
                                     userId: content.userId
@@ -347,9 +396,14 @@ export default class extends baseClass {
                     this.$emit('USER', {
                         json: {
                             location: content.location,
+                            worldId: content.worldId,
+                            instanceId: $location.instanceId,
                             travelingToLocation: content.travelingToLocation,
-                            ...content.user
-                            // state: 'online'
+                            travelingToWorld: $travelingToLocation.worldId,
+                            travelingToInstance:
+                                $travelingToLocation.instanceId,
+                            ...content.user,
+                            state: 'online' // JANK
                         },
                         params: {
                             userId: content.userId
@@ -412,7 +466,15 @@ export default class extends baseClass {
                     break;
 
                 case 'group-member-updated':
-                    var groupId = content.member.groupId;
+                    var member = content.member;
+                    if (!member) {
+                        console.error(
+                            'group-member-updated missing member',
+                            content
+                        );
+                        break;
+                    }
+                    var groupId = member.groupId;
                     if (
                         $app.groupDialog.visible &&
                         $app.groupDialog.id === groupId
@@ -420,24 +482,12 @@ export default class extends baseClass {
                         $app.getGroupDialogGroup(groupId);
                     }
                     this.$emit('GROUP:MEMBER', {
-                        json: content.member,
+                        json: member,
                         params: {
                             groupId
                         }
                     });
-                    console.log('group-member-updated', content);
-
-                    // content {
-                    //   groupId: string,
-                    //   id: string,
-                    //   isRepresenting: boolean,
-                    //   isSubscribedToAnnouncements: boolean,
-                    //   joinedAt: string,
-                    //   membershipStatus: string,
-                    //   roleIds: string[],
-                    //   userId: string,
-                    //   visibility: string
-                    // }
+                    console.log('group-member-updated', member);
                     break;
 
                 case 'instance-queue-joined':
@@ -464,16 +514,35 @@ export default class extends baseClass {
                     var contentType = content.contentType;
                     console.log('content-refresh', content);
                     if (contentType === 'icon') {
-                        if ($app.galleryDialogVisible) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogIconsLoading
+                        ) {
                             $app.refreshVRCPlusIconsTable();
                         }
                     } else if (contentType === 'gallery') {
-                        if ($app.galleryDialogVisible) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogGalleryLoading
+                        ) {
                             $app.refreshGalleryTable();
                         }
                     } else if (contentType === 'emoji') {
-                        if ($app.galleryDialogVisible) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogEmojisLoading
+                        ) {
                             $app.refreshEmojiTable();
+                        }
+                    } else if (
+                        contentType === 'print' ||
+                        contentType === 'prints'
+                    ) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogPrintsLoading
+                        ) {
+                            $app.refreshPrintTable();
                         }
                     } else if (contentType === 'avatar') {
                         // hmm, utilizing this might be too spamy and cause UI to move around

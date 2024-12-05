@@ -408,6 +408,14 @@ img.friends-list-avatar {
     filter: none;
 }
 
+.x-user-badge-hidden {
+    filter: grayscale(1);
+}
+
+.x-user-badge:hover {
+    filter: none;
+}
+
 .x-friend-item > .avatar.online.mobile > img,
 .x-friend-item > .avatar.joinme.mobile > img,
 .x-friend-item > .avatar.askme.mobile > img,
@@ -633,6 +641,11 @@ i.x-user-status.busy {
 }
 
 .x-tag-platform-other {
+    color: #ff4177 !important;
+    border-color: #ff4177 !important;
+}
+
+.x-tag-age-verification {
     color: #ff4177 !important;
     border-color: #ff4177 !important;
 }
