@@ -94,6 +94,15 @@
     -webkit-line-clamp: 1;
 }
 
+.el-table th.is-sortable .cell {
+    display: flex;
+    align-items: center;
+}
+
+.el-table .caret-wrapper {
+    margin-top: 4.5px;
+}
+
 .notification-table .el-table .cell {
     -webkit-line-clamp: 2;
 }
