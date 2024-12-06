@@ -11922,10 +11922,15 @@ speechSynthesis.getVoices();
             if (!avatarId) {
                 if (avatarInfo.ownerId === refUserId) {
                     this.$message({
-                        message: "It's personal (own) avatar",
+                        message:
+                            "It's personal (own) avatar or not found in avatar database",
                         type: 'warning'
                     });
                 } else {
+                    this.$message({
+                        message: 'Avatar not found in avatar database',
+                        type: 'warning'
+                    });
                     this.showUserDialog(avatarInfo.ownerId);
                 }
             }
