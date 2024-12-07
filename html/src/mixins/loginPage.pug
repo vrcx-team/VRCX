@@ -22,8 +22,8 @@ mixin loginPage()
                         el-form-item(v-if="enableCustomEndpoint" :label="$t('view.login.field.websocket')" prop="endpoint" style="margin-top:10px")
                             el-input(v-model="loginForm.websocket" name="websocket" :placeholder="API.websocketDomainVrchat" clearable)
                         el-form-item(style="margin-top:15px")
-                            el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") {{ $t("view.login.login") }}
-                    el-button(type="primary" @click="openExternalLink('https://vrchat.com/register')" :loading="loginForm.loading" style="width:100%") {{ $t("view.login.register") }}
+                            el-button(native-type="submit" type="primary" style="width:100%") {{ $t("view.login.login") }}
+                    el-button(type="primary" @click="openExternalLink('https://vrchat.com/register')" style="width:100%") {{ $t("view.login.register") }}
                 
                 hr.x-vertical-divider(v-if="Object.keys(loginForm.savedCredentials).length !== 0")/
 
