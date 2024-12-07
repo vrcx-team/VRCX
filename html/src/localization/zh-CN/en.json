@@ -8,7 +8,7 @@
         "search": "搜索",
         "favorites": "收藏",
         "friend_log": "好友日志",
-        "moderation": "用户管理(屏蔽/静音)",
+        "moderation": "用户管理（屏蔽 / 静音）",
         "notification": "通知",
         "friend_list": "好友列表",
         "profile": "个人信息",
@@ -119,7 +119,7 @@
             "delete_tooltip": "删除",
             "unavailable_tooltip": "不可用",
             "private": "私人",
-            "sort_by": "排序方式:",
+            "sort_by": "排序方式：",
             "select_avatar_tooltip": "更换为此模型"
         },
         "friend_log": {
@@ -243,7 +243,7 @@
                 "automation": {
                     "header": "自动化",
                     "auto_state_change": "自动化状态切换",
-                    "auto_state_change_tooltip": "当房间中有其他人时自动切换状态 (独自一人 / 有其他人时) 如果你不知道这是什么，保持默认关闭即可",
+                    "auto_state_change_tooltip": "当房间中有其他人时自动切换状态（独自一人 / 有其他人时）如果你不知道这是什么，保持默认关闭即可",
                     "auto_state_change_off": "关闭",
                     "auto_state_change_active_or_ask_me": "欢迎加入 / 忙碌",
                     "auto_state_change_active_or_busy": "在线 / 请勿打扰",
@@ -328,7 +328,7 @@
                 },
                 "friend_log": {
                     "header": "好友日志",
-                    "hide_unfriends": "隐藏 Unfriends (删/被删好友) 事件"
+                    "hide_unfriends": "隐藏 Unfriends （删 / 被删好友）事件"
                 }
             },
             "notifications": {
@@ -343,7 +343,7 @@
                         "xsoverlay_notifications": "XSOverlay 通知",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit 手腕通知",
-                        "user_images": "显示用户头像(较慢)",
+                        "user_images": "显示用户头像（较慢）",
                         "notification_timeout": "通知时长"
                     },
                     "desktop_notifications": {
@@ -404,7 +404,7 @@
                     "enable": "启用",
                     "enable_tooltip": "建议在 VRChat 的 config.json 中停用原生的 Discord 状态面板来防止冲突",
                     "instance_type_player_count": "显示房间类型和人数",
-                    "join_button": "在面板上显示加入按钮(仅限公开房间)",
+                    "join_button": "在面板上显示加入按钮（仅限公开房间）",
                     "show_details_in_private": "在私人房间时显示房间信息",
                     "show_images": "显示世界缩略图"
                 }
@@ -418,7 +418,7 @@
                     "common_folders": "常用文件夹",
                     "primary_password": {
                         "header": "独立密码",
-                        "description": "使用独立密码加密 VRCX 数据(将停用自动登录)"
+                        "description": "使用独立密码加密 VRCX 数据（将停用自动登录）"
                     },
                     "relaunch_vrchat": {
                         "header": "崩溃后重启",
@@ -434,7 +434,7 @@
                     },
                     "local_world_persistence": {
                         "header": "世界数据持久化",
-                        "description": "启用世界数据持久化存储功能(需要重启)"
+                        "description": "启用世界数据持久化存储功能（需要重启）"
                     },
                     "save_instance_prints_to_file": {
                         "header": "将房间内的“拍立得”照片保存到本地文件",
@@ -465,7 +465,7 @@
                     "screenshot_helper": {
                         "header": "截图助手",
                         "description": "在游戏拍摄的照片的元数据中添加世界ID/世界名称",
-                        "description_tooltip": "不幸的是，Windows 并不支持直接查看 PNG 元数据(很多东西都不支持查看这玩意)，但你可以使用 exiftool 等命令行工具、png查看器或十六进制编辑器来查看它们。",
+                        "description_tooltip": "不幸的是，Windows 并不支持直接查看 PNG 元数据（很多东西都不支持查看这玩意），但你可以使用 exiftool 等命令行工具、png查看器或十六进制编辑器来查看它们。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
                         "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。",
@@ -482,16 +482,16 @@
                         "header": "VRCX 缓存/调试选项",
                         "udon_exception_logging": "显示 Udon 错误日志",
                         "gpu_fix": "修复 SteamVR 叠加界面显示问题",
-                        "gpu_fix_notice": "(需要重启)",
+                        "gpu_fix_notice": "（需要重启）",
                         "gpu_fix_warning": "只有在 SteamVR 叠加界面异常并且你有2张显卡的情况下才需要启用这个选项。",
                         "disable_gamelog": "关闭游戏日志",
-                        "disable_gamelog_notice": "(可能会弄坏很多东西！)",
+                        "disable_gamelog_notice": "（可能会弄坏很多东西！）",
                         "user_cache": "用户缓存：",
                         "world_cache": "世界缓存：",
                         "avatar_cache": "模型缓存：",
-                        "group_cache": "群组信息缓存:",
+                        "group_cache": "群组信息缓存：",
                         "avatar_name_cache": "模型名称缓存：",
-                        "instance_cache": "房间信息缓存:",
+                        "instance_cache": "房间信息缓存：",
                         "clear_cache": "清除缓存",
                         "auto_clear_cache": "自动清除缓存",
                         "show_console": "显示界面调试工具"
@@ -551,7 +551,7 @@
         "me": "我",
         "favorite": "星标好友",
         "online": "在线",
-        "active": "活跃中(仅登录网页端)",
+        "active": "活跃中（仅登录网页端）",
         "offline": "离线",
         "pending_offline": "可能离线"
     },
@@ -604,7 +604,7 @@
                 "edit_language": "语言",
                 "edit_bio": "自我介绍",
                 "edit_pronouns": "人称代词",
-                "report_hacking": "报告这个用户的作弊行为(例如盗模)",
+                "report_hacking": "报告这个用户的作弊行为（例如盗模）",
                 "unfriend": "解除好友关系",
                 "logout": "退出登录"
             },
@@ -613,10 +613,10 @@
                 "launch_invite_tooltip": "启动 / 邀请",
                 "self_invite_tooltip": "自我邀请",
                 "refresh_instance_info": "刷新房间信息",
-                "instance_queue": "在排队等待的用户:",
-                "instance_users": "房间用户:",
-                "instance_game_version": "游戏版本:",
-                "last_join": "距离上次加入房间:",
+                "instance_queue": "在排队等待的用户：",
+                "instance_users": "房间用户：",
+                "instance_game_version": "游戏版本：",
+                "last_join": "距离上次加入房间：",
                 "instance_queuing_enabled": "允许排队加入",
                 "instance_creator": "房间建立者",
                 "note": "VRChat 备注",
@@ -674,8 +674,8 @@
             "worlds": {
                 "header": "创建的世界",
                 "total_count": "总共 {count} 个",
-                "sort_by": "排序方式:",
-                "order_by": "顺序:",
+                "sort_by": "排序方式：",
+                "order_by": "顺序：",
                 "sorting": {
                     "name": "世界名称",
                     "updated": "更新时间",
@@ -775,7 +775,7 @@
                 "last_updated": "最后更新",
                 "publication_date": "正式公开于",
                 "labs_publication_date": "进入实验室的日期",
-                "time_in_labs": "在实验室里的时长:",
+                "time_in_labs": "在实验室里的时长：",
                 "version": "版本",
                 "platform": "平台",
                 "last_visited": "上次游玩",
@@ -802,9 +802,9 @@
                 "content_sex": "性暗示"
             },
             "labels": {
-                "public": "(公开)",
-                "private": "(私人)",
-                "own": "(自有)"
+                "public": "（公开）",
+                "private": "（私人）",
+                "own": "（自有）"
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除模型",
@@ -905,7 +905,7 @@
             },
             "posts": {
                 "header": "帖子",
-                "visibility": "可见性:",
+                "visibility": "可见性：",
                 "edited_at": "最后编辑于：",
                 "created_at": "创建于：",
                 "edit_tooltip": "编辑帖子",
@@ -917,23 +917,23 @@
             "members": {
                 "header": "成员",
                 "all_members": "成员列表",
-                "friends_only": "成员列表(仅显示好友)",
+                "friends_only": "成员列表（仅显示好友）",
                 "load_more": "载入更多……",
-                "sort_by": "排序设置:",
+                "sort_by": "排序设置：",
                 "sorting": {
-                    "user_id": "用户ID (顺序)",
-                    "joined_at_asc": "加入时间 (顺序)",
-                    "joined_at_desc": "加入时间 (倒序)"
+                    "user_id": "用户ID（顺序）",
+                    "joined_at_asc": "加入时间（顺序）",
+                    "joined_at_desc": "加入时间（顺序）"
                 },
-                "filter": "按身份组筛选:",
+                "filter": "按身份组筛选：",
                 "filters": {
                     "everyone": "所有人",
                     "users_with_no_role": "没有身份组的成员"
                 },
                 "unsubscribed_announcements": "不接收公告通知",
-                "visibility": "可见性:",
+                "visibility": "可见性：",
                 "representing": "该用户在其名片上展示该群组",
-                "manager_notes": "群组内备注:",
+                "manager_notes": "群组内备注：",
                 "search": "搜索"
             },
             "gallery": {
@@ -947,7 +947,7 @@
             "header": "选择收藏夹",
             "vrchat_favorites": "VRChat 上的收藏",
             "local_favorites": "本地收藏",
-            "local_avatar_favorites": "模型收藏 (需要VRC+，游戏中不可见)"
+            "local_avatar_favorites": "模型收藏（需要VRC+，游戏中不可见）"
         },
         "invite": {
             "header": "邀请",
@@ -995,7 +995,7 @@
             "group_access_type": "房间类型",
             "group_access_type_members": "仅限群组成员",
             "group_access_type_plus": "群组+",
-            "group_access_type_public": "公开(受群组管理)",
+            "group_access_type_public": "公开（受群组管理）",
             "region": "服务器位置",
             "region_usw": "美国西部",
             "region_use": "美国东部",
@@ -1041,8 +1041,8 @@
             "delete_cache": "删除缓存",
             "delete_old_cache": "从缓存中删除无效数据",
             "sweep_cache": "清理缓存",
-            "max_cache_size": "最大缓存大小 [GB] (至少 20GB)",
-            "cache_expiry_delay": "缓存保存时长 [天] (至少 30 天)",
+            "max_cache_size": "最大缓存大小 [GB]（至少 20GB）",
+            "cache_expiry_delay": "缓存保存时长 [天]（至少 30 天）",
             "cache_directory": "缓存文件夹位置",
             "picture_directory": "截图文件夹位置",
             "fpv_steadycam_fov": "第一人称镜头的FOV",
@@ -1056,9 +1056,9 @@
         },
         "youtube_api": {
             "header": "YouTube API",
-            "description": "输入你的 YouTube API 密钥(选填)",
+            "description": "输入你的 YouTube API 密钥（选填）",
             "placeholder": "YouTube API 密钥",
-            "guide": "教程(英语)",
+            "guide": "教程（英语）",
             "save": "保存"
         },
         "set_world_tags": {
@@ -1067,8 +1067,8 @@
             "focus_view_disabled": "禁用焦点视图",
             "stickers_disabled": "禁用贴纸",
             "enable_debugging": "为其他人启用世界调试菜单",
-            "author_tags": "作者添加的标签(以逗号分隔)",
-            "content_tags": "内容警告标签(以逗号分隔)",
+            "author_tags": "作者添加的标签（以逗号分隔）",
+            "content_tags": "内容警告标签（以逗号分隔）",
             "content_horror": "恐怖",
             "content_gore": "血腥",
             "content_violence": "暴力",
@@ -1112,7 +1112,7 @@
             "short_url_notice": "短链接会在一段时间后过期",
             "location": "地点",
             "copy_tooltip": "复制到剪贴板",
-            "start_as_desktop": "以桌面模式启动游戏(不使用 VR)",
+            "start_as_desktop": "以桌面模式启动游戏（不使用 VR）",
             "info": "信息",
             "invite": "邀请",
             "launch": "启动"
@@ -1179,7 +1179,7 @@
             "clear_errors": "清除错误信息"
         },
         "friend_export": {
-            "header": "导出收藏(星标)好友"
+            "header": "导出收藏（星标）好友"
         },
         "friend_import": {
             "header": "导入好友",
@@ -1218,8 +1218,8 @@
             "description2": "请注意以下限制：",
             "description3": "- API 接口有速率限制，每个请求之间会有很大的延迟。",
             "description4": "- 每个备注的字数限制为 256 个字符。",
-            "description5": "- 有脏话过滤器(一点乐趣都没有)。",
-            "description6": "- 不能换行(换行符将会被替换成空格)。",
+            "description5": "- 有脏话过滤器（一点乐趣都没有）。",
+            "description6": "- 不能换行（换行符将会被替换成空格）。",
             "description7": "- 这将会覆盖这些用户现有的任何 VRChat 备注。",
             "description8": "- 在这里所做的任何编辑都不会影响 VRCX 在本地写入的备注，但会在导出后会影响 VRChat 备注。",
             "refresh": "刷新",
@@ -1278,7 +1278,7 @@
             "recommended_image_size": "推荐的图片尺寸",
             "gallery": "相册",
             "icons": "图标",
-            "emojis": "Emojis(表情包)",
+            "emojis": "Emojis（表情包）",
             "stickers": "贴纸",
             "prints": "打印",
             "refresh": "刷新",
@@ -1286,8 +1286,8 @@
             "clear": "清除",
             "emoji_animation_styles": "动画样式",
             "emoji_animation_type": "动画表情",
-            "emoji_animation_fps": "FPS:",
-            "emoji_animation_frame_count": "帧数:",
+            "emoji_animation_fps": "FPS：",
+            "emoji_animation_frame_count": "帧数：",
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）",
             "note": "备注"
@@ -1379,7 +1379,7 @@
             "reject_join_requests": "拒绝加入请求",
             "block_join_requests": "屏蔽加入请求",
             "group_members": "群组成员",
-            "progress": "操作进度:",
+            "progress": "操作进度：",
             "display_name": "昵称",
             "visibility": "可见性",
             "avatar": "模型",
@@ -1583,7 +1583,7 @@
         },
         "change_world_recommended_capacity": {
             "header": "更改推荐人数",
-            "description": "输入世界的推荐容纳人数(软上限)",
+            "description": "输入世界的推荐容纳人数（软上限）",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的数字",
@@ -1604,21 +1604,21 @@
         },
         "change_table_size": {
             "header": "最大读取记录数",
-            "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能 (默认值：1000)",
+            "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能（默认值：1000）",
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的数量"
         },
         "photon_lobby_timeout": {
             "header": "用户超时阀值",
-            "description": "输入秒数(默认值：3)",
+            "description": "输入秒数（默认值：3）",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的秒数"
         },
         "auto_clear_cache": {
             "header": "VRCX 缓存清除间隔",
-            "description": "以小时为单位，较大的数值可能会影响性能 (默认值：24，为 0 时关闭)",
+            "description": "以小时为单位，较大的数值可能会影响性能（默认值：24，为 0 时关闭）",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的值"
@@ -1645,7 +1645,7 @@
         },
         "pending_offline_delay": {
             "header": "待确认离线",
-            "description": "设置将好友标记为离线之前的延迟(秒)(默认值：110)",
+            "description": "设置将好友标记为离线之前的延迟（秒） （默认值：110）",
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的秒数"
