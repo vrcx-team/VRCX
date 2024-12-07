@@ -23,7 +23,7 @@ mixin simpleRadioGroup(nameTrKey, model, options, onChange="")
     div.options-container-item
         span.name {{ $t('#{nameTrKey}') }}
         br
-        el-radio-group(v-model=model @change=onChange size="mini")
+        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
             each option in options
                 el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
 
@@ -33,7 +33,7 @@ mixin simpleRadioGroupWithTooltip(nameTrKey, tooltipContent, model, options, onC
             el-tooltip(placement="top" style="margin-left:5px" :content=tooltipContent)
                 i.el-icon-warning
         br
-        el-radio-group(v-model=model @change=onChange size="mini")
+        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
             each option in options
                 el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
 
@@ -89,11 +89,16 @@ mixin settingsTab()
                                 i.el-icon-warning
                         el-switch(v-model="disableGpuAcceleration" @change="saveVRCXWindowOption")
                     div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.general.application.disable_vr_overlay_gpu_acceleration') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
+                                i.el-icon-warning
+                        el-switch(v-model="disableVrOverlayGpuAcceleration" @change="saveVRCXWindowOption")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
                 //- General | Favorite
                 +simpleSettingsCategory("view.settings.general.favorites.header")
                     br
-                    el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends")
+                    el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends" style="margin-top:8px")
                         el-option-group(:label="$t('view.settings.general.favorites.group_placeholder')")
                             el-option.x-friend-item(v-for="group in API.favoriteFriendGroups" :key="group.key" :label="group.displayName ? group.displayName : group.name" :value="group.key")
                                 .detail
@@ -111,15 +116,47 @@ mixin settingsTab()
                         span.name(style="min-width:225px") {{ $t('view.settings.general.logging.empty_avatar') }}
                         el-switch(v-model="logEmptyAvatars" @change="saveLoggingOptions")
                 //- General | Automation
-                +simpleSettingsCategory("view.settings.general.automation.header")
-                    +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_state_change", "$t('view.settings.general.automation.auto_state_change_tooltip')", "autoStateChange", [
-                        { label: "Off", translationKey: "view.settings.general.automation.auto_state_change_off" },
-                        { label: "Active or Ask Me", translationKey: "view.settings.general.automation.auto_state_change_active_or_ask_me" },
-                        { label: "Active or Busy", translationKey: "view.settings.general.automation.auto_state_change_active_or_busy" },
-                        { label: "Join Me or Ask Me", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_ask_me" },
-                        { label: "Join Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_busy" },
-                        { label: "Ask Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_ask_me_or_busy" },
-                    ], "saveAutomationOptions")
+                div.options-container
+                    span.header {{ $t('view.settings.general.automation.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.auto_change_status') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.automation.auto_state_change_tooltip')")
+                                i.el-icon-info
+                        el-switch(v-model="autoStateChangeEnabled" @change="saveAutomationOptions")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.alone_status') }}
+                        el-select(v-model="autoStateChangeAloneStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px")
+                            el-option(:label="$t('dialog.user.status.join_me')" value="join me").
+                                #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
+                            el-option(:label="$t('dialog.user.status.online')" value="active").
+                                #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
+                            el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
+                                #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
+                            el-option(:label="$t('dialog.user.status.busy')" value="busy").
+                                #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.company_status') }}
+                        el-select(v-model="autoStateChangeCompanyStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px")
+                            el-option(:label="$t('dialog.user.status.join_me')" value="join me").
+                                #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
+                            el-option(:label="$t('dialog.user.status.online')" value="active").
+                                #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
+                            el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
+                                #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
+                            el-option(:label="$t('dialog.user.status.busy')" value="busy").
+                                #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.allowed_instance_types') }}
+                        el-select(v-model="autoStateChangeInstanceTypes" :disabled="!autoStateChangeEnabled" multiple clearable :placeholder="$t('view.settings.general.automation.instance_type_placeholder')" @change="saveAutomationOptions" style="margin-top:8px")
+                            el-option-group(:label="$t('view.settings.general.automation.allowed_instance_types')")
+                                el-option.x-friend-item(v-for="instanceType in instanceTypes" :key="instanceType" :label="instanceType" :value="instanceType")
+                                    .detail
+                                        span.name(v-text="instanceType")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.alone_condition') }}
+                        el-switch(v-model="autoStateChangeNoFriends" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" :inactive-text="$t('view.settings.general.automation.alone')" :active-text="$t('view.settings.general.automation.no_friends')")
+                    br
+                    br
                     +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_invite_request_accept", "$t('view.settings.general.automation.auto_invite_request_accept_tooltip')", "autoAcceptInviteRequests", [
                         { label: "Off", translationKey: "view.settings.general.automation.auto_invite_request_accept_off" },
                         { label: "All Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_favs" },
@@ -212,6 +249,7 @@ mixin settingsTab()
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
                         i.el-icon-arrow-right(style="margin:16px 5px")
@@ -221,6 +259,7 @@ mixin settingsTab()
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
                         i.el-icon-arrow-right(style="margin:16px 5px")
@@ -230,6 +269,7 @@ mixin settingsTab()
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
                     div.options-container-item
@@ -247,7 +287,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes') }}
                         br
-                        el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog") {{ $t('view.settings.appearance.user_dialog.export_notes') }}
+                        el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog" style="margin-top:5px") {{ $t('view.settings.appearance.user_dialog.export_notes') }}
                 //- Appearance | Friend Log
                 div.options-container
                     span.header {{ $t('view.settings.appearance.friend_log.header') }}
@@ -320,7 +360,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
                         br
-                        el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini")
+                        el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini" style="margin-top:5px")
                             el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_never') }}
                             el-radio-button(label="Desktop Mode") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_desktop') }}
                             el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_inside_vr') }}
@@ -337,7 +377,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play') }}
                         br
-                        el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini")
+                        el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini" style="margin-top:5px")
                             el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_never') }}
                             el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_inside_vr') }}
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_game_closed') }}
@@ -350,6 +390,12 @@ mixin settingsTab()
                                 span {{ getTTSVoiceName() }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames') }}
+                        el-switch(v-model="notificationTTSNickName" @change="saveOpenVROption" :disabled="notificationTTS === 'Never'")
+                    div.options-container-item
+                        el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
+                        el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
             //- Wrist Overlay Tab
             el-tab-pane(:label="$t('view.settings.category.wrist_overlay')")
                 //- Wrist Overlay | SteamVR Wrist Overlay
@@ -481,6 +527,10 @@ mixin settingsTab()
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.description') }}
                         el-switch(v-model="saveInstancePrints" @change="saveVRCXWindowOption")
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.description') }}
+                        el-switch(v-model="saveInstanceStickers" @change="saveVRCXWindowOption")
                 //- Advanced | Remote Avatar Database
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
@@ -492,7 +542,7 @@ mixin settingsTab()
                 //- Advanced | Automatic App Launcher
                 +simpleSettingsCategory("view.settings.advanced.advanced.app_launcher.header")
                     br
-                    el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
+                    el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
                         el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.app_launcher.folder_tooltip')")
                             i.el-icon-warning
                     +simpleSwitch("view.settings.advanced.advanced.app_launcher.enable", "enableAppLauncher", "updateAppLauncherSettings")

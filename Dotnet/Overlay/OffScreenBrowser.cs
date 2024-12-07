@@ -11,6 +11,7 @@ using CefSharp.Structs;
 using SharpDX.Direct3D11;
 using System;
 using System.Threading;
+using NLog;
 using SharpDX.Direct3D;
 using SharpDX.Mathematics.Interop;
 using Range = CefSharp.Structs.Range;
@@ -24,6 +25,8 @@ namespace VRCX
         private DeviceMultithread _deviceMultithread;
         private Query _query;
         private Texture2D _renderTarget;
+        
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public OffScreenBrowser(string address, int width, int height)
             : base(address, automaticallyCreateBrowser: false)
@@ -101,11 +104,20 @@ namespace VRCX
 
             if (_device == null)
                 return;
-            
-            using Texture2D cefTexture = _device1.OpenSharedResource1<Texture2D>(paintInfo.SharedTextureHandle);
-            _device.ImmediateContext.CopyResource(cefTexture, _renderTarget);
-            _device.ImmediateContext.End(_query);
-            _device.ImmediateContext.Flush();
+
+            try
+            {
+                using Texture2D cefTexture = _device1.OpenSharedResource1<Texture2D>(paintInfo.SharedTextureHandle);
+                _device.ImmediateContext.CopyResource(cefTexture, _renderTarget);
+                _device.ImmediateContext.End(_query);
+                _device.ImmediateContext.Flush();
+            }
+            catch (Exception e)
+            {
+                logger.Error(e);
+                _device = null;
+                return;
+            }
 
             RawBool q = _device.ImmediateContext.GetData<RawBool>(_query, AsynchronousFlags.DoNotFlush);
 

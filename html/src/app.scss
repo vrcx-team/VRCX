@@ -94,6 +94,15 @@
     -webkit-line-clamp: 1;
 }
 
+.el-table th.is-sortable .cell {
+    display: flex;
+    align-items: center;
+}
+
+.el-table .caret-wrapper {
+    margin-top: 4.5px;
+}
+
 .notification-table .el-table .cell {
     -webkit-line-clamp: 2;
 }
@@ -408,6 +417,14 @@ img.friends-list-avatar {
     filter: none;
 }
 
+.x-user-badge-hidden {
+    filter: grayscale(1);
+}
+
+.x-user-badge:hover {
+    filter: none;
+}
+
 .x-friend-item > .avatar.online.mobile > img,
 .x-friend-item > .avatar.joinme.mobile > img,
 .x-friend-item > .avatar.askme.mobile > img,
@@ -637,6 +654,11 @@ i.x-user-status.busy {
     border-color: #ff4177 !important;
 }
 
+.x-tag-age-verification {
+    color: #ff4177 !important;
+    border-color: #ff4177 !important;
+}
+
 .x-grey {
     color: #909399;
 }
@@ -668,6 +690,11 @@ i.x-user-status.busy {
 .options-container {
     margin-top: 30px;
     padding: 0px 10px 10px 10px;
+}
+
+.options-container .header-bar {
+    display: flex;
+    align-items: center;
 }
 
 .options-container .header {
@@ -865,4 +892,8 @@ i.x-user-status.busy {
 
 .max-height-el-select .el-select-dropdown__wrap {
     max-height: 83vh;
+}
+
+.el-pagination .el-input .el-input__icon {
+    line-height: 22px;
 }

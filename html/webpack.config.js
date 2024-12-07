@@ -24,6 +24,7 @@ module.exports = {
         'theme.material3': './src/theme.material3.scss',
         flags: './src/flags.scss',
         'animated-emoji': './src/animated-emoji.scss',
+        'emoji.font': './src/emoji.font.scss',
         vr: {
             import: ['./src/vr.js', './src/vr.scss'],
             dependOn: 'vendor'

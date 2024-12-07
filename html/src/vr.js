@@ -8,6 +8,7 @@ import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
+import '@infolektuell/noto-color-emoji';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
@@ -130,6 +131,7 @@ Vue.component('marquee-text', MarqueeText);
             appType: location.href.substr(-1),
             appLanguage: 'en',
             currentCulture: 'en-nz',
+            isRunningUnderWine: false,
             currentTime: new Date().toJSON(),
             cpuUsageEnabled: false,
             cpuUsage: 0,
@@ -168,7 +170,9 @@ Vue.component('marquee-text', MarqueeText);
         },
         watch: {},
         el: '#x-app',
-        mounted() {
+        async mounted() {
+            this.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
+            await this.applyWineEmojis();
             workerTimers.setTimeout(() => AppApiVr.VrInit(), 5000);
             if (this.appType === '1') {
                 this.refreshCustomScript();
@@ -654,6 +658,19 @@ Vue.component('marquee-text', MarqueeText);
         if (appLanguage !== this.appLanguage) {
             this.appLanguage = appLanguage;
             i18n.locale = this.appLanguage;
+        }
+    };
+
+    $app.methods.applyWineEmojis = async function () {
+        if (document.contains(document.getElementById('app-emoji-font'))) {
+            document.getElementById('app-emoji-font').remove();
+        }
+        if (this.isRunningUnderWine) {
+            var $appEmojiFont = document.createElement('link');
+            $appEmojiFont.setAttribute('id', 'app-emoji-font');
+            $appEmojiFont.rel = 'stylesheet';
+            $appEmojiFont.href = 'emoji.font.css';
+            document.head.appendChild($appEmojiFont);
         }
     };
 

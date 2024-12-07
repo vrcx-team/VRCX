@@ -35,6 +35,10 @@ namespace VRCX
 
         private static void Install()
         {
+            var setupArguments = string.Empty;
+            if (Wine.GetIfWine())
+                setupArguments += "/SKIP_SHORTCUT=true";
+            
             try
             {
                 File.Move(Update_Executable, VRCX_Setup_Executable);
@@ -43,7 +47,7 @@ namespace VRCX
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = VRCX_Setup_Executable,
-                        Arguments = "/S",
+                        Arguments = setupArguments,
                         UseShellExecute = true,
                         WorkingDirectory = Program.AppDataDirectory
                     }

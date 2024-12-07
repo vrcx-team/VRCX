@@ -56,7 +56,7 @@ namespace VRCX
         {
             _browser1.ExecuteScriptAsync("location.reload()");
             _browser2.ExecuteScriptAsync("location.reload()");
-            VRCXVR.Instance.Refresh();
+            Program.VRCXVRInstance.Refresh();
         }
 
         private void button_devtools_Click(object sender, System.EventArgs e)

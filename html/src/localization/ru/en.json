@@ -90,21 +90,28 @@
                 "search": "Поиск",
                 "vrchat_favorites": "Избранное VRChat",
                 "local_favorites": "Локальное избранное",
-                "new_group": "Новая группа"
+                "new_group": "Новая группа",
+                "refresh": "Обновить",
+                "cancel_refresh": "Отмена обновления"
             },
             "avatars": {
                 "header": "Аватары",
                 "search": "Поиск",
                 "vrchat_favorites": "Избранное VRChat",
                 "local_favorites": "Локальное избранное (требуется VRC+)",
-                "new_group": "Новая группа"
+                "new_group": "Новая группа",
+                "refresh": "Обновить",
+                "cancel_refresh": "Отмена обновления"
             },
-            "bulk_unfavorite_mode": "Массовый режим удаления избранного",
+            "edit_mode": "Режим редактирования",
+            "copy": "Копировать",
+            "clear": "Очистить",
             "bulk_unfavorite_selection": "Удалить выбранное",
             "refresh_tooltip": "Обновить все избранное",
             "export": "Экспорт",
             "import": "Импорт",
             "move_tooltip": "Переместить",
+            "copy_tooltip": "Копировать",
             "unfavorite_tooltip": "Удалить из избранного",
             "visibility_tooltip": "Изменить видимость",
             "rename_tooltip": "Переименовать",
@@ -207,6 +214,7 @@
                 "vrcx_updater": {
                     "header": "Обновление VRCX",
                     "change_build": "Изменить сборку",
+                    "update_action": "Действия по обновлению",
                     "auto_update": "Автоматическое обновление",
                     "auto_update_off": "Выкл",
                     "auto_update_notify": "Оповестить",
@@ -218,6 +226,10 @@
                     "startup": "Запускать при старте Windows",
                     "minimized": "Запускать в свернутом режиме",
                     "tray": "Сворачивать в трей",
+                    "disable_gpu_acceleration": "Отключить аппаратоное ускорение",
+                    "disable_gpu_acceleration_tooltip": "Изменяйте этот параметр только в том случае, если вы знаете, что делаете. Нарушает оверлей SteamVR, может исправить проблемы с пользовательским интерфейсом, требует перезапуска VRCX.",
+                    "disable_vr_overlay_gpu_acceleration": "Отключить аппаратное ускорение VR оверлея",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "Аппаратное ускорени VR оверлея может привести к сбою VRCX или утечке памяти видеопаняти, требуется перезапуск VRCX",
                     "proxy": "Настройки прокси-сервера"
                 },
                 "favorites": {
@@ -293,9 +305,9 @@
                     "sorting": {
                         "header": "Сортировка",
                         "alphabetical": "По алфавиту",
-                        "sort_private_to_bottom": "Приватные в конец ",
+                        "private_to_bottom": "Приватные в конец",
                         "status": "По статусу",
-                        "sort_by_status_and_private_to_bottom": "Приватные в конец у",
+                        "status_and_private_to_bottom": "ПСтатус и частные до конца",
                         "location": "По местоположению",
                         "last_active": "По последней активности",
                         "time_in_instance": "По времени в инстансе",
@@ -355,7 +367,8 @@
                         "when_to_play_game_closed": "Игра закрыта",
                         "when_to_play_game_running": "Игра запущена",
                         "when_to_play_always": "Всегда",
-                        "tts_voice": "Синтезатор голоса"
+                        "tts_voice": "Синтезатор голоса",
+                        "use_memo_nicknames": "Использовать прозвища из заметок"
                     }
                 }
             },
@@ -422,7 +435,16 @@
                     },
                     "local_world_persistence": {
                         "header": "Локальное сохранение мира",
-                        "description": "Локальный веб-сервер (требуется перезапуск)"
+                        "description": "Локальный веб-сервер (требуется перезапуск)"  
+                        },
+                        "save_instance_prints_to_file": {
+                            "header": "Сохранить снимки инстанса в файл",
+                            "header_tooltip": "Требуется \"--enable-sdk-log-levels\" опция запуска VRC.",
+                            "description": "Сохраните созданные отпечатки в папке «Изображения VRChat»."
+                        },
+                        "save_instance_stickers_to_file": {
+                            "header": "Сохранить стикеры инстанса в файл",
+                            "description": "Сохраните размещенные наклейки в папке «Изображения VRChat»."
                     },
                     "remote_database": {
                         "header": "Удаленная база данных аватаров",
@@ -550,6 +572,11 @@
                 "friend_no": "Друг №{number}",
                 "vrchat_team": "Команда VRChat"
             },
+            "badges": {
+                "assigned": "Назначен",
+                "hidden": "Скрыт",
+                "showcased": "Представленный"
+            },
             "actions": {
                 "favorite_tooltip": "Добавить в избранное",
                 "unfavorite_tooltip": "Убрать из избранного",
@@ -636,9 +663,19 @@
             "groups": {
                 "header": "Группы",
                 "total_count": "Всего {count}",
+                "sort_by": "Сортировать по:",
+                "edit_mode": "Режим редактирования",
+                "exit_edit_mode": "Выход из режима редактирования",
+                "hold_shift": "Удерживайте shift, чтобы уйти без подтверждения",
                 "own_groups": "Собственные группы",
                 "mutual_groups": "Взаимные группы",
-                "groups": "Группы"
+                "groups": "Группы",
+                "sorting": {
+                    "alphabetical": "По алфавиту",
+                    "members": "Участники",
+                    "in_game": "Игровой порядок"
+                },
+                "leave_group_tooltip": "Покинуть группу"
             },
             "worlds": {
                 "header": "Миры",
@@ -694,6 +731,7 @@
                 "favorites_tooltip": "Избранное",
                 "refresh": "Обновить",
                 "new_instance": "Новый инстанс",
+                "new_instance_and_self_invite": "Новый инстанс и самоприглашение",
                 "make_home": "Сделать Домом",
                 "reset_home": "Сбросить домашний мир",
                 "show_previous_instances": "Показать предыдущие инстансы",
@@ -705,9 +743,11 @@
                 "change_preview": "Изменить превью YouTube",
                 "change_tags": "Изменить теги",
                 "change_image": "Изменить изображение",
+                "change_allowed_video_player_domains": "Изменение разрешенных доменов видеоплеера",
                 "download_package": "Скачать пакет Unity",
                 "publish_to_labs": "Опубликовать в Labs",
                 "unpublish": "Снять с публикации",
+                "delete_persistent_data": "Удаление постоянных данных",
                 "delete": "Удалить"
             },
             "instances": {
@@ -1245,6 +1285,8 @@
             "gallery": "Фото",
             "icons": "Иконки",
             "emojis": "Эмодзи",
+            "stickers": "Стикеры",
+            "prints": "Принты",
             "refresh": "Обновить",
             "upload": "Загрузить",
             "clear": "Очистить",
@@ -1253,7 +1295,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Количество кадров:",
             "emoji_loop_pingpong": "Зацикленный PingPong",
-            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)"
+            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)",
+             "note": "Заметка"
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",
@@ -1386,6 +1429,11 @@
             "default_emojis": "Стандартные эмодзи",
             "cancel": "Отмена",
             "send": "Отправить"
+        },
+        "allowed_video_player_domains": {
+            "header": "Разрешенные домены видеоплеера",
+            "add_domain": "Добавить домен",
+            "save": "Сохранить"
         }
     },
     "prompt": {

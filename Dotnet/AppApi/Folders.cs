@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
@@ -245,6 +246,22 @@ namespace VRCX
                 // open folder with file highlighted
                 Process.Start("explorer.exe", $"/select,\"{path}\"");
             }
+        }
+        
+        private static readonly Regex _folderRegex = new Regex(string.Format(@"([{0}]*\.+$)|([{0}]+)",
+            Regex.Escape(new string(Path.GetInvalidPathChars()))));
+
+        private static readonly Regex _fileRegex = new Regex(string.Format(@"([{0}]*\.+$)|([{0}]+)",
+            Regex.Escape(new string(Path.GetInvalidFileNameChars()))));
+
+        public static string MakeValidFileName(string name)
+        {
+            name = name.Replace("/", "");
+            name = name.Replace("\\", "");
+            name = _folderRegex.Replace(name, "");
+            name = _fileRegex.Replace(name, "");
+    
+            return name;
         }
     }
 }

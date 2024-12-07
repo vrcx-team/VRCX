@@ -227,6 +227,8 @@
                     "tray": "Minimize to tray when closing",
                     "disable_gpu_acceleration": "Disable GPU Acceleration",
                     "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, breaks SteamVR overlay, may fix issues with UI, requires restarting VRCX",
+                    "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "VR Overlay GPU acceleration can cause VRCX to crash or cause VRAM memory leaks, requires restarting VRCX",
                     "proxy": "Proxy settings"
                 },
                 "favorites": {
@@ -240,14 +242,15 @@
                 },
                 "automation": {
                     "header": "Automation",
-                    "auto_state_change": "Auto Status Change",
+                    "auto_change_status": "Auto Change Status",
                     "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
-                    "auto_state_change_off": "Off",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy",
+                    "alone_condition": "Alone Condition",
+                    "alone": "Alone",
+                    "no_friends": "No Friends",
+                    "alone_status": "Alone Status",
+                    "company_status": "Company Status",
+                    "allowed_instance_types": "Allowed Instance Types",
+                    "instance_type_placeholder": "All Instance Types",
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_off": "Off",
@@ -307,6 +310,7 @@
                         "status_and_private_to_bottom": "Status and Private to Bottom",
                         "location": "Location",
                         "last_active": "Last Active",
+                        "last_seen": "Last Seen",
                         "time_in_instance": "Time in Instance",
                         "placeholder": "Sort Order",
                         "dropdown_header": "Choose Sort Order"
@@ -364,7 +368,10 @@
                         "when_to_play_game_closed": "Game Closed",
                         "when_to_play_game_running": "Game Running",
                         "when_to_play_always": "Always",
-                        "tts_voice": "TTS Voice"
+                        "tts_voice": "TTS Voice",
+                        "use_memo_nicknames": "Use Memo Nicknames",
+                        "play": "Play",
+                        "tts_test_placeholder": "Test TTS"
                     }
                 }
             },
@@ -437,6 +444,10 @@
                         "header": "Save Instance Prints To File",
                         "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
                         "description": "Save spawned prints to your VRChat Pictures folder"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "Save Instance Stickers To File",
+                        "description": "Save placed stickers to your VRChat Pictures folder"
                     },
                     "remote_database": {
                         "header": "Remote Avatar Database",
@@ -563,6 +574,11 @@
             "tags": {
                 "friend_no": "Friend No.{number}",
                 "vrchat_team": "VRChat Team"
+            },
+            "badges": {
+                "assigned": "Assigned",
+                "hidden": "Hidden",
+                "showcased": "Showcased"
             },
             "actions": {
                 "favorite_tooltip": "Add to favorites",
@@ -1268,7 +1284,7 @@
         },
         "gallery_icons": {
             "header": "Manage Photos, Icons, Emojis and Stickers",
-            "description": "Recommended image size: 1200x900px (4:3)",
+            "recommended_image_size": "Recommended image size",
             "gallery": "Photos",
             "icons": "Icons",
             "emojis": "Emojis",
@@ -1282,7 +1298,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
+            "note": "Note"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",

@@ -1,6 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import gameLogService from '../service/gamelog.js';
 import configRepository from '../repository/config.js';
+import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 
 export default class extends baseClass {
@@ -161,6 +162,20 @@ export default class extends baseClass {
                     var ref = this.lastLocation.playerList.get(userId);
                     if (typeof ref === 'undefined') {
                         break;
+                    }
+                    var friendRef = this.friends.get(userId);
+                    if (typeof friendRef?.ref !== 'undefined') {
+                        friendRef.ref.$joinCount++;
+                        friendRef.ref.$lastSeen = Date.now();
+                        friendRef.ref.$timeSpent += Date.now() - ref.joinTime;
+                        if (
+                            this.sidebarSortMethods.includes(
+                                'Sort by Last Seen'
+                            )
+                        ) {
+                            this.sortVIPFriends = true;
+                            this.sortOnlineFriends = true;
+                        }
                     }
                     var time = Date.now() - ref.joinTime;
                     this.lastLocation.playerList.delete(userId);
@@ -403,6 +418,16 @@ export default class extends baseClass {
                     //     data: gameLog.data
                     // };
                     // database.addGamelogEventToDatabase(entry);
+                    break;
+                case 'sticker-spawn':
+                    if (!$app.saveInstanceStickers) {
+                        break;
+                    }
+
+                    $app.trySaveStickerToFile(
+                        gameLog.displayName,
+                        gameLog.fileId
+                    );
                     break;
             }
             if (entry) {

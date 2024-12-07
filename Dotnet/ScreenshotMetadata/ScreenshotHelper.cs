@@ -174,15 +174,23 @@ namespace VRCX
             if (!metadataString.StartsWith("{"))
             {
                 // parse VRC prints
-                var xmlIndex = metadataString.IndexOf("<x:xmpmeta");
+                var xmlIndex = metadataString.IndexOf("<x:xmpmeta", StringComparison.Ordinal);
                 if (xmlIndex != -1)
                 {
-                    var xmlString = metadataString.Substring(xmlIndex);
-                    // everything after index
-                    var result = ParseVRCPrint(xmlString.Substring(xmlIndex - 7));
-                    result.SourceFile = path;
+                    try
+                    {
+                        var xmlString = metadataString.Substring(xmlIndex);
+                        // everything after index
+                        var result = ParseVRCPrint(xmlString.Substring(xmlIndex - 7));
+                        result.SourceFile = path;
 
-                    return result;
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, "Failed to parse VRCPrint XML metadata for file '{0}'", path);
+                        return ScreenshotMetadata.JustError(path, "Failed to parse VRCPrint metadata.");
+                    }
                 }
                 
                 logger.ConditionalDebug("Screenshot file '{0}' has unknown non-JSON metadata:\n{1}\n", path, metadataString);

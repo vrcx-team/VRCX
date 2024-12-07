@@ -9,6 +9,7 @@ import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
+import '@infolektuell/noto-color-emoji';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
@@ -127,6 +128,7 @@ speechSynthesis.getVoices();
             isGameNoVR: true,
             isSteamVRRunning: false,
             isHmdAfk: false,
+            isRunningUnderWine: false,
             appVersion: '',
             latestAppVersion: '',
             shiftHeld: false
@@ -140,6 +142,11 @@ speechSynthesis.getVoices();
         el: '#x-app',
         async mounted() {
             await this.initLanguage();
+            try {
+                this.isRunningUnderWine = await AppApi.IsRunningUnderWine();
+            } catch (err) {
+                console.error(err);
+            }
             await this.changeThemeMode();
             await AppApi.SetUserAgent();
             this.appVersion = await AppApi.GetVersion();
@@ -680,6 +687,22 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+        }
+        if (
+            ref.$isVRCPlus &&
+            ref.badges &&
+            ref.badges.every((x) => x.badgeName !== 'Supporter')
+        ) {
+            // I doubt this will last long
+            ref.badges.unshift({
+                badgeId: 'bdg_system_supporter',
+                badgeName: 'Supporter',
+                badgeDescription: 'Supports VRChat through VRC+',
+                badgeImageUrl:
+                    'https://assets.vrchat.com/badges/fa/bdgai_8c9cf371-ffd2-4177-9894-1093e2e34bf7.png',
+                hidden: true,
+                showcased: false
+            });
         }
         var friendCtx = $app.friends.get(ref.id);
         if (friendCtx) {
@@ -1366,6 +1389,10 @@ speechSynthesis.getVoices();
 
     API.$on('FRIEND:LIST', function (args) {
         for (var json of args.json) {
+            if (!json.displayName) {
+                console.error('/friends gave us garbage', json);
+                continue;
+            }
             this.$emit('USER', {
                 json,
                 params: {
@@ -3659,6 +3686,9 @@ speechSynthesis.getVoices();
         isSteamVRRunning,
         isHmdAfk
     ) {
+        if (this.gameLogDisabled) {
+            return;
+        }
         if (isGameRunning !== this.isGameRunning) {
             this.isGameRunning = isGameRunning;
             if (isGameRunning) {
@@ -3895,6 +3925,7 @@ speechSynthesis.getVoices();
             )}</strong>!`
         }).show();
         $app.$refs.menu.activeIndex = 'feed';
+        $app.updateStoredUser(this.currentUser);
     });
 
     API.$on('LOGOUT', async function () {
@@ -4581,6 +4612,10 @@ speechSynthesis.getVoices();
                 );
             }
         }
+        if (!this.friends.has(id)) {
+            console.log('Friend not found', id);
+            return;
+        }
         var isVIP = this.localFavoriteFriends.has(id);
         var ref = ctx.ref;
         if (ctx.state !== newState && typeof ctx.ref !== 'undefined') {
@@ -4669,7 +4704,9 @@ speechSynthesis.getVoices();
             this.updateOnlineFriendCoutner();
         }
         ctx.state = newState;
-        ctx.name = ref.displayName;
+        if (ref?.displayName) {
+            ctx.name = ref.displayName;
+        }
         ctx.isVIP = isVIP;
     };
 
@@ -4944,6 +4981,11 @@ speechSynthesis.getVoices();
         return compareByActivityField(a, b, 'last_activity');
     };
 
+    // last seen
+    var compareByLastSeen = function (a, b) {
+        return compareByActivityField(a, b, '$lastSeen');
+    };
+
     var getFriendsSortFunction = function (sortMethods) {
         const sorts = [];
         for (const sortMethod of sortMethods) {
@@ -4959,6 +5001,9 @@ speechSynthesis.getVoices();
                     break;
                 case 'Sort by Last Active':
                     sorts.push(compareByLastActive);
+                    break;
+                case 'Sort by Last Seen':
+                    sorts.push(compareByLastSeen);
                     break;
                 case 'Sort by Time in Instance':
                     sorts.push((a, b) => {
@@ -5355,7 +5400,7 @@ speechSynthesis.getVoices();
         );
         // eslint-disable-next-line require-atomic-updates
         $app.feedSessionTable = await database.getFeedDatabase();
-        $app.feedTableLookup();
+        await $app.feedTableLookup();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
@@ -5382,18 +5427,19 @@ speechSynthesis.getVoices();
                 throw err;
             }
         }
-        $app.sortVIPFriends = true;
-        $app.sortOnlineFriends = true;
-        $app.sortActiveFriends = true;
-        $app.sortOfflineFriends = true;
-        $app.getAvatarHistory();
-        $app.getAllUserMemos();
+        await $app.getAvatarHistory();
+        await $app.getAllUserMemos();
         if ($app.randomUserColours) {
             $app.getNameColour(this.currentUser.id).then((colour) => {
                 this.currentUser.$userColour = colour;
             });
-            $app.userColourInit();
+            await $app.userColourInit();
         }
+        await $app.getAllUserStats();
+        $app.sortVIPFriends = true;
+        $app.sortOnlineFriends = true;
+        $app.sortActiveFriends = true;
+        $app.sortOfflineFriends = true;
         this.getAuth();
         $app.updateSharedFeed(true);
         if ($app.isGameRunning) {
@@ -5520,6 +5566,9 @@ speechSynthesis.getVoices();
                 console.log(
                     `${ref.displayName} GPS ${previousLocation} -> ${newLocation}`
                 );
+            }
+            if (previousLocation === 'offline') {
+                previousLocation = '';
             }
             if (!previousLocation) {
                 // no previous location
@@ -6142,9 +6191,20 @@ speechSynthesis.getVoices();
         return length;
     };
 
+    $app.data.instanceTypes = [
+        'invite',
+        'invite+',
+        'friends',
+        'friends+',
+        'public',
+        'groupPublic',
+        'groupPlus',
+        'groupOnly'
+    ];
+
     $app.methods.updateAutoStateChange = function () {
         if (
-            this.autoStateChange === 'Off' ||
+            !this.autoStateChangeEnabled ||
             !this.isGameRunning ||
             !this.lastLocation.playerList.size ||
             this.lastLocation.location === '' ||
@@ -6153,38 +6213,50 @@ speechSynthesis.getVoices();
             return;
         }
 
-        const otherPeopleExists = this.lastLocation.playerList.size > 1;
-        const prevStatus = API.currentUser.status;
-        let nextStatus = prevStatus;
-
-        switch (this.autoStateChange) {
-            case 'Active or Ask Me':
-                nextStatus = otherPeopleExists ? 'ask me' : 'active';
-                break;
-
-            case 'Active or Busy':
-                nextStatus = otherPeopleExists ? 'busy' : 'active';
-                break;
-
-            case 'Join Me or Ask Me':
-                nextStatus = otherPeopleExists ? 'ask me' : 'join me';
-                break;
-
-            case 'Join Me or Busy':
-                nextStatus = otherPeopleExists ? 'busy' : 'join me';
-                break;
-
-            case 'Ask Me or Busy':
-                nextStatus = otherPeopleExists ? 'ask me' : 'busy';
-                break;
+        var $location = $utils.parseLocation(this.lastLocation.location);
+        var instanceType = $location.accessType;
+        if (instanceType === 'group') {
+            if ($location.groupAccessType === 'members') {
+                instanceType = 'groupOnly';
+            } else if ($location.groupAccessType === 'plus') {
+                instanceType = 'groupPlus';
+            } else {
+                instanceType = 'groupPublic';
+            }
+        }
+        if (
+            this.autoStateChangeInstanceTypes.length > 0 &&
+            !this.autoStateChangeInstanceTypes.includes(instanceType)
+        ) {
+            return;
         }
 
-        if (prevStatus === nextStatus) {
+        var withCompany = this.lastLocation.playerList.size > 1;
+        if (this.autoStateChangeNoFriends) {
+            withCompany = this.lastLocation.friendList.size > 1;
+        }
+
+        var currentStatus = API.currentUser.status;
+        var newStatus = withCompany
+            ? this.autoStateChangeCompanyStatus
+            : this.autoStateChangeAloneStatus;
+
+        if (currentStatus === newStatus) {
             return;
         }
 
         API.saveCurrentUser({
-            status: nextStatus
+            status: newStatus
+        }).then(() => {
+            var text = `Status automaticly changed to ${newStatus}`;
+            if (this.errorNoty) {
+                this.errorNoty.close();
+            }
+            this.errorNoty = new Noty({
+                type: 'info',
+                text
+            }).show();
+            console.log(text);
         });
     };
 
@@ -7017,7 +7089,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.addFriendship = function (id) {
-        if (!this.friendLogInitStatus || this.friendLog.has(id)) {
+        if (
+            !this.friendLogInitStatus ||
+            this.friendLog.has(id) ||
+            id === API.currentUser.id
+        ) {
             return;
         }
         var ref = API.cachedUsers.get(id);
@@ -7092,7 +7168,7 @@ speechSynthesis.getVoices();
                     created_at: new Date().toJSON(),
                     type: 'Unfriend',
                     userId: id,
-                    displayName: ctx.displayName
+                    displayName: ctx.displayName || id
                 };
                 this.friendLogTable.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
@@ -7363,7 +7439,7 @@ speechSynthesis.getVoices();
         ) {
             return;
         }
-        if (!$utils.checkCanInvite(currentLocation)) {
+        if (!$app.checkCanInvite(currentLocation)) {
             return;
         }
 
@@ -7381,7 +7457,18 @@ speechSynthesis.getVoices();
                 ref.senderUserId
             )
                 .then((_args) => {
-                    $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                    var text = `Auto invite sent to ${ref.senderUsername}`;
+                    if (this.errorNoty) {
+                        this.errorNoty.close();
+                    }
+                    this.errorNoty = new Noty({
+                        type: 'info',
+                        text
+                    }).show();
+                    console.log(text);
+                    API.hideNotification({
+                        notificationId: ref.id
+                    });
                     return _args;
                 })
                 .catch((err) => {
@@ -7791,6 +7878,10 @@ speechSynthesis.getVoices();
         'VRCX_notificationTTS',
         'Never'
     );
+    $app.data.notificationTTSNickName = await configRepository.getBool(
+        'VRCX_notificationTTSNickName',
+        false
+    );
     $app.data.notificationTTSVoice = await configRepository.getString(
         'VRCX_notificationTTSVoice',
         '0'
@@ -7976,6 +8067,10 @@ speechSynthesis.getVoices();
             'VRCX_afkDesktopToast',
             this.afkDesktopToast
         );
+        await configRepository.setBool(
+            'VRCX_notificationTTSNickName',
+            this.notificationTTSNickName
+        );
         await configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
         await configRepository.setBool(
             'displayVRCPlusIconsAsAvatar',
@@ -8045,6 +8140,7 @@ speechSynthesis.getVoices();
         );
         this.friendLogTable.filters[2].value = this.hideUnfriends;
     };
+    $app.data.notificationTTSTest = '';
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.saveNotificationTTS = async function () {
         speechSynthesis.cancel();
@@ -8060,6 +8156,10 @@ speechSynthesis.getVoices();
             this.notificationTTS
         );
         this.updateVRConfigVars();
+    };
+    $app.methods.testNotificationTTS = function () {
+        speechSynthesis.cancel();
+        this.speak(this.notificationTTSTest);
     };
     $app.data.themeMode = await configRepository.getString(
         'VRCX_ThemeMode',
@@ -8142,6 +8242,20 @@ speechSynthesis.getVoices();
         }
         this.updateVRConfigVars();
         await this.updatetrustColor();
+        await this.applyWineEmojis();
+    };
+
+    $app.methods.applyWineEmojis = async function () {
+        if (document.contains(document.getElementById('app-emoji-font'))) {
+            document.getElementById('app-emoji-font').remove();
+        }
+        if (this.isRunningUnderWine) {
+            var $appEmojiFont = document.createElement('link');
+            $appEmojiFont.setAttribute('id', 'app-emoji-font');
+            $appEmojiFont.rel = 'stylesheet';
+            $appEmojiFont.href = 'emoji.font.css';
+            document.head.appendChild($appEmojiFont);
+        }
     };
 
     $app.data.isStartAtWindowsStartup = await configRepository.getBool(
@@ -8168,9 +8282,17 @@ speechSynthesis.getVoices();
     if ((await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === '') {
         await VRCXStorage.Set('VRCX_DisableGpuAcceleration', 'false');
     }
+    if (
+        (await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) === ''
+    ) {
+        await VRCXStorage.Set('VRCX_DisableVrOverlayGpuAcceleration', 'false');
+    }
     $app.data.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
     $app.data.disableGpuAcceleration =
         (await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === 'true';
+    $app.data.disableVrOverlayGpuAcceleration =
+        (await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) ===
+        'true';
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
@@ -8181,6 +8303,10 @@ speechSynthesis.getVoices();
         await configRepository.setBool(
             'VRCX_saveInstancePrints',
             this.saveInstancePrints
+        );
+        await configRepository.setBool(
+            'VRCX_saveInstanceStickers',
+            this.saveInstanceStickers
         );
         VRCXStorage.Set(
             'VRCX_StartAsMinimizedState',
@@ -8194,6 +8320,10 @@ speechSynthesis.getVoices();
         VRCXStorage.Set(
             'VRCX_DisableGpuAcceleration',
             this.disableGpuAcceleration.toString()
+        );
+        VRCXStorage.Set(
+            'VRCX_DisableVrOverlayGpuAcceleration',
+            this.disableVrOverlayGpuAcceleration.toString()
         );
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
@@ -8272,18 +8402,52 @@ speechSynthesis.getVoices();
             this.logEmptyAvatars
         );
     };
-    $app.data.autoStateChange = await configRepository.getString(
-        'VRCX_autoStateChange',
-        'Off'
+    $app.data.autoStateChangeEnabled = await configRepository.getBool(
+        'VRCX_autoStateChangeEnabled',
+        false
+    );
+    $app.data.autoStateChangeNoFriends = await configRepository.getBool(
+        'VRCX_autoStateChangeNoFriends',
+        false
+    );
+    $app.data.autoStateChangeInstanceTypes = JSON.parse(
+        await configRepository.getString(
+            'VRCX_autoStateChangeInstanceTypes',
+            '[]'
+        )
+    );
+    $app.data.autoStateChangeAloneStatus = await configRepository.getString(
+        'VRCX_autoStateChangeAloneStatus',
+        'join me'
+    );
+    $app.data.autoStateChangeCompanyStatus = await configRepository.getString(
+        'VRCX_autoStateChangeCompanyStatus',
+        'busy'
     );
     $app.data.autoAcceptInviteRequests = await configRepository.getString(
         'VRCX_autoAcceptInviteRequests',
         'Off'
     );
     $app.methods.saveAutomationOptions = async function () {
+        await configRepository.setBool(
+            'VRCX_autoStateChangeEnabled',
+            this.autoStateChangeEnabled
+        );
+        await configRepository.setBool(
+            'VRCX_autoStateChangeNoFriends',
+            this.autoStateChangeNoFriends
+        );
         await configRepository.setString(
-            'VRCX_autoStateChange',
-            this.autoStateChange
+            'VRCX_autoStateChangeInstanceTypes',
+            JSON.stringify(this.autoStateChangeInstanceTypes)
+        );
+        await configRepository.setString(
+            'VRCX_autoStateChangeAloneStatus',
+            this.autoStateChangeAloneStatus
+        );
+        await configRepository.setString(
+            'VRCX_autoStateChangeCompanyStatus',
+            this.autoStateChangeCompanyStatus
         );
         await configRepository.setString(
             'VRCX_autoAcceptInviteRequests',
@@ -8915,8 +9079,9 @@ speechSynthesis.getVoices();
         ) {
             var url = new URL(input);
             var urlPath = url.pathname;
-            if (urlPath.substring(5, 12) === '/world/') {
-                var worldId = urlPath.substring(12);
+            var urlPathSplit = urlPath.split('/');
+            if (urlPathSplit.length >= 4 && urlPathSplit[2] === 'world') {
+                var worldId = urlPathSplit[3];
                 this.showWorldDialog(worldId);
                 return true;
             } else if (urlPath.substring(5, 12) === '/launch') {
@@ -8984,16 +9149,21 @@ speechSynthesis.getVoices();
         if (input.startsWith('https://vrchat.')) {
             var url = new URL(input);
             var urlPath = url.pathname;
-            if (urlPath.substring(5, 11) === '/user/') {
-                var userId = urlPath.substring(11);
+            var urlPathSplit = urlPath.split('/');
+            if (urlPathSplit.length < 4) {
+                return false;
+            }
+            var type = urlPathSplit[2];
+            if (type === 'user') {
+                var userId = urlPathSplit[3];
                 this.showUserDialog(userId);
                 return true;
-            } else if (urlPath.substring(5, 13) === '/avatar/') {
-                var avatarId = urlPath.substring(13);
+            } else if (type === 'avatar') {
+                var avatarId = urlPathSplit[3];
                 this.showAvatarDialog(avatarId);
                 return true;
-            } else if (urlPath.substring(5, 12) === '/group/') {
-                var groupId = urlPath.substring(12);
+            } else if (type === 'group') {
+                var groupId = urlPathSplit[3];
                 this.showGroupDialog(groupId);
                 return true;
             }
@@ -11831,10 +12001,15 @@ speechSynthesis.getVoices();
             if (!avatarId) {
                 if (avatarInfo.ownerId === refUserId) {
                     this.$message({
-                        message: "It's personal (own) avatar",
+                        message:
+                            "It's personal (own) avatar or not found in avatar database",
                         type: 'warning'
                     });
                 } else {
+                    this.$message({
+                        message: 'Avatar not found in avatar database',
+                        type: 'warning'
+                    });
                     this.showUserDialog(avatarInfo.ownerId);
                 }
             }
@@ -12310,7 +12485,7 @@ speechSynthesis.getVoices();
             'instanceDialogAccessType',
             'public'
         ),
-        region: await configRepository.getString('instanceRegion', ''),
+        region: await configRepository.getString('instanceRegion', 'US West'),
         groupRegion: '',
         groupId: await configRepository.getString('instanceDialogGroupId', ''),
         groupAccessType: await configRepository.getString(
@@ -12603,6 +12778,14 @@ speechSynthesis.getVoices();
         this.buildLegacyInstance();
         this.updateNewInstanceDialog();
         D.visible = true;
+    };
+
+    $app.methods.newInstanceTabClick = function (tab) {
+        if (tab === '1') {
+            this.buildInstance();
+        } else {
+            this.buildLegacyInstance();
+        }
     };
 
     $app.methods.makeHome = function (tag) {
@@ -13252,7 +13435,9 @@ speechSynthesis.getVoices();
             L.instanceType !== 'public' &&
             L.groupAccessType !== 'public'
         ) {
-            args.push(`vrchat://launch?id=${location}&shortName=${shortName}`);
+            args.push(
+                `vrchat://launch?ref=vrcx.app&id=${location}&shortName=${shortName}`
+            );
         } else {
             // fetch shortName
             var newShortName = '';
@@ -13269,10 +13454,10 @@ speechSynthesis.getVoices();
             }
             if (newShortName) {
                 args.push(
-                    `vrchat://launch?id=${location}&shortName=${newShortName}`
+                    `vrchat://launch?ref=vrcx.app&id=${location}&shortName=${newShortName}`
                 );
             } else {
-                args.push(`vrchat://launch?id=${location}`);
+                args.push(`vrchat://launch?ref=vrcx.app&id=${location}`);
             }
         }
         var { launchArguments, vrcLaunchPathOverride } =
@@ -13629,6 +13814,7 @@ speechSynthesis.getVoices();
         };
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {
@@ -14588,7 +14774,7 @@ speechSynthesis.getVoices();
         this.friendsListTable.data = results;
     };
 
-    $app.methods.getAllUserStats = function () {
+    $app.methods.getAllUserStats = async function () {
         var userIds = [];
         var displayNames = [];
         for (var ctx of this.friends.values()) {
@@ -14598,55 +14784,54 @@ speechSynthesis.getVoices();
             }
         }
 
-        database.getAllUserStats(userIds, displayNames).then((data) => {
-            var friendListMap = new Map();
-            for (var item of data) {
-                if (!item.userId) {
-                    // find userId from previous data with matching displayName
-                    for (var ref of data) {
-                        if (
-                            ref.displayName === item.displayName &&
-                            ref.userId
-                        ) {
-                            item.userId = ref.userId;
-                        }
-                    }
-                    // if still no userId, find userId from friends list
-                    if (!item.userId) {
-                        for (var ref of this.friends.values()) {
-                            if (
-                                ref?.ref?.id &&
-                                ref.ref.displayName === item.displayName
-                            ) {
-                                item.userId = ref.id;
-                            }
-                        }
-                    }
-                    // if still no userId, skip
-                    if (!item.userId) {
-                        continue;
+        var data = await database.getAllUserStats(userIds, displayNames);
+        var friendListMap = new Map();
+        for (var item of data) {
+            if (!item.userId) {
+                // find userId from previous data with matching displayName
+                for (var ref of data) {
+                    if (ref.displayName === item.displayName && ref.userId) {
+                        item.userId = ref.userId;
                     }
                 }
-
-                var friend = friendListMap.get(item.userId);
-                if (!friend) {
-                    friendListMap.set(item.userId, item);
+                // if still no userId, find userId from friends list
+                if (!item.userId) {
+                    for (var ref of this.friends.values()) {
+                        if (
+                            ref?.ref?.id &&
+                            ref.ref.displayName === item.displayName
+                        ) {
+                            item.userId = ref.id;
+                        }
+                    }
+                }
+                // if still no userId, skip
+                if (!item.userId) {
                     continue;
                 }
-                friend.timeSpent += item.timeSpent;
-                friend.joinCount += item.joinCount;
-                friend.displayName = item.displayName;
-                friendListMap.set(item.userId, friend);
             }
-            for (var item of friendListMap.values()) {
-                var ref = this.friends.get(item.userId);
-                if (ref?.ref) {
-                    ref.ref.$joinCount = item.joinCount;
-                    ref.ref.$lastSeen = item.created_at;
-                    ref.ref.$timeSpent = item.timeSpent;
-                }
+
+            var friend = friendListMap.get(item.userId);
+            if (!friend) {
+                friendListMap.set(item.userId, item);
+                continue;
             }
-        });
+            if (Date.parse(item.lastSeen) > Date.parse(friend.lastSeen)) {
+                friend.lastSeen = item.lastSeen;
+            }
+            friend.timeSpent += item.timeSpent;
+            friend.joinCount += item.joinCount;
+            friend.displayName = item.displayName;
+            friendListMap.set(item.userId, friend);
+        }
+        for (var item of friendListMap.values()) {
+            var ref = this.friends.get(item.userId);
+            if (ref?.ref) {
+                ref.ref.$joinCount = item.joinCount;
+                ref.ref.$lastSeen = item.lastSeen;
+                ref.ref.$timeSpent = item.timeSpent;
+            }
+        }
     };
 
     $app.methods.getUserStats = async function (ctx) {
@@ -16065,7 +16250,7 @@ speechSynthesis.getVoices();
     ) {
         var D = this.screenshotMetadataDialog;
         var metadata = JSON.parse(json);
-        if (typeof metadata === 'undefined' || !metadata.sourceFile) {
+        if (!metadata?.sourceFile) {
             D.metadata = {};
             D.metadata.error =
                 'Invalid file selected. Please select a valid VRChat screenshot.';
@@ -16695,7 +16880,8 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.sweepVRChatCache = async function () {
-        await AssetBundleCacher.SweepCache();
+        var output = await AssetBundleCacher.SweepCache();
+        console.log('SweepCache', output);
         if (this.VRChatConfigDialog.visible) {
             this.getVRChatCacheSize();
         }
@@ -17312,6 +17498,7 @@ speechSynthesis.getVoices();
         };
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: false,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {
@@ -17423,6 +17610,7 @@ speechSynthesis.getVoices();
     API.uploadSticker = function (imageData, params) {
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {
@@ -17440,6 +17628,29 @@ speechSynthesis.getVoices();
             $app.stickerTable.unshift(args.json);
         }
     });
+
+    $app.data.stickersCache = [];
+
+    $app.methods.trySaveStickerToFile = async function (displayName, fileId) {
+        if ($app.stickersCache.includes(fileId)) return;
+        $app.stickersCache.push(fileId);
+        if ($app.stickersCache.size > 100) {
+            $app.stickersCache.shift();
+        }
+        var args = await API.call(`file/${fileId}`);
+        var imageUrl = args.versions[1].file.url;
+        var createdAt = args.versions[0].created_at;
+        var path = createdAt.slice(0, 7);
+        var fileNameDate = createdAt
+            .replace(/:/g, '-')
+            .replace(/T/g, '_')
+            .replace(/Z/g, '');
+        var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
+        var status = await AppApi.SaveStickerToFile(imageUrl, path, fileName);
+        if (status) {
+            console.log(`Sticker saved to file: ${path}\\${fileName}`);
+        }
+    };
 
     // #endregion
     // #region | Prints
@@ -17483,7 +17694,7 @@ speechSynthesis.getVoices();
     };
 
     API.$on('PRINT:LIST', function (args) {
-        $app.printTable = args.json.reverse();
+        $app.printTable = args.json;
         $app.galleryDialogPrintsLoading = false;
     });
 
@@ -17501,6 +17712,8 @@ speechSynthesis.getVoices();
             }
         }
     });
+
+    $app.data.printUploadNote = '';
 
     $app.methods.onFileChangePrint = function (e) {
         var clearFile = function () {
@@ -17532,10 +17745,12 @@ speechSynthesis.getVoices();
         var r = new FileReader();
         r.onload = function () {
             var date = new Date();
+            // why the fuck isn't this UTC
+            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
             var timestamp = date.toISOString().slice(0, 19);
             var params = {
-                note: 'test print',
-                worldId: 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c',
+                note: $app.printUploadNote,
+                // worldId: '',
                 timestamp
             };
             var base64Body = btoa(r.result);
@@ -17608,25 +17823,66 @@ speechSynthesis.getVoices();
         false
     );
 
-    $app.methods.trySavePrintToFile = async function (printId) {
-        var print = await API.getPrint({ printId });
-        var imageUrl = print.json?.files?.image;
-        if (!imageUrl) {
-            console.error('Print image URL is missing', print);
-            return;
+    $app.data.saveInstanceStickers = await configRepository.getBool(
+        'VRCX_saveInstanceStickers',
+        false
+    );
+
+    $app.methods.getPrintLocalDate = function (print) {
+        if (print.createdAt) {
+            var createdAt = new Date(print.createdAt);
+            // cursed convert to local time
+            createdAt.setMinutes(
+                createdAt.getMinutes() - createdAt.getTimezoneOffset()
+            );
+            return createdAt;
         }
-        var createdAt = new Date(print.json.createdAt);
-        var authorName = print.json.authorName;
+        if (print.timestamp) {
+            var createdAt = new Date(print.timestamp);
+            return createdAt;
+        }
+
+        var createdAt = new Date();
+        // cursed convert to local time
+        createdAt.setMinutes(
+            createdAt.getMinutes() - createdAt.getTimezoneOffset()
+        );
+        return createdAt;
+    };
+
+    $app.methods.getPrintFileName = function (print) {
+        var authorName = print.authorName;
         // fileDate format: 2024-11-03_16-14-25.757
+        var createdAt = this.getPrintLocalDate(print);
         var fileNameDate = createdAt
             .toISOString()
             .replace(/:/g, '-')
             .replace(/T/g, '_')
             .replace(/Z/g, '');
-        var fileName = `Prints\\${createdAt.toISOString().slice(0, 7)}\\${authorName}_${fileNameDate}_${printId}.png`;
-        var status = await AppApi.SavePrintToFile(imageUrl, fileName);
+        var fileName = `${authorName}_${fileNameDate}_${print.id}.png`;
+        return fileName;
+    };
+
+    $app.data.printCache = [];
+
+    $app.methods.trySavePrintToFile = async function (printId) {
+        if ($app.printCache.includes(printId)) return;
+        $app.printCache.push(printId);
+        if ($app.printCache.length > 100) {
+            $app.printCache.shift();
+        }
+        var args = await API.getPrint({ printId });
+        var imageUrl = args.json?.files?.image;
+        if (!imageUrl) {
+            console.error('Print image URL is missing', args);
+            return;
+        }
+        var createdAt = this.getPrintLocalDate(args.json);
+        var path = createdAt.toISOString().slice(0, 7);
+        var fileName = this.getPrintFileName(args.json);
+        var status = await AppApi.SavePrintToFile(imageUrl, path, fileName);
         if (status) {
-            console.log(`Print saved to file: ${fileName}`);
+            console.log(`Print saved to file: ${path}\\${fileName}`);
         }
     };
 
@@ -17698,6 +17954,8 @@ speechSynthesis.getVoices();
             clearFile();
             return;
         }
+        // set Emoji settings from fileName
+        this.parseEmojiFileName(files[0].name);
         var r = new FileReader();
         r.onload = function () {
             var params = {
@@ -17732,6 +17990,7 @@ speechSynthesis.getVoices();
     API.uploadEmoji = function (imageData, params) {
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {
@@ -17809,6 +18068,42 @@ speechSynthesis.getVoices();
             animation: ${animationDurationMs}ms steps(1) 0s infinite ${animStyle} running animated-emoji-${frameCount};
         `;
         return style;
+    };
+
+    $app.methods.getEmojiFileName = function (emoji) {
+        if (emoji.frames) {
+            var loopStyle = emoji.loopStyle || 'linear';
+            return `${emoji.name}_${emoji.animationStyle}animationStyle_${emoji.frames}frames_${emoji.framesOverTime}fps_${loopStyle}loopStyle.png`;
+        } else {
+            return `${emoji.name}_${emoji.animationStyle}animationStyle.png`;
+        }
+    };
+
+    $app.methods.parseEmojiFileName = function (fileName) {
+        // remove file extension
+        fileName = fileName.replace(/\.[^/.]+$/, '');
+        var array = fileName.split('_');
+        for (var i = 0; i < array.length; ++i) {
+            var value = array[i];
+            if (value.endsWith('animationStyle')) {
+                this.emojiAnimType = false;
+                this.emojiAnimationStyle = value
+                    .replace('animationStyle', '')
+                    .toLowerCase();
+            }
+            if (value.endsWith('frames')) {
+                this.emojiAnimType = true;
+                this.emojiAnimFrameCount = parseInt(
+                    value.replace('frames', '')
+                );
+            }
+            if (value.endsWith('fps')) {
+                this.emojiAnimFps = parseInt(value.replace('fps', ''));
+            }
+            if (value.endsWith('loopStyle')) {
+                this.emojiAnimLoopPingPong = value === 'pingpong';
+            }
+        }
     };
 
     // #endregion
@@ -18954,9 +19249,19 @@ speechSynthesis.getVoices();
                 break;
             }
         }
-        if (this.isRealInstance(location) && lastLocation !== location) {
+        if (lastLocation === location) {
+            return;
+        }
+        this.lastLocationDestination = '';
+        this.lastLocationDestinationTime = 0;
+
+        if (this.isRealInstance(location)) {
             var dt = new Date().toJSON();
             var L = $utils.parseLocation(location);
+
+            this.lastLocation.location = location;
+            this.lastLocation.date = dt;
+
             var entry = {
                 created_at: dt,
                 type: 'Location',
@@ -18974,6 +19279,9 @@ speechSynthesis.getVoices();
             this.applyUserDialogLocation();
             this.applyWorldDialogInstances();
             this.applyGroupDialogInstances();
+        } else {
+            this.lastLocation.location = '';
+            this.lastLocation.date = '';
         }
     };
 
@@ -20455,7 +20763,9 @@ speechSynthesis.getVoices();
                     ref.name.toLowerCase().includes(search) ||
                     ref.authorName.toLowerCase().includes(search)
                 ) {
-                    results.push(ref);
+                    if (!results.some((r) => r.id == ref.id)) {
+                        results.push(ref);
+                    }
                 }
             }
         }
@@ -20469,7 +20779,9 @@ speechSynthesis.getVoices();
                 ref.name.toLowerCase().includes(search) ||
                 ref.authorName.toLowerCase().includes(search)
             ) {
-                results.push(ref);
+                if (!results.some((r) => r.id == ref.id)) {
+                    results.push(ref);
+                }
             }
         }
 
@@ -20569,13 +20881,33 @@ speechSynthesis.getVoices();
 
     API.$on('AVATAR', function (args) {
         if ($app.localAvatarFavoritesList.includes(args.ref.id)) {
+            for (var i = 0; i < $app.localAvatarFavoriteGroups.length; ++i) {
+                var groupName = $app.localAvatarFavoriteGroups[i];
+                if (!$app.localAvatarFavorites[groupName]) {
+                    continue;
+                }
+                for (
+                    var j = 0;
+                    j < $app.localAvatarFavorites[groupName].length;
+                    ++j
+                ) {
+                    var ref = $app.localAvatarFavorites[groupName][j];
+                    if (ref.id === args.ref.id) {
+                        $app.localAvatarFavorites[groupName][j] = args.ref;
+                    }
+                }
+            }
+
             // update db cache
             database.addAvatarToCache(args.ref);
         }
     });
 
     API.$on('LOGIN', function () {
-        $app.getLocalAvatarFavorites();
+        $app.localAvatarFavoriteGroups = [];
+        $app.localAvatarFavoritesList = [];
+        $app.localAvatarFavorites = {};
+        workerTimers.setTimeout(() => $app.getLocalAvatarFavorites(), 100);
     });
 
     $app.methods.getLocalAvatarFavorites = async function () {
@@ -21260,7 +21592,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.downloadAndSaveImage = async function (url) {
+    $app.methods.downloadAndSaveImage = async function (url, fileName) {
         if (!url) {
             return;
         }
@@ -21281,7 +21613,10 @@ speechSynthesis.getVoices();
             }
             var link = document.createElement('a');
             link.href = response.data;
-            var fileName = `${$utils.extractFileId(url)}.png`;
+            var fileId = $utils.extractFileId(url);
+            if (!fileName && fileId) {
+                fileName = `${fileId}.png`;
+            }
             if (!fileName) {
                 fileName = `${url.split('/').pop()}.png`;
             }
@@ -21661,10 +21996,11 @@ speechSynthesis.getVoices();
 
     $app.data.fullscreenImageDialog = {
         visible: false,
-        imageUrl: ''
+        imageUrl: '',
+        fileName: ''
     };
 
-    $app.methods.showFullscreenImageDialog = function (imageUrl) {
+    $app.methods.showFullscreenImageDialog = function (imageUrl, fileName) {
         if (!imageUrl) {
             return;
         }
@@ -21673,6 +22009,7 @@ speechSynthesis.getVoices();
         );
         var D = this.fullscreenImageDialog;
         D.imageUrl = imageUrl;
+        D.fileName = fileName;
         D.visible = true;
     };
 
@@ -21980,6 +22317,63 @@ speechSynthesis.getVoices();
     };
 
     $app.data.ossDialog = false;
+
+    // #region | App: Badges
+
+    API.updateBadge = function (params) {
+        return this.call(
+            `users/${API.currentUser.id}/badges/${params.badgeId}`,
+            {
+                method: 'PUT',
+                params: {
+                    userId: API.currentUser.id,
+                    badgeId: params.badgeId,
+                    hidden: params.hidden,
+                    showcased: params.showcased
+                }
+            }
+        ).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('BADGE:UPDATE', args);
+            return args;
+        });
+    };
+
+    API.$on('BADGE:UPDATE', function (args) {
+        if (args.json) {
+            $app.$message({
+                message: 'Badge updated',
+                type: 'success'
+            });
+        }
+    });
+
+    $app.methods.toggleBadgeVisibility = function (badge) {
+        if (badge.hidden) {
+            badge.showcased = false;
+        }
+        API.updateBadge({
+            badgeId: badge.badgeId,
+            hidden: badge.hidden,
+            showcased: badge.showcased
+        });
+    };
+
+    $app.methods.toggleBadgeShowcased = function (badge) {
+        if (badge.showcased) {
+            badge.hidden = false;
+        }
+        API.updateBadge({
+            badgeId: badge.badgeId,
+            hidden: badge.hidden,
+            showcased: badge.showcased
+        });
+    };
+
+    // #endregion
 
     // "$app" is being replaced by Vue, update references inside all the classes
     $app = new Vue($app);

@@ -1,6 +1,6 @@
 mixin favoritesTab()            
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'")
-        div(style="font-size:13px;position:absolute;right:0;z-index:1")
+        div(style="font-size:13px;position:absolute;right:0;z-index:1;margin-right:15px")
             div(v-if="editFavoritesMode" style="display:inline-block;margin-right:10px")
                 el-button(size="small" @click="clearBulkFavoriteSelection ") {{ $t('view.favorite.clear') }}
                 el-button(size="small" @click="bulkCopyFavoriteSelection") {{ $t('view.favorite.copy') }}
@@ -15,7 +15,7 @@ mixin favoritesTab()
                 el-collapse(v-if="$refs.menu && $refs.menu.activeIndex === 'favorite' && $refs.favoriteTabRef && $refs.favoriteTabRef.currentName === '0'" style="border:0")
                     el-button(size="small" @click="showFriendExportDialog") {{ $t('view.favorite.export') }}
                     el-button(size="small" @click="showFriendImportDialog" style="margin-left:5px") {{ $t('view.favorite.import') }}
-                    div(style="display:inline-block;float:right;font-size:13px;margin-right:10px")
+                    div(style="display:flex;align-items:center;float:right;font-size:13px;margin-right:10px")
                         span.name(style="margin-right:5px") {{ $t('view.favorite.sort_by') }}
                         el-switch(v-model="sortFavorites" :inactive-text="$t('view.settings.appearance.appearance.sort_favorite_by_name')" :active-text="$t('view.settings.appearance.appearance.sort_favorite_by_date')" @change="saveSortFavoritesOption")
                     el-collapse-item(v-for="group in API.favoriteFriendGroups" :key="group.name")
@@ -57,7 +57,7 @@ mixin favoritesTab()
                 el-collapse(v-if="$refs.menu && $refs.menu.activeIndex === 'favorite' && $refs.favoriteTabRef && $refs.favoriteTabRef.currentName === '1'" style="border:0")
                     el-button(size="small" @click="showWorldExportDialog") {{ $t('view.favorite.export') }}
                     el-button(size="small" @click="showWorldImportDialog" style="margin-left:5px") {{ $t('view.favorite.import') }}
-                    div(style="display:inline-block;float:right;font-size:13px;margin-right:10px")
+                    div(style="display:flex;align-items:center;float:right;font-size:13px;margin-right:10px")
                         span.name(style="margin-right:5px") {{ $t('view.favorite.sort_by') }}
                         el-switch(v-model="sortFavorites" :inactive-text="$t('view.settings.appearance.appearance.sort_favorite_by_name')" :active-text="$t('view.settings.appearance.appearance.sort_favorite_by_date')" @change="saveSortFavoritesOption")
                     span(style="display:block;margin-top:20px") {{ $t('view.favorite.worlds.search') }}
@@ -168,7 +168,7 @@ mixin favoritesTab()
                 el-collapse(v-if="$refs.menu && $refs.menu.activeIndex === 'favorite' && $refs.favoriteTabRef && $refs.favoriteTabRef.currentName === '2'" style="border:0")
                     el-button(size="small" @click="showAvatarExportDialog") {{ $t('view.favorite.export') }}
                     el-button(size="small" @click="showAvatarImportDialog" style="margin-left:5px") {{ $t('view.favorite.import') }}
-                    div(style="display:inline-block;float:right;font-size:13px;margin-right:10px")
+                    div(style="display:flex;align-items:center;float:right;font-size:13px;margin-right:10px")
                         span.name(style="margin-right:5px") {{ $t('view.favorite.sort_by') }}
                         el-switch(v-model="sortFavorites" :inactive-text="$t('view.settings.appearance.appearance.sort_favorite_by_name')" :active-text="$t('view.settings.appearance.appearance.sort_favorite_by_date')" @change="saveSortFavoritesOption")
                     span(style="display:block;margin-top:20px") {{ $t('view.favorite.avatars.search') }}
