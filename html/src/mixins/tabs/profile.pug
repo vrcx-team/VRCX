@@ -37,9 +37,10 @@ mixin profileTab()
                         span.extra(v-if="visits") {{ $t('view.profile.game_info.user_online', { count: visits }) }}
                         span.extra(v-else) {{ $t('view.profile.game_info.refresh') }}
         div.options-container
-            span.header {{ $t('view.profile.vrc_sdk_downloads.header') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="API.getConfig()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.vrc_sdk_downloads.header') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="API.getConfig()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
             .x-friend-list(style="margin-top:10px")
                 .x-friend-item(v-for="(link, item) in API.cachedConfig.downloadUrls" :key="item" placement="top")
                     .detail(@click="openExternalLink(link)")
@@ -54,11 +55,12 @@ mixin profileTab()
                     el-button(size="small" @click="promptWorldDialog()") {{ $t('view.profile.direct_access.world_instance') }}
                     el-button(size="small" @click="promptAvatarDialog()") {{ $t('view.profile.direct_access.avatar') }}
         div.options-container
-            span.header {{ $t('view.profile.invite_messages') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteMessageTable.visible = true; refreshInviteMessageTable('message')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-            el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.invite_messages') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteMessageTable.visible = true; refreshInviteMessageTable('message')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             data-tables(v-if="inviteMessageTable.visible" v-bind="inviteMessageTable" style="margin-top:10px")
                 el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                 el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -69,11 +71,12 @@ mixin profileTab()
                     template(v-once #default="scope")
                         el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('message', scope.row)")
         div.options-container
-            span.header {{ $t('view.profile.invite_response_messages') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteResponseMessageTable.visible = true; refreshInviteMessageTable('response')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-            el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.invite_response_messages') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteResponseMessageTable.visible = true; refreshInviteMessageTable('response')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             data-tables(v-if="inviteResponseMessageTable.visible" v-bind="inviteResponseMessageTable" style="margin-top:10px")
                 el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                 el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -84,11 +87,12 @@ mixin profileTab()
                     template(v-once #default="scope")
                         el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('response', scope.row)")
         div.options-container
-            span.header {{ $t('view.profile.invite_request_messages') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteRequestMessageTable.visible = true; refreshInviteMessageTable('request')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-            el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteRequestMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.invite_request_messages') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteRequestMessageTable.visible = true; refreshInviteMessageTable('request')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteRequestMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             data-tables(v-if="inviteRequestMessageTable.visible" v-bind="inviteRequestMessageTable" style="margin-top:10px")
                 el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                 el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -99,11 +103,12 @@ mixin profileTab()
                     template(v-once #default="scope")
                         el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('request', scope.row)")
         div.options-container
-            span.header {{ $t('view.profile.invite_request_response_messages') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteRequestResponseMessageTable.visible = true; refreshInviteMessageTable('requestResponse')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-            el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="inviteRequestResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.invite_request_response_messages') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteRequestResponseMessageTable.visible = true; refreshInviteMessageTable('requestResponse')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="inviteRequestResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             data-tables(v-if="inviteRequestResponseMessageTable.visible" v-bind="inviteRequestResponseMessageTable" style="margin-top:10px")
                 el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                 el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -121,33 +126,36 @@ mixin profileTab()
                         span {{ scope.row.updated_at | formatDate('long') }}
                 el-table-column(:label="$t('table.profile.previous_display_name.name')" prop="displayName")
         div.options-container
-            span.header {{ $t('view.profile.config_json') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-            el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.config_json') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             el-tree(v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top:10px;font-size:12px")
                 template(#default="scope")
                     span
                         span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                         span(v-if="!scope.data.children" v-text="scope.data.value")
         div.options-container
-            span.header {{ $t('view.profile.current_user_json') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-            el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.current_user_json') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             el-tree(v-if="currentUserTreeData.length > 0" :data="currentUserTreeData" style="margin-top:10px;font-size:12px")
                 template(#default="scope")
                     span
                         span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                         span(v-if="!scope.data.children" v-text="scope.data.value")
         div.options-container
-            span.header {{ $t('view.profile.feedback') }}
-            el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="getCurrentUserFeedback()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-            el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
-                el-button(type="default" @click="currentUserFeedbackData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+            div.header-bar
+                span.header {{ $t('view.profile.feedback') }}
+                el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="getCurrentUserFeedback()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                    el-button(type="default" @click="currentUserFeedbackData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
             el-tree(v-if="currentUserFeedbackData.length > 0" :data="currentUserFeedbackData" style="margin-top:10px;font-size:12px")
                 template(#default="scope")
                     span

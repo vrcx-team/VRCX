@@ -692,6 +692,11 @@ i.x-user-status.busy {
     padding: 0px 10px 10px 10px;
 }
 
+.options-container .header-bar {
+    display: flex;
+    align-items: center;
+}
+
 .options-container .header {
     font-weight: bold;
     font-size: 20px;
@@ -887,4 +892,8 @@ i.x-user-status.busy {
 
 .max-height-el-select .el-select-dropdown__wrap {
     max-height: 83vh;
+}
+
+.el-pagination .el-input .el-input__icon {
+    line-height: 22px;
 }

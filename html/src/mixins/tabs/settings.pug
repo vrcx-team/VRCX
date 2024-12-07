@@ -23,7 +23,7 @@ mixin simpleRadioGroup(nameTrKey, model, options, onChange="")
     div.options-container-item
         span.name {{ $t('#{nameTrKey}') }}
         br
-        el-radio-group(v-model=model @change=onChange size="mini")
+        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
             each option in options
                 el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
 
@@ -33,7 +33,7 @@ mixin simpleRadioGroupWithTooltip(nameTrKey, tooltipContent, model, options, onC
             el-tooltip(placement="top" style="margin-left:5px" :content=tooltipContent)
                 i.el-icon-warning
         br
-        el-radio-group(v-model=model @change=onChange size="mini")
+        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
             each option in options
                 el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
 
@@ -98,7 +98,7 @@ mixin settingsTab()
                 //- General | Favorite
                 +simpleSettingsCategory("view.settings.general.favorites.header")
                     br
-                    el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends")
+                    el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends" style="margin-top:8px")
                         el-option-group(:label="$t('view.settings.general.favorites.group_placeholder')")
                             el-option.x-friend-item(v-for="group in API.favoriteFriendGroups" :key="group.key" :label="group.displayName ? group.displayName : group.name" :value="group.key")
                                 .detail
@@ -252,7 +252,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes') }}
                         br
-                        el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog") {{ $t('view.settings.appearance.user_dialog.export_notes') }}
+                        el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog" style="margin-top:5px") {{ $t('view.settings.appearance.user_dialog.export_notes') }}
                 //- Appearance | Friend Log
                 div.options-container
                     span.header {{ $t('view.settings.appearance.friend_log.header') }}
@@ -325,7 +325,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
                         br
-                        el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini")
+                        el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini" style="margin-top:5px")
                             el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_never') }}
                             el-radio-button(label="Desktop Mode") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_desktop') }}
                             el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_inside_vr') }}
@@ -342,7 +342,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play') }}
                         br
-                        el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini")
+                        el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini" style="margin-top:5px")
                             el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_never') }}
                             el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_inside_vr') }}
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_game_closed') }}
@@ -504,7 +504,7 @@ mixin settingsTab()
                 //- Advanced | Automatic App Launcher
                 +simpleSettingsCategory("view.settings.advanced.advanced.app_launcher.header")
                     br
-                    el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
+                    el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
                         el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.app_launcher.folder_tooltip')")
                             i.el-icon-warning
                     +simpleSwitch("view.settings.advanced.advanced.app_launcher.enable", "enableAppLauncher", "updateAppLauncherSettings")
