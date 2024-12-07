@@ -309,6 +309,7 @@
                         "status_and_private_to_bottom": "Status and Private to Bottom",
                         "location": "Location",
                         "last_active": "Last Active",
+                        "last_seen": "Last Seen",
                         "time_in_instance": "Time in Instance",
                         "placeholder": "Sort Order",
                         "dropdown_header": "Choose Sort Order"
@@ -367,7 +368,9 @@
                         "when_to_play_game_running": "Game Running",
                         "when_to_play_always": "Always",
                         "tts_voice": "TTS Voice",
-                        "use_memo_nicknames": "Use Memo Nicknames"
+                        "use_memo_nicknames": "Use Memo Nicknames",
+                        "play": "Play",
+                        "tts_test_placeholder": "Test TTS"
                     }
                 }
             },

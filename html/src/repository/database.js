@@ -1194,7 +1194,7 @@ class Database {
         await sqliteService.execute(
             (dbRow) => {
                 var row = {
-                    created_at: dbRow[0],
+                    lastSeen: dbRow[0],
                     userId: dbRow[1],
                     timeSpent: dbRow[2],
                     joinCount: dbRow[3],

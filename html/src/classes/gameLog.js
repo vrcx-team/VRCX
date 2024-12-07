@@ -163,6 +163,20 @@ export default class extends baseClass {
                     if (typeof ref === 'undefined') {
                         break;
                     }
+                    var friendRef = this.friends.get(userId);
+                    if (typeof friendRef?.ref !== 'undefined') {
+                        friendRef.ref.$joinCount++;
+                        friendRef.ref.$lastSeen = Date.now();
+                        friendRef.ref.$timeSpent += Date.now() - ref.joinTime;
+                        if (
+                            this.sidebarSortMethods.includes(
+                                'Sort by Last Seen'
+                            )
+                        ) {
+                            this.sortVIPFriends = true;
+                            this.sortOnlineFriends = true;
+                        }
+                    }
                     var time = Date.now() - ref.joinTime;
                     this.lastLocation.playerList.delete(userId);
                     this.lastLocation.friendList.delete(userId);
@@ -410,7 +424,10 @@ export default class extends baseClass {
                         break;
                     }
 
-                    $app.trySaveStickerToFile(gameLog.displayName, gameLog.fileId);
+                    $app.trySaveStickerToFile(
+                        gameLog.displayName,
+                        gameLog.fileId
+                    );
                     break;
             }
             if (entry) {

@@ -4981,6 +4981,11 @@ speechSynthesis.getVoices();
         return compareByActivityField(a, b, 'last_activity');
     };
 
+    // last seen
+    var compareByLastSeen = function (a, b) {
+        return compareByActivityField(a, b, '$lastSeen');
+    };
+
     var getFriendsSortFunction = function (sortMethods) {
         const sorts = [];
         for (const sortMethod of sortMethods) {
@@ -4996,6 +5001,9 @@ speechSynthesis.getVoices();
                     break;
                 case 'Sort by Last Active':
                     sorts.push(compareByLastActive);
+                    break;
+                case 'Sort by Last Seen':
+                    sorts.push(compareByLastSeen);
                     break;
                 case 'Sort by Time in Instance':
                     sorts.push((a, b) => {
@@ -5392,7 +5400,7 @@ speechSynthesis.getVoices();
         );
         // eslint-disable-next-line require-atomic-updates
         $app.feedSessionTable = await database.getFeedDatabase();
-        $app.feedTableLookup();
+        await $app.feedTableLookup();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
@@ -5419,18 +5427,19 @@ speechSynthesis.getVoices();
                 throw err;
             }
         }
-        $app.sortVIPFriends = true;
-        $app.sortOnlineFriends = true;
-        $app.sortActiveFriends = true;
-        $app.sortOfflineFriends = true;
-        $app.getAvatarHistory();
-        $app.getAllUserMemos();
+        await $app.getAvatarHistory();
+        await $app.getAllUserMemos();
         if ($app.randomUserColours) {
             $app.getNameColour(this.currentUser.id).then((colour) => {
                 this.currentUser.$userColour = colour;
             });
-            $app.userColourInit();
+            await $app.userColourInit();
         }
+        await $app.getAllUserStats();
+        $app.sortVIPFriends = true;
+        $app.sortOnlineFriends = true;
+        $app.sortActiveFriends = true;
+        $app.sortOfflineFriends = true;
         this.getAuth();
         $app.updateSharedFeed(true);
         if ($app.isGameRunning) {
@@ -8100,6 +8109,7 @@ speechSynthesis.getVoices();
         );
         this.friendLogTable.filters[2].value = this.hideUnfriends;
     };
+    $app.data.notificationTTSTest = '';
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.saveNotificationTTS = async function () {
         speechSynthesis.cancel();
@@ -8115,6 +8125,10 @@ speechSynthesis.getVoices();
             this.notificationTTS
         );
         this.updateVRConfigVars();
+    };
+    $app.methods.testNotificationTTS = function () {
+        speechSynthesis.cancel();
+        this.speak(this.notificationTTSTest);
     };
     $app.data.themeMode = await configRepository.getString(
         'VRCX_ThemeMode',
@@ -14695,7 +14709,7 @@ speechSynthesis.getVoices();
         this.friendsListTable.data = results;
     };
 
-    $app.methods.getAllUserStats = function () {
+    $app.methods.getAllUserStats = async function () {
         var userIds = [];
         var displayNames = [];
         for (var ctx of this.friends.values()) {
@@ -14705,55 +14719,54 @@ speechSynthesis.getVoices();
             }
         }
 
-        database.getAllUserStats(userIds, displayNames).then((data) => {
-            var friendListMap = new Map();
-            for (var item of data) {
-                if (!item.userId) {
-                    // find userId from previous data with matching displayName
-                    for (var ref of data) {
-                        if (
-                            ref.displayName === item.displayName &&
-                            ref.userId
-                        ) {
-                            item.userId = ref.userId;
-                        }
-                    }
-                    // if still no userId, find userId from friends list
-                    if (!item.userId) {
-                        for (var ref of this.friends.values()) {
-                            if (
-                                ref?.ref?.id &&
-                                ref.ref.displayName === item.displayName
-                            ) {
-                                item.userId = ref.id;
-                            }
-                        }
-                    }
-                    // if still no userId, skip
-                    if (!item.userId) {
-                        continue;
+        var data = await database.getAllUserStats(userIds, displayNames);
+        var friendListMap = new Map();
+        for (var item of data) {
+            if (!item.userId) {
+                // find userId from previous data with matching displayName
+                for (var ref of data) {
+                    if (ref.displayName === item.displayName && ref.userId) {
+                        item.userId = ref.userId;
                     }
                 }
-
-                var friend = friendListMap.get(item.userId);
-                if (!friend) {
-                    friendListMap.set(item.userId, item);
+                // if still no userId, find userId from friends list
+                if (!item.userId) {
+                    for (var ref of this.friends.values()) {
+                        if (
+                            ref?.ref?.id &&
+                            ref.ref.displayName === item.displayName
+                        ) {
+                            item.userId = ref.id;
+                        }
+                    }
+                }
+                // if still no userId, skip
+                if (!item.userId) {
                     continue;
                 }
-                friend.timeSpent += item.timeSpent;
-                friend.joinCount += item.joinCount;
-                friend.displayName = item.displayName;
-                friendListMap.set(item.userId, friend);
             }
-            for (var item of friendListMap.values()) {
-                var ref = this.friends.get(item.userId);
-                if (ref?.ref) {
-                    ref.ref.$joinCount = item.joinCount;
-                    ref.ref.$lastSeen = item.created_at;
-                    ref.ref.$timeSpent = item.timeSpent;
-                }
+
+            var friend = friendListMap.get(item.userId);
+            if (!friend) {
+                friendListMap.set(item.userId, item);
+                continue;
             }
-        });
+            if (Date.parse(item.lastSeen) > Date.parse(friend.lastSeen)) {
+                friend.lastSeen = item.lastSeen;
+            }
+            friend.timeSpent += item.timeSpent;
+            friend.joinCount += item.joinCount;
+            friend.displayName = item.displayName;
+            friendListMap.set(item.userId, friend);
+        }
+        for (var item of friendListMap.values()) {
+            var ref = this.friends.get(item.userId);
+            if (ref?.ref) {
+                ref.ref.$joinCount = item.joinCount;
+                ref.ref.$lastSeen = item.lastSeen;
+                ref.ref.$timeSpent = item.timeSpent;
+            }
+        }
     };
 
     $app.methods.getUserStats = async function (ctx) {

@@ -64,18 +64,19 @@ mixin userDialog()
                                         span(v-if="badge.hidden") &nbsp;(Hidden)
                                     el-popover(placement="right" width="300px" trigger="click")
                                         img.x-link.x-user-badge(slot="reference" v-lazy="badge.badgeImageUrl" style="flex:none;height:32px;width:32px;border-radius:3px;object-fit:cover;margin-top:5px;margin-right:5px" :class="{'x-user-badge-hidden':badge.hidden}")
-                                        img.x-link(v-lazy="badge.badgeImageUrl" style="height:300px" @click="showFullscreenImageDialog(badge.badgeImageUrl)")
+                                        img.x-link(v-lazy="badge.badgeImageUrl" style="width:300px" @click="showFullscreenImageDialog(badge.badgeImageUrl)")
                                         br
-                                        span {{ badge.badgeName }}
-                                        br
-                                        span.x-grey(style="font-size:12px") {{ badge.badgeDescription }}
-                                        br
-                                        span.x-grey(v-if="badge.assignedAt" style="font-family:monospace;font-size:12px") {{ $t('dialog.user.badges.assigned') }}: {{ badge.assignedAt | formatDate('long') }}
-                                        template(v-if="userDialog.id === API.currentUser.id")
+                                        div(style="display:block;width:300px;word-break:normal")
+                                            span {{ badge.badgeName }}
                                             br
-                                            el-checkbox(@change="toggleBadgeVisibility(badge)" v-model="badge.hidden" style="margin-top:5px") {{ $t('dialog.user.badges.hidden') }}
+                                            span.x-grey(style="font-size:12px") {{ badge.badgeDescription }}
                                             br
-                                            el-checkbox(@change="toggleBadgeShowcased(badge)" v-model="badge.showcased" style="margin-top:5px") {{ $t('dialog.user.badges.showcased') }}
+                                            span.x-grey(v-if="badge.assignedAt" style="font-family:monospace;font-size:12px") {{ $t('dialog.user.badges.assigned') }}: {{ badge.assignedAt | formatDate('long') }}
+                                            template(v-if="userDialog.id === API.currentUser.id")
+                                                br
+                                                el-checkbox(@change="toggleBadgeVisibility(badge)" v-model="badge.hidden" style="margin-top:5px") {{ $t('dialog.user.badges.hidden') }}
+                                                br
+                                                el-checkbox(@change="toggleBadgeShowcased(badge)" v-model="badge.showcased" style="margin-top:5px") {{ $t('dialog.user.badges.showcased') }}
                         div(style="margin-top:5px")
                             span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                     div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")

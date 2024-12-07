@@ -217,6 +217,7 @@ mixin settingsTab()
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
                         i.el-icon-arrow-right(style="margin:16px 5px")
@@ -226,6 +227,7 @@ mixin settingsTab()
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
                         i.el-icon-arrow-right(style="margin:16px 5px")
@@ -235,6 +237,7 @@ mixin settingsTab()
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
                                 el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
                     div.options-container-item
@@ -358,6 +361,9 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames') }}
                         el-switch(v-model="notificationTTSNickName" @change="saveOpenVROption" :disabled="notificationTTS === 'Never'")
+                    div.options-container-item
+                        el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
+                        el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
             //- Wrist Overlay Tab
             el-tab-pane(:label="$t('view.settings.category.wrist_overlay')")
                 //- Wrist Overlay | SteamVR Wrist Overlay
