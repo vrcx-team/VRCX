@@ -90,21 +90,30 @@
                 "search": "検索",
                 "vrchat_favorites": "VRChatのお気に入り",
                 "local_favorites": "ローカルのお気に入り",
-                "new_group": "グループを作成"
+                "new_group": "グループ作成",
+                "refresh": "更新",
+                "cancel_refresh": "キャッシュ削除"
             },
             "avatars": {
                 "header": "アバター",
                 "search": "検索",
                 "vrchat_favorites": "VRChatのお気に入り",
                 "local_favorites": "ローカルのお気に入り (VRC+が必要)",
-                "new_group": "グループを作成"
+                "new_group": "グループ作成",
+                "refresh": "更新",
+                "cancel_refresh": "キャッシュ削除"
             },
+            "edit_mode": "編集モード",
+            "copy": "コピー",
+            "clear": "クリア",
+            "bulk_unfavorite": "一括お気に入り解除",
             "bulk_unfavorite_mode": "一括お気に入り解除モード",
             "bulk_unfavorite_selection": "お気に入り解除する",
             "refresh_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
             "import": "インポート",
             "move_tooltip": "移動",
+            "copy_tooltip": "コピー",
             "unfavorite_tooltip": "お気に入り解除",
             "visibility_tooltip": "表示設定を変更",
             "rename_tooltip": "名前を変更",
@@ -218,6 +227,10 @@
                     "startup": "Windowsと一緒に起動",
                     "minimized": "最小化した状態で起動",
                     "tray": "トレイに格納した状態で起動",
+                    "disable_gpu_acceleration": "GPUアクセラレーション無効化",
+                    "disable_gpu_acceleration_tooltip": "このオプションは「自分が何をしているかわかっている場合」にのみ変更してください。SteamVR オーバーレイに問題が発生する可能性がありますが、UI表示に問題が発生した場合は、これを無効にして再起動してください。",
+                    "disable_vr_overlay_gpu_acceleration": "VRオーバーレイのGPUアクセラレーション無効化",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "GPUアクセラレーションはVRCXのクラッシュやメモリリークを引き起こす可能性があります。問題が発生した場合は、このオプションを有効にして再起動してください。",
                     "proxy": "プロキシ設定"
                 },
                 "favorites": {
@@ -355,7 +368,8 @@
                         "when_to_play_game_closed": "ゲーム終了時",
                         "when_to_play_game_running": "ゲーム実行時",
                         "when_to_play_always": "常に読み上げる",
-                        "tts_voice": "読み上げボイス"
+                        "tts_voice": "読み上げボイス",
+                        "use_memo_nicknames": "メモのニックネームを使用"
                     }
                 }
             },
@@ -423,6 +437,15 @@
                     "local_world_persistence": {
                         "header": "ローカルでのワールド永続化",
                         "description": "Webサーバーをローカルでホストする (再起動が必要です)"
+                    },
+                    "save_instance_prints_to_file": {
+                        "header": "部屋内の「ポラロイド」写真をローカルファイルに保存",
+                        "header_tooltip": "VRChatを「--enable-sdk-log-levels」オプションで起動する必要があります",
+                        "description": "生成された「ポラロイド」写真をVRChatの画像フォルダに保存します"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "部屋内のスタンプをローカルファイルに保存",
+                        "description": "部屋内のスタンプをVRChatの画像フォルダに保存します"
                     },
                     "remote_database": {
                         "header": "リモートアバターデータベース",
@@ -636,9 +659,14 @@
             "groups": {
                 "header": "グループ",
                 "total_count": "{count} 個のグループ",
+                "sort_by": "ソート方法：",
+                "edit_mode": "編集モード",
+                "exit_edit_mode": "編集モード終了",
+                "hold_shift": "Shiftキーを押し続けることで、確認なしに終了できます",
                 "own_groups": "自分のグループ",
                 "mutual_groups": "共通グループ",
-                "groups": "グループ"
+                "groups": "グループ",
+                "leave_group_tooltip": "グループから退出"
             },
             "worlds": {
                 "header": "ワールド",
@@ -693,7 +721,8 @@
                 "delete_cache_tooltip": "キャッシュからワールドを削除",
                 "favorites_tooltip": "お気に入り",
                 "refresh": "更新",
-                "new_instance": "インスタンスを作成",
+                "new_instance": "インスタンス作成",
+                "new_instance_and_self_invite": "インスタンス作成して自分を招待する",
                 "make_home": "ホームに設定",
                 "reset_home": "ホームをリセット",
                 "show_previous_instances": "以前のインスタンス",
@@ -705,6 +734,7 @@
                 "change_preview": "YouTube プレビュー動画を変更",
                 "change_tags": "タグを変更",
                 "change_image": "画像を変更",
+                "change_allowed_video_player_domains": "許可されたビデオプレーヤードメインを変更する",
                 "download_package": "Unity Packageをダウンロード",
                 "publish_to_labs": "ラボに公開",
                 "unpublish": "非公開化",
@@ -1242,11 +1272,12 @@
         },
         "gallery_icons": {
             "header": "ギャラリーとアイコン",
-            "description": "推奨画像サイズ: 1200x900px (4:3)",
+            "recommended_image_size": "推奨画像サイズ",
             "gallery": "ギャラリー",
             "icons": "アイコン",
             "emojis": "絵文字",
             "stickers": "ステッカー",
+            "prints": "プリント",
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去",
@@ -1255,7 +1286,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "フレーム数:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "アニメーション絵文字として使用する1024x1024のPNGスプライトシート画像を選択 (最大 64FPS)"
+            "flipbook_info": "アニメーション絵文字として使用する1024x1024のPNGスプライトシート画像を選択 (最大 64FPS)",
+            "note": "ノート"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
@@ -1388,6 +1420,11 @@
             "default_emojis": "デフォルトの絵文字",
             "cancel": "キャンセル",
             "send": "送信"
+        },
+        "allowed_video_player_domains": {
+            "header": "ビデオプレーヤーで使用が許可されているのドメイン",
+            "add_domain": "ドメイン追加",
+            "save": "保存"
         }
     },
     "prompt": {
