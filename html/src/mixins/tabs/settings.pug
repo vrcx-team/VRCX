@@ -116,15 +116,47 @@ mixin settingsTab()
                         span.name(style="min-width:225px") {{ $t('view.settings.general.logging.empty_avatar') }}
                         el-switch(v-model="logEmptyAvatars" @change="saveLoggingOptions")
                 //- General | Automation
-                +simpleSettingsCategory("view.settings.general.automation.header")
-                    +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_state_change", "$t('view.settings.general.automation.auto_state_change_tooltip')", "autoStateChange", [
-                        { label: "Off", translationKey: "view.settings.general.automation.auto_state_change_off" },
-                        { label: "Active or Ask Me", translationKey: "view.settings.general.automation.auto_state_change_active_or_ask_me" },
-                        { label: "Active or Busy", translationKey: "view.settings.general.automation.auto_state_change_active_or_busy" },
-                        { label: "Join Me or Ask Me", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_ask_me" },
-                        { label: "Join Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_busy" },
-                        { label: "Ask Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_ask_me_or_busy" },
-                    ], "saveAutomationOptions")
+                div.options-container
+                    span.header {{ $t('view.settings.general.automation.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.auto_change_status') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.automation.auto_state_change_tooltip')")
+                                i.el-icon-info
+                        el-switch(v-model="autoStateChangeEnabled" @change="saveAutomationOptions")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.alone_status') }}
+                        el-select(v-model="autoStateChangeAloneStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px")
+                            el-option(:label="$t('dialog.user.status.join_me')" value="join me").
+                                #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
+                            el-option(:label="$t('dialog.user.status.online')" value="active").
+                                #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
+                            el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
+                                #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
+                            el-option(:label="$t('dialog.user.status.busy')" value="busy").
+                                #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.company_status') }}
+                        el-select(v-model="autoStateChangeCompanyStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px")
+                            el-option(:label="$t('dialog.user.status.join_me')" value="join me").
+                                #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
+                            el-option(:label="$t('dialog.user.status.online')" value="active").
+                                #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
+                            el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
+                                #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
+                            el-option(:label="$t('dialog.user.status.busy')" value="busy").
+                                #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.allowed_instance_types') }}
+                        el-select(v-model="autoStateChangeInstanceTypes" :disabled="!autoStateChangeEnabled" multiple clearable :placeholder="$t('view.settings.general.automation.instance_type_placeholder')" @change="saveAutomationOptions" style="margin-top:8px")
+                            el-option-group(:label="$t('view.settings.general.automation.allowed_instance_types')")
+                                el-option.x-friend-item(v-for="instanceType in instanceTypes" :key="instanceType" :label="instanceType" :value="instanceType")
+                                    .detail
+                                        span.name(v-text="instanceType")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.alone_condition') }}
+                        el-switch(v-model="autoStateChangeNoFriends" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" :inactive-text="$t('view.settings.general.automation.alone')" :active-text="$t('view.settings.general.automation.no_friends')")
+                    br
+                    br
                     +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_invite_request_accept", "$t('view.settings.general.automation.auto_invite_request_accept_tooltip')", "autoAcceptInviteRequests", [
                         { label: "Off", translationKey: "view.settings.general.automation.auto_invite_request_accept_off" },
                         { label: "All Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_favs" },

@@ -6191,9 +6191,20 @@ speechSynthesis.getVoices();
         return length;
     };
 
+    $app.data.instanceTypes = [
+        'invite',
+        'invite+',
+        'friends',
+        'friends+',
+        'public',
+        'groupPublic',
+        'groupPlus',
+        'groupOnly'
+    ];
+
     $app.methods.updateAutoStateChange = function () {
         if (
-            this.autoStateChange === 'Off' ||
+            !this.autoStateChangeEnabled ||
             !this.isGameRunning ||
             !this.lastLocation.playerList.size ||
             this.lastLocation.location === '' ||
@@ -6202,38 +6213,50 @@ speechSynthesis.getVoices();
             return;
         }
 
-        const otherPeopleExists = this.lastLocation.playerList.size > 1;
-        const prevStatus = API.currentUser.status;
-        let nextStatus = prevStatus;
-
-        switch (this.autoStateChange) {
-            case 'Active or Ask Me':
-                nextStatus = otherPeopleExists ? 'ask me' : 'active';
-                break;
-
-            case 'Active or Busy':
-                nextStatus = otherPeopleExists ? 'busy' : 'active';
-                break;
-
-            case 'Join Me or Ask Me':
-                nextStatus = otherPeopleExists ? 'ask me' : 'join me';
-                break;
-
-            case 'Join Me or Busy':
-                nextStatus = otherPeopleExists ? 'busy' : 'join me';
-                break;
-
-            case 'Ask Me or Busy':
-                nextStatus = otherPeopleExists ? 'ask me' : 'busy';
-                break;
+        var $location = $utils.parseLocation(this.lastLocation.location);
+        var instanceType = $location.accessType;
+        if (instanceType === 'group') {
+            if ($location.groupAccessType === 'members') {
+                instanceType = 'groupOnly';
+            } else if ($location.groupAccessType === 'plus') {
+                instanceType = 'groupPlus';
+            } else {
+                instanceType = 'groupPublic';
+            }
+        }
+        if (
+            this.autoStateChangeInstanceTypes.length > 0 &&
+            !this.autoStateChangeInstanceTypes.includes(instanceType)
+        ) {
+            return;
         }
 
-        if (prevStatus === nextStatus) {
+        var withCompany = this.lastLocation.playerList.size > 1;
+        if (this.autoStateChangeNoFriends) {
+            withCompany = this.lastLocation.friendList.size > 1;
+        }
+
+        var currentStatus = API.currentUser.status;
+        var newStatus = withCompany
+            ? this.autoStateChangeCompanyStatus
+            : this.autoStateChangeAloneStatus;
+
+        if (currentStatus === newStatus) {
             return;
         }
 
         API.saveCurrentUser({
-            status: nextStatus
+            status: newStatus
+        }).then(() => {
+            var text = `Status automaticly changed to ${newStatus}`;
+            if (this.errorNoty) {
+                this.errorNoty.close();
+            }
+            this.errorNoty = new Noty({
+                type: 'info',
+                text
+            }).show();
+            console.log(text);
         });
     };
 
@@ -7434,7 +7457,15 @@ speechSynthesis.getVoices();
                 ref.senderUserId
             )
                 .then((_args) => {
-                    $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                    var text = `Auto invite sent to ${ref.senderUsername}`;
+                    if (this.errorNoty) {
+                        this.errorNoty.close();
+                    }
+                    this.errorNoty = new Noty({
+                        type: 'info',
+                        text
+                    }).show();
+                    console.log(text);
                     API.hideNotification({
                         notificationId: ref.id
                     });
@@ -8371,18 +8402,52 @@ speechSynthesis.getVoices();
             this.logEmptyAvatars
         );
     };
-    $app.data.autoStateChange = await configRepository.getString(
-        'VRCX_autoStateChange',
-        'Off'
+    $app.data.autoStateChangeEnabled = await configRepository.getBool(
+        'VRCX_autoStateChangeEnabled',
+        false
+    );
+    $app.data.autoStateChangeNoFriends = await configRepository.getBool(
+        'VRCX_autoStateChangeNoFriends',
+        false
+    );
+    $app.data.autoStateChangeInstanceTypes = JSON.parse(
+        await configRepository.getString(
+            'VRCX_autoStateChangeInstanceTypes',
+            '[]'
+        )
+    );
+    $app.data.autoStateChangeAloneStatus = await configRepository.getString(
+        'VRCX_autoStateChangeAloneStatus',
+        'join me'
+    );
+    $app.data.autoStateChangeCompanyStatus = await configRepository.getString(
+        'VRCX_autoStateChangeCompanyStatus',
+        'busy'
     );
     $app.data.autoAcceptInviteRequests = await configRepository.getString(
         'VRCX_autoAcceptInviteRequests',
         'Off'
     );
     $app.methods.saveAutomationOptions = async function () {
+        await configRepository.setBool(
+            'VRCX_autoStateChangeEnabled',
+            this.autoStateChangeEnabled
+        );
+        await configRepository.setBool(
+            'VRCX_autoStateChangeNoFriends',
+            this.autoStateChangeNoFriends
+        );
         await configRepository.setString(
-            'VRCX_autoStateChange',
-            this.autoStateChange
+            'VRCX_autoStateChangeInstanceTypes',
+            JSON.stringify(this.autoStateChangeInstanceTypes)
+        );
+        await configRepository.setString(
+            'VRCX_autoStateChangeAloneStatus',
+            this.autoStateChangeAloneStatus
+        );
+        await configRepository.setString(
+            'VRCX_autoStateChangeCompanyStatus',
+            this.autoStateChangeCompanyStatus
         );
         await configRepository.setString(
             'VRCX_autoAcceptInviteRequests',
