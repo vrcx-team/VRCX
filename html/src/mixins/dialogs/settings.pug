@@ -31,7 +31,17 @@ mixin settings()
                     span #[span(v-text="getVRChatCameraResolution()")] #[i.el-icon-arrow-down.el-icon--right]
                 el-dropdown-menu(#default="dropdown")
                     el-dropdown-item(v-for="row in VRChatCameraResolutions" :key="row.index" v-text="row.name" :command="row")
-        div(style="display:inline-block;margin-top:10px;margin-left:10px")
+        br
+        div(style="display:inline-block;margin-top:10px")
+            span {{ $t('dialog.config_json.spout_resolution') }}
+            br
+            el-dropdown(@command="(command) => setVRChatSpoutResolution(command)" size="small" trigger="click" style="margin-top:5px")
+                el-button(size="small")
+                    span #[span(v-text="getVRChatSpoutResolution()")] #[i.el-icon-arrow-down.el-icon--right]
+                el-dropdown-menu(#default="dropdown")
+                    el-dropdown-item(v-for="row in VRChatScreenshotResolutions" :key="row.index" v-text="row.name" :command="row")
+        br
+        div(style="display:inline-block;margin-top:10px")
             span {{ $t('dialog.config_json.screenshot_resolution') }}
             br
             el-dropdown(@command="(command) => setVRChatScreenshotResolution(command)" size="small" trigger="click" style="margin-top:5px")

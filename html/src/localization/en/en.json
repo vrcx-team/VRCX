@@ -1056,6 +1056,7 @@
             "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "First-Person Steadycam FOV",
             "camera_resolution": "Camera Resolution",
+            "spout_resolution": "Spout Resolution",
             "screenshot_resolution": "Screenshot Resolution",
             "picture_sort_by_date": "Sort pictures into folders by date",
             "disable_discord_presence": "Disable Discord Rich Presence",

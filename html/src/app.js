@@ -16163,6 +16163,22 @@ speechSynthesis.getVoices();
         this.VRChatConfigFile.screenshot_res_width = res.width;
     };
 
+    $app.methods.getVRChatSpoutResolution = function () {
+        if (
+            this.VRChatConfigFile.camera_spout_res_height &&
+            this.VRChatConfigFile.camera_spout_res_width
+        ) {
+            var res = `${this.VRChatConfigFile.camera_spout_res_width}x${this.VRChatConfigFile.camera_spout_res_height}`;
+            return this.getVRChatResolution(res);
+        }
+        return '1920x1080 (1080p)';
+    };
+
+    $app.methods.setVRChatSpoutResolution = function (res) {
+        this.VRChatConfigFile.camera_spout_res_height = res.height;
+        this.VRChatConfigFile.camera_spout_res_width = res.width;
+    };
+
     // Auto Launch Shortcuts
 
     $app.methods.openShortcutFolder = function () {
