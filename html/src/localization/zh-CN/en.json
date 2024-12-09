@@ -1430,6 +1430,63 @@
             "save": "保存"
         }
     },
+    "confirm": {
+        "title": "确认",
+        "confirm_button": "确认",
+        "cancel_button": "取消",
+        "message": "确认{command}?"
+    },
+    "message": {
+        "vrcx_updater": {
+            "failed": "无法检查更新，{message}"
+        },
+        "api_headler": {
+            "avatar_private_or_deleted": "模型是私密的或已删除"
+        },
+        "badge": {
+            "updated": "徽章已更新"
+        },
+        "instance": {
+            "closed": "房间已关闭",
+            "removed_form_queue": "已从队列中移除房间 {worldName}",
+            "not_allowed": "您无权访问此房间"
+        },
+        "avatar": {
+            "change_moderation_failed": "无法更改模型显示状态",
+            "image_changed": "模型图片已更改",
+            "image_invalid": "当前模型图片无效"
+        },
+        "emoji": {
+            "uploaded": "Emoji 已上传"
+        },
+        "file": {
+            "not_image": "文件不是有效图片格式",
+            "too_large": "文件大小过大"
+        },
+        "print": {
+            "uploaded": "Print 已上传"
+        },
+        "sticker": {
+            "uploaded": "Sticker 已上传"
+        },
+        "gallery": {
+            "uploaded": "Gallery 图片已上传",
+            "failed": "无法上传 Gallery 图片"
+        },
+        "world": {
+            "image_changed": "世界图片已更改",
+            "image_invalid": "当前世界图片无效"
+        },
+        "icon": {
+            "uploaded": "Icon 已上传"
+        },
+        "user": {
+            "moderated": "用户状态已更改"
+        },
+        "friend": {
+            "load_failed": "加载好友列表失败，即将登出"
+        }
+    },
     "prompt": {
         "totp": {
             "header": "双重认证",

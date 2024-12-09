@@ -1427,6 +1427,63 @@
             "save": "保存"
         }
     },
+    "confirm": {
+        "title": "確認",
+        "confirm_button": "確認",
+        "cancel_button": "キャンセル",
+        "message": "{command}を続行しますか？"
+    },
+    "message": {
+        "vrcx_updater": {
+            "failed": "アップデートの確認に失敗しました、{message}"
+        },
+        "api_headler": {
+            "avatar_private_or_deleted": "アバターは非公開または削除されています"
+        },
+        "badge": {
+            "updated": "バッジが更新されました"
+        },
+        "instance": {
+            "closed": "インスタンスが閉じられました",
+            "removed_form_queue": "キューからインスタンス {worldName} が削除されました",
+            "not_allowed": "このインスタンスにアクセスする権限がありません"
+        },
+        "avatar": {
+            "change_moderation_failed": "アバターのモデレーションの変更に失敗しました",
+            "image_changed": "アバター画像が変更されました",
+            "image_invalid": "アバター画像が無効です"
+        },
+        "emoji": {
+            "uploaded": "Emoji がアップロードされました"
+        },
+        "file": {
+            "not_image": "ファイルが画像ではありません",
+            "too_large": "ファイルサイズが大きすぎます"
+        },
+        "print": {
+            "uploaded": "Print がアップロードされました"
+        },
+        "sticker": {
+            "uploaded": "ステッカーがアップロードされました"
+        },
+        "gallery": {
+            "uploaded": "ギャラリー画像がアップロードされました",
+            "failed": "ギャラリー画像のアップロードに失敗しました"
+        },
+        "world": {
+            "image_changed": "ワールド画像が変更されました",
+            "image_invalid": "現在のワールド画像が無効です"
+        },
+        "icon": {
+            "uploaded": "アイコンがアップロードされました"
+        },
+        "user": {
+            "moderated": "ユーザーがモデレートされました"
+        },
+        "friend": {
+            "load_failed": "フレンドリストの読み込みに失敗しました、ログアウトしています"
+        }
+    },
     "prompt": {
         "totp": {
             "header": "2段階認証",

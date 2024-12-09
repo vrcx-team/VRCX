@@ -120,20 +120,20 @@ mixin userDialog()
                                     el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") {{ $t('dialog.user.actions.show_fallback_avatar') }}
                                     el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") {{ $t('dialog.user.actions.show_previous_instances') }}
                                     el-dropdown-item(v-if="userDialog.ref.currentAvatarImageUrl" icon="el-icon-picture-outline" command="Previous Images") {{ $t('dialog.user.actions.show_previous_images') }}
-                                    el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_unblock') }}
-                                    el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_block') }}
-                                    el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_unmute') }}
-                                    el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute" :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_mute') }}
-                                    el-dropdown-item(v-if="userDialog.isMuteChat" icon="el-icon-chat-line-round" command="Unmute Chatbox" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_chatbox') }}
-                                    el-dropdown-item(v-else icon="el-icon-chat-dot-round" command="Mute Chatbox") {{ $t('dialog.user.actions.moderation_disable_chatbox') }}
+                                    el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Moderation Unblock" divided style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_unblock') }}
+                                    el-dropdown-item(v-else icon="el-icon-circle-close" command="Moderation Block" divided :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_block') }}
+                                    el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Moderation Unmute" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_unmute') }}
+                                    el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Moderation Mute" :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_mute') }}
+                                    el-dropdown-item(v-if="userDialog.isMuteChat" icon="el-icon-chat-line-round" command="Moderation Enable Chatbox" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_chatbox') }}
+                                    el-dropdown-item(v-else icon="el-icon-chat-dot-round" command="Moderation Disable Chatbox") {{ $t('dialog.user.actions.moderation_disable_chatbox') }}
                                     el-dropdown-item(icon="el-icon-user-solid" command="Show Avatar")
                                         i.el-icon-check.el-icon--left(v-if="userDialog.isShowAvatar")
                                         span {{ $t('dialog.user.actions.moderation_show_avatar') }}
                                     el-dropdown-item(icon="el-icon-user" command="Hide Avatar")
                                         i.el-icon-check.el-icon--left(v-if="userDialog.isHideAvatar")
                                         span {{ $t('dialog.user.actions.moderation_hide_avatar') }}
-                                    el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Enable Avatar Interaction" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_avatar_interaction') }}
-                                    el-dropdown-item(v-else icon="el-icon-circle-close" command="Disable Avatar Interaction") {{ $t('dialog.user.actions.moderation_disable_avatar_interaction') }}
+                                    el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Moderation Enable Avatar Interaction" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_avatar_interaction') }}
+                                    el-dropdown-item(v-else icon="el-icon-circle-close" command="Moderation Disable Avatar Interaction") {{ $t('dialog.user.actions.moderation_disable_avatar_interaction') }}
                                     el-dropdown-item(icon="el-icon-s-flag" command="Report Hacking" :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.report_hacking') }}
                                     template(v-if="userDialog.isFriend")
                                         el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided style="color:#F56C6C") {{ $t('dialog.user.actions.unfriend') }}

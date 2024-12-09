@@ -158,7 +158,9 @@ export default class extends baseClass {
                         endpoint.startsWith('avatars/')
                     ) {
                         $app.$message({
-                            message: 'Avatar private or deleted',
+                            message: $t(
+                                'message.api_headler.avatar_private_or_deleted'
+                            ),
                             type: 'error'
                         });
                         $app.avatarDialog.visible = false;
