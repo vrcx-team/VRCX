@@ -1337,7 +1337,7 @@ namespace VRCX
             string userDisplayName;
             string userId;
 
-            int pos = userInfo.LastIndexOf(" (");
+            int pos = userInfo.LastIndexOf(" (", StringComparison.Ordinal);
             if (pos >= 0)
             {
                 userDisplayName = userInfo.Substring(0, pos);
