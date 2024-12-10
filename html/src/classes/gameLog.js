@@ -166,7 +166,7 @@ export default class extends baseClass {
                     var friendRef = this.friends.get(userId);
                     if (typeof friendRef?.ref !== 'undefined') {
                         friendRef.ref.$joinCount++;
-                        friendRef.ref.$lastSeen = Date.now();
+                        friendRef.ref.$lastSeen = new Date().toJSON();
                         friendRef.ref.$timeSpent += Date.now() - ref.joinTime;
                         if (
                             this.sidebarSortMethods.includes(

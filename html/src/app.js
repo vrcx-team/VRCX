@@ -1689,6 +1689,7 @@ speechSynthesis.getVoices();
                 imageUrl: '',
                 thumbnailImageUrl: '',
                 releaseStatus: '',
+                styles: [],
                 version: 0,
                 unityPackages: [],
                 unityPackageUrl: '',
@@ -6866,19 +6867,22 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.deleteFavorite = function (objectId) {
-        // FIXME: 메시지 수정
-        this.$confirm('Continue? Delete Favorite', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    API.deleteFavorite({
-                        objectId
-                    });
-                }
-            }
+        API.deleteFavorite({
+            objectId
         });
+        // FIXME: 메시지 수정
+        // this.$confirm('Continue? Delete Favorite', 'Confirm', {
+        //     confirmButtonText: 'Confirm',
+        //     cancelButtonText: 'Cancel',
+        //     type: 'info',
+        //     callback: (action) => {
+        //         if (action === 'confirm') {
+        //             API.deleteFavorite({
+        //                 objectId
+        //             });
+        //         }
+        //     }
+        // });
     };
 
     $app.methods.deleteFavoriteNoConfirm = function (objectId) {
@@ -7964,7 +7968,7 @@ speechSynthesis.getVoices();
             '[ "https://avtr.just-h.party/vrcx_search.php" ]'
         )
     );
-    $app.data.pendingOfflineDelay = 110000;
+    $app.data.pendingOfflineDelay = 130000;
     if (await configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
         var avatarRemoteDatabaseProvider = await configRepository.getString(
@@ -9696,7 +9700,7 @@ speechSynthesis.getVoices();
                             .getUserStats(D.ref, inCurrentWorld)
                             .then((ref1) => {
                                 if (ref1.userId === D.id) {
-                                    D.lastSeen = ref1.created_at;
+                                    D.lastSeen = ref1.lastSeen;
                                     D.joinCount = ref1.joinCount;
                                     D.timeSpent = ref1.timeSpent;
                                 }
@@ -9757,7 +9761,7 @@ speechSynthesis.getVoices();
                             .getUserStats(D.ref, inCurrentWorld)
                             .then((ref1) => {
                                 if (ref1.userId === D.id) {
-                                    D.lastSeen = ref1.created_at;
+                                    D.lastSeen = ref1.lastSeen;
                                     D.joinCount = ref1.joinCount;
                                     D.timeSpent = ref1.timeSpent;
                                 }
@@ -10688,6 +10692,8 @@ speechSynthesis.getVoices();
         }
         if (command === 'Refresh') {
             this.showUserDialog(D.id);
+        } else if (command === 'Share') {
+            this.copyUserURL(D.id);
         } else if (command === 'Add Favorite') {
             this.showFavoriteDialog('friend', D.id);
         } else if (command === 'Edit Social Status') {
@@ -11482,21 +11488,14 @@ speechSynthesis.getVoices();
             case 'Refresh':
                 this.showWorldDialog(D.id);
                 break;
+            case 'Share':
+                this.copyWorldUrl(D.id);
+                break;
             case 'New Instance':
                 this.showNewInstanceDialog(D.$location.tag);
                 break;
             case 'New Instance and Self Invite':
-                this.newInstanceDialog.worldId = D.id;
-                this.createNewInstance().then((args) => {
-                    if (!args?.json?.location) {
-                        this.$message({
-                            message: 'Failed to create instance',
-                            type: 'error'
-                        });
-                        return;
-                    }
-                    this.selfInvite(args.json.location);
-                });
+                this.newInstanceSelfInvite(D.id);
                 break;
             case 'Add Favorite':
                 this.showFavoriteDialog('world', D.id);
@@ -11626,6 +11625,20 @@ speechSynthesis.getVoices();
                 });
                 break;
         }
+    };
+
+    $app.methods.newInstanceSelfInvite = function (worldId) {
+        this.newInstanceDialog.worldId = worldId;
+        this.createNewInstance().then((args) => {
+            if (!args?.json?.location) {
+                this.$message({
+                    message: 'Failed to create instance',
+                    type: 'error'
+                });
+                return;
+            }
+            this.selfInvite(args.json.location);
+        });
     };
 
     $app.methods.refreshWorldDialogTreeData = function () {
@@ -14856,7 +14869,7 @@ speechSynthesis.getVoices();
         var ref = await database.getUserStats(ctx);
         /* eslint-disable require-atomic-updates */
         ctx.$joinCount = ref.joinCount;
-        ctx.$lastSeen = ref.created_at;
+        ctx.$lastSeen = ref.lastSeen;
         ctx.$timeSpent = ref.timeSpent;
         /* eslint-enable require-atomic-updates */
     };
@@ -17135,11 +17148,11 @@ speechSynthesis.getVoices();
     $app.methods.userFavoriteWorldsStatus = function (visibility) {
         var style = {};
         if (visibility === 'public') {
-            style.online = true;
+            style.green = true;
         } else if (visibility === 'friends') {
-            style.joinme = true;
+            style.blue = true;
         } else {
-            style.busy = true;
+            style.red = true;
         }
         return style;
     };

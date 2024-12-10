@@ -1147,7 +1147,7 @@ class Database {
         var instances = new Set();
         var ref = {
             timeSpent: 0,
-            created_at: '',
+            lastSeen: '',
             joinCount: 0,
             userId: input.id,
             previousDisplayNames: new Map()
@@ -1159,7 +1159,7 @@ class Database {
                 }
                 i++;
                 if (i === 1 || (inCurrentWorld && i === 2)) {
-                    ref.created_at = row[0];
+                    ref.lastSeen = row[0];
                 }
                 instances.add(row[3]);
                 if (input.displayName !== row[4]) {

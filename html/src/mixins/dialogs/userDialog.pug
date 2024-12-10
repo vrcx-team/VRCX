@@ -93,6 +93,7 @@ mixin userDialog()
                             el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.user.actions.refresh') }}
+                                el-dropdown-item(icon="el-icon-share" command="Share") {{ $t('dialog.user.actions.share') }}
                                 template(v-if="userDialog.ref.id === API.currentUser.id")
                                     el-dropdown-item(icon="el-icon-picture-outline" command="Manage Gallery" divided) {{ $t('dialog.user.actions.manage_gallery_icon') }}
                                     el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") {{ $t('dialog.user.actions.show_avatar_author') }}
@@ -467,7 +468,7 @@ mixin userDialog()
                             el-tab-pane
                                 span(slot="label")
                                     span(v-text="list[0]" style="font-weight:bold;font-size:16px")
-                                    i.x-user-status(style="margin-left:5px" :class="userFavoriteWorldsStatus(list[1])")
+                                    i.x-status-icon(style="margin-left:5px" :class="userFavoriteWorldsStatus(list[1])")
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ list[2].length }}/{{ API.favoriteLimits.maxFavoritesPerGroup.world }}
                                 .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
                                     .x-friend-item(v-for="world in list[2]" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item-border")

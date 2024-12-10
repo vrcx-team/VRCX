@@ -593,7 +593,8 @@ img.friends-list-avatar {
     text-align: center;
 }
 
-i.x-user-status {
+i.x-user-status,
+i.x-status-icon {
     display: inline-block;
     width: 10px;
     height: 10px;
@@ -622,6 +623,22 @@ i.x-user-status.askme {
 i.x-user-status.busy {
     background: #ff2c2c;
     mask-image: url(masks/busy.svg);
+}
+
+i.x-status-icon.green {
+    background: #67c23a;
+}
+
+i.x-status-icon.blue {
+    background: #409eff;
+}
+
+i.x-status-icon.orange {
+    background: #ff9500;
+}
+
+i.x-status-icon.red {
+    background: #ff2c2c;
 }
 
 .x-tag-friend {
