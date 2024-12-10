@@ -462,7 +462,7 @@ namespace VRCX
 
             if (line.Contains("[Behaviour] OnPlayerJoined") && !line.Contains("] OnPlayerJoined:"))
             {
-                var lineOffset = line.LastIndexOf("] OnPlayerJoined");
+                var lineOffset = line.LastIndexOf("] OnPlayerJoined", StringComparison.Ordinal);
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 17;
@@ -1236,10 +1236,10 @@ namespace VRCX
         private bool ParseVoteKickInitiation(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2024.08.29 02:04:47 Log        -  [ModerationManager] A vote kick has been initiated against בורקס במאווררים 849d, do you agree?
-            if (!line.Contains("[ModerationManager] A vote kick has been initiated against "))
+            if (!line.Contains("[ModerationManager] A vote kick has been initiated against ", StringComparison.Ordinal))
                 return false;
 
-            int index = line.IndexOf("[ModerationManager] A vote kick has been initiated against ") + 20;
+            int index = line.IndexOf("[ModerationManager] A vote kick has been initiated against ", StringComparison.Ordinal) + 20;
 
             AppendLog(new[]
             {
@@ -1255,10 +1255,10 @@ namespace VRCX
         private bool ParseVoteKickSuccess(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2024.08.29 02:05:21 Log        -  [ModerationManager] Vote to kick בורקס במאווררים 849d succeeded
-            if (!line.Contains("[ModerationManager] Vote to kick "))
+            if (!line.Contains("[ModerationManager] Vote to kick ", StringComparison.Ordinal))
                 return false;
 
-            int index = line.IndexOf("[ModerationManager] Vote to kick ") + 20;
+            int index = line.IndexOf("[ModerationManager] Vote to kick ", StringComparison.Ordinal) + 20;
 
             AppendLog(new[]
             {
@@ -1337,7 +1337,7 @@ namespace VRCX
             string userDisplayName;
             string userId;
 
-            int pos = userInfo.LastIndexOf(" (");
+            int pos = userInfo.LastIndexOf(" (", StringComparison.Ordinal);
             if (pos >= 0)
             {
                 userDisplayName = userInfo.Substring(0, pos);
