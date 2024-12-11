@@ -95,11 +95,9 @@ namespace VRCX
             {
                 var newSize = Math.Max(image.Width, image.Height);
                 var newImage = new Bitmap(newSize, newSize);
-                using (var graphics = Graphics.FromImage(newImage))
-                {
-                    graphics.Clear(Color.Transparent);
-                    graphics.DrawImage(image, new Rectangle((newSize - image.Width) / 2, (newSize - image.Height) / 2, image.Width, image.Height));
-                }
+                using var graphics = Graphics.FromImage(newImage);
+                graphics.Clear(Color.Transparent);
+                graphics.DrawImage(image, new Rectangle((newSize - image.Width) / 2, (newSize - image.Height) / 2, image.Width, image.Height));
                 image.Dispose();
                 image = newImage;
             }
@@ -140,6 +138,53 @@ namespace VRCX
                 imageData = imageSaveMemoryStream.ToArray();
             }
         }
+        
+        public byte[] ResizePrintImage(byte[] imageData)
+        {
+            var inputImage = ResizeImageToFitLimits(imageData, false, 1920, 1080);
+            using var fileMemoryStream = new MemoryStream(inputImage);
+            var image = new Bitmap(fileMemoryStream);
+            
+            // increase size to 1920x1080
+            if (image.Width < 1920 || image.Height < 1080)
+            {
+                var newHeight = image.Height;
+                var newWidth = image.Width;
+                if (image.Width < 1920)
+                {
+                    newWidth = 1920;
+                    newHeight = (int)Math.Round(image.Height / (image.Width / (double)newWidth));
+                }
+                if (image.Height < 1080)
+                {
+                    newHeight = 1080;
+                    newWidth = (int)Math.Round(image.Width / (image.Height / (double)newHeight));
+                }
+                var resizedImage = new Bitmap(1920, 1080);
+                using var graphics1 = Graphics.FromImage(resizedImage);
+                graphics1.Clear(Color.White);
+                var x = (1920 - newWidth) / 2;
+                var y = (1080 - newHeight) / 2;
+                graphics1.DrawImage(image, new Rectangle(x, y, newWidth, newHeight));
+                image.Dispose();
+                image = resizedImage;
+            }
+
+            // add white border
+            // wtf are these magic numbers
+            const int xOffset = 64; // 2048 / 32
+            const int yOffset = 69; // 1440 / 20.869
+            var newImage = new Bitmap(2048, 1440);
+            using var graphics = Graphics.FromImage(newImage);
+            graphics.Clear(Color.White);
+            graphics.DrawImage(image, new Rectangle(xOffset, yOffset, image.Width, image.Height));
+            image.Dispose();
+            image = newImage;
+            
+            using var imageSaveMemoryStream = new MemoryStream();
+            image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            return imageSaveMemoryStream.ToArray();
+        } 
 
         /// <summary>
         /// Computes the signature of the file represented by the specified base64-encoded string using the librsync library.

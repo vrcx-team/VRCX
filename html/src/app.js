@@ -691,11 +691,13 @@ speechSynthesis.getVoices();
         if (
             ref.$isVRCPlus &&
             ref.badges &&
-            ref.badges.every((x) => x.badgeName !== 'Supporter')
+            ref.badges.every(
+                (x) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa'
+            )
         ) {
             // I doubt this will last long
             ref.badges.unshift({
-                badgeId: 'bdg_system_supporter',
+                badgeId: 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa',
                 badgeName: 'Supporter',
                 badgeDescription: 'Supports VRChat through VRC+',
                 badgeImageUrl:
