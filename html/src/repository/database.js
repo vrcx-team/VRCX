@@ -1631,10 +1631,29 @@ class Database {
         return gamelogDatabase;
     }
 
-    async lookupGameLogDatabase(search, filters) {
+    /**
+     * Lookup the game log database for a specific search term
+     * @param {string} search The search term
+     * @param {Array} filters The filters to apply
+     * @param {Array} [vipList] The list of VIP users
+     * @returns {Promise<any[]>} The game log data
+     */
+
+    async lookupGameLogDatabase(search, filters, vipList = []) {
         var search = search.replaceAll("'", "''");
         if (search.startsWith('wrld_')) {
             return Database.getGameLogByLocation(search, filters);
+        }
+        let vipQuery = '';
+        if (vipList.length > 0) {
+            vipQuery = 'AND user_id IN (';
+            vipList.forEach((vip, i) => {
+                vipQuery += `'${vip.replaceAll("'", "''")}'`;
+                if (i < vipList.length - 1) {
+                    vipQuery += ', ';
+                }
+            });
+            vipQuery += ')';
         }
         var location = true;
         var onplayerjoined = true;
@@ -1723,7 +1742,7 @@ class Database {
                     time: dbRow[6]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_join_leave WHERE (display_name LIKE '%${search}%' AND user_id != '${Database.userId}') ${query} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_join_leave WHERE (display_name LIKE '%${search}%' AND user_id != '${Database.userId}') ${vipQuery} ${query} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (portalspawn) {
             await sqliteService.execute((dbRow) => {
@@ -1738,7 +1757,7 @@ class Database {
                     worldName: dbRow[6]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_portal_spawn WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_portal_spawn WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (msgevent) {
             await sqliteService.execute((dbRow) => {
@@ -1763,7 +1782,7 @@ class Database {
                     location: dbRow[5]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_external WHERE (display_name LIKE '%${search}%' OR message LIKE '%${search}%') ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_external WHERE (display_name LIKE '%${search}%' OR message LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (videoplay) {
             await sqliteService.execute((dbRow) => {
