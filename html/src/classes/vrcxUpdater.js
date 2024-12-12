@@ -128,7 +128,9 @@ export default class extends baseClass {
             var releases = [];
             if (typeof json !== 'object' || json.message) {
                 $app.$message({
-                    message: `Failed to check for update, "${json.message}"`,
+                    message: $t('message.vrcx_updater.failed', {
+                        message: json.message
+                    }),
                     type: 'error'
                 });
                 return;
