@@ -165,7 +165,7 @@ export default class extends baseClass {
                     ) {
                         $app.$message({
                             message: $t(
-                                'api.error.message.avatar_private_or_deleted'
+                                'message.api_handler.avatar_private_or_deleted'
                             ),
                             type: 'error'
                         });
@@ -254,12 +254,12 @@ export default class extends baseClass {
             }
             if (typeof error !== 'undefined') {
                 text.push(
-                    `${$t('api.error.message.error_message')}${typeof error === 'string' ? error : JSON.stringify(error)}`
+                    `${$t('api.error.message.error_message')}: ${typeof error === 'string' ? error : JSON.stringify(error)}`
                 );
             }
             if (typeof endpoint !== 'undefined') {
                 text.push(
-                    `${$t('api.error.message.endpoint')}"${typeof endpoint === 'string' ? endpoint : JSON.stringify(endpoint)}"`
+                    `${$t('api.error.message.endpoint')}: "${typeof endpoint === 'string' ? endpoint : JSON.stringify(endpoint)}"`
                 );
             }
             text = text.map((s) => $app.escapeTag(s)).join('<br>');

@@ -1907,8 +1907,8 @@
         },
         "error": {
             "message": {
-                "error_message": "エラーメッセージ：",
-                "endpoint": "エンドポイント：",
+                "error_message": "エラーメッセージ",
+                "endpoint": "エンドポイント",
                 "missing_credentials": "認証情報不足",
                 "avatar_private_or_deleted": "アバターは非公開または削除されました",
                 "vpn_in_use": "VRChatは現在ほとんどのVPNをブロックしています。接続中のVPNを無効にして、もう一度お試しください。",

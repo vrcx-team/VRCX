@@ -10628,49 +10628,49 @@ speechSynthesis.getVoices();
                     userId
                 });
                 break;
-            case 'Unblock':
+            case 'Moderation Unblock':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
                 break;
-            case 'Block':
+            case 'Moderation Block':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
                 break;
-            case 'Unmute':
+            case 'Moderation Unmute':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
                 break;
-            case 'Mute':
+            case 'Moderation Mute':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
                 break;
-            case 'Enable Avatar Interaction':
+            case 'Moderation Enable Avatar Interaction':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
                 break;
-            case 'Disable Avatar Interaction':
+            case 'Moderation Disable Avatar Interaction':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
                 break;
-            case 'Unmute Chatbox':
+            case 'Moderation Enable Chatbox':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });
                 break;
-            case 'Mute Chatbox':
+            case 'Moderation Disable Chatbox':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
@@ -19641,7 +19641,7 @@ speechSynthesis.getVoices();
         function resText(ref) {
             let resArr = [];
             propsForQuery.forEach((e) => {
-                resArr.push(formatter(ref.ref?.[e]));
+                resArr.push(formatter(ref?.[e]));
             });
             return resArr.join(',');
         }
@@ -19658,7 +19658,7 @@ speechSynthesis.getVoices();
                 if (this.worldExportFavoriteGroup === group) {
                     $app.favoriteWorlds.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(resText(ref));
+                            lines.push(resText(ref.ref));
                         }
                     });
                 }
@@ -19676,7 +19676,7 @@ speechSynthesis.getVoices();
         } else {
             // export all
             this.favoriteWorlds.forEach((ref) => {
-                lines.push(resText(ref));
+                lines.push(resText(ref.ref));
             });
             for (let i = 0; i < this.localWorldFavoritesList.length; ++i) {
                 const worldId = this.localWorldFavoritesList[i];
@@ -19910,7 +19910,7 @@ speechSynthesis.getVoices();
         function resText(ref) {
             let resArr = [];
             propsForQuery.forEach((e) => {
-                resArr.push(formatter(ref.ref?.[e]));
+                resArr.push(formatter(ref?.[e]));
             });
             return resArr.join(',');
         }
@@ -19930,7 +19930,7 @@ speechSynthesis.getVoices();
                 ) {
                     $app.favoriteAvatars.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(resText(ref));
+                            lines.push(resText(ref.ref));
                         }
                     });
                 }
@@ -19948,7 +19948,7 @@ speechSynthesis.getVoices();
         } else {
             // export all
             this.favoriteAvatars.forEach((ref) => {
-                lines.push(resText(ref));
+                lines.push(resText(ref.ref));
             });
             for (let i = 0; i < this.localAvatarFavoritesList.length; ++i) {
                 const avatarId = this.localAvatarFavoritesList[i];

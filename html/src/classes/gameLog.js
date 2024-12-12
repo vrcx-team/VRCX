@@ -457,6 +457,7 @@ export default class extends baseClass {
                 !this.localFavoriteFriends.has(entry.userId) &&
                 (entry.type === 'OnPlayerJoined' ||
                     entry.type === 'OnPlayerLeft' ||
+                    entry.type === 'VideoPlay' ||
                     entry.type === 'PortalSpawn' ||
                     entry.type === 'External')
             ) {

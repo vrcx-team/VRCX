@@ -1454,7 +1454,7 @@
         "vrcx_updater": {
             "failed": "Failed to check for update, {message}"
         },
-        "api_headler": {
+        "api_handler": {
             "avatar_private_or_deleted": "Avatar is private or deleted"
         },
         "badge": {
@@ -1924,8 +1924,8 @@
         },
         "error": {
             "message": {
-                "error_message": "Error Message: ",
-                "endpoint": "Endpoint: ",
+                "error_message": "Error Message",
+                "endpoint": "Endpoint",
                 "missing_credentials": "Missing Credentials",
                 "avatar_private_or_deleted": "Avatar private or deleted",
                 "vpn_in_use": "VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.",

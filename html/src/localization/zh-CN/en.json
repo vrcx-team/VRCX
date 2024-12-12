@@ -1910,8 +1910,8 @@
         },
         "error": {
             "message": {
-                "error_message": "错误信息：",
-                "endpoint": "接口地址：",
+                "error_message": "错误信息",
+                "endpoint": "接口地址",
                 "missing_credentials": "访问凭据缺失",
                 "avatar_private_or_deleted": "模型是私密的或已被删除",
                 "vpn_in_use": "VRChat 目前屏蔽了大多数的 VPN。请断开所有已连接的 VPN 后重试。",
