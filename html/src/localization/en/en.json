@@ -1439,6 +1439,63 @@
             "save": "Save"
         }
     },
+    "confirm": {
+        "title": "Confirm",
+        "confirm_button": "Confirm",
+        "cancel_button": "Cancel",
+        "message": "Continue {command}?"
+    },
+    "message": {
+        "vrcx_updater": {
+            "failed": "Failed to check for update, {message}"
+        },
+        "api_headler": {
+            "avatar_private_or_deleted": "Avatar is private or deleted"
+        },
+        "badge": {
+            "updated": "Badge updated"
+        },
+        "instance": {
+            "closed": "Instance closed",
+            "removed_form_queue": "Removed instance {worldName} from queue",
+            "not_allowed": "You're not allowed to access this instance"
+        },
+        "avatar": {
+            "change_moderation_failed": "Failed to change avatar moderation",
+            "image_changed": "Avatar image changed",
+            "image_invalid": "Current avatar image invalid"
+        },
+        "emoji": {
+            "uploaded": "Emoji uploaded"
+        },
+        "file": {
+            "not_image": "File isn't an image",
+            "too_large": "File size too large"
+        },
+        "print": {
+            "uploaded": "Print uploaded"
+        },
+        "sticker": {
+            "uploaded": "Sticker uploaded"
+        },
+        "gallery": {
+            "uploaded": "Gallery image uploaded",
+            "failed": "Failed to upload gallery image"
+        },
+        "world": {
+            "image_changed": "World image changed",
+            "image_invalid": "Current world image invalid"
+        },
+        "icon": {
+            "uploaded": "Icon uploaded"
+        },
+        "user": {
+            "moderated": "User moderated"
+        },
+        "friend": {
+            "load_failed": "Failed to load friends list, logging out"
+        }
+    },
     "prompt": {
         "totp": {
             "header": "Two-factor Authentication",
