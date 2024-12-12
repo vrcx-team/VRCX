@@ -450,6 +450,18 @@ export default class extends baseClass {
                 // event time can be before last gameLog entry
                 this.updateSharedFeed(true);
             }
+
+            // If the VIP friend filter is enabled, logs from other friends will be ignored.
+            if (
+                this.gameLogTable.vip &&
+                !this.localFavoriteFriends.has(entry.userId) &&
+                (entry.type === 'OnPlayerJoined' ||
+                    entry.type === 'OnPlayerLeft' ||
+                    entry.type === 'PortalSpawn' ||
+                    entry.type === 'External')
+            ) {
+                return;
+            }
             if (
                 entry.type === 'LocationDestination' ||
                 entry.type === 'AvatarChange' ||
@@ -866,10 +878,19 @@ export default class extends baseClass {
                 'VRCX_gameLogTableFilters',
                 JSON.stringify(this.gameLogTable.filter)
             );
+            await configRepository.setBool(
+                'VRCX_gameLogTableVIPFilter',
+                this.gameLogTable.vip
+            );
             this.gameLogTable.loading = true;
+            let vipList = [];
+            if (this.gameLogTable.vip) {
+                vipList = Array.from(this.localFavoriteFriends.values());
+            }
             this.gameLogTable.data = await database.lookupGameLogDatabase(
                 this.gameLogTable.search,
-                this.gameLogTable.filter
+                this.gameLogTable.filter,
+                vipList
             );
             this.gameLogTable.loading = false;
         },
