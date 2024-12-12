@@ -2392,20 +2392,27 @@ speechSynthesis.getVoices();
      * @param {{ notificationId: string }} params
      * @return { Promise<{json: any, params}> }
      */
-    API.acceptNotification = function (params) {
+    API.acceptFriendRequestNotification = function (params) {
         return this.call(
             `auth/user/notifications/${params.notificationId}/accept`,
             {
                 method: 'PUT'
             }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:ACCEPT', args);
-            return args;
-        });
+        )
+            .then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('NOTIFICATION:ACCEPT', args);
+                return args;
+            })
+            .catch((err) => {
+                // if friend request could not be found, delete it
+                if (err && err.message && err.message.includes('404')) {
+                    this.$emit('NOTIFICATION:HIDE', { params });
+                }
+            });
     };
 
     /**
@@ -7526,7 +7533,7 @@ speechSynthesis.getVoices();
         }
     });
 
-    $app.methods.acceptNotification = function (row) {
+    $app.methods.acceptFriendRequestNotification = function (row) {
         // FIXME: 메시지 수정
         this.$confirm('Continue? Accept Friend Request', 'Confirm', {
             confirmButtonText: 'Confirm',
@@ -7534,7 +7541,7 @@ speechSynthesis.getVoices();
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    API.acceptNotification({
+                    API.acceptFriendRequestNotification({
                         notificationId: row.id
                     });
                 }
@@ -10601,7 +10608,7 @@ speechSynthesis.getVoices();
                         userId
                     });
                 } else {
-                    API.acceptNotification({
+                    API.acceptFriendRequestNotification({
                         notificationId: key
                     });
                 }
