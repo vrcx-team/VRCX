@@ -32,6 +32,9 @@ mixin favoritesDialog()
 
     //- dialog: export world list
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldExportDialogRef" :visible.sync="worldExportDialogVisible" :title="$t('dialog.world_export.header')" width="650px")
+        el-checkbox-group(v-model="exportSelectedOptions" @change="updateWorldExportDialog()" style="margin-bottom:10px")
+            template(v-for="option in exportSelectOptions" :key="option.value")
+                el-checkbox(:label="option.label")
         el-dropdown(@click.native.stop trigger="click" size="small")
             el-button(size="mini")
                 span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
@@ -106,6 +109,9 @@ mixin favoritesDialog()
 
     //- dialog: export avatar list
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarExportDialogRef" :visible.sync="avatarExportDialogVisible" :title="$t('dialog.avatar_export.header')" width="650px")
+        el-checkbox-group(v-model="exportSelectedOptions" @change="updateAvatarExportDialog()" style="margin-bottom:10px")
+            template(v-for="option in exportSelectOptions" :key="option.value")
+                el-checkbox(:label="option.label")
         el-dropdown(@click.native.stop trigger="click" size="small")
             el-button(size="mini")
                 span(v-if="avatarExportFavoriteGroup") {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{ avatarExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]

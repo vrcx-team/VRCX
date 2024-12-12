@@ -19596,43 +19596,58 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateWorldExportDialog = function () {
-        var _ = function (str) {
+        const formatter = function (str) {
             if (/[\x00-\x1f,"]/.test(str) === true) {
                 return `"${str.replace(/"/g, '""')}"`;
             }
             return str;
         };
-        var lines = ['WorldID,Name'];
+
+        function resText(ref) {
+            let resArr = [];
+            propsForQuery.forEach((e) => {
+                resArr.push(formatter(ref.ref?.[e]));
+            });
+            return resArr.join(',');
+        }
+
+        const lines = [this.exportSelectedOptions.join(',')];
+        const propsForQuery = this.exportSelectOptions
+            .filter((option) =>
+                this.exportSelectedOptions.includes(option.label)
+            )
+            .map((option) => option.value);
+
         if (this.worldExportFavoriteGroup) {
             API.favoriteWorldGroups.forEach((group) => {
                 if (this.worldExportFavoriteGroup === group) {
                     $app.favoriteWorlds.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(`${_(ref.id)},${_(ref.name)}`);
+                            lines.push(resText(ref));
                         }
                     });
                 }
             });
         } else if (this.worldExportLocalFavoriteGroup) {
-            var favoriteGroup =
+            const favoriteGroup =
                 this.localWorldFavorites[this.worldExportLocalFavoriteGroup];
             if (!favoriteGroup) {
                 return;
             }
-            for (var i = 0; i < favoriteGroup.length; ++i) {
-                var ref = favoriteGroup[i];
-                lines.push(`${_(ref.id)},${_(ref.name)}`);
+            for (let i = 0; i < favoriteGroup.length; ++i) {
+                const ref = favoriteGroup[i];
+                lines.push(resText(ref));
             }
         } else {
             // export all
-            this.favoriteWorlds.forEach((ref1) => {
-                lines.push(`${_(ref1.id)},${_(ref1.name)}`);
+            this.favoriteWorlds.forEach((ref) => {
+                lines.push(resText(ref));
             });
-            for (var i = 0; i < this.localWorldFavoritesList.length; ++i) {
-                var worldId = this.localWorldFavoritesList[i];
-                var ref2 = API.cachedWorlds.get(worldId);
-                if (typeof ref2 !== 'undefined') {
-                    lines.push(`${_(ref2.id)},${_(ref2.name)}`);
+            for (let i = 0; i < this.localWorldFavoritesList.length; ++i) {
+                const worldId = this.localWorldFavoritesList[i];
+                const ref = API.cachedWorlds.get(worldId);
+                if (typeof ref !== 'undefined') {
+                    lines.push(resText(ref));
                 }
             }
         }
@@ -19825,6 +19840,16 @@ speechSynthesis.getVoices();
     $app.data.avatarExportFavoriteGroup = null;
     $app.data.avatarExportLocalFavoriteGroup = null;
 
+    // Storage of selected filtering options for model and world export
+    $app.data.exportSelectedOptions = ['ID', 'Name'];
+    $app.data.exportSelectOptions = [
+        { label: 'ID', value: 'id' },
+        { label: 'Name', value: 'name' },
+        { label: 'Author ID', value: 'authorId' },
+        { label: 'Author Name', value: 'authorName' },
+        { label: 'Thumbnail', value: 'thumbnailImageUrl' }
+    ];
+
     $app.methods.showAvatarExportDialog = function () {
         this.$nextTick(() =>
             $app.adjustDialogZ(this.$refs.avatarExportDialogRef.$el)
@@ -19835,14 +19860,33 @@ speechSynthesis.getVoices();
         this.avatarExportDialogVisible = true;
     };
 
+    /**
+     * Update the content of the avatar export dialog based on the selected options
+     */
+
     $app.methods.updateAvatarExportDialog = function () {
-        var _ = function (str) {
+        const formatter = function (str) {
             if (/[\x00-\x1f,"]/.test(str) === true) {
                 return `"${str.replace(/"/g, '""')}"`;
             }
             return str;
         };
-        var lines = ['AvatarID,Name'];
+
+        function resText(ref) {
+            let resArr = [];
+            propsForQuery.forEach((e) => {
+                resArr.push(formatter(ref.ref?.[e]));
+            });
+            return resArr.join(',');
+        }
+
+        const lines = [this.exportSelectedOptions.join(',')];
+        const propsForQuery = this.exportSelectOptions
+            .filter((option) =>
+                this.exportSelectedOptions.includes(option.label)
+            )
+            .map((option) => option.value);
+
         if (this.avatarExportFavoriteGroup) {
             API.favoriteAvatarGroups.forEach((group) => {
                 if (
@@ -19851,31 +19895,31 @@ speechSynthesis.getVoices();
                 ) {
                     $app.favoriteAvatars.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(`${_(ref.id)},${_(ref.name)}`);
+                            lines.push(resText(ref));
                         }
                     });
                 }
             });
         } else if (this.avatarExportLocalFavoriteGroup) {
-            var favoriteGroup =
+            const favoriteGroup =
                 this.localAvatarFavorites[this.avatarExportLocalFavoriteGroup];
             if (!favoriteGroup) {
                 return;
             }
-            for (var i = 0; i < favoriteGroup.length; ++i) {
-                var ref = favoriteGroup[i];
-                lines.push(`${_(ref.id)},${_(ref.name)}`);
+            for (let i = 0; i < favoriteGroup.length; ++i) {
+                const ref = favoriteGroup[i];
+                lines.push(resText(ref));
             }
         } else {
             // export all
-            this.favoriteAvatars.forEach((ref1) => {
-                lines.push(`${_(ref1.id)},${_(ref1.name)}`);
+            this.favoriteAvatars.forEach((ref) => {
+                lines.push(resText(ref));
             });
-            for (var i = 0; i < this.localAvatarFavoritesList.length; ++i) {
-                var avatarId = this.localAvatarFavoritesList[i];
-                var ref2 = API.cachedAvatars.get(avatarId);
-                if (typeof ref2 !== 'undefined') {
-                    lines.push(`${_(ref2.id)},${_(ref2.name)}`);
+            for (let i = 0; i < this.localAvatarFavoritesList.length; ++i) {
+                const avatarId = this.localAvatarFavoritesList[i];
+                const ref = API.cachedAvatars.get(avatarId);
+                if (typeof ref !== 'undefined') {
+                    lines.push(resText(ref));
                 }
             }
         }
