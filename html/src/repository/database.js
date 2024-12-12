@@ -1648,12 +1648,9 @@ class Database {
         if (vipList.length > 0) {
             vipQuery = 'AND user_id IN (';
             vipList.forEach((vip, i) => {
-                vipQuery += `'${vip.replaceAll("'", "''")}'`;
-                if (i < vipList.length - 1) {
-                    vipQuery += ', ';
-                }
+                vipQuery += `'${vip.replaceAll("'", "''")}', `;
             });
-            vipQuery += ')';
+            vipQuery += "'')";
         }
         var location = true;
         var onplayerjoined = true;
@@ -1798,7 +1795,7 @@ class Database {
                     userId: dbRow[7]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_video_play WHERE video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_video_play WHERE (video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (resourceload_string || resourceload_image) {
             var checkString = '';
