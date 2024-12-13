@@ -1977,6 +1977,12 @@ speechSynthesis.getVoices();
                 break;
             }
         }
+        // delete any null in json
+        for (var key in json) {
+            if (json[key] === null) {
+                delete json[key];
+            }
+        }
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
