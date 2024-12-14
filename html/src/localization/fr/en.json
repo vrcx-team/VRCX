@@ -1015,7 +1015,7 @@
             "delete_cache": "Supprimer le cache",
             "delete_old_cache": "Supprimer les anciennes versions du cache",
             "sweep_cache": "Balayer le cache",
-            "max_cache_size": "Taille maximale du cache [Go] (min 20)",
+            "max_cache_size": "Taille maximale du cache [Go] (min 30)",
             "cache_expiry_delay": "Expiration du cache [jours] (30 - 150)",
             "cache_directory": "Emplacement du dossier de cache personnalisé",
             "picture_directory": "Emplacement du dossier de photos personnalisé",

@@ -1015,7 +1015,7 @@
             "delete_cache": "Wyczyść pamięć",
             "delete_old_cache": "Usuń stare wersje z pamięci podręcznej",
             "sweep_cache": "Wyczyść pamięć podręczną",
-            "max_cache_size": "Maks. rozmiar pamięci podręcznej [GB] (min. 20)",
+            "max_cache_size": "Maks. rozmiar pamięci podręcznej [GB] (min. 30)",
             "cache_expiry_delay": "Czas wygaśnięcia pamięci podręcznej [dni] (min. 30)",
             "cache_directory": "Niestandardowy folder pamięci podręcznej",
             "picture_directory": "Niestandardowy folder zdjęć",

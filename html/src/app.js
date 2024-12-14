@@ -2232,6 +2232,21 @@ speechSynthesis.getVoices();
         }
     });
 
+    API.hideNotificationV2 = function (notificationId) {
+        return this.call(`notifications/${notificationId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params: {
+                    notificationId
+                }
+            };
+            this.$emit('NOTIFICATION:V2:HIDE', args);
+            return args;
+        });
+    };
+
     /**
     * @param {{
             notificationId: string,
@@ -2256,6 +2271,7 @@ speechSynthesis.getVoices();
             .catch((err) => {
                 // something went wrong, lets assume it's already expired
                 this.$emit('NOTIFICATION:HIDE', { params });
+                API.hideNotificationV2(params.notificationId);
                 throw err;
             });
     };
@@ -16061,7 +16077,7 @@ speechSynthesis.getVoices();
                 name: $t('dialog.config_json.max_cache_size'),
                 default: '30',
                 type: 'number',
-                min: 20
+                min: 30
             },
             cache_expiry_delay: {
                 name: $t('dialog.config_json.cache_expiry_delay'),
