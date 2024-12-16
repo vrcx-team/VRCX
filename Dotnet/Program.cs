@@ -7,6 +7,7 @@
 using NLog;
 using NLog.Targets;
 using System;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -133,6 +134,20 @@ namespace VRCX
                 }
             }
             #endregion
+            catch (SQLiteException e)
+            {
+                logger.Fatal(e, "Unhandled SQLite Exception, closing");
+                var messageBoxResult = MessageBox.Show(
+                    "An error which is related to your Database occured, this might indicate a broken database. " +
+                    "You can go to https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database to find potential steps for resolving the issue. " +
+                    "If the issue remains please join the Discord (https://vrcx.app/discord) to get further assistance. " +
+                    "Would you like to open the Database repair steps page?\n" +
+                    e, "Database error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (messageBoxResult == DialogResult.Yes)
+                {
+                    AppApi.Instance.OpenLink("https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database");
+                }
+            }
             catch (Exception e)
             {
                 var cpuError = WinApi.GetCpuErrorMessage();
