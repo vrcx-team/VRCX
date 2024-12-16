@@ -214,7 +214,7 @@ mixin userDialog()
                                     el-tooltip(v-if="link" v-for="(link, index) in userDialog.ref.bioLinks" :key="index")
                                         template(#content)
                                             span(v-text="link")
-                                        img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
+                                        img(:src="getFaviconUrl(link)" onerror="this.onerror=null;this.class='el-icon-error'" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
                         template(v-if="API.currentUser.id !== userDialog.id")
                             .x-friend-item(style="cursor:default")
                                 .detail
