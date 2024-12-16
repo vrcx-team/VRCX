@@ -73,7 +73,7 @@ export default class extends baseClass {
                 '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
                 '<span>{{ text }}</span></span>' +
                 '<span v-if="groupName" @click="showGroupDialog" :class="{ \'x-link\': link}">({{ groupName }})</span>' +
-                '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
+                '<span v-if="region" class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
                 '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
             props: {
                 location: String,

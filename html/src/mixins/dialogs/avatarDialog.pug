@@ -74,7 +74,7 @@ mixin avatarDialog()
                     .x-friend-list
                         .x-friend-item(style="width:100%;cursor:default")
                             .detail 
-                                span.name {{ $t('dialog.avatar.info.memo') }}
+                                span.name(style="margin-bottom:5px") {{ $t('dialog.avatar.info.memo') }}
                                 el-input.extra(v-model="avatarDialog.memo" @change="onAvatarMemoChange" size="mini" type="textarea" :rows="2" :autosize="{minRows: 1, maxRows: 20}" :placeholder="$t('dialog.avatar.info.memo_placeholder')" resize="none")
                         .x-friend-item(style="width:100%;cursor:default")
                             .detail
