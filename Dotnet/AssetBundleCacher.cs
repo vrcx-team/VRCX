@@ -119,8 +119,7 @@ namespace VRCX
             var dirs = Directory.GetDirectories(topDir, versionSearchPattern);
             if (dirs.Length > 0)
                 return dirs.OrderByDescending(dir => ReverseHexToDecimal(Path.GetFileName(dir)).Item2).First();
-
-
+            
             return Path.Combine(topDir, versionLocation);
         }
 

@@ -46,7 +46,7 @@ mixin userDialog()
                                     span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
                         div(style="margin-top:5px")
                             el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
-                            el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.user.tags.friend_no', { number: userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : "?" }) }}
+                            el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.user.tags.friend_no', { number: userDialog.ref.$friendNumber ?? : "?" }) }}
                             el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Nuisance
                             el-tag.x-tag-troll(v-if="userDialog.ref.$isProbableTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Almost Nuisance
                             el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")  {{ $t('dialog.user.tags.vrchat_team') }}
