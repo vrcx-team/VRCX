@@ -357,6 +357,7 @@ export default class extends baseClass {
                 '<span v-if="isHardClosed" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_hard_closed") }}</span>' +
                 '<span v-else-if="isClosed" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_closed") }}</span>' +
                 '<span v-if="queueSize" style="margin-left:5px">{{ $t("dialog.user.info.instance_queue") }} {{ queueSize }}</span>' +
+                '<span v-if="isAgeGated" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_age_gated") }}</span>' +
                 '</div>',
             props: {
                 location: String,
@@ -396,6 +397,7 @@ export default class extends baseClass {
                     this.userList = [];
                     this.gameServerVersion = '';
                     this.canCloseInstance = false;
+                    this.isAgeGated = false;
                     if (
                         !this.location ||
                         !this.instance ||
@@ -437,6 +439,7 @@ export default class extends baseClass {
                             'group-instance-moderate'
                         );
                     }
+                    this.isAgeGated = this.instance.ageGate === true;
                 },
                 showUserDialog(userId) {
                     API.$emit('SHOW_USER_DIALOG', userId);
