@@ -356,3 +356,8 @@ input[type='checkbox']:checked + .el-switch__core {
 .el-loading-spinner .path {
     stroke: var(--theme);
 }
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background-color: var(--lighter-lighter-bg);
+}
