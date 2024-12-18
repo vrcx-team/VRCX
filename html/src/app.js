@@ -5148,7 +5148,18 @@ speechSynthesis.getVoices();
             // Do Not Disturb
             style.busy = true;
         }
-        if (user.last_platform && user.last_platform !== 'standalonewindows') {
+        if (
+            user.platform &&
+            user.platform !== 'standalonewindows' &&
+            user.platform !== 'web'
+        ) {
+            style.mobile = true;
+        }
+        if (
+            user.last_platform &&
+            user.last_platform !== 'standalonewindows' &&
+            user.platform === 'web'
+        ) {
             style.mobile = true;
         }
         return style;
