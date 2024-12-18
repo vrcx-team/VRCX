@@ -313,3 +313,8 @@ path[stroke='#20a0ff'] {
 path[stroke='#e5e9f2'] {
     stroke: var(--farback) !important;
 }
+
+.el-collapse-item .el-tag--mini {
+    border: transparent;
+    background-color: #333 !important;
+}

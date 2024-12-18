@@ -687,3 +687,8 @@ i[class='el-icon-star-off']:not(.el-menu-item div.el-tooltip i) {
 .x-friend-item:hover .el-input__count {
     background-color: transparent;
 }
+
+.el-collapse-item .el-tag--mini {
+    border: transparent;
+    background-color: var(--dv_bg-bot);
+}

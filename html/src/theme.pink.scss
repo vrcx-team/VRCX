@@ -361,3 +361,8 @@ input[type='checkbox']:checked + .el-switch__core {
 .x-friend-item:hover .el-input__count {
     background-color: var(--lighter-lighter-bg);
 }
+
+.el-collapse-item .el-tag--mini {
+    border: transparent;
+    background-color: #333;
+}
