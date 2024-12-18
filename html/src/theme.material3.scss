@@ -636,7 +636,11 @@ input[type='number'],
 }
 .el-table__expand-icon--expanded,
 .x-friend-group > .el-icon-arrow-right.rotate {
-    transform: rotateX(180deg);
+    transform: rotate(270deg);
+}
+.el-table__expand-icon--expanded,
+.x-friend-group > .el-icon-arrow-right {
+    transform: rotate(90deg);
 }
 .el-table .el-table__body-wrapper table tr th,
 .el-table .el-table__body-wrapper table tr > td:not(.is-right) > .cell {

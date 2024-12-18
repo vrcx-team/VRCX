@@ -1038,7 +1038,7 @@
             "delete_cache": "削除",
             "delete_old_cache": "旧バージョンのキャッシュを削除",
             "sweep_cache": "掃除",
-            "max_cache_size": "最大キャッシュサイズ [GB] (最小 20)",
+            "max_cache_size": "最大キャッシュサイズ [GB] (最小 30)",
             "cache_expiry_delay": "キャッシュの有効期限 [日] (最小 30)",
             "cache_directory": "カスタムキャッシュフォルダー",
             "picture_directory": "カスタム写真フォルダー",

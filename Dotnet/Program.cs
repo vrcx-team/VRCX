@@ -7,6 +7,7 @@
 using NLog;
 using NLog.Targets;
 using System;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -130,6 +131,22 @@ namespace VRCX
                         Thread.Sleep(5000);
                         Environment.Exit(0);
                         break;
+                }
+            }
+            #endregion
+            #region Handle Database Error
+            catch (SQLiteException e)
+            {
+                logger.Fatal(e, "Unhandled SQLite Exception, closing.");
+                var messageBoxResult = MessageBox.Show(
+                    "A fatal database error has occured.\n" +
+                    "Please try to repair your database by following the steps in the provided repair guide, or alternatively rename your \"%AppData%\\VRCX\" folder to reset VRCX. " +
+                    "If the issue still persists after following the repair guide please join the Discord (https://vrcx.app/discord) for further assistance. " +
+                    "Would you like to open the webpage for database repair steps?\n" +
+                    e, "Database error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (messageBoxResult == DialogResult.Yes)
+                {
+                    AppApi.Instance.OpenLink("https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database");
                 }
             }
             #endregion

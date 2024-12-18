@@ -46,7 +46,7 @@ mixin userDialog()
                                     span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
                         div(style="margin-top:5px")
                             el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
-                            el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.user.tags.friend_no', { number: userDialog.friend.no }) }}
+                            el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.user.tags.friend_no', { number: userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : "?" }) }}
                             el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Nuisance
                             el-tag.x-tag-troll(v-if="userDialog.ref.$isProbableTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Almost Nuisance
                             el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")  {{ $t('dialog.user.tags.vrchat_team') }}
@@ -214,7 +214,7 @@ mixin userDialog()
                                     el-tooltip(v-if="link" v-for="(link, index) in userDialog.ref.bioLinks" :key="index")
                                         template(#content)
                                             span(v-text="link")
-                                        img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
+                                        img(:src="getFaviconUrl(link)" onerror="this.onerror=null;this.class='el-icon-error'" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
                         template(v-if="API.currentUser.id !== userDialog.id")
                             .x-friend-item(style="cursor:default")
                                 .detail

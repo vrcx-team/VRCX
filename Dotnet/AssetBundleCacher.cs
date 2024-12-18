@@ -66,13 +66,13 @@ namespace VRCX
             return versionHex.PadLeft(32, '0');
         }
         
-        public int ReverseHexToDecimal(string hexString)
+        public (int, int) ReverseHexToDecimal(string hexString)
         {
             if (hexString.Length != 32)
-                return 0; // it's cooked
+                return (0, 0); // it's cooked
             
             try {
-                var variantVersionHexString = hexString.Substring(16, 8); // 16..24
+                var variantVersionHexString = hexString.Substring(0, 8); // 0..8
                 var versionHexString = hexString.Substring(24, 8); // 24..32
                 var versionBytes = new byte[4];
                 var variantVersionBytes = new byte[4];
@@ -85,12 +85,12 @@ namespace VRCX
                 }
                 var version = BitConverter.ToInt32(versionBytes, 0);
                 var variantVersion = BitConverter.ToInt32(variantVersionBytes, 0);
-                return version + variantVersion;
+                return (version, variantVersion);
             }
             catch (Exception ex)
             {
                 logger.Error($"Failed to convert hex to decimal: {hexString} {ex}");
-                return 0; // it's cooked
+                return (0, 0); // it's cooked
             }
         }
 
@@ -110,9 +110,17 @@ namespace VRCX
         public string GetVRChatCacheFullLocation(string id, int version, string variant = "", int variantVersion = 0)
         {
             var cachePath = GetVRChatCacheLocation();
-            var idHash = GetAssetId(id, variant); 
+            var idHash = GetAssetId(id, variant);
+            var topDir = Path.Combine(cachePath, idHash);
             var versionLocation = GetAssetVersion(version, variantVersion);
-            return Path.Combine(cachePath, idHash, versionLocation);
+            if (!Directory.Exists(topDir))
+                return Path.Combine(topDir, versionLocation);
+            var versionSearchPattern = string.Concat("*", versionLocation.AsSpan(8));
+            var dirs = Directory.GetDirectories(topDir, versionSearchPattern);
+            if (dirs.Length > 0)
+                return dirs.OrderByDescending(dir => ReverseHexToDecimal(Path.GetFileName(dir)).Item2).First();
+            
+            return Path.Combine(topDir, versionLocation);
         }
 
         /// <summary>

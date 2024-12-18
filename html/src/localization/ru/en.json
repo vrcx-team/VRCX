@@ -435,16 +435,16 @@
                     },
                     "local_world_persistence": {
                         "header": "Локальное сохранение мира",
-                        "description": "Локальный веб-сервер (требуется перезапуск)"  
-                        },
-                        "save_instance_prints_to_file": {
-                            "header": "Сохранить снимки инстанса в файл",
-                            "header_tooltip": "Требуется \"--enable-sdk-log-levels\" опция запуска VRC.",
-                            "description": "Сохраните созданные отпечатки в папке «Изображения VRChat»."
-                        },
-                        "save_instance_stickers_to_file": {
-                            "header": "Сохранить стикеры инстанса в файл",
-                            "description": "Сохраните размещенные наклейки в папке «Изображения VRChat»."
+                        "description": "Локальный веб-сервер (требуется перезапуск)"
+                    },
+                    "save_instance_prints_to_file": {
+                        "header": "Сохранить снимки инстанса в файл",
+                        "header_tooltip": "Требуется \"--enable-sdk-log-levels\" опция запуска VRC.",
+                        "description": "Сохраните созданные отпечатки в папке «Изображения VRChat»."
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "Сохранить стикеры инстанса в файл",
+                        "description": "Сохраните размещенные наклейки в папке «Изображения VRChat»."
                     },
                     "remote_database": {
                         "header": "Удаленная база данных аватаров",
@@ -1047,7 +1047,7 @@
             "delete_cache": "Удалить кэш",
             "delete_old_cache": "Удалить старые версии из кэша",
             "sweep_cache": "Удалить кэш",
-            "max_cache_size": "Макс. размер кэша [GB] (мин. 20)",
+            "max_cache_size": "Макс. размер кэша [GB] (мин. 30)",
             "cache_expiry_delay": "Срок действия кэша [Days] (30 – 150)",
             "cache_directory": "Местоположение папки кэша",
             "picture_directory": "Местоположение папки картинок",
@@ -1296,7 +1296,7 @@
             "emoji_animation_frame_count": "Количество кадров:",
             "emoji_loop_pingpong": "Зацикленный PingPong",
             "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)",
-             "note": "Заметка"
+            "note": "Заметка"
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",
