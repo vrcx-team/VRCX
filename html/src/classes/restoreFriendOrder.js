@@ -17,12 +17,15 @@ export default class extends baseClass {
             var lastUpdate = await configRepository.getString(
                 `VRCX_lastStoreTime_${API.currentUser.id}`
             );
-            if (lastUpdate == -2) {
+            if (lastUpdate == -3) {
                 // this means the backup was already applied
                 return;
             }
             var status = false;
             this.friendNumber = 0;
+            for (var ref of this.friendLog.values()) {
+                ref.friendNumber = 0;
+            }
             try {
                 if (lastUpdate) {
                     // backup ready to try apply
@@ -51,7 +54,7 @@ export default class extends baseClass {
             // }
             await configRepository.setString(
                 `VRCX_lastStoreTime_${API.currentUser.id}`,
-                -2
+                -3
             );
         },
 
