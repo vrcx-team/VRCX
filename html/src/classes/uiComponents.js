@@ -440,6 +440,10 @@ export default class extends baseClass {
                         );
                     }
                     this.isAgeGated = this.instance.ageGate === true;
+                    if (this.location && this.location.includes('~ageGate')) {
+                        // dumb workaround for API not returning `ageGate`
+                        this.isAgeGated = true;
+                    }
                 },
                 showUserDialog(userId) {
                     API.$emit('SHOW_USER_DIALOG', userId);

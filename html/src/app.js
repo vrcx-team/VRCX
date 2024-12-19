@@ -12620,6 +12620,9 @@ speechSynthesis.getVoices();
                 tags.push('~canRequestInvite');
             }
         }
+        if (D.accessType === 'group' && D.ageGate) {
+            tags.push('~ageGate');
+        }
         if (D.region === 'US West') {
             tags.push(`~region(us)`);
         } else if (D.region === 'US East') {
@@ -12746,7 +12749,14 @@ speechSynthesis.getVoices();
                 params.canRequestInvite = true;
             }
         }
-        if (D.ageGate) {
+        if (
+            D.ageGate &&
+            type === 'group' &&
+            this.hasGroupPermission(
+                D.groupRef,
+                'group-instance-age-gated-create'
+            )
+        ) {
             params.ageGate = true;
         }
         try {
