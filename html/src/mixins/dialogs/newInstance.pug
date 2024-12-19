@@ -24,6 +24,8 @@ mixin newInstance()
                             el-radio-button(label="Japan") {{ $t('dialog.new_instance.region_jp') }}
                     el-form-item(:label="$t('dialog.new_instance.queueEnabled')" v-if="newInstanceDialog.accessType === 'group'")
                         el-checkbox(v-model="newInstanceDialog.queueEnabled" @change="buildInstance")
+                    el-form-item(:label="$t('dialog.new_instance.ageGate')")
+                        el-checkbox(v-model="newInstanceDialog.ageGate" @change="buildInstance")
                     el-form-item(:label="$t('dialog.new_instance.world_id')")
                         el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" @change="buildInstance")
                     el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")

@@ -1031,6 +1031,7 @@
             "launch": "Launch",
             "create_instance": "Create Instance",
             "queueEnabled": "Queue",
+            "ageGate": "Age Gate",
             "normal": "Normal",
             "group": "Group",
             "legacy": "Legacy",

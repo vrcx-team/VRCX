@@ -1332,6 +1332,7 @@ speechSynthesis.getVoices();
                 roleRestricted: false, // only present with group instance type
                 instancePersistenceEnabled: null,
                 playerPersistenceEnabled: null,
+                ageGate: null,
                 // VRCX
                 $fetchedAt: '',
                 ...json
@@ -12571,6 +12572,7 @@ speechSynthesis.getVoices();
             'instanceDialogGroupAccessType',
             'plus'
         ),
+        ageGate: await configRepository.getBool('instanceDialogAgeGate', false),
         strict: false,
         location: '',
         shortName: '',
@@ -12744,6 +12746,9 @@ speechSynthesis.getVoices();
                 params.canRequestInvite = true;
             }
         }
+        if (D.ageGate) {
+            params.ageGate = true;
+        }
         try {
             var args = await API.createInstance(params);
             D.location = args.json.location;
@@ -12826,6 +12831,10 @@ speechSynthesis.getVoices();
         await configRepository.setBool(
             'instanceDialogQueueEnabled',
             this.newInstanceDialog.queueEnabled
+        );
+        await configRepository.setBool(
+            'instanceDialogAgeGate',
+            this.newInstanceDialog.ageGate
         );
     };
 
