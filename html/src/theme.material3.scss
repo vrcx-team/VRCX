@@ -1125,6 +1125,15 @@ input[type='number'],
     border-radius: 25px;
 }
 
+.x-friend-item .el-input__count {
+    background-color: transparent;
+}
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background-color: transparent;
+}
+
 .x-friend-item .detail {
     margin: 0 -2px;
 }
@@ -1987,4 +1996,9 @@ i.x-user-status {
 .el-table_41_column_287,
 .el-table_41_column_291 {
     text-align: center !important;
+}
+
+.el-collapse-item .el-tag--mini {
+    background-color: transparent;
+    border: transparent;
 }

@@ -394,8 +394,11 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames') }}
                         el-switch(v-model="notificationTTSNickName" @change="saveOpenVROption" :disabled="notificationTTS === 'Never'")
                     div.options-container-item
-                        el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
-                        el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
+                        span.name {{ $t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder') }}
+                        el-switch(v-model="isTestTTSVisible")
+                        div(v-if="isTestTTSVisible" style="margin-top:5px")
+                            el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
+                            el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS" style="margin-top:5px") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
             //- Wrist Overlay Tab
             el-tab-pane(:label="$t('view.settings.category.wrist_overlay')")
                 //- Wrist Overlay | SteamVR Wrist Overlay

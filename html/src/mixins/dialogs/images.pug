@@ -55,6 +55,7 @@ mixin images()
 
     //- dialog: full screen image
     el-dialog.x-dialog(ref="fullscreenImageDialog" :before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="fullscreenImageDialog.visible" top="3vh" width="97vw")
-        el-button(@click="copyImageUrl(fullscreenImageDialog.imageUrl)" size="mini" icon="el-icon-s-order" circle)
-        el-button(type="default" size="mini" icon="el-icon-download" circle @click="downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)" style="margin-left:5px")
+        div(style="margin:0 0 5px 5px")
+            el-button(@click="copyImageUrl(fullscreenImageDialog.imageUrl)" size="mini" icon="el-icon-s-order" circle)
+            el-button(type="default" size="mini" icon="el-icon-download" circle @click="downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)" style="margin-left:5px")
         img(v-lazy="fullscreenImageDialog.imageUrl" style="width:100%;height:100vh;object-fit:contain")
