@@ -1,11 +1,11 @@
 mixin favoritesTab()            
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'")
-        div(style="font-size:13px;position:absolute;right:0;z-index:1;margin-right:15px")
+        div(style="font-size:13px;position:absolute;display:flex;right:0;z-index:1;margin-right:15px")
             div(v-if="editFavoritesMode" style="display:inline-block;margin-right:10px")
                 el-button(size="small" @click="clearBulkFavoriteSelection ") {{ $t('view.favorite.clear') }}
                 el-button(size="small" @click="bulkCopyFavoriteSelection") {{ $t('view.favorite.copy') }}
                 el-button(size="small" @click="showBulkUnfavoriteSelectionConfirm") {{ $t('view.favorite.bulk_unfavorite') }}
-            div(style="display:inline-block;margin-right:10px")
+            div(style="display:flex;align-items: center;margin-right:10px")
                 span.name {{ $t('view.favorite.edit_mode') }}
                 el-switch(v-model="editFavoritesMode" style="margin-left:5px")
             el-tooltip(placement="bottom" :content="$t('view.favorite.refresh_tooltip')" :disabled="hideTooltips")
@@ -92,7 +92,7 @@ mixin favoritesTab()
                         template(slot="title")
                             div(style="display:flex;align-items:center;")
                                 span(v-text="group.displayName ? group.displayName : group.name" style="font-weight:bold;font-size:14px;margin-left:10px")
-                                el-tag(style="margin-left:5px" size="mini" :type="userFavoriteWorldsStatusForFavTab(group.visibility)" effect="plain") {{ group.visibility.charAt(0).toUpperCase() + group.visibility.slice(1) }}
+                                el-tag(style="margin:1px 0 0 5px" size="mini" :type="userFavoriteWorldsStatusForFavTab(group.visibility)" effect="plain") {{ group.visibility.charAt(0).toUpperCase() + group.visibility.slice(1) }}
                                 span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
                                 el-tooltip(placement="top" :content="$t('view.favorite.visibility_tooltip')" :disabled="hideTooltips")
                                     el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:10px")

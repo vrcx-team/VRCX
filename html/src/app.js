@@ -7923,6 +7923,10 @@ speechSynthesis.getVoices();
         'VRCX_notificationTTSNickName',
         false
     );
+
+    // It's not necessary to store it in configRepo because it's rarely used.
+    $app.data.isTestTTSVisible = false;
+    
     $app.data.notificationTTSVoice = await configRepository.getString(
         'VRCX_notificationTTSVoice',
         '0'
