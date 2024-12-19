@@ -7083,6 +7083,10 @@ speechSynthesis.getVoices();
             `VRCX_friendNumber_${currentUser.id}`,
             0
         );
+        var maxFriendLogNumber = await database.getMaxFriendLogNumber();
+        if (this.friendNumber < maxFriendLogNumber) {
+            this.friendNumber = maxFriendLogNumber;
+        }
 
         var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
@@ -16720,10 +16724,7 @@ speechSynthesis.getVoices();
         var variant = '';
         for (var i = ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = ref.unityPackages[i];
-            if (
-                unityPackage.variant &&
-                unityPackage.variant !== 'security'
-            ) {
+            if (unityPackage.variant && unityPackage.variant !== 'security') {
                 continue;
             }
             if (

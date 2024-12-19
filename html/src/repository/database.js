@@ -378,6 +378,14 @@ class Database {
         );
     }
 
+    async getMaxFriendLogNumber() {
+        var friendNumber = 0;
+        await sqliteService.execute((dbRow) => {
+            friendNumber = dbRow[0];
+        }, `SELECT MAX(friend_number) FROM ${Database.userPrefix}_friend_log_current`);
+        return friendNumber;
+    }
+
     async getFriendLogHistory() {
         var friendLogHistory = [];
         await sqliteService.execute((dbRow) => {

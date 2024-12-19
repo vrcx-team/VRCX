@@ -17,7 +17,7 @@ export default class extends baseClass {
             var lastUpdate = await configRepository.getString(
                 `VRCX_lastStoreTime_${API.currentUser.id}`
             );
-            if (lastUpdate == -1) {
+            if (lastUpdate == -2) {
                 // this means the backup was already applied
                 return;
             }
@@ -33,25 +33,25 @@ export default class extends baseClass {
             } catch (err) {
                 console.error(err);
             }
-            if (status) {
-                this.$message({
-                    message: 'Friend order restored from backup',
-                    type: 'success',
-                    duration: 0,
-                    showClose: true
-                });
-            } else if (this.friendLogTable.data.length > 0) {
-                this.$message({
-                    message:
-                        'No backup found, friend order partially restored from friendLog',
-                    type: 'success',
-                    duration: 0,
-                    showClose: true
-                });
-            }
+            // if (status) {
+            //     this.$message({
+            //         message: 'Friend order restored from backup',
+            //         type: 'success',
+            //         duration: 0,
+            //         showClose: true
+            //     });
+            // } else if (this.friendLogTable.data.length > 0) {
+            //     this.$message({
+            //         message:
+            //             'No backup found, friend order partially restored from friendLog',
+            //         type: 'success',
+            //         duration: 0,
+            //         showClose: true
+            //     });
+            // }
             await configRepository.setString(
                 `VRCX_lastStoreTime_${API.currentUser.id}`,
-                -1
+                -2
             );
         },
 
@@ -192,6 +192,7 @@ export default class extends baseClass {
                     friendRef.ref.$friendNumber = ref.friendNumber;
                 }
             }
+            this.friendNumber = this.friends.size;
             console.log('Applied friend order from friendLog');
         },
 
