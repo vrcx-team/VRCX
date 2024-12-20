@@ -6,13 +6,13 @@ mixin simpleSettingsCategory(headerTrKey)
         else
             p No Content
 
-mixin simpleSwitch(nameTrKey, model, onChange="")
-    div.options-container-item
+mixin simpleSwitch(nameTrKey, model, onChange="", tooltipContent)
+    div.simple-switch
         //- I fought with getting the right syntax for a translation key, as an argument, in an interpolated block for like 20mins before I realized the answer was staring me in the face in the documentation I passed over like 5 times. Feelsbadman.
         //- I didn't even know what pug was before working on this; speedrunning learning pug templating.
-        span.name {{ $t('#{nameTrKey}') }}
         //- I've also never worked with vue/element and have no idea what I'm doing. pog, as the kids say
-        el-switch(v-model=model @change=onChange)
+        span.name {{ $t('#{nameTrKey}') }}
+        el-switch.switch(v-model=model @change=onChange)
 
 mixin simpleTwoLabelSwitch(nameTrKey, model, onChange="")
     div.options-container-item
@@ -31,7 +31,7 @@ mixin simpleRadioGroupWithTooltip(nameTrKey, tooltipContent, model, options, onC
     div.options-container-item
         span.name {{ $t('#{nameTrKey}') }}
             el-tooltip(placement="top" style="margin-left:5px" :content=tooltipContent)
-                i.el-icon-warning
+                i.el-icon-info
         br
         el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
             each option in options
@@ -41,7 +41,7 @@ mixin settingsTab()
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
         div.options-container(style="margin-top:0;padding:5px")
             span.header {{ $t("view.settings.header") }}
-        el-tabs(type="card" style="height: calc(100% - 51px")
+        el-tabs(type="card" style="height: calc(100% - 51px)")
             el-tab-pane(:label="$t('view.settings.category.general')")
                 //- General | General
                 div.options-container(style="margin-top:0")
@@ -86,12 +86,12 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.general.application.disable_gpu_acceleration') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
-                                i.el-icon-warning
+                                i.el-icon-info
                         el-switch(v-model="disableGpuAcceleration" @change="saveVRCXWindowOption")
                     div.options-container-item
-                        span.name(style="min-width:225px") {{ $t('view.settings.general.application.disable_vr_overlay_gpu_acceleration') }}
+                        span.name {{ $t('view.settings.general.application.disable_vr_overlay_gpu_acceleration') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
-                                i.el-icon-warning
+                                i.el-icon-info
                         el-switch(v-model="disableVrOverlayGpuAcceleration" @change="saveVRCXWindowOption")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
@@ -106,15 +106,9 @@ mixin settingsTab()
                 //- General | Game Log
                 div.options-container
                     span.header {{ $t('view.settings.general.logging.header') }}
-                    div.options-container-item
-                        span.name(style="min-width:225px") {{ $t('view.settings.advanced.advanced.cache_debug.udon_exception_logging') }}
-                        el-switch(v-model="udonExceptionLogging" @change="saveOpenVROption")
-                    div.options-container-item
-                        span.name(style="min-width:225px") {{ $t('view.settings.general.logging.resource_load') }}
-                        el-switch(v-model="logResourceLoad" @change="saveLoggingOptions")
-                    div.options-container-item
-                        span.name(style="min-width:225px") {{ $t('view.settings.general.logging.empty_avatar') }}
-                        el-switch(v-model="logEmptyAvatars" @change="saveLoggingOptions")
+                    +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
+                    +simpleSwitch("view.settings.general.logging.resource_load", "logResourceLoad", "saveLoggingOptions")
+                    +simpleSwitch("view.settings.general.logging.empty_avatar", "logEmptyAvatars", "saveLoggingOptions")
                 //- General | Automation
                 div.options-container
                     span.header {{ $t('view.settings.general.automation.header') }}
@@ -125,7 +119,7 @@ mixin settingsTab()
                         el-switch(v-model="autoStateChangeEnabled" @change="saveAutomationOptions")
                     div.options-container-item
                         span.name {{ $t('view.settings.general.automation.alone_status') }}
-                        el-select(v-model="autoStateChangeAloneStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px")
+                        el-select(v-model="autoStateChangeAloneStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px" size="small")
                             el-option(:label="$t('dialog.user.status.join_me')" value="join me").
                                 #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
                             el-option(:label="$t('dialog.user.status.online')" value="active").
@@ -136,7 +130,7 @@ mixin settingsTab()
                                 #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.general.automation.company_status') }}
-                        el-select(v-model="autoStateChangeCompanyStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px")
+                        el-select(v-model="autoStateChangeCompanyStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px" size="small")
                             el-option(:label="$t('dialog.user.status.join_me')" value="join me").
                                 #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
                             el-option(:label="$t('dialog.user.status.online')" value="active").
@@ -147,16 +141,16 @@ mixin settingsTab()
                                 #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.general.automation.allowed_instance_types') }}
-                        el-select(v-model="autoStateChangeInstanceTypes" :disabled="!autoStateChangeEnabled" multiple clearable :placeholder="$t('view.settings.general.automation.instance_type_placeholder')" @change="saveAutomationOptions" style="margin-top:8px")
+                        el-select(v-model="autoStateChangeInstanceTypes" :disabled="!autoStateChangeEnabled" multiple clearable :placeholder="$t('view.settings.general.automation.instance_type_placeholder')" @change="saveAutomationOptions" style="margin-top:8px" size="small")
                             el-option-group(:label="$t('view.settings.general.automation.allowed_instance_types')")
                                 el-option.x-friend-item(v-for="instanceType in instanceTypes" :key="instanceType" :label="instanceType" :value="instanceType")
                                     .detail
                                         span.name(v-text="instanceType")
                     div.options-container-item
                         span.name {{ $t('view.settings.general.automation.alone_condition') }}
-                        el-switch(v-model="autoStateChangeNoFriends" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" :inactive-text="$t('view.settings.general.automation.alone')" :active-text="$t('view.settings.general.automation.no_friends')")
-                    br
-                    br
+                        el-radio-group(v-model="autoStateChangeNoFriends" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" )
+                            el-radio(:label="false") {{ $t('view.settings.general.automation.alone') }}
+                            el-radio(:label="true") {{ $t('view.settings.general.automation.no_friends') }}
                     +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_invite_request_accept", "$t('view.settings.general.automation.auto_invite_request_accept_tooltip')", "autoAcceptInviteRequests", [
                         { label: "Off", translationKey: "view.settings.general.automation.auto_invite_request_accept_off" },
                         { label: "All Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_favs" },
@@ -205,35 +199,35 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.zoom') }}
                         el-input-number(size="small" v-model="zoomLevel" @change="setZoomLevel" :precision="0" style="width:128px")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.appearance.vrcplus_profile_icons') }}
-                        el-switch(v-model="displayVRCPlusIconsAsAvatar" @change="saveOpenVROption")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.appearance.nicknames') }}
-                        el-switch(v-model="hideNicknames" :active-value="false" :inactive-value="true" @change="saveOpenVROption")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.appearance.tooltips') }}
-                        el-switch(v-model="hideTooltips" :active-value="false" :inactive-value="true" @change="saveOpenVROption")
+                    +simpleSwitch('view.settings.appearance.appearance.vrcplus_profile_icons', "displayVRCPlusIconsAsAvatar", "saveOpenVROption")
+                    +simpleSwitch('view.settings.appearance.appearance.nicknames', "hideNicknames", "saveOpenVROption")
+                    +simpleSwitch('view.settings.appearance.appearance.tooltips', "hideTooltips", "saveOpenVROption")                    
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.sort_favorite_by') }}
-                        el-switch(v-model="sortFavorites" :inactive-text="$t('view.settings.appearance.appearance.sort_favorite_by_name')" :active-text="$t('view.settings.appearance.appearance.sort_favorite_by_date')" @change="saveSortFavoritesOption")
+                        el-radio-group(v-model="sortFavorites" @change="saveSortFavoritesOption")
+                            el-radio(:label="false") {{ $t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                            el-radio(:label="true") {{ $t('view.settings.appearance.appearance.sort_favorite_by_date') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.sort_instance_users_by') }}
-                        el-switch(v-model="instanceUsersSortAlphabetical" :inactive-text="$t('view.settings.appearance.appearance.sort_instance_users_by_time')" :active-text="$t('view.settings.appearance.appearance.sort_instance_users_by_alphabet')" @change="saveOpenVROption")
+                        el-radio-group(v-model="instanceUsersSortAlphabetical" @change="saveOpenVROption")
+                            el-radio(:label="false") {{ $t('view.settings.appearance.appearance.sort_instance_users_by_time') }}
+                            el-radio(:label="true") {{ $t('view.settings.appearance.appearance.sort_instance_users_by_alphabet') }}
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-notebook-1" @click="promptMaxTableSizeDialog") {{ $t('view.settings.appearance.appearance.table_max_size') }}
-                    div.options-container-item
+                        el-button(size="small" icon="el-icon-notebook-1" @click="promptMaxTableSizeDialog" style="margin-right:10px") {{ $t('view.settings.appearance.appearance.table_max_size') }}
                         el-dropdown(@click.native.stop trigger="click" size="small")
-                            el-button(size="mini")
+                            el-button(size="small")
                                 span {{ $t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-for="(number) in [10, 15, 25, 50, 100]" v-text="number" @click.native="setTablePageSize(number)")
+                    div.options-container-item
                 //- Appearance | Time/Date
                 div.options-container
                     span.header {{ $t('view.settings.appearance.timedate.header') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.timedate.time_format') }}
-                        el-switch(v-model="dtHour12" @change="setDatetimeFormat" :inactive-text="$t('view.settings.appearance.timedate.time_format_24')" :active-text="$t('view.settings.appearance.timedate.time_format_12')")
+                        el-radio-group(v-model="dtHour12" @change="setDatetimeFormat")
+                            el-radio(:label="true") {{ $t('view.settings.appearance.timedate.time_format_12') }}
+                            el-radio(:label="false") {{ $t('view.settings.appearance.timedate.time_format_24') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.timedate.force_iso_date_format') }}
                         el-switch(v-model="dtIsoFormat" @change="setDatetimeFormat")
@@ -278,12 +272,8 @@ mixin settingsTab()
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.user_dialog.vrchat_notes') }}
-                        el-switch(v-model="hideUserNotes" :active-value="false" :inactive-value="true" @change="saveUserDialogOption")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.user_dialog.vrcx_memos') }}
-                        el-switch(v-model="hideUserMemos" :active-value="false" :inactive-value="true" @change="saveUserDialogOption")
+                    +simpleSwitch("view.settings.appearance.user_dialog.vrchat_notes", "hideUserNotes", "saveUserDialogOption")
+                    +simpleSwitch("view.settings.appearance.user_dialog.vrcx_memos", "hideUserMemos", "saveUserDialogOption")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes') }}
                         br
@@ -291,9 +281,7 @@ mixin settingsTab()
                 //- Appearance | Friend Log
                 div.options-container
                     span.header {{ $t('view.settings.appearance.friend_log.header') }}
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.friend_log.hide_unfriends') }}
-                        el-switch(v-model="hideUnfriends" @change="saveFriendLogOptions")
+                    +simpleSwitch("view.settings.appearance.friend_log.hide_unfriends", "hideUnfriends", "saveFriendLogOptions")
                 //- Appearance | User Colors
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_colors.header') }}
@@ -333,25 +321,20 @@ mixin settingsTab()
                 div.options-container
                     span.sub-header {{ $t('view.settings.notifications.notifications.steamvr_notifications.header') }}
                     div.options-container-item
-                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay') }}
-                        el-switch(v-model="openVR" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay", "openVR", "saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications') }}
                         el-switch(v-model="overlayNotifications" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
                     div.options-container-item
-                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications') }}
-                        el-switch(v-model="xsNotifications" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications", "xsNotifications", "saveOpenVROption")
                     div.options-container-item
-                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications') }}
-                        el-switch(v-model="ovrtHudNotifications" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications", "ovrtHudNotifications", "saveOpenVROption")
                     div.options-container-item
-                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications') }}
-                        el-switch(v-model="ovrtWristNotifications" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications", "ovrtWristNotifications", "saveOpenVROption")
                     div.options-container-item
-                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.user_images') }}
-                        el-switch(v-model="imageNotifications" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.user_images", "imageNotifications", "saveOpenVROption")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout') }}
                 //- Notifications | Notifications | Desktop Notifications
@@ -394,8 +377,11 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames') }}
                         el-switch(v-model="notificationTTSNickName" @change="saveOpenVROption" :disabled="notificationTTS === 'Never'")
                     div.options-container-item
-                        el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
-                        el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
+                        span.name {{ $t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder') }}
+                        el-switch(v-model="isTestTTSVisible")
+                        div(v-if="isTestTTSVisible" style="margin-top:5px")
+                            el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
+                            el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS" style="margin-top:5px") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
             //- Wrist Overlay Tab
             el-tab-pane(:label="$t('view.settings.category.wrist_overlay')")
                 //- Wrist Overlay | SteamVR Wrist Overlay
@@ -412,20 +398,22 @@ mixin settingsTab()
                         span {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.menu') }}
                         br
                     div.options-container-item
-                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.steamvr_overlay') }}
-                        el-switch(v-model="openVR" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.wrist_overlay.steamvr_wrist_overlay.steamvr_overlay", "openVR", "saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_overlay') }}
                         el-switch(v-model="overlayWrist" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
-                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds') }}
-                        el-switch(v-model="hidePrivateFromFeed" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds", "hidePrivateFromFeed", "saveOpenVROption")
                     div.options-container-item(style="min-width:118px")
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with') }}
-                        el-switch(v-model="openVRAlways" @change="saveOpenVROption" inactive-text="VRChat" active-text="SteamVR" :disabled="!openVR")
+                        el-radio-group(v-model="openVRAlways" @change="saveOpenVROption" :disabled="!openVR")
+                            el-radio(:label="false") {{ "VRChat" }}
+                            el-radio(:label="true") {{ "SteamVR" }}
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button') }}
-                        el-switch(v-model="overlaybutton" @change="saveOpenVROption" :inactive-text="$t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_grip')" :active-text="$t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_menu')" :disabled="!openVR || !overlayWrist")
+                        el-radio-group(v-model="overlaybutton" @change="saveOpenVROption"  :disabled="!openVR || !overlayWrist")
+                            el-radio(:label="false") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_grip') }}
+                            el-radio(:label="true") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_menu') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on') }}
                         el-radio-group(v-model="overlayHand" @change="saveOpenVROption" size="mini")
@@ -457,10 +445,7 @@ mixin settingsTab()
                     div.options-container-item
                         span {{ $t('view.settings.discord_presence.discord_presence.description') }}
                     div.options-container-item
-                        span.name {{ $t('view.settings.discord_presence.discord_presence.enable') }}
-                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.discord_presence.discord_presence.enable_tooltip')")
-                                i.el-icon-warning(style="cursor:pointer" @click="showVRChatConfig")
-                        el-switch(v-model="discordActive" @change="saveDiscordOption")
+                        +simpleSwitch("view.settings.discord_presence.discord_presence.enable", "discordActive", "saveDiscordOption", 'view.settings.discord_presence.discord_presence.enable_tooltip')
                     div.options-container-item
                         span.name {{ $t('view.settings.discord_presence.discord_presence.instance_type_player_count') }}
                         el-switch(v-model="discordInstance" @change="saveDiscordOption" :disabled="!discordActive")
@@ -535,8 +520,7 @@ mixin settingsTab()
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
                     div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.remote_database.enable') }}
-                        el-switch(v-model="avatarRemoteDatabase" @change="saveOpenVROption")
+                        +simpleSwitch("view.settings.advanced.advanced.remote_database.enable", "avatarRemoteDatabase", "saveOpenVROption")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog") {{ $t('view.settings.advanced.advanced.remote_database.avatar_database_provider') }}
                 //- Advanced | Automatic App Launcher
@@ -544,7 +528,7 @@ mixin settingsTab()
                     br
                     el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
                         el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.app_launcher.folder_tooltip')")
-                            i.el-icon-warning
+                            i.el-icon-info
                     +simpleSwitch("view.settings.advanced.advanced.app_launcher.enable", "enableAppLauncher", "updateAppLauncherSettings")
                     +simpleSwitch("view.settings.advanced.advanced.app_launcher.auto_close", "enableAppLauncherAutoClose", "updateAppLauncherSettings")
                 //- Advanced | Screenshot Helper
@@ -555,8 +539,7 @@ mixin settingsTab()
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')")
                                 i.el-icon-info
                     div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.enable') }}
-                        el-switch(v-model="screenshotHelper" @change="saveScreenshotHelper")
+                        +simpleSwitch("view.settings.advanced.advanced.screenshot_helper.enable", "screenshotHelper", "saveScreenshotHelper")
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.modify_filename') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')")
@@ -581,7 +564,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.video_progress_pie.enable') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')")
-                                i.el-icon-warning
+                                i.el-icon-info
                         el-switch(v-model="progressPie" @change="changeYouTubeApi" :disabled="!openVR")
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.video_progress_pie.dance_world_only') }}
@@ -594,7 +577,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.photon.event_hud.enable') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.photon.event_hud.enable_tooltip')")
-                                i.el-icon-warning
+                                i.el-icon-info
                         el-switch(v-model="photonEventOverlay" @change="saveEventOverlay" :disabled="!openVR")
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.photon.event_hud.filter') }}
@@ -612,7 +595,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.photon.timeout_hud.enable') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.photon.timeout_hud.enable_tooltip')")
-                                i.el-icon-warning
+                                i.el-icon-info
                         el-switch(v-model="timeoutHudOverlay" @change="saveEventOverlay" :disabled="!openVR")
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.photon.timeout_hud.filter') }}
@@ -627,8 +610,7 @@ mixin settingsTab()
                     span.header {{ $t('view.settings.advanced.advanced.cache_debug.header') }}
                     br
                     div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}
-                        el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")
+                        +simpleSwitch("view.settings.advanced.advanced.cache_debug.disable_gamelog", "gameLogDisabled", "disableGameLogDialog")
                         span.name(style="margin-left:15px") {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.cache_debug.user_cache') }} #[span(v-text="API.cachedUsers.size")]

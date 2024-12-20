@@ -12,17 +12,17 @@ mixin settings()
         span GB
         el-tooltip(placement="top" :content="$t('dialog.config_json.refresh')" :disabled="hideTooltips")
             el-button(type="default" :loading="VRChatCacheSizeLoading" @click="getVRChatCacheSize" size="small" icon="el-icon-refresh" circle style="margin-left:5px")
-        br
-        span {{ $t('dialog.config_json.delete_all_cache') }}
-        el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="showDeleteAllVRChatCacheConfirm()") {{ $t('dialog.config_json.delete_cache') }}
-        br
-        span {{ $t('dialog.config_json.delete_old_cache') }}
-        el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") {{ $t('dialog.config_json.sweep_cache') }}
-        br
+        div(style="margin-top:10px")
+            span(style="margin-right:5px") {{ $t('dialog.config_json.delete_all_cache') }}
+            el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="showDeleteAllVRChatCacheConfirm()") {{ $t('dialog.config_json.delete_cache') }}
+        div(style="margin-top:10px")
+            span(style="margin-right:5px") {{ $t('dialog.config_json.delete_old_cache') }}
+            el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") {{ $t('dialog.config_json.sweep_cache') }}
         div(style="display:inline-block;margin-top:10px" v-for="(item, value) in VRChatConfigList" :key="value")
             span(v-text="item.name" style="word-break:keep-all")
             |:
-            el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini" :type="item.type?item.type:'text'" :min="item.min" :max="item.max")
+            el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini" :type="item.type?item.type:'text'" :min="item.min" :max="item.max" style="margin-top:5px")
+        br
         div(style="display:inline-block;margin-top:10px")
             span {{ $t('dialog.config_json.camera_resolution') }}
             br
@@ -52,9 +52,12 @@ mixin settings()
         el-checkbox(v-model="VRChatConfigFile.picture_output_split_by_date" style="margin-top:5px;display:block" :checked="true") {{ $t('dialog.config_json.picture_sort_by_date') }}
         el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") {{ $t('dialog.config_json.disable_discord_presence') }}
         template(#footer)
-            el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") {{ $t('dialog.config_json.vrchat_docs') }}
-            el-button(size="small" @click="VRChatConfigDialog.visible = false") {{ $t('dialog.config_json.cancel') }}
-            el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") {{ $t('dialog.config_json.save') }}
+            div(style="display:flex;align-items:center;justify-content:space-between")
+                div
+                    el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") {{ $t('dialog.config_json.vrchat_docs') }}
+                div
+                    el-button(size="small" @click="VRChatConfigDialog.visible = false") {{ $t('dialog.config_json.cancel') }}
+                    el-button(size="small" type="primary" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") {{ $t('dialog.config_json.save') }}
 
     //- dialog: YouTube Api Dialog
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" :title="$t('dialog.youtube_api.header')" width="400px")
@@ -150,13 +153,10 @@ mixin settings()
     //- dialog: Registry Auto Backup
     el-dialog.x-dialog(:before-close="beforeDialogClose" @closed="clearVrcRegistryDialog" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="registryBackupDialog" :visible.sync="registryBackupDialog.visible" :title="$t('dialog.registry_backup.header')" width="600px")
         div(v-if="registryBackupDialog.visible" style="margin-top:10px")
-            div.options-container
-                div.options-container-item
-                    span.name {{ $t('dialog.registry_backup.auto_backup') }}
+            div.options-container(style="padding:0")
+                div.options-container-item(style="display:flex;align-items:center;justify-content:space-between")
+                    span.name(style="margin-right:24px") {{ $t('dialog.registry_backup.auto_backup') }}
                     el-switch(v-model="vrcRegistryAutoBackup" @change="saveVrcRegistryAutoBackup")
-            el-button(@click="promptVrcRegistryBackupName" size="small") {{ $t('dialog.registry_backup.backup') }}
-            el-button(@click="AppApi.OpenVrcRegJsonFileDialog()" size="small") {{ $t('dialog.registry_backup.restore_from_file') }}
-            el-button(@click="deleteVrcRegistry" size="small") {{ $t('dialog.registry_backup.reset') }}
             data-tables(v-bind="registryBackupTable" style="margin-top:10px")
                 el-table-column(:label="$t('dialog.registry_backup.name')" prop="name")
                 el-table-column(:label="$t('dialog.registry_backup.date')" prop="date")
@@ -170,6 +170,12 @@ mixin settings()
                             el-button(type="text" icon="el-icon-download" size="mini" @click="saveVrcRegistryBackupToFile(scope.row)")
                         el-tooltip(placement="top" :content="$t('dialog.registry_backup.delete')" :disabled="hideTooltips")
                             el-button(type="text" icon="el-icon-delete" size="mini" @click="deleteVrcRegistryBackup(scope.row)")
+            div(style="display:flex;align-items:center;justify-content:space-between;margin-top:10px")
+                el-button(type="danger" @click="deleteVrcRegistry" size="small") {{ $t('dialog.registry_backup.reset') }}
+                div
+                    el-button(@click="promptVrcRegistryBackupName" size="small") {{ $t('dialog.registry_backup.backup') }}
+                    el-button(@click="AppApi.OpenVrcRegJsonFileDialog()" size="small") {{ $t('dialog.registry_backup.restore_from_file') }}
+                
 
     //- dialog: Enable primary password
     el-dialog.x-dialog(

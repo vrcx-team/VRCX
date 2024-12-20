@@ -193,7 +193,7 @@ mixin userDialog()
                                     avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id" :avatartags="userDialog.ref.currentAvatarTags")
                         .x-friend-item(style="width:100%;cursor:default")
                             .detail
-                                span.name {{ $t('dialog.user.info.represented_group') }}
+                                span.name(style="margin-bottom:5px") {{ $t('dialog.user.info.represented_group') }}
                                 .extra(v-if="userDialog.representedGroup?.isRepresenting")
                                     div(style="display:inline-block;flex:none;margin-right:5px")
                                         el-popover(placement="right" width="500px" trigger="click")
@@ -318,20 +318,22 @@ mixin userDialog()
                                                 el-dropdown-item(@click.native="copyUserURL(userDialog.id)") {{ $t('dialog.user.info.copy_url') }}
                                                 el-dropdown-item(@click.native="copyUserDisplayName(userDialog.ref.displayName)") {{ $t('dialog.user.info.copy_display_name') }}
                 el-tab-pane(:label="$t('dialog.user.groups.header')")
-                    el-button(type="default" :loading="userDialog.isGroupsLoading" @click="getUserGroups(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
-                    span(style="margin-left:5px") {{ $t('dialog.user.groups.total_count', { count: userGroups.groups.length }) }}
-                    template(v-if="userDialogGroupEditMode")
-                        span(style="margin-left:10px;color:#909399;font-size:10px") {{ $t('dialog.user.groups.hold_shift') }}
-                    div(style="float:right")
-                        template(v-if="!userDialogGroupEditMode")
-                            span(style="margin-right:5px") {{ $t('dialog.user.groups.sort_by') }}
-                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isGroupsLoading")
-                                el-button(size="mini")
-                                    span {{ userDialog.groupSorting.name }} #[i.el-icon-arrow-down.el-icon--right]
-                                el-dropdown-menu(#default="dropdown")
-                                    el-dropdown-item(:disabled="item === userDialogGroupSortingOptions.inGame && userDialog.id !== API.currentUser.id" v-for="(item) in userDialogGroupSortingOptions" v-text="item.name" @click.native="setUserDialogGroupSorting(item)")
-                        el-button(v-if="userDialogGroupEditMode" size="small" @click="exitEditModeCurrentUserGroups" icon="el-icon-edit" style="margin-right:5px") {{ $t('dialog.user.groups.exit_edit_mode') }}
-                        el-button(v-else-if="API.currentUser.id === userDialog.id" size="small" @click="editModeCurrentUserGroups" icon="el-icon-edit" style="margin-right:5px") {{ $t('dialog.user.groups.edit_mode') }}
+                    div(style="display:flex;align-items:center;justify-content:space-between")
+                        div(style="display:flex;align-items:center")
+                            el-button(type="default" :loading="userDialog.isGroupsLoading" @click="getUserGroups(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
+                            span(style="margin-left:5px") {{ $t('dialog.user.groups.total_count', { count: userGroups.groups.length }) }}
+                        template(v-if="userDialogGroupEditMode")
+                            span(style="margin-left:10px;color:#909399;font-size:10px") {{ $t('dialog.user.groups.hold_shift') }}
+                        div(style="display:flex;align-items:center;")
+                            template(v-if="!userDialogGroupEditMode")
+                                span(style="margin-right:5px") {{ $t('dialog.user.groups.sort_by') }}
+                                el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isGroupsLoading")
+                                    el-button(size="mini")
+                                        span {{ userDialog.groupSorting.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                    el-dropdown-menu(#default="dropdown")
+                                        el-dropdown-item(:disabled="item === userDialogGroupSortingOptions.inGame && userDialog.id !== API.currentUser.id" v-for="(item) in userDialogGroupSortingOptions" v-text="item.name" @click.native="setUserDialogGroupSorting(item)")
+                            el-button(v-if="userDialogGroupEditMode" size="small" @click="exitEditModeCurrentUserGroups" icon="el-icon-edit" style="margin-right:5px;height:29px;padding:7px 15px;") {{ $t('dialog.user.groups.exit_edit_mode') }}
+                            el-button(v-else-if="API.currentUser.id === userDialog.id" size="small" @click="editModeCurrentUserGroups" icon="el-icon-edit" style="margin-right:5px;height:29px;padding: 7px 15px;") {{ $t('dialog.user.groups.edit_mode') }}
                     div(v-loading="userDialog.isGroupsLoading" style="margin-top:10px")
                         template(v-if="userDialogGroupEditMode")
                             .x-friend-list(style="margin-top:10px;margin-bottom:15px;max-height:unset")
@@ -439,21 +441,23 @@ mixin userDialog()
                                                     i.el-icon-view(style="margin-right:5px")
                                                 span ({{ group.memberCount }})
                 el-tab-pane(:label="$t('dialog.user.worlds.header')")
-                    el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
-                    span(style="margin-left:5px") {{ $t('dialog.user.worlds.total_count', { count: userDialog.worlds.length }) }}
-                    div(style="float:right")
-                        span(style="margin-right:5px") {{ $t('dialog.user.worlds.sort_by') }}
-                        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isWorldsLoading")
-                            el-button(size="mini")
-                                span {{ userDialog.worldSorting.name }} #[i.el-icon-arrow-down.el-icon--right]
-                            el-dropdown-menu(#default="dropdown")
-                                el-dropdown-item(v-for="(item) in userDialogWorldSortingOptions" v-text="item.name" @click.native="setUserDialogWorldSorting(item)")
-                        span(style="margin-right:5px") {{ $t('dialog.user.worlds.order_by') }}
-                        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isWorldsLoading")
-                            el-button(size="mini")
-                                span {{ userDialog.worldOrder.name }} #[i.el-icon-arrow-down.el-icon--right]
-                            el-dropdown-menu(#default="dropdown")
-                                el-dropdown-item(v-for="(item) in userDialogWorldOrderOptions" v-text="item.name" @click.native="setUserDialogWorldOrder(item)")
+                    div(style="display:flex;align-items:center;justify-content:space-between")
+                        div(style="display:flex;align-items:center;")
+                            el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
+                            span(style="margin-left:5px") {{ $t('dialog.user.worlds.total_count', { count: userDialog.worlds.length }) }}
+                        div(style="display:flex;align-items:center")
+                            span(style="margin-right:5px") {{ $t('dialog.user.worlds.sort_by') }}
+                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isWorldsLoading")
+                                el-button(size="mini")
+                                    span {{ userDialog.worldSorting.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                el-dropdown-menu(#default="dropdown")
+                                    el-dropdown-item(v-for="(item) in userDialogWorldSortingOptions" v-text="item.name" @click.native="setUserDialogWorldSorting(item)")
+                            span(style="margin:0 5px") {{ $t('dialog.user.worlds.order_by') }}
+                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isWorldsLoading")
+                                el-button(size="mini")
+                                    span {{ userDialog.worldOrder.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                el-dropdown-menu(#default="dropdown")
+                                    el-dropdown-item(v-for="(item) in userDialogWorldOrderOptions" v-text="item.name" @click.native="setUserDialogWorldOrder(item)")
                     .x-friend-list(v-loading="userDialog.isWorldsLoading" style="margin-top:10px;min-height:60px")
                         .x-friend-item(v-for="world in userDialog.worlds" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item-border")
                             .avatar
@@ -478,16 +482,20 @@ mixin userDialog()
                                             span.name(v-text="world.name")
                                             span.extra(v-if="world.occupants") ({{ world.occupants }})
                 el-tab-pane(:label="$t('dialog.user.avatars.header')")
-                    el-button(v-if="userDialog.ref.id === API.currentUser.id" type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
-                    el-button(v-else type="default" :loading="userDialog.isAvatarsLoading" @click="setUserDialogAvatarsRemote(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
-                    span(style="margin-left:5px") {{ $t('dialog.user.avatars.total_count', { count: userDialogAvatars.length }) }}
-                    el-radio-group(v-if="userDialog.ref.id === API.currentUser.id" v-model="userDialog.avatarSorting" size="mini" style="margin-left:30px;margin-right:30px" @change="changeUserDialogAvatarSorting")
-                        el-radio(label="name") {{ $t('dialog.user.avatars.sort_by_name') }}
-                        el-radio(label="update") {{ $t('dialog.user.avatars.sort_by_update') }}
-                    el-radio-group(v-if="userDialog.ref.id === API.currentUser.id" v-model="userDialog.avatarReleaseStatus" size="mini" style="margin-left:30px")
-                        el-radio(label="all") {{ $t('dialog.user.avatars.all') }}
-                        el-radio(label="public") {{ $t('dialog.user.avatars.public') }}
-                        el-radio(label="private") {{ $t('dialog.user.avatars.private') }}
+                    div(style="display:flex;align-items:center;justify-content:space-between")
+                        div(style="display:flex;align-items:center")
+                            el-button(v-if="userDialog.ref.id === API.currentUser.id" type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
+                            el-button(v-else type="default" :loading="userDialog.isAvatarsLoading" @click="setUserDialogAvatarsRemote(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
+                            span(style="margin-left:5px") {{ $t('dialog.user.avatars.total_count', { count: userDialogAvatars.length }) }}
+                        div
+                            el-radio-group(v-if="userDialog.ref.id === API.currentUser.id" v-model="userDialog.avatarSorting" size="mini" @change="changeUserDialogAvatarSorting")
+                                el-radio(label="name") {{ $t('dialog.user.avatars.sort_by_name') }}
+                                el-radio(label="update") {{ $t('dialog.user.avatars.sort_by_update') }}
+                            el-divider(direction="vertical")
+                            el-radio-group(v-if="userDialog.ref.id === API.currentUser.id" v-model="userDialog.avatarReleaseStatus" size="mini")
+                                el-radio(label="all") {{ $t('dialog.user.avatars.all') }}
+                                el-radio(label="public") {{ $t('dialog.user.avatars.public') }}
+                                el-radio(label="private") {{ $t('dialog.user.avatars.private') }}
                     .x-friend-list(style="margin-top:10px;min-height:60px")
                         .x-friend-item(v-for="avatar in userDialogAvatars" @click="showAvatarDialog(avatar.id)" class="x-friend-item-border")
                             .avatar

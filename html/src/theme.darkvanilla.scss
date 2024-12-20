@@ -3,7 +3,7 @@
  * https://github.com/MintLily/Dark-Vanilla
  */
 
- :root {
+:root {
     --ThemeName: 'Dark Vanilla';
     --ThemeVers: '2.0.2';
     --ThemeAuth: 'MintLily';
@@ -681,4 +681,14 @@ i[class='el-icon-star-off']:not(.el-menu-item div.el-tooltip i) {
 
 ::-webkit-scrollbar-thumb {
     background: var(--dv_bg-bot);
+}
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background-color: transparent;
+}
+
+.el-collapse-item .el-tag--mini {
+    border: transparent;
+    background-color: var(--dv_bg-bot);
 }

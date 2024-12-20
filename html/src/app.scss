@@ -407,7 +407,6 @@ img.friends-list-avatar {
     object-fit: cover;
 }
 
-.x-friend-item > .avatar.offline > img,
 .x-friend-item > .avatar.active > img {
     filter: grayscale(1);
 }
@@ -731,7 +730,21 @@ i.x-status-icon.red {
 
 .options-container-item .name {
     display: inline-block;
-    min-width: 175px;
+    min-width: 225px;
+}
+
+.simple-switch {
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+}
+
+.simple-switch .name {
+    flex-basis: 225px;
+}
+
+.simple-switch .switch {
+    flex-shrink: 0;
 }
 
 .toggle-switch {
@@ -749,7 +762,7 @@ i.x-status-icon.red {
 .toggle-list .toggle-name {
     display: inline-block;
     min-width: 190px;
-    padding-right: 5px;
+    padding-right: 10px;
     text-align: right;
 }
 
@@ -913,4 +926,28 @@ i.x-status-icon.red {
 
 .el-pagination .el-input .el-input__icon {
     line-height: 22px;
+}
+
+// User dialog memo: tag line-height
+.el-dialog__body .el-tag--mini {
+    line-height: 17px;
+}
+
+// feed table detail time tag line-height
+.el-table__expanded-cell .el-tag--mini {
+    line-height: 17px;
+}
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background: #f0f0f0;
+}
+
+// Align the left page with the right friend bar
+.x-app > .x-container {
+    padding-top: 15px;
+}
+
+.el-collapse-item .el-tag--mini {
+    line-height: 17px;
 }

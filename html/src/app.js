@@ -7939,6 +7939,10 @@ speechSynthesis.getVoices();
         'VRCX_notificationTTSNickName',
         false
     );
+
+    // It's not necessary to store it in configRepo because it's rarely used.
+    $app.data.isTestTTSVisible = false;
+    
     $app.data.notificationTTSVoice = await configRepository.getString(
         'VRCX_notificationTTSVoice',
         '0'
@@ -17219,6 +17223,18 @@ speechSynthesis.getVoices();
         return style;
     };
 
+    $app.methods.userFavoriteWorldsStatusForFavTab = function (visibility) {
+        let style = '';
+        if (visibility === 'public') {
+            style = '';
+        } else if (visibility === 'friends') {
+            style = 'success';
+        } else {
+            style = 'info';
+        }
+        return style;
+    };
+
     $app.methods.changeWorldGroupVisibility = function (name, visibility) {
         var params = {
             type: 'world',
@@ -19690,6 +19706,23 @@ speechSynthesis.getVoices();
         this.worldExportDialogVisible = true;
     };
 
+    $app.methods.handleCopyWorldExportData = function (event) {
+        event.target.tagName === 'TEXTAREA' && event.target.select();
+        navigator.clipboard
+            .writeText(this.worldExportContent)
+            .then(() => {
+                this.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                this.$message.error('Copy failed!');
+            });
+    };
+
     $app.methods.updateWorldExportDialog = function () {
         const formatter = function (str) {
             if (/[\x00-\x1f,"]/.test(str) === true) {
@@ -19955,6 +19988,23 @@ speechSynthesis.getVoices();
         this.avatarExportDialogVisible = true;
     };
 
+    $app.methods.handleCopyAvatarExportData = function (event) {
+        event.target.tagName === 'TEXTAREA' && event.target.select();
+        navigator.clipboard
+            .writeText(this.avatarExportContent)
+            .then(() => {
+                this.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                this.$message.error('Copy failed!');
+            });
+    };
+
     /**
      * Update the content of the avatar export dialog based on the selected options
      */
@@ -20194,6 +20244,23 @@ speechSynthesis.getVoices();
         this.friendExportFavoriteGroup = null;
         this.updateFriendExportDialog();
         this.friendExportDialogVisible = true;
+    };
+
+    $app.methods.handleCopyFriendExportData = function (event) {
+        event.target.tagName === 'TEXTAREA' && event.target.select();
+        navigator.clipboard
+            .writeText(this.friendExportContent)
+            .then(() => {
+                this.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                this.$message.error('Copy failed!');
+            });
     };
 
     $app.methods.updateFriendExportDialog = function () {

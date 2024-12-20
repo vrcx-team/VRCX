@@ -73,8 +73,13 @@ a {
 .el-textarea__inner,
 .el-textarea .el-input__count,
 .el-input .el-input__count .el-input__count-inner {
-    background: var(--top) !important;
+    background: transparent;
     border: var(--top-border) !important;
+}
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background: transparent;
 }
 
 .el-table th.is-leaf {
@@ -307,4 +312,9 @@ path[stroke='#20a0ff'] {
 }
 path[stroke='#e5e9f2'] {
     stroke: var(--farback) !important;
+}
+
+.el-collapse-item .el-tag--mini {
+    border: transparent;
+    background-color: #333 !important;
 }
