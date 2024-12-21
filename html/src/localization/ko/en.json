@@ -343,26 +343,21 @@
                         "user_images": "유저 이미지 표시 (느림)",
                         "notification_timeout": "알림 시간 설정"
                     },
+                    "conditions": {
+                        "never": "안함",
+                        "desktop": "데스크톱 모드",
+                        "inside_vr": "VR을 쓰고 있을 때",
+                        "outside_vr": "VR을 벗고 있을 때",
+                        "always": "항상"
+                    },
                     "desktop_notifications": {
                         "header": "데스크톱 알림",
                         "when_to_display": "표시 조건",
-                        "when_to_display_never": "안함",
-                        "when_to_display_desktop": "데스크톱 모드",
-                        "when_to_display_inside_vr": "VR을 쓰고 있을 때",
-                        "when_to_display_outside_vr": "VR을 벗고 있을 때",
-                        "when_to_display_game_closed": "VRChat을 하지 않을 때",
-                        "when_to_display_game_running": "VRChat을 할 때",
-                        "when_to_display_always": "항상",
                         "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
                         "when_to_play": "알림 TTS 재생 조건",
-                        "when_to_play_never": "안함",
-                        "when_to_play_inside_vr": "VR을 쓰고 있을 때",
-                        "when_to_play_game_closed": "VRChat을 하지 않을 때",
-                        "when_to_play_game_running": "VRChat을 할 때",
-                        "when_to_play_always": "항상",
                         "tts_voice": "TTS 목소리"
                     }
                 }

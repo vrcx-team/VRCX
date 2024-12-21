@@ -7915,6 +7915,10 @@ speechSynthesis.getVoices();
         'VRCX_afkDesktopToast',
         false
     );
+    $app.data.overlayToast = await configRepository.getString(
+        'VRCX_overlayToast',
+        'Game Running'
+    )
     $app.data.minimalFeed = await configRepository.getBool(
         'VRCX_minimalFeed',
         false
@@ -8128,6 +8132,10 @@ speechSynthesis.getVoices();
             'VRCX_afkDesktopToast',
             this.afkDesktopToast
         );
+        await configRepository.setString(
+            'VRCX_overlayToast',
+            this.overlayToast
+        )
         await configRepository.setBool(
             'VRCX_notificationTTSNickName',
             this.notificationTTSNickName

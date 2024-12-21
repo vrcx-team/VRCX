@@ -349,26 +349,23 @@
                         "user_images": "User Images (slower)",
                         "notification_timeout": "Notification Timeout"
                     },
+                    "conditions": {
+                        "never": "Never",
+                        "desktop": "Desktop Mode",
+                        "inside_vr": "Inside VR",
+                        "outside_vr": "Outside VR",
+                        "inside_vrchat": "Inside VRChat",
+                        "outside_vrchat": "Outside VRChat",
+                        "always": "Always"
+                    },
                     "desktop_notifications": {
                         "header": "Desktop Notifications",
                         "when_to_display": "When to display",
-                        "when_to_display_never": "Never",
-                        "when_to_display_desktop": "Desktop Mode",
-                        "when_to_display_inside_vr": "Inside VR",
-                        "when_to_display_outside_vr": "Outside VR",
-                        "when_to_display_game_closed": "Game Closed",
-                        "when_to_display_game_running": "Game Running",
-                        "when_to_display_always": "Always",
                         "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
                         "when_to_play": "Notification TTS. When to play",
-                        "when_to_play_never": "Never",
-                        "when_to_play_inside_vr": "Inside VR",
-                        "when_to_play_game_closed": "Game Closed",
-                        "when_to_play_game_running": "Game Running",
-                        "when_to_play_always": "Always",
                         "tts_voice": "TTS Voice",
                         "use_memo_nicknames": "Use Memo Nicknames",
                         "play": "Play",

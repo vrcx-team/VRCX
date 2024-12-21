@@ -343,26 +343,21 @@
                         "user_images": "Ảnh người chơi (chậm hơn)",
                         "notification_timeout": "Thời gian chờ thông báo tối đa (Timeout)"
                     },
+                    "conditions": {
+                        "never": "Không bao giờ",
+                        "desktop": "Trên chế độ Desktop",
+                        "inside_vr": "Trong VR",
+                        "outside_vr": "Ngoài VR",
+                        "always": "Luôn luôn"
+                    },
                     "desktop_notifications": {
                         "header": "Thông báo Desktop",
                         "when_to_display": "Khi nào hiển thị",
-                        "when_to_display_never": "Không bao giờ",
-                        "when_to_display_desktop": "Trên chế độ Desktop",
-                        "when_to_display_inside_vr": "Trong VR",
-                        "when_to_display_outside_vr": "Ngoài VR",
-                        "when_to_display_game_closed": "Đóng trò chơi",
-                        "when_to_display_game_running": "Khi trò chơi đang chạy",
-                        "when_to_display_always": "Luôn luôn",
                         "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
                         "when_to_play": "Thông báo TTS. khi nào báo",
-                        "when_to_play_never": "Không bao giờ",
-                        "when_to_play_inside_vr": "Trong VR",
-                        "when_to_play_game_closed": "Đóng trò chơi",
-                        "when_to_play_game_running": "Khi trò chơi đang chạy",
-                        "when_to_play_always": "Luôn luôn",
                         "tts_voice": "Giọng TTS"
                     }
                 }

@@ -343,26 +343,21 @@
                         "user_images": "玩家照片（較慢）",
                         "notification_timeout": "通知時長"
                     },
+                    "conditions": {
+                        "never": "永不",
+                        "desktop": "在桌面模式時",
+                        "inside_vr": "在 VR 裡時",
+                        "outside_vr": "在 VR 外時",
+                        "always": "總是"
+                    },
                     "desktop_notifications": {
                         "header": "桌面通知",
                         "when_to_display": "顯示時機",
-                        "when_to_display_never": "永不",
-                        "when_to_display_desktop": "在桌面模式時",
-                        "when_to_display_inside_vr": "在 VR 裡時",
-                        "when_to_display_outside_vr": "在 VR 外時",
-                        "when_to_display_game_closed": "遊戲關閉時",
-                        "when_to_display_game_running": "遊戲執行中",
-                        "when_to_display_always": "總是",
                         "desktop_notification_while_afk": "在 AFK 時顯示桌面通知"
                     },
                     "text_to_speech": {
                         "header": "文字轉語音",
                         "when_to_play": "通知文字轉語音播放時機",
-                        "when_to_play_never": "永不",
-                        "when_to_play_inside_vr": "在 VR 裡時",
-                        "when_to_play_game_closed": "遊戲關閉時",
-                        "when_to_play_game_running": "遊戲執行中",
-                        "when_to_play_always": "總是",
                         "tts_voice": "語音樣式"
                     }
                 }

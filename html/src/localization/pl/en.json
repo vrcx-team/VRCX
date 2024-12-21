@@ -343,26 +343,21 @@
                         "user_images": "Obrazki użytkowników (wolniejsze)",
                         "notification_timeout": "Czas trwania powiadomień"
                     },
+                    "conditions": {
+                        "never": "Nigdy",
+                        "desktop": "Tryb PC",
+                        "inside_vr": "W VR",
+                        "outside_vr": "Poza VR",
+                        "always": "Zawsze"
+                    },
                     "desktop_notifications": {
                         "header": "Powiadomienia na pulpicie",
                         "when_to_display": "Kiedy wyświetlać",
-                        "when_to_display_never": "Nigdy",
-                        "when_to_display_desktop": "Tryb PC",
-                        "when_to_display_inside_vr": "W VR",
-                        "when_to_display_outside_vr": "Poza VR",
-                        "when_to_display_game_closed": "Gra wyłączona",
-                        "when_to_display_game_running": "Gra uruchomiona",
-                        "when_to_display_always": "Zawsze",
                         "desktop_notification_while_afk": "Powiadomienia na pulpicie podczas AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
                         "when_to_play": "Kiedy odtwarzać powiadomienia jako tekst-na-mowę",
-                        "when_to_play_never": "Nigdy",
-                        "when_to_play_inside_vr": "W VR",
-                        "when_to_play_game_closed": "Gra wyłączona",
-                        "when_to_play_game_running": "Gra uruchomiona",
-                        "when_to_play_always": "Zawsze",
                         "tts_voice": "Głos tekstu-na-mowę"
                     }
                 }

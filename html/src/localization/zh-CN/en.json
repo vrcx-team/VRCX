@@ -349,26 +349,21 @@
                         "user_images": "显示用户头像（较慢）",
                         "notification_timeout": "通知时长"
                     },
+                    "conditions": {
+                        "never": "永不",
+                        "desktop": "在桌面模式时",
+                        "inside_vr": "在 VR 里时",
+                        "outside_vr": "在 VR 外时",
+                        "always": "总是"
+                    },
                     "desktop_notifications": {
                         "header": "桌面通知",
                         "when_to_display": "何时显示",
-                        "when_to_display_never": "永不",
-                        "when_to_display_desktop": "在桌面模式时",
-                        "when_to_display_inside_vr": "在 VR 里时",
-                        "when_to_display_outside_vr": "在 VR 外时",
-                        "when_to_display_game_closed": "游戏关闭时",
-                        "when_to_display_game_running": "游戏运行时",
-                        "when_to_display_always": "总是",
                         "desktop_notification_while_afk": "当处于 AFK 状态时显示桌面通知"
                     },
                     "text_to_speech": {
                         "header": "文字转语音选项",
                         "when_to_play": "何时使用文字转语音",
-                        "when_to_play_never": "永不",
-                        "when_to_play_inside_vr": "在 VR 里时",
-                        "when_to_play_game_closed": "游戏关闭时",
-                        "when_to_play_game_running": "游戏运行时",
-                        "when_to_play_always": "总是",
                         "tts_voice": "TTS 语音样式",
                         "use_memo_nicknames": "使用备忘录昵称",
                         "play": "播放",
