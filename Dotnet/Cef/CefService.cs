@@ -52,6 +52,7 @@ namespace VRCX
             cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.CefCommandLineArgs.Add("disk-cache-size", "2147483647");
+            cefSettings.CefCommandLineArgs.Add("unsafely-disable-devtools-self-xss-warnings");
 
             if (WebApi.ProxySet)
             {
