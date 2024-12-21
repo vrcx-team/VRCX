@@ -347,26 +347,21 @@
                         "user_images": "Иконка пользователя (медленнее)",
                         "notification_timeout": "Время показа уведомлений"
                     },
+                    "conditions": {
+                        "never": "Никогда",
+                        "desktop": "Режим настольного ПК",
+                        "inside_vr": "В VR",
+                        "outside_vr": "Вне VR",
+                        "always": "Всегда"
+                    },
                     "desktop_notifications": {
                         "header": "Уведомления на рабочем столе",
                         "when_to_display": "Когда отображать",
-                        "when_to_display_never": "Никогда",
-                        "when_to_display_desktop": "Режим настольного ПК",
-                        "when_to_display_inside_vr": "В VR",
-                        "when_to_display_outside_vr": "Вне VR",
-                        "when_to_display_game_closed": "Игра закрыта",
-                        "when_to_display_game_running": "Игра запущена",
-                        "when_to_display_always": "Всегда",
                         "desktop_notification_while_afk": "Уведомления на рабочем столе при AFK"
                     },
                     "text_to_speech": {
                         "header": "Преобразование текста в речь",
                         "when_to_play": "TTS уведомления во время игры",
-                        "when_to_play_never": "Никогда",
-                        "when_to_play_inside_vr": "В VR",
-                        "when_to_play_game_closed": "Игра закрыта",
-                        "when_to_play_game_running": "Игра запущена",
-                        "when_to_play_always": "Всегда",
                         "tts_voice": "Синтезатор голоса",
                         "use_memo_nicknames": "Использовать прозвища из заметок"
                     }

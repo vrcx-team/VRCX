@@ -321,6 +321,14 @@ mixin settingsTab()
                 div.options-container
                     span.sub-header {{ $t('view.settings.notifications.notifications.steamvr_notifications.header') }}
                     div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
+                        br
+                        el-radio-group(v-model="overlayToast" @change="saveOpenVROption" size="mini" :disabled="(!overlayNotifications || !openVR) && !xsNotifications && !ovrtHudNotifications && !ovrtWristNotifications" style="margin-top:5px")
+                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
+                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
+                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
+                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
+                    div.options-container-item
                         +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay", "openVR", "saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications') }}
@@ -344,13 +352,13 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
                         br
                         el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini" style="margin-top:5px")
-                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_never') }}
-                            el-radio-button(label="Desktop Mode") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_desktop') }}
-                            el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_inside_vr') }}
-                            el-radio-button(label="Outside VR") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_outside_vr') }}
-                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_game_closed') }}
-                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_game_running') }}
-                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_always') }}
+                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
+                            el-radio-button(label="Desktop Mode") {{ $t('view.settings.notifications.notifications.conditions.desktop') }}
+                            el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.conditions.inside_vr') }}
+                            el-radio-button(label="Outside VR") {{ $t('view.settings.notifications.notifications.conditions.outside_vr') }}
+                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
+                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
+                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
                     div.options-container-item
                         span.name(style="min-width:225px") {{ $t('view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk') }}
                         el-switch(v-model="afkDesktopToast" @change="saveOpenVROption")
@@ -361,11 +369,11 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play') }}
                         br
                         el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini" style="margin-top:5px")
-                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_never') }}
-                            el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_inside_vr') }}
-                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_game_closed') }}
-                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_game_running') }}
-                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play_always') }}
+                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
+                            el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.conditions.inside_vr') }}
+                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
+                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
+                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.text_to_speech.tts_voice') }}
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")

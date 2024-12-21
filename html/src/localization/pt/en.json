@@ -343,26 +343,21 @@
                         "user_images": "Imagens do Usuário (mais lento)",
                         "notification_timeout": "Tempo limite da Notificação"
                     },
+                    "conditions": {
+                        "never": "Nunca",
+                        "desktop": "Modo Desktop",
+                        "inside_vr": "Dentro do VR",
+                        "outside_vr": "Fora do VR",
+                        "always": "Sempre"
+                    },
                     "desktop_notifications": {
                         "header": "Notificações do Desktop",
                         "when_to_display": "Quando mostrar",
-                        "when_to_display_never": "Nunca",
-                        "when_to_display_desktop": "Modo Desktop",
-                        "when_to_display_inside_vr": "Dentro do VR",
-                        "when_to_display_outside_vr": "Fora do VR",
-                        "when_to_display_game_closed": "Jogo Fechado",
-                        "when_to_display_game_running": "Jogo em Execução",
-                        "when_to_display_always": "Sempre",
                         "desktop_notification_while_afk": "Notificações no Desktop Enquanto AFK"
                     },
                     "text_to_speech": {
                         "header": "Texto-Para-Fala",
                         "when_to_play": "Nitificação TTS. Quando deseja reproduzir",
-                        "when_to_play_never": "Nunca",
-                        "when_to_play_inside_vr": "Dentro do VR",
-                        "when_to_play_game_closed": "Jogo Fechado",
-                        "when_to_play_game_running": "Jogo em Execução",
-                        "when_to_play_always": "Sempre",
                         "tts_voice": "Voz TTS"
                     }
                 }

@@ -348,26 +348,21 @@
                         "user_images": "ユーザー画像を使用 (遅い)",
                         "notification_timeout": "通知のタイムアウト時間"
                     },
+                    "conditions": {
+                        "never": "表示しない",
+                        "desktop": "デスクトップモード",
+                        "inside_vr": "VRChat中",
+                        "outside_vr": "VRChat以外",
+                        "always": "常に表示する"
+                    },
                     "desktop_notifications": {
                         "header": "デスクトップの通知",
                         "when_to_display": "表示タイミング",
-                        "when_to_display_never": "表示しない",
-                        "when_to_display_desktop": "デスクトップモード",
-                        "when_to_display_inside_vr": "VR中",
-                        "when_to_display_outside_vr": "VR以外",
-                        "when_to_display_game_closed": "ゲーム終了時",
-                        "when_to_display_game_running": "ゲーム実行時",
-                        "when_to_display_always": "常に表示する",
                         "desktop_notification_while_afk": "AFK中でもデスクトップに通知"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
                         "when_to_play": "読み上げタイミング",
-                        "when_to_play_never": "読み上げない",
-                        "when_to_play_inside_vr": "VR中",
-                        "when_to_play_game_closed": "ゲーム終了時",
-                        "when_to_play_game_running": "ゲーム実行時",
-                        "when_to_play_always": "常に読み上げる",
                         "tts_voice": "読み上げボイス",
                         "use_memo_nicknames": "メモのニックネームを使用"
                     }
