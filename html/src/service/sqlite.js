@@ -1,21 +1,13 @@
 // requires binding of SQLite
 
 class SQLiteService {
-    execute(callback, sql, args = null) {
-        return new Promise((resolve, reject) => {
-            SQLite.Execute(
-                (err, data) => {
-                    if (err !== null) {
-                        reject(err);
-                    } else if (data === null) {
-                        resolve();
-                    } else {
-                        callback(data);
-                    }
-                },
-                sql,
-                args
-            );
+    async execute(callback, sql, args = null) {
+        var item = await SQLite.Execute(sql, args);
+        if (item.Item1 !== null) {
+            throw item.Item1;
+        }
+        item.Item2?.forEach((item) => {
+            callback(item);
         });
     }
 

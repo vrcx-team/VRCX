@@ -1,15 +1,16 @@
-using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Text.Json.Nodes;
 using System.Threading;
+using System.Text.Json;
 
 namespace VRCX
 {
     public class SQLiteLegacy
     {
-        public static readonly SQLiteLegacy Instance;
+        public static SQLiteLegacy Instance;
         private readonly ReaderWriterLockSlim m_ConnectionLock;
         private SQLiteConnection m_Connection;
 
@@ -40,84 +41,78 @@ namespace VRCX
             m_Connection.Close();
             m_Connection.Dispose();
         }
-
-        public void Execute(IJavascriptCallback callback, string sql, IDictionary<string, object> args = null)
-        {
-            try
-            {
-                m_ConnectionLock.EnterReadLock();
-                try
-                {
-                    using (var command = new SQLiteCommand(sql, m_Connection))
-                    {
-                        if (args != null)
-                        {
-                            foreach (var arg in args)
-                            {
-                                command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
-                            }
-                        }
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read() == true)
-                            {
-                                var values = new object[reader.FieldCount];
-                                reader.GetValues(values);
-                                if (callback.CanExecute == true)
-                                {
-                                    callback.ExecuteAsync(null, values);
-                                }
-                            }
-                        }
-                    }
-                    if (callback.CanExecute == true)
-                    {
-                        callback.ExecuteAsync(null, null);
-                    }
-                }
-                finally
-                {
-                    m_ConnectionLock.ExitReadLock();
-                }
-            }
-            catch (Exception e)
-            {
-                if (callback.CanExecute == true)
-                {
-                    callback.ExecuteAsync(e.Message, null);
-                }
-            }
-
-            callback.Dispose();
-        }
-
-        public void Execute(Action<object[]> callback, string sql, IDictionary<string, object> args = null)
+        
+        public string ExecuteJson(string sql, IDictionary<string, object> args = null)
         {
             m_ConnectionLock.EnterReadLock();
             try
             {
-                using (var command = new SQLiteCommand(sql, m_Connection))
+                using var command = new SQLiteCommand(sql, m_Connection);
+                if (args != null)
                 {
-                    if (args != null)
+                    foreach (var arg in args)
                     {
-                        foreach (var arg in args)
-                        {
-                            command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
-                        }
-                    }
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read() == true)
-                        {
-                            var values = new object[reader.FieldCount];
-                            reader.GetValues(values);
-                            callback(values);
-                        }
+                        command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                     }
                 }
+
+                using var reader = command.ExecuteReader();
+                var result = new List<object[]>();
+                while (reader.Read())
+                {
+                    var values = new object[reader.FieldCount];
+                    for (var i = 0; i < reader.FieldCount; i++)
+                    {
+                        values[i] = reader.GetValue(i);
+                    }
+                    result.Add(values);
+                }
+                return JsonSerializer.Serialize(new
+                {
+                    status = "success",
+                    data = result
+                });
             }
-            catch
+            catch (Exception ex)
             {
+                return JsonSerializer.Serialize(new
+                {
+                    status = "error",
+                    message = ex.Message
+                });
+            }
+        }
+
+        public Tuple<string, object[]> Execute(string sql, IDictionary<string, object> args = null)
+        {
+            m_ConnectionLock.EnterReadLock();
+            try
+            {
+                using var command = new SQLiteCommand(sql, m_Connection);
+                if (args != null)
+                {
+                    foreach (var arg in args)
+                    {
+                        command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
+                    }
+                }
+
+                using var reader = command.ExecuteReader();
+                var result = new List<object[]>();
+                while (reader.Read())
+                {
+                    var values = new object[reader.FieldCount];
+                    for (var i = 0; i < reader.FieldCount; i++)
+                    {
+                        values[i] = reader.GetValue(i);
+                    }
+                    result.Add(values);
+                }
+                return new Tuple<string, object[]>(null, result.ToArray());
+            }
+            catch (Exception ex)
+            {
+                return new Tuple<string, object[]>(ex.Message, null);
             }
             finally
             {
@@ -128,21 +123,18 @@ namespace VRCX
         public int ExecuteNonQuery(string sql, IDictionary<string, object> args = null)
         {
             int result = -1;
-
             m_ConnectionLock.EnterWriteLock();
             try
             {
-                using (var command = new SQLiteCommand(sql, m_Connection))
+                using var command = new SQLiteCommand(sql, m_Connection);
+                if (args != null)
                 {
-                    if (args != null)
+                    foreach (var arg in args)
                     {
-                        foreach (var arg in args)
-                        {
-                            command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
-                        }
+                        command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                     }
-                    result = command.ExecuteNonQuery();
                 }
+                result = command.ExecuteNonQuery();
             }
             finally
             {

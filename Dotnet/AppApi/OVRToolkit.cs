@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Text.Json;
 using Websocket.Client;
 
 namespace VRCX
@@ -71,7 +72,7 @@ namespace VRCX
                 {
                     foreach (var message in ovrtMessages)
                     {
-                        _ovrtWebsocketClient.Send(System.Text.Json.JsonSerializer.Serialize(message));
+                        _ovrtWebsocketClient.Send(JsonSerializer.Serialize(message));
                     }
                 }
             }
@@ -107,7 +108,7 @@ namespace VRCX
                 messages.Add(new OvrtMessage
                 {
                     MessageType = "SendWristNotification",
-                    Json = System.Text.Json.JsonSerializer.Serialize(new OvrtWristNotificationMessage
+                    Json = JsonSerializer.Serialize(new OvrtWristNotificationMessage
                     {
                         Body = title + " - " + body
                     })
@@ -119,7 +120,7 @@ namespace VRCX
                 messages.Add(new OvrtMessage
                 {
                     MessageType = "SendNotification",
-                    Json = System.Text.Json.JsonSerializer.Serialize(new OvrtHudNotificationMessage
+                    Json = JsonSerializer.Serialize(new OvrtHudNotificationMessage
                     {
                         Title = title,
                         Body = body,
