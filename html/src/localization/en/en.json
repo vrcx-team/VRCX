@@ -516,6 +516,13 @@
                         "portal_spawn": "Portal Spawn:",
                         "video_play": "Video Play:",
                         "event": "Event:"
+                    },
+                    "user_generated_content": {
+                        "header": "User Generated Content",
+                        "folder": "Open Folder",
+                        "description": "Open or set the folder where content such as 'Prints' and 'Stickers' are stored.",
+                        "set_folder": "Set Folder",
+                        "reset_override": "Reset"
                     }
                 },
                 "photon": {

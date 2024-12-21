@@ -38,12 +38,12 @@ namespace VRCX
             ProcessMonitor.Instance.ProcessStarted += Instance.OnProcessStateChanged;
             ProcessMonitor.Instance.ProcessExited += Instance.OnProcessStateChanged;
         }
-        
+
         public void Init()
         {
             // Create Instance before Cef tries to bind it
         }
-        
+
         /// <summary>
         /// Computes the MD5 hash of the file represented by the specified base64-encoded string.
         /// </summary>
@@ -68,7 +68,7 @@ namespace VRCX
         {
             using var fileMemoryStream = new MemoryStream(imageData);
             var image = new Bitmap(fileMemoryStream);
-            
+
             // for APNG, check if image is png format and less than maxSize
             if ((!matchingDimensions || image.Width == image.Height) &&
                 image.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Png) &&
@@ -78,7 +78,7 @@ namespace VRCX
             {
                 return imageData;
             }
-            
+
             if (image.Width > maxWidth)
             {
                 var sizingFactor = image.Width / (double)maxWidth;
@@ -101,14 +101,14 @@ namespace VRCX
                 image.Dispose();
                 image = newImage;
             }
-            
+
             SaveToFileToUpload();
             for (int i = 0; i < 250 && imageData.Length > maxSize; i++)
             {
                 SaveToFileToUpload();
                 if (imageData.Length < maxSize)
                     break;
-                
+
                 int newWidth;
                 int newHeight;
                 if (image.Width > image.Height)
@@ -138,13 +138,13 @@ namespace VRCX
                 imageData = imageSaveMemoryStream.ToArray();
             }
         }
-        
+
         public byte[] ResizePrintImage(byte[] imageData)
         {
             var inputImage = ResizeImageToFitLimits(imageData, false, 1920, 1080);
             using var fileMemoryStream = new MemoryStream(inputImage);
             var image = new Bitmap(fileMemoryStream);
-            
+
             // increase size to 1920x1080
             if (image.Width < 1920 || image.Height < 1080)
             {
@@ -180,11 +180,11 @@ namespace VRCX
             graphics.DrawImage(image, new Rectangle(xOffset, yOffset, image.Width, image.Height));
             image.Dispose();
             image = newImage;
-            
+
             using var imageSaveMemoryStream = new MemoryStream();
             image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
             return imageSaveMemoryStream.ToArray();
-        } 
+        }
 
         /// <summary>
         /// Computes the signature of the file represented by the specified base64-encoded string using the librsync library.
@@ -283,7 +283,7 @@ namespace VRCX
         {
             MainForm.Instance.Browser.SetZoomLevel(zoomLevel);
         }
-        
+
         public async Task<double> GetZoom()
         {
             return await MainForm.Instance.Browser.GetZoomLevelAsync();
@@ -340,7 +340,7 @@ namespace VRCX
         public void RestartApplication(bool isUpgrade)
         {
             var args = new List<string>();
-            
+
             if (isUpgrade)
                 args.Add(StartupArgs.VrcxLaunchArguments.IsUpgradePrefix);
 
@@ -597,7 +597,7 @@ namespace VRCX
                 }));
             }
         }
-        
+
         /// <summary>
         /// Flashes the window of the main form.
         /// </summary>
@@ -629,7 +629,7 @@ namespace VRCX
 
         public async Task<bool> SavePrintToFile(string url, string path, string fileName)
         {
-            var folder = Path.Combine(GetVRChatPhotosLocation(), "Prints", MakeValidFileName(path));
+            var folder = Path.Combine(GetUGCPhotoLocation(), "Prints", MakeValidFileName(path));
             Directory.CreateDirectory(folder);
             var filePath = Path.Combine(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))
@@ -640,7 +640,7 @@ namespace VRCX
 
         public async Task<bool> SaveStickerToFile(string url, string path, string fileName)
         {
-            var folder = Path.Combine(GetVRChatPhotosLocation(), "Stickers", MakeValidFileName(path));
+            var folder = Path.Combine(GetUGCPhotoLocation(), "Stickers", MakeValidFileName(path));
             Directory.CreateDirectory(folder);
             var filePath = Path.Combine(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))
@@ -648,7 +648,7 @@ namespace VRCX
 
             return await ImageCache.SaveImageToFile(url, filePath);
         }
-        
+
         public bool IsRunningUnderWine()
         {
             return Wine.GetIfWine();
