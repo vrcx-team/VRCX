@@ -12,8 +12,6 @@ namespace VRCX
 {
     public partial class AppApi
     {
-        private static bool dialogOpen;
-        
         /// <summary>
         /// Adds metadata to a PNG screenshot file and optionally renames the file to include the specified world ID.
         /// </summary>
@@ -37,51 +35,6 @@ namespace VRCX
 
             ScreenshotHelper.WritePNGDescription(path, metadataString);
             return path;
-        }
-
-        /// <summary>
-        /// Opens a file dialog to select a PNG screenshot file.
-        /// The resulting file path is passed to <see cref="GetScreenshotMetadata(string)"/>.
-        /// </summary>
-        public void OpenScreenshotFileDialog()
-        {
-            if (dialogOpen) return;
-            dialogOpen = true;
-
-            var thread = new Thread(() =>
-            {
-                using (var openFileDialog = new OpenFileDialog())
-                {
-                    openFileDialog.DefaultExt = ".png";
-                    openFileDialog.Filter = "PNG Files (*.png)|*.png";
-                    openFileDialog.FilterIndex = 1;
-                    openFileDialog.RestoreDirectory = true;
-
-                    var initialPath = GetVRChatPhotosLocation();
-                    if (Directory.Exists(initialPath))
-                    {
-                        openFileDialog.InitialDirectory = initialPath;
-                    }
-
-                    if (openFileDialog.ShowDialog() != DialogResult.OK)
-                    {
-                        dialogOpen = false;
-                        return;
-                    }
-
-                    dialogOpen = false;
-
-                    var path = openFileDialog.FileName;
-                    if (string.IsNullOrEmpty(path))
-                        return;
-
-                    ExecuteAppFunction("screenshotMetadataResetSearch", null);
-                    ExecuteAppFunction("getAndDisplayScreenshot", path);
-                }
-            });
-
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
         }
 
         public string GetExtraScreenshotData(string path, bool carouselCache)
@@ -130,7 +83,6 @@ namespace VRCX
         {
             if (string.IsNullOrEmpty(path))
                 return null;
-
 
             var metadata = ScreenshotHelper.GetScreenshotMetadata(path);
 
