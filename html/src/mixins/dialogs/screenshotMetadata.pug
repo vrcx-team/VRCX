@@ -4,7 +4,7 @@ mixin screenshotMetadata()
             span(style="margin-left:5px;color:#909399;font-family:monospace") {{ $t('dialog.screenshot_metadata.drag') }}
             br
             br
-            el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
+            el-button(size="small" icon="el-icon-folder-opened" @click="getAndDisplayScreenshotFromFile()") {{ $t('dialog.screenshot_metadata.browse') }}
             el-button(size="small" icon="el-icon-picture-outline" @click="getAndDisplayLastScreenshot()") {{ $t('dialog.screenshot_metadata.last_screenshot') }}
             el-button(size="small" icon="el-icon-copy-document" @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.copy_image') }}
             el-button(size="small" icon="el-icon-folder" @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.open_folder') }}

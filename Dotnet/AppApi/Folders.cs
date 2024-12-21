@@ -326,6 +326,50 @@ namespace VRCX
             return await tcs.Task;
         }
 
+        /// <summary>
+        /// Opens a folder dialog to select a file and pass the path back to the JS side.
+        /// </summary>
+        /// <param name="defaultPath">The default path for the file picker.</param>
+        public async Task<string> OpenFileSelectorDialog(string defaultPath = "", string defaultExt = "", string defaultFilter = "All files (*.*)|*.*")
+        {
+            var tcs = new TaskCompletionSource<string>();
+            var staThread = new Thread(() =>
+            {
+                try
+                {
+                    using (var openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                    {
+                        if (Directory.Exists(defaultPath))
+                        {
+                            openFileDialog.InitialDirectory = defaultPath;
+                        }
+
+                        openFileDialog.DefaultExt = defaultExt;
+                        openFileDialog.Filter = defaultFilter;
+
+                        var dialogResult = openFileDialog.ShowDialog(MainForm.nativeWindow);
+                        if (dialogResult == DialogResult.OK && !string.IsNullOrEmpty(openFileDialog.FileName))
+                        {
+                            tcs.SetResult(openFileDialog.FileName);
+                        }
+                        else
+                        {
+                            tcs.SetResult("");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+
+            staThread.SetApartmentState(ApartmentState.STA);
+            staThread.Start();
+
+            return await tcs.Task;
+        }
+
         private static readonly Regex _folderRegex = new Regex(string.Format(@"([{0}]*\.+$)|([{0}]+)",
             Regex.Escape(new string(Path.GetInvalidPathChars()))));
 

@@ -174,7 +174,7 @@ mixin settings()
                 el-button(type="danger" @click="deleteVrcRegistry" size="small") {{ $t('dialog.registry_backup.reset') }}
                 div
                     el-button(@click="promptVrcRegistryBackupName" size="small") {{ $t('dialog.registry_backup.backup') }}
-                    el-button(@click="AppApi.OpenVrcRegJsonFileDialog()" size="small") {{ $t('dialog.registry_backup.restore_from_file') }}
+                    el-button(@click="restoreVrcRegistryFromFile" size="small") {{ $t('dialog.registry_backup.restore_from_file') }}
                 
 
     //- dialog: Enable primary password

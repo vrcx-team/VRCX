@@ -16344,6 +16344,16 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.getAndDisplayScreenshotFromFile = async function () {
+        var filePath = await AppApi.OpenFileSelectorDialog(await AppApi.GetVRChatPhotosLocation(), ".png", "PNG Files (*.png)|*.png");
+        if (filePath === "") {
+            return;
+        }
+
+        this.screenshotMetadataResetSearch();
+        this.getAndDisplayScreenshot(filePath);
+    };
+
     $app.methods.getAndDisplayScreenshot = function (
         path,
         needsCarouselFiles = true
