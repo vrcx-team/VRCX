@@ -506,6 +506,16 @@ mixin settingsTab()
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.local_world_persistence.description') }}
                         el-switch(v-model="disableWorldDatabase" :active-value="false" :inactive-value="true" @change="saveVRCXWindowOption")
+                //- Advanced | User Generated Content
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.user_generated_content.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.user_generated_content.description') }}
+                        br
+                        el-button(size="small" icon="el-icon-folder" @click="openUGCFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.user_generated_content.folder') }}
+                        el-button(size="small" icon="el-icon-folder-opened" @click="openUGCFolderSelector()") {{ $t('view.settings.advanced.advanced.user_generated_content.set_folder') }}
+                        el-button(size="small" icon="el-icon-delete" @click="resetUGCFolder()" v-if="ugcFolderPath") {{ $t('view.settings.advanced.advanced.user_generated_content.reset_override') }}
+                    br
                     span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.header') }}
                         el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')")
                             i.el-icon-info

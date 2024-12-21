@@ -20455,6 +20455,45 @@ speechSynthesis.getVoices();
         this.noteExportDialog.loading = false;
     };
 
+    // user generated content
+    $app.data.ugcFolderPath = await configRepository.getString(
+        'VRCX_userGeneratedContentPath',
+        ''
+    );
+
+    $app.data.userGeneratedContentDialog = {
+        visible: false
+    };
+
+    $app.methods.setUGCFolderPath = async function (path) {
+        await configRepository.setString(
+            'VRCX_userGeneratedContentPath',
+            path
+        );
+        this.ugcFolderPath = path;
+    };
+
+    $app.methods.resetUGCFolder = function () {
+        this.setUGCFolderPath('');
+    }
+
+    $app.methods.openUGCFolder = async function () {
+        await AppApi.OpenUGCPhotosFolder(this.ugcFolderPath);
+    };
+
+    $app.methods.openUGCFolderSelector = async function () {
+        var D = this.userGeneratedContentDialog;
+
+        if(D.visible)
+            return;
+
+        D.visible = true;
+        var newUGCFolder = await AppApi.OpenFolderSelectorDialog(this.ugcFolderPath);
+        D.visible = false;
+
+        await this.setUGCFolderPath(newUGCFolder);
+    };
+
     // avatar database provider
 
     $app.data.avatarProviderDialog = {
