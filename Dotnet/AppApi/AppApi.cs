@@ -627,9 +627,9 @@ namespace VRCX
             return null;
         }
 
-        public async Task<bool> SavePrintToFile(string url, string path, string fileName)
+        public async Task<bool> SavePrintToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
         {
-            var folder = Path.Combine(GetUGCPhotoLocation(), "Prints", MakeValidFileName(path));
+            var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Prints", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
             var filePath = Path.Combine(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))
@@ -638,9 +638,9 @@ namespace VRCX
             return await ImageCache.SaveImageToFile(url, filePath);
         }
 
-        public async Task<bool> SaveStickerToFile(string url, string path, string fileName)
+        public async Task<bool> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
         {
-            var folder = Path.Combine(GetUGCPhotoLocation(), "Stickers", MakeValidFileName(path));
+            var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Stickers", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
             var filePath = Path.Combine(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))

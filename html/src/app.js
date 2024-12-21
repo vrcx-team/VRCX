@@ -7918,7 +7918,7 @@ speechSynthesis.getVoices();
     $app.data.overlayToast = await configRepository.getString(
         'VRCX_overlayToast',
         'Game Running'
-    )
+    );
     $app.data.minimalFeed = await configRepository.getBool(
         'VRCX_minimalFeed',
         false
@@ -7946,7 +7946,7 @@ speechSynthesis.getVoices();
 
     // It's not necessary to store it in configRepo because it's rarely used.
     $app.data.isTestTTSVisible = false;
-    
+
     $app.data.notificationTTSVoice = await configRepository.getString(
         'VRCX_notificationTTSVoice',
         '0'
@@ -8135,7 +8135,7 @@ speechSynthesis.getVoices();
         await configRepository.setString(
             'VRCX_overlayToast',
             this.overlayToast
-        )
+        );
         await configRepository.setBool(
             'VRCX_notificationTTSNickName',
             this.notificationTTSNickName
@@ -17773,15 +17773,20 @@ speechSynthesis.getVoices();
         var args = await API.call(`file/${fileId}`);
         var imageUrl = args.versions[1].file.url;
         var createdAt = args.versions[0].created_at;
-        var path = createdAt.slice(0, 7);
+        var monthFolder = createdAt.slice(0, 7);
         var fileNameDate = createdAt
             .replace(/:/g, '-')
             .replace(/T/g, '_')
             .replace(/Z/g, '');
         var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
-        var status = await AppApi.SaveStickerToFile(imageUrl, path, fileName);
+        var status = await AppApi.SaveStickerToFile(
+            imageUrl,
+            this.ugcFolderPath,
+            monthFolder,
+            fileName
+        );
         if (status) {
-            console.log(`Sticker saved to file: ${path}\\${fileName}`);
+            console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
         }
     };
 
@@ -18011,11 +18016,16 @@ speechSynthesis.getVoices();
             return;
         }
         var createdAt = this.getPrintLocalDate(args.json);
-        var path = createdAt.toISOString().slice(0, 7);
+        var monthFolder = createdAt.toISOString().slice(0, 7);
         var fileName = this.getPrintFileName(args.json);
-        var status = await AppApi.SavePrintToFile(imageUrl, path, fileName);
+        var status = await AppApi.SavePrintToFile(
+            imageUrl,
+            this.ugcFolderPath,
+            monthFolder,
+            fileName
+        );
         if (status) {
-            console.log(`Print saved to file: ${path}\\${fileName}`);
+            console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
         }
     };
 
@@ -20474,16 +20484,13 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.setUGCFolderPath = async function (path) {
-        await configRepository.setString(
-            'VRCX_userGeneratedContentPath',
-            path
-        );
+        await configRepository.setString('VRCX_userGeneratedContentPath', path);
         this.ugcFolderPath = path;
     };
 
     $app.methods.resetUGCFolder = function () {
         this.setUGCFolderPath('');
-    }
+    };
 
     $app.methods.openUGCFolder = async function () {
         await AppApi.OpenUGCPhotosFolder(this.ugcFolderPath);
@@ -20492,11 +20499,12 @@ speechSynthesis.getVoices();
     $app.methods.openUGCFolderSelector = async function () {
         var D = this.userGeneratedContentDialog;
 
-        if(D.visible)
-            return;
+        if (D.visible) return;
 
         D.visible = true;
-        var newUGCFolder = await AppApi.OpenFolderSelectorDialog(this.ugcFolderPath);
+        var newUGCFolder = await AppApi.OpenFolderSelectorDialog(
+            this.ugcFolderPath
+        );
         D.visible = false;
 
         await this.setUGCFolderPath(newUGCFolder);

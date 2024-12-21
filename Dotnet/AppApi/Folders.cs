@@ -79,7 +79,7 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.Error(e);
                 return GetVRChatPhotosLocation();
             }
         }
