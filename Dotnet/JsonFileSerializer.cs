@@ -10,7 +10,7 @@ using System.Text;
 
 namespace VRCX
 {
-    public static class JsonSerializer
+    public static class JsonFileSerializer
     {
         public static void Serialize<T>(string path, T obj)
         {

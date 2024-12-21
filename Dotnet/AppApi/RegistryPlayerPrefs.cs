@@ -207,7 +207,7 @@ namespace VRCX
         {
             CreateVRChatRegistryFolder();
             Span<double> spanDouble = stackalloc double[1];
-            var dict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, object>>>(json);
+            var dict = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, object>>>(json);
             foreach (var item in dict)
             {
                 var data = (JsonElement)item.Value["data"];

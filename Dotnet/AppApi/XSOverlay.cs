@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Text.Json;
 
 namespace VRCX
 {
@@ -45,7 +46,7 @@ namespace VRCX
                 icon = icon
             };
             
-            var byteBuffer = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(msg);
+            var byteBuffer = JsonSerializer.SerializeToUtf8Bytes(msg);
             broadcastSocket.SendTo(byteBuffer, endPoint);
             broadcastSocket.Close();
         }

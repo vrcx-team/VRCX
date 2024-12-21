@@ -11,11 +11,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Cookie = System.Net.Cookie;
 using System.Windows;
+using NLog;
 
 namespace VRCX
 {
     public class WebApi
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static readonly WebApi Instance;
         
         public static bool ProxySet;
@@ -45,8 +47,9 @@ namespace VRCX
             {
                 SaveCookies();
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Error($"Failed to save cookies: {e.Message}");
             }
         }
 
@@ -97,29 +100,27 @@ namespace VRCX
             SaveCookies();
         }
 
-        internal void LoadCookies()
+        private void LoadCookies()
         {
             SQLiteLegacy.Instance.ExecuteNonQuery("CREATE TABLE IF NOT EXISTS `cookies` (`key` TEXT PRIMARY KEY, `value` TEXT)");
-            SQLiteLegacy.Instance.Execute((values) =>
-            {
-                try
+            var values = SQLiteLegacy.Instance.Execute("SELECT `value` FROM `cookies` WHERE `key` = @key",
+                new Dictionary<string, object>
                 {
-                    using (var stream = new MemoryStream(Convert.FromBase64String((string)values[0])))
-                    {
-                        _cookieContainer = new CookieContainer();
-                        _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
-                        //_cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
-                    }
-                }
-                catch
-                {
-                }
-            },
-                "SELECT `value` FROM `cookies` WHERE `key` = @key",
-                new Dictionary<string, object>() {
-                    {"@key", "default"}
+                    { "@key", "default" }
                 }
             );
+            try
+            {
+                var item = (object[])values.Item2[0];
+                using var stream = new MemoryStream(Convert.FromBase64String((string)item[0]));
+                _cookieContainer = new CookieContainer();
+                _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
+                // _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream); // from .NET framework
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to load cookies: {e.Message}");
+            }
         }
 
         internal void SaveCookies()
@@ -148,8 +149,9 @@ namespace VRCX
                 }
                 _cookieDirty = false;
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Error($"Failed to save cookies: {e.Message}");
             }
         }
 
@@ -157,19 +159,15 @@ namespace VRCX
         {
             _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
 
-            using (var memoryStream = new MemoryStream())
-            {
-                System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
-                //new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
-                return Convert.ToBase64String(memoryStream.ToArray());
-            }
+            using var memoryStream = new MemoryStream();
+            System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
+            return Convert.ToBase64String(memoryStream.ToArray());
         }
 
         public void SetCookies(string cookies)
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(cookies)))
             {
-                //_cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
                 _cookieContainer = new CookieContainer();
                 _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
             }
