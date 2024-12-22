@@ -18,7 +18,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: vrcx
-          path: bin/x64/Release
+          path: build/Cef/Release
 
   build_node:
     runs-on: ubuntu-latest
@@ -35,12 +35,12 @@ jobs:
       - name: Restore dependencies
         run: npm ci
       - name: Build
-        run: npm run production
+        run: npm run prod
       - name: Fix folder structure
         id: fix-folders
         run: |
           mkdir upload
-          mv dist upload/html
+          mv build/html upload/html
       - uses: actions/upload-artifact@v3
         with:
           name: vrcx
