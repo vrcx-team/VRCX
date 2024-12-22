@@ -19,6 +19,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <BaseIntermediateOutputPath>obj1\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -114,8 +115,4 @@
     <Content Remove=".\node_modules\**" />
     <Compile Remove=".\node_modules\**" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(DefineConstants)' != '' and !($(DefineConstants.Contains('LINUX')))">
-    <Exec Command="$(ProjectDir)/build-tools/Topten.nvpatch.exe --enable VRCX.exe" WorkingDirectory="$(OutDir)" />
-  </Target>
 </Project>

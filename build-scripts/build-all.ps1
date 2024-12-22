@@ -14,16 +14,14 @@ Write-Host "Building .Net..." -ForegroundColor Green
 dotnet build VRCX.sln -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
 
 Write-Host "Building Node.js..." -ForegroundColor Green
-cd "html"
 Remove-Item -Path "node_modules" -Force -Recurse -ErrorAction SilentlyContinue
 npm ci --loglevel=error
 npm run prod
-cd ..
-Remove-Item -Path "bin\x64\Release\html" -Force -Recurse -ErrorAction SilentlyContinue
-New-Item -ItemType Junction -Path "bin\x64\Release\html" -Target "html\dist"
+Remove-Item -Path "build\Cef\Release\html" -Force -Recurse -ErrorAction SilentlyContinue
+New-Item -ItemType Junction -Path "build\Cef\Release\html" -Target "html"
 
 Write-Host "Creating Zip..." -ForegroundColor Green
-cd "bin\x64\Release"
+cd "build\Cef\Release"
 7z a -tzip $ZipName * -mx=7 -xr0!"*.log" -xr0!"*.pdb"
 Move-Item $ZipName ..\..\..\$ZipName -Force
 cd ..\..\..\

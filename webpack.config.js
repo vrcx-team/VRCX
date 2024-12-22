@@ -1,9 +1,9 @@
 const path = require('path');
+const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
     entry: {
@@ -32,6 +32,7 @@ module.exports = {
         }
     },
     output: {
+        path: path.resolve(__dirname, 'build/html'),
         filename: '[name].js',
         library: {
             type: 'window'
@@ -39,10 +40,6 @@ module.exports = {
     },
     module: {
         rules: [
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            },
             {
                 test: /\.pug$/,
                 oneOf: [
@@ -88,7 +85,10 @@ module.exports = {
         timings: true
     },
     plugins: [
-        new VueLoaderPlugin(),
+        new webpack.DefinePlugin({
+            LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
+            WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows')
+        }),
         new MiniCssExtractPlugin({
             filename: '[name].css'
         }),

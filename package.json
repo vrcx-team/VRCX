@@ -1,0 +1,131 @@
+{
+    "name": "VRCX",
+    "private": true,
+    "main": "main.js",
+    "scripts": {
+        "watch": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode development --watch",
+        "watch-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode development --watch",
+        "lint": "eslint --ext .js src/ && prettier --check src/",
+        "localization": "node ./src/localization/localizationHelperCLI.js",
+        "prod": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode production",
+        "prod-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode production",
+        "build-electron": "node patch-package-version.js && electron-builder",
+        "postbuild-electron": "node patch-node-api-dotnet.js && node rename-builds.js",
+        "start-electron": "electron ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vrcx-team/VRCX.git"
+    },
+    "keywords": [
+        "vrchat"
+    ],
+    "author": "pypy <git@pypy.moe>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/vrcx-team/VRCX/issues"
+    },
+    "homepage": "https://github.com/vrcx-team/VRCX#readme",
+    "devDependencies": {
+        "@babel/eslint-parser": "^7.25.9",
+        "@babel/plugin-syntax-import-assertions": "^7.26.0",
+        "@babel/preset-env": "^7.26.0",
+        "@electron/rebuild": "^3.7.1",
+        "@fontsource/noto-sans-jp": "^5.1.0",
+        "@fontsource/noto-sans-kr": "^5.1.0",
+        "@fontsource/noto-sans-sc": "^5.1.0",
+        "@fontsource/noto-sans-tc": "^5.1.0",
+        "@infolektuell/noto-color-emoji": "^0.2.0",
+        "animate.css": "^4.1.1",
+        "copy-webpack-plugin": "^12.0.2",
+        "cross-env": "^7.0.3",
+        "css-loader": "^7.1.2",
+        "default-passive-events": "^2.0.0",
+        "electron": "^33.2.1",
+        "electron-builder": "^25.1.8",
+        "element-ui": "^2.15.14",
+        "eslint": "^9.15.0",
+        "eslint-config-prettier": "^9.1.0",
+        "html-webpack-plugin": "^5.6.3",
+        "mini-css-extract-plugin": "^2.9.2",
+        "normalize.css": "^8.0.1",
+        "noty": "^3.2.0-beta-deprecated",
+        "prettier": "^3.3.3",
+        "pug": "^3.0.3",
+        "pug-plain-loader": "^1.1.0",
+        "raw-loader": "^4.0.2",
+        "sass": "^1.81.0",
+        "sass-loader": "^16.0.3",
+        "vue": "^2.6.14",
+        "vue-data-tables": "^3.4.5",
+        "vue-i18n": "^8.28.2",
+        "vue-lazyload": "^1.3.4",
+        "vue-markdown": "^2.2.4",
+        "vue-marquee-text-component": "^1.2.0",
+        "webpack": "^5.96.1",
+        "webpack-cli": "^5.1.4",
+        "worker-timers": "^8.0.11",
+        "yargs": "^17.7.2"
+    },
+    "build": {
+        "appId": "com.pypy.vrcx",
+        "productName": "VRCX",
+        "icon": "VRCX.png",
+        "files": [
+            "build/html/**/*",
+            "main.js",
+            "preload.js",
+            "InteropApi.js",
+            "VRCX.png",
+            "images/tray.png",
+            "!build/bin/**/*"
+        ],
+        "asarUnpack": [
+            "node_modules/node-api-dotnet/**/*",
+            "node_modules/node-api-dotnet/net8.0/**/*",
+            "build/bin/Debug/*",
+            "build/bin/Debug/**"
+        ],
+        "extraResources": [
+            {
+                "from": "build/bin/Debug/",
+                "to": "app.asar.unpacked/build/bin/Debug/"
+            },
+            {
+                "from": "node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.dll",
+                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.dll"
+            },
+            {
+                "from": "node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll",
+                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll"
+            }
+        ],
+        "directories": {
+            "output": "build"
+        },
+        "linux": {
+            "artifactName": "VRCX_Version.${ext}",
+            "target": [
+                "tar.xz",
+                "AppImage"
+            ],
+            "icon": "VRCX.png",
+            "category": "Utility",
+            "executableName": "vrcx",
+            "desktop": {
+                "Name": "VRCX",
+                "Comment": "Friendship management tool for VRChat",
+                "Icon": "VRCX",
+                "Terminal": "false",
+                "Type": "Application",
+                "Categories": "Utility;Application;"
+            },
+            "maintainer": "rs189 <35667100+rs189@users.noreply.github.com>",
+            "description": "Friendship management tool for VRChat"
+        }
+    },
+    "dependencies": {
+        "hazardous": "^0.3.0",
+        "node-api-dotnet": "^0.8.19"
+    }
+}

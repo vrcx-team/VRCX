@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net8-windows10.0.19041.0</TargetFrameworks>
+    <TargetFramework>net8-windows10.0.19041.0</TargetFramework>
     <Platforms>x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationRevision>0</ApplicationRevision>
@@ -102,6 +102,11 @@
   <Target Name="CefSharpAfterBuildDebug" AfterTargets="AfterBuild">
     <CallTarget Targets="CefSharpAfterBuildDiagnostic" />
   </Target>
+
+  <ItemGroup>
+    <Content Remove=".\obj1\**" />
+    <Compile Remove=".\obj1\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Remove=".\node_modules\**" />
