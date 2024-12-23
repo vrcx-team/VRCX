@@ -329,7 +329,7 @@ namespace VRCX
                         if (isHmdAfk != IsHmdAfk)
                         {
                             IsHmdAfk = isHmdAfk;
-                            AppApi.Instance.CheckGameRunning();
+                            Program.AppApiInstance.CheckGameRunning();
                         }
 
                         var headsetErr = ETrackedPropertyError.TrackedProp_Success;

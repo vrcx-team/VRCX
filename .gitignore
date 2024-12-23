@@ -3,3 +3,5 @@ build/
 obj/
 obj1/
 .idea/
+*.log
+*.DotSettings.user

@@ -24,34 +24,19 @@ using NLog;
 
 namespace VRCX
 {
-    public partial class AppApi
+    public partial class AppApiCef : AppApiInterface
     {
-        public static readonly AppApi Instance;
-
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly MD5 _hasher = MD5.Create();
-
-        static AppApi()
-        {
-            Instance = new AppApi();
-
-            ProcessMonitor.Instance.ProcessStarted += Instance.OnProcessStateChanged;
-            ProcessMonitor.Instance.ProcessExited += Instance.OnProcessStateChanged;
-        }
-
-        public void Init()
-        {
-            // Create Instance before Cef tries to bind it
-        }
 
         /// <summary>
         /// Computes the MD5 hash of the file represented by the specified base64-encoded string.
         /// </summary>
         /// <param name="Blob">The base64-encoded string representing the file.</param>
         /// <returns>The MD5 hash of the file as a base64-encoded string.</returns>
-        public string MD5File(string Blob)
+        public string MD5File(string blob)
         {
-            var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            var fileData = Convert.FromBase64CharArray(blob.ToCharArray(), 0, blob.Length);
             using (var md5 = MD5.Create())
             {
                 var md5Hash = md5.ComputeHash(fileData);
@@ -218,9 +203,9 @@ namespace VRCX
         /// </summary>
         /// <param name="Blob">The base64-encoded string representing the file.</param>
         /// <returns>The signature of the file as a base64-encoded string.</returns>
-        public string SignFile(string Blob)
+        public string SignFile(string blob)
         {
-            var fileData = Convert.FromBase64String(Blob);
+            var fileData = Convert.FromBase64String(blob);
             using (var sig = Librsync.ComputeSignature(new MemoryStream(fileData)))
             using (var memoryStream = new MemoryStream())
             {
@@ -235,9 +220,9 @@ namespace VRCX
         /// </summary>
         /// <param name="Blob">The base64-encoded string representing the file.</param>
         /// <returns>The length of the file in bytes.</returns>
-        public string FileLength(string Blob)
+        public string FileLength(string blob)
         {
-            var fileData = Convert.FromBase64String(Blob);
+            var fileData = Convert.FromBase64String(blob);
             return fileData.Length.ToString();
         }
 

@@ -7,7 +7,7 @@ namespace VRCX
         public static void ApplyAppJavascriptBindings(IJavascriptObjectRepository repository)
         {
             repository.NameConverter = null;
-            repository.Register("AppApi", AppApi.Instance);
+            repository.Register("AppApi", Program.AppApiInstance);
             repository.Register("SharedVariable", SharedVariable.Instance);
             repository.Register("WebApi", WebApi.Instance);
             repository.Register("VRCXStorage", VRCXStorage.Instance);

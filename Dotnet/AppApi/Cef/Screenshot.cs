@@ -10,7 +10,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace VRCX
 {
-    public partial class AppApi
+    public partial class AppApiCef : AppApiInterface
     {
         /// <summary>
         /// Adds metadata to a PNG screenshot file and optionally renames the file to include the specified world ID.
