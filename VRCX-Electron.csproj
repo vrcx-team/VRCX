@@ -20,6 +20,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <BaseIntermediateOutputPath>obj1\</BaseIntermediateOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -39,11 +41,7 @@
   <PropertyGroup>
     <ApplicationIcon>VRCX.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <StartupObject />
-    <CefSharpExcludeSubProcessExe>true</CefSharpExcludeSubProcessExe>
-  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(PlatformTarget)' == 'x64'">
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>

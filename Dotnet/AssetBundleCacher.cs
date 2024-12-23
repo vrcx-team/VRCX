@@ -96,7 +96,7 @@ namespace VRCX
 
         public string GetVRChatCacheLocation()
         {
-            return AppApi.Instance.GetVRChatCacheLocation();
+            return Program.AppApiInstance.GetVRChatCacheLocation();
         }
 
         /// <summary>

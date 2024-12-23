@@ -23,6 +23,8 @@
     <RootNamespace>VRCX</RootNamespace>
     <PackageId>VRCX</PackageId>
     <Company>VRCX</Company>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">

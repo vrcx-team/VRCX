@@ -3,7 +3,7 @@ using System.IO;
 
 namespace VRCX
 {
-    public partial class AppApi
+    public partial class AppApiCef : AppApiInterface
     {
         /// <summary>
         /// Reads the VRChat config file and returns its contents as a string.

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace VRCX
 {
-    public partial class AppApi
+    public partial class AppApiCef : AppApiInterface
     {
         /// <summary>
         /// Retrieves a dictionary of moderations for the specified user from the VRChat LocalPlayerModerations folder.

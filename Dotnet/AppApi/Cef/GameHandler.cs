@@ -9,9 +9,9 @@ using Microsoft.Win32;
 
 namespace VRCX
 {
-    public partial class AppApi
+    public partial class AppApiCef : AppApiInterface
     {
-        private void OnProcessStateChanged(MonitoredProcess monitoredProcess)
+        public void OnProcessStateChanged(MonitoredProcess monitoredProcess)
         {
             if (!monitoredProcess.HasName("VRChat") && !monitoredProcess.HasName("vrserver"))
                 return;
@@ -104,7 +104,7 @@ namespace VRCX
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CloseHandle([In] IntPtr handle);
 
-        public static void ResumeProcess(int processId)
+        private static void ResumeProcess(int processId)
         {
             IntPtr hProc = IntPtr.Zero;
             try
@@ -123,7 +123,7 @@ namespace VRCX
             }
         }
 
-        public static string GetProcessName(int pid)
+        private static string GetProcessName(int pid)
         {
             IntPtr hProc = IntPtr.Zero;
             try

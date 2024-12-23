@@ -24,6 +24,7 @@ namespace VRCX
         public static bool LaunchDebug;
         private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
         public static VRCXVRInterface VRCXVRInstance { get; private set; }
+        public static AppApiInterface AppApiInstance { get; private set; }
 
         private static void SetProgramDirectories()
         {
@@ -122,7 +123,7 @@ namespace VRCX
                         MessageBox.Show(
                             "vc_redist has finished installing, if the issue persists upon next restart, please reinstall VRCX From GitHub,\nVRCX Will now restart.", "vc_redist installation complete", MessageBoxButtons.OK);
                         Thread.Sleep(5000);
-                        AppApi.Instance.RestartApplication(false);
+                        AppApiInstance.RestartApplication(false);
                         break;
 
                     case DialogResult.No:
@@ -146,7 +147,7 @@ namespace VRCX
                     e, "Database error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (messageBoxResult == DialogResult.Yes)
                 {
-                    AppApi.Instance.OpenLink("https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database");
+                    AppApiInstance.OpenLink("https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database");
                 }
             }
             #endregion
@@ -158,7 +159,7 @@ namespace VRCX
                     var messageBoxResult = MessageBox.Show(cpuError.Value.Item1, "Potentially Faulty CPU Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                     if (messageBoxResult == DialogResult.Yes)
                     {
-                        AppApi.Instance.OpenLink(cpuError.Value.Item2);
+                        AppApiInstance.OpenLink(cpuError.Value.Item2);
                     }
                 }
                 logger.Fatal(e, "Unhandled Exception, program dying");
@@ -197,10 +198,14 @@ namespace VRCX
             logger.Info("{0} Starting...", Version);
             logger.Debug("Wine support detection: {0}", Wine.GetIfWine());
             
-            ProcessMonitor.Instance.Init();
             SQLiteLegacy.Instance.Init();
-            AppApi.Instance.Init();
+#if LINUX
+            AppApiInstance = new AppApiElectron();
+#else
+            AppApiInstance = new AppApiCef();
+#endif
             AppApiVr.Instance.Init();
+            ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
             WorldDBManager.Instance.Init();
             WebApi.Instance.Init();

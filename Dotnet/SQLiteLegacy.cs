@@ -81,6 +81,10 @@ namespace VRCX
                     message = ex.Message
                 });
             }
+            finally
+            {
+                m_ConnectionLock.ExitReadLock();
+            }
         }
 
         public Tuple<string, object[]> Execute(string sql, IDictionary<string, object> args = null)
