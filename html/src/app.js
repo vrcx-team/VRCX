@@ -133,10 +133,16 @@ speechSynthesis.getVoices();
             isRunningUnderWine: false,
             appVersion: '',
             latestAppVersion: '',
-            shiftHeld: false
+            shiftHeld: false,
+            showTooltips: false
         },
         i18n,
-        computed: {},
+        computed: {
+            // REVIEW: Temp hide tooltips and fix boolean-switch mismatch.
+            hideTooltips: function () {
+                return !this.showTooltips;
+            }
+        },
         methods: {
             ...$utils
         },
@@ -7927,8 +7933,8 @@ speechSynthesis.getVoices();
         'displayVRCPlusIconsAsAvatar',
         true
     );
-    $app.data.hideTooltips = await configRepository.getBool(
-        'VRCX_hideTooltips',
+    $app.data.showTooltips = await configRepository.getBool(
+        'VRCX_showTooltips',
         false
     );
     $app.data.hideNicknames = await configRepository.getBool(
@@ -8145,7 +8151,7 @@ speechSynthesis.getVoices();
             'displayVRCPlusIconsAsAvatar',
             this.displayVRCPlusIconsAsAvatar
         );
-        await configRepository.setBool('VRCX_hideTooltips', this.hideTooltips);
+        await configRepository.setBool('VRCX_showTooltips', this.showTooltips);
         await configRepository.setBool(
             'VRCX_hideNicknames',
             this.hideNicknames
