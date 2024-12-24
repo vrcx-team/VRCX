@@ -23,7 +23,9 @@ namespace VRCX
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
+#if !LINUX
         public static VRCXVRInterface VRCXVRInstance { get; private set; }
+#endif
         public static AppApiInterface AppApiInstance { get; private set; }
 
         private static void SetProgramDirectories()
@@ -61,6 +63,20 @@ namespace VRCX
                 Directory.Move(oldCachePath, newCachePath);
             }
         }
+        
+        private static void GetVersion()
+        {
+            var buildName = "VRCX";
+            try
+            {
+                Version = $"{buildName} {File.ReadAllText(Path.Combine(BaseDirectory, "Version"))}";
+            }
+            catch (Exception)
+            {
+                Version = $"{buildName} Build";
+            }
+            Version = Version.Replace("\r", "").Replace("\n", "");
+        }
 
         private static void ConfigureLogger()
         {
@@ -86,7 +102,7 @@ namespace VRCX
                     Encoding = System.Text.Encoding.UTF8
                 };
 
-                if (Program.LaunchDebug)
+                if (LaunchDebug)
                 {
                     builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
                 }
@@ -102,6 +118,7 @@ namespace VRCX
             });
         }
 
+#if !LINUX
         [STAThread]
         private static void Main()
         {
@@ -168,20 +185,6 @@ namespace VRCX
             }
         }
 
-        private static void GetVersion()
-        {
-            var buildName = "VRCX";
-            try
-            {
-                Version = $"{buildName} {File.ReadAllText(Path.Combine(BaseDirectory, "Version"))}";
-            }
-            catch (Exception)
-            {
-                Version = $"{buildName} Build";
-            }
-            Version = Version.Replace("\r", "").Replace("\n", "");
-        }
-
         private static void Run()
         {
             StartupArgs.ArgsCheck();
@@ -199,11 +202,9 @@ namespace VRCX
             logger.Debug("Wine support detection: {0}", Wine.GetIfWine());
             
             SQLiteLegacy.Instance.Init();
-#if LINUX
-            AppApiInstance = new AppApiElectron();
-#else
+            // AppApiInstance = new AppApiElectron();
             AppApiInstance = new AppApiCef();
-#endif
+            
             AppApiVr.Instance.Init();
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
@@ -237,5 +238,6 @@ namespace VRCX
             SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();
         }
+#endif
     }
 }

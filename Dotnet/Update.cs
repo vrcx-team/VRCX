@@ -6,9 +6,12 @@
 
 using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Net.Http;
+
+#if !LINUX
+using System.Windows.Forms;
+#endif
 
 namespace VRCX
 {
@@ -36,8 +39,10 @@ namespace VRCX
         private static void Install()
         {
             var setupArguments = string.Empty;
+#if !LINUX
             if (Wine.GetIfWine())
                 setupArguments += "/SKIP_SHORTCUT=true";
+#endif
             
             try
             {
@@ -57,7 +62,11 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString(), "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var message = $"Failed to install the update: {e.Message}";
+#if !LINUX
+                MessageBox.Show(message, "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+#endif
+                Console.WriteLine(message);
             }
         }
         
@@ -79,7 +88,11 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString(), "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var message = $"Failed to download and install the Visual C++ Redistributable: {e.Message}";
+#if !LINUX
+                MessageBox.Show(message, "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+#endif
+                Console.WriteLine(message);
             }
         }
 

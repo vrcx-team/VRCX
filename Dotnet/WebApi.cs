@@ -1,17 +1,20 @@
-using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Cookie = System.Net.Cookie;
-using System.Windows;
 using NLog;
+using Timer = System.Threading.Timer;
+
+#if !LINUX
+using CefSharp;
+using System.Windows.Forms;
+#endif
 
 namespace VRCX
 {
@@ -53,7 +56,7 @@ namespace VRCX
             }
         }
 
-        internal void Init()
+        public void Init()
         {
             SetProxy();
             LoadCookies();
@@ -83,12 +86,16 @@ namespace VRCX
             catch (UriFormatException)
             {
                 VRCXStorage.Instance.Set("VRCX_ProxyServer", string.Empty);
-                MessageBox.Show("The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.", "Invalid Proxy URI", MessageBoxButton.OK);
+                var message = "The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.";
+#if !LINUX
+                MessageBox.Show(message, "Invalid Proxy URI", MessageBoxButton.OK);
+#endif
+                Logger.Error(message);
                 Environment.Exit(0);
             }
         }
 
-        internal void Exit()
+        public void Exit()
         {
             _timer.Change(-1, -1);
             SaveCookies();
@@ -123,7 +130,7 @@ namespace VRCX
             }
         }
 
-        internal void SaveCookies()
+        private void SaveCookies()
         {
             if (_cookieDirty == false)
             {

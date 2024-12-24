@@ -68,6 +68,7 @@
     <None Include="Version">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Remove="Dotnet\Cef\**" />
   </ItemGroup>
   <ItemGroup>
     <None Include="libs\openvr_api.dll">
@@ -110,7 +111,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove=".\node_modules\**" />
-    <Compile Remove=".\node_modules\**" />
+    <Content Remove="node_modules\**" />
+    <Compile Remove="node_modules\**" />
+    <Content Remove="Dotnet\Cef\**" />
+    <Compile Remove="Dotnet\Cef\**" />
+    <Content Remove="Dotnet\AppApi\Cef\**" />
+    <Compile Remove="Dotnet\AppApi\Cef\**" />
+    <Content Remove="Dotnet\PWI\**" />
+    <Compile Remove="Dotnet\PWI\**" />
+    <Content Remove="Dotnet\Overlay\**" />
+    <Compile Remove="Dotnet\Overlay\**" />
   </ItemGroup>
 </Project>
