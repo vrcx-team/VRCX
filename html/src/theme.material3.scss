@@ -212,7 +212,7 @@ div[style*='margin: 0px 0px 10px;'] {
     flex: 1;
 }
 
-.options-container-item *:not(.el-color-picker__color-inner):last-child {
+.options-container-item > :not(.el-color-picker__color-inner):last-child {
     margin-right: 4px;
 }
 
@@ -988,7 +988,7 @@ input[type='number'],
 }
 .el-button:not(.el-button--text, .el-button--primary)
     > i:first-child:last-child {
-    padding: 0 11px;
+    padding: 5px 10px;
 }
 .el-button:not(.el-button--text, .el-button--primary) > i:first-child {
     padding-left: 16px;
@@ -2001,4 +2001,16 @@ i.x-user-status {
 .el-collapse-item .el-tag--mini {
     background-color: transparent;
     border: transparent;
+}
+
+.simple-switch {
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.el-dialog__body .el-tag--mini {
+    line-height: 28px;
 }

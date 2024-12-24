@@ -44,8 +44,12 @@ button {
 .el-textarea .el-input__count,
 .el-input .el-input__count .el-input__count-inner {
     color: #fff;
-    background-color: #333;
+    background-color: #444;
     border: #333;
+}
+
+.x-friend-item .el-textarea .el-input__count {
+    background-color: #333;
 }
 
 // User dialog memo: input count background color

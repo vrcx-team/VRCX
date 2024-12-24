@@ -22,7 +22,7 @@ mixin profileTab()
                         span.name {{ $t('view.profile.profile.v_bucks') }}
                         span.extra {{ API.currentUser.$vbucks ?? $t('view.profile.profile.refresh') }}
             div(style="margin-top:10px")
-                el-button(size="small" type="danger" plain icon="el-icon-switch-button" @click="logout()" style="margin-left:0;margin-right:5px;margin-top:10px;background:#fef0f0 !important;border-color:#fbc4c4 !important;") {{ $t('view.profile.profile.logout') }}
+                el-button(size="small" type="danger" plain icon="el-icon-switch-button" @click="logout()" style="margin-left:0;margin-right:5px;margin-top:10px;") {{ $t('view.profile.profile.logout') }}
                 el-button(size="small" icon="el-icon-picture-outline" @click="showGalleryDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.manage_gallery_icon') }}
                 el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.export_friend_list') }}
                 el-button(size="small" icon="el-icon-user" @click="showExportAvatarsListDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.export_own_avatars') }}
