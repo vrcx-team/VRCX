@@ -12019,6 +12019,7 @@ speechSynthesis.getVoices();
                                         message: 'Imposter deleted',
                                         type: 'success'
                                     });
+                                    this.showAvatarDialog(D.id);
                                     return args;
                                 });
                                 break;
