@@ -10,7 +10,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace VRCX
 {
-    public partial class AppApiCef : AppApiInterface
+    public partial class AppApiCef
     {
         /// <summary>
         /// Adds metadata to a PNG screenshot file and optionally renames the file to include the specified world ID.
@@ -18,8 +18,8 @@ namespace VRCX
         /// <param name="path">The path to the PNG screenshot file.</param>
         /// <param name="metadataString">The metadata to add to the screenshot file.</param>
         /// <param name="worldId">The ID of the world to associate with the screenshot.</param>
-        /// <param name="changeFilename">Whether or not to rename the screenshot file to include the world ID.</param>
-        public string AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
+        /// <param name="changeFilename">Whether to rename the screenshot file to include the world ID.</param>
+        public override string AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_"))
@@ -37,127 +37,43 @@ namespace VRCX
             return path;
         }
 
-        public string GetExtraScreenshotData(string path, bool carouselCache)
+        public override void OpenScreenshotFileDialog()
         {
-            var fileName = Path.GetFileNameWithoutExtension(path);
-            var metadata = new JObject();
+            if (dialogOpen) return;
+            dialogOpen = true;
 
-            if (!File.Exists(path) || !path.EndsWith(".png"))
-                return null;
-
-            var files = Directory.GetFiles(Path.GetDirectoryName(path), "*.png");
-
-            // Add previous/next file paths to metadata so the screenshot viewer carousel can request metadata for next/previous images in directory
-            if (carouselCache)
+            var thread = new Thread(() =>
             {
-                var index = Array.IndexOf(files, path);
-                if (index > 0)
+                using var openFileDialog = new OpenFileDialog();
+                openFileDialog.DefaultExt = ".png";
+                openFileDialog.Filter = "PNG Files (*.png)|*.png";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                var initialPath = GetVRChatPhotosLocation();
+                if (Directory.Exists(initialPath))
                 {
-                    metadata.Add("previousFilePath", files[index - 1]);
+                    openFileDialog.InitialDirectory = initialPath;
                 }
-                if (index < files.Length - 1)
+
+                if (openFileDialog.ShowDialog() != DialogResult.OK)
                 {
-                    metadata.Add("nextFilePath", files[index + 1]);
+                    dialogOpen = false;
+                    return;
                 }
-            }
 
-            metadata.Add("fileResolution", ScreenshotHelper.ReadPNGResolution(path));
+                dialogOpen = false;
 
-            var creationDate = File.GetCreationTime(path);
-            metadata.Add("creationDate", creationDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                var path = openFileDialog.FileName;
+                if (string.IsNullOrEmpty(path))
+                    return;
 
-            var fileSizeBytes = new FileInfo(path).Length;
-            metadata.Add("fileSizeBytes", fileSizeBytes.ToString());
-            metadata.Add("fileName", fileName);
-            metadata.Add("filePath", path);
-            metadata.Add("fileSize", $"{(fileSizeBytes / 1024f / 1024f).ToString("0.00")} MB");
-
-            return metadata.ToString(Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Retrieves metadata from a PNG screenshot file and send the result to displayScreenshotMetadata in app.js
-        /// </summary>
-        /// <param name="path">The path to the PNG screenshot file.</param>
-        public string GetScreenshotMetadata(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return null;
-
-            var metadata = ScreenshotHelper.GetScreenshotMetadata(path);
-
-            if (metadata == null)
-            {
-                var obj = new JObject
-                {
-                    { "sourceFile", path },
-                    { "error", "Screenshot contains no metadata." }
-                };
-
-                return obj.ToString(Formatting.Indented);
-            };
-
-            if (metadata.Error != null)
-            {
-                var obj = new JObject
-                {
-                    { "sourceFile", path },
-                    { "error", metadata.Error }
-                };
-
-                return obj.ToString(Formatting.Indented);
-            }
-
-            return JsonConvert.SerializeObject(metadata, Formatting.Indented, new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy() // This'll serialize our .net property names to their camelCase equivalents. Ex; "FileName" -> "fileName"
-                }
+                ExecuteAppFunction("screenshotMetadataResetSearch", null);
+                ExecuteAppFunction("getAndDisplayScreenshot", path);
             });
-        }
 
-        public string FindScreenshotsBySearch(string searchQuery, int searchType = 0)
-        {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            var searchPath = GetVRChatPhotosLocation();
-            var screenshots = ScreenshotHelper.FindScreenshots(searchQuery, searchPath, (ScreenshotHelper.ScreenshotSearchType)searchType);
-
-            JArray json = new JArray();
-
-            foreach (var screenshot in screenshots)
-            {
-                json.Add(screenshot.SourceFile);
-            }
-
-            stopwatch.Stop();
-
-            logger.Info($"FindScreenshotsBySearch took {stopwatch.ElapsedMilliseconds}ms to complete.");
-
-            return json.ToString();
-        }
-
-        /// <summary>
-        /// Gets and returns the path of the last screenshot taken by VRChat.
-        /// </summary>
-        public string GetLastScreenshot()
-        {
-            // Get the last screenshot taken by VRChat
-            var path = GetVRChatPhotosLocation();
-            if (!Directory.Exists(path))
-                return null;
-
-            var lastDirectory = Directory.GetDirectories(path).OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
-            if (lastDirectory == null)
-                return null;
-
-            var lastScreenshot = Directory.GetFiles(lastDirectory, "*.png").OrderByDescending(File.GetCreationTime).FirstOrDefault();
-            if (lastScreenshot == null)
-                return null;
-
-            return lastScreenshot;
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
         }
     }
 }

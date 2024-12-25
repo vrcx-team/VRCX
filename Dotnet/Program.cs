@@ -26,7 +26,7 @@ namespace VRCX
 #if !LINUX
         public static VRCXVRInterface VRCXVRInstance { get; private set; }
 #endif
-        public static AppApiInterface AppApiInstance { get; private set; }
+        public static AppApiCommon AppApiInstance { get; private set; }
 
         private static void SetProgramDirectories()
         {

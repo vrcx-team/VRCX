@@ -21,7 +21,7 @@ namespace VRCX
     {
         private readonly Dictionary<string, MonitoredProcess> monitoredProcesses;
         private readonly Timer monitorProcessTimer;
-        private readonly static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         static ProcessMonitor()
         {
