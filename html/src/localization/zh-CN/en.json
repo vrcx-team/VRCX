@@ -444,8 +444,8 @@
                         "description": "将生成的『拍立得』图片保存到你的 VRChat 图片文件夹中"
                     },
                     "save_instance_stickers_to_file": {
-                        "header": "表情贴纸保存选项",
-                        "description": "将房间内的表情贴纸保存到 VRChat 的图片文件夹中"
+                        "header": "『表情贴纸』保存选项",
+                        "description": "将房间内的『表情贴纸』保存到 VRChat 的图片文件夹中"
                     },
                     "remote_database": {
                         "header": "模型数据库",
@@ -495,7 +495,7 @@
                         "avatar_name_cache": "模型名称缓存：",
                         "instance_cache": "房间信息缓存：",
                         "clear_cache": "清除缓存",
-                        "auto_clear_cache": "自动清除缓存",
+                        "auto_clear_cache": "自动清除",
                         "show_console": "显示界面调试工具"
                     },
                     "sqlite_table_size": {
