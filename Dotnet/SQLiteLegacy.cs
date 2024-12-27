@@ -44,47 +44,20 @@ namespace VRCX
         
         public string ExecuteJson(string sql, IDictionary<string, object> args = null)
         {
-            m_ConnectionLock.EnterReadLock();
-            try
-            {
-                using var command = new SQLiteCommand(sql, m_Connection);
-                if (args != null)
-                {
-                    foreach (var arg in args)
-                    {
-                        command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
-                    }
-                }
-
-                using var reader = command.ExecuteReader();
-                var result = new List<object[]>();
-                while (reader.Read())
-                {
-                    var values = new object[reader.FieldCount];
-                    for (var i = 0; i < reader.FieldCount; i++)
-                    {
-                        values[i] = reader.GetValue(i);
-                    }
-                    result.Add(values);
-                }
-                return JsonSerializer.Serialize(new
-                {
-                    status = "success",
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            var result = Execute(sql, args);
+            if (result.Item1 != null)
             {
                 return JsonSerializer.Serialize(new
                 {
                     status = "error",
-                    message = ex.Message
+                    message = result.Item1
                 });
             }
-            finally
+            return JsonSerializer.Serialize(new
             {
-                m_ConnectionLock.ExitReadLock();
-            }
+                status = "success",
+                data = result.Item2
+            });
         }
 
         public Tuple<string, object[]> Execute(string sql, IDictionary<string, object> args = null)

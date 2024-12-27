@@ -39,6 +39,25 @@ namespace VRCX
         {
             return _vrcAppDataPath;
         }
+                
+        public override string GetVRChatCacheLocation()
+        {
+            var json = ReadConfigFile();
+            if (!string.IsNullOrEmpty(json))
+            {
+                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                if (obj["cache_directory"] != null)
+                {
+                    var cacheDir = (string)obj["cache_directory"];
+                    if (!string.IsNullOrEmpty(cacheDir) && Directory.Exists(cacheDir))
+                    {
+                        return cacheDir;
+                    }
+                }
+            }
+            
+            return Path.Combine(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
+        }
 
         public override string GetVRChatPhotosLocation()
         {
@@ -85,11 +104,6 @@ namespace VRCX
         {
             // program files steam userdata screenshots
             return Path.Combine(_steamUserdataPath, "760/remote/438100/screenshots");
-        }
-        
-        public override string GetVRChatCacheLocation()
-        {
-            return Path.Combine(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
         }
 
         public override bool OpenVrcxAppDataFolder()

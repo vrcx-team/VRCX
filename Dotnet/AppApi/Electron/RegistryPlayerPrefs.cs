@@ -435,7 +435,7 @@ namespace VRCX
             };
         }
 
-        public override string GetVRChatRegistryKey(string key)
+        public override object GetVRChatRegistryKey(string key)
         {
             try 
             {
@@ -459,6 +459,12 @@ namespace VRCX
                 logger.Error($"Exception in GetRegistryValueFromWine: {ex.Message}");
                 return null;
             }
+        }
+        
+        public override string GetVRChatRegistryKeyString(string key)
+        {
+            // for electron
+            return GetVRChatRegistryKey(key)?.ToString();
         }
         
         // TODO: check this

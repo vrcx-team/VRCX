@@ -8,7 +8,6 @@ using NLog;
 using NLog.Targets;
 using System;
 using System.Data.SQLite;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -31,7 +30,8 @@ namespace VRCX
         private static void SetProgramDirectories()
         {
             if (string.IsNullOrEmpty(AppDataDirectory))
-                AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
+                AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "VRCX");
 
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             ConfigLocation = Path.Combine(AppDataDirectory, "VRCX.sqlite3");
@@ -44,12 +44,16 @@ namespace VRCX
                 if (File.Exists(Path.Combine(BaseDirectory, "VRCX.json")))
                 {
                     File.Move(Path.Combine(BaseDirectory, "VRCX.json"), Path.Combine(AppDataDirectory, "VRCX.json"));
-                    File.Copy(Path.Combine(AppDataDirectory, "VRCX.json"), Path.Combine(AppDataDirectory, "VRCX-backup.json"));
+                    File.Copy(Path.Combine(AppDataDirectory, "VRCX.json"),
+                        Path.Combine(AppDataDirectory, "VRCX-backup.json"));
                 }
+
                 if (File.Exists(Path.Combine(BaseDirectory, "VRCX.sqlite3")))
                 {
-                    File.Move(Path.Combine(BaseDirectory, "VRCX.sqlite3"), Path.Combine(AppDataDirectory, "VRCX.sqlite3"));
-                    File.Copy(Path.Combine(AppDataDirectory, "VRCX.sqlite3"), Path.Combine(AppDataDirectory, "VRCX-backup.sqlite3"));
+                    File.Move(Path.Combine(BaseDirectory, "VRCX.sqlite3"),
+                        Path.Combine(AppDataDirectory, "VRCX.sqlite3"));
+                    File.Copy(Path.Combine(AppDataDirectory, "VRCX.sqlite3"),
+                        Path.Combine(AppDataDirectory, "VRCX-backup.sqlite3"));
                 }
             }
 
@@ -63,7 +67,7 @@ namespace VRCX
                 Directory.Move(oldCachePath, newCachePath);
             }
         }
-        
+
         private static void GetVersion()
         {
             var buildName = "VRCX";
@@ -75,6 +79,7 @@ namespace VRCX
             {
                 Version = $"{buildName} Build";
             }
+
             Version = Version.Replace("\r", "").Replace("\n", "");
         }
 
@@ -88,7 +93,8 @@ namespace VRCX
                     FileName = Path.Combine(AppDataDirectory, "logs", "VRCX.log"),
                     //Layout = "${longdate} [${level:uppercase=true}] ${logger} - ${message} ${exception:format=tostring}",
                     // Layout with padding between the level/logger and message so that the message always starts at the same column
-                    Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
+                    Layout =
+                        "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
                     ArchiveFileName = Path.Combine(AppDataDirectory, "logs", "VRCX.{#}.log"),
                     ArchiveNumbering = ArchiveNumberingMode.DateAndSequence,
                     ArchiveEvery = FileArchivePeriod.Day,
@@ -126,33 +132,43 @@ namespace VRCX
             {
                 Run();
             }
+
             #region Handle CEF Explosion
+
             catch (FileNotFoundException e)
             {
                 logger.Error(e, "Handled Exception, Missing file found in Handle Cef Explosion.");
 
-                var result = MessageBox.Show("VRCX has encountered an error with the CefSharp backend,\nthis is typically caused by missing files or dependencies.\nWould you like to try autofix by automatically installing vc_redist?.", "VRCX CefSharp not found.", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                var result = MessageBox.Show(
+                    "VRCX has encountered an error with the CefSharp backend,\nthis is typically caused by missing files or dependencies.\nWould you like to try autofix by automatically installing vc_redist?.",
+                    "VRCX CefSharp not found.", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 switch (result)
                 {
                     case DialogResult.Yes:
                         logger.Fatal("Handled Exception, user selected auto install of vc_redist.");
                         Update.DownloadInstallRedist();
                         MessageBox.Show(
-                            "vc_redist has finished installing, if the issue persists upon next restart, please reinstall VRCX From GitHub,\nVRCX Will now restart.", "vc_redist installation complete", MessageBoxButtons.OK);
+                            "vc_redist has finished installing, if the issue persists upon next restart, please reinstall VRCX From GitHub,\nVRCX Will now restart.",
+                            "vc_redist installation complete", MessageBoxButtons.OK);
                         Thread.Sleep(5000);
                         AppApiInstance.RestartApplication(false);
                         break;
 
                     case DialogResult.No:
                         logger.Fatal("Handled Exception, user chose manual.");
-                        MessageBox.Show("VRCX will now close, try reinstalling VRCX using the setup from Github as a potential fix.", "VRCX CefSharp not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(
+                            "VRCX will now close, try reinstalling VRCX using the setup from Github as a potential fix.",
+                            "VRCX CefSharp not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         Thread.Sleep(5000);
                         Environment.Exit(0);
                         break;
                 }
             }
+
             #endregion
+
             #region Handle Database Error
+
             catch (SQLiteException e)
             {
                 logger.Fatal(e, "Unhandled SQLite Exception, closing.");
@@ -167,20 +183,25 @@ namespace VRCX
                     AppApiInstance.OpenLink("https://github.com/vrcx-team/VRCX/wiki#how-to-repair-vrcx-database");
                 }
             }
+
             #endregion
+
             catch (Exception e)
             {
                 var cpuError = WinApi.GetCpuErrorMessage();
                 if (cpuError != null)
                 {
-                    var messageBoxResult = MessageBox.Show(cpuError.Value.Item1, "Potentially Faulty CPU Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    var messageBoxResult = MessageBox.Show(cpuError.Value.Item1, "Potentially Faulty CPU Detected",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                     if (messageBoxResult == DialogResult.Yes)
                     {
                         AppApiInstance.OpenLink(cpuError.Value.Item2);
                     }
                 }
+
                 logger.Fatal(e, "Unhandled Exception, program dying");
-                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.app/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.app/discord", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
         }
@@ -200,11 +221,10 @@ namespace VRCX
 
             logger.Info("{0} Starting...", Version);
             logger.Debug("Wine support detection: {0}", Wine.GetIfWine());
-            
+
             SQLiteLegacy.Instance.Init();
-            // AppApiInstance = new AppApiElectron();
             AppApiInstance = new AppApiCef();
-            
+
             AppApiVr.Instance.Init();
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
@@ -214,13 +234,13 @@ namespace VRCX
             AutoAppLaunchManager.Instance.Init();
             CefService.Instance.Init();
             IPCServer.Instance.Init();
-            
+
             if (VRCXStorage.Instance.Get("VRCX_DisableVrOverlayGpuAcceleration") == "true")
                 VRCXVRInstance = new VRCXVRLegacy();
             else
                 VRCXVRInstance = new VRCXVR();
             VRCXVRInstance.Init();
-            
+
             Application.Run(new MainForm());
             logger.Info("{0} Exiting...", Version);
             WebApi.Instance.SaveCookies();
@@ -238,6 +258,49 @@ namespace VRCX
             SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();
         }
+#else
+        public static void PreInit()
+        {
+            StartupArgs.ArgsCheck();
+            SetProgramDirectories();
+        }
+
+        public static void Init()
+        {
+            VRCXStorage.Load();
+            ConfigureLogger();
+            Update.Check();
+            GetVersion();
+
+            logger.Info("{0} Starting...", Version);
+
+            SQLiteLegacy.Instance.Init();
+            AppApiInstance = new AppApiElectron();
+            ProcessMonitor.Instance.Init();
+            Discord.Instance.Init();
+            WebApi.Instance.Init();
+            LogWatcher.Instance.Init();
+            AutoAppLaunchManager.Instance.Init();
+        }
 #endif
     }
+
+#if LINUX
+    public class DynamicProgram
+    {
+        public DynamicProgram()
+        {
+        }
+
+        public void PreInit()
+        {
+            Program.PreInit();
+        }
+
+        public void Init()
+        {
+            Program.Init();
+        }
+    }
+#endif
 }

@@ -6,8 +6,6 @@ namespace VRCX
 {
     public abstract partial class AppApiCommon
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-            
         // AppApi
         public abstract void ShowDevTools();
         public abstract void DeleteAllCookies();
@@ -59,6 +57,7 @@ namespace VRCX
         
         // RegistryPlayerPrefs
         public abstract object GetVRChatRegistryKey(string key);
+        public abstract string GetVRChatRegistryKeyString(string key);
         public abstract bool SetVRChatRegistryKey(string key, object value, int typeInt);
         public abstract void SetVRChatRegistryKey(string key, byte[] value);
         public abstract Dictionary<string, Dictionary<string, object>> GetVRChatRegistry();
