@@ -12062,7 +12062,6 @@ speechSynthesis.getVoices();
                                 API.deleteImposter({
                                     avatarId: D.id
                                 }).then((args) => {return args;});
-                                this.showAvatarDialog(D.id);
                                 API.createImposter({
                                     avatarId: D.id
                                 }).then((args) => {
@@ -12070,6 +12069,7 @@ speechSynthesis.getVoices();
                                         message: 'Imposter deleted and queued for creation',
                                         type: 'success'
                                     });
+                                    this.showAvatarDialog(D.id);
                                     return args;
                                 });
                                 break;
