@@ -36,44 +36,5 @@ namespace VRCX
             ScreenshotHelper.WritePNGDescription(path, metadataString);
             return path;
         }
-
-        public override void OpenScreenshotFileDialog()
-        {
-            if (dialogOpen) return;
-            dialogOpen = true;
-
-            var thread = new Thread(() =>
-            {
-                using var openFileDialog = new OpenFileDialog();
-                openFileDialog.DefaultExt = ".png";
-                openFileDialog.Filter = "PNG Files (*.png)|*.png";
-                openFileDialog.FilterIndex = 1;
-                openFileDialog.RestoreDirectory = true;
-
-                var initialPath = GetVRChatPhotosLocation();
-                if (Directory.Exists(initialPath))
-                {
-                    openFileDialog.InitialDirectory = initialPath;
-                }
-
-                if (openFileDialog.ShowDialog() != DialogResult.OK)
-                {
-                    dialogOpen = false;
-                    return;
-                }
-
-                dialogOpen = false;
-
-                var path = openFileDialog.FileName;
-                if (string.IsNullOrEmpty(path))
-                    return;
-
-                ExecuteAppFunction("screenshotMetadataResetSearch", null);
-                ExecuteAppFunction("getAndDisplayScreenshot", path);
-            });
-
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-        }
     }
 }

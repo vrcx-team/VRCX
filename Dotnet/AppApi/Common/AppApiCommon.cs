@@ -113,33 +113,49 @@ namespace VRCX
 
         public byte[] ResizePrintImage(byte[] imageData)
         {
-            var inputImage = ResizeImageToFitLimits(imageData, false, 1920, 1080);
-            using var fileMemoryStream = new MemoryStream(inputImage);
+            const int desiredWidth = 1920;
+            const int desiredHeight = 1080;
+
+            using var fileMemoryStream = new MemoryStream(imageData);
             var image = new Bitmap(fileMemoryStream);
 
             // increase size to 1920x1080
-            if (image.Width < 1920 || image.Height < 1080)
+            if (image.Width < desiredWidth || image.Height < desiredHeight)
             {
                 var newHeight = image.Height;
                 var newWidth = image.Width;
-                if (image.Width < 1920)
+                if (image.Width < desiredWidth)
                 {
-                    newWidth = 1920;
+                    newWidth = desiredWidth;
                     newHeight = (int)Math.Round(image.Height / (image.Width / (double)newWidth));
                 }
-                if (image.Height < 1080)
+                if (image.Height < desiredHeight)
                 {
-                    newHeight = 1080;
+                    newHeight = desiredHeight;
                     newWidth = (int)Math.Round(image.Width / (image.Height / (double)newHeight));
                 }
-                var resizedImage = new Bitmap(1920, 1080);
+                var resizedImage = new Bitmap(desiredWidth, desiredHeight);
                 using var graphics1 = Graphics.FromImage(resizedImage);
                 graphics1.Clear(Color.White);
-                var x = (1920 - newWidth) / 2;
-                var y = (1080 - newHeight) / 2;
+                var x = (desiredWidth - newWidth) / 2;
+                var y = (desiredHeight - newHeight) / 2;
                 graphics1.DrawImage(image, new Rectangle(x, y, newWidth, newHeight));
                 image.Dispose();
                 image = resizedImage;
+            }
+            
+            // limit size to 1920x1080
+            if (image.Width > desiredWidth)
+            {
+                var sizingFactor = image.Width / (double)desiredWidth;
+                var newHeight = (int)Math.Round(image.Height / sizingFactor);
+                image = new Bitmap(image, desiredWidth, newHeight);
+            }
+            if (image.Height > desiredHeight)
+            {
+                var sizingFactor = image.Height / (double)desiredHeight;
+                var newWidth = (int)Math.Round(image.Width / sizingFactor);
+                image = new Bitmap(image, newWidth, desiredHeight);
             }
 
             // add white border
@@ -149,7 +165,10 @@ namespace VRCX
             var newImage = new Bitmap(2048, 1440);
             using var graphics = Graphics.FromImage(newImage);
             graphics.Clear(Color.White);
-            graphics.DrawImage(image, new Rectangle(xOffset, yOffset, image.Width, image.Height));
+            // graphics.DrawImage(image, new Rectangle(xOffset, yOffset, image.Width, image.Height));
+            var newX = (2048 - image.Width) / 2;
+            var newY = yOffset;
+            graphics.DrawImage(image, new Rectangle(newX, newY, image.Width, image.Height));
             image.Dispose();
             image = newImage;
 

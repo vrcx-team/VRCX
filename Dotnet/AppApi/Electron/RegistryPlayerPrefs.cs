@@ -754,8 +754,13 @@ namespace VRCX
             GetWineRegCommand(regCommand);
         }
 
-        public override void OpenVrcRegJsonFileDialog()
+        public override string ReadVrcRegJsonFile(string filepath)
         {
+            if (!File.Exists(filepath))
+                return string.Empty;
+            
+            var json = File.ReadAllText(filepath);
+            return json;
         }
     }
 }

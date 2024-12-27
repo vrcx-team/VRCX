@@ -33,9 +33,5 @@ namespace VRCX
             ScreenshotHelper.WritePNGDescription(path, metadataString);
             return path;
         }
-
-        public override void OpenScreenshotFileDialog()
-        {
-        }
     }
 }

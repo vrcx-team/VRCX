@@ -47,6 +47,9 @@ namespace VRCX
         public abstract void OpenShortcutFolder();
         public abstract void OpenFolderAndSelectItem(string path, bool isFolder = false);
         public abstract Task<string> OpenFolderSelectorDialog(string defaultPath = "");
+
+        public abstract Task<string> OpenFileSelectorDialog(string defaultPath = "", string defaultExt = "",
+            string defaultFilter = "All files (*.*)|*.*");
         
         // GameHandler
         public abstract void OnProcessStateChanged(MonitoredProcess monitoredProcess);
@@ -64,10 +67,9 @@ namespace VRCX
         public abstract void SetVRChatRegistry(string json);
         public abstract bool HasVRChatRegistryFolder();
         public abstract void DeleteVRChatRegistryFolder();
-        public abstract void OpenVrcRegJsonFileDialog();
+        public abstract string ReadVrcRegJsonFile(string filepath);
         
         // Screenshot
         public abstract string AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false);
-        public abstract void OpenScreenshotFileDialog();
     }
 }
