@@ -16,6 +16,11 @@ namespace VRCX
     {
         public override string GetVRChatAppDataLocation()
         {
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
+        }
+        
+        public override string GetVRChatCacheLocation()
+        {
             var json = ReadConfigFile();
             if (!string.IsNullOrEmpty(json))
             {
@@ -30,7 +35,7 @@ namespace VRCX
                 }
             }
 
-            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
+            return Path.Combine(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
         }
 
         public override string GetVRChatPhotosLocation()
@@ -125,11 +130,6 @@ namespace VRCX
             }
 
             return screenshotPath;
-        }
-        
-        public override string GetVRChatCacheLocation()
-        {
-            return Path.Combine(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
         }
 
         public override bool OpenVrcxAppDataFolder()

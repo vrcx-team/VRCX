@@ -14,6 +14,7 @@ namespace VRCX
 {
     public abstract partial class AppApiCommon
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly MD5 _hasher = MD5.Create();
         
         public string MD5File(string blob)
@@ -29,7 +30,6 @@ namespace VRCX
             var hash = _hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));
             return (hash[3] << 8) | hash[4];
         }
-        
         
         public string ResizeImageToFitLimits(string base64data)
         {
@@ -209,7 +209,6 @@ namespace VRCX
                 Data = data
             });
         }
-        
         
         public string CustomCssPath()
         {

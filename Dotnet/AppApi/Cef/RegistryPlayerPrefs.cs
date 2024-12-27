@@ -75,6 +75,12 @@ namespace VRCX
             return null;
         }
 
+        public override string GetVRChatRegistryKeyString(string key)
+        {
+            // for electron
+            return GetVRChatRegistryKey(key)?.ToString();
+        }
+
         /// <summary>
         /// Sets the value of the specified key in the VRChat group in the windows registry.
         /// </summary>
