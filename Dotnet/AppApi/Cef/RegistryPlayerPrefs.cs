@@ -266,44 +266,14 @@ namespace VRCX
 
             Registry.CurrentUser.DeleteSubKeyTree(@"SOFTWARE\VRChat\VRChat");
         }
-
-        /// <summary>
-        /// Opens a file dialog to select a VRChat registry backup JSON file.
-        /// </summary>
-        public override void OpenVrcRegJsonFileDialog()
-        {
-            if (dialogOpen) return;
-            dialogOpen = true;
-
-        public string ReadVrcRegJsonFile(string filepath)
+        
+        public override string ReadVrcRegJsonFile(string filepath)
         {
             if (!File.Exists(filepath))
-            {
-                using var openFileDialog = new System.Windows.Forms.OpenFileDialog();
-                openFileDialog.DefaultExt = ".json";
-                openFileDialog.Filter = "JSON Files (*.json)|*.json";
-                openFileDialog.FilterIndex = 1;
-                openFileDialog.RestoreDirectory = true;
-
-                if (openFileDialog.ShowDialog() != DialogResult.OK)
-                {
-                    dialogOpen = false;
-                    return;
-                }
-
-                dialogOpen = false;
-
-                var path = openFileDialog.FileName;
-                if (string.IsNullOrEmpty(path))
-                    return;
-
-                // return file contents
-                var json = File.ReadAllText(path);
-                ExecuteAppFunction("restoreVrcRegistryFromFile", json);
-            });
-
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
+                return string.Empty;
+            
+            var json = File.ReadAllText(filepath);
+            return json;
         }
     }
 }
