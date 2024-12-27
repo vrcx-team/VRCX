@@ -161,7 +161,7 @@ Section "Install" SecInstall
 
     SetOutPath "$INSTDIR"
 
-    File /r /x *.log /x *.pdb "..\bin\x64\Release\*.*"
+    File /r /x *.log /x *.pdb "..\build\Cef\Release\*.*"
 
     WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
     WriteUninstaller "$INSTDIR\Uninstall.exe"

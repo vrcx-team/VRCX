@@ -3,31 +3,54 @@ name: VRCX
 on:
   - workflow_dispatch
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build_dotnet:
-    runs-on: windows-latest
+  set_version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - uses: actions/checkout@v3
+      - id: version
+        run: |
+          git_hash=$(git rev-parse --short "$GITHUB_SHA")
+          export FILENAME="$(date '+%Y-%m-%dT%H.%M')-${git_hash}"
+          echo "::set-output name=version::${FILENAME}"
+
+  build_dotnet:
+    runs-on: windows-latest
+    needs: set_version
+
+    steps:
+      - uses: actions/checkout@v3
+
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "8.0.x"
+      - name: Set version
+        run: |
+          echo "${{ needs.set_version.outputs.version }}" > Version
+          cat Version
       - name: Build .NET Application
-        run: dotnet build -p:Configuration=Release -p:Platform=x64 -p:EnableWindowsTargeting=true --self-contained
-      - uses: actions/upload-artifact@v3
+        run: dotnet build VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+      - name: Upload dotnet artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: vrcx
+          name: Release
           path: build/Cef/Release
 
   build_node:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: html
+    needs: set_version
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -36,12 +59,69 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run prod
-      - name: Fix folder structure
-        id: fix-folders
-        run: |
-          mkdir upload
-          mv build/html upload/html
-      - uses: actions/upload-artifact@v3
+      - name: Upload html artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: vrcx
-          path: html/upload
+          name: html
+          path: build/html
+
+  create_setup:
+    runs-on: ubuntu-latest
+    needs: [set_version, build_node, build_dotnet]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install 7-zip and makensis
+        run: sudo apt update && sudo apt install -y p7zip-full nsis nsis-pluginapi
+      - name: Set plugin permissions
+        run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
+      - name: Download dotnet artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Release
+          path: build/Cef/Release
+      - name: Download html artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: html
+          path: build/Cef/Release
+      - name: Create nsis installer
+        uses: joncloud/makensis-action@v4
+        with:
+          script-file: Installer/installer.nsi
+          additional-plugin-paths: Installer/Plugins
+      - name: Rename setup
+        run: |
+          file_name="VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+          echo "Setup FileName: ${file_name}"
+          mv Installer/VRCX_Setup.exe $file_name
+      - name: Make zip
+        run: |
+          file_name="VRCX_${{ needs.set_version.outputs.version }}.zip"
+          cd build/Cef/Release
+          7z a -tzip ${file_name} * -mx=7 -xr0!*.log
+          mv ${file_name} ../../../${file_name}
+          echo "Zip FileName: ${file_name}"
+      - name: Generate setup hash
+        run: |
+          sha256sum "VRCX_${{ needs.set_version.outputs.version }}_Setup.exe" > "SHA256SUMS.txt"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{ needs.set_version.outputs.version }}"
+          release_name: "VRCX Nightly ${{ needs.set_version.outputs.version }}"
+          draft: false
+          prerelease: false
+      - name: Upload multiple assets to release
+        uses: csexton/release-asset-action@v2
+        with:
+          files: |
+            VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+            VRCX_${{ needs.set_version.outputs.version }}.zip
+            SHA256SUMS.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-url: ${{ steps.create_release.outputs.upload_url }}
