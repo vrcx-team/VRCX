@@ -1882,6 +1882,12 @@ speechSynthesis.getVoices();
         });
     };
 
+    API.$on('AVATAR:IMPOSTER:DELETE', function (args) {
+        if (args.json && $app.avatarDialog.visible) {
+            $app.showAvatarDialog($app.avatarDialog.id);
+        }
+    });
+
     // #endregion
     // #region | API: Notification
 
@@ -6262,7 +6268,7 @@ speechSynthesis.getVoices();
 
         var withCompany = this.lastLocation.playerList.size > 1;
         if (this.autoStateChangeNoFriends) {
-            withCompany = this.lastLocation.friendList.size > 1;
+            withCompany = this.lastLocation.friendList.size >= 1;
         }
 
         var currentStatus = API.currentUser.status;
@@ -10485,10 +10491,28 @@ speechSynthesis.getVoices();
                     continue;
                 }
                 if (unityPackage.platform === 'standalonewindows') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        pc.performanceRating
+                    ) {
+                        continue;
+                    }
                     pc = unityPackage;
                 } else if (unityPackage.platform === 'android') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        android.performanceRating
+                    ) {
+                        continue;
+                    }
                     android = unityPackage;
                 } else if (unityPackage.platform === 'ios') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        ios.performanceRating
+                    ) {
+                        continue;
+                    }
                     ios = unityPackage;
                 }
             }
@@ -16527,6 +16551,20 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.getAndDisplayScreenshotFromFile = async function () {
+        var filePath = await AppApi.OpenFileSelectorDialog(
+            await AppApi.GetVRChatPhotosLocation(),
+            '.png',
+            'PNG Files (*.png)|*.png'
+        );
+        if (filePath === '') {
+            return;
+        }
+
+        this.screenshotMetadataResetSearch();
+        this.getAndDisplayScreenshot(filePath);
+    };
+
     $app.methods.getAndDisplayScreenshot = function (
         path,
         needsCarouselFiles = true
@@ -22430,7 +22468,7 @@ speechSynthesis.getVoices();
             var unityPackage = D.ref.unityPackages[i];
             if (
                 unityPackage.variant &&
-                unityPackage.variant !== 'standard' &&
+                // unityPackage.variant !== 'standard' &&
                 unityPackage.variant !== 'security'
             ) {
                 continue;
