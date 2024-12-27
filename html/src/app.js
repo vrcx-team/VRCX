@@ -12034,6 +12034,21 @@ speechSynthesis.getVoices();
                                     return args;
                                 });
                                 break;
+                            case 'Regenerate Imposter':
+                                API.deleteImposter({
+                                    avatarId: D.id
+                                }).then((args) => {return args;});
+                                this.showAvatarDialog(D.id);
+                                API.createImposter({
+                                    avatarId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Imposter deleted and queued for creation',
+                                        type: 'success'
+                                    });
+                                    return args;
+                                });
+                                break;
                         }
                     }
                 });
