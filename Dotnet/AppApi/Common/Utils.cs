@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace VRCX;
 
-public partial class AppApiCommon
+public partial class AppApi
 {
     private static readonly Regex _folderRegex = new Regex(string.Format(@"([{0}]*\.+$)|([{0}]+)",
         Regex.Escape(new string(Path.GetInvalidPathChars()))));

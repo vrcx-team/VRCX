@@ -9,7 +9,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace VRCX;
 
-public partial class AppApiCommon
+public partial class AppApi
 {
         public string GetExtraScreenshotData(string path, bool carouselCache)
         {

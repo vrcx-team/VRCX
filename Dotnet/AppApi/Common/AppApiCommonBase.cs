@@ -4,7 +4,7 @@ using NLog;
 
 namespace VRCX
 {
-    public abstract partial class AppApiCommon
+    public abstract partial class AppApi
     {
         // AppApi
         public abstract void ShowDevTools();

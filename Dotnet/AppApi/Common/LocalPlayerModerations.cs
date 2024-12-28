@@ -6,7 +6,7 @@ using System.Text;
 
 namespace VRCX
 {
-    public partial class AppApiCommon
+    public partial class AppApi
     {
         public Dictionary<string, short> GetVRChatModerations(string currentUserId)
         {

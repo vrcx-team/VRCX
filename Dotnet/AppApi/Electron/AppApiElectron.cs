@@ -6,7 +6,7 @@ using NLog;
 
 namespace VRCX
 {
-    public partial class AppApiElectron : AppApiCommon
+    public partial class AppApiElectron : AppApi
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         
