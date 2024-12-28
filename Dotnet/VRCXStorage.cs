@@ -25,7 +25,7 @@ namespace VRCX
             Instance = new VRCXStorage();
         }
 
-        public static void Load()
+        public void Load()
         {
             m_Lock.EnterWriteLock();
             try
@@ -39,7 +39,7 @@ namespace VRCX
             }
         }
 
-        public static void Save()
+        public void Save()
         {
             m_Lock.EnterReadLock();
             try

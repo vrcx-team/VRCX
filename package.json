@@ -68,7 +68,7 @@
         "yargs": "^17.7.2"
     },
     "build": {
-        "appId": "com.pypy.vrcx",
+        "appId": "app.vrcx",
         "productName": "VRCX",
         "icon": "VRCX.png",
         "files": [
@@ -83,13 +83,13 @@
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",
             "node_modules/node-api-dotnet/net8.0/**/*",
-            "build/bin/Debug/*",
-            "build/bin/Debug/**"
+            "build/Electron/Debug/*",
+            "build/Electron/Debug/**"
         ],
         "extraResources": [
             {
-                "from": "build/bin/Debug/",
-                "to": "app.asar.unpacked/build/bin/Debug/"
+                "from": "build/Electron/Debug/",
+                "to": "app.asar.unpacked/build/Electron/Debug/"
             },
             {
                 "from": "node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.dll",

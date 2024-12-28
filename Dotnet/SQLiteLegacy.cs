@@ -24,7 +24,7 @@ namespace VRCX
             m_ConnectionLock = new ReaderWriterLockSlim();
         }
 
-        internal void Init()
+        public void Init()
         {
             var dataSource = Program.ConfigLocation;
             var jsonDataSource = VRCXStorage.Instance.Get("VRCX_DatabaseLocation");
@@ -36,7 +36,7 @@ namespace VRCX
             m_Connection.Open();
         }
 
-        internal void Exit()
+        public void Exit()
         {
             m_Connection.Close();
             m_Connection.Dispose();
