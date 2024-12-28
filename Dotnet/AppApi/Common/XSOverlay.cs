@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace VRCX
 {
-    public partial class AppApiCommon
+    public partial class AppApi
     {
         /// <summary>
         /// Displays an XSOverlay notification with the specified title, content, and optional image.

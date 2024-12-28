@@ -3,7 +3,7 @@ using System.IO;
 
 namespace VRCX
 {
-    public partial class AppApiCommon
+    public partial class AppApi
     {
         public string ReadConfigFile()
         {
