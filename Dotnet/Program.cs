@@ -267,20 +267,13 @@ namespace VRCX
 
         public static void Init()
         {
-            VRCXStorage.Load();
             ConfigureLogger();
             Update.Check();
             GetVersion();
 
             logger.Info("{0} Starting...", Version);
 
-            SQLiteLegacy.Instance.Init();
-            AppApiInstance = new AppApiElectron();
-            ProcessMonitor.Instance.Init();
-            Discord.Instance.Init();
-            WebApi.Instance.Init();
-            LogWatcher.Instance.Init();
-            AutoAppLaunchManager.Instance.Init();
+            // ProcessMonitor.Instance.Init();
         }
 #endif
     }
