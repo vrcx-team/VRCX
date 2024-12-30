@@ -343,6 +343,7 @@
                         "overlay_notifications": "通知オーバーレイ",
                         "notification_position": "通知の位置",
                         "xsoverlay_notifications": "XSOverlayで通知する",
+                        "wlxoverlay_notifications": "WlxOverlayで通知する",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD上での通知",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit 手首上での通知",
                         "user_images": "ユーザー画像を使用 (遅い)",

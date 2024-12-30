@@ -344,6 +344,7 @@
                         "overlay_notifications": "疊層通知",
                         "notification_position": "通知位置",
                         "xsoverlay_notifications": "XSOverlay 通知",
+                        "wlxoverlay_notifications": "WlxOverlay 通知",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit 手腕通知",
                         "user_images": "玩家照片（較慢）",

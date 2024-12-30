@@ -338,6 +338,7 @@
                         "overlay_notifications": "오버레이 알림 사용",
                         "notification_position": "알림 위치 설정",
                         "xsoverlay_notifications": "XSOverlay 알림 사용",
+                        "wlxoverlay_notifications": "WlxOverlay 알림 사용",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
                         "user_images": "유저 이미지 표시 (느림)",
