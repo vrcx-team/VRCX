@@ -237,24 +237,46 @@ export default class extends baseClass {
             }
         },
 
-        async saveDiscordOption() {
-            await configRepository.setBool('discordActive', this.discordActive);
-            await configRepository.setBool(
-                'discordInstance',
-                this.discordInstance
-            );
-            await configRepository.setBool(
-                'discordJoinButton',
-                this.discordJoinButton
-            );
-            await configRepository.setBool(
-                'discordHideInvite',
-                this.discordHideInvite
-            );
-            await configRepository.setBool(
-                'discordHideImage',
-                this.discordHideImage
-            );
+        async saveDiscordOption(configLabel = '') {
+            if (configLabel === 'discordActive') {
+                this.discordActive = !this.discordActive;
+                await configRepository.setBool(
+                    'discordActive',
+                    this.discordActive
+                );
+            }
+
+            if (configLabel === 'discordInstance') {
+                this.discordInstance = !this.discordInstance;
+                await configRepository.setBool(
+                    'discordInstance',
+                    this.discordInstance
+                );
+            }
+
+            if (configLabel === 'discordJoinButton') {
+                this.discordJoinButton = !this.discordJoinButton;
+                await configRepository.setBool(
+                    'discordJoinButton',
+                    this.discordJoinButton
+                );
+            }
+
+            if (configLabel === 'discordHideInvite') {
+                this.discordHideInvite = !this.discordHideInvite;
+                await configRepository.setBool(
+                    'discordHideInvite',
+                    this.discordHideInvite
+                );
+            }
+            if (configLabel === 'discordHideImage') {
+                this.discordHideImage = !this.discordHideImage;
+                await configRepository.setBool(
+                    'discordHideImage',
+                    this.discordHideImage
+                );
+            }
+
             this.lastLocation$.tag = '';
             this.nextDiscordUpdate = 3;
             this.updateDiscord();

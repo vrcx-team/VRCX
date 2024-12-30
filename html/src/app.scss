@@ -730,21 +730,7 @@ i.x-status-icon.red {
 
 .options-container-item .name {
     display: inline-block;
-    min-width: 225px;
-}
-
-.simple-switch {
-    font-size: 12px;
-    margin-top: 5px;
-    display: flex;
-}
-
-.simple-switch .name {
-    flex-basis: 225px;
-}
-
-.simple-switch .switch {
-    flex-shrink: 0;
+    width: 235px;
 }
 
 .toggle-switch {
