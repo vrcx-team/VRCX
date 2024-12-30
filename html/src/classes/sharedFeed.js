@@ -579,18 +579,18 @@ export default class extends baseClass {
             this.updateSharedFeed(true);
         },
 
-        async resetNotyFeedFilters(){
+        async resetNotyFeedFilters() {
             this.sharedFeedFilters.noty = {
                 ...this.sharedFeedFiltersDefaults.noty
             };
-            await configRepository.setString('sharedFeedFilters', JSON.stringify(this.sharedFeedFiltersDefaults));
+            this.saveSharedFeedFilters();
         },
 
-        async resetWristFeedFilters(){
+        async resetWristFeedFilters() {
             this.sharedFeedFilters.wrist = {
                 ...this.sharedFeedFiltersDefaults.wrist
             };
-            await configRepository.setString('sharedFeedFilters', JSON.stringify(this.sharedFeedFiltersDefaults));
+            this.saveSharedFeedFilters();
         }
     };
 }

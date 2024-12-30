@@ -154,13 +154,21 @@ namespace VRCX
                 var newWidth = image.Width;
                 if (image.Width < desiredWidth)
                 {
-                    newWidth = desiredWidth;
-                    newHeight = (int)Math.Round(image.Height / (image.Width / (double)newWidth));
+                    var testHeight = (int)Math.Round(image.Height / (image.Width / (double)desiredWidth));
+                    if (testHeight <= desiredHeight)
+                    {
+                        newWidth = desiredWidth;
+                        newHeight = testHeight;
+                    }
                 }
                 if (image.Height < desiredHeight)
                 {
-                    newHeight = desiredHeight;
-                    newWidth = (int)Math.Round(image.Width / (image.Height / (double)newHeight));
+                    var testWidth = (int)Math.Round(image.Width / (image.Height / (double)desiredHeight));
+                    if (testWidth <= desiredWidth)
+                    {
+                        newHeight = desiredHeight;
+                        newWidth = testWidth;
+                    }
                 }
                 var resizedImage = new Bitmap(desiredWidth, desiredHeight);
                 using var graphics1 = Graphics.FromImage(resizedImage);
