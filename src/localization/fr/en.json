@@ -338,6 +338,7 @@
                         "overlay_notifications": "Overlay des Notifications",
                         "notification_position": "Position des notifications",
                         "xsoverlay_notifications": "Notifications d'XSOverlay",
+                        "wlxoverlay_notifications": "Notifications d'WlxOverlay",
                         "ovrtoolkit_hud_notifications": "Notifications sur l'HUD d'OVR Toolkit",
                         "ovrtoolkit_wrist_notifications": "Notifications sur le poignet d'OVR Toolkit",
                         "user_images": "Afficher les images d'utilisateur (plus lent)",

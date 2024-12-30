@@ -338,6 +338,7 @@
                         "overlay_notifications": "Thông báo Overlay",
                         "notification_position": "Vị trí thông báo",
                         "xsoverlay_notifications": "Thông báo XSOverlay",
+                        "wlxoverlay_notifications": "Thông báo WlxOverlay",
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
                         "user_images": "Ảnh người chơi (chậm hơn)",
