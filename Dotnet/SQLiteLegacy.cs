@@ -26,6 +26,9 @@ namespace VRCX
 
         public void Init()
         {
+#if LINUX
+            Instance = this;
+#endif
             var dataSource = Program.ConfigLocation;
             var jsonDataSource = VRCXStorage.Instance.Get("VRCX_DatabaseLocation");
             if (!string.IsNullOrEmpty(jsonDataSource))
