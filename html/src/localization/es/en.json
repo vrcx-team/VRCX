@@ -802,6 +802,7 @@
                 "download_package": "Descargar paquete de Unity",
                 "delete": "Eliminar",
                 "delete_impostor": "Eliminar Impostor",
+                "regenerate_impostor": "Recrear Impostor",
                 "create_impostor": "Crear impostor"
             },
             "info": {

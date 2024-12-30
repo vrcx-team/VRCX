@@ -794,6 +794,7 @@
                 "download_package": "Tải về Unity Package",
                 "delete": "Xóa",
                 "delete_impostor": "Delete Impostor",
+                "regenerate_impostor": "Regenerate Impostor",
                 "create_impostor": "Create Impostor"
             },
             "info": {

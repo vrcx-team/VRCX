@@ -794,6 +794,7 @@
                 "download_package": "Baixar Pacote Unity",
                 "delete": "Excluir",
                 "delete_impostor": "Excluir Impostor",
+                "regenerate_impostor": "Recriar Impostor",
                 "create_impostor": "Criar Impostor"
             },
             "info": {

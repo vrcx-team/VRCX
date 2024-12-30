@@ -12043,6 +12043,7 @@ speechSynthesis.getVoices();
                                         message: 'Imposter deleted',
                                         type: 'success'
                                     });
+                                    this.showAvatarDialog(D.id);
                                     return args;
                                 });
                                 break;
@@ -12054,6 +12055,21 @@ speechSynthesis.getVoices();
                                         message: 'Imposter queued for creation',
                                         type: 'success'
                                     });
+                                    return args;
+                                });
+                                break;
+                            case 'Regenerate Imposter':
+                                API.deleteImposter({
+                                    avatarId: D.id
+                                }).then((args) => {return args;});
+                                API.createImposter({
+                                    avatarId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Imposter deleted and queued for creation',
+                                        type: 'success'
+                                    });
+                                    this.showAvatarDialog(D.id);
                                     return args;
                                 });
                                 break;

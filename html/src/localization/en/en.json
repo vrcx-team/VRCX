@@ -842,6 +842,7 @@
                 "download_package": "Download Unity Package",
                 "delete": "Delete",
                 "delete_impostor": "Delete Impostor",
+                "regenerate_impostor": "Regenerate Impostor",
                 "create_impostor": "Create Impostor"
             },
             "info": {

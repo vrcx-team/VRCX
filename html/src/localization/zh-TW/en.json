@@ -842,6 +842,7 @@
                 "download_package": "下載 Unity Package",
                 "delete": "刪除",
                 "delete_impostor": "刪除投影替身",
+                "regenerate_impostor": "Regenerate Impostor",
                 "create_impostor": "建立投影替身"
             },
             "info": {

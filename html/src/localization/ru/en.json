@@ -826,6 +826,7 @@
                 "download_package": "Скачать пакет Unity",
                 "delete": "Удалить",
                 "delete_impostor": "Удалить импостора",
+                "regenerate_impostor": "Воссоздать импостора",
                 "create_impostor": "Создать импостора"
             },
             "info": {
