@@ -46,11 +46,11 @@ mixin vrcx()
             el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX(true)") {{ $t('dialog.vrcx_updater.install') }}
 
     //- dialog: change log
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px")
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px" top="5vh")
         .changelog-dialog(v-if="changeLogDialog.visible")
             h2(v-text="changeLogDialog.buildName")
             span {{ $t('dialog.change_log.description') }} #[a.x-link(@click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')") Patreon], #[a.x-link(@click="openExternalLink('https://ko-fi.com/natsumi_sama')") Ko-fi].
-            vue-markdown(:source="changeLogDialog.changeLog" :linkify="false")
+            vue-markdown(:source="changeLogDialog.changeLog" :linkify="false" style="height:62vh;overflow-y:auto;margin-top:10px")
         template(#footer)
             el-button(type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')") {{ $t('dialog.change_log.github') }}
             el-button(type="small" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')") {{ $t('dialog.change_log.donate') }}
