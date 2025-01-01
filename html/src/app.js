@@ -5978,15 +5978,10 @@ speechSynthesis.getVoices();
           return result;
         }
 
-        let out = buildDiff(0, oldWords.length, 0, newWords.length)
-            .join(" ")
-            .replace(/<br>[ ]+<br>/g, "<br><br>")
-            .replace(/<br> /g, "<br>");
-
-        console.log(oldWords, newWords);
-        console.log(out);
-      
-        return out;
+        return buildDiff(0, oldWords.length, 0, newWords.length)
+        .join(" ")
+        .replace(/<br>[ ]+<br>/g, "<br><br>")
+        .replace(/<br> /g, "<br>");
     }
 
     // #endregion
