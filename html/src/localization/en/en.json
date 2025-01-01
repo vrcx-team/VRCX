@@ -34,11 +34,30 @@
         "feed": {
             "favorites_only_tooltip": "Filter favorites only",
             "filter_placeholder": "Filter",
-            "search_placeholder": "Search"
+            "search_placeholder": "Search",
+            "filters": {
+                "GPS": "GPS",
+                "Online": "Online",
+                "Offline": "Offline",
+                "Status": "Status",
+                "Avatar": "Avatar",
+                "Bio": "Bio"
+            }
         },
         "game_log": {
             "filter_placeholder": "Filter",
-            "search_placeholder": "Search"
+            "search_placeholder": "Search",
+            "filters": {
+                "Location": "Location",
+                "OnPlayerJoined": "Player joined",
+                "OnPlayerLeft": "Player left",
+                "PortalSpawn": "Portal spawn",
+                "VideoPlay": "Video play",
+                "Event": "Event",
+                "External": "External",
+                "StringLoad": "String load",
+                "ImageLoad": "Image load"
+            }
         },
         "player_list": {
             "photon": {
@@ -125,17 +144,64 @@
         },
         "friend_log": {
             "filter_placeholder": "Filter",
-            "search_placeholder": "Search"
+            "search_placeholder": "Search",
+            "filters": {
+                "Friend": "New friend",
+                "Unfriend": "Unfriend",
+                "FriendRequest": "Friend request",
+                "CancelFriendRequest": "Cancel friend request",
+                "DisplayName": "Display name",
+                "TrustLevel": "Trust level"
+            }
         },
         "moderation": {
             "filter_placeholder": "Filter",
             "search_placeholder": "Search",
-            "refresh_tooltip": "Refresh"
+            "refresh_tooltip": "Refresh",
+            "filters": {
+                "block": "Block",
+                "unblock": "Unblock",
+                "mute": "Mute",
+                "unmute": "Unmute",
+                "interactOn": "Interact On",
+                "interactOff": "Interact Off",
+                "muteChat": "Mute chat"
+            }
         },
         "notification": {
             "filter_placeholder": "Filter",
             "search_placeholder": "Search",
-            "refresh_tooltip": "Refresh"
+            "refresh_tooltip": "Refresh",
+            "filters": {
+                "requestInvite": "Request Invite",
+                "invite": "Invite",
+                "requestInviteResponse": "Request Invite Response",
+                "inviteResponse": "Invite Response",
+                "friendRequest": "Friend Request",
+                "ignoredFriendRequest": "Ignored Friend Request",
+                "message": "Message",
+                "boop": "Boop",
+                "groupChange": "Group Change",
+                "group": {
+                    "announcement": "Announcement",
+                    "informative": "Informative",
+                    "invite": "Invite",
+                    "joinRequest": "Join Request",
+                    "transfer": "Transfer",
+                    "queueReady": "Queue Ready"
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "Moderation Warning Group"
+                    },
+                    "report": {
+                        "closed": "Moderation Report Closed"
+                    }
+                },
+                "instance": {
+                    "closed": "Instance Closed"
+                }
+            }
         },
         "friend_list": {
             "header": "Friend List",
