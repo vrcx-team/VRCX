@@ -367,8 +367,8 @@
                         "when_to_play": "TTS уведомления во время игры",
                         "tts_voice": "Синтезатор голоса",
                         "use_memo_nicknames": "Использовать прозвища из заметок",
-                        "play": "Play",
-                        "tts_test_placeholder": "Test TTS"
+                        "play": "Воспроизвести",
+                        "tts_test_placeholder": "Тест TTS"
                     }
                 }
             },
