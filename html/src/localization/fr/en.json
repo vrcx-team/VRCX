@@ -34,11 +34,30 @@
         "feed": {
             "favorites_only_tooltip": "Filtrer les favoris seulement",
             "filter_placeholder": "Filtrer",
-            "search_placeholder": "Rechercher"
+            "search_placeholder": "Rechercher",
+            "filters": {
+                "GPS": "GPS",
+                "Online": "En ligne",
+                "Offline": "Hors ligne",
+                "Status": "Statut",
+                "Avatar": "Avatar",
+                "Bio": "Bio"
+            }
         },
         "game_log": {
             "filter_placeholder": "Filtrer",
-            "search_placeholder": "Rechercher"
+            "search_placeholder": "Rechercher",
+            "filters": {
+                "Location": "Localisation",
+                "Event": "Événement",
+                "StringLoad": "Texte téléchargé",
+                "ImageLoad": "Image téléchargée",
+                "OnPlayerJoined": "Rejoint",
+                "OnPlayerLeft": "Quitté",
+                "PortalSpawn": "Portail",
+                "VideoPlay": "Vidéo",
+                "External": "Externe"
+            }
         },
         "player_list": {
             "photon": {
@@ -125,17 +144,64 @@
         },
         "friend_log": {
             "filter_placeholder": "Filtrer",
-            "search_placeholder": "Rechercher"
+            "search_placeholder": "Rechercher",
+            "filters": {
+                "Friend": "Nouvel ami",
+                "Unfriend": "Ami supprimé",
+                "FriendRequest": "Demande d'ami envoyée",
+                "CancelFriendRequest": "Demande d'ami annulée",
+                "DisplayName": "Nom d'affichage",
+                "TrustLevel": "Niveau de confiance"
+            }
         },
         "moderation": {
             "filter_placeholder": "Filtrer",
             "search_placeholder": "Rechercher",
-            "refresh_tooltip": "Actualiser"
+            "refresh_tooltip": "Actualiser",
+            "filters": {
+                "block": "Bloqué",
+                "unblock": "Débloqué",
+                "mute": "Sourdine",
+                "unmute": "Son rétabli",
+                "interactOn": "Interaction activée",
+                "interactOff": "Interaction désactivée",
+                "muteChat": "Boîtes de dialogue désactivées"
+            }
         },
         "notification": {
             "filter_placeholder": "Filtrer",
             "search_placeholder": "Rechercher",
-            "refresh_tooltip": "Actualiser"
+            "refresh_tooltip": "Actualiser",
+            "filters": {
+                "requestInvite": "Demande d'invitation",
+                "invite": "Invitation",
+                "requestInviteResponse": "Réponse à une demande d'invitation",
+                "inviteResponse": "Réponse à une invitation",
+                "friendRequest": "Demande d'ami",
+                "ignoredFriendRequest": "Demande d'ami ignorée",
+                "message": "Message",
+                "boop": "Boop",
+                "groupChange": "Changement de groupe",
+                "group": {
+                    "announcement": "Annonce de groupe",
+                    "informative": "Publication de groupe",
+                    "invite": "Invitation de groupe",
+                    "joinRequest": "Demande de rejoindre le groupe",
+                    "transfer": "Transfert de groupe",
+                    "queueReady": "File d'attente prête"
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "Avertissement de modération de groupe"
+                    },
+                    "report": {
+                        "closed": "Rapport de modération fermé"
+                    }
+                },
+                "instance": {
+                    "closed": "Instance fermée"
+                }
+            }
         },
         "friend_list": {
             "header": "Liste des amis",
