@@ -263,7 +263,28 @@ namespace VRCX
                     return null;
                 }
             }
-            else
+            else if (Directory.Exists(compatabilityToolsPath))
+            {
+                var dirs = Directory.GetDirectories(compatabilityToolsPath);
+                foreach (var dir in dirs)
+                {
+                    if (dir.Contains(compatTool))
+                    {
+                        winePath = Path.Combine(dir, "files", "bin", "wine");
+                        if (File.Exists(winePath))
+                        {
+                            break;
+                        }
+                    }
+                }
+                if (!File.Exists(winePath))
+                {
+                    Console.WriteLine("Wine not found in CompatTool path");
+                    return null;
+                }
+            }
+
+            if (winePath == "")
             {
                 logger.Error("CompatTool and Proton not found");
                 return null;

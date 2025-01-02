@@ -2632,6 +2632,7 @@ class Database {
                     `ALTER TABLE ${tableName} ADD friend_number INTEGER DEFAULT 0`
                 );
             } catch (e) {
+                e = e.toString();   
                 if (e.indexOf('duplicate column name') === -1) {
                     console.error(e);
                 }
@@ -2650,6 +2651,7 @@ class Database {
                     `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
                 );
             } catch (e) {
+                e = e.toString();    
                 if (e.indexOf('duplicate column name') === -1) {
                     console.error(e);
                 }
@@ -2661,6 +2663,7 @@ class Database {
                 `ALTER TABLE gamelog_location DROP COLUMN groupName`
             );
         } catch (e) {
+            e = e.toString();
             if (e.indexOf('no such column') === -1) {
                 console.error(e);
             }

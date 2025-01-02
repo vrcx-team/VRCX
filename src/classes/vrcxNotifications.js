@@ -200,6 +200,8 @@ export default class extends baseClass {
             const playOverlayToast = notiConditions[this.overlayToast]?.();
             const playOverlayNotification = this.overlayNotifications && playOverlayToast;
             const playXSNotification = this.xsNotifications && playOverlayToast;
+            if (LINUX && !playXSNotification && this.wlxNotifications)
+                playXSNotification = true;
             const playOvrtHudNotifications = this.ovrtHudNotifications && playOverlayToast;
             const playOvrtWristNotifications = this.ovrtWristNotifications && playOverlayToast;
 
