@@ -163,6 +163,9 @@ export default class extends baseClass {
         },
 
         async checkForVRCXUpdate() {
+            if (LINUX) {
+                return;
+            }
             if (
                 !this.appVersion ||
                 this.appVersion === 'VRCX Nightly Build' ||

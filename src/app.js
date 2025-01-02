@@ -68,7 +68,7 @@ console.log(`isLinux: ${LINUX}`);
 // #region | Hey look it's most of VRCX!
 (async function () {
     // #region | Init Cef C# bindings
-    if (!LINUX) {
+    if (WINDOWS) {
         await CefSharp.BindObjectAsync(
             'AppApi',
             'WebApi',
@@ -107,6 +107,19 @@ console.log(`isLinux: ${LINUX}`);
     let $app = {};
     const API = new _apiInit($app);
     const vrcxJsonStorage = new _vrcxJsonStorage(VRCXStorage);
+
+    if (LINUX) {
+        const position = { 
+            x: await VRCXStorage.Get('VRCX_LocationX'), 
+            y: await VRCXStorage.Get('VRCX_LocationY') 
+        };
+        const size = { 
+            width: await VRCXStorage.Get('VRCX_SizeWidth'),
+            height: await VRCXStorage.Get('VRCX_SizeHeight')
+        };
+        const state = await VRCXStorage.Get('VRCX_WindowState');
+        window.electron.applyWindowSettings(position, size, state);
+    }
 
     let vrcxClasses = {
         // other classes
@@ -242,6 +255,11 @@ console.log(`isLinux: ${LINUX}`);
                     this.loginForm.loading = false;
                 }
             });
+            if (LINUX) {
+                setTimeout(() => {
+                    this.updateTTSVoices();
+                }, 5000);
+            }
         }
     };
     for (let value of Object.values(vrcxClasses)) {
@@ -7915,6 +7933,10 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_xsNotifications',
         true
     );
+    $app.data.wlxNotifications = await configRepository.getBool(
+        'VRCX_wlxNotifications',
+        true
+    );
     $app.data.ovrtHudNotifications = await configRepository.getBool(
         'VRCX_ovrtHudNotifications',
         true
@@ -8231,6 +8253,20 @@ console.log(`isLinux: ${LINUX}`);
     };
     $app.data.notificationTTSTest = '';
     $app.data.TTSvoices = speechSynthesis.getVoices();
+    $app.methods.updateTTSVoices = function () {
+        $app.$data.TTSvoices = speechSynthesis.getVoices();
+        if (LINUX) {
+            let voices = speechSynthesis.getVoices();
+            let uniqueVoices = [];
+            voices.forEach(voice => {
+                if (!uniqueVoices.some(v => v.lang === voice.lang)) {
+                    uniqueVoices.push(voice);
+                }
+            });
+            uniqueVoices = uniqueVoices.filter(v => v.lang.startsWith('en'));
+            $app.$data.TTSvoices = uniqueVoices;
+        }
+    }
     $app.methods.saveNotificationTTS = async function () {
         speechSynthesis.cancel();
         if (
@@ -8379,6 +8415,16 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
     $app.data.disableGpuAcceleration =
         (await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === 'true';
+    $app.data.locationX =
+        (await VRCXStorage.Get('VRCX_LocationX'));
+    $app.data.locationY = 
+        (await VRCXStorage.Get('VRCX_LocationY'));
+    $app.data.sizeWidth =
+        (await VRCXStorage.Get('VRCX_SizeWidth'));
+    $app.data.sizeHeight =
+        (await VRCXStorage.Get('VRCX_SizeHeight'));
+    $app.data.windowState =
+        (await VRCXStorage.Get('VRCX_WindowState'));
     $app.data.disableVrOverlayGpuAcceleration =
         (await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) ===
         'true';
@@ -8410,11 +8456,20 @@ console.log(`isLinux: ${LINUX}`);
             'VRCX_DisableGpuAcceleration',
             this.disableGpuAcceleration.toString()
         );
+        VRCXStorage.Set('VRCX_LocationX', this.locationX);
+        VRCXStorage.Set('VRCX_LocationY', this.locationY);
+        VRCXStorage.Set('VRCX_SizeWidth', this.sizeWidth);
+        VRCXStorage.Set('VRCX_SizeHeight', this.sizeHeight);
+        VRCXStorage.Set('VRCX_WindowState', this.windowState);
         VRCXStorage.Set(
             'VRCX_DisableVrOverlayGpuAcceleration',
             this.disableVrOverlayGpuAcceleration.toString()
         );
-        AppApi.SetStartup(this.isStartAtWindowsStartup);
+        if (LINUX) {
+            VRCXStorage.Flush();
+        } else {
+            AppApi.SetStartup(this.isStartAtWindowsStartup);
+        }
     };
     $app.data.photonEventOverlay = await configRepository.getBool(
         'VRCX_PhotonEventOverlay',
@@ -9092,7 +9147,12 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.getTTSVoiceName = function () {
-        var voices = speechSynthesis.getVoices();
+        var voices;
+        if (LINUX) {
+            voices = $app.$data.TTSvoices;
+        } else {
+            voices = speechSynthesis.getVoices();
+        }
         if (voices.length === 0) {
             return '';
         }
@@ -9112,7 +9172,12 @@ console.log(`isLinux: ${LINUX}`);
             'VRCX_notificationTTSVoice',
             this.notificationTTSVoice
         );
-        var voices = speechSynthesis.getVoices();
+        var voices;
+        if (LINUX) {
+            voices = $app.$data.TTSvoices;
+        } else {
+            voices = speechSynthesis.getVoices();
+        }
         if (voices.length === 0) {
             return;
         }
@@ -16383,11 +16448,17 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.getAndDisplayScreenshotFromFile = async function () {
-        var filePath = await AppApi.OpenFileSelectorDialog(
-            await AppApi.GetVRChatPhotosLocation(),
-            '.png',
-            'PNG Files (*.png)|*.png'
-        );
+        var filePath = '';
+        if (LINUX) {
+            filePath = await window.electron.openFileDialog(); // PNG filter is applied in main.js
+        } else {
+            filePath = await AppApi.OpenFileSelectorDialog(
+                await AppApi.GetVRChatPhotosLocation(),
+                '.png',
+                'PNG Files (*.png)|*.png'
+            );
+        }
+        
         if (filePath === '') {
             return;
         }
@@ -16403,6 +16474,18 @@ console.log(`isLinux: ${LINUX}`);
         AppApi.GetScreenshotMetadata(path).then((metadata) =>
             this.displayScreenshotMetadata(metadata, needsCarouselFiles)
         );
+    };
+
+    $app.methods.openScreenshotFileDialog = async function () {
+        if (LINUX) {
+            const filePath = await window.electron.openFileDialog();
+            if (filePath) {
+                this.screenshotMetadataResetSearch();
+                this.getAndDisplayScreenshot(filePath);
+            }
+        } else {
+            AppApi.OpenScreenshotFileDialog();
+        }
     };
 
     $app.methods.getAndDisplayLastScreenshot = function () {
@@ -20552,6 +20635,9 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.openUGCFolder = async function () {
+        if (LINUX && this.ugcFolderPath == null) {
+            this.resetUGCFolder();
+        }
         await AppApi.OpenUGCPhotosFolder(this.ugcFolderPath);
     };
 
@@ -20561,9 +20647,15 @@ console.log(`isLinux: ${LINUX}`);
         if (D.visible) return;
 
         D.visible = true;
-        var newUGCFolder = await AppApi.OpenFolderSelectorDialog(
-            this.ugcFolderPath
-        );
+        var newUGCFolder;
+        if (LINUX) {
+            newUGCFolder = await window.electron.openDirectoryDialog();
+        } else {
+            newUGCFolder = await AppApi.OpenFolderSelectorDialog(
+                this.ugcFolderPath
+            );
+        }
+
         D.visible = false;
 
         await this.setUGCFolderPath(newUGCFolder);
@@ -22709,6 +22801,10 @@ console.log(`isLinux: ${LINUX}`);
         });
     };
 
+    $app.methods.isLinux = function () {
+        return LINUX;
+    }
+
     // #endregion
 
     // "$app" is being replaced by Vue, update references inside all the classes
@@ -22719,6 +22815,27 @@ console.log(`isLinux: ${LINUX}`);
     for (let value of Object.values(vrcxClasses)) {
         value.updateRef($app);
     }
+
+    window.electron.onWindowPositionChanged((event, position) => {
+        window.$app.locationX = position.x;
+        window.$app.locationY = position.y;
+        window.$app.saveVRCXWindowOption();
+    });
+
+    window.electron.onWindowSizeChanged((event, size) => {
+        window.$app.sizeWidth = size.width;
+        window.$app.sizeHeight = size.height;
+        window.$app.saveVRCXWindowOption();
+    });
+
+    window.electron.onWindowStateChange((event, state) => {
+        window.$app.windowState = state;
+        window.$app.saveVRCXWindowOption();
+    });
+
+    //window.electron.onWindowClosed((event) => {
+    //    window.$app.saveVRCXWindowOption();
+    //});
 })();
 // #endregion
 

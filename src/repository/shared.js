@@ -13,7 +13,7 @@ class SharedRepository {
     async getString(key, defaultValue = null) {
         var _key = transformKey(key);
         var value = await SharedVariable.Get(_key);
-        if (value === null) {
+        if (value === null || value === undefined) {
             return defaultValue;
         }
         return value;
@@ -27,7 +27,7 @@ class SharedRepository {
 
     async getBool(key, defaultValue = null) {
         var value = await this.getString(key, null);
-        if (value === null) {
+        if (value === null || value === undefined) {
             return defaultValue;
         }
         return value === 'true';
@@ -39,7 +39,7 @@ class SharedRepository {
 
     async getInt(key, defaultValue = null) {
         var value = await this.getString(key, null);
-        if (value === null) {
+        if (value === null || value === undefined) {
             return defaultValue;
         }
         value = parseInt(value, 10);
@@ -55,7 +55,7 @@ class SharedRepository {
 
     async getFloat(key, defaultValue = null) {
         var value = await this.getString(key, null);
-        if (value === null) {
+        if (value === null || value === undefined) {
             return defaultValue;
         }
         value = parseFloat(value);
@@ -71,7 +71,7 @@ class SharedRepository {
 
     async getObject(key, defaultValue = null) {
         var value = await this.getString(key, null);
-        if (value === null) {
+        if (value === null || value === undefined) {
             return defaultValue;
         }
         try {

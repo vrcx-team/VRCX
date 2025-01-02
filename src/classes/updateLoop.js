@@ -23,11 +23,12 @@ export default class extends baseClass {
         nextClearVRCXCacheCheck: 0,
         nextDiscordUpdate: 0,
         nextAutoStateChange: 0,
+        nextGetLogCheck: 0,
         nextGameRunningCheck: 0
     };
 
     _methods = {
-        updateLoop() {
+        async updateLoop() {
             try {
                 if (API.isLoggedIn === true) {
                     if (--this.nextCurrentUserRefresh <= 0) {
@@ -77,11 +78,28 @@ export default class extends baseClass {
                         this.updateAutoStateChange();
                     }
                     if (
-                        this.isRunningUnderWine &&
+                        (this.isRunningUnderWine || LINUX) &&
+                        --this.nextGetLogCheck <= 0
+                    ) {
+                        this.nextGetLogCheck = 0.5;
+                        const logLines = await LogWatcher.GetLogLines();
+                        if (logLines) {
+                            logLines.forEach((logLine) => {
+                                $app.addGameLogEvent(logLine);
+                            });
+                        }
+                    }
+                    if (
+                        (this.isRunningUnderWine || LINUX) &&
                         --this.nextGameRunningCheck <= 0
                     ) {
-                        this.nextGameRunningCheck = 3;
-                        AppApi.CheckGameRunning();
+                        if (LINUX) {
+                            this.nextGameRunningCheck = 1;
+                            $app.updateIsGameRunning(await AppApi.IsGameRunning(), false, false);
+                        } else {
+                            this.nextGameRunningCheck = 3;
+                            AppApi.CheckGameRunning();
+                        }
                     }
                 }
             } catch (err) {

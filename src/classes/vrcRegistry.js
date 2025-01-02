@@ -70,7 +70,13 @@ export default class extends baseClass {
         },
 
         async backupVrcRegistry(name) {
-            var regJson = await AppApi.GetVRChatRegistry();
+            var regJson;
+            if (LINUX) {
+                regJson = await AppApi.GetVRChatRegistryJson();
+                regJson = JSON.parse(regJson);
+            } else {
+                regJson = await AppApi.GetVRChatRegistry();
+            }
             var newBackup = {
                 name,
                 date: new Date().toJSON(),
@@ -133,14 +139,48 @@ export default class extends baseClass {
             this.downloadAndSaveJson(row.name, row.data);
         },
 
+        async openJsonFileSelectorDialogElectron() {
+            return new Promise((resolve) => {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.json';
+                fileInput.style.display = 'none';
+                document.body.appendChild(fileInput);
+                
+                fileInput.onchange = function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function() {
+                            fileInput.remove();
+                            resolve(reader.result);
+                        };
+                        reader.readAsText(file);
+                    } else {
+                        fileInput.remove();
+                        resolve(null);
+                    }
+                };
+                
+                fileInput.click();
+            });
+        },
+
         async restoreVrcRegistryFromFile() {
-            var filePath = await AppApi.OpenFileSelectorDialog(null, ".json", "JSON Files (*.json)|*.json");
-            if (filePath === "") {
-                return;
+            if (WINDOWS) {
+                var filePath = await AppApi.OpenFileSelectorDialog(null, ".json", "JSON Files (*.json)|*.json");
+                if (filePath === "") {
+                    return;
+                }
+            }
+
+            var json;
+            if (LINUX) {
+                json = await this.openJsonFileSelectorDialogElectron();
+            } else {
+                json = await AppApi.ReadVrcRegJsonFile(filePath);
             }
             
-            var json = await AppApi.ReadVrcRegJsonFile(filePath);
-
             try {
                 var data = JSON.parse(json);
                 if (!data || typeof data !== 'object') {
