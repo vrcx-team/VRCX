@@ -26,10 +26,10 @@ namespace VRCX
     {
         public static readonly LogWatcher Instance;
         private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
-        private readonly Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
-        private readonly DirectoryInfo m_LogDirectoryInfo;
-        private readonly List<string[]> m_LogList;
-        private readonly ReaderWriterLockSlim m_LogListLock;
+        private Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
+        private DirectoryInfo m_LogDirectoryInfo;
+        private List<string[]> m_LogList;
+        private ReaderWriterLockSlim m_LogListLock;
         private bool m_FirstRun = true;
         private bool m_ResetLog;
         private Thread m_Thread;
@@ -45,7 +45,7 @@ namespace VRCX
             Instance = new LogWatcher();
         }
 
-        private LogWatcher()
+        public void Init()
         {
             var logPath = Program.AppApiInstance.GetVRChatAppDataLocation();
             m_LogDirectoryInfo = new DirectoryInfo(logPath);
@@ -56,10 +56,6 @@ namespace VRCX
             {
                 IsBackground = true
             };
-        }
-
-        public void Init()
-        {
             m_Thread.Start();
         }
 

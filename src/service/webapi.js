@@ -14,6 +14,22 @@ class WebApiService {
     }
 
     async execute(options) {
+        if (!options) {
+            throw new Error('options is required');
+        }
+        if (LINUX) {
+            const optionsMap = new Map(Object.entries(options));
+            var json = await WebApi.ExecuteJson(optionsMap);
+            var data = JSON.parse(json);
+            if (data.status === -1) {
+                throw new Error(data.message);
+            }
+            return {
+                status: data.status,
+                data: data.message
+            };
+        }
+
         var item = await WebApi.Execute(options);
         if (item.Item1 === -1) {
             throw item.Item2;
