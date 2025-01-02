@@ -24,7 +24,7 @@ using NLog;
 
 namespace VRCX
 {
-    public partial class AppApiCef : AppApiCommon
+    public partial class AppApiCef : AppApi
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         

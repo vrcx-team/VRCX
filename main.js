@@ -14,10 +14,10 @@ interopApi.getDotNetObject('DynamicProgram').PreInit();
 interopApi.getDotNetObject('VRCXStorage').Load();
 interopApi.getDotNetObject('DynamicProgram').Init();
 interopApi.getDotNetObject('SQLiteLegacy').Init();
-interopApi.getDotNetObject('AppApi').Init();
+interopApi.getDotNetObject('AppApiElectron').Init();
 interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
-//interopApi.getDotNetObject('LogWatcher').Init();
+interopApi.getDotNetObject('LogWatcher').Init();
 //interopApi.getDotNetObject('AutoAppLaunchManager').Init();
 
 ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {

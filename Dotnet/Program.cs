@@ -210,7 +210,7 @@ namespace VRCX
         {
             StartupArgs.ArgsCheck();
             SetProgramDirectories();
-            VRCXStorage.Load();
+            VRCXStorage.Instance.Load();
             BrowserSubprocess.Start();
             ConfigureLogger();
             Update.Check();
@@ -254,7 +254,7 @@ namespace VRCX
 
             Discord.Instance.Exit();
             SystemMonitor.Instance.Exit();
-            VRCXStorage.Save();
+            VRCXStorage.Instance.Save();
             SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();
         }
@@ -273,6 +273,7 @@ namespace VRCX
 
             logger.Info("{0} Starting...", Version);
 
+            AppApiInstance = new AppApiElectron();
             // ProcessMonitor.Instance.Init();
         }
 #endif

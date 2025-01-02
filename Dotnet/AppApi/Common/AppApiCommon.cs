@@ -12,7 +12,7 @@ using NLog;
 
 namespace VRCX
 {
-    public abstract partial class AppApi
+    public partial class AppApi
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly MD5 _hasher = MD5.Create();

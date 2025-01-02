@@ -65,19 +65,33 @@ import _config from './classes/API/config.js';
 // some workaround for failing to get voice list first run
 speechSynthesis.getVoices();
 
+import InteropApi from './ipc/interopApi.js';
+console.log(`isLinux: ${LINUX}`);
+
 // #region | Hey look it's most of VRCX!
 (async function () {
     // #region | Init Cef C# bindings
-    await CefSharp.BindObjectAsync(
-        'AppApi',
-        'WebApi',
-        'SharedVariable',
-        'VRCXStorage',
-        'SQLite',
-        'LogWatcher',
-        'Discord',
-        'AssetBundleCacher'
-    );
+    if (!LINUX) {
+        await CefSharp.BindObjectAsync(
+            'AppApi',
+            'WebApi',
+            'SharedVariable',
+            'VRCXStorage',
+            'SQLite',
+            'LogWatcher',
+            'Discord',
+            'AssetBundleCacher'
+        );
+    } else {
+        window.AppApi = InteropApi.AppApiElectron;
+        window.WebApi = InteropApi.WebApi;
+        window.SharedVariable = InteropApi.SharedVariable;
+        window.VRCXStorage = InteropApi.VRCXStorage;
+        window.SQLite = InteropApi.SQLiteLegacy;
+        window.LogWatcher = InteropApi.LogWatcher;
+        window.Discord = InteropApi.Discord;
+        window.AssetBundleCacher = InteropApi.AssetBundleCacher;
+    }
 
     // #region | localization
     Vue.use(VueI18n);
@@ -17756,10 +17770,17 @@ speechSynthesis.getVoices();
 
     $app.data.inGameGroupOrder = [];
 
+    $app.methods.getVRChatRegistryKey = async function (key) {
+        if (LINUX) {
+            return AppApi.GetVRChatRegistryKeyString(key);
+        }
+        return AppApi.GetVRChatRegistryKey(key);
+    };
+
     $app.methods.updateInGameGroupOrder = async function () {
         this.inGameGroupOrder = [];
         try {
-            var json = await AppApi.GetVRChatRegistryKey(
+            var json = await this.getVRChatRegistryKey(
                 `VRC_GROUP_ORDER_${API.currentUser.id}`
             );
             this.inGameGroupOrder = JSON.parse(json);
@@ -22318,12 +22339,12 @@ speechSynthesis.getVoices();
         }
         try {
             var loggingEnabled =
-                await AppApi.GetVRChatRegistryKey('LOGGING_ENABLED');
+                await this.getVRChatRegistryKey('LOGGING_ENABLED');
             if (loggingEnabled === null) {
                 // key not found
                 return;
             }
-            if (loggingEnabled === 1) {
+            if (parseInt(loggingEnabled, 10) === 1) {
                 // already enabled
                 return;
             }

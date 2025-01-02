@@ -110,6 +110,8 @@
     <Compile Remove="obj1\**" />
     <Content Remove="node_modules\**" />
     <Compile Remove="node_modules\**" />
+    <Content Remove="Dotnet\obj\**" />
+    <Compile Remove="Dotnet\obj\**" />
   </ItemGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
