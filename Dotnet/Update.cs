@@ -135,7 +135,7 @@ namespace VRCX
                 if (startIndex >= 0)
                 {
                     startIndex += "filename=".Length;
-                    int endIndex = contentDisposition.IndexOf(";", startIndex);
+                    int endIndex = contentDisposition.IndexOf(';', startIndex);
                     if (endIndex == -1)
                     {
                         endIndex = contentDisposition.Length;

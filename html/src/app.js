@@ -611,6 +611,15 @@ speechSynthesis.getVoices();
                     $app.updateSharedFeed(false);
                 }
             }
+            if (ref.isFriend || ref.id === this.currentUser.id) {
+                // update instancePlayerCount
+                var newCount = $app.instancePlayerCount.get(ref.location);
+                if (typeof newCount === 'undefined') {
+                    newCount = 0;
+                }
+                newCount++;
+                $app.instancePlayerCount.set(ref.location, newCount);
+            }
             if ($app.customUserTags.has(json.id)) {
                 var tag = $app.customUserTags.get(json.id);
                 ref.$customTag = tag.tag;
@@ -5550,6 +5559,7 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.data.instancePlayerCount = new Map();
     $app.data.robotUrl = `${API.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
 
     API.$on('USER:UPDATE', async function (args) {
@@ -5557,6 +5567,26 @@ speechSynthesis.getVoices();
         var friend = $app.friends.get(ref.id);
         if (typeof friend === 'undefined') {
             return;
+        }
+        if (props.location) {
+            // update instancePlayerCount
+            var previousLocation = props.location[1];
+            var newLocation = props.location[0];
+            var oldCount = $app.instancePlayerCount.get(previousLocation);
+            if (typeof oldCount !== 'undefined') {
+                oldCount--;
+                if (oldCount <= 0) {
+                    $app.instancePlayerCount.delete(previousLocation);
+                } else {
+                    $app.instancePlayerCount.set(previousLocation, oldCount);
+                }
+            }
+            var newCount = $app.instancePlayerCount.get(newLocation);
+            if (typeof newCount === 'undefined') {
+                newCount = 0;
+            }
+            newCount++;
+            $app.instancePlayerCount.set(newLocation, newCount);
         }
         if (props.location && ref.id === $app.userDialog.id) {
             // update user dialog instance occupants
@@ -9373,11 +9403,13 @@ speechSynthesis.getVoices();
         speechSynthesis.speak(tts);
     };
 
-    $app.methods.refreshConfigTreeData = function () {
+    $app.methods.refreshConfigTreeData = async function () {
+        await API.getConfig();
         this.configTreeData = $utils.buildTreeData(API.cachedConfig);
     };
 
-    $app.methods.refreshCurrentUserTreeData = function () {
+    $app.methods.refreshCurrentUserTreeData = async function () {
+        await API.getCurrentUser();
         this.currentUserTreeData = $utils.buildTreeData(API.currentUser);
     };
 
