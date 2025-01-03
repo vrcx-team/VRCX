@@ -8254,7 +8254,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.notificationTTSTest = '';
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.updateTTSVoices = function () {
-        $app.$data.TTSvoices = speechSynthesis.getVoices();
+        this.TTSvoices = speechSynthesis.getVoices();
         if (LINUX) {
             let voices = speechSynthesis.getVoices();
             let uniqueVoices = [];
@@ -8264,7 +8264,7 @@ console.log(`isLinux: ${LINUX}`);
                 }
             });
             uniqueVoices = uniqueVoices.filter(v => v.lang.startsWith('en'));
-            $app.$data.TTSvoices = uniqueVoices;
+            this.TTSvoices = uniqueVoices;
         }
     }
     $app.methods.saveNotificationTTS = async function () {
@@ -9149,7 +9149,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.getTTSVoiceName = function () {
         var voices;
         if (LINUX) {
-            voices = $app.$data.TTSvoices;
+            voices = this.TTSvoices;
         } else {
             voices = speechSynthesis.getVoices();
         }
@@ -9174,7 +9174,7 @@ console.log(`isLinux: ${LINUX}`);
         );
         var voices;
         if (LINUX) {
-            voices = $app.$data.TTSvoices;
+            voices = this.TTSvoices;
         } else {
             voices = speechSynthesis.getVoices();
         }
