@@ -54,6 +54,11 @@ namespace VRCX
                 MainForm.Instance.Browser.ExecuteScriptAsync("$app.updateIsGameRunning", isGameRunning, isSteamVRRunning, isHmdAfk);
         }
         
+        public override bool IsGameRunning()
+        {
+            return isGameRunning;
+        }
+        
         public override int QuitGame()
         {
             var processes = Process.GetProcessesByName("vrchat");

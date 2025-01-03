@@ -54,6 +54,7 @@ namespace VRCX
         // GameHandler
         public abstract void OnProcessStateChanged(MonitoredProcess monitoredProcess);
         public abstract void CheckGameRunning();
+        public abstract bool IsGameRunning();
         public abstract int QuitGame();
         public abstract bool StartGame(string arguments);
         public abstract bool StartGameFromPath(string path, string arguments);

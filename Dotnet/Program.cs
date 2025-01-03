@@ -85,9 +85,8 @@ namespace VRCX
 
         private static void ConfigureLogger()
         {
-            NLog.LogManager.Setup().LoadConfiguration(builder =>
+            LogManager.Setup().LoadConfiguration(builder =>
             {
-
                 var fileTarget = new FileTarget("fileTarget")
                 {
                     FileName = Path.Combine(AppDataDirectory, "logs", "VRCX.log"),
@@ -107,20 +106,14 @@ namespace VRCX
                     AutoFlush = true,
                     Encoding = System.Text.Encoding.UTF8
                 };
-
-                if (LaunchDebug)
+                builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
+                
+                var consoleTarget = new ConsoleTarget("consoleTarget")
                 {
-                    builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
-                }
-                else
-                {
-#if DEBUG
-                    // Archive maximum of 3 files 10MB each, kept for a maximum of 7 days
-                    builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
-#else
-                    builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
-#endif
-                }
+                    Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
+                    DetectConsoleAvailable = true
+                };
+                builder.ForLogger("VRCX").FilterMinLevel(LogLevel.Info).WriteTo(consoleTarget);
             });
         }
 
@@ -280,12 +273,8 @@ namespace VRCX
     }
 
 #if LINUX
-    public class DynamicProgram
+    public class ProgramElectron
     {
-        public DynamicProgram()
-        {
-        }
-
         public void PreInit()
         {
             Program.PreInit();

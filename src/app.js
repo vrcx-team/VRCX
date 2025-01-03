@@ -25,9 +25,7 @@ import webApiService from './service/webapi.js';
 import security from './security.js';
 import database from './repository/database.js';
 import * as localizedStrings from './localization/localizedStrings.js';
-import removeConfusables, {
-    removeWhitespace
-} from './libsAndLolisAndSugoiLibs/confusables.js';
+import removeConfusables, { removeWhitespace } from './confusables.js';
 import $utils from './classes/utils.js';
 import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';
@@ -62,7 +60,7 @@ import _config from './classes/API/config.js';
 // some workaround for failing to get voice list first run
 speechSynthesis.getVoices();
 
-import InteropApi from './ipc/interopApi.js';
+import InteropApi from './ipc-electron/interopApi.js';
 console.log(`isLinux: ${LINUX}`);
 
 // #region | Hey look it's most of VRCX!
@@ -109,11 +107,11 @@ console.log(`isLinux: ${LINUX}`);
     const vrcxJsonStorage = new _vrcxJsonStorage(VRCXStorage);
 
     if (LINUX) {
-        const position = { 
-            x: await VRCXStorage.Get('VRCX_LocationX'), 
-            y: await VRCXStorage.Get('VRCX_LocationY') 
+        const position = {
+            x: await VRCXStorage.Get('VRCX_LocationX'),
+            y: await VRCXStorage.Get('VRCX_LocationY')
         };
-        const size = { 
+        const size = {
             width: await VRCXStorage.Get('VRCX_SizeWidth'),
             height: await VRCXStorage.Get('VRCX_SizeHeight')
         };
@@ -8155,6 +8153,10 @@ console.log(`isLinux: ${LINUX}`);
             this.xsNotifications
         );
         await configRepository.setBool(
+            'VRCX_wlxNotifications',
+            this.wlxNotifications
+        );
+        await configRepository.setBool(
             'VRCX_ovrtHudNotifications',
             this.ovrtHudNotifications
         );
@@ -8258,15 +8260,15 @@ console.log(`isLinux: ${LINUX}`);
         if (LINUX) {
             let voices = speechSynthesis.getVoices();
             let uniqueVoices = [];
-            voices.forEach(voice => {
-                if (!uniqueVoices.some(v => v.lang === voice.lang)) {
+            voices.forEach((voice) => {
+                if (!uniqueVoices.some((v) => v.lang === voice.lang)) {
                     uniqueVoices.push(voice);
                 }
             });
-            uniqueVoices = uniqueVoices.filter(v => v.lang.startsWith('en'));
+            uniqueVoices = uniqueVoices.filter((v) => v.lang.startsWith('en'));
             this.TTSvoices = uniqueVoices;
         }
-    }
+    };
     $app.methods.saveNotificationTTS = async function () {
         speechSynthesis.cancel();
         if (
@@ -8415,16 +8417,11 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
     $app.data.disableGpuAcceleration =
         (await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === 'true';
-    $app.data.locationX =
-        (await VRCXStorage.Get('VRCX_LocationX'));
-    $app.data.locationY = 
-        (await VRCXStorage.Get('VRCX_LocationY'));
-    $app.data.sizeWidth =
-        (await VRCXStorage.Get('VRCX_SizeWidth'));
-    $app.data.sizeHeight =
-        (await VRCXStorage.Get('VRCX_SizeHeight'));
-    $app.data.windowState =
-        (await VRCXStorage.Get('VRCX_WindowState'));
+    $app.data.locationX = await VRCXStorage.Get('VRCX_LocationX');
+    $app.data.locationY = await VRCXStorage.Get('VRCX_LocationY');
+    $app.data.sizeWidth = await VRCXStorage.Get('VRCX_SizeWidth');
+    $app.data.sizeHeight = await VRCXStorage.Get('VRCX_SizeHeight');
+    $app.data.windowState = await VRCXStorage.Get('VRCX_WindowState');
     $app.data.disableVrOverlayGpuAcceleration =
         (await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) ===
         'true';
@@ -16458,7 +16455,7 @@ console.log(`isLinux: ${LINUX}`);
                 'PNG Files (*.png)|*.png'
             );
         }
-        
+
         if (filePath === '') {
             return;
         }
@@ -22803,6 +22800,33 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.isLinux = function () {
         return LINUX;
+    };
+
+    // #endregion
+
+    // #region | Electron
+
+    if (LINUX) {
+        window.electron.onWindowPositionChanged((event, position) => {
+            window.$app.locationX = position.x;
+            window.$app.locationY = position.y;
+            window.$app.saveVRCXWindowOption();
+        });
+
+        window.electron.onWindowSizeChanged((event, size) => {
+            window.$app.sizeWidth = size.width;
+            window.$app.sizeHeight = size.height;
+            window.$app.saveVRCXWindowOption();
+        });
+
+        window.electron.onWindowStateChange((event, state) => {
+            window.$app.windowState = state;
+            window.$app.saveVRCXWindowOption();
+        });
+
+        // window.electron.onWindowClosed((event) => {
+        //    window.$app.saveVRCXWindowOption();
+        // });
     }
 
     // #endregion
@@ -22815,27 +22839,6 @@ console.log(`isLinux: ${LINUX}`);
     for (let value of Object.values(vrcxClasses)) {
         value.updateRef($app);
     }
-
-    window.electron.onWindowPositionChanged((event, position) => {
-        window.$app.locationX = position.x;
-        window.$app.locationY = position.y;
-        window.$app.saveVRCXWindowOption();
-    });
-
-    window.electron.onWindowSizeChanged((event, size) => {
-        window.$app.sizeWidth = size.width;
-        window.$app.sizeHeight = size.height;
-        window.$app.saveVRCXWindowOption();
-    });
-
-    window.electron.onWindowStateChange((event, state) => {
-        window.$app.windowState = state;
-        window.$app.saveVRCXWindowOption();
-    });
-
-    //window.electron.onWindowClosed((event) => {
-    //    window.$app.saveVRCXWindowOption();
-    //});
 })();
 // #endregion
 
