@@ -8,7 +8,7 @@ function patchFile(filePath) {
     }
 
     let fileContent = fs.readFileSync(filePath, 'utf8');
-    
+
     const regex =
         /const\s+managedHostPath\s*=\s*__dirname\s*\+\s*`\/\$\{targetFramework\}\/\$\{assemblyName\}\.DotNetHost\.dll`/;
 
@@ -39,7 +39,7 @@ switch (process.platform) {
 }
 const postBuildPath = path.join(
     __dirname,
-    `/build/${platformName}-unpacked/resources/app.asar.unpacked/node_modules/node-api-dotnet/init.js`
+    `./../build/${platformName}-unpacked/resources/app.asar.unpacked/node_modules/node-api-dotnet/init.js`
 );
 console.log('Patching post-build init.js...');
 patchFile(postBuildPath);

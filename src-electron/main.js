@@ -1,24 +1,32 @@
 require('hazardous');
 const path = require('path');
-const { BrowserWindow, ipcMain, app, globalShortcut, Tray, Menu, dialog } = require('electron');
+const {
+    BrowserWindow,
+    ipcMain,
+    app,
+    globalShortcut,
+    Tray,
+    Menu,
+    dialog
+} = require('electron');
 const fs = require('fs');
 const https = require('https');
 
-const dotnet = require('node-api-dotnet/net8.0');
-require(path.join(__dirname, 'build/Electron/Debug/VRCX.cjs'));
+const rootDir = app.getAppPath();
+
+require(path.join(rootDir, 'build/Electron/Debug/VRCX.cjs'));
 
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
 
-interopApi.getDotNetObject('DynamicProgram').PreInit();
+interopApi.getDotNetObject('ProgramElectron').PreInit();
 interopApi.getDotNetObject('VRCXStorage').Load();
-interopApi.getDotNetObject('DynamicProgram').Init();
+interopApi.getDotNetObject('ProgramElectron').Init();
 interopApi.getDotNetObject('SQLiteLegacy').Init();
 interopApi.getDotNetObject('AppApiElectron').Init();
 interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
 interopApi.getDotNetObject('LogWatcher').Init();
-//interopApi.getDotNetObject('AutoAppLaunchManager').Init();
 
 ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
@@ -68,34 +76,40 @@ ipcMain.handle('dialog:openDirectory', async () => {
 });
 
 function createWindow() {
-    app.commandLine.appendSwitch('enable-speech-dispatcher')
+    app.commandLine.appendSwitch('enable-speech-dispatcher');
 
     mainWindow = new BrowserWindow({
         width: 1024,
         height: 768,
-        icon: path.join(__dirname, 'VRCX.png'),
+        icon: path.join(rootDir, 'VRCX.png'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     });
 
-    const indexPath = path.join(app.getAppPath(), 'build/html/index.html');
+    const indexPath = path.join(rootDir, 'build/html/index.html');
     mainWindow.loadFile(indexPath);
 
     // Open the DevTools.
     //mainWindow.webContents.openDevTools()
 
-	globalShortcut.register('Control+=', () => {
-		mainWindow.webContents.setZoomLevel(mainWindow.webContents.getZoomLevel() + 1)
-	})
+    globalShortcut.register('Control+=', () => {
+        mainWindow.webContents.setZoomLevel(
+            mainWindow.webContents.getZoomLevel() + 1
+        );
+    });
 
     mainWindow.on('resize', () => {
-        const [width, height] = mainWindow.getSize().map(size => size.toString());
+        const [width, height] = mainWindow
+            .getSize()
+            .map((size) => size.toString());
         mainWindow.webContents.send('setWindowSize', { width, height });
     });
 
     mainWindow.on('move', () => {
-        const [x, y] = mainWindow.getPosition().map(coord => coord.toString());
+        const [x, y] = mainWindow
+            .getPosition()
+            .map((coord) => coord.toString());
         mainWindow.webContents.send('setWindowPosition', { x, y });
     });
 
@@ -113,7 +127,7 @@ function createWindow() {
 }
 
 function createTray() {
-    const tray = new Tray(path.join(__dirname, 'images/tray.png'));
+    const tray = new Tray(path.join(rootDir, 'images/tray.png'));
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Open',
@@ -167,7 +181,9 @@ async function installVRCX() {
         }
     }
 
-    if (appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))) {
+    if (
+        appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))
+    ) {
         console.log('VRCX is already installed.');
         return;
     }
@@ -195,15 +211,16 @@ async function installVRCX() {
         return;
     }
 
-	// Download the icon and save it to the target directory
-    const iconUrl = 'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
+    // Download the icon and save it to the target directory
+    const iconUrl =
+        'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
     const targetIconPath = path.join(targetPath, 'VRCX.png');
     downloadIcon(iconUrl, targetIconPath)
         .then(() => {
             console.log('Icon downloaded and saved to:', targetIconPath);
 
-    		// Create a .desktop file in ~/.local/share/applications/
-    		const desktopFile = `[Desktop Entry]
+            // Create a .desktop file in ~/.local/share/applications/
+            const desktopFile = `[Desktop Entry]
 Name=VRCX
 Exec=${targetAppImagePath}
 Icon=${targetIconPath}
@@ -213,7 +230,10 @@ Terminal=false
 StartupWMClass=VRCX
 `;
 
-            const desktopFilePath = path.join(app.getPath('home'), '.local/share/applications/VRCX.desktop');
+            const desktopFilePath = path.join(
+                app.getPath('home'),
+                '.local/share/applications/VRCX.desktop'
+            );
             try {
                 fs.writeFileSync(desktopFilePath, desktopFile);
                 console.log('Desktop file created at:', desktopFilePath);
@@ -233,18 +253,24 @@ StartupWMClass=VRCX
 function downloadIcon(url, targetPath) {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(targetPath);
-        https.get(url, (response) => {
-            if (response.statusCode !== 200) {
-                reject(new Error(`Failed to download icon, status code: ${response.statusCode}`));
-                return;
-            }
-            response.pipe(file);
-            file.on('finish', () => {
-                file.close(resolve);
+        https
+            .get(url, (response) => {
+                if (response.statusCode !== 200) {
+                    reject(
+                        new Error(
+                            `Failed to download icon, status code: ${response.statusCode}`
+                        )
+                    );
+                    return;
+                }
+                response.pipe(file);
+                file.on('finish', () => {
+                    file.close(resolve);
+                });
+            })
+            .on('error', (err) => {
+                fs.unlink(targetPath, () => reject(err)); // Delete the file if error occurs
             });
-        }).on('error', (err) => {
-            fs.unlink(targetPath, () => reject(err)); // Delete the file if error occurs
-        });
     });
 }
 
@@ -253,7 +279,7 @@ app.whenReady().then(() => {
 
     createTray();
 
-	installVRCX();
+    installVRCX();
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

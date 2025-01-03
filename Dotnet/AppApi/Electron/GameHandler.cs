@@ -29,7 +29,7 @@ namespace VRCX
             }
         }
 
-        public bool IsGameRunning()
+        public override bool IsGameRunning()
         {
             var isGameRunning = false;
             var processes = Process.GetProcesses();

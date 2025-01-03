@@ -1,16 +1,15 @@
 {
     "name": "VRCX",
     "private": true,
-    "main": "main.js",
+    "main": "src-electron/main.js",
     "scripts": {
         "watch": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode development --watch",
         "watch-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode development --watch",
-        "lint": "eslint --ext .js src/ && prettier --check src/",
         "localization": "node ./src/localization/localizationHelperCLI.js",
         "prod": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode production",
         "prod-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode production",
-        "build-electron": "node patch-package-version.js && electron-builder",
-        "postbuild-electron": "node patch-node-api-dotnet.js && node rename-builds.js",
+        "build-electron": "node ./src-electron/patch-package-version.js && electron-builder",
+        "postbuild-electron": "node ./src-electron/patch-node-api-dotnet.js && node ./src-electron/rename-builds.js",
         "start-electron": "electron ."
     },
     "repository": {
@@ -73,9 +72,7 @@
         "icon": "VRCX.png",
         "files": [
             "build/html/**/*",
-            "main.js",
-            "preload.js",
-            "InteropApi.js",
+            "src-electron/*",
             "VRCX.png",
             "images/tray.png",
             "!build/bin/**/*"
