@@ -8517,7 +8517,7 @@ console.log(`isLinux: ${LINUX}`);
                     uniqueVoices.push(voice);
                 }
             });
-            uniqueVoices = uniqueVoices.filter((v) => v.lang.startsWith('en'));
+            uniqueVoices = uniqueVoices.filter(v => v.lang.startsWith('en'));
             this.TTSvoices = uniqueVoices;
         }
     };
