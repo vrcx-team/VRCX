@@ -37,6 +37,9 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
 
 var mainWindow = undefined;
 
+var VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
+var isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
         mainWindow.setPosition(parseInt(position.x), parseInt(position.y));
@@ -81,10 +84,10 @@ ipcMain.handle('dialog:openDirectory', async () => {
 function createWindow() {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 
-    const x = tryGetConfigInt(vrcxConfig, 'VRCX_LocationX');
-    const y = tryGetConfigInt(vrcxConfig, 'VRCX_LocationY');
-    const width = tryGetConfigInt(vrcxConfig, 'VRCX_SizeWidth', 1920);
-    const height = tryGetConfigInt(vrcxConfig, 'VRCX_SizeHeight', 1080);
+    const x = parseInt(VRCXStorage.Get('VRCX_LocationX'));
+    const y = parseInt(VRCXStorage.Get('VRCX_LocationY'));
+    const width = parseInt(VRCXStorage.Get('VRCX_SizeWidth'));
+    const height = parseInt(VRCXStorage.Get('VRCX_SizeHeight'));
     mainWindow = new BrowserWindow({
         x,
         y,
@@ -123,6 +126,14 @@ function createWindow() {
         mainWindow.webContents.setZoomLevel(
             mainWindow.webContents.getZoomLevel() + 1
         );
+    });
+
+    mainWindow.on('close', (event) => {
+        isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+        if (isCloseToTray && !app.isQuiting) {
+            event.preventDefault();
+            mainWindow.hide();
+        }
     });
 
     mainWindow.on('resize', () => {
@@ -181,12 +192,19 @@ function createTray() {
             label: 'Quit VRCX',
             type: 'normal',
             click: function () {
+                app.isQuiting = true;
                 app.quit();
             }
         }
     ]);
     tray.setToolTip('VRCX');
     tray.setContextMenu(contextMenu);
+
+    tray.on('click', () => {
+        BrowserWindow.getAllWindows().forEach(function (win) {
+            win.show();
+        });
+    });
 }
 
 async function installVRCX() {
@@ -346,11 +364,15 @@ function getVRCXConfig(vrcxPath) {
 }
 
 function applyWindowState(vrcxConfig) {
-    if (tryGetConfigBool(vrcxConfig, 'VRCX_StartAsMinimizedState')) {
+    if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true') {
+        if (isCloseToTray) {
+            mainWindow.hide();
+            return;
+        }
         mainWindow.minimize();
         return;
     }
-    const windowState = tryGetConfigInt(vrcxConfig, 'VRCX_WindowState', -1);
+    const windowState = parseInt(VRCXStorage.Get('VRCX_WindowState'));
     switch (windowState) {
         case -1:
             break;
@@ -364,27 +386,6 @@ function applyWindowState(vrcxConfig) {
             mainWindow.maximize();
             break;
     }
-}
-
-function tryGetConfigInt(config, key, defaultValue = 0) {
-    if (config[key]) {
-        return parseInt(config[key]);
-    }
-    return defaultValue;
-}
-
-function tryGetConfigString(config, key, defaultValue = '') {
-    if (config[key]) {
-        return config[key];
-    }
-    return defaultValue;
-}
-
-function tryGetConfigBool(config, key, defaultValue = false) {
-    if (config[key]) {
-        return config[key] === 'true';
-    }
-    return defaultValue;
 }
 
 app.whenReady().then(() => {
