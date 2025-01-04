@@ -109,19 +109,6 @@ console.log(`isLinux: ${LINUX}`);
     const API = new _apiInit($app);
     const vrcxJsonStorage = new _vrcxJsonStorage(VRCXStorage);
 
-    if (LINUX) {
-        const position = {
-            x: await VRCXStorage.Get('VRCX_LocationX'),
-            y: await VRCXStorage.Get('VRCX_LocationY')
-        };
-        const size = {
-            width: await VRCXStorage.Get('VRCX_SizeWidth'),
-            height: await VRCXStorage.Get('VRCX_SizeHeight')
-        };
-        const state = await VRCXStorage.Get('VRCX_WindowState');
-        window.electron.applyWindowSettings(position, size, state);
-    }
-
     let vrcxClasses = {
         // other classes
         API,
@@ -19785,6 +19772,9 @@ console.log(`isLinux: ${LINUX}`);
         var dictObject = await AppApi.GetColourBulk(
             Array.from(API.cachedUsers.keys())
         );
+        if (LINUX) {
+            dictObject = Object.fromEntries(dictObject);
+        }
         for (var [userId, hue] of Object.entries(dictObject)) {
             var ref = API.cachedUsers.get(userId);
             if (typeof ref !== 'undefined') {
