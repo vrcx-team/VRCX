@@ -51,7 +51,6 @@ mixin settingsTab()
                             .detail
                                 span.name {{ $t("view.settings.general.general.latest_app_version") }}
                                 span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
-                                span.extra(v-else-if="isLinux") -
                                 span.extra(v-else) {{ $t("view.settings.general.general.latest_app_version_refresh") }}
                         //- General | General | Repository URL
                         .x-friend-item(@click="openExternalLink('https://github.com/vrcx-team/VRCX')")
@@ -64,19 +63,21 @@ mixin settingsTab()
                                 span.name {{ $t("view.settings.general.general.support") }}
                                 span.extra https://vrcx.app/discord
                 //- General | VRCX Updater
-                template(v-if="!isLinux")
-                    +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
-                        div.options-container-item
-                            el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
-                            el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
-                        +simpleRadioGroup("view.settings.general.vrcx_updater.update_action", "autoUpdateVRCX", [
-                            { label: "Off", translationKey: "view.settings.general.vrcx_updater.auto_update_off" },
-                            { label: "Notify", translationKey: "view.settings.general.vrcx_updater.auto_update_notify" },
-                            { label: "Auto Download", translationKey: "view.settings.general.vrcx_updater.auto_update_download" },
-                        ], "saveAutoUpdateVRCX")
+                +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
+                    div.options-container-item(v-if="!isLinux")
+                        el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
+                        el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.vrcx_updater.update_action') }}
+                        br
+                        el-radio-group(v-model="autoUpdateVRCX" size="mini" style="margin-top:5px")
+                            el-radio-button(label="Off") {{ $t('view.settings.general.vrcx_updater.auto_update_off') }}
+                            el-radio-button(label="Notify") {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
+                            el-radio-button(label="Auto Download" :disabled="isLinux") {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
                 //- General | Application
                 +simpleSettingsCategory("view.settings.general.application.header")
-                    simple-switch(:label='$t("view.settings.general.application.startup")' :value='isStartAtWindowsStartup' @change='saveVRCXWindowOption("VRCX_StartAtWindowsStartup")')
+                    template(v-if="!isLinux")
+                        simple-switch(:label='$t("view.settings.general.application.startup")' :value='isStartAtWindowsStartup' @change='saveVRCXWindowOption("VRCX_StartAtWindowsStartup")')
                     simple-switch(:label='$t("view.settings.general.application.minimized")' :value='isStartAsMinimizedState' @change='saveVRCXWindowOption("VRCX_StartAsMinimizedState")')
                     simple-switch(:label='$t("view.settings.general.application.tray")' :value='isCloseToTray' @change='saveVRCXWindowOption("VRCX_CloseToTray")')
                     template(v-if="!isLinux")

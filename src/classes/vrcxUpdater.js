@@ -35,6 +35,27 @@ export default class extends baseClass {
 
     _methods = {
         async showVRCXUpdateDialog() {
+            // if (LINUX) {
+            //     this.$confirm(
+            //         "Currently, VRCX updater isn't supported on Linux. Please download the latest version from VRCX GitHub releases page.",
+            //         'VRCX updater',
+            //         {
+            //             distinguishCancelAndClose: true,
+            //             confirmButtonText: 'Open',
+            //             cancelButtonText: 'Close',
+            //             type: 'info',
+            //             callback: (action) => {
+            //                 if (action === 'confirm') {
+            //                     AppApi.OpenLink(
+            //                         'https://github.com/vrcx-team/VRCX/releases'
+            //                     );
+            //                 }
+            //             }
+            //         }
+            //     );
+            //     AppApi.OpenLink();
+            //     return;
+            // }
             this.$nextTick(() =>
                 $app.adjustDialogZ(this.$refs.VRCXUpdateDialog.$el)
             );
@@ -46,6 +67,10 @@ export default class extends baseClass {
         },
 
         downloadVRCXUpdate(updateSetupUrl, updateHashUrl, size, name, type) {
+            if (LINUX) {
+                // IPC to node
+                return;
+            }
             var ref = {
                 id: 'VRCXUpdate',
                 name
@@ -163,16 +188,17 @@ export default class extends baseClass {
         },
 
         async checkForVRCXUpdate() {
-            if (LINUX) {
-                return;
-            }
             if (
                 !this.appVersion ||
                 this.appVersion === 'VRCX Nightly Build' ||
-                this.appVersion === 'VRCX Build'
+                this.appVersion === 'VRCX Build' ||
+                this.appVersion === 'VRCX-Linux Nightly Build' ||
+                this.appVersion === 'VRCX-Linux Build'
             ) {
+                // ignore custom builds
                 return;
             }
+            var currentVersion = this.appVersion.replace('-Linux', '');
             if (this.branch === 'Beta') {
                 // move Beta users to stable
                 this.branch = 'Stable';
@@ -205,7 +231,7 @@ export default class extends baseClass {
                 if (name === this.pendingVRCXInstall) {
                     // update already downloaded
                     this.VRCXUpdateDialog.updatePendingIsLatest = true;
-                } else if (name > this.appVersion) {
+                } else if (name > currentVersion) {
                     var downloadUrl = '';
                     var hashUrl = '';
                     var size = 0;
@@ -214,8 +240,19 @@ export default class extends baseClass {
                             continue;
                         }
                         if (
-                            asset.content_type === 'application/x-msdownload' ||
-                            asset.content_type === 'application/x-msdos-program'
+                            !LINUX &&
+                            (asset.content_type ===
+                                'application/x-msdownload' ||
+                                asset.content_type ===
+                                    'application/x-msdos-program')
+                        ) {
+                            downloadUrl = asset.browser_download_url;
+                            size = asset.size;
+                            continue;
+                        }
+                        if (
+                            LINUX &&
+                            asset.content_type === 'application/octet-stream'
                         ) {
                             downloadUrl = asset.browser_download_url;
                             size = asset.size;

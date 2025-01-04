@@ -125,6 +125,12 @@ namespace VRCX
         [STAThread]
         private static void Main()
         {
+            if (Wine.GetIfWine())
+            {
+                MessageBox.Show(
+                    "VRCX Cef has detected Wine.\nPlease switch to our native Electron build for Linux.",
+                    "Wine Detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             try
             {
                 Run();
@@ -217,7 +223,7 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
-            logger.Debug("Wine support detection: {0}", Wine.GetIfWine());
+            logger.Debug("Wine detection: {0}", Wine.GetIfWine());
 
             SQLiteLegacy.Instance.Init();
             AppApiInstance = new AppApiCef();
