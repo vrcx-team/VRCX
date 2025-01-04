@@ -306,7 +306,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
                         br
-                        el-radio-group(v-model="overlayToast" @change="saveOpenVROption" size="mini" :disabled="(!overlayNotifications || !openVR) && !xsNotifications && !wlxNotifications && !ovrtHudNotifications && !ovrtWristNotifications" style="margin-top:5px")
+                        el-radio-group(v-model="overlayToast" @change="saveOpenVROption" size="mini" :disabled="(!overlayNotifications || !openVR) && !xsNotifications && !ovrtHudNotifications && !ovrtWristNotifications" style="margin-top:5px")
                             el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
                             el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}

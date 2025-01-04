@@ -8052,10 +8052,6 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_xsNotifications',
         true
     );
-    $app.data.wlxNotifications = await configRepository.getBool(
-        'VRCX_wlxNotifications',
-        true
-    );
     $app.data.ovrtHudNotifications = await configRepository.getBool(
         'VRCX_ovrtHudNotifications',
         true
@@ -8361,10 +8357,6 @@ console.log(`isLinux: ${LINUX}`);
             this.xsNotifications
         );
 
-        await configRepository.setBool(
-            'VRCX_wlxNotifications',
-            this.wlxNotifications
-        );
         await configRepository.setBool(
             'VRCX_ovrtHudNotifications',
             this.ovrtHudNotifications
