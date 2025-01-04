@@ -355,14 +355,10 @@ mixin settingsTab()
                         el-switch(v-model="overlayNotifications" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
-                    template(v-if="!isLinux")
-                        div.options-container-item
-                            span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications') }}
-                            el-switch(v-model="xsNotifications" @change="saveOpenVROption")
-                    template(v-else)
-                        div.options-container-item
-                            span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications') }}
-                            el-switch(v-model="xsNotifications" @change="saveOpenVROption")
+                    div.options-container-item
+                        span.name(v-if="!isLinux") {{ $t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications') }}
+                        span.name(v-else) {{ $t('view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications') }}
+                        el-switch(v-model="xsNotifications" @change="saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications') }}
                         el-switch(v-model="ovrtHudNotifications" @change="saveOpenVROption")

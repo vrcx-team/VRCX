@@ -15,10 +15,6 @@ const https = require('https');
 const rootDir = app.getAppPath();
 require(path.join(rootDir, 'build/Electron/Debug/VRCX.cjs'));
 
-const version = getVersion();
-const vrcxPath = getVRCXPath();
-const vrcxConfig = getVRCXConfig(vrcxPath);
-
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
 
@@ -35,10 +31,12 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
 });
 
-var mainWindow = undefined;
+let mainWindow = undefined;
 
-var VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
-var isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
+let isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+const AppApiElectron = interopApi.getDotNetObject('AppApiElectron');
+const version = AppApiElectron.GetVersion();
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -84,10 +82,10 @@ ipcMain.handle('dialog:openDirectory', async () => {
 function createWindow() {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 
-    const x = parseInt(VRCXStorage.Get('VRCX_LocationX'));
-    const y = parseInt(VRCXStorage.Get('VRCX_LocationY'));
-    const width = parseInt(VRCXStorage.Get('VRCX_SizeWidth'));
-    const height = parseInt(VRCXStorage.Get('VRCX_SizeHeight'));
+    const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
+    const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
+    const width = parseInt(VRCXStorage.Get('VRCX_SizeWidth')) || 1920;
+    const height = parseInt(VRCXStorage.Get('VRCX_SizeHeight')) || 1080;
     mainWindow = new BrowserWindow({
         x,
         y,
@@ -97,16 +95,17 @@ function createWindow() {
         autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
+        },
+        webContents: {
+            userAgent: version
         }
     });
-    const session = mainWindow.webContents.session;
-    session.setUserAgent(version);
+    applyWindowState();
     const indexPath = path.join(rootDir, 'build/html/index.html');
-    mainWindow.loadFile(indexPath);
-    applyWindowState(vrcxConfig);
+    mainWindow.loadFile(indexPath, { userAgent: version });
 
     // add proxy config
-    // const proxy = tryGetConfigString(vrcxConfig, 'VRCX_Proxy');
+    // const proxy = VRCXStorage.Get('VRCX_Proxy');
     // if (proxy) {
     //     session.setProxy(
     //         { proxyRules: proxy.replaceAll('://', '=') },
@@ -322,22 +321,6 @@ function downloadIcon(url, targetPath) {
     });
 }
 
-function getVersion() {
-    let version = 'VRCX Electron ';
-    try {
-        version += fs
-            .readFileSync(
-                path.join(rootDir, 'build/Electron/Debug/Version'),
-                'utf8'
-            )
-            .trim();
-    } catch (err) {
-        version += 'Build';
-        console.error('Error reading version:', err);
-    }
-    return version;
-}
-
 function getVRCXPath() {
     let vrcxPath = '';
     if (process.platform === 'win32') {
@@ -348,22 +331,7 @@ function getVRCXPath() {
     return vrcxPath;
 }
 
-function getVRCXConfig(vrcxPath) {
-    // check if the directory exists
-    if (!fs.existsSync(vrcxPath)) {
-        console.error('VRCX directory does not exist:', vrcxPath);
-    } else {
-        const json = fs.readFileSync(path.join(vrcxPath, 'VRCX.json'), 'utf8');
-        // handle utf-8 BOM
-        const settings = JSON.parse(
-            json.toString('utf8').replace(/^\uFEFF/, '')
-        );
-        return settings;
-    }
-    return {};
-}
-
-function applyWindowState(vrcxConfig) {
+function applyWindowState() {
     if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true') {
         if (isCloseToTray) {
             mainWindow.hide();
