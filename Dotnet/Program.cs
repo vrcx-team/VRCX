@@ -70,7 +70,11 @@ namespace VRCX
 
         private static void GetVersion()
         {
+#if !LINUX
             var buildName = "VRCX";
+#else
+            var buildName = "VRCX-Linux";
+#endif
             try
             {
                 Version = $"{buildName} {File.ReadAllText(Path.Combine(BaseDirectory, "Version"))}";
