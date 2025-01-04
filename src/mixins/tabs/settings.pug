@@ -57,6 +57,7 @@ mixin settingsTab()
                             .detail
                                 span.name {{ $t("view.settings.general.general.latest_app_version") }}
                                 span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
+                                span.extra(v-else-if="isLinux") -
                                 span.extra(v-else) {{ $t("view.settings.general.general.latest_app_version_refresh") }}
                         //- General | General | Repository URL
                         .x-friend-item(@click="openExternalLink('https://github.com/vrcx-team/VRCX')")
@@ -69,26 +70,27 @@ mixin settingsTab()
                                 span.name {{ $t("view.settings.general.general.support") }}
                                 span.extra https://vrcx.app/discord
                 //- General | VRCX Updater
-                +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
-                    div.options-container-item
-                        el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
-                        el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
-                    +simpleRadioGroup("view.settings.general.vrcx_updater.update_action", "autoUpdateVRCX", [
-                        { label: "Off", translationKey: "view.settings.general.vrcx_updater.auto_update_off" },
-                        { label: "Notify", translationKey: "view.settings.general.vrcx_updater.auto_update_notify" },
-                        { label: "Auto Download", translationKey: "view.settings.general.vrcx_updater.auto_update_download" },
-                    ], "saveAutoUpdateVRCX")
+                template(v-if="!isLinux")
+                    +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
+                        div.options-container-item
+                            el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
+                            el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
+                        +simpleRadioGroup("view.settings.general.vrcx_updater.update_action", "autoUpdateVRCX", [
+                            { label: "Off", translationKey: "view.settings.general.vrcx_updater.auto_update_off" },
+                            { label: "Notify", translationKey: "view.settings.general.vrcx_updater.auto_update_notify" },
+                            { label: "Auto Download", translationKey: "view.settings.general.vrcx_updater.auto_update_download" },
+                        ], "saveAutoUpdateVRCX")
                 //- General | Application
                 +simpleSettingsCategory("view.settings.general.application.header")
                     +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
-                    div.options-container-item
+                    div.options-container-item(v-if="!isLinux")
                         span.name {{ $t('view.settings.general.application.disable_gpu_acceleration') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
                                 i.el-icon-info
                         el-switch(v-model="disableGpuAcceleration" @change="saveVRCXWindowOption")
-                    div.options-container-item
+                    div.options-container-item(v-if="!isLinux")
                         span.name {{ $t('view.settings.general.application.disable_vr_overlay_gpu_acceleration') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
                                 i.el-icon-info
@@ -348,7 +350,7 @@ mixin settingsTab()
                             el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
                     div.options-container-item
                         +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay", "openVR", "saveOpenVROption")
-                    div.options-container-item
+                    div.options-container-item(v-if="!isLinux")
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications') }}
                         el-switch(v-model="overlayNotifications" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
@@ -418,7 +420,7 @@ mixin settingsTab()
                             el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
                             el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS" style="margin-top:5px") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
             //- Wrist Overlay Tab
-            el-tab-pane(:label="$t('view.settings.category.wrist_overlay')")
+            el-tab-pane(:label="$t('view.settings.category.wrist_overlay')" v-if="!isLinux")
                 //- Wrist Overlay | SteamVR Wrist Overlay
                 div.options-container(style="margin-top:0")
                     span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}
@@ -532,20 +534,22 @@ mixin settingsTab()
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.relaunch_vrchat.description') }}
                         el-switch(v-model="relaunchVRChatAfterCrash" @change="saveOpenVROption")
                     //- Advanced | VRChat Quit Fix
-                    span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}
-                    div.options-container-item
-                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.description') }}
-                        el-switch(v-model="vrcQuitFix" @change="saveOpenVROption")
+                    template(v-if="!isLinux")
+                        span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}
+                        div.options-container-item
+                            span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.description') }}
+                            el-switch(v-model="vrcQuitFix" @change="saveOpenVROption")
                     //- Advanced | Auto Cache Management
                     span.sub-header {{ $t('view.settings.advanced.advanced.auto_cache_management.header') }}
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.auto_cache_management.description') }}
                         el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
                     //- Advanced | Disable local world database
-                    span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
-                    div.options-container-item
-                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.local_world_persistence.description') }}
-                        el-switch(v-model="disableWorldDatabase" :active-value="false" :inactive-value="true" @change="saveVRCXWindowOption")
+                    template(v-if="!isLinux")
+                        span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
+                        div.options-container-item
+                            span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.local_world_persistence.description') }}
+                            el-switch(v-model="disableWorldDatabase" :active-value="false" :inactive-value="true" @change="saveVRCXWindowOption")
                 //- Advanced | User Generated Content
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.user_generated_content.header') }}
@@ -612,7 +616,7 @@ mixin settingsTab()
                     div.options-container-item
                         el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") {{ $t('view.settings.advanced.advanced.youtube_api.youtube_api_key') }}
                 //- Advanced | Video Progress Pie
-                div.options-container
+                div.options-container(v-if="!isLinux")
                     span.header {{ $t('view.settings.advanced.advanced.video_progress_pie.header') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.video_progress_pie.enable') }}
