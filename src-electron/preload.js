@@ -6,22 +6,30 @@
  *
  * https://www.electronjs.org/docs/latest/tutorial/sandbox
  */
-const { contextBridge, ipcRenderer, app } = require("electron");
+const { contextBridge, ipcRenderer, app } = require('electron');
 
-contextBridge.exposeInMainWorld("interopApi", {
+contextBridge.exposeInMainWorld('interopApi', {
     callDotNetMethod: (className, methodName, args) => {
-        return ipcRenderer.invoke("callDotNetMethod", className, methodName, args);
+        return ipcRenderer.invoke(
+            'callDotNetMethod',
+            className,
+            methodName,
+            args
+        );
     }
 });
 
 contextBridge.exposeInMainWorld('electron', {
     openFileDialog: () => ipcRenderer.invoke('dialog:openFile'),
     openDirectoryDialog: () => ipcRenderer.invoke('dialog:openDirectory'),
-    onWindowPositionChanged: (callback) => ipcRenderer.on('setWindowPosition', callback),
-    onWindowSizeChanged: (callback) => ipcRenderer.on('setWindowSize', callback),
-    onWindowStateChange: (callback) => ipcRenderer.on('setWindowState', callback),
-    applyWindowSettings: (position, size, state) => { 
-        ipcRenderer.invoke('applyWindowSettings', position, size, state);
-    },
+    onWindowPositionChanged: (callback) =>
+        ipcRenderer.on('setWindowPosition', callback),
+    onWindowSizeChanged: (callback) =>
+        ipcRenderer.on('setWindowSize', callback),
+    onWindowStateChange: (callback) =>
+        ipcRenderer.on('setWindowState', callback)
+    // applyWindowSettings: (position, size, state) => {
+    //     ipcRenderer.invoke('applyWindowSettings', position, size, state);
+    // },
     //onWindowClosed: (callback) => ipcRenderer.on('windowClosed', callback)
 });

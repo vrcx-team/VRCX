@@ -13,8 +13,11 @@ const fs = require('fs');
 const https = require('https');
 
 const rootDir = app.getAppPath();
-
 require(path.join(rootDir, 'build/Electron/Debug/VRCX.cjs'));
+
+const version = getVersion();
+const vrcxPath = getVRCXPath();
+const vrcxConfig = getVRCXConfig(vrcxPath);
 
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
@@ -78,17 +81,40 @@ ipcMain.handle('dialog:openDirectory', async () => {
 function createWindow() {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 
+    const x = tryGetConfigInt(vrcxConfig, 'VRCX_LocationX');
+    const y = tryGetConfigInt(vrcxConfig, 'VRCX_LocationY');
+    const width = tryGetConfigInt(vrcxConfig, 'VRCX_SizeWidth', 1920);
+    const height = tryGetConfigInt(vrcxConfig, 'VRCX_SizeHeight', 1080);
     mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 768,
+        x,
+        y,
+        width,
+        height,
         icon: path.join(rootDir, 'VRCX.png'),
+        autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     });
-
+    const session = mainWindow.webContents.session;
+    session.setUserAgent(version);
     const indexPath = path.join(rootDir, 'build/html/index.html');
     mainWindow.loadFile(indexPath);
+    applyWindowState(vrcxConfig);
+
+    // add proxy config
+    // const proxy = tryGetConfigString(vrcxConfig, 'VRCX_Proxy');
+    // if (proxy) {
+    //     session.setProxy(
+    //         { proxyRules: proxy.replaceAll('://', '=') },
+    //         function () {
+    //             mainWindow.loadFile(indexPath);
+    //         }
+    //     );
+    //     session.setProxy({
+    //         proxyRules: proxy.replaceAll('://', '=')
+    //     });
+    // }
 
     // Open the DevTools.
     //mainWindow.webContents.openDevTools()
@@ -122,6 +148,10 @@ function createWindow() {
     });
 
     mainWindow.on('unmaximize', () => {
+        mainWindow.webContents.send('setWindowState', '0');
+    });
+
+    mainWindow.on('restore', () => {
         mainWindow.webContents.send('setWindowState', '0');
     });
 }
@@ -272,6 +302,89 @@ function downloadIcon(url, targetPath) {
                 fs.unlink(targetPath, () => reject(err)); // Delete the file if error occurs
             });
     });
+}
+
+function getVersion() {
+    let version = 'VRCX Electron ';
+    try {
+        version += fs
+            .readFileSync(
+                path.join(rootDir, 'build/Electron/Debug/Version'),
+                'utf8'
+            )
+            .trim();
+    } catch (err) {
+        version += 'Build';
+        console.error('Error reading version:', err);
+    }
+    return version;
+}
+
+function getVRCXPath() {
+    let vrcxPath = '';
+    if (process.platform === 'win32') {
+        vrcxPath = path.join(process.env.APPDATA, 'VRCX');
+    } else if (process.platform === 'linux') {
+        vrcxPath = path.join(process.env.HOME, '.config/VRCX');
+    }
+    return vrcxPath;
+}
+
+function getVRCXConfig(vrcxPath) {
+    // check if the directory exists
+    if (!fs.existsSync(vrcxPath)) {
+        console.error('VRCX directory does not exist:', vrcxPath);
+    } else {
+        const json = fs.readFileSync(path.join(vrcxPath, 'VRCX.json'), 'utf8');
+        // handle utf-8 BOM
+        const settings = JSON.parse(
+            json.toString('utf8').replace(/^\uFEFF/, '')
+        );
+        return settings;
+    }
+    return {};
+}
+
+function applyWindowState(vrcxConfig) {
+    if (tryGetConfigBool(vrcxConfig, 'VRCX_StartAsMinimizedState')) {
+        mainWindow.minimize();
+        return;
+    }
+    const windowState = tryGetConfigInt(vrcxConfig, 'VRCX_WindowState', -1);
+    switch (windowState) {
+        case -1:
+            break;
+        case 0:
+            mainWindow.restore();
+            break;
+        case 1:
+            mainWindow.minimize();
+            break;
+        case 2:
+            mainWindow.maximize();
+            break;
+    }
+}
+
+function tryGetConfigInt(config, key, defaultValue = 0) {
+    if (config[key]) {
+        return parseInt(config[key]);
+    }
+    return defaultValue;
+}
+
+function tryGetConfigString(config, key, defaultValue = '') {
+    if (config[key]) {
+        return config[key];
+    }
+    return defaultValue;
+}
+
+function tryGetConfigBool(config, key, defaultValue = false) {
+    if (config[key]) {
+        return config[key] === 'true';
+    }
+    return defaultValue;
 }
 
 app.whenReady().then(() => {
