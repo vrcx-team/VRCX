@@ -343,7 +343,7 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
                         br
-                        el-radio-group(v-model="overlayToast" @change="saveOpenVROption" size="mini" :disabled="(!overlayNotifications || !openVR) && !xsNotifications && !wlxNotifications && !ovrtHudNotifications && !ovrtWristNotifications" style="margin-top:5px")
+                        el-radio-group(v-model="overlayToast" @change="saveOpenVROption" size="mini" :disabled="(!overlayNotifications || !openVR) && !xsNotifications && !ovrtHudNotifications && !ovrtWristNotifications" style="margin-top:5px")
                             el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
                             el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
@@ -362,7 +362,7 @@ mixin settingsTab()
                     template(v-else)
                         div.options-container-item
                             span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications') }}
-                            el-switch(v-model="wlxNotifications" @change="saveOpenVROption")
+                            el-switch(v-model="xsNotifications" @change="saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications') }}
                         el-switch(v-model="ovrtHudNotifications" @change="saveOpenVROption")
@@ -373,7 +373,7 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.user_images') }}
                         el-switch(v-model="imageNotifications" @change="saveOpenVROption")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout" :disabled="(!overlayNotifications || !openVR) && !xsNotifications && !wlxNotifications") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout') }}
+                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout') }}
                 //- Notifications | Notifications | Desktop Notifications
                 div.options-container
                     span.sub-header {{ $t('view.settings.notifications.notifications.desktop_notifications.header') }}
