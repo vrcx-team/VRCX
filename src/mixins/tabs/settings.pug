@@ -57,7 +57,6 @@ mixin settingsTab()
                             .detail
                                 span.name {{ $t("view.settings.general.general.latest_app_version") }}
                                 span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
-                                span.extra(v-else-if="isLinux") -
                                 span.extra(v-else) {{ $t("view.settings.general.general.latest_app_version_refresh") }}
                         //- General | General | Repository URL
                         .x-friend-item(@click="openExternalLink('https://github.com/vrcx-team/VRCX')")
@@ -70,19 +69,21 @@ mixin settingsTab()
                                 span.name {{ $t("view.settings.general.general.support") }}
                                 span.extra https://vrcx.app/discord
                 //- General | VRCX Updater
-                template(v-if="!isLinux")
-                    +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
-                        div.options-container-item
-                            el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
-                            el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
-                        +simpleRadioGroup("view.settings.general.vrcx_updater.update_action", "autoUpdateVRCX", [
-                            { label: "Off", translationKey: "view.settings.general.vrcx_updater.auto_update_off" },
-                            { label: "Notify", translationKey: "view.settings.general.vrcx_updater.auto_update_notify" },
-                            { label: "Auto Download", translationKey: "view.settings.general.vrcx_updater.auto_update_download" },
-                        ], "saveAutoUpdateVRCX")
+                +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
+                    div.options-container-item(v-if="!isLinux")
+                        el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
+                        el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.vrcx_updater.update_action') }}
+                        br
+                        el-radio-group(v-model="autoUpdateVRCX" size="mini" style="margin-top:5px")
+                            el-radio-button(label="Off") {{ $t('view.settings.general.vrcx_updater.auto_update_off') }}
+                            el-radio-button(label="Notify") {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
+                            el-radio-button(label="Auto Download" :disabled="isLinux") {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
                 //- General | Application
                 +simpleSettingsCategory("view.settings.general.application.header")
-                    +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup", "saveVRCXWindowOption")
+                    template(v-if="!isLinux")
+                        +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
                     div.options-container-item(v-if="!isLinux")
@@ -348,13 +349,14 @@ mixin settingsTab()
                             el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
                             el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
-                    div.options-container-item
-                        +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay", "openVR", "saveOpenVROption")
-                    div.options-container-item(v-if="!isLinux")
-                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications') }}
-                        el-switch(v-model="overlayNotifications" @change="saveOpenVROption" :disabled="!openVR")
-                    div.options-container-item
-                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
+                    template(v-if="!isLinux")
+                        div.options-container-item
+                            +simpleSwitch("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay", "openVR", "saveOpenVROption")
+                        div.options-container-item
+                            span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.overlay_notifications') }}
+                            el-switch(v-model="overlayNotifications" @change="saveOpenVROption" :disabled="!openVR")
+                        div.options-container-item
+                            el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
                     div.options-container-item
                         span.name(v-if="!isLinux") {{ $t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications') }}
                         span.name(v-else) {{ $t('view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications') }}

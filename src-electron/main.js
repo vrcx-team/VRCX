@@ -322,13 +322,14 @@ function downloadIcon(url, targetPath) {
 }
 
 function getVRCXPath() {
-    let vrcxPath = '';
     if (process.platform === 'win32') {
-        vrcxPath = path.join(process.env.APPDATA, 'VRCX');
+        return path.join(process.env.APPDATA, 'VRCX');
     } else if (process.platform === 'linux') {
-        vrcxPath = path.join(process.env.HOME, '.config/VRCX');
+        return path.join(process.env.HOME, '.config/VRCX');
+    } else if (process.platform === 'darwin') {
+        return path.join(process.env.HOME, 'Library/Application Support/VRCX');
     }
-    return vrcxPath;
+    return '';
 }
 
 function applyWindowState() {
@@ -340,7 +341,7 @@ function applyWindowState() {
         mainWindow.minimize();
         return;
     }
-    const windowState = parseInt(VRCXStorage.Get('VRCX_WindowState'));
+    const windowState = parseInt(VRCXStorage.Get('VRCX_WindowState')) || -1;
     switch (windowState) {
         case -1:
             break;
