@@ -80,13 +80,17 @@
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",
             "node_modules/node-api-dotnet/net8.0/**/*",
-            "build/Electron/Debug/*",
-            "build/Electron/Debug/**"
+            "build/Electron/*",
+            "build/Electron/**"
         ],
         "extraResources": [
             {
-                "from": "build/Electron/Debug/",
-                "to": "app.asar.unpacked/build/Electron/Debug/"
+                "from": "VRCX.png",
+                "to": "VRCX.png"
+            },
+            {
+                "from": "build/Electron/",
+                "to": "app.asar.unpacked/build/Electron/"
             },
             {
                 "from": "node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.dll",
@@ -124,5 +128,6 @@
     "dependencies": {
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.8.19"
-    }
+    },
+    "version": "2024.12.30"
 }
