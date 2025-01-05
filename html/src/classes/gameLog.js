@@ -286,7 +286,7 @@ export default class extends baseClass {
                             printId = pathArray[4];
                         }
                         if (printId && printId.length === 41) {
-                            $app.trySavePrintToFile(printId);
+                            $app.queueSavePrintToFile(printId);
                         }
                     } catch (err) {
                         console.error(err);

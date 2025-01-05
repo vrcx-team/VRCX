@@ -18040,13 +18040,29 @@ speechSynthesis.getVoices();
     };
 
     $app.data.printCache = [];
+    $app.data.printQueue = [];
+    $app.data.printQueueWorker = undefined;
 
-    $app.methods.trySavePrintToFile = async function (printId) {
+    $app.methods.queueSavePrintToFile = function (printId) {
         if ($app.printCache.includes(printId)) return;
         $app.printCache.push(printId);
         if ($app.printCache.length > 100) {
             $app.printCache.shift();
         }
+
+        $app.printQueue.push(printId);
+
+        if (!$app.printQueueWorker) {
+            $app.printQueueWorker = workerTimers.setInterval(() => {
+                let printId = $app.printQueue.shift();
+                if (printId) {
+                    $app.trySavePrintToFile(printId);
+                }
+            }, 2_500);
+        }
+    }
+
+    $app.methods.trySavePrintToFile = async function (printId) {
         var args = await API.getPrint({ printId });
         var imageUrl = args.json?.files?.image;
         if (!imageUrl) {
@@ -18064,6 +18080,11 @@ speechSynthesis.getVoices();
         );
         if (status) {
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
+        }
+
+        if ($app.printQueue.length == 0) {
+            workerTimers.clearInterval($app.printQueueWorker);
+            $app.printQueueWorker = undefined;
         }
     };
 
