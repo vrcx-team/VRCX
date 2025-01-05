@@ -37,7 +37,7 @@ jobs:
           echo "${{ needs.set_version.outputs.version }}" > Version
           cat Version
       - name: Build .NET Application
-        run: dotnet build VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+        run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
       - name: Upload dotnet artifacts
         uses: actions/upload-artifact@v3
         with:

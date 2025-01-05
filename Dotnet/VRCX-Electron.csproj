@@ -1,4 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>obj1\</BaseIntermediateOutputPath>
+    <OutputPath>..\build\Electron\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Platforms>x64</Platforms>
@@ -7,22 +12,21 @@
     <AssemblyTitle>VRCX</AssemblyTitle>
     <Product>VRCX</Product>
     <Copyright>vrcx-team, pypy, natsumi</Copyright>
-    <OutputPath>build\Electron\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Title>VRCX</Title>
     <Description>VRCX</Description>
-    <PackageIcon>VRCX.png</PackageIcon>
+    <PackageIcon>..\VRCX.png</PackageIcon>
     <RepositoryUrl>https://github.com/vrcx-team/VRCX</RepositoryUrl>
     <ResourceLanguages>en</ResourceLanguages>
     <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <BaseIntermediateOutputPath>obj1\</BaseIntermediateOutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
   <PropertyGroup>
     <DefineConstants>LINUX</DefineConstants>
@@ -39,16 +43,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ApplicationIcon>VRCX.ico</ApplicationIcon>
+    <ApplicationIcon>..\VRCX.ico</ApplicationIcon>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(PlatformTarget)' == 'x64'">
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+
   <PropertyGroup>
     <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
     <CopySQLiteInteropFiles>true</CopySQLiteInteropFiles>
@@ -65,10 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />
-    <None Include="Version">
+    <None Include="..\Version">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Remove="Dotnet\Cef\**" />
   </ItemGroup>
   <ItemGroup>
     <None Include="libs\openvr_api.dll">
@@ -83,10 +84,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>System.Data.SQLite.dll</TargetPath>
     </None>
-    <Content Include="VRCX.ico">
+    <Content Include="..\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="VRCX.png">
+    <Content Include="..\VRCX.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -111,15 +112,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="node_modules\**" />
-    <Compile Remove="node_modules\**" />
-    <Content Remove="Dotnet\Cef\**" />
-    <Compile Remove="Dotnet\Cef\**" />
-    <Content Remove="Dotnet\AppApi\Cef\**" />
-    <Compile Remove="Dotnet\AppApi\Cef\**" />
-    <Content Remove="Dotnet\PWI\**" />
-    <Compile Remove="Dotnet\PWI\**" />
-    <Content Remove="Dotnet\Overlay\**" />
-    <Compile Remove="Dotnet\Overlay\**" />
+    <Content Remove="obj\**" />
+    <Compile Remove="obj\**" />
+    <Content Remove="Cef\**" />
+    <Compile Remove="Cef\**" />
+    <Content Remove="AppApi\Cef\**" />
+    <Compile Remove="AppApi\Cef\**" />
+    <Content Remove="PWI\**" />
+    <Compile Remove="PWI\**" />
+    <Content Remove="Overlay\**" />
+    <Compile Remove="Overlay\**" />
   </ItemGroup>
 </Project>
