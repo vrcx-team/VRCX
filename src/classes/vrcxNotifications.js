@@ -1295,31 +1295,39 @@ export default class extends baseClass {
             }
         },
 
+        desktopNotification(displayName, message, image) {
+            if (WINDOWS) {
+                AppApi.DesktopNotification(displayName, message, image);
+            } else {
+                window.electron.desktopNotification(displayName, message, image);
+            }
+        },
+
         displayDesktopToast(noty, message, image) {
             switch (noty.type) {
                 case 'OnPlayerJoined':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'has joined',
                         image
                     );
                     break;
                 case 'OnPlayerLeft':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'has left',
                         image
                     );
                     break;
                 case 'OnPlayerJoining':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'is joining',
                         image
                     );
                     break;
                 case 'GPS':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         `is in ${this.displayLocation(
                             noty.location,
@@ -1338,28 +1346,28 @@ export default class extends baseClass {
                             noty.groupName
                         )}`;
                     }
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         `has logged in${locationName}`,
                         image
                     );
                     break;
                 case 'Offline':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'has logged out',
                         image
                     );
                     break;
                 case 'Status':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         `status is now ${noty.status} ${noty.statusDescription}`,
                         image
                     );
                     break;
                 case 'invite':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.senderUsername,
                         `has invited you to ${this.displayLocation(
                             noty.details.worldId,
@@ -1369,119 +1377,119 @@ export default class extends baseClass {
                     );
                     break;
                 case 'requestInvite':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.senderUsername,
                         `has requested an invite${message}`,
                         image
                     );
                     break;
                 case 'inviteResponse':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.senderUsername,
                         `has responded to your invite${message}`,
                         image
                     );
                     break;
                 case 'requestInviteResponse':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.senderUsername,
                         `has responded to your invite request${message}`,
                         image
                     );
                     break;
                 case 'friendRequest':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.senderUsername,
                         'has sent you a friend request',
                         image
                     );
                     break;
                 case 'Friend':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'is now your friend',
                         image
                     );
                     break;
                 case 'Unfriend':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'is no longer your friend',
                         image
                     );
                     break;
                 case 'TrustLevel':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         `trust level is now ${noty.trustLevel}`,
                         image
                     );
                     break;
                 case 'DisplayName':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.previousDisplayName,
                         `changed their name to ${noty.displayName}`,
                         image
                     );
                     break;
                 case 'boop':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.senderUsername,
                         noty.message,
                         image
                     );
                     break;
                 case 'groupChange':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.senderUsername,
                         noty.message,
                         image
                     );
                     break;
                 case 'group.announcement':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Group Announcement',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.informative':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Group Informative',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.invite':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Group Invite',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.joinRequest':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Group Join Request',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.transfer':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Group Transfer Request',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.queueReady':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Instance Queue Ready',
                         noty.message,
                         image
                     );
                     break;
                 case 'instance.closed':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Instance Closed',
                         noty.message,
                         image
@@ -1489,7 +1497,7 @@ export default class extends baseClass {
                     break;
                 case 'PortalSpawn':
                     if (noty.displayName) {
-                        AppApi.DesktopNotification(
+                        desktopNotification(
                             noty.displayName,
                             `has spawned a portal to ${this.displayLocation(
                                 noty.instanceId,
@@ -1499,7 +1507,7 @@ export default class extends baseClass {
                             image
                         );
                     } else {
-                        AppApi.DesktopNotification(
+                        desktopNotification(
                             '',
                             'User has spawned a portal',
                             image
@@ -1507,83 +1515,83 @@ export default class extends baseClass {
                     }
                     break;
                 case 'AvatarChange':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         `changed into avatar ${noty.name}`,
                         image
                     );
                     break;
                 case 'ChatBoxMessage':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         `said ${noty.text}`,
                         image
                     );
                     break;
                 case 'Event':
-                    AppApi.DesktopNotification('Event', noty.data, image);
+                    desktopNotification('Event', noty.data, image);
                     break;
                 case 'External':
-                    AppApi.DesktopNotification('External', noty.message, image);
+                    desktopNotification('External', noty.message, image);
                     break;
                 case 'VideoPlay':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         'Now playing',
                         noty.notyName,
                         image
                     );
                     break;
                 case 'BlockedOnPlayerJoined':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'blocked user has joined',
                         image
                     );
                     break;
                 case 'BlockedOnPlayerLeft':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'blocked user has left',
                         image
                     );
                     break;
                 case 'MutedOnPlayerJoined':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'muted user has joined',
                         image
                     );
                     break;
                 case 'MutedOnPlayerLeft':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'muted user has left',
                         image
                     );
                     break;
                 case 'Blocked':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'has blocked you',
                         image
                     );
                     break;
                 case 'Unblocked':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'has unblocked you',
                         image
                     );
                     break;
                 case 'Muted':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'has muted you',
                         image
                     );
                     break;
                 case 'Unmuted':
-                    AppApi.DesktopNotification(
+                    desktopNotification(
                         noty.displayName,
                         'has unmuted you',
                         image

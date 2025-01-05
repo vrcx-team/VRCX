@@ -27,9 +27,11 @@ contextBridge.exposeInMainWorld('electron', {
     onWindowSizeChanged: (callback) =>
         ipcRenderer.on('setWindowSize', callback),
     onWindowStateChange: (callback) =>
-        ipcRenderer.on('setWindowState', callback)
+        ipcRenderer.on('setWindowState', callback),
     // applyWindowSettings: (position, size, state) => {
     //     ipcRenderer.invoke('applyWindowSettings', position, size, state);
     // },
     //onWindowClosed: (callback) => ipcRenderer.on('windowClosed', callback)
+    desktopNotification: (title, body, icon) =>
+        ipcRenderer.invoke('notification:showNotification', title, body, icon),
 });

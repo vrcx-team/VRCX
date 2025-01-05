@@ -44,6 +44,21 @@ namespace VRCX
             return isGameRunning;
         }
 
+        public override bool IsSteamVRRunning()
+        {
+            var isSteamVRRunning = false;
+            var processes = Process.GetProcesses();
+            foreach (var process in processes)
+            {
+                if (process.ProcessName == "vrmonitor" || process.ProcessName == "monado-service")
+                {
+                    isSteamVRRunning = true;
+                    break;
+                }
+            }
+            return isSteamVRRunning;
+        }
+
         public override int QuitGame()
         {
             var processes = Process.GetProcessesByName("vrchat");

@@ -55,6 +55,11 @@ namespace VRCX
             // unused
             return ProcessMonitor.Instance.IsProcessRunning("VRChat");
         }
+
+        public override bool IsSteamVRRunning()
+        {
+            return isSteamVRRunning;
+        }
         
         public override int QuitGame()
         {

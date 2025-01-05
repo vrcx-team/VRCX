@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -56,7 +56,9 @@ internal static class ImageCache
             foreach (Cookie cookie in cookies)
                 cookieString += $"{cookie.Name}={cookie.Value};";
         }
-            
+        Console.WriteLine($"Cookie: {cookieString}");
+        
+        Console.WriteLine($"Downloading {url} to {fileLocation}");
         var request = new HttpRequestMessage(HttpMethod.Get, url)
         {
             Headers =
@@ -75,6 +77,7 @@ internal static class ImageCache
                 await response.Content.CopyToAsync(fileStream);
             }
         }
+        Console.WriteLine($"Downloaded {url} to {fileLocation}");
 
         var cacheSize = Directory.GetDirectories(cacheLocation).Length;
         if (cacheSize > 1100)
