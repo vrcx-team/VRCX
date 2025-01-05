@@ -151,7 +151,7 @@ function createWindow() {
 
     mainWindow.on('close', (event) => {
         isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
-        if (isCloseToTray && !app.isQuiting) {
+        if (isCloseToTray && !app.isQuitting) {
             event.preventDefault();
             mainWindow.hide();
         }
@@ -213,7 +213,7 @@ function createTray() {
             label: 'Quit VRCX',
             type: 'normal',
             click: function () {
-                app.isQuiting = true;
+                app.isQuitting = true;
                 app.quit();
             }
         }

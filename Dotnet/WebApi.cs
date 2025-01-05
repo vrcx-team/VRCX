@@ -40,7 +40,8 @@ namespace VRCX
         public WebApi()
         {
 #if LINUX
-            Instance = this;
+            if (Instance == null)
+                Instance = this;
 #endif
             _cookieContainer = new CookieContainer();
             _timer = new Timer(TimerCallback, null, -1, -1);
@@ -355,9 +356,11 @@ namespace VRCX
             requestStream.Close();
         }
         
-        public async Task<string> ExecuteJson(IDictionary<string, object> options)
+        public async Task<string> ExecuteJson(string options)
         {
-            var result = await Execute(options);
+            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(options);
+            Logger.Info(JsonConvert.SerializeObject(data));
+            var result = await Execute(data);
             return System.Text.Json.JsonSerializer.Serialize(new
             {
                 status = result.Item1,
@@ -375,7 +378,7 @@ namespace VRCX
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 if (ProxySet)
                     request.Proxy = Proxy;
-                
+
                 request.CookieContainer = _cookieContainer;
                 request.KeepAlive = true;
                 request.UserAgent = Program.Version;
@@ -383,9 +386,21 @@ namespace VRCX
 
                 if (options.TryGetValue("headers", out var headers))
                 {
-                    foreach (var (key, o) in (IEnumerable<KeyValuePair<string, object>>)headers)
+                    Dictionary<string, string> headersDict;
+                    if (headers.GetType() == typeof(JObject))
                     {
-                        var value = (string)o;
+                        headersDict = ((JObject)headers).ToObject<Dictionary<string, string>>();
+                    }
+                    else
+                    {
+                        var headersKvp = (IEnumerable<KeyValuePair<string, object>>)headers;
+                        headersDict = new Dictionary<string, string>();
+                        foreach (var (key, value) in headersKvp)
+                            headersDict.Add(key, value.ToString());
+                    }
+
+                    foreach (var (key, value) in headersDict)
+                    {
                         if (string.Compare(key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0)
                             request.ContentType = value;
                         else if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
@@ -401,67 +416,66 @@ namespace VRCX
                     if (string.Compare(request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0 &&
                         options.TryGetValue("body", out var body))
                     {
-                        await using var stream = await request.GetRequestStreamAsync();
-                        await using var streamWriter = new StreamWriter(stream);
+                        await using var bodyStream = await request.GetRequestStreamAsync();
+                        await using var streamWriter = new StreamWriter(bodyStream);
                         await streamWriter.WriteAsync((string)body);
                     }
                 }
-                
+
                 if (options.TryGetValue("uploadImage", out _))
                     await ImageUpload(request, options);
-                
+
                 if (options.TryGetValue("uploadFilePUT", out _))
                     await UploadFilePut(request, options);
 
                 if (options.TryGetValue("uploadImageLegacy", out _))
                     await LegacyImageUpload(request, options);
-                
+
                 if (options.TryGetValue("uploadImagePrint", out _))
                     await PrintImageUpload(request, options);
 
-                try
+                using var response = await request.GetResponseAsync() as HttpWebResponse;
+                if (response?.Headers["Set-Cookie"] != null)
+                    _cookieDirty = true;
+
+                await using var imageStream = response.GetResponseStream();
+                using var streamReader = new StreamReader(imageStream);
+                if (response.ContentType.Contains("image/") ||
+                    response.ContentType.Contains("application/octet-stream"))
                 {
-                    using var response = await request.GetResponseAsync() as HttpWebResponse;
-                    if (response?.Headers["Set-Cookie"] != null)
+                    // base64 response data for image
+                    using var memoryStream = new MemoryStream();
+                    await imageStream.CopyToAsync(memoryStream);
+                    return new Tuple<int, string>(
+                        (int)response.StatusCode,
+                        $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}"
+                    );
+                }
+
+                return new Tuple<int, string>(
+                    (int)response.StatusCode,
+                    await streamReader.ReadToEndAsync()
+                );
+            }
+            catch (WebException webException)
+            {
+                if (webException.Response is HttpWebResponse response)
+                {
+                    if (response.Headers["Set-Cookie"] != null)
                         _cookieDirty = true;
 
                     await using var stream = response.GetResponseStream();
                     using var streamReader = new StreamReader(stream);
-                    if (response.ContentType.Contains("image/") ||
-                        response.ContentType.Contains("application/octet-stream"))
-                    {
-                        // base64 response data for image
-                        using var memoryStream = new MemoryStream();
-                        await stream.CopyToAsync(memoryStream);
-                        return new Tuple<int, string>(
-                            (int)response.StatusCode,
-                            $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}"
-                        );
-                    }
                     return new Tuple<int, string>(
                         (int)response.StatusCode,
                         await streamReader.ReadToEndAsync()
                     );
                 }
-                catch (WebException webException)
-                {
-                    if (webException.Response is HttpWebResponse response)
-                    {
-                        if (response.Headers["Set-Cookie"] != null)
-                            _cookieDirty = true;
 
-                        await using var stream = response.GetResponseStream();
-                        using var streamReader = new StreamReader(stream);
-                        return new Tuple<int, string>(
-                            (int)response.StatusCode,
-                            await streamReader.ReadToEndAsync()
-                        );
-                    }
-                    return new Tuple<int, string>(
-                        -1,
-                        webException.Message
-                    );
-                }
+                return new Tuple<int, string>(
+                    -1,
+                    webException.Message
+                );
             }
             catch (Exception e)
             {
