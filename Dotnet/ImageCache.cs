@@ -56,16 +56,9 @@ internal static class ImageCache
             foreach (Cookie cookie in cookies)
                 cookieString += $"{cookie.Name}={cookie.Value};";
         }
-        Console.WriteLine($"Cookie: {cookieString}");
-        
-        Console.WriteLine($"Downloading {url} to {fileLocation}");
-        var request = new HttpRequestMessage(HttpMethod.Get, url)
-        {
-            Headers =
-            {
-                { "User-Agent", Program.Version }
-            }
-        };
+
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Add("User-Agent", Program.Version);
         if (!string.IsNullOrEmpty(cookieString))
             request.Headers.Add("Cookie", cookieString);
         
@@ -77,7 +70,6 @@ internal static class ImageCache
                 await response.Content.CopyToAsync(fileStream);
             }
         }
-        Console.WriteLine($"Downloaded {url} to {fileLocation}");
 
         var cacheSize = Directory.GetDirectories(cacheLocation).Length;
         if (cacheSize > 1100)
@@ -109,15 +101,12 @@ internal static class ImageCache
             foreach (Cookie cookie in cookies)
                 cookieString += $"{cookie.Name}={cookie.Value};";
         }
-            
-        var request = new HttpRequestMessage(HttpMethod.Get, url)
-        {
-            Headers =
-            {
-                { "Cookie", cookieString },
-                { "User-Agent", Program.Version }
-            }
-        };
+        
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Add("User-Agent", Program.Version);
+        if (!string.IsNullOrEmpty(cookieString))
+            request.Headers.Add("Cookie", cookieString);
+        
         using var response = await httpClient.SendAsync(request);
         if (!response.IsSuccessStatusCode)
             return false;

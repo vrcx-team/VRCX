@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Release
-          path: build/Cef/Release
+          path: build/Cef
 
   build_node:
     runs-on: ubuntu-latest
@@ -80,12 +80,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: Release
-          path: build/Cef/Release
+          path: build/Cef
       - name: Download html artifacts
         uses: actions/download-artifact@v3
         with:
           name: html
-          path: build/Cef/Release
+          path: build/Cef
       - name: Create nsis installer
         uses: joncloud/makensis-action@v4
         with:
@@ -99,7 +99,7 @@ jobs:
       - name: Make zip
         run: |
           file_name="VRCX_${{ needs.set_version.outputs.version }}.zip"
-          cd build/Cef/Release
+          cd build/Cef
           7z a -tzip ${file_name} * -mx=7 -xr0!*.log
           mv ${file_name} ../../../${file_name}
           echo "Zip FileName: ${file_name}"

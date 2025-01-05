@@ -73,7 +73,7 @@ mixin settingsTab()
                         el-radio-group(v-model="autoUpdateVRCX" size="mini" style="margin-top:5px")
                             el-radio-button(label="Off") {{ $t('view.settings.general.vrcx_updater.auto_update_off') }}
                             el-radio-button(label="Notify") {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
-                            el-radio-button(label="Auto Download" :disabled="isLinux") {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
+                            el-radio-button(label="Auto Download") {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
                 //- General | Application
                 +simpleSettingsCategory("view.settings.general.application.header")
                     template(v-if="!isLinux")
@@ -312,7 +312,6 @@ mixin settingsTab()
                             el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
                             el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
-
                     template(v-if="!isLinux")
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay")' :value='openVR' @change='saveOpenVROption("openVR")')
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.overlay_notifications")' :value='overlayNotifications' @change='saveOpenVROption("VRCX_overlayNotifications")' :disabled="!openVR")
@@ -368,7 +367,7 @@ mixin settingsTab()
                         el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS" style="margin-left:10px") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
 
             //- Wrist Overlay Tab
-            el-tab-pane(:label="$t('view.settings.category.wrist_overlay')" v-if="!isLinux")
+            el-tab-pane(:label="$t('view.settings.category.wrist_overlay')" v-if="!isLinux()")
                 //- Wrist Overlay | SteamVR Wrist Overlay
                 div.options-container(style="margin-top:0")
                     span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}
@@ -450,14 +449,14 @@ mixin settingsTab()
                     //- Advanced | Relaunch VRChat After Crash
                     simple-switch(:label='$t("view.settings.advanced.advanced.relaunch_vrchat.description")' :value='relaunchVRChatAfterCrash' @change='saveOpenVROption("VRCX_relaunchVRChatAfterCrash")' :long-label='true')
                     //- Advanced | VRChat Quit Fix
-                    template(v-if="!isLinux")
+                    template(v-if="!isLinux()")
                         span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}
                         simple-switch(:label='$t("view.settings.advanced.advanced.vrchat_quit_fix.description")' :value='vrcQuitFix' @change='saveOpenVROption("VRCX_vrcQuitFix")' :long-label='true')
                     //- Advanced | Auto Cache Management
                     span.sub-header {{ $t('view.settings.advanced.advanced.auto_cache_management.header') }}
                     simple-switch(:label='$t("view.settings.advanced.advanced.auto_cache_management.description")' :value='autoSweepVRChatCache' @change='saveOpenVROption("VRCX_autoSweepVRChatCache")' :long-label='true')
                     //- Advanced | Disable local world database
-                    template(v-if="!isLinux")
+                    template(v-if="!isLinux()")
                         span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
                         simple-switch(:label='$t("view.settings.advanced.advanced.local_world_persistence.description")' :value='!disableWorldDatabase' @change='saveVRCXWindowOption("VRCX_DisableWorldDatabase")' :long-label='true')
 
@@ -486,7 +485,7 @@ mixin settingsTab()
                     div.options-container-item
                         el-button(size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog") {{ $t('view.settings.advanced.advanced.remote_database.avatar_database_provider') }}
                 //- Advanced | Automatic App Launcher
-                template(v-if="!isLinux")
+                template(v-if="!isLinux()")
                     +simpleSettingsCategory("view.settings.advanced.advanced.app_launcher.header")
                         br
                         el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
@@ -515,7 +514,7 @@ mixin settingsTab()
                     div.options-container-item
                         el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") {{ $t('view.settings.advanced.advanced.youtube_api.youtube_api_key') }}
                 //- Advanced | Video Progress Pie
-                div.options-container(v-if="!isLinux")
+                div.options-container(v-if="!isLinux()")
                     span.header {{ $t('view.settings.advanced.advanced.video_progress_pie.header') }}
                     simple-switch(:label='$t("view.settings.advanced.advanced.video_progress_pie.enable")' :value='progressPie' @change='changeYouTubeApi("VRCX_progressPie")' :disabled="!openVR" :tooltip="$t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')" :long-label='true')
                     simple-switch(:label='$t("view.settings.advanced.advanced.video_progress_pie.dance_world_only")' :value='progressPieFilter' @change='changeYouTubeApi("VRCX_progressPieFilter")' :disabled="!openVR" :long-label='true')

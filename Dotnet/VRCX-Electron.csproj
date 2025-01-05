@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <BaseIntermediateOutputPath>obj1\</BaseIntermediateOutputPath>
-    <OutputPath>..\build\Electron\$(Configuration)\</OutputPath>
+    <OutputPath>..\build\Electron\</OutputPath>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <PropertyGroup>

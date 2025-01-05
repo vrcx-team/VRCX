@@ -188,17 +188,15 @@ export default class extends baseClass {
         },
 
         async checkForVRCXUpdate() {
+            var currentVersion = this.appVersion.replace(' (Linux)', '');
             if (
-                !this.appVersion ||
-                this.appVersion === 'VRCX Nightly Build' ||
-                this.appVersion === 'VRCX Build' ||
-                this.appVersion === 'VRCX (Linux) Nightly Build' ||
-                this.appVersion === 'VRCX (Linux) Build'
+                !currentVersion ||
+                currentVersion === 'VRCX Nightly Build' ||
+                currentVersion === 'VRCX Build'
             ) {
                 // ignore custom builds
                 return;
             }
-            var currentVersion = this.appVersion.replace(' (Linux)', '');
             if (this.branch === 'Beta') {
                 // move Beta users to stable
                 this.branch = 'Stable';

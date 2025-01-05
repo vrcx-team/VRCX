@@ -3733,7 +3733,8 @@ console.log(`isLinux: ${LINUX}`);
             );
             return;
         }
-        if (lastVersion !== this.appVersion) {
+        var currentVersion = this.appVersion.replace(' (Linux)', '');
+        if (lastVersion !== currentVersion) {
             await configRepository.setString(
                 'VRCX_lastVRCXVersion',
                 this.appVersion
