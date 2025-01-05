@@ -74,8 +74,7 @@
             "build/html/**/*",
             "src-electron/*",
             "VRCX.png",
-            "images/tray.png",
-            "!build/bin/**/*"
+            "images/tray.png"
         ],
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",
@@ -128,6 +127,5 @@
     "dependencies": {
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.8.19"
-    },
-    "version": "2024.12.30"
+    }
 }

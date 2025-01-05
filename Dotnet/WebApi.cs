@@ -32,13 +32,16 @@ namespace VRCX
 
         static WebApi()
         {
+            Instance = new WebApi();
             ServicePointManager.DefaultConnectionLimit = 10;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
         public WebApi()
         {
-            if (Instance == null) Instance = this;
+#if LINUX
+            Instance = this;
+#endif
             _cookieContainer = new CookieContainer();
             _timer = new Timer(TimerCallback, null, -1, -1);
         }

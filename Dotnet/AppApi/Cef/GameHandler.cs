@@ -62,7 +62,8 @@ namespace VRCX
 
         public override bool IsSteamVRRunning()
         {
-            return isSteamVRRunning;
+            // unused
+            return ProcessMonitor.Instance.IsProcessRunning("vrserver");
         }
         
         public override int QuitGame()
