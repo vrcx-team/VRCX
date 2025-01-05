@@ -95,7 +95,7 @@ export default class extends baseClass {
                     ) {
                         if (LINUX) {
                             this.nextGameRunningCheck = 1;
-                            $app.updateIsGameRunning(await AppApi.IsGameRunning(), AppApi.IsSteamVRRunning(), false);
+                            $app.updateIsGameRunning(await AppApi.IsGameRunning(), await AppApi.IsSteamVRRunning(), false);
                         } else {
                             this.nextGameRunningCheck = 3;
                             AppApi.CheckGameRunning();
