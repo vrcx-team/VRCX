@@ -18,8 +18,8 @@ class WebApiService {
             throw new Error('options is required');
         }
         if (LINUX) {
-            const optionsMap = new Map(Object.entries(options));
-            var json = await WebApi.ExecuteJson(optionsMap);
+            const requestJson = JSON.stringify(options);
+            var json = await WebApi.ExecuteJson(requestJson);
             var data = JSON.parse(json);
             if (data.status === -1) {
                 throw new Error(data.message);
