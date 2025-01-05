@@ -73,7 +73,7 @@ namespace VRCX
 #if !LINUX
             var buildName = "VRCX";
 #else
-            var buildName = "VRCX-Linux";
+            var buildName = "VRCX (Linux)";
 #endif
             try
             {

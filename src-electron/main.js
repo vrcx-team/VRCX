@@ -7,7 +7,8 @@ const {
     globalShortcut,
     Tray,
     Menu,
-    dialog
+    dialog,
+    Notification
 } = require('electron');
 const fs = require('fs');
 const https = require('https');
@@ -79,6 +80,15 @@ ipcMain.handle('dialog:openDirectory', async () => {
     return null;
 });
 
+ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
+    const notification = {
+        title,
+        body,
+        icon
+    };
+    new Notification(notification).show();
+});
+
 function createWindow() {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 
@@ -121,11 +131,23 @@ function createWindow() {
     // Open the DevTools.
     //mainWindow.webContents.openDevTools()
 
-    globalShortcut.register('Control+=', () => {
-        mainWindow.webContents.setZoomLevel(
-            mainWindow.webContents.getZoomLevel() + 1
-        );
+    mainWindow.webContents.on('before-input-event', (event, input) => {
+        if (input.control && input.key === '=') {
+            mainWindow.webContents.setZoomLevel(
+                mainWindow.webContents.getZoomLevel() + 1
+            );
+        }
     });
+
+    mainWindow.webContents.on('zoom-changed', (event, zoomDirection) => {
+        const currentZoom = mainWindow.webContents.getZoomLevel();
+        if (zoomDirection === 'in') {
+            mainWindow.webContents.setZoomLevel(currentZoom + 1);
+        } else {
+            mainWindow.webContents.setZoomLevel(currentZoom - 1);
+        }
+    });
+    mainWindow.webContents.setVisualZoomLevelLimits(1, 5);
 
     mainWindow.on('close', (event) => {
         isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';

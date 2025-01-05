@@ -58,6 +58,11 @@ namespace VRCX
         {
             return isGameRunning;
         }
+
+        public override bool IsSteamVRRunning()
+        {
+            return isSteamVRRunning;
+        }
         
         public override int QuitGame()
         {
