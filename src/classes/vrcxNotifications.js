@@ -1306,28 +1306,28 @@ export default class extends baseClass {
         displayDesktopToast(noty, message, image) {
             switch (noty.type) {
                 case 'OnPlayerJoined':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'has joined',
                         image
                     );
                     break;
                 case 'OnPlayerLeft':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'has left',
                         image
                     );
                     break;
                 case 'OnPlayerJoining':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'is joining',
                         image
                     );
                     break;
                 case 'GPS':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         `is in ${this.displayLocation(
                             noty.location,
@@ -1346,28 +1346,28 @@ export default class extends baseClass {
                             noty.groupName
                         )}`;
                     }
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         `has logged in${locationName}`,
                         image
                     );
                     break;
                 case 'Offline':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'has logged out',
                         image
                     );
                     break;
                 case 'Status':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         `status is now ${noty.status} ${noty.statusDescription}`,
                         image
                     );
                     break;
                 case 'invite':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.senderUsername,
                         `has invited you to ${this.displayLocation(
                             noty.details.worldId,
@@ -1377,119 +1377,119 @@ export default class extends baseClass {
                     );
                     break;
                 case 'requestInvite':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.senderUsername,
                         `has requested an invite${message}`,
                         image
                     );
                     break;
                 case 'inviteResponse':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.senderUsername,
                         `has responded to your invite${message}`,
                         image
                     );
                     break;
                 case 'requestInviteResponse':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.senderUsername,
                         `has responded to your invite request${message}`,
                         image
                     );
                     break;
                 case 'friendRequest':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.senderUsername,
                         'has sent you a friend request',
                         image
                     );
                     break;
                 case 'Friend':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'is now your friend',
                         image
                     );
                     break;
                 case 'Unfriend':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'is no longer your friend',
                         image
                     );
                     break;
                 case 'TrustLevel':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         `trust level is now ${noty.trustLevel}`,
                         image
                     );
                     break;
                 case 'DisplayName':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.previousDisplayName,
                         `changed their name to ${noty.displayName}`,
                         image
                     );
                     break;
                 case 'boop':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.senderUsername,
                         noty.message,
                         image
                     );
                     break;
                 case 'groupChange':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.senderUsername,
                         noty.message,
                         image
                     );
                     break;
                 case 'group.announcement':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Group Announcement',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.informative':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Group Informative',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.invite':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Group Invite',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.joinRequest':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Group Join Request',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.transfer':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Group Transfer Request',
                         noty.message,
                         image
                     );
                     break;
                 case 'group.queueReady':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Instance Queue Ready',
                         noty.message,
                         image
                     );
                     break;
                 case 'instance.closed':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Instance Closed',
                         noty.message,
                         image
@@ -1497,7 +1497,7 @@ export default class extends baseClass {
                     break;
                 case 'PortalSpawn':
                     if (noty.displayName) {
-                        desktopNotification(
+                        this.desktopNotification(
                             noty.displayName,
                             `has spawned a portal to ${this.displayLocation(
                                 noty.instanceId,
@@ -1507,7 +1507,7 @@ export default class extends baseClass {
                             image
                         );
                     } else {
-                        desktopNotification(
+                        this.desktopNotification(
                             '',
                             'User has spawned a portal',
                             image
@@ -1515,83 +1515,83 @@ export default class extends baseClass {
                     }
                     break;
                 case 'AvatarChange':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         `changed into avatar ${noty.name}`,
                         image
                     );
                     break;
                 case 'ChatBoxMessage':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         `said ${noty.text}`,
                         image
                     );
                     break;
                 case 'Event':
-                    desktopNotification('Event', noty.data, image);
+                    this.desktopNotification('Event', noty.data, image);
                     break;
                 case 'External':
-                    desktopNotification('External', noty.message, image);
+                    this.desktopNotification('External', noty.message, image);
                     break;
                 case 'VideoPlay':
-                    desktopNotification(
+                    this.desktopNotification(
                         'Now playing',
                         noty.notyName,
                         image
                     );
                     break;
                 case 'BlockedOnPlayerJoined':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'blocked user has joined',
                         image
                     );
                     break;
                 case 'BlockedOnPlayerLeft':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'blocked user has left',
                         image
                     );
                     break;
                 case 'MutedOnPlayerJoined':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'muted user has joined',
                         image
                     );
                     break;
                 case 'MutedOnPlayerLeft':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'muted user has left',
                         image
                     );
                     break;
                 case 'Blocked':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'has blocked you',
                         image
                     );
                     break;
                 case 'Unblocked':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'has unblocked you',
                         image
                     );
                     break;
                 case 'Muted':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'has muted you',
                         image
                     );
                     break;
                 case 'Unmuted':
-                    desktopNotification(
+                    this.desktopNotification(
                         noty.displayName,
                         'has unmuted you',
                         image
