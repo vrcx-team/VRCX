@@ -20,7 +20,7 @@ namespace VRCX
     public class WebApi
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public static readonly WebApi Instance;
+        public static WebApi Instance;
         
         public static bool ProxySet;
         public static string ProxyUrl = "";
@@ -32,13 +32,13 @@ namespace VRCX
 
         static WebApi()
         {
-            Instance = new WebApi();
             ServicePointManager.DefaultConnectionLimit = 10;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
         public WebApi()
         {
+            if (Instance == null) Instance = this;
             _cookieContainer = new CookieContainer();
             _timer = new Timer(TimerCallback, null, -1, -1);
         }

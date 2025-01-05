@@ -14,7 +14,7 @@ const fs = require('fs');
 const https = require('https');
 
 const rootDir = app.getAppPath();
-require(path.join(rootDir, 'build/Electron/Debug/VRCX.cjs'));
+require(path.join(rootDir, 'build/Electron/Debug/VRCX-Electron.cjs'));
 
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();

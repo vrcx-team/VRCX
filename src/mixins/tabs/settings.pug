@@ -70,7 +70,7 @@ mixin settingsTab()
                                 span.extra https://vrcx.app/discord
                 //- General | VRCX Updater
                 +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
-                    div.options-container-item(v-if="!isLinux")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
                         el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
                     div.options-container-item

@@ -63,14 +63,12 @@ internal static class ImageCache
         {
             Headers =
             {
-#if !LINUX
-                { "Cookie", cookieString },
-#endif
                 { "User-Agent", Program.Version }
             }
         };
-        Console.WriteLine($"Request: {request}");
-
+        if (!string.IsNullOrEmpty(cookieString))
+            request.Headers.Add("Cookie", cookieString);
+        
         using (var response = await httpClient.SendAsync(request))
         {
             response.EnsureSuccessStatusCode();
