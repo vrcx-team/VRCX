@@ -8380,6 +8380,10 @@ speechSynthesis.getVoices();
             this.saveInstancePrints
         );
         await configRepository.setBool(
+            'VRCX_cropInstancePrints',
+            this.cropInstancePrints
+        );
+        await configRepository.setBool(
             'VRCX_saveInstanceStickers',
             this.saveInstanceStickers
         );
@@ -17817,19 +17821,39 @@ speechSynthesis.getVoices();
             .replace(/T/g, '_')
             .replace(/Z/g, '');
         var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
-        var status = await AppApi.SaveStickerToFile(
+        var filePath = await AppApi.SaveStickerToFile(
             imageUrl,
             this.ugcFolderPath,
             monthFolder,
             fileName
         );
-        if (status) {
+        if (filePath) {
             console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
         }
     };
 
     // #endregion
     // #region | Prints
+    $app.methods.cropPrintsChanged = function () {
+        if (!this.cropInstancePrints)
+            return;
+        this.$confirm(
+            $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'), 
+            { 
+                confirmButtonText: $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'), 
+                cancelButtonText: $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'), 
+                type: 'info', 
+                showInput: false, 
+                callback: (action) => { 
+                    if (action === 'confirm') { 
+                        AppApi.CropAllPrints(this.ugcFolderPath); 
+                    } 
+                } 
+            });
+        
+        this.saveVRCXWindowOption();
+    }
+
     API.$on('LOGIN', function () {
         $app.printTable = [];
     });
@@ -17999,6 +18023,11 @@ speechSynthesis.getVoices();
         false
     );
 
+    $app.data.cropInstancePrints = await configRepository.getBool(
+        'VRCX_cropInstancePrints',
+        false
+    );
+
     $app.data.saveInstanceStickers = await configRepository.getBool(
         'VRCX_saveInstanceStickers',
         false
@@ -18072,14 +18101,18 @@ speechSynthesis.getVoices();
         var createdAt = this.getPrintLocalDate(args.json);
         var monthFolder = createdAt.toISOString().slice(0, 7);
         var fileName = this.getPrintFileName(args.json);
-        var status = await AppApi.SavePrintToFile(
+        var filePath = await AppApi.SavePrintToFile(
             imageUrl,
             this.ugcFolderPath,
             monthFolder,
             fileName
         );
-        if (status) {
+        if (filePath) {
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
+
+            if (this.cropInstancePrints) {
+                await AppApi.CropPrintImage(filePath);
+            }
         }
 
         if ($app.printQueue.length == 0) {
