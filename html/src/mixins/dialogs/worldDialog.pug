@@ -52,6 +52,7 @@ mixin worldDialog()
                             el-button(type="default" icon="el-icon-more" circle)
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.world.actions.refresh') }}
+                                el-dropdown-item(icon="el-icon-share" command="Share") {{ $t('dialog.world.actions.share') }}
                                 el-dropdown-item(icon="el-icon-s-flag" command="New Instance" divided) {{ $t('dialog.world.actions.new_instance') }}
                                 el-dropdown-item(icon="el-icon-message" command="New Instance and Self Invite") {{ $t('dialog.world.actions.new_instance_and_self_invite') }}
                                 el-dropdown-item(v-if="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided) {{ $t('dialog.world.actions.reset_home') }}

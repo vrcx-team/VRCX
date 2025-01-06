@@ -133,7 +133,14 @@ export default class extends baseClass {
             this.downloadAndSaveJson(row.name, row.data);
         },
 
-        restoreVrcRegistryFromFile(json) {
+        async restoreVrcRegistryFromFile() {
+            var filePath = await AppApi.OpenFileSelectorDialog(null, ".json", "JSON Files (*.json)|*.json");
+            if (filePath === "") {
+                return;
+            }
+            
+            var json = await AppApi.ReadVrcRegJsonFile(filePath);
+
             try {
                 var data = JSON.parse(json);
                 if (!data || typeof data !== 'object') {

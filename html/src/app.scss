@@ -407,7 +407,6 @@ img.friends-list-avatar {
     object-fit: cover;
 }
 
-.x-friend-item > .avatar.offline > img,
 .x-friend-item > .avatar.active > img {
     filter: grayscale(1);
 }
@@ -593,7 +592,8 @@ img.friends-list-avatar {
     text-align: center;
 }
 
-i.x-user-status {
+i.x-user-status,
+i.x-status-icon {
     display: inline-block;
     width: 10px;
     height: 10px;
@@ -622,6 +622,22 @@ i.x-user-status.askme {
 i.x-user-status.busy {
     background: #ff2c2c;
     mask-image: url(masks/busy.svg);
+}
+
+i.x-status-icon.green {
+    background: #67c23a;
+}
+
+i.x-status-icon.blue {
+    background: #409eff;
+}
+
+i.x-status-icon.orange {
+    background: #ff9500;
+}
+
+i.x-status-icon.red {
+    background: #ff2c2c;
 }
 
 .x-tag-friend {
@@ -714,7 +730,21 @@ i.x-user-status.busy {
 
 .options-container-item .name {
     display: inline-block;
-    min-width: 175px;
+    min-width: 225px;
+}
+
+.simple-switch {
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+}
+
+.simple-switch .name {
+    flex-basis: 225px;
+}
+
+.simple-switch .switch {
+    flex-shrink: 0;
 }
 
 .toggle-switch {
@@ -732,7 +762,7 @@ i.x-user-status.busy {
 .toggle-list .toggle-name {
     display: inline-block;
     min-width: 190px;
-    padding-right: 5px;
+    padding-right: 10px;
     text-align: right;
 }
 
@@ -754,7 +784,7 @@ i.x-user-status.busy {
     border-color: #67c23a !important;
 }
 
-.el-button--danger {
+.x-dialog .el-button--danger {
     background-color: #f56c6c !important;
     border-color: #f56c6c !important;
 }
@@ -896,4 +926,28 @@ i.x-user-status.busy {
 
 .el-pagination .el-input .el-input__icon {
     line-height: 22px;
+}
+
+// User dialog memo: tag line-height
+.el-dialog__body .el-tag--mini {
+    line-height: 17px;
+}
+
+// feed table detail time tag line-height
+.el-table__expanded-cell .el-tag--mini {
+    line-height: 17px;
+}
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background: #f0f0f0;
+}
+
+// Align the left page with the right friend bar
+.x-app > .x-container {
+    padding-top: 15px;
+}
+
+.el-collapse-item .el-tag--mini {
+    line-height: 17px;
 }

@@ -70,6 +70,7 @@ mixin groupDialog()
                             el-button(:type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'" icon="el-icon-more" circle)
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.group.actions.refresh') }}
+                                el-dropdown-item(icon="el-icon-share" command="Share") {{ $t('dialog.group.actions.share') }}
                                 template(v-if="groupDialog.inGroup")
                                     template(v-if="groupDialog.ref.myMember")
                                         el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) {{ $t('dialog.group.actions.unsubscribe') }}
@@ -329,7 +330,7 @@ mixin groupDialog()
                             el-tab-pane
                                 span(slot="label")
                                     span(v-text="gallery.name" style="font-weight:bold;font-size:16px")
-                                    i.x-user-status(style="margin-left:5px" :class="groupGalleryStatus(gallery)")
+                                    i.x-status-icon(style="margin-left:5px" :class="groupGalleryStatus(gallery)")
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0 }}
                                 span(v-text="gallery.description" style="color:#c7c7c7;padding:10px")
                                 el-carousel(:interval="0" height="600px" style="margin-top:10px")

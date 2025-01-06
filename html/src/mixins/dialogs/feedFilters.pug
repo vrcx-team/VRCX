@@ -245,8 +245,8 @@ mixin feedFilters()
                         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
         template(#footer)
-            el-button(type="small" @click="resetSharedFeedFilters") {{ $t('dialog.shared_feed_filters.reset') }}
-            el-button(size="small" style="margin-left:10px" @click="notyFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}
+            el-button(size="small" @click="resetNotyFeedFilters") {{ $t('dialog.shared_feed_filters.reset') }}
+            el-button(size="small" type="primary" style="margin-left:10px" @click="notyFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}
 
     //- dialog: wrist feed filters
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" :title="$t('dialog.shared_feed_filters.wrist')" width="550px")
@@ -499,5 +499,5 @@ mixin feedFilters()
                         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
         template(#footer)
-            el-button(type="small" @click="resetSharedFeedFilters") {{ $t('dialog.shared_feed_filters.reset') }}
-            el-button(size="small" @click="wristFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}
+            el-button(size="small" @click="resetWristFeedFilters") {{ $t('dialog.shared_feed_filters.reset') }}
+            el-button(size="small" type="primary" @click="wristFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}

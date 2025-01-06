@@ -28,10 +28,10 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER, group_name TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT, friend_number INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_friend_log_history (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, user_id TEXT, display_name TEXT, previous_display_name TEXT, trust_level TEXT, previous_trust_level TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_friend_log_history (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, user_id TEXT, display_name TEXT, previous_display_name TEXT, trust_level TEXT, previous_trust_level TEXT, friend_number INTEGER)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_notifications (id TEXT PRIMARY KEY, created_at TEXT, type TEXT, sender_user_id TEXT, sender_username TEXT, receiver_user_id TEXT, message TEXT, world_id TEXT, world_name TEXT, image_url TEXT, invite_message TEXT, request_message TEXT, response_message TEXT, expired INTEGER)`
@@ -326,7 +326,8 @@ class Database {
             var row = {
                 userId: dbRow[0],
                 displayName: dbRow[1],
-                trustLevel: dbRow[2]
+                trustLevel: dbRow[2],
+                friendNumber: dbRow[3]
             };
             friendLogCurrent.unshift(row);
         }, `SELECT * FROM ${Database.userPrefix}_friend_log_current`);
@@ -335,11 +336,12 @@ class Database {
 
     setFriendLogCurrent(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${Database.userPrefix}_friend_log_current (user_id, display_name, trust_level) VALUES (@user_id, @display_name, @trust_level)`,
+            `INSERT OR REPLACE INTO ${Database.userPrefix}_friend_log_current (user_id, display_name, trust_level, friend_number) VALUES (@user_id, @display_name, @trust_level, @friend_number)`,
             {
                 '@user_id': entry.userId,
                 '@display_name': entry.displayName,
-                '@trust_level': entry.trustLevel
+                '@trust_level': entry.trustLevel,
+                '@friend_number': entry.friendNumber
             }
         );
     }
@@ -359,11 +361,11 @@ class Database {
                     field[item] = '';
                 }
             }
-            sqlValues += `('${field.userId}', '${field.displayName}', '${field.trustLevel}'), `;
+            sqlValues += `('${field.userId}', '${field.displayName}', '${field.trustLevel}', ${line.friendNumber}), `;
         }
         sqlValues = sqlValues.slice(0, -2);
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${Database.userPrefix}_friend_log_current (user_id, display_name, trust_level) VALUES ${sqlValues}`
+            `INSERT OR REPLACE INTO ${Database.userPrefix}_friend_log_current (user_id, display_name, trust_level, friend_number) VALUES ${sqlValues}`
         );
     }
 
@@ -376,6 +378,14 @@ class Database {
         );
     }
 
+    async getMaxFriendLogNumber() {
+        var friendNumber = 0;
+        await sqliteService.execute((dbRow) => {
+            friendNumber = dbRow[0];
+        }, `SELECT MAX(friend_number) FROM ${Database.userPrefix}_friend_log_current`);
+        return friendNumber;
+    }
+
     async getFriendLogHistory() {
         var friendLogHistory = [];
         await sqliteService.execute((dbRow) => {
@@ -384,7 +394,8 @@ class Database {
                 created_at: dbRow[1],
                 type: dbRow[2],
                 userId: dbRow[3],
-                displayName: dbRow[4]
+                displayName: dbRow[4],
+                friendNumber: dbRow[8]
             };
             if (row.type === 'DisplayName') {
                 row.previousDisplayName = dbRow[5];
@@ -399,7 +410,7 @@ class Database {
 
     addFriendLogHistory(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level, friend_number) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level, @friend_number)`,
             {
                 '@created_at': entry.created_at,
                 '@type': entry.type,
@@ -407,7 +418,8 @@ class Database {
                 '@display_name': entry.displayName,
                 '@previous_display_name': entry.previousDisplayName,
                 '@trust_level': entry.trustLevel,
-                '@previous_trust_level': entry.previousTrustLevel
+                '@previous_trust_level': entry.previousTrustLevel,
+                '@friend_number': entry.friendNumber
             }
         );
     }
@@ -424,7 +436,8 @@ class Database {
             'displayName',
             'previousDisplayName',
             'trustLevel',
-            'previousTrustLevel'
+            'previousTrustLevel',
+            'friendNumber'
         ];
         for (var i = 0; i < inputData.length; ++i) {
             var line = inputData[i];
@@ -449,7 +462,7 @@ class Database {
             // sqlValues `('${line.created_at}', '${line.type}', '${line.userId}', '${line.displayName}', '${line.previousDisplayName}', '${line.trustLevel}', '${line.previousTrustLevel}'), `
         }
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES ${sqlValues}`
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level, friend_number) VALUES ${sqlValues}`
         );
     }
 
@@ -1147,7 +1160,7 @@ class Database {
         var instances = new Set();
         var ref = {
             timeSpent: 0,
-            created_at: '',
+            lastSeen: '',
             joinCount: 0,
             userId: input.id,
             previousDisplayNames: new Map()
@@ -1159,7 +1172,7 @@ class Database {
                 }
                 i++;
                 if (i === 1 || (inCurrentWorld && i === 2)) {
-                    ref.created_at = row[0];
+                    ref.lastSeen = row[0];
                 }
                 instances.add(row[3]);
                 if (input.displayName !== row[4]) {
@@ -1631,10 +1644,26 @@ class Database {
         return gamelogDatabase;
     }
 
-    async lookupGameLogDatabase(search, filters) {
+    /**
+     * Lookup the game log database for a specific search term
+     * @param {string} search The search term
+     * @param {Array} filters The filters to apply
+     * @param {Array} [vipList] The list of VIP users
+     * @returns {Promise<any[]>} The game log data
+     */
+
+    async lookupGameLogDatabase(search, filters, vipList = []) {
         var search = search.replaceAll("'", "''");
         if (search.startsWith('wrld_')) {
             return Database.getGameLogByLocation(search, filters);
+        }
+        let vipQuery = '';
+        if (vipList.length > 0) {
+            vipQuery = 'AND user_id IN (';
+            vipList.forEach((vip, i) => {
+                vipQuery += `'${vip.replaceAll("'", "''")}', `;
+            });
+            vipQuery += "'')";
         }
         var location = true;
         var onplayerjoined = true;
@@ -1723,7 +1752,7 @@ class Database {
                     time: dbRow[6]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_join_leave WHERE (display_name LIKE '%${search}%' AND user_id != '${Database.userId}') ${query} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_join_leave WHERE (display_name LIKE '%${search}%' AND user_id != '${Database.userId}') ${vipQuery} ${query} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (portalspawn) {
             await sqliteService.execute((dbRow) => {
@@ -1738,7 +1767,7 @@ class Database {
                     worldName: dbRow[6]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_portal_spawn WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_portal_spawn WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (msgevent) {
             await sqliteService.execute((dbRow) => {
@@ -1763,7 +1792,7 @@ class Database {
                     location: dbRow[5]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_external WHERE (display_name LIKE '%${search}%' OR message LIKE '%${search}%') ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_external WHERE (display_name LIKE '%${search}%' OR message LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (videoplay) {
             await sqliteService.execute((dbRow) => {
@@ -1779,7 +1808,7 @@ class Database {
                     userId: dbRow[7]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_video_play WHERE video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_video_play WHERE (video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (resourceload_string || resourceload_image) {
             var checkString = '';
@@ -2580,6 +2609,36 @@ class Database {
         );
     }
 
+    async upgradeDatabaseVersion() {
+        // var version = 0;
+        // await sqliteService.execute((dbRow) => {
+        //     version = dbRow[0];
+        // }, 'PRAGMA user_version');
+        // if (version === 0) {
+        await this.updateTableForGroupNames();
+        await this.addFriendLogFriendNumber();
+        // }
+        // await sqliteService.executeNonQuery('PRAGMA user_version = 1');
+    }
+
+    async addFriendLogFriendNumber() {
+        var tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_friend_log_current' OR name LIKE '%_friend_log_history'`);
+        for (var tableName of tables) {
+            try {
+                await sqliteService.executeNonQuery(
+                    `ALTER TABLE ${tableName} ADD friend_number INTEGER DEFAULT 0`
+                );
+            } catch (e) {
+                if (e.indexOf('duplicate column name') === -1) {
+                    console.error(e);
+                }
+            }
+        }
+    }
+
     async updateTableForGroupNames() {
         var tables = [];
         await sqliteService.execute((dbRow) => {
@@ -2588,28 +2647,22 @@ class Database {
         for (var tableName of tables) {
             try {
                 await sqliteService.executeNonQuery(
-                    `SELECT group_name FROM ${tableName} LIMIT 1`
-                );
-            } catch (e) {
-                if (e.indexOf('no such column') === -1) {
-                    throw e;
-                }
-                sqliteService.executeNonQuery(
                     `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
                 );
+            } catch (e) {
+                if (e.indexOf('duplicate column name') === -1) {
+                    console.error(e);
+                }
             }
         }
         // Fix gamelog_location column typo
         try {
             await sqliteService.executeNonQuery(
-                `SELECT groupName FROM gamelog_location LIMIT 1`
-            );
-            await sqliteService.executeNonQuery(
                 `ALTER TABLE gamelog_location DROP COLUMN groupName`
             );
         } catch (e) {
             if (e.indexOf('no such column') === -1) {
-                throw e;
+                console.error(e);
             }
         }
     }

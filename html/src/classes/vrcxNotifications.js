@@ -184,48 +184,25 @@ export default class extends baseClass {
                 return;
             }
 
-            var playNotificationTTS = false;
-            if (
-                this.notificationTTS === 'Always' ||
-                (this.notificationTTS === 'Inside VR' &&
-                    !this.isGameNoVR &&
-                    this.isGameRunning) ||
-                (this.notificationTTS === 'Game Closed' &&
-                    !this.isGameRunning) ||
-                (this.notificationTTS === 'Game Running' && this.isGameRunning)
-            ) {
-                playNotificationTTS = true;
-            }
-            var playDesktopToast = false;
-            if (
-                this.desktopToast === 'Always' ||
-                (this.desktopToast === 'Outside VR' &&
-                    !this.isSteamVRRunning) ||
-                (this.desktopToast === 'Inside VR' && this.isSteamVRRunning) ||
-                (this.desktopToast === 'Game Closed' && !this.isGameRunning) ||
-                (this.desktopToast === 'Game Running' && this.isGameRunning) ||
-                (this.desktopToast === 'Desktop Mode' &&
-                    this.isGameNoVR &&
-                    this.isGameRunning) ||
-                (this.afkDesktopToast &&
-                    this.isHmdAfk &&
-                    this.isGameRunning &&
-                    !this.isGameNoVR)
-            ) {
-                // this if statement looks like it has seen better days
-                playDesktopToast = true;
-            }
-            var playXSNotification = this.xsNotifications;
-            var playOvrtHudNotifications = this.ovrtHudNotifications;
-            var playOvrtWristNotifications = this.ovrtWristNotifications;
-            var playOverlayNotification = false;
-            if (
-                this.overlayNotifications &&
-                !this.isGameNoVR &&
-                this.isGameRunning
-            ) {
-                playOverlayNotification = true;
-            }
+            const notiConditions = {
+                'Always': () => true,
+                'Inside VR': () => this.isSteamVRRunning,
+                'Outside VR': () => !this.isSteamVRRunning,
+                'Game Closed': () => !this.isGameRunning, // Also known as "Outside VRChat"
+                'Game Running': () => this.isGameRunning, // Also known as "Inside VRChat"
+                'Desktop Mode': () => this.isGameNoVR && this.isGameRunning,
+                'AFK': () => this.afkDesktopToast && this.isHmdAfk && this.isGameRunning && !this.isGameNoVR,
+            };
+
+            const playNotificationTTS = notiConditions[this.notificationTTS]?.();
+            const playDesktopToast = notiConditions[this.desktopToast]?.() || notiConditions['AFK']();
+
+            const playOverlayToast = notiConditions[this.overlayToast]?.();
+            const playOverlayNotification = this.overlayNotifications && playOverlayToast;
+            const playXSNotification = this.xsNotifications && playOverlayToast;
+            const playOvrtHudNotifications = this.ovrtHudNotifications && playOverlayToast;
+            const playOvrtWristNotifications = this.ovrtWristNotifications && playOverlayToast;
+
             var message = '';
             if (noty.title) {
                 message = `${noty.title}, ${noty.message}`;

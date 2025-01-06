@@ -306,7 +306,7 @@ namespace VRCX
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             var requestStream = request.GetRequestStream();
             var imageData = options["imageData"] as string;
-            var fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false, 1920, 1080);
+            var fileToUpload = AppApi.Instance.ResizePrintImage(Convert.FromBase64String(imageData));
             const string fileFormKey = "image";
             const string fileName = "image";
             const string fileMimeType = "image/png";

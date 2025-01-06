@@ -33,7 +33,7 @@ export default class extends baseClass {
                     if (lastRun >= Date.now() - 900000) {
                         // 15mins
                         throw new Error(
-                            `Bailing request due to recent 404/403, ${endpoint}`
+                            `${$t('api.error.message.403_404_bailing_request')}, ${endpoint}`
                         );
                     }
                     this.failedGetRequests.delete(endpoint);
@@ -87,7 +87,11 @@ export default class extends baseClass {
                         return response;
                     } catch (e) {}
                     if (response.status === 200) {
-                        this.$throw(0, 'Invalid JSON response', endpoint);
+                        this.$throw(
+                            0,
+                            $t('api.error.message.invalid_json_response'),
+                            endpoint
+                        );
                     }
                     if (
                         response.status === 429 &&
@@ -131,7 +135,9 @@ export default class extends baseClass {
                         data.error.message === '"Missing Credentials"'
                     ) {
                         this.$emit('AUTOLOGIN');
-                        throw new Error('401: Missing Credentials');
+                        throw new Error(
+                            `401 ${$t('api.error.message.missing_credentials')}`
+                        );
                     }
                     if (
                         status === 401 &&
@@ -142,15 +148,15 @@ export default class extends baseClass {
                         if (!$app.twoFactorAuthDialogVisible) {
                             $app.API.getCurrentUser();
                         }
-                        throw new Error('401: Unauthorized');
+                        throw new Error(`401 ${$t('api.status_code.401')}`);
                     }
                     if (status === 403 && endpoint === 'config') {
                         $app.$alert(
-                            'VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.',
-                            'Login Error 403'
+                            $t('api.error.message.vpn_in_use'),
+                            `403 ${$t('api.error.message.login_error')}`
                         );
                         this.logout();
-                        throw new Error(`403: ${endpoint}`);
+                        throw new Error(`403 ${endpoint}`);
                     }
                     if (
                         init.method === 'GET' &&
@@ -158,7 +164,9 @@ export default class extends baseClass {
                         endpoint.startsWith('avatars/')
                     ) {
                         $app.$message({
-                            message: 'Avatar private or deleted',
+                            message: $t(
+                                'message.api_handler.avatar_private_or_deleted'
+                            ),
                             type: 'error'
                         });
                         $app.avatarDialog.visible = false;
@@ -236,18 +244,23 @@ export default class extends baseClass {
         API.$throw = function (code, error, endpoint) {
             var text = [];
             if (code > 0) {
-                var status = this.statusCodes[code];
+                const status = this.statusCodes[code];
                 if (typeof status === 'undefined') {
                     text.push(`${code}`);
                 } else {
-                    text.push(`${code} ${status}`);
+                    const codeText = $t(`api.status_code.${code}`);
+                    text.push(`${code} ${codeText}`);
                 }
             }
             if (typeof error !== 'undefined') {
-                text.push(JSON.stringify(error));
+                text.push(
+                    `${$t('api.error.message.error_message')}: ${typeof error === 'string' ? error : JSON.stringify(error)}`
+                );
             }
             if (typeof endpoint !== 'undefined') {
-                text.push(JSON.stringify(endpoint));
+                text.push(
+                    `${$t('api.error.message.endpoint')}: "${typeof endpoint === 'string' ? endpoint : JSON.stringify(endpoint)}"`
+                );
             }
             text = text.map((s) => $app.escapeTag(s)).join('<br>');
             if (text.length) {

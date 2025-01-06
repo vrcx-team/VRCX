@@ -105,7 +105,8 @@ export default {
             groupId: null,
             groupAccessType: null,
             canRequestInvite: false,
-            strict: false
+            strict: false,
+            ageGate: false
         };
         if (_tag === 'offline' || _tag === 'offline:offline') {
             ctx.isOffline = true;
@@ -149,6 +150,8 @@ export default {
                             ctx.groupAccessType = value;
                         } else if (key === 'strict') {
                             ctx.strict = true;
+                        } else if (key === 'ageGate') {
+                            ctx.ageGate = true;
                         }
                     } else {
                         ctx.instanceName = s;

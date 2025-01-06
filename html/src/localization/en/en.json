@@ -112,6 +112,7 @@
             "import": "Import",
             "move_tooltip": "Move",
             "copy_tooltip": "Copy",
+            "self_invite_tooltip": "Self Invite",
             "unfavorite_tooltip": "Unfavorite",
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
@@ -348,26 +349,23 @@
                         "user_images": "User Images (slower)",
                         "notification_timeout": "Notification Timeout"
                     },
+                    "conditions": {
+                        "never": "Never",
+                        "desktop": "Desktop Mode",
+                        "inside_vr": "Inside VR",
+                        "outside_vr": "Outside VR",
+                        "inside_vrchat": "Inside VRChat",
+                        "outside_vrchat": "Outside VRChat",
+                        "always": "Always"
+                    },
                     "desktop_notifications": {
                         "header": "Desktop Notifications",
                         "when_to_display": "When to display",
-                        "when_to_display_never": "Never",
-                        "when_to_display_desktop": "Desktop Mode",
-                        "when_to_display_inside_vr": "Inside VR",
-                        "when_to_display_outside_vr": "Outside VR",
-                        "when_to_display_game_closed": "Game Closed",
-                        "when_to_display_game_running": "Game Running",
-                        "when_to_display_always": "Always",
                         "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech",
                         "when_to_play": "Notification TTS. When to play",
-                        "when_to_play_never": "Never",
-                        "when_to_play_inside_vr": "Inside VR",
-                        "when_to_play_game_closed": "Game Closed",
-                        "when_to_play_game_running": "Game Running",
-                        "when_to_play_always": "Always",
                         "tts_voice": "TTS Voice",
                         "use_memo_nicknames": "Use Memo Nicknames",
                         "play": "Play",
@@ -515,6 +513,13 @@
                         "portal_spawn": "Portal Spawn:",
                         "video_play": "Video Play:",
                         "event": "Event:"
+                    },
+                    "user_generated_content": {
+                        "header": "User Generated Content",
+                        "folder": "Open Folder",
+                        "description": "Open or set the folder where content such as 'Prints' and 'Stickers' are stored.",
+                        "set_folder": "Set Folder",
+                        "reset_override": "Reset"
                     }
                 },
                 "photon": {
@@ -584,6 +589,7 @@
                 "favorite_tooltip": "Add to favorites",
                 "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Refresh",
+                "share": "Share",
                 "invite": "Invite",
                 "invite_with_message": "Invite With Message",
                 "request_invite": "Request Invite",
@@ -661,7 +667,8 @@
                 "instance_full": "full",
                 "instance_closed": "closed",
                 "instance_hard_closed": "hard closed",
-                "close_instance": "Close Instance"
+                "close_instance": "Close Instance",
+                "instance_age_gated": "age gated"
             },
             "groups": {
                 "header": "Groups",
@@ -733,6 +740,7 @@
                 "delete_cache_tooltip": "Delete world from cache",
                 "favorites_tooltip": "Favorites",
                 "refresh": "Refresh",
+                "share": "Share",
                 "new_instance": "New Instance",
                 "new_instance_and_self_invite": "New Instance and Self Invite",
                 "make_home": "Make Home",
@@ -879,6 +887,7 @@
                 "invite_required_tooltip": "Invite required",
                 "join_group_tooltip": "Join Group",
                 "refresh": "Refresh",
+                "share": "Share",
                 "unsubscribe": "Unsubscribe From Announcements",
                 "subscribe": "Subscribe To Announcements",
                 "invite_to_group": "Invite To Group",
@@ -1026,6 +1035,7 @@
             "launch": "Launch",
             "create_instance": "Create Instance",
             "queueEnabled": "Queue",
+            "ageGate": "Age Gate",
             "normal": "Normal",
             "group": "Group",
             "legacy": "Legacy",
@@ -1050,12 +1060,13 @@
             "delete_cache": "Delete Cache",
             "delete_old_cache": "Delete old versions from cache",
             "sweep_cache": "Sweep Cache",
-            "max_cache_size": "Max Cache Size [GB] (min 20)",
+            "max_cache_size": "Max Cache Size [GB] (min 30)",
             "cache_expiry_delay": "Cache Expiry [Days] (min 30)",
             "cache_directory": "Custom Cache Folder Location",
             "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "First-Person Steadycam FOV",
             "camera_resolution": "Camera Resolution",
+            "spout_resolution": "Spout Resolution",
             "screenshot_resolution": "Screenshot Resolution",
             "picture_sort_by_date": "Sort pictures into folders by date",
             "disable_discord_presence": "Disable Discord Rich Presence",
@@ -1439,6 +1450,63 @@
             "save": "Save"
         }
     },
+    "confirm": {
+        "title": "Confirm",
+        "confirm_button": "Confirm",
+        "cancel_button": "Cancel",
+        "message": "Continue {command}?"
+    },
+    "message": {
+        "vrcx_updater": {
+            "failed": "Failed to check for update, {message}"
+        },
+        "api_handler": {
+            "avatar_private_or_deleted": "Avatar is private or deleted"
+        },
+        "badge": {
+            "updated": "Badge updated"
+        },
+        "instance": {
+            "closed": "Instance closed",
+            "removed_form_queue": "Removed instance {worldName} from queue",
+            "not_allowed": "You're not allowed to access this instance"
+        },
+        "avatar": {
+            "change_moderation_failed": "Failed to change avatar moderation",
+            "image_changed": "Avatar image changed",
+            "image_invalid": "Current avatar image invalid"
+        },
+        "emoji": {
+            "uploaded": "Emoji uploaded"
+        },
+        "file": {
+            "not_image": "File isn't an image",
+            "too_large": "File size too large"
+        },
+        "print": {
+            "uploaded": "Print uploaded"
+        },
+        "sticker": {
+            "uploaded": "Sticker uploaded"
+        },
+        "gallery": {
+            "uploaded": "Gallery image uploaded",
+            "failed": "Failed to upload gallery image"
+        },
+        "world": {
+            "image_changed": "World image changed",
+            "image_invalid": "Current world image invalid"
+        },
+        "icon": {
+            "uploaded": "Icon uploaded"
+        },
+        "user": {
+            "moderated": "User moderated"
+        },
+        "friend": {
+            "load_failed": "Failed to load friends list, logging out"
+        }
+    },
     "prompt": {
         "totp": {
             "header": "Two-factor Authentication",
@@ -1784,6 +1852,93 @@
             "players": "Players:",
             "cpu": "CPU:",
             "online": "Online:"
+        }
+    },
+    "api": {
+        "status_code": {
+            "100": "Continue",
+            "101": "Switching Protocols",
+            "102": "Processing",
+            "103": "Early Hints",
+            "200": "OK",
+            "201": "Created",
+            "202": "Accepted",
+            "203": "Non-Authoritative Information",
+            "204": "No Content",
+            "205": "Reset Content",
+            "206": "Partial Content",
+            "207": "Multi-Status",
+            "208": "Already Reported",
+            "226": "IM Used",
+            "300": "Multiple Choices",
+            "301": "Moved Permanently",
+            "302": "Found",
+            "303": "See Other",
+            "304": "Not Modified",
+            "305": "Use Proxy",
+            "306": "Switch Proxy",
+            "307": "Temporary Redirect",
+            "308": "Permanent Redirect",
+            "400": "Bad Request",
+            "401": "Unauthorized",
+            "402": "Payment Required",
+            "403": "Forbidden",
+            "404": "Not Found",
+            "405": "Method Not Allowed",
+            "406": "Not Acceptable",
+            "407": "Proxy Authentication Required",
+            "408": "Request Timeout",
+            "409": "Conflict",
+            "410": "Gone",
+            "411": "Length Required",
+            "412": "Precondition Failed",
+            "413": "Payload Too Large",
+            "414": "URI Too Long",
+            "415": "Unsupported Media Type",
+            "416": "Range Not Satisfiable",
+            "417": "Expectation Failed",
+            "418": "I'm a teapot",
+            "421": "Misdirected Request",
+            "422": "Unprocessable Entity",
+            "423": "Locked",
+            "424": "Failed Dependency",
+            "425": "Too Early",
+            "426": "Upgrade Required",
+            "428": "Precondition Required",
+            "429": "Too Many Requests",
+            "431": "Request Header Fields Too Large",
+            "451": "Unavailable For Legal Reasons",
+            "500": "Internal Server Error",
+            "501": "Not Implemented",
+            "502": "Bad Gateway",
+            "503": "Service Unavailable",
+            "504": "Gateway Timeout",
+            "505": "HTTP Version Not Supported",
+            "506": "Variant Also Negotiates",
+            "507": "Insufficient Storage",
+            "508": "Loop Detected",
+            "510": "Not Extended",
+            "511": "Network Authentication Required",
+            "520": "Web server returns an unknown error",
+            "521": "Web server is down",
+            "522": "Connection timed out",
+            "523": "Origin is unreachable",
+            "524": "A timeout occurred",
+            "525": "SSL handshake failed",
+            "526": "Invalid SSL certificate",
+            "527": "Railgun Listener to origin error"
+        },
+        "error": {
+            "message": {
+                "error_message": "Error Message",
+                "endpoint": "Endpoint",
+                "missing_credentials": "Missing Credentials",
+                "avatar_private_or_deleted": "Avatar private or deleted",
+                "vpn_in_use": "VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.",
+                "login_error": "Login Error",
+                "invalid_json_response": "Invalid JSON response",
+                "403_404_bailing_request": "Bailing request due to recent 404/403"
+            }
         }
     }
 }

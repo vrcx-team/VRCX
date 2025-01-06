@@ -1,6 +1,6 @@
 {
     "language": "简体中文 (zh_CN)",
-    "translator": "flower_elf,Yingxue",
+    "translator": "flower_elf,Yingxue,Map1en",
     "nav_tooltip": {
         "feed": "好友动态",
         "game_log": "游戏日志",
@@ -21,9 +21,9 @@
             "register": "注册",
             "forgotPassword": "忘记密码？",
             "updater": "检查更新",
-            "proxy_settings": "代理服务器设置",
+            "proxy_settings": "代理设置",
             "field": {
-                "username": "用户名或电子邮件地址",
+                "username": "用户名或邮箱地址",
                 "password": "密码",
                 "saveCredentials": "保存登录数据",
                 "devEndpoint": "使用测试接口",
@@ -59,7 +59,7 @@
             "world": {
                 "header": "世界",
                 "category": "按类别搜索",
-                "community_lab": "包含社区实验室里的世界"
+                "community_lab": "包含位于社区实验室的世界"
             },
             "avatar": {
                 "header": "模型",
@@ -112,6 +112,7 @@
             "import": "导入",
             "move_tooltip": "移动",
             "copy_tooltip": "复制",
+            "self_invite_tooltip": "邀请自己",
             "unfavorite_tooltip": "取消收藏",
             "visibility_tooltip": "更改可见性",
             "rename_tooltip": "重命名",
@@ -226,7 +227,7 @@
                     "minimized": "以最小化的形式启动",
                     "tray": "最小化到系统托盘",
                     "disable_gpu_acceleration": "禁用 GPU 加速",
-                    "disable_gpu_acceleration_tooltip": "仅在你“知道自己在做什么”时才应更改此选项，这可能会导致 SteamVR 叠加界面出现问题，但如果你遇到 UI 显示问题，可以试试关闭这个，重启 VRCX 生效",
+                    "disable_gpu_acceleration_tooltip": "仅在你“知道自己在做什么”时才应更改此选项，这可能会导致 SteamVR 叠加界面出现问题，但如果你遇到 UI 显示问题，那么可以尝试关闭此选项，重启 VRCX 生效",
                     "disable_vr_overlay_gpu_acceleration": "禁用 VR 叠加界面的GPU加速",
                     "disable_vr_overlay_gpu_acceleration_tooltip": "GPU 加速可能导致 VRCX 崩溃或显存泄漏，如果你遇到了问题，请尝试打开此选项，重启 VRCX 生效",
                     "proxy": "代理服务器设置"
@@ -242,14 +243,15 @@
                 },
                 "automation": {
                     "header": "自动化",
-                    "auto_state_change": "自动化状态切换",
-                    "auto_state_change_tooltip": "当房间中有其他人时自动切换状态（独自一人 / 有其他人时）如果你不知道这是什么，保持默认关闭即可",
-                    "auto_state_change_off": "关闭",
-                    "auto_state_change_active_or_ask_me": "欢迎加入 / 忙碌",
-                    "auto_state_change_active_or_busy": "在线 / 请勿打扰",
-                    "auto_state_change_join_me_or_ask_me": "欢迎加入 / 请勿打扰",
-                    "auto_state_change_join_me_or_busy": "欢迎加入 / 请勿打扰",
-                    "auto_state_change_ask_me_or_busy": "忙碌 / 请勿打扰",
+                    "auto_change_status": "自动化状态切换",
+                    "auto_state_change_tooltip": "当房间中有其他人时自动切换状态。如果你不知道这是什么，保持默认关闭即可",
+                    "alone_condition": "判断为“独自一人”的条件",
+                    "alone": "房间内只有自己时",
+                    "no_friends": "房间内没有好友时",
+                    "alone_status": "“独自一人”时",
+                    "company_status": "有其他符合条件的人时",
+                    "allowed_instance_types": "允许生效的房间类型",
+                    "instance_type_placeholder": "所有类型的房间",
                     "auto_invite_request_accept": "自动同意邀请请求",
                     "auto_invite_request_accept_tooltip": "自动同意来自星标好友的邀请请求",
                     "auto_invite_request_accept_off": "关闭",
@@ -258,8 +260,8 @@
                 },
                 "legal_notice": {
                     "header": "法律声明",
-                    "info": "VRCX 是一个提供VRChat好友管理的辅助应用。这个程序使用非官方的 VRChat API (VRCSDK)。",
-                    "disclaimer1": "VRCX 不受 VRChat 的认可，也不反映 VRChat &任何正式参与制作或管理 VRChat 的人员/团体的观点或意见。VRChat 是 VRChat Inc. 的商标。 VRChat © VRChat Inc.",
+                    "info": "VRCX 是一个提供VRChat好友管理的辅助应用。这个程序使用了非官方的 VRChat API (VRCSDK)。",
+                    "disclaimer1": "VRCX 不受 VRChat 的认可，也不反映 VRChat & 任何正式参与制作或管理 VRChat 的人员/团体的观点或意见。VRChat 是 VRChat Inc. 的商标。 VRChat © VRChat Inc.",
                     "disclaimer2": "pypy 和 Natsumi 不对使用 VRCX 引起的任何问题负责。使用时请自负风险！",
                     "open_source_software_notice": "开放源代码软件许可"
                 },
@@ -308,7 +310,8 @@
                         "status": "状态",
                         "status_and_private_to_bottom": "置底私人状态",
                         "location": "所在位置",
-                        "last_active": "最后活跃",
+                        "last_active": "上次活跃",
+                        "last_seen": "上次见面",
                         "time_in_instance": "在房间的时长",
                         "placeholder": "排序依据",
                         "dropdown_header": "选择排序方式"
@@ -346,28 +349,27 @@
                         "user_images": "显示用户头像（较慢）",
                         "notification_timeout": "通知时长"
                     },
+                    "conditions": {
+                        "never": "永不",
+                        "desktop": "在桌面模式时",
+                        "inside_vr": "在 VR 里时",
+                        "outside_vr": "在 VR 外时",
+                        "inside_vrchat": "VRChat 运行时",
+                        "outside_vrchat": "VRChat 未运行时",
+                        "always": "总是"
+                    },
                     "desktop_notifications": {
                         "header": "桌面通知",
                         "when_to_display": "何时显示",
-                        "when_to_display_never": "永不",
-                        "when_to_display_desktop": "在桌面模式时",
-                        "when_to_display_inside_vr": "在 VR 里时",
-                        "when_to_display_outside_vr": "在 VR 外时",
-                        "when_to_display_game_closed": "游戏关闭时",
-                        "when_to_display_game_running": "游戏运行时",
-                        "when_to_display_always": "总是",
                         "desktop_notification_while_afk": "当处于 AFK 状态时显示桌面通知"
                     },
                     "text_to_speech": {
                         "header": "文字转语音选项",
                         "when_to_play": "何时使用文字转语音",
-                        "when_to_play_never": "永不",
-                        "when_to_play_inside_vr": "在 VR 里时",
-                        "when_to_play_game_closed": "游戏关闭时",
-                        "when_to_play_game_running": "游戏运行时",
-                        "when_to_play_always": "总是",
                         "tts_voice": "TTS 语音样式",
-                        "use_memo_nicknames": "使用备忘录昵称"
+                        "use_memo_nicknames": "使用备注昵称",
+                        "play": "播放",
+                        "tts_test_placeholder": "测试 TTS"
                     }
                 }
             },
@@ -437,13 +439,13 @@
                         "description": "启用世界数据持久化存储功能（需要重启）"
                     },
                     "save_instance_prints_to_file": {
-                        "header": "将房间内的“拍立得”照片保存到本地文件",
+                        "header": "“拍立得”照片保存选项",
                         "header_tooltip": "需要使用 \"--enable-sdk-log-levels\" 启动选项启动VRChat",
-                        "description": "将生成的“拍立得”图片保存到您的 VRChat 图片文件夹中"
+                        "description": "将生成的“拍立得”图片保存到你的 VRChat 图片文件夹中"
                     },
                     "save_instance_stickers_to_file": {
-                        "header": "将房间内的表情贴纸保存到本地文件",
-                        "description": "将房间内的表情贴纸保存到 VRChat 的图片文件夹中"
+                        "header": "“表情贴纸”保存选项",
+                        "description": "将房间内的“表情贴纸”保存到 VRChat 的图片文件夹中"
                     },
                     "remote_database": {
                         "header": "模型数据库",
@@ -493,16 +495,16 @@
                         "avatar_name_cache": "模型名称缓存：",
                         "instance_cache": "房间信息缓存：",
                         "clear_cache": "清除缓存",
-                        "auto_clear_cache": "自动清除缓存",
+                        "auto_clear_cache": "自动清除",
                         "show_console": "显示界面调试工具"
                     },
                     "sqlite_table_size": {
-                        "header": "SQLite 数据库大小",
+                        "header": "SQLite 数据库信息",
                         "refresh": "刷新",
                         "gps": "GPS：",
-                        "status": "状态：",
+                        "status": "状态变更：",
                         "bio": "自我介绍：",
-                        "avatar": "模型：",
+                        "avatar": "模型更换：",
                         "online_offline": "上线 / 离线：",
                         "friend_log_history": "好友变动记录：",
                         "notification": "通知数量：",
@@ -510,7 +512,14 @@
                         "join_leave": "加入 / 离开：",
                         "portal_spawn": "放置的传送门数量：",
                         "video_play": "视频播放事件：",
-                        "event": "事件："
+                        "event": "一般事件："
+                    },
+                    "user_generated_content": {
+                        "header": "内容存放设置",
+                        "folder": "打开保存文件夹",
+                        "description": "设置“拍立得”和“贴纸”等内容保存的位置",
+                        "set_folder": "设置保存文件夹",
+                        "reset_override": "重置为默认"
                     }
                 },
                 "photon": {
@@ -571,10 +580,16 @@
                 "friend_no": "第 {number} 位好友",
                 "vrchat_team": "VRChat Team"
             },
+            "badges": {
+                "assigned": "获得于",
+                "hidden": "隐藏",
+                "showcased": "显示在个人资料上"
+            },
             "actions": {
                 "favorite_tooltip": "添加到我的收藏",
                 "unfavorite_tooltip": "从我的收藏中移除",
                 "refresh": "刷新",
+                "share": "分享",
                 "invite": "发送邀请",
                 "invite_with_message": "发送带消息的邀请",
                 "request_invite": "申请加入",
@@ -598,8 +613,8 @@
                 "moderation_show_avatar": "显示模型",
                 "moderation_enable_avatar_interaction": "开启模型互动",
                 "moderation_disable_avatar_interaction": "关闭模型互动",
-                "moderation_enable_chatbox": "取消聊天框静音",
-                "moderation_disable_chatbox": "聊天框静音",
+                "moderation_enable_chatbox": "取消屏蔽聊天气泡",
+                "moderation_disable_chatbox": "屏蔽聊天气泡",
                 "edit_status": "社交状态",
                 "edit_language": "语言",
                 "edit_bio": "自我介绍",
@@ -611,7 +626,7 @@
             "info": {
                 "header": "信息",
                 "launch_invite_tooltip": "启动 / 邀请",
-                "self_invite_tooltip": "自我邀请",
+                "self_invite_tooltip": "邀请自己",
                 "refresh_instance_info": "刷新房间信息",
                 "instance_queue": "在排队等待的用户：",
                 "instance_users": "房间用户：",
@@ -620,21 +635,21 @@
                 "instance_queuing_enabled": "允许排队加入",
                 "instance_creator": "房间建立者",
                 "note": "VRChat 备注",
-                "note_placeholder": "点击添加备注",
+                "note_placeholder": "点此添加备注",
                 "memo": "本地备注",
-                "memo_placeholder": "点击添加备注",
+                "memo_placeholder": "点此添加备注",
                 "avatar_info": "正在使用的模型",
                 "avatar_info_last_seen": "正在使用的模型",
                 "represented_group": "展示群组",
                 "bio": "自我介绍",
-                "last_seen": "最后见面",
+                "last_seen": "上次见面",
                 "join_count": "见面的次数",
                 "time_together": "一起游玩的时长",
                 "play_time": "总在线时长",
                 "online_for": "本次在线时长",
                 "offline_for": "离线时长",
                 "last_activity": "最后活动",
-                "last_login": "最后登录",
+                "last_login": "上次登录",
                 "date_joined": "账号创建日期",
                 "friended": "添加为好友的时间",
                 "unfriended": "解除好友的时间",
@@ -652,7 +667,8 @@
                 "instance_full": "房间已满",
                 "instance_closed": "房间已关闭",
                 "instance_hard_closed": "房间已关闭",
-                "close_instance": "关闭该房间"
+                "close_instance": "关闭该房间",
+                "instance_age_gated": "房间具有年龄限制"
             },
             "groups": {
                 "header": "群组",
@@ -708,9 +724,9 @@
             "tags": {
                 "public": "公开",
                 "private": "私人",
-                "avatar_scaling_disabled": "已关闭模型缩放功能",
-                "focus_view_disabled": "焦点视图已禁用",
-                "stickers_disabled": "贴纸已禁用",
+                "avatar_scaling_disabled": "已禁用模型缩放功能",
+                "focus_view_disabled": "已禁用焦点视图功能",
+                "stickers_disabled": "已禁用贴纸功能",
                 "future_proofing": "Future Proofing",
                 "labs": "社区实验室",
                 "cache": "缓存",
@@ -721,9 +737,10 @@
                 "content_sex": "性暗示"
             },
             "actions": {
-                "delete_cache_tooltip": "从缓存中删除世界",
-                "favorites_tooltip": "收藏此内容",
+                "delete_cache_tooltip": "从缓存中删除此世界",
+                "favorites_tooltip": "添加到我的收藏",
                 "refresh": "刷新",
+                "share": "分享",
                 "new_instance": "创建新房间",
                 "new_instance_and_self_invite": "创建新房间并邀请自己",
                 "make_home": "设为出生点",
@@ -749,7 +766,7 @@
                 "public_count": "公开 {count}",
                 "private_count": "私人 {count}",
                 "capacity_count": "人数上限 {count} ({max})",
-                "self_invite_tooltip": "自我邀请",
+                "self_invite_tooltip": "邀请自己",
                 "refresh_instance_info": "刷新房间信息",
                 "instance_full": "房间已满",
                 "instance_creator": "房间建立者"
@@ -765,7 +782,7 @@
                 "copy_name": "复制名称",
                 "youtube_preview": "YouTube 预览链接",
                 "author_tags": "作者添加的标签",
-                "players": "地图内在线人数",
+                "players": "地图内总在线人数",
                 "favorites": "收藏人数",
                 "visits": "总游玩人次",
                 "capacity": "推荐人数",
@@ -780,7 +797,7 @@
                 "platform": "平台",
                 "last_visited": "上次游玩",
                 "visit_count": "游玩次数",
-                "time_spent": "停留时长",
+                "time_spent": "总停留时长",
                 "accuracy_notice": "本地数据库的数据可能不准确"
             },
             "json": {
@@ -808,7 +825,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除模型",
-                "favorite_tooltip": "收藏此内容",
+                "favorite_tooltip": "添加到我的收藏",
                 "unfavorite_tooltip": "从我的收藏中移除",
                 "refresh": "刷新",
                 "select": "选择模型",
@@ -870,6 +887,7 @@
                 "invite_required_tooltip": "需要被邀请才能加入",
                 "join_group_tooltip": "加入群组",
                 "refresh": "刷新",
+                "share": "分享",
                 "unsubscribe": "忽略群组通知",
                 "subscribe": "接收群组通知",
                 "invite_to_group": "邀请好友加入群组",
@@ -1012,11 +1030,12 @@
             "location": "地点",
             "url": "链接",
             "copy_url": "复制链接",
-            "self_invite": "自我邀请",
+            "self_invite": "邀请自己",
             "invite": "邀请",
             "launch": "启动",
             "create_instance": "创建房间",
             "queueEnabled": "允许排队加入",
+            "ageGate": "启用年龄限制",
             "normal": "普通",
             "group": "群组",
             "legacy": "传统",
@@ -1034,7 +1053,7 @@
         "config_json": {
             "header": "VRChat JSON 配置文件",
             "description1": "这些选项仅适用于高级用户。",
-            "description2": "将输入框留白以使用默认值，设置需要重新启动游戏才会应用。",
+            "description2": "将输入框留白以使用默认值，设置需要重新启动游戏才能应用。",
             "cache_size": "缓存大小：",
             "refresh": "刷新",
             "delete_all_cache": "删除所有缓存",
@@ -1047,7 +1066,8 @@
             "picture_directory": "截图文件夹位置",
             "fpv_steadycam_fov": "第一人称镜头的FOV",
             "camera_resolution": "相机分辨率",
-            "screenshot_resolution": "屏幕截图分辨率",
+            "spout_resolution": "直播相机分辨率",
+            "screenshot_resolution": "截图分辨率",
             "picture_sort_by_date": "将图片按日期分类到文件夹中",
             "disable_discord_presence": "停用原生 Discord 状态面板",
             "vrchat_docs": "VRChat 文档",
@@ -1058,7 +1078,7 @@
             "header": "YouTube API",
             "description": "输入你的 YouTube API 密钥（选填）",
             "placeholder": "YouTube API 密钥",
-            "guide": "教程（英语）",
+            "guide": "查看教程（英语）",
             "save": "保存"
         },
         "set_world_tags": {
@@ -1278,9 +1298,9 @@
             "recommended_image_size": "推荐的图片尺寸",
             "gallery": "相册",
             "icons": "图标",
-            "emojis": "Emojis（表情包）",
+            "emojis": "Emojis（表情）",
             "stickers": "贴纸",
-            "prints": "打印",
+            "prints": "拍立得",
             "refresh": "刷新",
             "upload": "上传",
             "clear": "清除",
@@ -1289,7 +1309,7 @@
             "emoji_animation_fps": "FPS：",
             "emoji_animation_frame_count": "帧数：",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）",
+            "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS为64）",
             "note": "备注"
         },
         "change_content_image": {
@@ -1351,7 +1371,7 @@
             "name": "名称",
             "date": "日期",
             "action": "操作",
-            "auto_backup": "只要VRCX在运行，就会每周自动备份一次VRC的设置数据，你也可以在这里手动备份和恢复你的VRC设置数据",
+            "auto_backup": "只要 VRCX 在运行，就会每周自动备份一次VRC的设置数据，你也可以在这里手动备份和恢复你的VRC设置数据",
             "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复数据，可以在此处进行恢复。"
         },
         "group_member_moderation": {
@@ -1430,11 +1450,68 @@
             "save": "保存"
         }
     },
+    "confirm": {
+        "title": "确认",
+        "confirm_button": "确认",
+        "cancel_button": "取消",
+        "message": "确认{command}?"
+    },
+    "message": {
+        "vrcx_updater": {
+            "failed": "无法检查更新，{message}"
+        },
+        "api_headler": {
+            "avatar_private_or_deleted": "这个模型是私人的，或其已被删除"
+        },
+        "badge": {
+            "updated": "已更新徽章状态"
+        },
+        "instance": {
+            "closed": "房间已关闭",
+            "removed_form_queue": "已从等待队列中移除房间 {worldName}",
+            "not_allowed": "你无权访问此房间"
+        },
+        "avatar": {
+            "change_moderation_failed": "无法更新模型状态",
+            "image_changed": "已更改模型封面",
+            "image_invalid": "上传的模型封面图片无效"
+        },
+        "emoji": {
+            "uploaded": "表情(Emoji)上传成功"
+        },
+        "file": {
+            "not_image": "文件不是有效的图片格式",
+            "too_large": "文件大小过大"
+        },
+        "print": {
+            "uploaded": "拍立得(Print)上传成功"
+        },
+        "sticker": {
+            "uploaded": "贴纸(Sticker)上传成功"
+        },
+        "gallery": {
+            "uploaded": "图片已成功上传到相册",
+            "failed": "无法将图片上传到相册"
+        },
+        "world": {
+            "image_changed": "已更改世界封面",
+            "image_invalid": "当前使用的世界封面无效"
+        },
+        "icon": {
+            "uploaded": "图标(Icon)上传成功"
+        },
+        "user": {
+            "moderated": "已更新用户状态"
+        },
+        "friend": {
+            "load_failed": "加载好友列表失败，即将登出"
+        }
+    },
     "prompt": {
         "totp": {
             "header": "双重认证",
-            "description": "输入你的身份验证器应用程序中的验证代码",
-            "use_otp": "使用电子邮件一次性验证码或备用验证码",
+            "description": "输入你的身份验证应用中的验证码",
+            "use_otp": "使用一次性邮件验证码或备用验证码",
             "verify": "验证",
             "input_placeholder": "输入验证码",
             "input_error": "无效的验证码"
@@ -1449,7 +1526,7 @@
         },
         "email_otp": {
             "header": "双重认证",
-            "description": "输入发送到电子邮箱的数字代码",
+            "description": "输入发送到邮箱的验证码",
             "resend": "重新发送验证码",
             "verify": "验证",
             "input_placeholder": "输入验证码",
@@ -1573,7 +1650,7 @@
         },
         "change_world_capacity": {
             "header": "更改人数上限",
-            "description": "输入世界可容纳的人数, 最大值：80",
+            "description": "输入世界最大可容纳的人数（硬上限）, 最大值：80",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的人数",
@@ -1640,7 +1717,7 @@
             "save": "保存",
             "input_error": "请输入有效的名称",
             "message": {
-                "error": "名称为 {name} 的收藏夹已存在"
+                "error": "已存在名称为 {name} 的收藏夹"
             }
         },
         "pending_offline_delay": {
@@ -1720,11 +1797,11 @@
             "bioLink": "社交链接",
             "joinCount": "一起玩的次数",
             "timeTogether": "一起玩的时长",
-            "lastSeen": "最后见面",
+            "lastSeen": "上次见面",
             "lastActivity": "最后活动",
-            "lastLogin": "最后登录",
+            "lastLogin": "上次登录",
             "dateJoined": "账号创建于",
-            "unfriend": "解除好友"
+            "unfriend": "解除好友关系"
         },
         "profile": {
             "invite_messages": {
@@ -1775,6 +1852,93 @@
             "players": "人数：",
             "cpu": "CPU：",
             "online": "在线："
+        }
+    },
+    "api": {
+        "status_code": {
+            "100": "继续",
+            "101": "切换协议",
+            "102": "请求正在处理",
+            "103": "预加载",
+            "200": "成功",
+            "201": "已创建",
+            "202": "已接受",
+            "203": "非权威响应",
+            "204": "无内容",
+            "205": "重置内容",
+            "206": "部分内容",
+            "207": "多状态",
+            "208": "已报告",
+            "226": "IM已使用",
+            "300": "多种选择",
+            "301": "永久移动",
+            "302": "已找到",
+            "303": "参见其他",
+            "304": "未修改",
+            "305": "使用代理",
+            "306": "切换代理",
+            "307": "临时重定向",
+            "308": "永久重定向",
+            "400": "非法请求",
+            "401": "请求未授权",
+            "402": "需要付款",
+            "403": "禁止访问",
+            "404": "未找到内容",
+            "405": "不允许使用的方法",
+            "406": "不可接受的方法",
+            "407": "需要代理身份验证",
+            "408": "请求超时",
+            "409": "发生冲突",
+            "410": "资源已永久丢失",
+            "411": "需要长度",
+            "412": "先决条件失败",
+            "413": "请求载荷过大",
+            "414": "URI过长",
+            "415": "不支持的媒体类型",
+            "416": "范围不满足",
+            "417": "无法满足期望",
+            "418": "我是一个茶壶",
+            "421": "错误的请求",
+            "422": "不可处理的实体",
+            "423": "资源已锁定",
+            "424": "依赖操作失败",
+            "425": "请求过早",
+            "426": "需要升级协议",
+            "428": "需要先决条件",
+            "429": "请求过于频繁",
+            "431": "请求头字段太大",
+            "451": "因法律原因不可用",
+            "500": "内部服务器错误",
+            "501": "未实现",
+            "502": "网关错误",
+            "503": "服务不可用",
+            "504": "网关超时",
+            "505": "不支持的HTTP版本",
+            "506": "变体协商",
+            "507": "存储不足",
+            "508": "检测到无限循环",
+            "510": "未扩展",
+            "511": "需要网络身份验证",
+            "520": "Web服务器返回未知错误",
+            "521": "Web服务器已关闭",
+            "522": "连接超时",
+            "523": "源不可达",
+            "524": "发生超时",
+            "525": "SSL握手失败",
+            "526": "无效的SSL证书",
+            "527": "Railgun与源的连接发生错误"
+        },
+        "error": {
+            "message": {
+                "error_message": "错误信息",
+                "endpoint": "接口地址",
+                "missing_credentials": "缺少访问凭据",
+                "avatar_private_or_deleted": "这个模型是私人的，或其已被删除",
+                "vpn_in_use": "VRChat 目前限制了大多数的 VPN 服务。请断开所有已连接的 VPN 后重试。",
+                "login_error": "登录失败",
+                "invalid_json_response": "无效的 JSON 响应",
+                "403_404_bailing_request": "由于最近出现的 403/404 错误，请求已中止"
+            }
         }
     }
 }

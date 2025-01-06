@@ -52,6 +52,7 @@ import _memos from './classes/memos.js';
 import _languages from './classes/languages.js';
 import _groups from './classes/groups.js';
 import _vrcRegistry from './classes/vrcRegistry.js';
+import _restoreFriendOrder from './classes/restoreFriendOrder.js';
 
 // API classes
 import _config from './classes/API/config.js';
@@ -116,7 +117,8 @@ speechSynthesis.getVoices();
         config: new _config($app, API, $t),
         languages: new _languages($app, API, $t),
         groups: new _groups($app, API, $t),
-        vrcRegistry: new _vrcRegistry($app, API, $t)
+        vrcRegistry: new _vrcRegistry($app, API, $t),
+        restoreFriendOrder: new _restoreFriendOrder($app, API, $t)
     };
 
     await configRepository.init();
@@ -570,6 +572,7 @@ speechSynthesis.getVoices();
                 $previousLocation: '',
                 $customTag: '',
                 $customTagColour: '',
+                $friendNumber: 0,
                 //
                 ...json
             };
@@ -691,11 +694,13 @@ speechSynthesis.getVoices();
         if (
             ref.$isVRCPlus &&
             ref.badges &&
-            ref.badges.every((x) => x.badgeName !== 'Supporter')
+            ref.badges.every(
+                (x) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa'
+            )
         ) {
             // I doubt this will last long
             ref.badges.unshift({
-                badgeId: 'bdg_system_supporter',
+                badgeId: 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa',
                 badgeName: 'Supporter',
                 badgeDescription: 'Supports VRChat through VRC+',
                 badgeImageUrl:
@@ -1277,7 +1282,7 @@ speechSynthesis.getVoices();
                     throw err;
                 }
                 $app.$message({
-                    message: "you're not allowed to access this instance.",
+                    message: $t('message.instance.not_allowed'),
                     type: 'error'
                 });
                 throw err;
@@ -1327,6 +1332,7 @@ speechSynthesis.getVoices();
                 roleRestricted: false, // only present with group instance type
                 instancePersistenceEnabled: null,
                 playerPersistenceEnabled: null,
+                ageGate: null,
                 // VRCX
                 $fetchedAt: '',
                 ...json
@@ -1689,6 +1695,7 @@ speechSynthesis.getVoices();
                 imageUrl: '',
                 thumbnailImageUrl: '',
                 releaseStatus: '',
+                styles: [],
                 version: 0,
                 unityPackages: [],
                 unityPackageUrl: '',
@@ -1869,6 +1876,12 @@ speechSynthesis.getVoices();
         });
     };
 
+    API.$on('AVATAR:IMPOSTER:DELETE', function (args) {
+        if (args.json && $app.avatarDialog.visible) {
+            $app.showAvatarDialog($app.avatarDialog.id);
+        }
+    });
+
     // #endregion
     // #region | API: Notification
 
@@ -1972,6 +1985,12 @@ speechSynthesis.getVoices();
             if (array[i].id === json.id) {
                 var ref = array[i];
                 break;
+            }
+        }
+        // delete any null in json
+        for (var key in json) {
+            if (json[key] === null) {
+                delete json[key];
             }
         }
         if (typeof ref === 'undefined') {
@@ -2223,6 +2242,21 @@ speechSynthesis.getVoices();
         }
     });
 
+    API.hideNotificationV2 = function (notificationId) {
+        return this.call(`notifications/${notificationId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params: {
+                    notificationId
+                }
+            };
+            this.$emit('NOTIFICATION:V2:HIDE', args);
+            return args;
+        });
+    };
+
     /**
     * @param {{
             notificationId: string,
@@ -2247,6 +2281,7 @@ speechSynthesis.getVoices();
             .catch((err) => {
                 // something went wrong, lets assume it's already expired
                 this.$emit('NOTIFICATION:HIDE', { params });
+                API.hideNotificationV2(params.notificationId);
                 throw err;
             });
     };
@@ -2389,20 +2424,27 @@ speechSynthesis.getVoices();
      * @param {{ notificationId: string }} params
      * @return { Promise<{json: any, params}> }
      */
-    API.acceptNotification = function (params) {
+    API.acceptFriendRequestNotification = function (params) {
         return this.call(
             `auth/user/notifications/${params.notificationId}/accept`,
             {
                 method: 'PUT'
             }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:ACCEPT', args);
-            return args;
-        });
+        )
+            .then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('NOTIFICATION:ACCEPT', args);
+                return args;
+            })
+            .catch((err) => {
+                // if friend request could not be found, delete it
+                if (err && err.message && err.message.includes('404')) {
+                    this.$emit('NOTIFICATION:HIDE', { params });
+                }
+            });
     };
 
     /**
@@ -4112,7 +4154,7 @@ speechSynthesis.getVoices();
 
     $app.data.friends = new Map();
     $app.data.pendingActiveFriends = new Set();
-    $app.data.friendsNo = 0;
+    $app.data.friendNumber = 0;
     $app.data.isFriendsGroupMe = true;
     $app.data.isVIPFriends = true;
     $app.data.isOnlineFriends = true;
@@ -4219,7 +4261,7 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', function () {
         $app.friends.clear();
         $app.pendingActiveFriends.clear();
-        $app.friendsNo = 0;
+        $app.friendNumber = 0;
         $app.isVIPFriends = true;
         $app.isOnlineFriends = true;
         $app.isActiveFriends = true;
@@ -4310,40 +4352,6 @@ speechSynthesis.getVoices();
                 this.deleteFriend(id);
             }
         }
-
-        this.saveFriendOrder();
-    };
-
-    $app.methods.saveFriendOrder = async function () {
-        var currentTime = Date.now();
-        var lastStoreTime = await configRepository.getString(
-            `VRCX_lastStoreTime_${API.currentUser.id}`,
-            ''
-        );
-        // store once every week
-        if (lastStoreTime && currentTime - lastStoreTime < 604800000) {
-            return;
-        }
-        var storedData = {};
-        try {
-            var data = await configRepository.getString(
-                `VRCX_friendOrder_${API.currentUser.id}`
-            );
-            if (data) {
-                var storedData = JSON.parse(data);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-        storedData[currentTime] = Array.from(this.friends.keys());
-        await configRepository.setString(
-            `VRCX_friendOrder_${API.currentUser.id}`,
-            JSON.stringify(storedData)
-        );
-        await configRepository.setString(
-            `VRCX_lastStoreTime_${API.currentUser.id}`,
-            currentTime
-        );
     };
 
     $app.methods.addFriend = function (id, state) {
@@ -4363,7 +4371,6 @@ speechSynthesis.getVoices();
             isVIP,
             ref,
             name,
-            no: ++this.friendsNo,
             memo: '',
             pendingOffline: false,
             pendingOfflineTime: '',
@@ -5148,7 +5155,18 @@ speechSynthesis.getVoices();
             // Do Not Disturb
             style.busy = true;
         }
-        if (user.last_platform && user.last_platform !== 'standalonewindows') {
+        if (
+            user.platform &&
+            user.platform !== 'standalonewindows' &&
+            user.platform !== 'web'
+        ) {
+            style.mobile = true;
+        }
+        if (
+            user.last_platform &&
+            user.last_platform !== 'standalonewindows' &&
+            user.platform === 'web'
+        ) {
             style.mobile = true;
         }
         return style;
@@ -5420,7 +5438,7 @@ speechSynthesis.getVoices();
         } catch (err) {
             if (!$app.dontLogMeOut) {
                 $app.$message({
-                    message: 'Failed to load friends list, logging out',
+                    message: $t('message.friend.load_failed'),
                     type: 'error'
                 });
                 this.logout();
@@ -6081,6 +6099,14 @@ speechSynthesis.getVoices();
 
     $app.methods.setNowPlaying = function (ctx) {
         if (this.nowPlaying.url !== ctx.videoUrl) {
+            if (!ctx.userId && ctx.displayName) {
+                for (var ref of API.cachedUsers.values()) {
+                    if (ref.displayName === ctx.displayName) {
+                        ctx.userId = ref.id;
+                        break;
+                    }
+                }
+            }
             this.queueGameLogNoty(ctx);
             this.addGameLog(ctx);
             database.addGamelogVideoPlayToDatabase(ctx);
@@ -6233,7 +6259,7 @@ speechSynthesis.getVoices();
 
         var withCompany = this.lastLocation.playerList.size > 1;
         if (this.autoStateChangeNoFriends) {
-            withCompany = this.lastLocation.friendList.size > 1;
+            withCompany = this.lastLocation.friendList.size >= 1;
         }
 
         var currentStatus = API.currentUser.status;
@@ -6866,19 +6892,22 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.deleteFavorite = function (objectId) {
-        // FIXME: 메시지 수정
-        this.$confirm('Continue? Delete Favorite', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    API.deleteFavorite({
-                        objectId
-                    });
-                }
-            }
+        API.deleteFavorite({
+            objectId
         });
+        // FIXME: 메시지 수정
+        // this.$confirm('Continue? Delete Favorite', 'Confirm', {
+        //     confirmButtonText: 'Confirm',
+        //     cancelButtonText: 'Cancel',
+        //     type: 'info',
+        //     callback: (action) => {
+        //         if (action === 'confirm') {
+        //             API.deleteFavorite({
+        //                 objectId
+        //             });
+        //         }
+        //     }
+        // });
     };
 
     $app.methods.deleteFavoriteNoConfirm = function (objectId) {
@@ -7045,7 +7074,8 @@ speechSynthesis.getVoices();
             var row = {
                 userId: ref.id,
                 displayName: ref.displayName,
-                trustLevel: ref.$trustLevel
+                trustLevel: ref.$trustLevel,
+                friendNumber: 0
             };
             this.friendLog.set(friend.id, row);
             sqlValues.unshift(row);
@@ -7067,6 +7097,15 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.getFriendLog = async function (currentUser) {
+        this.friendNumber = await configRepository.getInt(
+            `VRCX_friendNumber_${currentUser.id}`,
+            0
+        );
+        var maxFriendLogNumber = await database.getMaxFriendLogNumber();
+        if (this.friendNumber < maxFriendLogNumber) {
+            this.friendNumber = maxFriendLogNumber;
+        }
+
         var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
             this.friendLog.set(friend.userId, friend);
@@ -7075,7 +7114,9 @@ speechSynthesis.getVoices();
         this.friendLogTable.data = await database.getFriendLogHistory();
         this.refreshFriends(currentUser, true);
         await API.refreshFriends();
+        await this.tryRestoreFriendNumber();
         this.friendLogInitStatus = true;
+
         // check for friend/name/rank change AFTER friendLogInitStatus is set
         for (var friend of friendLogCurrentArray) {
             var ref = API.cachedUsers.get(friend.userId);
@@ -7111,12 +7152,21 @@ speechSynthesis.getVoices();
             userId: id
         }).then((args) => {
             if (args.json.isFriend && !this.friendLog.has(id)) {
+                if (this.friendNumber === 0) {
+                    this.friendNumber = this.friends.size;
+                }
+                ref.$friendNumber = ++this.friendNumber;
+                configRepository.setInt(
+                    `VRCX_friendNumber_${API.currentUser.id}`,
+                    this.friendNumber
+                );
                 this.addFriend(id, ref.state);
                 var friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'Friend',
                     userId: id,
-                    displayName: ref.displayName
+                    displayName: ref.displayName,
+                    friendNumber: ref.$friendNumber
                 };
                 this.friendLogTable.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
@@ -7124,7 +7174,8 @@ speechSynthesis.getVoices();
                 var friendLogCurrent = {
                     userId: id,
                     displayName: ref.displayName,
-                    trustLevel: ref.$trustLevel
+                    trustLevel: ref.$trustLevel,
+                    friendNumber: ref.$friendNumber
                 };
                 this.friendLog.set(id, friendLogCurrent);
                 database.setFriendLogCurrent(friendLogCurrent);
@@ -7212,7 +7263,8 @@ speechSynthesis.getVoices();
                     type: 'DisplayName',
                     userId: ref.id,
                     displayName: ref.displayName,
-                    previousDisplayName: ctx.displayName
+                    previousDisplayName: ctx.displayName,
+                    friendNumber: ref.$friendNumber
                 };
                 this.friendLogTable.data.push(friendLogHistoryDisplayName);
                 database.addFriendLogHistory(friendLogHistoryDisplayName);
@@ -7220,7 +7272,8 @@ speechSynthesis.getVoices();
                 var friendLogCurrent = {
                     userId: ref.id,
                     displayName: ref.displayName,
-                    trustLevel: ref.$trustLevel
+                    trustLevel: ref.$trustLevel,
+                    friendNumber: ref.$friendNumber
                 };
                 this.friendLog.set(ref.id, friendLogCurrent);
                 database.setFriendLogCurrent(friendLogCurrent);
@@ -7243,7 +7296,8 @@ speechSynthesis.getVoices();
                 var friendLogCurrent3 = {
                     userId: ref.id,
                     displayName: ref.displayName,
-                    trustLevel: ref.$trustLevel
+                    trustLevel: ref.$trustLevel,
+                    friendNumber: ref.$friendNumber
                 };
                 this.friendLog.set(ref.id, friendLogCurrent3);
                 database.setFriendLogCurrent(friendLogCurrent3);
@@ -7255,7 +7309,8 @@ speechSynthesis.getVoices();
                 userId: ref.id,
                 displayName: ref.displayName,
                 trustLevel: ref.$trustLevel,
-                previousTrustLevel: ctx.trustLevel
+                previousTrustLevel: ctx.trustLevel,
+                friendNumber: ref.$friendNumber
             };
             this.friendLogTable.data.push(friendLogHistoryTrustLevel);
             database.addFriendLogHistory(friendLogHistoryTrustLevel);
@@ -7263,7 +7318,8 @@ speechSynthesis.getVoices();
             var friendLogCurrent2 = {
                 userId: ref.id,
                 displayName: ref.displayName,
-                trustLevel: ref.$trustLevel
+                trustLevel: ref.$trustLevel,
+                friendNumber: ref.$friendNumber
             };
             this.friendLog.set(ref.id, friendLogCurrent2);
             database.setFriendLogCurrent(friendLogCurrent2);
@@ -7271,6 +7327,9 @@ speechSynthesis.getVoices();
             this.updateSharedFeed(true);
         }
         ctx.trustLevel = ref.$trustLevel;
+        if (ctx.friendNumber) {
+            ref.$friendNumber = ctx.friendNumber;
+        }
     };
 
     $app.methods.deleteFriendLog = function (row) {
@@ -7520,7 +7579,7 @@ speechSynthesis.getVoices();
         }
     });
 
-    $app.methods.acceptNotification = function (row) {
+    $app.methods.acceptFriendRequestNotification = function (row) {
         // FIXME: 메시지 수정
         this.$confirm('Continue? Accept Friend Request', 'Confirm', {
             confirmButtonText: 'Confirm',
@@ -7528,7 +7587,7 @@ speechSynthesis.getVoices();
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    API.acceptNotification({
+                    API.acceptFriendRequestNotification({
                         notificationId: row.id
                     });
                 }
@@ -7646,6 +7705,10 @@ speechSynthesis.getVoices();
         'VRCX_feedTableVIPFilter',
         false
     );
+    $app.data.gameLogTable.vip = await configRepository.getBool(
+        'VRCX_gameLogTableVIPFilter',
+        false
+    );
     $app.data.gameLogTable.filter = JSON.parse(
         await configRepository.getString('VRCX_gameLogTableFilters', '[]')
     );
@@ -7740,7 +7803,7 @@ speechSynthesis.getVoices();
             stripe: true,
             size: 'mini',
             defaultSort: {
-                prop: '$friendNum',
+                prop: '$friendNumber',
                 order: 'descending'
             }
         },
@@ -7858,6 +7921,10 @@ speechSynthesis.getVoices();
         'VRCX_afkDesktopToast',
         false
     );
+    $app.data.overlayToast = await configRepository.getString(
+        'VRCX_overlayToast',
+        'Game Running'
+    );
     $app.data.minimalFeed = await configRepository.getBool(
         'VRCX_minimalFeed',
         false
@@ -7882,6 +7949,10 @@ speechSynthesis.getVoices();
         'VRCX_notificationTTSNickName',
         false
     );
+
+    // It's not necessary to store it in configRepo because it's rarely used.
+    $app.data.isTestTTSVisible = false;
+
     $app.data.notificationTTSVoice = await configRepository.getString(
         'VRCX_notificationTTSVoice',
         '0'
@@ -7960,7 +8031,7 @@ speechSynthesis.getVoices();
             '[ "https://avtr.just-h.party/vrcx_search.php" ]'
         )
     );
-    $app.data.pendingOfflineDelay = 110000;
+    $app.data.pendingOfflineDelay = 130000;
     if (await configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
         var avatarRemoteDatabaseProvider = await configRepository.getString(
@@ -8066,6 +8137,10 @@ speechSynthesis.getVoices();
         await configRepository.setBool(
             'VRCX_afkDesktopToast',
             this.afkDesktopToast
+        );
+        await configRepository.setString(
+            'VRCX_overlayToast',
+            this.overlayToast
         );
         await configRepository.setBool(
             'VRCX_notificationTTSNickName',
@@ -9468,7 +9543,7 @@ speechSynthesis.getVoices();
             D.isMuteChat = true;
         }
         $app.$message({
-            message: 'User moderated',
+            message: $t('message.user.moderated'),
             type: 'success'
         });
     });
@@ -9692,7 +9767,7 @@ speechSynthesis.getVoices();
                             .getUserStats(D.ref, inCurrentWorld)
                             .then((ref1) => {
                                 if (ref1.userId === D.id) {
-                                    D.lastSeen = ref1.created_at;
+                                    D.lastSeen = ref1.lastSeen;
                                     D.joinCount = ref1.joinCount;
                                     D.timeSpent = ref1.timeSpent;
                                 }
@@ -9753,7 +9828,7 @@ speechSynthesis.getVoices();
                             .getUserStats(D.ref, inCurrentWorld)
                             .then((ref1) => {
                                 if (ref1.userId === D.id) {
-                                    D.lastSeen = ref1.created_at;
+                                    D.lastSeen = ref1.lastSeen;
                                     D.joinCount = ref1.joinCount;
                                     D.timeSpent = ref1.timeSpent;
                                 }
@@ -10248,10 +10323,28 @@ speechSynthesis.getVoices();
                     continue;
                 }
                 if (unityPackage.platform === 'standalonewindows') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        pc.performanceRating
+                    ) {
+                        continue;
+                    }
                     pc = unityPackage;
                 } else if (unityPackage.platform === 'android') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        android.performanceRating
+                    ) {
+                        continue;
+                    }
                     android = unityPackage;
                 } else if (unityPackage.platform === 'ios') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        ios.performanceRating
+                    ) {
+                        continue;
+                    }
                     ios = unityPackage;
                 }
             }
@@ -10591,7 +10684,7 @@ speechSynthesis.getVoices();
                         userId
                     });
                 } else {
-                    API.acceptNotification({
+                    API.acceptFriendRequestNotification({
                         notificationId: key
                     });
                 }
@@ -10618,49 +10711,49 @@ speechSynthesis.getVoices();
                     userId
                 });
                 break;
-            case 'Unblock':
+            case 'Moderation Unblock':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
                 break;
-            case 'Block':
+            case 'Moderation Block':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
                 break;
-            case 'Unmute':
+            case 'Moderation Unmute':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
                 break;
-            case 'Mute':
+            case 'Moderation Mute':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
                 break;
-            case 'Enable Avatar Interaction':
+            case 'Moderation Enable Avatar Interaction':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
                 break;
-            case 'Disable Avatar Interaction':
+            case 'Moderation Disable Avatar Interaction':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
                 break;
-            case 'Unmute Chatbox':
+            case 'Moderation Enable Chatbox':
                 API.deletePlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });
                 break;
-            case 'Mute Chatbox':
+            case 'Moderation Disable Chatbox':
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
@@ -10684,6 +10777,8 @@ speechSynthesis.getVoices();
         }
         if (command === 'Refresh') {
             this.showUserDialog(D.id);
+        } else if (command === 'Share') {
+            this.copyUserURL(D.id);
         } else if (command === 'Add Favorite') {
             this.showFavoriteDialog('friend', D.id);
         } else if (command === 'Edit Social Status') {
@@ -10788,16 +10883,30 @@ speechSynthesis.getVoices();
                 this.setPlayerModeration(D.id, 5);
             }
         } else {
-            this.$confirm(`Continue? ${command}`, 'Confirm', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        performUserDialogCommand(command, D.id);
+            const i18nPreFix = 'dialog.user.actions.';
+            const formattedCommand = command.toLowerCase().replace(/ /g, '_');
+            const displayCommandText = $t(
+                `${i18nPreFix}${formattedCommand}`
+            ).includes('i18nPreFix')
+                ? command
+                : $t(`${i18nPreFix}${formattedCommand}`);
+
+            this.$confirm(
+                $t('confirm.message', {
+                    command: displayCommandText
+                }),
+                $t('confirm.title'),
+                {
+                    confirmButtonText: $t('confirm.confirm_button'),
+                    cancelButtonText: $t('confirm.cancel_button'),
+                    type: 'info',
+                    callback: (action) => {
+                        if (action === 'confirm') {
+                            performUserDialogCommand(command, D.id);
+                        }
                     }
                 }
-            });
+            );
         }
     };
 
@@ -11464,21 +11573,14 @@ speechSynthesis.getVoices();
             case 'Refresh':
                 this.showWorldDialog(D.id);
                 break;
+            case 'Share':
+                this.copyWorldUrl(D.id);
+                break;
             case 'New Instance':
                 this.showNewInstanceDialog(D.$location.tag);
                 break;
             case 'New Instance and Self Invite':
-                this.newInstanceDialog.worldId = D.id;
-                this.createNewInstance().then((args) => {
-                    if (!args?.json?.location) {
-                        this.$message({
-                            message: 'Failed to create instance',
-                            type: 'error'
-                        });
-                        return;
-                    }
-                    this.selfInvite(args.json.location);
-                });
+                this.newInstanceSelfInvite(D.id);
                 break;
             case 'Add Favorite':
                 this.showFavoriteDialog('world', D.id);
@@ -11608,6 +11710,20 @@ speechSynthesis.getVoices();
                 });
                 break;
         }
+    };
+
+    $app.methods.newInstanceSelfInvite = function (worldId) {
+        this.newInstanceDialog.worldId = worldId;
+        this.createNewInstance().then((args) => {
+            if (!args?.json?.location) {
+                this.$message({
+                    message: 'Failed to create instance',
+                    type: 'error'
+                });
+                return;
+            }
+            this.selfInvite(args.json.location);
+        });
     };
 
     $app.methods.refreshWorldDialogTreeData = function () {
@@ -12492,6 +12608,7 @@ speechSynthesis.getVoices();
             'instanceDialogGroupAccessType',
             'plus'
         ),
+        ageGate: await configRepository.getBool('instanceDialogAgeGate', false),
         strict: false,
         location: '',
         shortName: '',
@@ -12538,6 +12655,9 @@ speechSynthesis.getVoices();
             if (D.accessType === 'invite+') {
                 tags.push('~canRequestInvite');
             }
+        }
+        if (D.accessType === 'group' && D.ageGate) {
+            tags.push('~ageGate');
         }
         if (D.region === 'US West') {
             tags.push(`~region(us)`);
@@ -12665,6 +12785,16 @@ speechSynthesis.getVoices();
                 params.canRequestInvite = true;
             }
         }
+        if (
+            D.ageGate &&
+            type === 'group' &&
+            this.hasGroupPermission(
+                D.groupRef,
+                'group-instance-age-gated-create'
+            )
+        ) {
+            params.ageGate = true;
+        }
         try {
             var args = await API.createInstance(params);
             D.location = args.json.location;
@@ -12747,6 +12877,10 @@ speechSynthesis.getVoices();
         await configRepository.setBool(
             'instanceDialogQueueEnabled',
             this.newInstanceDialog.queueEnabled
+        );
+        await configRepository.setBool(
+            'instanceDialogAgeGate',
+            this.newInstanceDialog.ageGate
         );
     };
 
@@ -13775,7 +13909,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             clearFile();
@@ -13783,7 +13917,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't an image",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             clearFile();
@@ -13794,7 +13928,7 @@ speechSynthesis.getVoices();
             var base64Body = btoa(r.result);
             API.uploadVRCPlusIcon(base64Body).then((args) => {
                 $app.$message({
-                    message: 'Icon uploaded',
+                    message: $t('message.icon.uploaded'),
                     type: 'success'
                 });
                 return args;
@@ -13843,7 +13977,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             this.clearInviteImageUpload();
@@ -13851,7 +13985,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't a png",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             this.clearInviteImageUpload();
@@ -14758,7 +14892,7 @@ speechSynthesis.getVoices();
                         this.stringComparer
                     );
                 }
-                if (!match && filters.includes('Rank') && ctx.ref.$friendNum) {
+                if (!match && filters.includes('Rank')) {
                     match = String(ctx.ref.$trustLevel)
                         .toUpperCase()
                         .includes(query.toUpperCase());
@@ -14767,7 +14901,6 @@ speechSynthesis.getVoices();
                     continue;
                 }
             }
-            ctx.ref.$friendNum = ctx.no;
             results.push(ctx.ref);
         }
         this.getAllUserStats();
@@ -14838,7 +14971,7 @@ speechSynthesis.getVoices();
         var ref = await database.getUserStats(ctx);
         /* eslint-disable require-atomic-updates */
         ctx.$joinCount = ref.joinCount;
-        ctx.$lastSeen = ref.created_at;
+        ctx.$lastSeen = ref.lastSeen;
         ctx.$timeSpent = ref.timeSpent;
         /* eslint-enable require-atomic-updates */
     };
@@ -14933,7 +15066,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             clearFile();
@@ -14941,7 +15074,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't a png",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             clearFile();
@@ -14966,7 +15099,7 @@ speechSynthesis.getVoices();
             var fileId = $utils.extractFileId(imageUrl);
             if (!fileId) {
                 $app.$message({
-                    message: 'Current avatar image invalid',
+                    message: $t('message.avatar.image_invalid'),
                     type: 'error'
                 });
                 clearFile();
@@ -15269,7 +15402,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             clearFile();
@@ -15277,7 +15410,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't a png",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             clearFile();
@@ -15302,7 +15435,7 @@ speechSynthesis.getVoices();
             var fileId = $utils.extractFileId(imageUrl);
             if (!fileId) {
                 $app.$message({
-                    message: 'Current world image invalid',
+                    message: $t('message.world.image_invalid'),
                     type: 'error'
                 });
                 clearFile();
@@ -15590,7 +15723,7 @@ speechSynthesis.getVoices();
         $app.changeAvatarImageDialogLoading = false;
         if (args.json.imageUrl === args.params.imageUrl) {
             $app.$message({
-                message: 'Avatar image changed',
+                message: $t('message.avatar.image_changed'),
                 type: 'success'
             });
             $app.displayPreviousImages('Avatar', 'Change');
@@ -15604,7 +15737,7 @@ speechSynthesis.getVoices();
         $app.changeWorldImageDialogLoading = false;
         if (args.json.imageUrl === args.params.imageUrl) {
             $app.$message({
-                message: 'World image changed',
+                message: $t('message.world.image_changed'),
                 type: 'success'
             });
             $app.displayPreviousImages('World', 'Change');
@@ -16007,7 +16140,7 @@ speechSynthesis.getVoices();
                 name: $t('dialog.config_json.max_cache_size'),
                 default: '30',
                 type: 'number',
-                min: 20
+                min: 30
             },
             cache_expiry_delay: {
                 name: $t('dialog.config_json.cache_expiry_delay'),
@@ -16145,6 +16278,22 @@ speechSynthesis.getVoices();
         this.VRChatConfigFile.screenshot_res_width = res.width;
     };
 
+    $app.methods.getVRChatSpoutResolution = function () {
+        if (
+            this.VRChatConfigFile.camera_spout_res_height &&
+            this.VRChatConfigFile.camera_spout_res_width
+        ) {
+            var res = `${this.VRChatConfigFile.camera_spout_res_width}x${this.VRChatConfigFile.camera_spout_res_height}`;
+            return this.getVRChatResolution(res);
+        }
+        return '1920x1080 (1080p)';
+    };
+
+    $app.methods.setVRChatSpoutResolution = function (res) {
+        this.VRChatConfigFile.camera_spout_res_height = res.height;
+        this.VRChatConfigFile.camera_spout_res_width = res.width;
+    };
+
     // Auto Launch Shortcuts
 
     $app.methods.openShortcutFolder = function () {
@@ -16217,6 +16366,20 @@ speechSynthesis.getVoices();
         if (this.screenshotHelperCopyToClipboard) {
             await AppApi.CopyImageToClipboard(newPath);
         }
+    };
+
+    $app.methods.getAndDisplayScreenshotFromFile = async function () {
+        var filePath = await AppApi.OpenFileSelectorDialog(
+            await AppApi.GetVRChatPhotosLocation(),
+            '.png',
+            'PNG Files (*.png)|*.png'
+        );
+        if (filePath === '') {
+            return;
+        }
+
+        this.screenshotMetadataResetSearch();
+        this.getAndDisplayScreenshot(filePath);
     };
 
     $app.methods.getAndDisplayScreenshot = function (
@@ -16464,7 +16627,7 @@ speechSynthesis.getVoices();
         var D = this.screenshotMetadataDialog;
         if (D.metadata.fileSizeBytes > 10000000) {
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             return;
@@ -16475,7 +16638,7 @@ speechSynthesis.getVoices();
                 API.uploadGalleryImage(base64Body)
                     .then((args) => {
                         $app.$message({
-                            message: 'Gallery image uploaded',
+                            message: $t('message.gallery.uploaded'),
                             type: 'success'
                         });
                         return args;
@@ -16486,7 +16649,7 @@ speechSynthesis.getVoices();
             })
             .catch((err) => {
                 $app.$message({
-                    message: 'Failed to upload gallery image',
+                    message: $t('message.gallery.failed'),
                     type: 'error'
                 });
                 console.error(err);
@@ -16641,11 +16804,7 @@ speechSynthesis.getVoices();
         var variant = '';
         for (var i = ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = ref.unityPackages[i];
-            if (
-                unityPackage.variant &&
-                unityPackage.variant !== 'standard' &&
-                unityPackage.variant !== 'security'
-            ) {
+            if (unityPackage.variant && unityPackage.variant !== 'security') {
                 continue;
             }
             if (
@@ -17101,11 +17260,23 @@ speechSynthesis.getVoices();
     $app.methods.userFavoriteWorldsStatus = function (visibility) {
         var style = {};
         if (visibility === 'public') {
-            style.online = true;
+            style.green = true;
         } else if (visibility === 'friends') {
-            style.joinme = true;
+            style.blue = true;
         } else {
-            style.busy = true;
+            style.red = true;
+        }
+        return style;
+    };
+
+    $app.methods.userFavoriteWorldsStatusForFavTab = function (visibility) {
+        let style = '';
+        if (visibility === 'public') {
+            style = '';
+        } else if (visibility === 'friends') {
+            style = 'success';
+        } else {
+            style = 'info';
         }
         return style;
     };
@@ -17459,7 +17630,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             clearFile();
@@ -17467,7 +17638,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't an image",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             clearFile();
@@ -17478,7 +17649,7 @@ speechSynthesis.getVoices();
             var base64Body = btoa(r.result);
             API.uploadGalleryImage(base64Body).then((args) => {
                 $app.$message({
-                    message: 'Gallery image uploaded',
+                    message: $t('message.gallery.uploaded'),
                     type: 'success'
                 });
                 return args;
@@ -17570,7 +17741,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             clearFile();
@@ -17578,7 +17749,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't an image",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             clearFile();
@@ -17593,7 +17764,7 @@ speechSynthesis.getVoices();
             var base64Body = btoa(r.result);
             API.uploadSticker(base64Body, params).then((args) => {
                 $app.$message({
-                    message: 'Sticker uploaded',
+                    message: $t('message.sticker.uploaded'),
                     type: 'success'
                 });
                 return args;
@@ -17640,15 +17811,20 @@ speechSynthesis.getVoices();
         var args = await API.call(`file/${fileId}`);
         var imageUrl = args.versions[1].file.url;
         var createdAt = args.versions[0].created_at;
-        var path = createdAt.slice(0, 7);
+        var monthFolder = createdAt.slice(0, 7);
         var fileNameDate = createdAt
             .replace(/:/g, '-')
             .replace(/T/g, '_')
             .replace(/Z/g, '');
         var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
-        var status = await AppApi.SaveStickerToFile(imageUrl, path, fileName);
+        var status = await AppApi.SaveStickerToFile(
+            imageUrl,
+            this.ugcFolderPath,
+            monthFolder,
+            fileName
+        );
         if (status) {
-            console.log(`Sticker saved to file: ${path}\\${fileName}`);
+            console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
         }
     };
 
@@ -17728,7 +17904,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             clearFile();
@@ -17736,7 +17912,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't an image",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             clearFile();
@@ -17756,7 +17932,7 @@ speechSynthesis.getVoices();
             var base64Body = btoa(r.result);
             API.uploadPrint(base64Body, params).then((args) => {
                 $app.$message({
-                    message: 'Print uploaded',
+                    message: $t('message.print.uploaded'),
                     type: 'success'
                 });
                 return args;
@@ -17878,11 +18054,16 @@ speechSynthesis.getVoices();
             return;
         }
         var createdAt = this.getPrintLocalDate(args.json);
-        var path = createdAt.toISOString().slice(0, 7);
+        var monthFolder = createdAt.toISOString().slice(0, 7);
         var fileName = this.getPrintFileName(args.json);
-        var status = await AppApi.SavePrintToFile(imageUrl, path, fileName);
+        var status = await AppApi.SavePrintToFile(
+            imageUrl,
+            this.ugcFolderPath,
+            monthFolder,
+            fileName
+        );
         if (status) {
-            console.log(`Print saved to file: ${path}\\${fileName}`);
+            console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
         }
     };
 
@@ -17940,7 +18121,7 @@ speechSynthesis.getVoices();
         if (files[0].size >= 100000000) {
             // 100MB
             $app.$message({
-                message: 'File size too large',
+                message: $t('message.file.too_large'),
                 type: 'error'
             });
             clearFile();
@@ -17948,7 +18129,7 @@ speechSynthesis.getVoices();
         }
         if (!files[0].type.match(/image.*/)) {
             $app.$message({
-                message: "File isn't an image",
+                message: $t('message.file.not_image'),
                 type: 'error'
             });
             clearFile();
@@ -17973,7 +18154,7 @@ speechSynthesis.getVoices();
             var base64Body = btoa(r.result);
             API.uploadEmoji(base64Body, params).then((args) => {
                 $app.$message({
-                    message: 'Emoji uploaded',
+                    message: $t('message.emoji.uploaded'),
                     type: 'success'
                 });
                 return args;
@@ -19344,7 +19525,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 10;
+        var databaseVersion = 11;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
@@ -19363,11 +19544,11 @@ speechSynthesis.getVoices();
                 await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
                 await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
                 await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
-                await database.updateTableForGroupNames(); // alter tables to include group name
                 await database.fixBrokenNotifications(); // fix notifications being null
                 await database.fixBrokenGroupChange(); // fix spam group left & name change
                 await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
                 await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
+                await database.upgradeDatabaseVersion(); // update database version
                 await database.vacuum(); // succ
                 await configRepository.setInt(
                     'VRCX_databaseVersion',
@@ -19581,44 +19762,76 @@ speechSynthesis.getVoices();
         this.worldExportDialogVisible = true;
     };
 
+    $app.methods.handleCopyWorldExportData = function (event) {
+        event.target.tagName === 'TEXTAREA' && event.target.select();
+        navigator.clipboard
+            .writeText(this.worldExportContent)
+            .then(() => {
+                this.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                this.$message.error('Copy failed!');
+            });
+    };
+
     $app.methods.updateWorldExportDialog = function () {
-        var _ = function (str) {
+        const formatter = function (str) {
             if (/[\x00-\x1f,"]/.test(str) === true) {
                 return `"${str.replace(/"/g, '""')}"`;
             }
             return str;
         };
-        var lines = ['WorldID,Name'];
+
+        function resText(ref) {
+            let resArr = [];
+            propsForQuery.forEach((e) => {
+                resArr.push(formatter(ref?.[e]));
+            });
+            return resArr.join(',');
+        }
+
+        const lines = [this.exportSelectedOptions.join(',')];
+        const propsForQuery = this.exportSelectOptions
+            .filter((option) =>
+                this.exportSelectedOptions.includes(option.label)
+            )
+            .map((option) => option.value);
+
         if (this.worldExportFavoriteGroup) {
             API.favoriteWorldGroups.forEach((group) => {
                 if (this.worldExportFavoriteGroup === group) {
                     $app.favoriteWorlds.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(`${_(ref.id)},${_(ref.name)}`);
+                            lines.push(resText(ref.ref));
                         }
                     });
                 }
             });
         } else if (this.worldExportLocalFavoriteGroup) {
-            var favoriteGroup =
+            const favoriteGroup =
                 this.localWorldFavorites[this.worldExportLocalFavoriteGroup];
             if (!favoriteGroup) {
                 return;
             }
-            for (var i = 0; i < favoriteGroup.length; ++i) {
-                var ref = favoriteGroup[i];
-                lines.push(`${_(ref.id)},${_(ref.name)}`);
+            for (let i = 0; i < favoriteGroup.length; ++i) {
+                const ref = favoriteGroup[i];
+                lines.push(resText(ref));
             }
         } else {
             // export all
-            this.favoriteWorlds.forEach((ref1) => {
-                lines.push(`${_(ref1.id)},${_(ref1.name)}`);
+            this.favoriteWorlds.forEach((ref) => {
+                lines.push(resText(ref.ref));
             });
-            for (var i = 0; i < this.localWorldFavoritesList.length; ++i) {
-                var worldId = this.localWorldFavoritesList[i];
-                var ref2 = API.cachedWorlds.get(worldId);
-                if (typeof ref2 !== 'undefined') {
-                    lines.push(`${_(ref2.id)},${_(ref2.name)}`);
+            for (let i = 0; i < this.localWorldFavoritesList.length; ++i) {
+                const worldId = this.localWorldFavoritesList[i];
+                const ref = API.cachedWorlds.get(worldId);
+                if (typeof ref !== 'undefined') {
+                    lines.push(resText(ref));
                 }
             }
         }
@@ -19811,6 +20024,16 @@ speechSynthesis.getVoices();
     $app.data.avatarExportFavoriteGroup = null;
     $app.data.avatarExportLocalFavoriteGroup = null;
 
+    // Storage of selected filtering options for model and world export
+    $app.data.exportSelectedOptions = ['ID', 'Name'];
+    $app.data.exportSelectOptions = [
+        { label: 'ID', value: 'id' },
+        { label: 'Name', value: 'name' },
+        { label: 'Author ID', value: 'authorId' },
+        { label: 'Author Name', value: 'authorName' },
+        { label: 'Thumbnail', value: 'thumbnailImageUrl' }
+    ];
+
     $app.methods.showAvatarExportDialog = function () {
         this.$nextTick(() =>
             $app.adjustDialogZ(this.$refs.avatarExportDialogRef.$el)
@@ -19821,14 +20044,50 @@ speechSynthesis.getVoices();
         this.avatarExportDialogVisible = true;
     };
 
+    $app.methods.handleCopyAvatarExportData = function (event) {
+        event.target.tagName === 'TEXTAREA' && event.target.select();
+        navigator.clipboard
+            .writeText(this.avatarExportContent)
+            .then(() => {
+                this.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                this.$message.error('Copy failed!');
+            });
+    };
+
+    /**
+     * Update the content of the avatar export dialog based on the selected options
+     */
+
     $app.methods.updateAvatarExportDialog = function () {
-        var _ = function (str) {
+        const formatter = function (str) {
             if (/[\x00-\x1f,"]/.test(str) === true) {
                 return `"${str.replace(/"/g, '""')}"`;
             }
             return str;
         };
-        var lines = ['AvatarID,Name'];
+
+        function resText(ref) {
+            let resArr = [];
+            propsForQuery.forEach((e) => {
+                resArr.push(formatter(ref?.[e]));
+            });
+            return resArr.join(',');
+        }
+
+        const lines = [this.exportSelectedOptions.join(',')];
+        const propsForQuery = this.exportSelectOptions
+            .filter((option) =>
+                this.exportSelectedOptions.includes(option.label)
+            )
+            .map((option) => option.value);
+
         if (this.avatarExportFavoriteGroup) {
             API.favoriteAvatarGroups.forEach((group) => {
                 if (
@@ -19837,31 +20096,31 @@ speechSynthesis.getVoices();
                 ) {
                     $app.favoriteAvatars.forEach((ref) => {
                         if (group.key === ref.groupKey) {
-                            lines.push(`${_(ref.id)},${_(ref.name)}`);
+                            lines.push(resText(ref.ref));
                         }
                     });
                 }
             });
         } else if (this.avatarExportLocalFavoriteGroup) {
-            var favoriteGroup =
+            const favoriteGroup =
                 this.localAvatarFavorites[this.avatarExportLocalFavoriteGroup];
             if (!favoriteGroup) {
                 return;
             }
-            for (var i = 0; i < favoriteGroup.length; ++i) {
-                var ref = favoriteGroup[i];
-                lines.push(`${_(ref.id)},${_(ref.name)}`);
+            for (let i = 0; i < favoriteGroup.length; ++i) {
+                const ref = favoriteGroup[i];
+                lines.push(resText(ref));
             }
         } else {
             // export all
-            this.favoriteAvatars.forEach((ref1) => {
-                lines.push(`${_(ref1.id)},${_(ref1.name)}`);
+            this.favoriteAvatars.forEach((ref) => {
+                lines.push(resText(ref.ref));
             });
-            for (var i = 0; i < this.localAvatarFavoritesList.length; ++i) {
-                var avatarId = this.localAvatarFavoritesList[i];
-                var ref2 = API.cachedAvatars.get(avatarId);
-                if (typeof ref2 !== 'undefined') {
-                    lines.push(`${_(ref2.id)},${_(ref2.name)}`);
+            for (let i = 0; i < this.localAvatarFavoritesList.length; ++i) {
+                const avatarId = this.localAvatarFavoritesList[i];
+                const ref = API.cachedAvatars.get(avatarId);
+                if (typeof ref !== 'undefined') {
+                    lines.push(resText(ref));
                 }
             }
         }
@@ -20041,6 +20300,23 @@ speechSynthesis.getVoices();
         this.friendExportFavoriteGroup = null;
         this.updateFriendExportDialog();
         this.friendExportDialogVisible = true;
+    };
+
+    $app.methods.handleCopyFriendExportData = function (event) {
+        event.target.tagName === 'TEXTAREA' && event.target.select();
+        navigator.clipboard
+            .writeText(this.friendExportContent)
+            .then(() => {
+                this.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                this.$message.error('Copy failed!');
+            });
     };
 
     $app.methods.updateFriendExportDialog = function () {
@@ -20233,6 +20509,43 @@ speechSynthesis.getVoices();
 
     $app.methods.cancelNoteExport = function () {
         this.noteExportDialog.loading = false;
+    };
+
+    // user generated content
+    $app.data.ugcFolderPath = await configRepository.getString(
+        'VRCX_userGeneratedContentPath',
+        ''
+    );
+
+    $app.data.userGeneratedContentDialog = {
+        visible: false
+    };
+
+    $app.methods.setUGCFolderPath = async function (path) {
+        await configRepository.setString('VRCX_userGeneratedContentPath', path);
+        this.ugcFolderPath = path;
+    };
+
+    $app.methods.resetUGCFolder = function () {
+        this.setUGCFolderPath('');
+    };
+
+    $app.methods.openUGCFolder = async function () {
+        await AppApi.OpenUGCPhotosFolder(this.ugcFolderPath);
+    };
+
+    $app.methods.openUGCFolderSelector = async function () {
+        var D = this.userGeneratedContentDialog;
+
+        if (D.visible) return;
+
+        D.visible = true;
+        var newUGCFolder = await AppApi.OpenFolderSelectorDialog(
+            this.ugcFolderPath
+        );
+        D.visible = false;
+
+        await this.setUGCFolderPath(newUGCFolder);
     };
 
     // avatar database provider
@@ -21389,7 +21702,9 @@ speechSynthesis.getVoices();
         API.queuedInstances.forEach((ref) => {
             if (ref.location !== instanceId) {
                 $app.$message({
-                    message: `Removed instance ${ref.$worldName} from queue`,
+                    message: $t('message.instance.removed_form_queue', {
+                        worldName: ref.$worldName
+                    }),
                     type: 'info'
                 });
                 ref.$msgBox?.close();
@@ -21676,7 +21991,7 @@ speechSynthesis.getVoices();
                     }
                 } else {
                     $app.$message({
-                        message: 'Failed to change avatar moderation',
+                        message: $t('message.avatar.change_moderation_failed'),
                         type: 'error'
                     });
                 }
@@ -21959,7 +22274,7 @@ speechSynthesis.getVoices();
             var unityPackage = D.ref.unityPackages[i];
             if (
                 unityPackage.variant &&
-                unityPackage.variant !== 'standard' &&
+                // unityPackage.variant !== 'standard' &&
                 unityPackage.variant !== 'security'
             ) {
                 continue;
@@ -22166,7 +22481,7 @@ speechSynthesis.getVoices();
     API.$on('INSTANCE:CLOSE', function (args) {
         if (args.json) {
             $app.$message({
-                message: 'Instance closed',
+                message: $t('message.instance.closed'),
                 type: 'success'
             });
 
@@ -22345,7 +22660,7 @@ speechSynthesis.getVoices();
     API.$on('BADGE:UPDATE', function (args) {
         if (args.json) {
             $app.$message({
-                message: 'Badge updated',
+                message: $t('message.badge.updated'),
                 type: 'success'
             });
         }

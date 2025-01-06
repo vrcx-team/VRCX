@@ -24,6 +24,8 @@ mixin newInstance()
                             el-radio-button(label="Japan") {{ $t('dialog.new_instance.region_jp') }}
                     el-form-item(:label="$t('dialog.new_instance.queueEnabled')" v-if="newInstanceDialog.accessType === 'group'")
                         el-checkbox(v-model="newInstanceDialog.queueEnabled" @change="buildInstance")
+                    el-form-item(:label="$t('dialog.new_instance.ageGate')" v-if="newInstanceDialog.accessType === 'group'")
+                        el-checkbox(v-model="newInstanceDialog.ageGate" @change="buildInstance" :disabled="!hasGroupPermission(newInstanceDialog.groupRef, 'group-instance-age-gated-create')")
                     el-form-item(:label="$t('dialog.new_instance.world_id')")
                         el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" @change="buildInstance")
                     el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
@@ -68,6 +70,8 @@ mixin newInstance()
                             el-radio-button(label="US East") {{ $t('dialog.new_instance.region_use') }}
                             el-radio-button(label="Europe") {{ $t('dialog.new_instance.region_eu') }}
                             el-radio-button(label="Japan") {{ $t('dialog.new_instance.region_jp') }}
+                    el-form-item(:label="$t('dialog.new_instance.ageGate')" v-if="newInstanceDialog.accessType === 'group'")
+                        el-checkbox(v-model="newInstanceDialog.ageGate" @change="buildInstance")
                     el-form-item(:label="$t('dialog.new_instance.world_id')")
                         el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" @change="buildLegacyInstance")
                     el-form-item(:label="$t('dialog.new_instance.instance_id')")

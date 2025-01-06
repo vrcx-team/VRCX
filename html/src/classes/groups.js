@@ -2222,6 +2222,9 @@ export default class extends baseClass {
                 case 'Refresh':
                     this.showGroupDialog(D.id);
                     break;
+                case 'Share':
+                    this.copyGroupUrl(D.ref.$url);
+                    break;
                 case 'Moderation Tools':
                     this.showGroupMemberModerationDialog(D.id);
                     break;
@@ -2645,11 +2648,11 @@ export default class extends baseClass {
         groupGalleryStatus(gallery) {
             var style = {};
             if (!gallery.membersOnly) {
-                style.joinme = true;
+                style.blue = true;
             } else if (!gallery.roleIdsToView) {
-                style.online = true;
+                style.green = true;
             } else {
-                style.busy = true;
+                style.red = true;
             }
             return style;
         },

@@ -3,10 +3,10 @@ mixin feedTab()
         data-tables(v-bind="feedTable" v-loading="feedTable.loading")
             template(#tool)
                 div(style="margin:0 0 10px;display:flex;align-items:center")
-                    div(style="flex:none;margin-right:10px")
+                    div(style="flex:none;margin-right:10px;display:flex;align-items:center;")
                         el-tooltip(placement="bottom" :content="$t('view.feed.favorites_only_tooltip')" :disabled="hideTooltips")
                             el-switch(v-model="feedTable.vip" @change="feedTableLookup" active-color="#13ce66")
-                    el-select(v-model="feedTable.filter" @change="feedTableLookup" multiple clearable collapse-tags style="flex:1" :placeholder="$t('view.feed.filter_placeholder')")
+                    el-select(v-model="feedTable.filter" @change="feedTableLookup" multiple clearable style="flex:1;height:40px;" :placeholder="$t('view.feed.filter_placeholder')")
                         el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio']" :key="type" :label="type" :value="type")
                     el-input(v-model="feedTable.search" :placeholder="$t('view.feed.search_placeholder')" @keyup.native.13="feedTableLookup" @change="feedTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
             el-table-column(type="expand" width="20")
@@ -16,7 +16,7 @@ mixin feedTab()
                             location(v-if="scope.row.previousLocation" :location="scope.row.previousLocation")
                             el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ timeToText(scope.row.time) }}
                             br
-                            span
+                            span(style="margin-right:5px")
                                 i.el-icon-right
                             location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                         template(v-else-if="scope.row.type === 'Offline'")
@@ -51,7 +51,7 @@ mixin feedTab()
                                     span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
                                     span(v-else) {{ $t('dialog.user.status.offline') }}
                                 i.x-user-status(:class="statusClass(scope.row.previousStatus)")
-                            span(v-text="scope.row.previousStatusDescription")
+                            span(v-text="scope.row.previousStatusDescription" style="margin-left:5px")
                             br
                             span
                                 i.el-icon-right
@@ -62,7 +62,7 @@ mixin feedTab()
                                     span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
                                     span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
                                     span(v-else) {{ $t('dialog.user.status.offline') }}
-                                i.x-user-status(:class="statusClass(scope.row.status)")
+                                i.x-user-status(:class="statusClass(scope.row.status)" style="margin:0 5px")
                             span(v-text="scope.row.statusDescription")
                         template(v-else-if="scope.row.type === 'Bio'")
                             template(v-for="(bio,idx) in formatDifference(scope.row.previousBio, scope.row.bio)")
@@ -95,7 +95,7 @@ mixin feedTab()
                                     span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
                                     span(v-else) {{ $t('dialog.user.status.offline') }}
                                 i.x-user-status(:class="statusClass(scope.row.previousStatus)")
-                            span
+                            span(style="margin:0 5px")
                                 i.el-icon-right
                             el-tooltip(placement="top")
                                 template(#content)
@@ -113,8 +113,7 @@ mixin feedTab()
                                     span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
                                     span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
                                     span(v-else) {{ $t('dialog.user.status.offline') }}
-                                i.x-user-status(:class="statusClass(scope.row.status)")
-                            span  ‎
+                                i.x-user-status(:class="statusClass(scope.row.status)" style="margin-right:3px")
                             span(v-text="scope.row.statusDescription")
                     template(v-else-if="scope.row.type === 'Avatar'")
                         avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName" :avatartags="scope.row.currentAvatarTags")

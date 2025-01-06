@@ -73,7 +73,7 @@ export default class extends baseClass {
                 '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
                 '<span>{{ text }}</span></span>' +
                 '<span v-if="groupName" @click="showGroupDialog" :class="{ \'x-link\': link}">({{ groupName }})</span>' +
-                '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
+                '<span v-if="region" class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
                 '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
             props: {
                 location: String,
@@ -357,6 +357,7 @@ export default class extends baseClass {
                 '<span v-if="isHardClosed" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_hard_closed") }}</span>' +
                 '<span v-else-if="isClosed" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_closed") }}</span>' +
                 '<span v-if="queueSize" style="margin-left:5px">{{ $t("dialog.user.info.instance_queue") }} {{ queueSize }}</span>' +
+                '<span v-if="isAgeGated" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_age_gated") }}</span>' +
                 '</div>',
             props: {
                 location: String,
@@ -396,6 +397,7 @@ export default class extends baseClass {
                     this.userList = [];
                     this.gameServerVersion = '';
                     this.canCloseInstance = false;
+                    this.isAgeGated = false;
                     if (
                         !this.location ||
                         !this.instance ||
@@ -436,6 +438,11 @@ export default class extends baseClass {
                             group,
                             'group-instance-moderate'
                         );
+                    }
+                    this.isAgeGated = this.instance.ageGate === true;
+                    if (this.location && this.location.includes('~ageGate')) {
+                        // dumb workaround for API not returning `ageGate`
+                        this.isAgeGated = true;
                     }
                 },
                 showUserDialog(userId) {
