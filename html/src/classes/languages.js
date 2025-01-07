@@ -99,7 +99,8 @@ export default class extends baseClass {
             nzs: 'nz',
             gsg: 'de',
             epo: 'eo',
-            tok: 'tok'
+            tok: 'tok',
+            cze: 'cs'
         },
 
         subsetOfLanguages: [],
