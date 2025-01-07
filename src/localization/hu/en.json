@@ -1060,13 +1060,6 @@
             "cancel": "Mégse",
             "save": "Save"
         },
-        "download_history": {
-            "header": "Download History",
-            "queue": "Queue:",
-            "history": "History:",
-            "cancel_all": "Cancel All",
-            "close": "Close"
-        },
         "vrcx_updater": {
             "header": "VRCX frissítő",
             "latest_version": "VRCX is up to date.",

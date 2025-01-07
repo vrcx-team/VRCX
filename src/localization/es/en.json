@@ -1102,13 +1102,6 @@
             "cancel": "Cancelar",
             "save": "Guardar"
         },
-        "download_history": {
-            "header": "Historial de Descargas",
-            "queue": "Cola:",
-            "history": "Historial:",
-            "cancel_all": "Cancelar todo",
-            "close": "Cerrar"
-        },
         "vrcx_updater": {
             "header": "Actualizador de VRCX",
             "latest_version": "VRCX está actualizado.",

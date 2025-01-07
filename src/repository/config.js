@@ -1,5 +1,6 @@
 import sqliteService from '../service/sqlite.js';
 import sharedRepository, { SharedRepository } from './shared.js';
+import * as workerTimers from 'worker-timers';
 
 var dirtyKeySet = new Set();
 
@@ -39,7 +40,7 @@ async function syncLoop() {
             console.error(err);
         }
     }
-    setTimeout(syncLoop, 100);
+    workerTimers.setTimeout(() => syncLoop(), 100);
 }
 
 class ConfigRepository extends SharedRepository {

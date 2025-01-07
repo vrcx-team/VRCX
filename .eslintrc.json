@@ -32,7 +32,7 @@
         "AppApiVr": "readonly",
         "SharedVariable": "readonly",
         "WebApi": "readonly",
-        "AssetBundleCacher": "readonly"
+        "AssetBundleManager": "readonly"
     },
     "rules": {
         "arrow-body-style": 0,

@@ -20,7 +20,7 @@ namespace VRCX
         private PerformanceCounter _performanceCounterCpuUsage;
         private PerformanceCounter _performanceCounterUpTime;
         private Thread _thread;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         static SystemMonitor()
         {

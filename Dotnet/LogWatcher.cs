@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using NLog;
 
 #if !LINUX
 using CefSharp;
@@ -25,7 +26,7 @@ namespace VRCX
     public class LogWatcher
     {
         public static readonly LogWatcher Instance;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
         private DirectoryInfo m_LogDirectoryInfo;
         private List<string[]> m_LogList;
