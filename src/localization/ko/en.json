@@ -1059,13 +1059,6 @@
             "cancel": "취소",
             "save": "저장"
         },
-        "download_history": {
-            "header": "다운로드 기록",
-            "queue": "대기열:",
-            "history": "내역:",
-            "cancel_all": "모두 취소",
-            "close": "닫기"
-        },
         "vrcx_updater": {
             "header": "VRCX 업데이트",
             "latest_version": "최신 버전입니다",

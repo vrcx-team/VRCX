@@ -1112,13 +1112,6 @@
             "cancel": "取消",
             "save": "保存"
         },
-        "download_history": {
-            "header": "下载记录",
-            "queue": "下载队列：",
-            "history": "历史：",
-            "cancel_all": "取消全部",
-            "close": "关闭"
-        },
         "vrcx_updater": {
             "header": "VRCX 更新",
             "latest_version": "VRCX 已是最新版本",

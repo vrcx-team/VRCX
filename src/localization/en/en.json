@@ -1112,19 +1112,13 @@
             "cancel": "Cancel",
             "save": "Save"
         },
-        "download_history": {
-            "header": "Download History",
-            "queue": "Queue:",
-            "history": "History:",
-            "cancel_all": "Cancel All",
-            "close": "Close"
-        },
         "vrcx_updater": {
             "header": "VRCX Updater",
             "latest_version": "VRCX is up to date.",
             "ready_for_update": "Ready for install, restart VRCX to apply.",
             "download": "Download",
-            "install": "Install"
+            "install": "Install",
+            "cancel": "Cancel"
         },
         "launch": {
             "header": "Launch",
@@ -1459,7 +1453,9 @@
     },
     "message": {
         "vrcx_updater": {
-            "failed": "Failed to check for update, {message}"
+            "failed": "Failed to check for update, {message}",
+            "failed_install": "Failed to install update",
+            "checking_hash": "Checking hash..."
         },
         "api_handler": {
             "avatar_private_or_deleted": "Avatar is private or deleted"

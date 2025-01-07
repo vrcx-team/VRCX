@@ -11,29 +11,19 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Net;
 using System.Text;
-using System.ComponentModel;
 using System.Linq;
 
 namespace VRCX
 {
-    public class AssetBundleCacher
+    public class AssetBundleManager
     {
-        public static readonly AssetBundleCacher Instance;
+        public static readonly AssetBundleManager Instance;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        static AssetBundleCacher()
+        static AssetBundleManager()
         {
-            Instance = new AssetBundleCacher();
+            Instance = new AssetBundleManager();
         }
-
-        public static string DownloadTempLocation;
-        public static string DownloadDestinationLocation;
-        public static string DownloadHashLocation;
-        public static int DownloadProgress;
-        public static int DownloadSize;
-        public static bool DownloadCanceled;
-        public static WebClient client;
-        public static Process process;
 
         public string GetAssetId(string id, string variant = "")
         {
@@ -152,103 +142,6 @@ namespace VRCX
                 isLocked = true;
             }
             return new Tuple<long, bool, string>(fileSize, isLocked, cachePath);
-        }
-
-        // old asset bundle cacher downloader method reused for updating, it's not pretty
-        public void DownloadFile(string fileUrl, string hashUrl, int size)
-        {
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
-            client = new WebClient();
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
-            client.Headers.Add("user-agent", Program.Version);
-            if (WebApi.ProxySet)
-                client.Proxy = WebApi.Proxy;
-            DownloadProgress = 0;
-            DownloadSize = size;
-            DownloadCanceled = false;
-            DownloadTempLocation = Path.Combine(Program.AppDataDirectory, "tempDownload.exe");
-            DownloadDestinationLocation = Path.Combine(Program.AppDataDirectory, "update.exe");
-            DownloadHashLocation = Path.Combine(Program.AppDataDirectory, "sha256sum.txt");
-            if (File.Exists(DownloadHashLocation))
-                File.Delete(DownloadHashLocation);
-            if (!string.IsNullOrEmpty(hashUrl))
-                client.DownloadFile(new Uri(hashUrl), DownloadHashLocation);
-
-            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
-            client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompletedCallback);
-            client.DownloadFileAsync(new Uri(fileUrl), DownloadTempLocation);
-        }
-
-        public void CancelDownload()
-        {
-            DownloadCanceled = true;
-            try
-            {
-                client?.CancelAsync();
-                if (File.Exists(DownloadTempLocation))
-                    File.Delete(DownloadTempLocation);
-            }
-            catch (Exception)
-            {
-            }
-            DownloadProgress = -4;
-        }
-
-        public int CheckDownloadProgress()
-        {
-            return DownloadProgress;
-        }
-
-        private static void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
-        {
-            DownloadProgress = e.ProgressPercentage;
-        }
-
-        private static void DownloadCompletedCallback(object sender, AsyncCompletedEventArgs e)
-        {
-            if (DownloadCanceled)
-            {
-                if (File.Exists(DownloadTempLocation))
-                    File.Delete(DownloadTempLocation);
-                return;
-            }
-            if (!File.Exists(DownloadTempLocation))
-            {
-                DownloadProgress = -15;
-                return;
-            }
-            FileInfo data = new FileInfo(DownloadTempLocation);
-            if (data.Length != DownloadSize)
-            {
-                File.Delete(DownloadTempLocation);
-                DownloadProgress = -15;
-                return;
-            }
-            if (File.Exists(DownloadHashLocation))
-            {
-                logger.Info("Updater: Checking hash");
-                var lines = File.ReadAllLines(DownloadHashLocation);
-                var hash = lines.Length > 0 ? lines[0].Split(' ') : new[] { "" };
-                using (var sha256 = SHA256.Create())
-                using (var stream = File.OpenRead(DownloadTempLocation))
-                {
-                    var hashBytes = sha256.ComputeHash(stream);
-                    var hashString = BitConverter.ToString(hashBytes).Replace("-", "");
-                    if (!hashString.Equals(hash[0], StringComparison.OrdinalIgnoreCase))
-                    {
-                        logger.Error($"Updater: Hash check failed file:{hashString} remote:{hash[0]}");
-                        // can't delete file yet because it's in use
-                        DownloadProgress = -14;
-                        return;
-                    }
-                }
-                logger.Info("Updater: Hash check passed");
-            }
-
-            if (File.Exists(DownloadDestinationLocation))
-                File.Delete(DownloadDestinationLocation);
-            File.Move(DownloadTempLocation, DownloadDestinationLocation);
-            DownloadProgress = -16;
         }
 
         /// <summary>

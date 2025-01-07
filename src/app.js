@@ -75,7 +75,7 @@ console.log(`isLinux: ${LINUX}`);
             'SQLite',
             'LogWatcher',
             'Discord',
-            'AssetBundleCacher'
+            'AssetBundleManager'
         );
     } else {
         window.AppApi = InteropApi.AppApiElectron;
@@ -85,7 +85,7 @@ console.log(`isLinux: ${LINUX}`);
         window.SQLite = InteropApi.SQLiteLegacy;
         window.LogWatcher = InteropApi.LogWatcher;
         window.Discord = InteropApi.Discord;
-        window.AssetBundleCacher = InteropApi.AssetBundleCacher;
+        window.AssetBundleManager = InteropApi.AssetBundleManager;
     }
 
     // #region | localization
@@ -7831,27 +7831,6 @@ console.log(`isLinux: ${LINUX}`);
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [50, 100, 250, 500]
         }
-    };
-    $app.data.downloadHistoryTable = {
-        data: [],
-        tableProps: {
-            stripe: true,
-            size: 'mini'
-        },
-        pageSize: 10,
-        paginationProps: {
-            small: true,
-            layout: 'prev,pager,next',
-            pageSizes: [10, 25, 50, 100]
-        }
-    };
-    $app.data.downloadQueueTable = {
-        data: [],
-        tableProps: {
-            stripe: true,
-            size: 'mini'
-        },
-        layout: 'table'
     };
     $app.data.socialStatusHistoryTable = {
         data: [],
@@ -16905,7 +16884,7 @@ console.log(`isLinux: ${LINUX}`);
             return { Item1: -1, Item2: false, Item3: '' };
         }
 
-        return AssetBundleCacher.CheckVRChatCache(
+        return AssetBundleManager.CheckVRChatCache(
             id,
             version,
             variant,
@@ -16922,120 +16901,6 @@ console.log(`isLinux: ${LINUX}`);
             };
             return args;
         });
-    };
-
-    $app.data.cacheAutoDownloadHistory = new Set();
-
-    $app.methods.downloadFileQueueUpdate = async function () {
-        if (this.downloadQueue.size === 0) {
-            return;
-        }
-        this.downloadProgress = 0;
-        this.downloadIsProcessing = false;
-        this.downloadInProgress = true;
-        this.downloadCurrent = this.downloadQueue.values().next().value;
-        this.downloadCurrent.id = this.downloadQueue.keys().next().value;
-        var { ref } = this.downloadCurrent;
-        this.downloadQueue.delete(ref.id);
-        this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
-
-        var fileUrl = this.downloadCurrent.updateSetupUrl;
-        var hashUrl = this.downloadCurrent.updateHashUrl;
-        var size = this.downloadCurrent.size;
-        await AssetBundleCacher.DownloadFile(fileUrl, hashUrl, size);
-        this.downloadFileProgress();
-    };
-
-    $app.methods.cancelDownload = function (id) {
-        AssetBundleCacher.CancelDownload();
-        if (this.downloadQueue.has(id)) {
-            this.downloadQueue.delete(id);
-            this.downloadQueueTable.data = Array.from(
-                this.downloadQueue.values()
-            );
-        }
-    };
-
-    $app.methods.cancelAllDownloads = function () {
-        if (typeof this.downloadCurrent.id !== 'undefined') {
-            this.cancelDownload(this.downloadCurrent.id);
-        }
-        for (var queue of this.downloadQueue.values()) {
-            this.cancelDownload(queue.ref.id);
-        }
-    };
-
-    $app.data.downloadProgress = 0;
-    $app.data.downloadInProgress = false;
-    $app.data.downloadIsProcessing = false;
-    $app.data.downloadQueue = new Map();
-    $app.data.downloadCurrent = {};
-
-    $app.methods.downloadFileProgress = async function () {
-        var downloadProgress = await AssetBundleCacher.CheckDownloadProgress();
-        switch (downloadProgress) {
-            case -4:
-                this.$message({
-                    message: 'Download canceled',
-                    type: 'info'
-                });
-                this.downloadFileComplete('Canceled');
-                return;
-            case -14:
-                this.$message({
-                    message: 'Download failed, hash mismatch',
-                    type: 'error'
-                });
-                this.downloadFileComplete('Failed');
-                return;
-            case -15:
-                this.$message({
-                    message: 'Download failed, size mismatch',
-                    type: 'error'
-                });
-                this.downloadFileComplete('Failed');
-                return;
-            case -16:
-                if (this.downloadCurrent.ref.id === 'VRCXUpdate') {
-                    this.downloadDialog.visible = false;
-                    this.pendingVRCXInstall = this.downloadCurrent.ref.name;
-                    this.showVRCXUpdateDialog();
-                }
-                this.downloadFileComplete('Success');
-                return;
-            default:
-                this.downloadProgress = downloadProgress;
-        }
-        workerTimers.setTimeout(() => this.downloadFileProgress(), 150);
-    };
-
-    $app.methods.downloadFileComplete = function (status) {
-        this.downloadCurrent.status = status;
-        this.downloadCurrent.date = Date.now();
-        this.downloadHistoryTable.data.unshift(this.downloadCurrent);
-        this.downloadCurrent = {};
-        this.downloadProgress = 0;
-        this.downloadInProgress = false;
-        this.downloadFileQueueUpdate();
-    };
-
-    $app.methods.showDownloadDialog = function () {
-        this.$nextTick(() => $app.adjustDialogZ(this.$refs.downloadDialog.$el));
-        this.downloadDialog.visible = true;
-    };
-
-    $app.data.downloadDialog = {
-        visible: false
-    };
-
-    $app.methods.downloadProgressText = function () {
-        if (this.downloadIsProcessing) {
-            return 'Processing';
-        }
-        if (this.downloadProgress >= 0) {
-            return `${this.downloadProgress}%`;
-        }
-        return '';
     };
 
     $app.methods.getDisplayName = function (userId) {
@@ -17077,7 +16942,7 @@ console.log(`isLinux: ${LINUX}`);
             $utils.extractVariantVersion(assetUrl),
             10
         );
-        await AssetBundleCacher.DeleteCache(
+        await AssetBundleManager.DeleteCache(
             id,
             version,
             variant,
@@ -17102,7 +16967,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.deleteAllVRChatCache = async function () {
-        await AssetBundleCacher.DeleteAllCache();
+        await AssetBundleManager.DeleteAllCache();
         this.getVRChatCacheSize();
     };
 
@@ -17113,7 +16978,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.sweepVRChatCache = async function () {
-        var output = await AssetBundleCacher.SweepCache();
+        var output = await AssetBundleManager.SweepCache();
         console.log('SweepCache', output);
         if (this.VRChatConfigDialog.visible) {
             this.getVRChatCacheSize();
@@ -17175,7 +17040,7 @@ console.log(`isLinux: ${LINUX}`);
             totalCacheSize = this.VRChatConfigFile.cache_size;
         }
         this.VRChatTotalCacheSize = totalCacheSize;
-        var usedCacheSize = await AssetBundleCacher.GetCacheSize();
+        var usedCacheSize = await AssetBundleManager.GetCacheSize();
         this.VRChatUsedCacheSize = (usedCacheSize / 1073741824).toFixed(2);
         this.VRChatCacheSizeLoading = false;
     };
@@ -17242,13 +17107,13 @@ console.log(`isLinux: ${LINUX}`);
             $utils.extractVariantVersion(assetUrl),
             10
         );
-        var assetLocation = await AssetBundleCacher.GetVRChatCacheFullLocation(
+        var assetLocation = await AssetBundleManager.GetVRChatCacheFullLocation(
             fileId,
             fileVersion,
             variant,
             variantVersion
         );
-        var cacheInfo = await AssetBundleCacher.CheckVRChatCache(
+        var cacheInfo = await AssetBundleManager.CheckVRChatCache(
             fileId,
             fileVersion,
             variant,
@@ -17263,10 +17128,6 @@ console.log(`isLinux: ${LINUX}`);
         console.log(fullAssetLocation);
         return fullAssetLocation;
     };
-
-    API.$on('LOGIN', function () {
-        $app.downloadDialog.visible = false;
-    });
 
     // Parse User URL
 

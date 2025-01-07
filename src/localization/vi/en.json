@@ -1059,13 +1059,6 @@
             "cancel": "Hủy",
             "save": "Lưu"
         },
-        "download_history": {
-            "header": "Tải xuống lịch sử",
-            "queue": "Chờ:",
-            "history": "Lịch sử:",
-            "cancel_all": "Hủy tất cả",
-            "close": "Đóng"
-        },
         "vrcx_updater": {
             "header": "Cập nhật VRCX",
             "latest_version": "VRCX đã được cập nhật mới nhất.",

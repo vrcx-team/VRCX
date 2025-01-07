@@ -1,4 +1,5 @@
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import * as workerTimers from 'worker-timers';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -30,7 +31,9 @@ export default class extends baseClass {
                 urlReleases: 'https://api0.vrcx.app/releases/nightly',
                 urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
             }
-        }
+        },
+        updateProgress: 0,
+        updateInProgress: false
     };
 
     _methods = {
@@ -66,71 +69,115 @@ export default class extends baseClass {
             this.loadBranchVersions();
         },
 
-        downloadVRCXUpdate(updateSetupUrl, updateHashUrl, size, name, type) {
-            if (LINUX) {
-                // IPC to node
+        async downloadVRCXUpdate(
+            downloadUrl,
+            downloadName,
+            hashUrl,
+            size,
+            releaseName,
+            type
+        ) {
+            if (this.updateInProgress) {
                 return;
             }
-            var ref = {
-                id: 'VRCXUpdate',
-                name
-            };
-            this.downloadQueue.set('VRCXUpdate', {
-                ref,
-                type,
-                updateSetupUrl,
-                updateHashUrl,
-                size
-            });
-            this.downloadQueueTable.data = Array.from(
-                this.downloadQueue.values()
-            );
-            if (!this.downloadInProgress) {
-                this.downloadFileQueueUpdate();
+            try {
+                this.updateInProgress = true;
+                this.downloadFileProgress();
+                await AppApi.DownloadUpdate(
+                    downloadUrl,
+                    downloadName,
+                    hashUrl,
+                    size
+                );
+                this.pendingVRCXInstall = releaseName;
+                if (type === 'Manual') {
+                    this.showVRCXUpdateDialog();
+                }
+            } catch (err) {
+                console.error(err);
+                this.$message({
+                    message: `${$t('message.vrcx_updater.failed_install')} ${err}`,
+                    type: 'error'
+                });
+            } finally {
+                this.updateInProgress = false;
+                this.updateProgress = 0;
             }
+        },
+
+        async cancelUpdate() {
+            await AppApi.CancelUpdate();
+            this.updateInProgress = false;
+            this.updateProgress = 0;
+        },
+
+        async downloadFileProgress() {
+            this.updateProgress = await AppApi.CheckUpdateProgress();
+            if (this.updateInProgress) {
+                workerTimers.setTimeout(() => this.downloadFileProgress(), 150);
+            }
+        },
+
+        updateProgressText() {
+            if (this.updateProgress === 100) {
+                return $t('message.vrcx_updater.checking_hash');
+            }
+            return `${this.updateProgress}%`;
         },
 
         installVRCXUpdate() {
             for (var release of this.VRCXUpdateDialog.releases) {
-                if (release.name === this.VRCXUpdateDialog.release) {
-                    var downloadUrl = '';
-                    var hashUrl = '';
-                    var size = 0;
-                    for (var asset of release.assets) {
-                        if (asset.state !== 'uploaded') {
-                            continue;
-                        }
-                        if (
-                            asset.content_type === 'application/x-msdownload' ||
-                            asset.content_type === 'application/x-msdos-program'
-                        ) {
-                            downloadUrl = asset.browser_download_url;
-                            size = asset.size;
-                            continue;
-                        }
-                        if (
-                            asset.name === 'SHA256SUMS.txt' &&
-                            asset.content_type === 'text/plain'
-                        ) {
-                            hashUrl = asset.browser_download_url;
-                            continue;
-                        }
-                    }
-                    if (!downloadUrl) {
-                        return;
-                    }
-                    var name = release.name;
-                    var type = 'Manual';
-                    this.downloadVRCXUpdate(
-                        downloadUrl,
-                        hashUrl,
-                        size,
-                        name,
-                        type
-                    );
-                    this.VRCXUpdateDialog.visible = false;
-                    this.showDownloadDialog();
+                if (release.name !== this.VRCXUpdateDialog.release) {
+                    continue;
                 }
+                var downloadUrl = '';
+                var downloadName = '';
+                var hashUrl = '';
+                var size = 0;
+                for (var asset of release.assets) {
+                    if (asset.state !== 'uploaded') {
+                        continue;
+                    }
+                    if (
+                        asset.content_type === 'application/x-msdownload' ||
+                        asset.content_type === 'application/x-msdos-program'
+                    ) {
+                        downloadUrl = asset.browser_download_url;
+                        downloadName = asset.name;
+                        size = asset.size;
+                        continue;
+                    }
+                    if (
+                        LINUX &&
+                        asset.content_type === 'application/octet-stream'
+                    ) {
+                        downloadUrl = asset.browser_download_url;
+                        downloadName = asset.name;
+                        size = asset.size;
+                        continue;
+                    }
+                    if (
+                        asset.name === 'SHA256SUMS.txt' &&
+                        asset.content_type === 'text/plain'
+                    ) {
+                        hashUrl = asset.browser_download_url;
+                        continue;
+                    }
+                }
+                if (!downloadUrl) {
+                    return;
+                }
+                var releaseName = release.name;
+                var type = 'Manual';
+                this.downloadVRCXUpdate(
+                    downloadUrl,
+                    downloadName,
+                    hashUrl,
+                    size,
+                    releaseName,
+                    type
+                );
+                break;
             }
         },
 
@@ -223,14 +270,15 @@ export default class extends baseClass {
                 this.changeLogDialog.changeLog = this.changeLogRemoveLinks(
                     json.body
                 );
-                this.latestAppVersion = json.name;
-                var name = json.name;
+                var releaseName = json.name;
+                this.latestAppVersion = releaseName;
                 this.VRCXUpdateDialog.updatePendingIsLatest = false;
-                if (name === this.pendingVRCXInstall) {
+                if (releaseName === this.pendingVRCXInstall) {
                     // update already downloaded
                     this.VRCXUpdateDialog.updatePendingIsLatest = true;
-                } else if (name > currentVersion) {
+                } else if (releaseName > currentVersion) {
                     var downloadUrl = '';
+                    var downloadName = '';
                     var hashUrl = '';
                     var size = 0;
                     for (var asset of json.assets) {
@@ -245,6 +293,7 @@ export default class extends baseClass {
                                     'application/x-msdos-program')
                         ) {
                             downloadUrl = asset.browser_download_url;
+                            downloadName = asset.name;
                             size = asset.size;
                             continue;
                         }
@@ -253,6 +302,7 @@ export default class extends baseClass {
                             asset.content_type === 'application/octet-stream'
                         ) {
                             downloadUrl = asset.browser_download_url;
+                            downloadName = asset.name;
                             size = asset.size;
                             continue;
                         }
@@ -277,9 +327,10 @@ export default class extends baseClass {
                     } else if (this.autoUpdateVRCX === 'Auto Download') {
                         this.downloadVRCXUpdate(
                             downloadUrl,
+                            downloadName,
                             hashUrl,
                             size,
-                            name,
+                            releaseName,
                             type
                         );
                     }
@@ -288,6 +339,7 @@ export default class extends baseClass {
         },
 
         restartVRCX(isUpgrade) {
+            // TODO: Linux support
             AppApi.RestartApplication(isUpgrade);
         },
 

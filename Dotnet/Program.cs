@@ -21,7 +21,7 @@ namespace VRCX
         public static string ConfigLocation { get; private set; }
         public static string Version { get; private set; }
         public static bool LaunchDebug;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 #if !LINUX
         public static VRCXVRInterface VRCXVRInstance { get; private set; }
 #endif
@@ -216,8 +216,8 @@ namespace VRCX
             VRCXStorage.Instance.Load();
             BrowserSubprocess.Start();
             ConfigureLogger();
-            Update.Check();
             GetVersion();
+            Update.Check();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -271,8 +271,8 @@ namespace VRCX
         public static void Init()
         {
             ConfigureLogger();
-            Update.Check();
             GetVersion();
+            Update.Check();
 
             logger.Info("{0} Starting...", Version);
 

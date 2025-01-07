@@ -1093,13 +1093,6 @@
             "cancel": "Отмена",
             "save": "Сохранить"
         },
-        "download_history": {
-            "header": "История загрузок",
-            "queue": "Очередь:",
-            "history": "История:",
-            "cancel_all": "Отменить все",
-            "close": "Закрыть"
-        },
         "vrcx_updater": {
             "header": "Обновление VRCX",
             "latest_version": "У вас установлена актуальная версия VRCX.",

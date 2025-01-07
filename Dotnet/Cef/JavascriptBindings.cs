@@ -14,7 +14,7 @@ namespace VRCX
             repository.Register("SQLite", SQLiteLegacy.Instance);
             repository.Register("LogWatcher", LogWatcher.Instance);
             repository.Register("Discord", Discord.Instance);
-            repository.Register("AssetBundleCacher", AssetBundleCacher.Instance);
+            repository.Register("AssetBundleManager", AssetBundleManager.Instance);
         }
         
         public static void ApplyVrJavascriptBindings(IJavascriptObjectRepository repository)

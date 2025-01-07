@@ -1,16 +1,16 @@
 using System;
 using System.IO;
-using System.Net;
 using CefSharp;
 using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
+using NLog;
 
 namespace VRCX
 {
     public class CefService
     {
         public static readonly CefService Instance;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         static CefService()
         {

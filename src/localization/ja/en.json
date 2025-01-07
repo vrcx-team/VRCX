@@ -1084,13 +1084,6 @@
             "cancel": "キャンセル",
             "save": "保存"
         },
-        "download_history": {
-            "header": "ダウンロード履歴",
-            "queue": "キュー:",
-            "history": "履歴:",
-            "cancel_all": "全てキャンセル",
-            "close": "閉じる"
-        },
         "vrcx_updater": {
             "header": "VRCX アップデーター",
             "latest_version": "VRCXは最新版です。",

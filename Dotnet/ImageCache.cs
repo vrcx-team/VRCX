@@ -28,6 +28,7 @@ internal static class ImageCache
             httpClientHandler.Proxy = WebApi.Proxy;
             
         httpClient = new HttpClient(httpClientHandler);
+        httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
     }
 
     public static async Task<string> GetImage(string url, string fileId, string version)
@@ -58,7 +59,6 @@ internal static class ImageCache
         }
 
         var request = new HttpRequestMessage(HttpMethod.Get, url);
-        request.Headers.Add("User-Agent", Program.Version);
         if (!string.IsNullOrEmpty(cookieString))
             request.Headers.Add("Cookie", cookieString);
         
@@ -103,7 +103,6 @@ internal static class ImageCache
         }
         
         var request = new HttpRequestMessage(HttpMethod.Get, url);
-        request.Headers.Add("User-Agent", Program.Version);
         if (!string.IsNullOrEmpty(cookieString))
             request.Headers.Add("Cookie", cookieString);
         

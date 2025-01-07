@@ -20,8 +20,8 @@ html
             //- menu
             .x-menu-container
                 //- download progress, update pending
-                .pending-update(v-if="downloadInProgress" @click="showDownloadDialog")
-                    el-progress(type="circle" width="50" stroke-width="3" :percentage="downloadProgress" :format="downloadProgressText")
+                .pending-update(v-if="updateInProgress" @click="showVRCXUpdateDialog")
+                    el-progress(type="circle" width="50" stroke-width="3" :percentage="updateProgress" :format="updateProgressText")
                 .pending-update(v-else-if="pendingVRCXUpdate || pendingVRCXInstall")
                     el-button(type="default" @click="showVRCXUpdateDialog" size="mini" icon="el-icon-download" circle style="font-size:14px;height:50px;width:50px")
 
