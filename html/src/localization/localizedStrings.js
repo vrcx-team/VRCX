@@ -23,7 +23,7 @@ import pt from './pt/en.json' assert { type: 'JSON' };
 import elements_pt from 'element-ui/lib/locale/lang/pt';
 
 import cz from './cz/en.json' assert { type: 'JSON' };
-import elements_cz from 'element-ui/lib/locale/lang/cz';
+import elements_cz from 'element-ui/lib/locale/lang/cs-CZ';
 
 import ru_RU from './ru/en.json' assert { type: 'JSON' };
 import elements_ru from 'element-ui/lib/locale/lang/ru-RU';
