@@ -794,6 +794,7 @@
                 "download_package": "유니티 패키지 다운로드",
                 "delete": "삭제",
                 "delete_impostor": "Delete Impostor",
+                "regenerate_impostor": "Regenerate Impostor",
                 "create_impostor": "Create Impostor"
             },
             "info": {
