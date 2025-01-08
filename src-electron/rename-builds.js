@@ -13,13 +13,11 @@ try {
     process.exit(1);
 }
 
-const formattedVersion = version.replace(/\./g, '');
-
 const oldAppImage = path.join(buildDir, `VRCX_Version.AppImage`);
 const oldTarXz = path.join(buildDir, `VRCX_Version.tar.xz`);
 
-const newAppImage = path.join(buildDir, `VRCX_${formattedVersion}.AppImage`);
-const newTarXz = path.join(buildDir, `VRCX_${formattedVersion}.tar.xz`);
+const newAppImage = path.join(buildDir, `VRCX_${version}.AppImage`);
+const newTarXz = path.join(buildDir, `VRCX_${version}.tar.xz`);
 
 try {
     if (fs.existsSync(oldAppImage)) {
