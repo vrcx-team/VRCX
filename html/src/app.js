@@ -22412,26 +22412,26 @@ speechSynthesis.getVoices();
     };
 
     // #endregion
-    // #region | V-Bucks
+    // #region | VRChat Credits
 
-    API.$on('VBUCKS', function (args) {
-        this.currentUser.$vbucks = args.json?.balance;
+    API.$on('VRCCREDITS', function (args) {
+        this.currentUser.$getVRChatCredits = args.json?.balance;
     });
 
-    API.getVbucks = function () {
+    API.getVRChatCredits = function () {
         return this.call(`user/${this.currentUser.id}/balance`, {
             method: 'GET'
         }).then((json) => {
             var args = {
                 json
             };
-            this.$emit('VBUCKS', args);
+            this.$emit('VRCCREDITS', args);
             return args;
         });
     };
 
-    $app.methods.getVbucks = function () {
-        API.getVbucks();
+    $app.methods.getVRChatCredits = function () {
+        API.getVRChatCredits();
     };
 
     // #endregion

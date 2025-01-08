@@ -157,7 +157,7 @@
                 "two_factor": "双重认证 (2FA)",
                 "two_factor_enabled": "已启用",
                 "two_factor_disabled": "已停用",
-                "v_bucks": "拥有的 VRChat 点数",
+                "vrchat_credits": "拥有的 VRChat 点数",
                 "refresh": "点击以刷新",
                 "logout": "退出登录",
                 "manage_gallery_icon": "管理上传的图片/图标/表情",
