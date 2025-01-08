@@ -192,8 +192,8 @@ speechSynthesis.getVoices();
             this.loginForm.savedCredentials =
                 (await configRepository.getString('savedCredentials')) !== null
                     ? JSON.parse(
-                          await configRepository.getString('savedCredentials')
-                      )
+                        await configRepository.getString('savedCredentials')
+                    )
                     : {};
             this.loginForm.lastUserLoggedIn =
                 await configRepository.getString('lastUserLoggedIn');
@@ -202,11 +202,11 @@ speechSynthesis.getVoices();
                 if (
                     !this.enablePrimaryPassword &&
                     (await configRepository.getString('lastUserLoggedIn')) !==
-                        null
+                    null
                 ) {
                     var user =
                         this.loginForm.savedCredentials[
-                            this.loginForm.lastUserLoggedIn
+                        this.loginForm.lastUserLoggedIn
                         ];
                     if (user?.loginParmas?.endpoint) {
                         API.endpointDomain = user.loginParmas.endpoint;
@@ -2026,7 +2026,7 @@ speechSynthesis.getVoices();
                     if (object === Object(object)) {
                         details = object;
                     }
-                } catch (err) {}
+                } catch (err) { }
             }
             ref.details = details;
         }
@@ -3835,7 +3835,7 @@ speechSynthesis.getVoices();
         if (this.loginForm.lastUserLoggedIn) {
             var user =
                 this.loginForm.savedCredentials[
-                    this.loginForm.lastUserLoggedIn
+                this.loginForm.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
                 await webApiService.clearCookies();
@@ -4737,7 +4737,7 @@ speechSynthesis.getVoices();
                     });
                     worldName = args.ref.name;
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
         return worldName;
     };
@@ -4760,7 +4760,7 @@ speechSynthesis.getVoices();
                 groupId
             });
             groupName = args.ref.name;
-        } catch (err) {}
+        } catch (err) { }
         return groupName;
     };
 
@@ -5647,7 +5647,7 @@ speechSynthesis.getVoices();
             props.currentAvatarThumbnailImageUrl[0] &&
             props.currentAvatarThumbnailImageUrl[1] &&
             props.currentAvatarThumbnailImageUrl[0] ===
-                props.currentAvatarThumbnailImageUrl[1]
+            props.currentAvatarThumbnailImageUrl[1]
         ) {
             imageMatches = true;
         }
@@ -5706,7 +5706,7 @@ speechSynthesis.getVoices();
                     avatarInfo = await $app.getAvatarName(
                         currentAvatarImageUrl
                     );
-                } catch (err) {}
+                } catch (err) { }
                 var previousAvatarInfo = {
                     ownerId: '',
                     avatarName: ''
@@ -5715,7 +5715,7 @@ speechSynthesis.getVoices();
                     previousAvatarInfo = await $app.getAvatarName(
                         previousCurrentAvatarImageUrl
                     );
-                } catch (err) {}
+                } catch (err) { }
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Avatar',
@@ -5824,67 +5824,52 @@ speechSynthesis.getVoices();
     };
 
     /**
-     * Function that find the differences between both strings, and return the differences and their position in the strings.
-     * @param {*} s1 String 1
-     * @param {*} s2 String 2
-     * @returns
+     * Function to find the longest common subsequence between two strings
+     * @param {string} str1
+     * @param {string} str2
+     * @returns {number[][]} A matrix that contains the longest common subsequence between both strings
      */
-    $app.methods.findDifferences = function (s1, s2) {
-        const dp = $app.lcsMatrix(s1, s2);
-        const differencesS1 = [];
-        const differencesS2 = [];
-        let i = s1.length;
-        let j = s2.length;
-
-        // Backtrack to find differences
-        while (i > 0 && j > 0) {
-            if (s1[i - 1] === s2[j - 1]) {
-                i--;
-                j--;
-            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-                differencesS1.push({ index: i - 1, char: s1[i - 1] }); // Deletion in s1
-                i--;
-            } else {
-                differencesS2.push({ index: j - 1, char: s2[j - 1] }); // Insertion in s2
-                j--;
+    $app.methods.longestCommonSubsequence = function longestCommonSubsequence(str1, str2) {
+        let lcs = [];
+        for (let i = 0; i <= str1.length; i++) {
+            lcs.push(new Array(str2.length + 1).fill(0));
+        }
+        for (let i = str1.length - 1; i >= 0; i--) {
+            for (let j = str2.length - 1; j >= 0; j--) {
+                if (str1[i] == str2[j]) {
+                    lcs[i][j] = lcs[i + 1][j + 1] + 1;
+                } else {
+                    lcs[i][j] = Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+                }
             }
         }
+        return lcs;
+    }
 
-        // Remaining characters in s1 (deletions)
-        while (i > 0) {
-            differencesS1.push({ index: i - 1, char: s1[i - 1] });
-            i--;
+    /**
+     * Merge differences in both strings to get the longest common subsequence
+     * @param {{text: string, type: "add" | "remove" | "same"}[]} res
+     * @returns {{text: string, type: "add" | "remove" | "same"}[]} An array that contains the differences between both strings
+     */
+    $app.methods.regoupDifferences = function regoupDifferences(res) {
+        let regrouped = [];
+        let text = "";
+        let type = "";
+        for (let i = 0; i < res.length; i++) {
+            if (i == 0) {
+                text = res[i].text;
+                type = res[i].type;
+            } else if (res[i].type == type) {
+                text += res[i].text;
+            } else {
+                regrouped.push({ text: text, type: type });
+                text = res[i].text;
+                type = res[i].type;
+            }
         }
-
-        // Remaining characters in s2 (insertions)
-        while (j > 0) {
-            differencesS2.push({ index: j - 1, char: s2[j - 1] });
-            j--;
-        }
-
-        return {
-            differencesS1: differencesS1.reverse(), // Reverse to maintain original order
-            differencesS2: differencesS2.reverse()
-        };
-    };
-
-    $app.methods.findSequences = function (arr) {
-        if (arr.length === 0) return [];
-        return arr.reduce(
-            (p, c, i) => {
-                if (i === 0) return p;
-                let lastSeq = p.pop();
-                p.push(lastSeq);
-                if (c - lastSeq[1] !== 1) {
-                    p.push([c, c]);
-                } else {
-                    lastSeq[1] = c;
-                }
-                return p;
-            },
-            [[arr[0], arr[0]]]
-        );
-    };
+        regrouped.push({ text: text, type: type });
+        return regrouped;
+    }
 
     /**
      * Function that format the differences between two strings with HTML tags
@@ -5895,40 +5880,118 @@ speechSynthesis.getVoices();
      * @param {*} markerEndTag
      * @returns An array that contains both the string 1 and string 2, which the differences are formatted with HTML tags
      */
-    $app.methods.formatDifference = function (
-        s1,
-        s2,
-        markerStartTag = '<u><font color="yellow">',
-        markerEndTag = '</font></u>'
+    $app.methods.formatDifference = function getWordDifferences(
+        oldString,
+        newString,
+        markerAddition = '<span class="x-text-added">{{text}}</span>',
+        markerDeletion = '<span class="x-text-removed">{{text}}</span>'
     ) {
-        const texts = [s1, s2];
-        const differs = $app.findDifferences(s1, s2);
-        return Object.values(differs)
-            .map((i) => $app.findSequences(i.map((j) => j.index)))
-            .map((i, k) => {
-                let stringBuilder = [];
-                let lastPos = 0;
-                let key = Date.now();
-                i.forEach((j) => {
-                    stringBuilder.push(texts[k].substring(lastPos, j[0]));
-                    stringBuilder.push(
-                        `{{diffTag-${key}}}${texts[k].substring(j[0], j[1] + 1)}{{diffTagClose-${key}}}`
-                    );
-                    lastPos = j[1] + 1;
-                });
-                stringBuilder.push(texts[k].substr(lastPos, texts[k].length));
-                let returnVal = stringBuilder
-                    .join('')
-                    .replaceAll(/&/g, '&amp;')
-                    .replaceAll(/</g, '&lt;')
-                    .replaceAll(/>/g, '&gt;')
-                    .replaceAll(/"/g, '&quot;')
-                    .replaceAll(/'/g, '&#039;')
-                    .replaceAll(`{{diffTag-${key}}}`, markerStartTag)
-                    .replaceAll(`{{diffTagClose-${key}}}`, markerEndTag);
-                return returnVal;
-            });
-    };
+        [oldString, newString] = [oldString, newString].map((s) => s
+            .replaceAll(/&/g, '&amp;')
+            .replaceAll(/</g, '&lt;')
+            .replaceAll(/>/g, '&gt;')
+            .replaceAll(/"/g, '&quot;')
+            .replaceAll(/'/g, '&#039;')
+            .replaceAll(/\n/g, '<br>')
+        );
+
+        const oldWords = oldString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
+        const newWords = newString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
+      
+        function findLongestMatch(oldStart, oldEnd, newStart, newEnd) {
+          let bestOldStart = oldStart;
+          let bestNewStart = newStart;
+          let bestSize = 0;
+      
+          const lookup = new Map();
+          for (let i = oldStart; i < oldEnd; i++) {
+            const word = oldWords[i];
+            if (!lookup.has(word)) lookup.set(word, []);
+            lookup.get(word).push(i);
+          }
+      
+          for (let j = newStart; j < newEnd; j++) {
+            const word = newWords[j];
+            if (!lookup.has(word)) continue;
+      
+            for (const i of lookup.get(word)) {
+              let size = 0;
+              while (
+                i + size < oldEnd &&
+                j + size < newEnd &&
+                oldWords[i + size] === newWords[j + size]
+              ) {
+                size++;
+              }
+              if (size > bestSize) {
+                bestOldStart = i;
+                bestNewStart = j;
+                bestSize = size;
+              }
+            }
+          }
+      
+          return { oldStart: bestOldStart, newStart: bestNewStart, size: bestSize };
+        }
+      
+        function buildDiff(oldStart, oldEnd, newStart, newEnd) {
+          const result = [];
+          const match = findLongestMatch(oldStart, oldEnd, newStart, newEnd);
+      
+          if (match.size > 0) {
+            // Handle differences before the match
+            if (oldStart < match.oldStart || newStart < match.newStart) {
+              result.push(
+                ...buildDiff(oldStart, match.oldStart, newStart, match.newStart)
+              );
+            }
+      
+            // Add the matched words
+            result.push(oldWords.slice(match.oldStart, match.oldStart + match.size).join(" "));
+      
+            // Handle differences after the match
+            if (match.oldStart + match.size < oldEnd || match.newStart + match.size < newEnd) {
+              result.push(
+                ...buildDiff(
+                  match.oldStart + match.size,
+                  oldEnd,
+                  match.newStart + match.size,
+                  newEnd
+                )
+              );
+            }
+          } else {
+            function build(words, start, end, pattern) {
+                let r = [];
+                let ts = words.slice(start, end)
+                    .filter((w) => w.length > 0)
+                    .join(" ")
+                    .split("<br>");
+                for (let i = 0; i < ts.length; i++) {
+                    if (i > 0) r.push("<br>");
+                    if (ts[i].length < 1) continue;
+                    r.push(pattern.replace("{{text}}", ts[i]));
+                }
+                return r;
+            }
+    
+            // Add deletions
+            if (oldStart < oldEnd)
+                result.push(...build(oldWords, oldStart, oldEnd, markerDeletion));
+            
+            // Add insertions
+            if (newStart < newEnd)
+                result.push(...build(newWords, newStart, newEnd, markerAddition));
+          }
+      
+          return result;
+        }
+
+        return buildDiff(0, oldWords.length, 0, newWords.length)
+        .join(" ")
+        .replace(/<br>[ ]+<br>/g, "<br><br>")
+        .replace(/<br> /g, "<br>");
+    }
 
     // #endregion
     // #region | App: gameLog
@@ -6178,8 +6241,8 @@ speechSynthesis.getVoices();
 
     $app.methods.formatSeconds = function (duration) {
         var pad = function (num, size) {
-                return `000${num}`.slice(size * -1);
-            },
+            return `000${num}`.slice(size * -1);
+        },
             time = parseFloat(duration).toFixed(3),
             hours = Math.floor(time / 60 / 60),
             minutes = Math.floor(time / 60) % 60,
@@ -8348,7 +8411,7 @@ speechSynthesis.getVoices();
         speechSynthesis.cancel();
         if (
             (await configRepository.getString('VRCX_notificationTTS')) ===
-                'Never' &&
+            'Never' &&
             this.notificationTTS !== 'Never'
         ) {
             this.speak('Notification text-to-speech enabled');
@@ -10617,9 +10680,8 @@ speechSynthesis.getVoices();
         if (type === 'search') {
             try {
                 var response = await webApiService.execute({
-                    url: `${
-                        this.avatarRemoteDatabaseProvider
-                    }?${type}=${encodeURIComponent(search)}&n=5000`,
+                    url: `${this.avatarRemoteDatabaseProvider
+                        }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
                         Referer: 'https://vrcx.app'
@@ -17472,7 +17534,7 @@ speechSynthesis.getVoices();
             try {
                 var args = await API.getFavoriteWorlds(params);
                 worldLists.push([list.displayName, list.visibility, args.json]);
-            } catch (err) {}
+            } catch (err) { }
         }
         this.userFavoriteWorlds = worldLists;
         this.userDialog.isFavoriteWorldsLoading = false;
@@ -17644,7 +17706,7 @@ speechSynthesis.getVoices();
 
     $app.methods.sortCurrentUserGroups = async function () {
         var D = this.userDialog;
-        var sortMethod = function () {};
+        var sortMethod = function () { };
 
         switch (D.groupSorting.value) {
             case 'alphabetical':

@@ -937,3 +937,18 @@ i.x-status-icon.red {
 .el-collapse-item .el-tag--mini {
     line-height: 17px;
 }
+
+.x-text-removed {
+    text-decoration: line-through;
+    color: #ff0000;
+    background-color: rgba(255, 0, 0, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
+
+.x-text-added {
+    color: rgb(76, 255, 80);
+    background-color: rgba(76, 255, 80, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
