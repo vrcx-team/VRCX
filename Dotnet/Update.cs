@@ -30,6 +30,8 @@ namespace VRCX
         private static readonly HttpClient httpClient;
         private static CancellationToken _cancellationToken;
         public static int UpdateProgress;
+        private static string AppImagePath = string.Empty;
+        private static string AppImagePathOld = string.Empty;
 
         static Update()
         {
@@ -39,6 +41,16 @@ namespace VRCX
             
             httpClient = new HttpClient(httpClientHandler);
             httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
+        }
+
+        public void Init(string appImagePath = "")
+        {
+            if (string.IsNullOrEmpty(appImagePath))
+                return;
+            
+            AppImagePath = appImagePath;
+            AppImagePathOld = appImagePath + ".old";
+            logger.Info($"AppImagePath: {AppImagePath}");
         }
 
         public static void Check()
@@ -67,6 +79,8 @@ namespace VRCX
             
             try
             {
+                if (File.Exists(VrcxSetupExecutable))
+                    File.Delete(VrcxSetupExecutable);
                 File.Move(UpdateExecutable, VrcxSetupExecutable);
                 var vrcxProcess = new Process
                 {
@@ -123,10 +137,10 @@ namespace VRCX
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Failed to download the file. Status code: {response.StatusCode}");
 
-                var fileName = GetFileNameFromContentDisposition(response);
-                var tempPath = Path.Combine(Path.GetTempPath(), "VRCX");
-                Directory.CreateDirectory(tempPath);
-                var filePath = Path.Combine(tempPath, fileName);
+            var fileName = GetFileNameFromContentDisposition(response);
+            var tempPath = Path.Combine(Path.GetTempPath(), "VRCX");
+            Directory.CreateDirectory(tempPath);
+            var filePath = Path.Combine(tempPath, fileName);
             await using var fileStream = File.Create(filePath);
             await response.Content.CopyToAsync(fileStream, cancellationToken);
             return filePath;
@@ -159,7 +173,7 @@ namespace VRCX
         {
             _cancellationToken = CancellationToken.None;
             const int chunkSize = 8192;
-            
+
             if (File.Exists(TempDownload))
                 File.Delete(TempDownload);
             if (File.Exists(HashLocation))
@@ -241,7 +255,21 @@ namespace VRCX
                 logger.Info("Hash check passed");
             }
 
+            if (string.IsNullOrEmpty(AppImagePath))
+            {
+                if (File.Exists(UpdateExecutable))
+                    File.Delete(UpdateExecutable);
                 File.Move(TempDownload, UpdateExecutable);
+            }
+            else
+            {
+                // Linux
+                if (File.Exists(AppImagePathOld))
+                    File.Delete(AppImagePathOld);
+                File.Move(AppImagePath, AppImagePathOld);
+                File.Move(TempDownload, AppImagePath);
+            }
+
             UpdateProgress = 0;
             _cancellationToken = CancellationToken.None;
         }

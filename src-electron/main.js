@@ -4,7 +4,6 @@ const {
     BrowserWindow,
     ipcMain,
     app,
-    globalShortcut,
     Tray,
     Menu,
     dialog,
@@ -27,6 +26,7 @@ interopApi.getDotNetObject('AppApiElectron').Init();
 interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
 interopApi.getDotNetObject('LogWatcher').Init();
+interopApi.getDotNetObject('Update').Init(process.env.APPIMAGE);
 
 ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
