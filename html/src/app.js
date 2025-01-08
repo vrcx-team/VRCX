@@ -21801,7 +21801,9 @@ speechSynthesis.getVoices();
                     ref.name.toLowerCase().includes(search) ||
                     ref.authorName.toLowerCase().includes(search)
                 ) {
-                    results.push(ref);
+                    if (!results.some((r) => r.id == ref.id)) {
+                        results.push(ref);
+                    }
                 }
             }
         }
@@ -21815,7 +21817,9 @@ speechSynthesis.getVoices();
                 ref.name.toLowerCase().includes(search) ||
                 ref.authorName.toLowerCase().includes(search)
             ) {
-                results.push(ref);
+                if (!results.some((r) => r.id == ref.id)) {
+                    results.push(ref);
+                }
             }
         }
 
