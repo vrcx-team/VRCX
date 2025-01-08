@@ -8,6 +8,11 @@ const packageJsonPath = path.join(rootDir, 'package.json');
 let version = '';
 try {
     version = fs.readFileSync(versionFilePath, 'utf8').trim();
+    var index = version.indexOf('T');
+    if (index > 0) {
+        // Remove time part from version
+        version = version.substring(0, index).replaceAll('-', '.');
+    }
 } catch (err) {
     console.error('Error reading Version file:', err);
     process.exit(1);

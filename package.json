@@ -8,7 +8,7 @@
         "localization": "node ./src/localization/localizationHelperCLI.js",
         "prod": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode production",
         "prod-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode production",
-        "build-electron": "node ./src-electron/patch-package-version.js && electron-builder",
+        "build-electron": "node ./src-electron/patch-package-version.js && electron-builder --publish never",
         "postbuild-electron": "node ./src-electron/patch-node-api-dotnet.js && node ./src-electron/rename-builds.js",
         "start-electron": "electron ."
     },

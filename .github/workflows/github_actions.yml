@@ -21,7 +21,7 @@ jobs:
           export FILENAME="$(date '+%Y-%m-%dT%H.%M')-${git_hash}"
           echo "::set-output name=version::${FILENAME}"
 
-  build_dotnet:
+  build_dotnet_windows:
     runs-on: windows-latest
     needs: set_version
 
@@ -36,38 +36,80 @@ jobs:
         run: |
           echo "${{ needs.set_version.outputs.version }}" > Version
           cat Version
-      - name: Build .NET Application
+      - name: Build Cef .NET Application
         run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
-      - name: Upload dotnet artifacts
+      - name: Upload Cef dotnet artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Release
+          name: Cef-Release
           path: build/Cef
 
-  build_node:
+  build_dotnet_linux:
     runs-on: ubuntu-latest
     needs: set_version
 
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
+      - name: Set version
+        run: |
+          echo "${{ needs.set_version.outputs.version }}" > Version
+          cat Version
+      - name: Build Electron .NET Application
+        run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+      - name: Upload Electron dotnet artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Electron-Release
+          path: build/Electron
+
+  build_node:
+    runs-on: ubuntu-latest
+    needs: [set_version, build_dotnet_linux]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set version
+        run: |
+          echo "${{ needs.set_version.outputs.version }}" > Version
+          cat Version
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Restore dependencies
         run: npm ci
-      - name: Build
+      - name: Build Cef-html
         run: npm run prod
-      - name: Upload html artifacts
+      - name: Upload Cef-html artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: html
+          name: Cef-html
           path: build/html
+
+      - name: Build Electron-html
+        run: npm run prod-linux
+      - name: Download Electron dotnet artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Electron-Release
+          path: build/Electron
+      - name: Build AppImage
+        run: npm run build-electron
+      - name: Upload Electron AppImage artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Electron-AppImage
+          path: "build/VRCX_${{ needs.set_version.outputs.version }}.AppImage"
 
   create_setup:
     runs-on: ubuntu-latest
-    needs: [set_version, build_node, build_dotnet]
+    needs: [set_version, build_node, build_dotnet_windows, build_dotnet_linux]
 
     steps:
       - uses: actions/checkout@v3
@@ -76,16 +118,16 @@ jobs:
         run: sudo apt update && sudo apt install -y p7zip-full nsis nsis-pluginapi
       - name: Set plugin permissions
         run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
-      - name: Download dotnet artifacts
+      - name: Download Cef dotnet artifacts
         uses: actions/download-artifact@v3
         with:
-          name: Release
+          name: Cef-Release
           path: build/Cef
-      - name: Download html artifacts
+      - name: Download Cef-html artifacts
         uses: actions/download-artifact@v3
         with:
-          name: html
-          path: build/Cef
+          name: Cef-html
+          path: build/Cef/html
       - name: Create nsis installer
         uses: joncloud/makensis-action@v4
         with:
@@ -101,11 +143,17 @@ jobs:
           file_name="VRCX_${{ needs.set_version.outputs.version }}.zip"
           cd build/Cef
           7z a -tzip ${file_name} * -mx=7 -xr0!*.log
-          mv ${file_name} ../../../${file_name}
+          mv ${file_name} ../../${file_name}
           echo "Zip FileName: ${file_name}"
-      - name: Generate setup hash
+
+      - name: Download Electron AppImage artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Electron-AppImage
+
+      - name: Generate hashes
         run: |
-          sha256sum "VRCX_${{ needs.set_version.outputs.version }}_Setup.exe" > "SHA256SUMS.txt"
+          sha256sum "VRCX_${{ needs.set_version.outputs.version }}_Setup.exe" "VRCX_${{ needs.set_version.outputs.version }}.AppImage" > "SHA256SUMS.txt"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -122,6 +170,7 @@ jobs:
           files: |
             VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
             VRCX_${{ needs.set_version.outputs.version }}.zip
+            VRCX_${{ needs.set_version.outputs.version }}.AppImage
             SHA256SUMS.txt
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-url: ${{ steps.create_release.outputs.upload_url }}
