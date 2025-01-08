@@ -213,6 +213,45 @@ namespace VRCX
             return imageSaveMemoryStream.ToArray();
         }
 
+        public async Task CropAllPrints(string ugcFolderPath)
+        {
+            var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Prints");
+            var files = Directory.GetFiles(folder, "*.png", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                await CropPrintImage(file);
+            }
+        }
+
+        public async Task<bool> CropPrintImage(string path)
+        {
+            var tempPath = path + ".temp";
+            var bytes = await File.ReadAllBytesAsync(path);
+            var ms = new MemoryStream(bytes);
+            Bitmap print = new Bitmap(ms);
+            // validation step to ensure image is actually a print
+            if (print.Width != 2048 || print.Height != 1440)
+            {
+                return false;
+            }
+            var point = new Point(64, 69);
+            var size = new Size(1920, 1080);
+            var rectangle = new Rectangle(point, size);
+            Bitmap cropped = print.Clone(rectangle, print.PixelFormat);
+            cropped.Save(tempPath);
+            if (ScreenshotHelper.HasTXt(path))
+            {
+                var success = ScreenshotHelper.CopyTXt(path, tempPath);
+                if (!success)
+                {
+                    File.Delete(tempPath);
+                    return false;
+                }
+            }
+            File.Move(tempPath, path, true);
+            return true;
+        }
+
         /// <summary>
         /// Computes the signature of the file represented by the specified base64-encoded string using the librsync library.
         /// </summary>
@@ -581,7 +620,7 @@ namespace VRCX
                 {
                     if (enabled)
                     {
-                        var path = Application.ExecutablePath;
+                        var path = System.Windows.Forms.Application.ExecutablePath;
                         key.SetValue("VRCX", $"\"{path}\" --startup");
                     }
                     else
@@ -615,7 +654,7 @@ namespace VRCX
             {
                 MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
                 {
-                    var image = Image.FromFile(path);
+                    var image = System.Drawing.Image.FromFile(path);
                     // Clipboard.SetImage(image);
                     var data = new DataObject();
                     data.SetData(DataFormats.Bitmap, image);
@@ -654,26 +693,30 @@ namespace VRCX
             return null;
         }
 
-        public async Task<bool> SavePrintToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
+        public async Task<string> SavePrintToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
         {
             var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Prints", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
             var filePath = Path.Combine(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))
-                return false;
+                return null;
 
-            return await ImageCache.SaveImageToFile(url, filePath);
+            var success = await ImageCache.SaveImageToFile(url, filePath);
+
+            return success ? filePath : null;
         }
 
-        public async Task<bool> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
+        public async Task<string> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
         {
             var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Stickers", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
             var filePath = Path.Combine(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))
-                return false;
+                return null;
 
-            return await ImageCache.SaveImageToFile(url, filePath);
+            var success = await ImageCache.SaveImageToFile(url, filePath);
+
+            return success ? filePath : null;
         }
 
         public bool IsRunningUnderWine()

@@ -507,7 +507,11 @@
                     "save_instance_prints_to_file": {
                         "header": "Save Instance Prints To File",
                         "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
-                        "description": "Save spawned prints to your VRChat Pictures folder"
+                        "description": "Save spawned prints to your VRChat Pictures folder",
+                        "crop": "Automatically crop saved prints to remove the white border",
+                        "crop_convert_old": "Do you want to crop all prints that have already been saved?",
+                        "crop_convert_old_confirm": "Yes",
+                        "crop_convert_old_cancel": "No"
                     },
                     "save_instance_stickers_to_file": {
                         "header": "Save Instance Stickers To File",

@@ -8603,6 +8603,10 @@ speechSynthesis.getVoices();
         );
 
         await configRepository.setBool(
+            'VRCX_cropInstancePrints',
+            this.cropInstancePrints
+        );
+        await configRepository.setBool(
             'VRCX_saveInstanceStickers',
             this.saveInstanceStickers
         );
@@ -18102,19 +18106,39 @@ speechSynthesis.getVoices();
             .replace(/T/g, '_')
             .replace(/Z/g, '');
         var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
-        var status = await AppApi.SaveStickerToFile(
+        var filePath = await AppApi.SaveStickerToFile(
             imageUrl,
             this.ugcFolderPath,
             monthFolder,
             fileName
         );
-        if (status) {
+        if (filePath) {
             console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
         }
     };
 
     // #endregion
     // #region | Prints
+    $app.methods.cropPrintsChanged = function () {
+        if (!this.cropInstancePrints)
+            return;
+        this.$confirm(
+            $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'), 
+            { 
+                confirmButtonText: $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'), 
+                cancelButtonText: $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'), 
+                type: 'info', 
+                showInput: false, 
+                callback: (action) => { 
+                    if (action === 'confirm') { 
+                        AppApi.CropAllPrints(this.ugcFolderPath); 
+                    } 
+                } 
+            });
+        
+        this.saveVRCXWindowOption();
+    }
+
     API.$on('LOGIN', function () {
         $app.printTable = [];
     });
@@ -18284,6 +18308,11 @@ speechSynthesis.getVoices();
         false
     );
 
+    $app.data.cropInstancePrints = await configRepository.getBool(
+        'VRCX_cropInstancePrints',
+        false
+    );
+
     $app.data.saveInstanceStickers = await configRepository.getBool(
         'VRCX_saveInstanceStickers',
         false
@@ -18325,13 +18354,29 @@ speechSynthesis.getVoices();
     };
 
     $app.data.printCache = [];
+    $app.data.printQueue = [];
+    $app.data.printQueueWorker = undefined;
 
-    $app.methods.trySavePrintToFile = async function (printId) {
+    $app.methods.queueSavePrintToFile = function (printId) {
         if ($app.printCache.includes(printId)) return;
         $app.printCache.push(printId);
         if ($app.printCache.length > 100) {
             $app.printCache.shift();
         }
+
+        $app.printQueue.push(printId);
+
+        if (!$app.printQueueWorker) {
+            $app.printQueueWorker = workerTimers.setInterval(() => {
+                let printId = $app.printQueue.shift();
+                if (printId) {
+                    $app.trySavePrintToFile(printId);
+                }
+            }, 2_500);
+        }
+    }
+
+    $app.methods.trySavePrintToFile = async function (printId) {
         var args = await API.getPrint({ printId });
         var imageUrl = args.json?.files?.image;
         if (!imageUrl) {
@@ -18341,14 +18386,23 @@ speechSynthesis.getVoices();
         var createdAt = this.getPrintLocalDate(args.json);
         var monthFolder = createdAt.toISOString().slice(0, 7);
         var fileName = this.getPrintFileName(args.json);
-        var status = await AppApi.SavePrintToFile(
+        var filePath = await AppApi.SavePrintToFile(
             imageUrl,
             this.ugcFolderPath,
             monthFolder,
             fileName
         );
-        if (status) {
+        if (filePath) {
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
+
+            if (this.cropInstancePrints) {
+                await AppApi.CropPrintImage(filePath);
+            }
+        }
+
+        if ($app.printQueue.length == 0) {
+            workerTimers.clearInterval($app.printQueueWorker);
+            $app.printQueueWorker = undefined;
         }
     };
 

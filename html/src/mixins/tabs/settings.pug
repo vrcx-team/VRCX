@@ -465,6 +465,11 @@ mixin settingsTab()
                         el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')")
                             i.el-icon-info
                     simple-switch(:label='$t("view.settings.advanced.advanced.save_instance_prints_to_file.description")' :value='saveInstancePrints' @change='saveVRCXWindowOption("VRCX_saveInstancePrints")' :long-label='true')
+                    br
+                    span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop') }}
+                    el-switch(v-model="cropInstancePrints" @change="cropPrintsChanged")
+                    br
+                    
                     span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}
                     simple-switch(:label='$t("view.settings.advanced.advanced.save_instance_stickers_to_file.description")' :value='saveInstanceStickers' @change='saveVRCXWindowOption("VRCX_saveInstanceStickers")' :long-label='true')
                 //- Advanced | Remote Avatar Database

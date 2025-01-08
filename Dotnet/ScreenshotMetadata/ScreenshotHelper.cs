@@ -15,7 +15,7 @@ namespace VRCX
     {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private static readonly byte[] pngSignatureBytes = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-        private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(Path.Combine(Program.AppDataDirectory, "metadataCache.db"));
+        private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(System.IO.Path.Combine(Program.AppDataDirectory, "metadataCache.db"));
         private static readonly Dictionary<string, ScreenshotMetadata> metadataCache = new Dictionary<string, ScreenshotMetadata>();
 
         public enum ScreenshotSearchType
@@ -287,6 +287,34 @@ namespace VRCX
             return true;
         }
 
+        public static bool CopyTXt(string sourceImage, string targetImage)
+        {
+            if (!File.Exists(sourceImage) || !IsPNGFile(sourceImage) ||
+                !File.Exists(targetImage) || !IsPNGFile(targetImage)) 
+                return false;
+
+            var sourceMetadata = ReadTXt(sourceImage);
+
+            if (sourceMetadata == null) 
+                return false;
+
+            var targetImageData = File.ReadAllBytes(targetImage);
+
+            var newChunkIndex = FindEndOfChunk(targetImageData, "IHDR");
+            if (newChunkIndex == -1) return false;
+
+            // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
+            var existingiTXt = FindChunkIndex(targetImageData, "iTXt");
+            if (existingiTXt != -1) return false;
+
+            var newFile = targetImageData.ToList();
+            newFile.InsertRange(newChunkIndex, sourceMetadata.ConstructChunkByteArray());
+
+            File.WriteAllBytes(targetImage, newFile.ToArray());
+
+            return true;
+        }
+
         /// <summary>
         ///     Reads a text description from a PNG file at the specified path.
         ///     Reads any existing iTXt PNG chunk in the target file, using the Description tag.
@@ -305,6 +333,30 @@ namespace VRCX
                 if (existingiTXt == null) return null;
 
                 return existingiTXt.GetText("Description");
+            }
+        }
+
+        public static bool HasTXt(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return false;
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
+            {
+                var existingiTXt = FindChunk(stream, "iTXt", true);
+
+                return existingiTXt != null;
+            }
+        }
+
+        public static PNGChunk ReadTXt(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return null;
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
+            {
+                var existingiTXt = FindChunk(stream, "iTXt", true);
+
+                return existingiTXt;
             }
         }
 
