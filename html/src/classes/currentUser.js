@@ -289,7 +289,7 @@ export default class extends baseClass {
                     $languages: [],
                     $locationTag: '',
                     $travelingToLocation: '',
-                    $vbucks: null,
+                    $vrchatcredits: null,
                     ...json
                 };
                 ref.$homeLocation = $app.parseLocation(ref.homeLocation);
