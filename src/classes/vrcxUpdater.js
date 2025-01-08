@@ -30,6 +30,12 @@ export default class extends baseClass {
                 name: 'Nightly',
                 urlReleases: 'https://api0.vrcx.app/releases/nightly',
                 urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
+            },
+            LinuxTest: {
+                name: 'LinuxTest',
+                urlReleases: 'https://api.github.com/repos/rs189/VRCX/releases',
+                urlLatest:
+                    'https://api.github.com/repos/rs189/VRCX/releases/latest'
             }
         },
         updateProgress: 0,
@@ -38,27 +44,6 @@ export default class extends baseClass {
 
     _methods = {
         async showVRCXUpdateDialog() {
-            // if (LINUX) {
-            //     this.$confirm(
-            //         "Currently, VRCX updater isn't supported on Linux. Please download the latest version from VRCX GitHub releases page.",
-            //         'VRCX updater',
-            //         {
-            //             distinguishCancelAndClose: true,
-            //             confirmButtonText: 'Open',
-            //             cancelButtonText: 'Close',
-            //             type: 'info',
-            //             callback: (action) => {
-            //                 if (action === 'confirm') {
-            //                     AppApi.OpenLink(
-            //                         'https://github.com/vrcx-team/VRCX/releases'
-            //                     );
-            //                 }
-            //             }
-            //         }
-            //     );
-            //     AppApi.OpenLink();
-            //     return;
-            // }
             this.$nextTick(() =>
                 $app.adjustDialogZ(this.$refs.VRCXUpdateDialog.$el)
             );

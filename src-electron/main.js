@@ -26,7 +26,6 @@ interopApi.getDotNetObject('AppApiElectron').Init();
 interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
 interopApi.getDotNetObject('LogWatcher').Init();
-interopApi.getDotNetObject('Update').Init(process.env.APPIMAGE);
 
 ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
@@ -38,6 +37,7 @@ const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
 let isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
 const AppApiElectron = interopApi.getDotNetObject('AppApiElectron');
 const version = AppApiElectron.GetVersion();
+let appImagePath = process.env.APPIMAGE;
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -229,7 +229,7 @@ function createTray() {
 }
 
 async function installVRCX() {
-    let appImagePath = process.env.APPIMAGE;
+    appImagePath = process.env.APPIMAGE;
     if (!appImagePath) {
         console.error('AppImage path is not available!');
         return;
@@ -273,6 +273,7 @@ async function installVRCX() {
     // Move the AppImage to the target directory
     try {
         fs.renameSync(appImagePath, targetAppImagePath);
+        appImagePath = targetAppImagePath;
         console.log('AppImage moved to:', targetAppImagePath);
     } catch (err) {
         console.error('Error moving AppImage:', err);
@@ -291,7 +292,7 @@ async function installVRCX() {
             // Create a .desktop file in ~/.local/share/applications/
             const desktopFile = `[Desktop Entry]
 Name=VRCX
-Exec=${targetAppImagePath}
+Exec=${appImagePath}
 Icon=${targetIconPath}
 Type=Application
 Categories=Network;InstantMessaging;Game;
@@ -385,6 +386,8 @@ app.whenReady().then(() => {
     createTray();
 
     installVRCX();
+
+    interopApi.getDotNetObject('Update').Init(appImagePath);
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
