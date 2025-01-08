@@ -222,11 +222,13 @@
                 },
                 "application": {
                     "header": "Aplicación",
-                    "startup": "Iniciar al ejecutar Windows",
+                    "startup": "Iniciar con Windows",
                     "minimized": "Iniciar minimizado",
-                    "tray": "Cerrar en la bandeja",
-                    "disable_gpu_acceleration": "Desactivar la aceleración de la GPU",
-                    "disable_gpu_acceleration_tooltip": "Sólo cambie esta opción si sabe lo que está haciendo, puede solucionar problemas con la interfaz de usuario, requiere reiniciar VRCX",
+                    "tray": "Minimizar a la bandeja al cerrar",
+                    "disable_gpu_acceleration": "Desactivar aceleración GPU",
+                    "disable_gpu_acceleration_tooltip": "Solo cambie esta opción si sabe lo que está haciendo, rompe el overlay de SteamVR, puede solucionar problemas con la interfaz, requiere reiniciar VRCX",
+                    "disable_vr_overlay_gpu_acceleration": "Desactivar aceleración GPU del overlay VR",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "La aceleración GPU del overlay VR puede causar que VRCX se bloquee o cause fugas de memoria VRAM, requiere reiniciar VRCX",
                     "proxy": "Ajustes de proxy"
                 },
                 "favorites": {
@@ -240,16 +242,17 @@
                 },
                 "automation": {
                     "header": "Automatización",
-                    "auto_state_change": "Cambio de estado automático",
-                    "auto_state_change_tooltip": "Cambia automáticamente el estado cuando hay otras personas en la instancia (Solo/Compañía)",
-                    "auto_state_change_off": "Desactivado",
-                    "auto_state_change_active_or_ask_me": "Activo / Pregúntame",
-                    "auto_state_change_active_or_busy": "Activo / Ocupado",
-                    "auto_state_change_join_me_or_ask_me": "Únete a mí / Pregúntame",
-                    "auto_state_change_join_me_or_busy": "Únete a mí / Ocupado",
-                    "auto_state_change_ask_me_or_busy": "Pregúntame / Ocupado",
+                    "auto_change_status": "Cambio de estado automático",
+                    "auto_state_change_tooltip": "Cambiar automáticamente el estado cuando haya otras personas en la instancia (Solo / Compañía)",
+                    "alone_condition": "Condición de estar solo",
+                    "alone": "Solo",
+                    "no_friends": "Sin amigos",
+                    "alone_status": "Estado de solo",
+                    "company_status": "Estado de compañía",
+                    "allowed_instance_types": "Tipos de instancia permitidos",
+                    "instance_type_placeholder": "Todos los tipos de instancia",
                     "auto_invite_request_accept": "Aceptar solicitudes de invitación automáticamente",
-                    "auto_invite_request_accept_tooltip": "Acepta automáticamente las solicitudes de invitación de tus amigos favoritos",
+                    "auto_invite_request_accept_tooltip": "Aceptar automáticamente las solicitudes de invitación de amigos favoritos",
                     "auto_invite_request_accept_off": "Desactivado",
                     "auto_invite_request_accept_favs": "Todos los favoritos",
                     "auto_invite_request_accept_selected_favs": "Favoritos de VRCX"
@@ -307,6 +310,7 @@
                         "status_and_private_to_bottom": "Estado y Privado al Final",
                         "location": "Ubicación",
                         "last_active": "Última Actividad",
+                        "last_seen": "Última Vez Visto",
                         "time_in_instance": "Tiempo en Instancia",
                         "placeholder": "Orden de Clasificación",
                         "dropdown_header": "Elegir Orden de Clasificación"
@@ -344,22 +348,30 @@
                         "user_images": "Imágenes de usuarios (más lento)",
                         "notification_timeout": "Tiempo de espera de las notificaciones"
                     },
-                    "conditions": {
-                        "never": "Nunca",
-                        "desktop": "En modo escritorio",
-                        "inside_vr": "Dentro de VR",
-                        "outside_vr": "Fuera de VR",
-                        "always": "Siempre"
-                    },
                     "desktop_notifications": {
                         "header": "Notificaciones de Escritorio",
                         "when_to_display": "Cuándo mostrar",
+                        "when_to_display_never": "Nunca",
+                        "when_to_display_desktop": "En modo escritorio",
+                        "when_to_display_inside_vr": "Dentro de VR",
+                        "when_to_display_outside_vr": "Fuera de VR",
+                        "when_to_display_game_closed": "Juego cerrado",
+                        "when_to_display_game_running": "Juego abierto",
+                        "when_to_display_always": "Siempre",
                         "desktop_notification_while_afk": "Notificaciones de escritorio mientras se está AFK"
                     },
                     "text_to_speech": {
-                        "header": "Text-To-Speech",
+                        "header": "Texto a Voz",
                         "when_to_play": "Notificaciones TTS. Cuándo se reproduce",
-                        "tts_voice": "Voz TTS"
+                        "when_to_play_never": "Nunca",
+                        "when_to_play_inside_vr": "Dentro de VR",
+                        "when_to_play_game_closed": "Juego cerrado",
+                        "when_to_play_game_running": "Juego abierto",
+                        "when_to_play_always": "Siempre",
+                        "tts_voice": "Voz TTS",
+                        "use_memo_nicknames": "Usar apodos de memo",
+                        "play": "Reproducir",
+                        "tts_test_placeholder": "Prueba TTS"
                     }
                 }
             },
@@ -425,8 +437,17 @@
                         "description": "Eliminar automáticamente versiones antiguas de la caché"
                     },
                     "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
+                        "header": "Persistencia de Mundo Local",
+                        "description": "Servidor web local (requiere reinicio)"
+                    },
+                    "save_instance_prints_to_file": {
+                        "header": "Save Instance Prints To File",
+                        "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
+                        "description": "Save spawned prints to your VRChat Pictures folder"
+                    },
+                    "save_instance_stickers_to_file": {
+                        "header": "Guardar Pegatinas de Instancia en Archivo",
+                        "description": "Guardar pegatinas colocadas en tu carpeta de Imágenes de VRChat"
                     },
                     "remote_database": {
                         "header": "Base de Datos de Avatares Remotos",
@@ -554,6 +575,11 @@
                 "friend_no": "Amigo N.º{number}",
                 "vrchat_team": "VRChat Team"
             },
+            "badges": {
+                "assigned": "Asignado",
+                "hidden": "Oculto",
+                "showcased": "Exhibido"
+            },
             "actions": {
                 "favorite_tooltip": "Añadir a favoritos",
                 "unfavorite_tooltip": "Quitar de favoritos",
@@ -640,15 +666,19 @@
             "groups": {
                 "header": "Grupos",
                 "total_count": "Total {count}",
-                "sort_by": "Clasificar por:",
-                "own_groups": "Grupos propios",
-                "mutual_groups": "Grupos mutuos",
+                "sort_by": "Ordenar por:",
+                "edit_mode": "Modo Edición",
+                "exit_edit_mode": "Salir del Modo Edición",
+                "hold_shift": "Mantén shift para salir sin confirmación",
+                "own_groups": "Grupos Propios",
+                "mutual_groups": "Grupos Mutuos",
                 "groups": "Grupos",
                 "sorting": {
                     "alphabetical": "Alfabético",
                     "members": "Miembros",
-                    "in_game": "Orden en el juego"
-                }
+                    "in_game": "Orden en el Juego"
+                },
+                "leave_group_tooltip": "Dejar Grupo"
             },
             "worlds": {
                 "header": "Mundos",
@@ -703,22 +733,24 @@
                 "delete_cache_tooltip": "Eliminar mundo de la caché",
                 "favorites_tooltip": "Favoritos",
                 "refresh": "Refrescar",
-                "new_instance": "Nueva instancia",
-                "make_home": "Establecer como hogar",
-                "reset_home": "Restablecer hogar",
-                "show_previous_instances": "Mostrar instancias anteriores",
-                "show_previous_images": "Mostrar Imágenes anteriores",
+                "new_instance": "Nueva Instancia",
+                "new_instance_and_self_invite": "Nueva Instancia y Auto-invitar",
+                "make_home": "Establecer como Casa",
+                "reset_home": "Restablecer Casa",
+                "show_previous_instances": "Mostrar Instancias Anteriores",
+                "show_previous_images": "Mostrar Imágenes Anteriores",
                 "rename": "Renombrar",
-                "change_description": "Cambiar descripción",
-                "change_capacity": "Cambiar capacidad",
-                "change_recommended_capacity": "Cambiar la capacidad recomendada",
-                "change_preview": "Cambiar la vista previa de YouTube",
-                "change_tags": "Cambiar etiquetas",
-                "change_image": "Cambiar imagen",
-                "download_package": "Descargar paquete de Unity",
+                "change_description": "Cambiar Descripción",
+                "change_capacity": "Cambiar Capacidad",
+                "change_recommended_capacity": "Cambiar Capacidad Recomendada",
+                "change_preview": "Cambiar Vista Previa de YouTube",
+                "change_tags": "Cambiar Etiquetas",
+                "change_image": "Cambiar Imagen",
+                "change_allowed_video_player_domains": "Cambiar Dominios Permitidos del Reproductor de Video",
+                "download_package": "Descargar Paquete de Unity",
                 "publish_to_labs": "Publicar en Labs",
-                "unpublish": "Anular la publicación",
-                "delete_persistent_data": "Borrar datos persistentes",
+                "unpublish": "Despublicar",
+                "delete_persistent_data": "Eliminar Datos Persistentes",
                 "delete": "Eliminar"
             },
             "instances": {
@@ -1019,7 +1051,7 @@
             "delete_cache": "Eliminar caché",
             "delete_old_cache": "Eliminar versiones antiguas de la caché",
             "sweep_cache": "Caché de barrido",
-            "max_cache_size": "Tamaño del cache máx. [GB] (min 30)",
+            "max_cache_size": "Tamaño del cache máx. [GB] (min 20)",
             "cache_expiry_delay": "Expiración del Cache [dias] (min 30)",
             "cache_directory": "Ubicación de la carpeta de caché",
             "picture_directory": "Ubicación de la carpeta de imagenes",
@@ -1252,21 +1284,23 @@
             "send": "Enviar"
         },
         "gallery_icons": {
-            "header": "Fotos, iconos y emojis",
-            "description": "Tamaño recomendado de la imagen: 1200x900px (4:3)",
+            "header": "Administrar Fotos, Iconos, Emojis y Pegatinas",
+            "recommended_image_size": "Tamaño de imagen recomendado",
             "gallery": "Fotos",
             "icons": "Iconos",
             "emojis": "Emojis",
             "stickers": "Pegatinas",
+            "prints": "Impresiones",
             "refresh": "Refrescar",
             "upload": "Subir",
             "clear": "Limpiar",
-            "emoji_animation_styles": "Estilos de animación",
-            "emoji_animation_type": "Animated Emoji",
+            "emoji_animation_styles": "Estilos de Animación",
+            "emoji_animation_type": "Emoji Animado",
             "emoji_animation_fps": "FPS:",
-            "emoji_animation_frame_count": "Frame Count:",
-            "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
+            "emoji_animation_frame_count": "Cantidad de Fotogramas:",
+            "emoji_loop_pingpong": "Bucle PingPong",
+            "flipbook_info": "Seleccione una hoja de sprites PNG de 1024x1024 para usar como un emoji animado, tamaños de cuadrícula de fotogramas disponibles: 4, 16 o 64 (FPS máximo 64, fotogramas máximos 64)",
+            "note": "Nota"
         },
         "change_content_image": {
             "avatar": "Cambiar imagen del avatar",
@@ -1379,26 +1413,31 @@
             "add_roles": "Añadir roles"
         },
         "group_post_edit": {
-            "header": "Create/Edit Post",
-            "title": "Title",
+            "header": "Crear/Editar Publicación",
+            "title": "Título",
             "message": "Mensaje",
-            "send_notification": "Send Notification",
-            "post_visibility": "Post Visibility",
-            "visibility_public": "Públicos",
-            "visibility_group": "Grupos",
+            "send_notification": "Enviar Notificación",
+            "post_visibility": "Visibilidad de la Publicación",
+            "visibility_public": "Público",
+            "visibility_group": "Grupo",
             "image": "Imagen",
             "cancel": "Cancelar",
-            "create_post": "Crear publicación",
-            "edit_post": "Editar publicación"
+            "create_post": "Crear Publicación",
+            "edit_post": "Editar Publicación"
         },
         "boop_dialog": {
             "header": "Boop",
-            "emoji_manager": "Gestor de Emojis",
+            "emoji_manager": "Administrador de Emojis",
             "select_emoji": "Seleccionar Emoji",
             "my_emojis": "Mis Emojis",
-            "default_emojis": "Emojis por defecto",
+            "default_emojis": "Emojis Predeterminados",
             "cancel": "Cancelar",
             "send": "Enviar"
+        },
+        "allowed_video_player_domains": {
+            "header": "Dominios Permitidos del Reproductor de Video",
+            "add_domain": "Añadir Dominio",
+            "save": "Guardar"
         }
     },
     "prompt": {
