@@ -12,13 +12,14 @@ using System.Security.Cryptography;
 using System.Net;
 using System.Text;
 using System.Linq;
+using NLog;
 
 namespace VRCX
 {
     public class AssetBundleManager
     {
         public static readonly AssetBundleManager Instance;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         static AssetBundleManager()
         {

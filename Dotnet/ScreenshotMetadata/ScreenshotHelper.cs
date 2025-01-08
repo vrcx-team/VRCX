@@ -13,7 +13,7 @@ namespace VRCX
 {
     internal static class ScreenshotHelper
     {
-        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(Path.Combine(Program.AppDataDirectory, "metadataCache.db"));
         private static readonly Dictionary<string, ScreenshotMetadata> metadataCache = new Dictionary<string, ScreenshotMetadata>();
 

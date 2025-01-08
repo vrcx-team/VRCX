@@ -66,6 +66,9 @@ export default class extends baseClass {
             D.visible = true;
             D.updatePendingIsLatest = false;
             D.updatePending = await AppApi.CheckForUpdateExe();
+            if (!D.updatePending) {
+                this.pendingVRCXInstall = '';
+            }
             this.loadBranchVersions();
         },
 
