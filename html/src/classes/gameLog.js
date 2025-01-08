@@ -1093,6 +1093,7 @@ export default class extends baseClass {
         },
 
         async disableGameLogDialog() {
+            this.gameLogDisabled = !this.gameLogDisabled;
             if (this.isGameRunning) {
                 this.$message({
                     message:

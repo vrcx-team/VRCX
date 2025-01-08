@@ -33,6 +33,9 @@ import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';
 import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 
+// components
+import SimpleSwitch from './components/settings/SimpleSwitch.vue';
+
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
 import _prompts from './classes/prompts.js';
@@ -141,6 +144,9 @@ speechSynthesis.getVoices();
             ...$utils
         },
         watch: {},
+        components: {
+            SimpleSwitch
+        },
         el: '#x-app',
         async mounted() {
             await this.initLanguage();
@@ -4016,6 +4022,9 @@ speechSynthesis.getVoices();
         }
     };
     $app.methods.enablePrimaryPasswordChange = function () {
+        // The function is only called in adv settings
+        this.enablePrimaryPassword = !this.enablePrimaryPassword;
+
         this.enablePrimaryPasswordDialog.password = '';
         this.enablePrimaryPasswordDialog.rePassword = '';
         if (this.enablePrimaryPassword) {
@@ -8077,8 +8086,87 @@ speechSynthesis.getVoices();
         false
     );
     $app.data.friendLogTable.filters[2].value = $app.data.hideUnfriends;
-    $app.methods.saveOpenVROption = async function () {
+    $app.methods.saveOpenVROption = async function (configKey = '') {
+        switch (configKey) {
+            case 'openVR':
+                this.openVR = !this.openVR;
+                break;
+            case 'VRCX_hidePrivateFromFeed':
+                this.hidePrivateFromFeed = !this.hidePrivateFromFeed;
+                break;
+            case 'VRCX_hideDevicesFromFeed':
+                this.hideDevicesFromFeed = !this.hideDevicesFromFeed;
+                break;
+            case 'VRCX_vrOverlayCpuUsage':
+                this.vrOverlayCpuUsage = !this.vrOverlayCpuUsage;
+                break;
+            case 'VRCX_hideUptimeFromFeed':
+                this.hideUptimeFromFeed = !this.hideUptimeFromFeed;
+                break;
+            case 'VRCX_pcUptimeOnFeed':
+                this.pcUptimeOnFeed = !this.pcUptimeOnFeed;
+                break;
+            case 'VRCX_overlayNotifications':
+                this.overlayNotifications = !this.overlayNotifications;
+                break;
+            case 'VRCX_overlayWrist':
+                this.overlayWrist = !this.overlayWrist;
+                break;
+            case 'VRCX_xsNotifications':
+                this.xsNotifications = !this.xsNotifications;
+                break;
+            case 'VRCX_ovrtHudNotifications':
+                this.ovrtHudNotifications = !this.ovrtHudNotifications;
+                break;
+            case 'VRCX_ovrtWristNotifications':
+                this.ovrtWristNotifications = !this.ovrtWristNotifications;
+                break;
+            case 'VRCX_imageNotifications':
+                this.imageNotifications = !this.imageNotifications;
+                break;
+            case 'VRCX_afkDesktopToast':
+                this.afkDesktopToast = !this.afkDesktopToast;
+                break;
+            case 'VRCX_notificationTTSNickName':
+                this.notificationTTSNickName = !this.notificationTTSNickName;
+                break;
+            case 'VRCX_minimalFeed':
+                this.minimalFeed = !this.minimalFeed;
+                break;
+            case 'displayVRCPlusIconsAsAvatar':
+                this.displayVRCPlusIconsAsAvatar =
+                    !this.displayVRCPlusIconsAsAvatar;
+                break;
+            case 'VRCX_hideTooltips':
+                this.hideTooltips = !this.hideTooltips;
+                break;
+            case 'VRCX_hideNicknames':
+                this.hideNicknames = !this.hideNicknames;
+                break;
+            case 'VRCX_autoSweepVRChatCache':
+                this.autoSweepVRChatCache = !this.autoSweepVRChatCache;
+                break;
+            case 'VRCX_relaunchVRChatAfterCrash':
+                this.relaunchVRChatAfterCrash = !this.relaunchVRChatAfterCrash;
+                break;
+            case 'VRCX_vrcQuitFix':
+                this.vrcQuitFix = !this.vrcQuitFix;
+                break;
+            case 'VRCX_vrBackgroundEnabled':
+                this.vrBackgroundEnabled = !this.vrBackgroundEnabled;
+                break;
+            case 'VRCX_avatarRemoteDatabase':
+                this.avatarRemoteDatabase = !this.avatarRemoteDatabase;
+                break;
+            case 'VRCX_udonExceptionLogging':
+                this.udonExceptionLogging = !this.udonExceptionLogging;
+                break;
+            default:
+                break;
+        }
+
         await configRepository.setBool('openVR', this.openVR);
+
         await configRepository.setBool('openVRAlways', this.openVRAlways);
         await configRepository.setBool(
             'VRCX_overlaybutton',
@@ -8089,108 +8177,137 @@ speechSynthesis.getVoices();
             this.overlayHand = 0;
         }
         await configRepository.setInt('VRCX_overlayHand', this.overlayHand);
+
         await configRepository.setBool(
             'VRCX_hidePrivateFromFeed',
             this.hidePrivateFromFeed
         );
+
         await configRepository.setBool(
             'VRCX_hideDevicesFromFeed',
             this.hideDevicesFromFeed
         );
+
         await configRepository.setBool(
             'VRCX_vrOverlayCpuUsage',
             this.vrOverlayCpuUsage
         );
+
         await configRepository.setBool(
             'VRCX_hideUptimeFromFeed',
             this.hideUptimeFromFeed
         );
+
         await configRepository.setBool(
             'VRCX_pcUptimeOnFeed',
             this.pcUptimeOnFeed
         );
+
         await configRepository.setBool(
             'VRCX_overlayNotifications',
             this.overlayNotifications
         );
+
         await configRepository.setBool('VRCX_overlayWrist', this.overlayWrist);
+
         await configRepository.setBool(
             'VRCX_xsNotifications',
             this.xsNotifications
         );
+
         await configRepository.setBool(
             'VRCX_ovrtHudNotifications',
             this.ovrtHudNotifications
         );
+
         await configRepository.setBool(
             'VRCX_ovrtWristNotifications',
             this.ovrtWristNotifications
         );
+
         await configRepository.setBool(
             'VRCX_imageNotifications',
             this.imageNotifications
         );
+
         await configRepository.setString(
             'VRCX_desktopToast',
             this.desktopToast
         );
+
         await configRepository.setBool(
             'VRCX_afkDesktopToast',
             this.afkDesktopToast
         );
+
         await configRepository.setString(
             'VRCX_overlayToast',
             this.overlayToast
         );
+
         await configRepository.setBool(
             'VRCX_notificationTTSNickName',
             this.notificationTTSNickName
         );
+
         await configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
+
         await configRepository.setBool(
             'displayVRCPlusIconsAsAvatar',
             this.displayVRCPlusIconsAsAvatar
         );
+
         await configRepository.setBool('VRCX_hideTooltips', this.hideTooltips);
+
         await configRepository.setBool(
             'VRCX_hideNicknames',
             this.hideNicknames
         );
+
         await configRepository.setBool(
             'VRCX_autoSweepVRChatCache',
             this.autoSweepVRChatCache
         );
+
         await configRepository.setBool(
             'VRCX_relaunchVRChatAfterCrash',
             this.relaunchVRChatAfterCrash
         );
+
         await configRepository.setBool('VRCX_vrcQuitFix', this.vrcQuitFix);
+
         await configRepository.setBool(
             'VRCX_vrBackgroundEnabled',
             this.vrBackgroundEnabled
         );
+
         await configRepository.setBool(
             'VRCX_avatarRemoteDatabase',
             this.avatarRemoteDatabase
         );
+
         await configRepository.setBool(
             'VRCX_instanceUsersSortAlphabetical',
             this.instanceUsersSortAlphabetical
         );
+
         await configRepository.setBool(
             'VRCX_randomUserColours',
             this.randomUserColours
         );
+
         await configRepository.setBool(
             'VRCX_udonExceptionLogging',
             this.udonExceptionLogging
         );
+
         this.updateSharedFeed(true);
         this.updateVRConfigVars();
         this.updateVRLastLocation();
         AppApi.ExecuteVrOverlayFunction('notyClear', '');
         this.updateOpenVR();
     };
+
     $app.methods.saveSortFavoritesOption = async function () {
         this.getLocalWorldFavorites();
         await configRepository.setBool(
@@ -8198,7 +8315,14 @@ speechSynthesis.getVoices();
             this.sortFavorites
         );
     };
-    $app.methods.saveUserDialogOption = async function () {
+
+    $app.methods.saveUserDialogOption = async function (configKey = '') {
+        if (configKey === 'VRCX_hideUserNotes') {
+            this.hideUserNotes = !this.hideUserNotes;
+        } else {
+            this.hideUserMemos = !this.hideUserMemos;
+        }
+
         await configRepository.setBool(
             'VRCX_hideUserNotes',
             this.hideUserNotes
@@ -8208,7 +8332,10 @@ speechSynthesis.getVoices();
             this.hideUserMemos
         );
     };
+
     $app.methods.saveFriendLogOptions = async function () {
+        // The function is only called in adv settings
+        this.hideUnfriends = !this.hideUnfriends;
         await configRepository.setBool(
             'VRCX_hideUnfriends',
             this.hideUnfriends
@@ -8370,38 +8497,78 @@ speechSynthesis.getVoices();
         'true';
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
-    $app.methods.saveVRCXWindowOption = async function () {
+
+    $app.methods.saveVRCXWindowOption = async function (configKey = '') {
+        switch (configKey) {
+            case 'VRCX_StartAtWindowsStartup':
+                this.isStartAtWindowsStartup = !this.isStartAtWindowsStartup;
+                break;
+            case 'VRCX_saveInstancePrints':
+                this.saveInstancePrints = !this.saveInstancePrints;
+                break;
+            case 'VRCX_saveInstanceStickers':
+                this.saveInstanceStickers = !this.saveInstanceStickers;
+                break;
+            case 'VRCX_StartAsMinimizedState':
+                this.isStartAsMinimizedState = !this.isStartAsMinimizedState;
+                break;
+            case 'VRCX_CloseToTray':
+                this.isCloseToTray = !this.isCloseToTray;
+                break;
+            case 'VRCX_DisableWorldDatabase':
+                this.disableWorldDatabase = !this.disableWorldDatabase;
+                break;
+            case 'VRCX_DisableGpuAcceleration':
+                this.disableGpuAcceleration = !this.disableGpuAcceleration;
+                break;
+            case 'VRCX_DisableVrOverlayGpuAcceleration':
+                this.disableVrOverlayGpuAcceleration =
+                    !this.disableVrOverlayGpuAcceleration;
+                break;
+            default:
+                break;
+        }
+
         await configRepository.setBool(
             'VRCX_StartAtWindowsStartup',
             this.isStartAtWindowsStartup
         );
+
         await configRepository.setBool(
             'VRCX_saveInstancePrints',
             this.saveInstancePrints
         );
+
         await configRepository.setBool(
             'VRCX_saveInstanceStickers',
             this.saveInstanceStickers
         );
+
         VRCXStorage.Set(
             'VRCX_StartAsMinimizedState',
             this.isStartAsMinimizedState.toString()
         );
+
         VRCXStorage.Set('VRCX_CloseToTray', this.isCloseToTray.toString());
+
         VRCXStorage.Set(
             'VRCX_DisableWorldDatabase',
             this.disableWorldDatabase.toString()
         );
+
         VRCXStorage.Set(
             'VRCX_DisableGpuAcceleration',
             this.disableGpuAcceleration.toString()
         );
+
         VRCXStorage.Set(
             'VRCX_DisableVrOverlayGpuAcceleration',
             this.disableVrOverlayGpuAcceleration.toString()
         );
+
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
+
     $app.data.photonEventOverlay = await configRepository.getBool(
         'VRCX_PhotonEventOverlay',
         false
@@ -8436,7 +8603,12 @@ speechSynthesis.getVoices();
         'VRCX_instanceUsersSortAlphabetical',
         false
     );
-    $app.methods.saveEventOverlay = async function () {
+    $app.methods.saveEventOverlay = async function (configKey = '') {
+        if (configKey === 'VRCX_PhotonEventOverlay') {
+            this.photonEventOverlay = !this.photonEventOverlay;
+        } else if (configKey === 'VRCX_TimeoutHudOverlay') {
+            this.timeoutHudOverlay = !this.timeoutHudOverlay;
+        }
         await configRepository.setBool(
             'VRCX_PhotonEventOverlay',
             this.photonEventOverlay
@@ -8467,7 +8639,13 @@ speechSynthesis.getVoices();
         'VRCX_logEmptyAvatars',
         false
     );
-    $app.methods.saveLoggingOptions = async function () {
+    $app.methods.saveLoggingOptions = async function (configKey = '') {
+        if (configKey === 'VRCX_logResourceLoad') {
+            this.logResourceLoad = !this.logResourceLoad;
+        } else {
+            this.logEmptyAvatars = !this.logEmptyAvatars;
+        }
+
         await configRepository.setBool(
             'VRCX_logResourceLoad',
             this.logResourceLoad
@@ -8503,11 +8681,14 @@ speechSynthesis.getVoices();
         'VRCX_autoAcceptInviteRequests',
         'Off'
     );
-    $app.methods.saveAutomationOptions = async function () {
-        await configRepository.setBool(
-            'VRCX_autoStateChangeEnabled',
-            this.autoStateChangeEnabled
-        );
+    $app.methods.saveAutomationOptions = async function (configKey = '') {
+        if (configKey === 'VRCX_autoStateChangeEnabled') {
+            this.autoStateChangeEnabled = !this.autoStateChangeEnabled;
+            await configRepository.setBool(
+                'VRCX_autoStateChangeEnabled',
+                this.autoStateChangeEnabled
+            );
+        }
         await configRepository.setBool(
             'VRCX_autoStateChangeNoFriends',
             this.autoStateChangeNoFriends
@@ -8819,7 +9000,10 @@ speechSynthesis.getVoices();
         )
     );
 
-    $app.methods.updatetrustColor = async function () {
+    $app.methods.updatetrustColor = async function (setRandomColor = false) {
+        if (setRandomColor) {
+            this.randomUserColours = !this.randomUserColours;
+        }
         if (typeof API.currentUser?.id === 'undefined') {
             return;
         }
@@ -16300,15 +16484,21 @@ speechSynthesis.getVoices();
         AppApi.OpenShortcutFolder();
     };
 
-    $app.methods.updateAppLauncherSettings = async function () {
-        await configRepository.setBool(
-            'VRCX_enableAppLauncher',
-            this.enableAppLauncher
-        );
-        await configRepository.setBool(
-            'VRCX_enableAppLauncherAutoClose',
-            this.enableAppLauncherAutoClose
-        );
+    $app.methods.updateAppLauncherSettings = async function (configKey = '') {
+        if (configKey === 'VRCX_enableAppLauncher') {
+            this.enableAppLauncher = !this.enableAppLauncher;
+            await configRepository.setBool(
+                'VRCX_enableAppLauncher',
+                this.enableAppLauncher
+            );
+        } else {
+            this.enableAppLauncherAutoClose = !this.enableAppLauncherAutoClose;
+            await configRepository.setBool(
+                'VRCX_enableAppLauncherAutoClose',
+                this.enableAppLauncherAutoClose
+            );
+        }
+
         await AppApi.SetAppLauncherSettings(
             this.enableAppLauncher,
             this.enableAppLauncherAutoClose
@@ -16317,7 +16507,16 @@ speechSynthesis.getVoices();
 
     // Screenshot Helper
 
-    $app.methods.saveScreenshotHelper = async function () {
+    $app.methods.saveScreenshotHelper = async function (configKey = '') {
+        if (configKey === 'VRCX_screenshotHelper') {
+            this.screenshotHelper = !this.screenshotHelper;
+        } else if (configKey === 'VRCX_screenshotHelperModifyFilename') {
+            this.screenshotHelperModifyFilename =
+                !this.screenshotHelperModifyFilename;
+        } else if (configKey === 'VRCX_screenshotHelperCopyToClipboard') {
+            this.screenshotHelperCopyToClipboard =
+                !this.screenshotHelperCopyToClipboard;
+        }
         await configRepository.setBool(
             'VRCX_screenshotHelper',
             this.screenshotHelper
@@ -16734,7 +16933,15 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.changeYouTubeApi = async function () {
+    $app.methods.changeYouTubeApi = async function (configKey = '') {
+        if (configKey === 'VRCX_youtubeAPI') {
+            this.youTubeApi = !this.youTubeApi;
+        } else if (configKey === 'VRCX_progressPie') {
+            this.progressPie = !this.progressPie;
+        } else if (configKey === 'VRCX_progressPieFilter') {
+            this.progressPieFilter = !this.progressPieFilter;
+        }
+
         await configRepository.setBool('VRCX_youtubeAPI', this.youTubeApi);
         await configRepository.setBool('VRCX_progressPie', this.progressPie);
         await configRepository.setBool(
@@ -19122,7 +19329,10 @@ speechSynthesis.getVoices();
         'VRCX_dtIsoFormat',
         false
     );
-    $app.methods.setDatetimeFormat = async function () {
+    $app.methods.setDatetimeFormat = async function (setIsoFormat = false) {
+        if (setIsoFormat) {
+            this.dtIsoFormat = !this.dtIsoFormat;
+        }
         var currentCulture = await AppApi.CurrentCulture();
         var hour12 = await configRepository.getBool('VRCX_dtHour12');
         var isoFormat = await configRepository.getBool('VRCX_dtIsoFormat');
