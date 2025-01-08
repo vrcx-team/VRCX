@@ -6,10 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Diagnostics;
-using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading;
@@ -22,14 +20,16 @@ using System.Windows.Forms;
 
 namespace VRCX
 {
-    public static class Update
+    public class Update
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly string VrcxSetupExecutable = Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe");
         private static readonly string UpdateExecutable = Path.Combine(Program.AppDataDirectory, "update.exe");
         private static readonly string TempDownload = Path.Combine(Program.AppDataDirectory, "tempDownload");
         private static readonly string HashLocation = Path.Combine(Program.AppDataDirectory, "sha256sum.txt");
-        private static HttpClient _httpClient;
+        private static readonly HttpClient httpClient;
+        private static CancellationToken _cancellationToken;
+        public static int UpdateProgress;
 
         static Update()
         {
@@ -37,8 +37,8 @@ namespace VRCX
             if (WebApi.ProxySet)
                 httpClientHandler.Proxy = WebApi.Proxy;
             
-            _httpClient = new HttpClient(httpClientHandler);
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
+            httpClient = new HttpClient(httpClientHandler);
+            httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
         }
 
         public static void Check()
@@ -84,7 +84,7 @@ namespace VRCX
             catch (Exception e)
             {
                 var message = $"Failed to install the update: {e.Message}";
-                Logger.Info(message);
+                logger.Info(message);
 #if !LINUX
                 MessageBox.Show(message, "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
 #endif
@@ -110,7 +110,7 @@ namespace VRCX
             catch (Exception e)
             {
                 var message = $"Failed to download and install the Visual C++ Redistributable: {e.Message}";
-                Logger.Info(message);
+                logger.Info(message);
 #if !LINUX
                 MessageBox.Show(message, "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
 #endif
@@ -119,24 +119,17 @@ namespace VRCX
 
         private static async Task<string> DownloadFile(string fileUrl, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(fileUrl, cancellationToken);
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception($"Failed to download the file. Status code: {response.StatusCode}");
+            var response = await httpClient.GetAsync(fileUrl, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Failed to download the file. Status code: {response.StatusCode}");
 
                 var fileName = GetFileNameFromContentDisposition(response);
                 var tempPath = Path.Combine(Path.GetTempPath(), "VRCX");
                 Directory.CreateDirectory(tempPath);
                 var filePath = Path.Combine(tempPath, fileName);
-                await using var fileStream = File.Create(filePath);
-                await response.Content.CopyToAsync(fileStream, cancellationToken);
-                return filePath;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error downloading the file: {ex.Message}");
-            }
+            await using var fileStream = File.Create(filePath);
+            await response.Content.CopyToAsync(fileStream, cancellationToken);
+            return filePath;
         }
 
         private static string GetFileNameFromContentDisposition(HttpResponseMessage response)
@@ -161,12 +154,7 @@ namespace VRCX
 
             throw new Exception("Unable to extract file name from content-disposition header.");
         }
-        
-        public static int UpdateProgress;
-        private static CancellationToken _cancellationToken;
-        
-        // old asset bundle cacher downloader method reused for updating, it's not pretty
-        // DownloadFile(string fileUrl, string hashUrl, int size)
+
         public static async Task DownloadUpdate(string fileUrl, string fileName, string hashUrl, int downloadSize)
         {
             _cancellationToken = CancellationToken.None;
@@ -182,7 +170,7 @@ namespace VRCX
                 File.Move(hashesPath, HashLocation);
             
             await using var destination = File.OpenWrite(TempDownload);
-            using (var response = await _httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, _cancellationToken))
+            using (var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, _cancellationToken))
             await using (var download = await response.Content.ReadAsStreamAsync(_cancellationToken))
             {
                 var contentLength = response.Content.Headers.ContentLength;
@@ -223,7 +211,7 @@ namespace VRCX
             }
             if (File.Exists(HashLocation))
             {
-                Logger.Info("Updater: Checking hash");
+                logger.Info("Checking hash");
                 var lines = await File.ReadAllLinesAsync(HashLocation, _cancellationToken);
                 var hashDict = new Dictionary<string, string>();
                 foreach (var line in lines)
@@ -239,28 +227,30 @@ namespace VRCX
                     var hashString = BitConverter.ToString(hashBytes).Replace("-", "");
                     if (!hashDict.TryGetValue(fileName, out var expectedHash))
                     {
-                        Logger.Error("Updater: Hash check failed, file not found in hash file");
+                        logger.Error("Hash check failed, file not found in hash file");
                     }
                     if (!string.IsNullOrEmpty(expectedHash) &&
                         !hashString.Equals(expectedHash, StringComparison.OrdinalIgnoreCase))
                     {
-                        Logger.Error($"Updater: Hash check failed file:{hashString} web:{expectedHash}");
+                        logger.Error($"Hash check failed file:{hashString} web:{expectedHash}");
                         // can't delete file yet because it's in use
                         return;
                     }
                 }
                 File.Delete(HashLocation);
-                Logger.Info("Updater: Hash check passed");
+                logger.Info("Hash check passed");
             }
-            
-            File.Move(TempDownload, UpdateExecutable);
+
+                File.Move(TempDownload, UpdateExecutable);
             UpdateProgress = 0;
             _cancellationToken = CancellationToken.None;
         }
 
-        public static void CancelUpdate()
+        public static async Task CancelUpdate()
         {
             _cancellationToken = new CancellationToken(true);
+            UpdateProgress = 0;
+            await Task.Delay(100);
             try
             {
                 if (File.Exists(TempDownload))
@@ -270,7 +260,6 @@ namespace VRCX
             {
                 // ignored
             }
-            UpdateProgress = 0;
         }
     }
 }

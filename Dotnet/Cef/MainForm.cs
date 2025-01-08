@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
+using NLog;
 
 namespace VRCX
 {
@@ -18,7 +19,7 @@ namespace VRCX
     {
         public static MainForm Instance;
         public static NativeWindow nativeWindow;
-        private static NLog.Logger jslogger = NLog.LogManager.GetLogger("Javascript");
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public ChromiumWebBrowser Browser;
         private readonly Timer _saveTimer;
         private int LastLocationX;
@@ -59,7 +60,7 @@ namespace VRCX
             }
             catch (Exception ex)
             {
-                jslogger.Error(ex);
+                logger.Error(ex);
             }
 
             Browser = new ChromiumWebBrowser("file://vrcx/index.html")
@@ -83,7 +84,7 @@ namespace VRCX
             JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
             Browser.ConsoleMessage += (_, args) =>
             {
-                jslogger.Debug(args.Message + " (" + args.Source + ":" + args.Line + ")");
+                logger.Debug(args.Message + " (" + args.Source + ":" + args.Line + ")");
             };
 
             Controls.Add(Browser);
@@ -112,7 +113,7 @@ namespace VRCX
             }
             catch (Exception ex)
             {
-                jslogger.Error(ex);
+                logger.Error(ex);
             }
 
             try
@@ -142,7 +143,7 @@ namespace VRCX
             }
             catch (Exception ex)
             {
-                jslogger.Error(ex);
+                logger.Error(ex);
             }
 
             LastWindowStateToRestore = WindowState;
