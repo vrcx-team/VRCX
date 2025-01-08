@@ -842,6 +842,7 @@
                 "download_package": "下载 Unity Package",
                 "delete": "删除",
                 "delete_impostor": "删除模型替身",
+                "regenerate_impostor": "Regenerate Impostor",
                 "create_impostor": "创建模型替身"
             },
             "info": {
