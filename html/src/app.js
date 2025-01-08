@@ -22415,7 +22415,7 @@ speechSynthesis.getVoices();
     // #region | VRChat Credits
 
     API.$on('VRCCREDITS', function (args) {
-        this.currentUser.$getVRChatCredits = args.json?.balance;
+        this.currentUser.$vrchatcredits = args.json?.balance;
     });
 
     API.getVRChatCredits = function () {
