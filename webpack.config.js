@@ -4,6 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
     entry: {
@@ -40,6 +41,10 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
             {
                 test: /\.pug$/,
                 oneOf: [
@@ -89,6 +94,7 @@ module.exports = {
             LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
             WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows')
         }),
+        new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].css'
         }),
@@ -111,33 +117,6 @@ module.exports = {
                     from: './images/',
                     to: './images/'
                 }
-                // // vscode-codicons
-                // {
-                //     from: './node_modules/vscode-codicons/dist/codicon.css',
-                //     to: 'vendor/vscode-codicons/'
-                // },
-                // {
-                //     from: './node_modules/vscode-codicons/dist/codicon.ttf',
-                //     to: 'vendor/vscode-codicons/'
-                // },
-                // // fontawesome
-                // {
-                //     from: './node_modules/@fortawesome/fontawesome-free/webfonts/',
-                //     to: 'vendor/fontawesome/webfonts/'
-                // },
-                // {
-                //     from: './node_modules/@fortawesome/fontawesome-free/css/all.min.css',
-                //     to: 'vendor/fontawesome/css/'
-                // },
-                // // element-plus
-                // {
-                //     from: './node_modules/element-plus/lib/theme-chalk/fonts/',
-                //     to: 'vendor/element-plus/lib/theme-chalk/fonts/'
-                // },
-                // {
-                //     from: './node_modules/element-plus/lib/theme-chalk/index.css',
-                //     to: 'vendor/element-plus/lib/theme-chalk/'
-                // }
             ]
         })
     ],

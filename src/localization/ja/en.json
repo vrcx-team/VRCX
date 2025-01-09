@@ -158,7 +158,7 @@
                 "two_factor": "2段階認証 (2FA)",
                 "two_factor_enabled": "有効",
                 "two_factor_disabled": "無効",
-                "v_bucks": "V-Bucks",
+                "vrchat_credits": "VRChatクレジット",
                 "refresh": "クリックして更新",
                 "logout": "ログアウト",
                 "manage_gallery_icon": "写真/アイコン/絵文字を管理",
@@ -766,8 +766,8 @@
                 "popularity": "人気度",
                 "created_at": "作成日時",
                 "last_updated": "最終更新日時",
-                "publication_date": "公開日",
-                "labs_publication_date": "ラボへの公開日",
+                "publication_date": "公開日時",
+                "labs_publication_date": "ラボへの公開日時",
                 "time_in_labs": "ラボにいた時間:",
                 "version": "バージョン",
                 "platform": "プラットフォーム",
@@ -818,6 +818,7 @@
                 "download_package": "Unity Packageをダウンロード",
                 "delete": "削除",
                 "delete_impostor": "インポスターを削除",
+                "regenerate_impostor": "Regenerate Impostor",
                 "create_impostor": "インポスターを作成"
             },
             "info": {

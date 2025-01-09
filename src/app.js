@@ -31,6 +31,9 @@ import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';
 import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 
+// components
+import SimpleSwitch from './components/settings/SimpleSwitch.vue';
+
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
 import _prompts from './classes/prompts.js';
@@ -153,6 +156,9 @@ console.log(`isLinux: ${LINUX}`);
             ...$utils
         },
         watch: {},
+        components: {
+            SimpleSwitch
+        },
         el: '#x-app',
         async mounted() {
             await this.initLanguage();
@@ -621,6 +627,15 @@ console.log(`isLinux: ${LINUX}`);
                     $app.sharedFeed.pendingUpdate = true;
                     $app.updateSharedFeed(false);
                 }
+            }
+            if (ref.isFriend || ref.id === this.currentUser.id) {
+                // update instancePlayerCount
+                var newCount = $app.instancePlayerCount.get(ref.location);
+                if (typeof newCount === 'undefined') {
+                    newCount = 0;
+                }
+                newCount++;
+                $app.instancePlayerCount.set(ref.location, newCount);
             }
             if ($app.customUserTags.has(json.id)) {
                 var tag = $app.customUserTags.get(json.id);
@@ -1894,7 +1909,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     API.$on('AVATAR:IMPOSTER:DELETE', function (args) {
-        if (args.json && $app.avatarDialog.visible) {
+        if (
+            $app.avatarDialog.visible &&
+            args.params.avatarId === $app.avatarDialog.id
+        ) {
             $app.showAvatarDialog($app.avatarDialog.id);
         }
     });
@@ -4034,6 +4052,9 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
     $app.methods.enablePrimaryPasswordChange = function () {
+        // The function is only called in adv settings
+        this.enablePrimaryPassword = !this.enablePrimaryPassword;
+
         this.enablePrimaryPasswordDialog.password = '';
         this.enablePrimaryPasswordDialog.rePassword = '';
         if (this.enablePrimaryPassword) {
@@ -5559,6 +5580,7 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
+    $app.data.instancePlayerCount = new Map();
     $app.data.robotUrl = `${API.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
 
     API.$on('USER:UPDATE', async function (args) {
@@ -5566,6 +5588,26 @@ console.log(`isLinux: ${LINUX}`);
         var friend = $app.friends.get(ref.id);
         if (typeof friend === 'undefined') {
             return;
+        }
+        if (props.location) {
+            // update instancePlayerCount
+            var previousLocation = props.location[1];
+            var newLocation = props.location[0];
+            var oldCount = $app.instancePlayerCount.get(previousLocation);
+            if (typeof oldCount !== 'undefined') {
+                oldCount--;
+                if (oldCount <= 0) {
+                    $app.instancePlayerCount.delete(previousLocation);
+                } else {
+                    $app.instancePlayerCount.set(previousLocation, oldCount);
+                }
+            }
+            var newCount = $app.instancePlayerCount.get(newLocation);
+            if (typeof newCount === 'undefined') {
+                newCount = 0;
+            }
+            newCount++;
+            $app.instancePlayerCount.set(newLocation, newCount);
         }
         if (props.location && ref.id === $app.userDialog.id) {
             // update user dialog instance occupants
@@ -5833,66 +5875,54 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     /**
-     * Function that find the differences between both strings, and return the differences and their position in the strings.
-     * @param {*} s1 String 1
-     * @param {*} s2 String 2
-     * @returns
+     * Function to find the longest common subsequence between two strings
+     * @param {string} str1
+     * @param {string} str2
+     * @returns {number[][]} A matrix that contains the longest common subsequence between both strings
      */
-    $app.methods.findDifferences = function (s1, s2) {
-        const dp = $app.lcsMatrix(s1, s2);
-        const differencesS1 = [];
-        const differencesS2 = [];
-        let i = s1.length;
-        let j = s2.length;
-
-        // Backtrack to find differences
-        while (i > 0 && j > 0) {
-            if (s1[i - 1] === s2[j - 1]) {
-                i--;
-                j--;
-            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-                differencesS1.push({ index: i - 1, char: s1[i - 1] }); // Deletion in s1
-                i--;
-            } else {
-                differencesS2.push({ index: j - 1, char: s2[j - 1] }); // Insertion in s2
-                j--;
+    $app.methods.longestCommonSubsequence = function longestCommonSubsequence(
+        str1,
+        str2
+    ) {
+        let lcs = [];
+        for (let i = 0; i <= str1.length; i++) {
+            lcs.push(new Array(str2.length + 1).fill(0));
+        }
+        for (let i = str1.length - 1; i >= 0; i--) {
+            for (let j = str2.length - 1; j >= 0; j--) {
+                if (str1[i] == str2[j]) {
+                    lcs[i][j] = lcs[i + 1][j + 1] + 1;
+                } else {
+                    lcs[i][j] = Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+                }
             }
         }
-
-        // Remaining characters in s1 (deletions)
-        while (i > 0) {
-            differencesS1.push({ index: i - 1, char: s1[i - 1] });
-            i--;
-        }
-
-        // Remaining characters in s2 (insertions)
-        while (j > 0) {
-            differencesS2.push({ index: j - 1, char: s2[j - 1] });
-            j--;
-        }
-
-        return {
-            differencesS1: differencesS1.reverse(), // Reverse to maintain original order
-            differencesS2: differencesS2.reverse()
-        };
+        return lcs;
     };
 
-    $app.methods.findSequences = function (arr) {
-        if (arr.length === 0) return [];
-        return arr.reduce(
-            (p, c, i) => {
-                if (i === 0) return p;
-                let lastSeq = p.pop();
-                p.push(lastSeq);
-                if (c - lastSeq[1] !== 1) {
-                    p.push([c, c]);
-                } else {
-                    lastSeq[1] = c;
-                }
-                return p;
-            },
-            [[arr[0], arr[0]]]
-        );
+    /**
+     * Merge differences in both strings to get the longest common subsequence
+     * @param {{text: string, type: "add" | "remove" | "same"}[]} res
+     * @returns {{text: string, type: "add" | "remove" | "same"}[]} An array that contains the differences between both strings
+     */
+    $app.methods.regoupDifferences = function regoupDifferences(res) {
+        let regrouped = [];
+        let text = '';
+        let type = '';
+        for (let i = 0; i < res.length; i++) {
+            if (i == 0) {
+                text = res[i].text;
+                type = res[i].type;
+            } else if (res[i].type == type) {
+                text += res[i].text;
+            } else {
+                regrouped.push({ text: text, type: type });
+                text = res[i].text;
+                type = res[i].type;
+            }
+        }
+        regrouped.push({ text: text, type: type });
+        return regrouped;
     };
 
     /**
@@ -5904,39 +5934,143 @@ console.log(`isLinux: ${LINUX}`);
      * @param {*} markerEndTag
      * @returns An array that contains both the string 1 and string 2, which the differences are formatted with HTML tags
      */
-    $app.methods.formatDifference = function (
-        s1,
-        s2,
-        markerStartTag = '<u><font color="yellow">',
-        markerEndTag = '</font></u>'
+    $app.methods.formatDifference = function getWordDifferences(
+        oldString,
+        newString,
+        markerAddition = '<span class="x-text-added">{{text}}</span>',
+        markerDeletion = '<span class="x-text-removed">{{text}}</span>'
     ) {
-        const texts = [s1, s2];
-        const differs = $app.findDifferences(s1, s2);
-        return Object.values(differs)
-            .map((i) => $app.findSequences(i.map((j) => j.index)))
-            .map((i, k) => {
-                let stringBuilder = [];
-                let lastPos = 0;
-                let key = Date.now();
-                i.forEach((j) => {
-                    stringBuilder.push(texts[k].substring(lastPos, j[0]));
-                    stringBuilder.push(
-                        `{{diffTag-${key}}}${texts[k].substring(j[0], j[1] + 1)}{{diffTagClose-${key}}}`
+        [oldString, newString] = [oldString, newString].map((s) =>
+            s
+                .replaceAll(/&/g, '&amp;')
+                .replaceAll(/</g, '&lt;')
+                .replaceAll(/>/g, '&gt;')
+                .replaceAll(/"/g, '&quot;')
+                .replaceAll(/'/g, '&#039;')
+                .replaceAll(/\n/g, '<br>')
+        );
+
+        const oldWords = oldString
+            .split(/\s+/)
+            .flatMap((word) => word.split(/(<br>)/));
+        const newWords = newString
+            .split(/\s+/)
+            .flatMap((word) => word.split(/(<br>)/));
+
+        function findLongestMatch(oldStart, oldEnd, newStart, newEnd) {
+            let bestOldStart = oldStart;
+            let bestNewStart = newStart;
+            let bestSize = 0;
+
+            const lookup = new Map();
+            for (let i = oldStart; i < oldEnd; i++) {
+                const word = oldWords[i];
+                if (!lookup.has(word)) lookup.set(word, []);
+                lookup.get(word).push(i);
+            }
+
+            for (let j = newStart; j < newEnd; j++) {
+                const word = newWords[j];
+                if (!lookup.has(word)) continue;
+
+                for (const i of lookup.get(word)) {
+                    let size = 0;
+                    while (
+                        i + size < oldEnd &&
+                        j + size < newEnd &&
+                        oldWords[i + size] === newWords[j + size]
+                    ) {
+                        size++;
+                    }
+                    if (size > bestSize) {
+                        bestOldStart = i;
+                        bestNewStart = j;
+                        bestSize = size;
+                    }
+                }
+            }
+
+            return {
+                oldStart: bestOldStart,
+                newStart: bestNewStart,
+                size: bestSize
+            };
+        }
+
+        function buildDiff(oldStart, oldEnd, newStart, newEnd) {
+            const result = [];
+            const match = findLongestMatch(oldStart, oldEnd, newStart, newEnd);
+
+            if (match.size > 0) {
+                // Handle differences before the match
+                if (oldStart < match.oldStart || newStart < match.newStart) {
+                    result.push(
+                        ...buildDiff(
+                            oldStart,
+                            match.oldStart,
+                            newStart,
+                            match.newStart
+                        )
                     );
-                    lastPos = j[1] + 1;
-                });
-                stringBuilder.push(texts[k].substr(lastPos, texts[k].length));
-                let returnVal = stringBuilder
-                    .join('')
-                    .replaceAll(/&/g, '&amp;')
-                    .replaceAll(/</g, '&lt;')
-                    .replaceAll(/>/g, '&gt;')
-                    .replaceAll(/"/g, '&quot;')
-                    .replaceAll(/'/g, '&#039;')
-                    .replaceAll(`{{diffTag-${key}}}`, markerStartTag)
-                    .replaceAll(`{{diffTagClose-${key}}}`, markerEndTag);
-                return returnVal;
-            });
+                }
+
+                // Add the matched words
+                result.push(
+                    oldWords
+                        .slice(match.oldStart, match.oldStart + match.size)
+                        .join(' ')
+                );
+
+                // Handle differences after the match
+                if (
+                    match.oldStart + match.size < oldEnd ||
+                    match.newStart + match.size < newEnd
+                ) {
+                    result.push(
+                        ...buildDiff(
+                            match.oldStart + match.size,
+                            oldEnd,
+                            match.newStart + match.size,
+                            newEnd
+                        )
+                    );
+                }
+            } else {
+                function build(words, start, end, pattern) {
+                    let r = [];
+                    let ts = words
+                        .slice(start, end)
+                        .filter((w) => w.length > 0)
+                        .join(' ')
+                        .split('<br>');
+                    for (let i = 0; i < ts.length; i++) {
+                        if (i > 0) r.push('<br>');
+                        if (ts[i].length < 1) continue;
+                        r.push(pattern.replace('{{text}}', ts[i]));
+                    }
+                    return r;
+                }
+
+                // Add deletions
+                if (oldStart < oldEnd)
+                    result.push(
+                        ...build(oldWords, oldStart, oldEnd, markerDeletion)
+                    );
+
+                // Add insertions
+                if (newStart < newEnd)
+                    result.push(
+                        ...build(newWords, newStart, newEnd, markerAddition)
+                    );
+            }
+
+            return result;
+        }
+
+        return buildDiff(0, oldWords.length, 0, newWords.length)
+            .join(' ')
+            .replace(/<br>[ ]+<br>/g, '<br><br>')
+            .replace(/<br> /g, '<br>');
     };
 
     // #endregion
@@ -7274,6 +7408,9 @@ console.log(`isLinux: ${LINUX}`);
         if (!this.friendLogInitStatus || typeof ctx === 'undefined') {
             return;
         }
+        if (ctx.friendNumber) {
+            ref.$friendNumber = ctx.friendNumber;
+        }
         if (ctx.displayName !== ref.displayName) {
             if (ctx.displayName) {
                 var friendLogHistoryDisplayName = {
@@ -7345,9 +7482,6 @@ console.log(`isLinux: ${LINUX}`);
             this.updateSharedFeed(true);
         }
         ctx.trustLevel = ref.$trustLevel;
-        if (ctx.friendNumber) {
-            ref.$friendNumber = ctx.friendNumber;
-        }
     };
 
     $app.methods.deleteFriendLog = function (row) {
@@ -8074,8 +8208,87 @@ console.log(`isLinux: ${LINUX}`);
         false
     );
     $app.data.friendLogTable.filters[2].value = $app.data.hideUnfriends;
-    $app.methods.saveOpenVROption = async function () {
+    $app.methods.saveOpenVROption = async function (configKey = '') {
+        switch (configKey) {
+            case 'openVR':
+                this.openVR = !this.openVR;
+                break;
+            case 'VRCX_hidePrivateFromFeed':
+                this.hidePrivateFromFeed = !this.hidePrivateFromFeed;
+                break;
+            case 'VRCX_hideDevicesFromFeed':
+                this.hideDevicesFromFeed = !this.hideDevicesFromFeed;
+                break;
+            case 'VRCX_vrOverlayCpuUsage':
+                this.vrOverlayCpuUsage = !this.vrOverlayCpuUsage;
+                break;
+            case 'VRCX_hideUptimeFromFeed':
+                this.hideUptimeFromFeed = !this.hideUptimeFromFeed;
+                break;
+            case 'VRCX_pcUptimeOnFeed':
+                this.pcUptimeOnFeed = !this.pcUptimeOnFeed;
+                break;
+            case 'VRCX_overlayNotifications':
+                this.overlayNotifications = !this.overlayNotifications;
+                break;
+            case 'VRCX_overlayWrist':
+                this.overlayWrist = !this.overlayWrist;
+                break;
+            case 'VRCX_xsNotifications':
+                this.xsNotifications = !this.xsNotifications;
+                break;
+            case 'VRCX_ovrtHudNotifications':
+                this.ovrtHudNotifications = !this.ovrtHudNotifications;
+                break;
+            case 'VRCX_ovrtWristNotifications':
+                this.ovrtWristNotifications = !this.ovrtWristNotifications;
+                break;
+            case 'VRCX_imageNotifications':
+                this.imageNotifications = !this.imageNotifications;
+                break;
+            case 'VRCX_afkDesktopToast':
+                this.afkDesktopToast = !this.afkDesktopToast;
+                break;
+            case 'VRCX_notificationTTSNickName':
+                this.notificationTTSNickName = !this.notificationTTSNickName;
+                break;
+            case 'VRCX_minimalFeed':
+                this.minimalFeed = !this.minimalFeed;
+                break;
+            case 'displayVRCPlusIconsAsAvatar':
+                this.displayVRCPlusIconsAsAvatar =
+                    !this.displayVRCPlusIconsAsAvatar;
+                break;
+            case 'VRCX_hideTooltips':
+                this.hideTooltips = !this.hideTooltips;
+                break;
+            case 'VRCX_hideNicknames':
+                this.hideNicknames = !this.hideNicknames;
+                break;
+            case 'VRCX_autoSweepVRChatCache':
+                this.autoSweepVRChatCache = !this.autoSweepVRChatCache;
+                break;
+            case 'VRCX_relaunchVRChatAfterCrash':
+                this.relaunchVRChatAfterCrash = !this.relaunchVRChatAfterCrash;
+                break;
+            case 'VRCX_vrcQuitFix':
+                this.vrcQuitFix = !this.vrcQuitFix;
+                break;
+            case 'VRCX_vrBackgroundEnabled':
+                this.vrBackgroundEnabled = !this.vrBackgroundEnabled;
+                break;
+            case 'VRCX_avatarRemoteDatabase':
+                this.avatarRemoteDatabase = !this.avatarRemoteDatabase;
+                break;
+            case 'VRCX_udonExceptionLogging':
+                this.udonExceptionLogging = !this.udonExceptionLogging;
+                break;
+            default:
+                break;
+        }
+
         await configRepository.setBool('openVR', this.openVR);
+
         await configRepository.setBool('openVRAlways', this.openVRAlways);
         await configRepository.setBool(
             'VRCX_overlaybutton',
@@ -8086,108 +8299,137 @@ console.log(`isLinux: ${LINUX}`);
             this.overlayHand = 0;
         }
         await configRepository.setInt('VRCX_overlayHand', this.overlayHand);
+
         await configRepository.setBool(
             'VRCX_hidePrivateFromFeed',
             this.hidePrivateFromFeed
         );
+
         await configRepository.setBool(
             'VRCX_hideDevicesFromFeed',
             this.hideDevicesFromFeed
         );
+
         await configRepository.setBool(
             'VRCX_vrOverlayCpuUsage',
             this.vrOverlayCpuUsage
         );
+
         await configRepository.setBool(
             'VRCX_hideUptimeFromFeed',
             this.hideUptimeFromFeed
         );
+
         await configRepository.setBool(
             'VRCX_pcUptimeOnFeed',
             this.pcUptimeOnFeed
         );
+
         await configRepository.setBool(
             'VRCX_overlayNotifications',
             this.overlayNotifications
         );
+
         await configRepository.setBool('VRCX_overlayWrist', this.overlayWrist);
+
         await configRepository.setBool(
             'VRCX_xsNotifications',
             this.xsNotifications
         );
+
         await configRepository.setBool(
             'VRCX_ovrtHudNotifications',
             this.ovrtHudNotifications
         );
+
         await configRepository.setBool(
             'VRCX_ovrtWristNotifications',
             this.ovrtWristNotifications
         );
+
         await configRepository.setBool(
             'VRCX_imageNotifications',
             this.imageNotifications
         );
+
         await configRepository.setString(
             'VRCX_desktopToast',
             this.desktopToast
         );
+
         await configRepository.setBool(
             'VRCX_afkDesktopToast',
             this.afkDesktopToast
         );
+
         await configRepository.setString(
             'VRCX_overlayToast',
             this.overlayToast
         );
+
         await configRepository.setBool(
             'VRCX_notificationTTSNickName',
             this.notificationTTSNickName
         );
+
         await configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
+
         await configRepository.setBool(
             'displayVRCPlusIconsAsAvatar',
             this.displayVRCPlusIconsAsAvatar
         );
+
         await configRepository.setBool('VRCX_hideTooltips', this.hideTooltips);
+
         await configRepository.setBool(
             'VRCX_hideNicknames',
             this.hideNicknames
         );
+
         await configRepository.setBool(
             'VRCX_autoSweepVRChatCache',
             this.autoSweepVRChatCache
         );
+
         await configRepository.setBool(
             'VRCX_relaunchVRChatAfterCrash',
             this.relaunchVRChatAfterCrash
         );
+
         await configRepository.setBool('VRCX_vrcQuitFix', this.vrcQuitFix);
+
         await configRepository.setBool(
             'VRCX_vrBackgroundEnabled',
             this.vrBackgroundEnabled
         );
+
         await configRepository.setBool(
             'VRCX_avatarRemoteDatabase',
             this.avatarRemoteDatabase
         );
+
         await configRepository.setBool(
             'VRCX_instanceUsersSortAlphabetical',
             this.instanceUsersSortAlphabetical
         );
+
         await configRepository.setBool(
             'VRCX_randomUserColours',
             this.randomUserColours
         );
+
         await configRepository.setBool(
             'VRCX_udonExceptionLogging',
             this.udonExceptionLogging
         );
+
         this.updateSharedFeed(true);
         this.updateVRConfigVars();
         this.updateVRLastLocation();
         AppApi.ExecuteVrOverlayFunction('notyClear', '');
         this.updateOpenVR();
     };
+
     $app.methods.saveSortFavoritesOption = async function () {
         this.getLocalWorldFavorites();
         await configRepository.setBool(
@@ -8195,7 +8437,14 @@ console.log(`isLinux: ${LINUX}`);
             this.sortFavorites
         );
     };
-    $app.methods.saveUserDialogOption = async function () {
+
+    $app.methods.saveUserDialogOption = async function (configKey = '') {
+        if (configKey === 'VRCX_hideUserNotes') {
+            this.hideUserNotes = !this.hideUserNotes;
+        } else {
+            this.hideUserMemos = !this.hideUserMemos;
+        }
+
         await configRepository.setBool(
             'VRCX_hideUserNotes',
             this.hideUserNotes
@@ -8205,7 +8454,10 @@ console.log(`isLinux: ${LINUX}`);
             this.hideUserMemos
         );
     };
+
     $app.methods.saveFriendLogOptions = async function () {
+        // The function is only called in adv settings
+        this.hideUnfriends = !this.hideUnfriends;
         await configRepository.setBool(
             'VRCX_hideUnfriends',
             this.hideUnfriends
@@ -8386,47 +8638,95 @@ console.log(`isLinux: ${LINUX}`);
         'true';
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
-    $app.methods.saveVRCXWindowOption = async function () {
+
+    $app.methods.saveVRCXWindowOption = async function (configKey = '') {
+        switch (configKey) {
+            case 'VRCX_StartAtWindowsStartup':
+                this.isStartAtWindowsStartup = !this.isStartAtWindowsStartup;
+                break;
+            case 'VRCX_saveInstancePrints':
+                this.saveInstancePrints = !this.saveInstancePrints;
+                break;
+            case 'VRCX_cropInstancePrints':
+                this.cropInstancePrints = !this.cropInstancePrints;
+                this.cropPrintsChanged();
+                break;
+            case 'VRCX_saveInstanceStickers':
+                this.saveInstanceStickers = !this.saveInstanceStickers;
+                break;
+            case 'VRCX_StartAsMinimizedState':
+                this.isStartAsMinimizedState = !this.isStartAsMinimizedState;
+                break;
+            case 'VRCX_CloseToTray':
+                this.isCloseToTray = !this.isCloseToTray;
+                break;
+            case 'VRCX_DisableWorldDatabase':
+                this.disableWorldDatabase = !this.disableWorldDatabase;
+                break;
+            case 'VRCX_DisableGpuAcceleration':
+                this.disableGpuAcceleration = !this.disableGpuAcceleration;
+                break;
+            case 'VRCX_DisableVrOverlayGpuAcceleration':
+                this.disableVrOverlayGpuAcceleration =
+                    !this.disableVrOverlayGpuAcceleration;
+                break;
+            default:
+                break;
+        }
+
         await configRepository.setBool(
             'VRCX_StartAtWindowsStartup',
             this.isStartAtWindowsStartup
         );
+
         await configRepository.setBool(
             'VRCX_saveInstancePrints',
             this.saveInstancePrints
         );
+
+        await configRepository.setBool(
+            'VRCX_cropInstancePrints',
+            this.cropInstancePrints
+        );
+
         await configRepository.setBool(
             'VRCX_saveInstanceStickers',
             this.saveInstanceStickers
         );
+
         VRCXStorage.Set(
             'VRCX_StartAsMinimizedState',
             this.isStartAsMinimizedState.toString()
         );
+
         VRCXStorage.Set('VRCX_CloseToTray', this.isCloseToTray.toString());
+
         VRCXStorage.Set(
             'VRCX_DisableWorldDatabase',
             this.disableWorldDatabase.toString()
         );
+
         VRCXStorage.Set(
             'VRCX_DisableGpuAcceleration',
             this.disableGpuAcceleration.toString()
         );
-        VRCXStorage.Set('VRCX_LocationX', this.locationX);
-        VRCXStorage.Set('VRCX_LocationY', this.locationY);
-        VRCXStorage.Set('VRCX_SizeWidth', this.sizeWidth);
-        VRCXStorage.Set('VRCX_SizeHeight', this.sizeHeight);
-        VRCXStorage.Set('VRCX_WindowState', this.windowState);
         VRCXStorage.Set(
             'VRCX_DisableVrOverlayGpuAcceleration',
             this.disableVrOverlayGpuAcceleration.toString()
         );
+
         if (LINUX) {
+            VRCXStorage.Set('VRCX_LocationX', this.locationX);
+            VRCXStorage.Set('VRCX_LocationY', this.locationY);
+            VRCXStorage.Set('VRCX_SizeWidth', this.sizeWidth);
+            VRCXStorage.Set('VRCX_SizeHeight', this.sizeHeight);
+            VRCXStorage.Set('VRCX_WindowState', this.windowState);
             VRCXStorage.Flush();
         } else {
             AppApi.SetStartup(this.isStartAtWindowsStartup);
         }
     };
+
     $app.data.photonEventOverlay = await configRepository.getBool(
         'VRCX_PhotonEventOverlay',
         false
@@ -8461,7 +8761,12 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_instanceUsersSortAlphabetical',
         false
     );
-    $app.methods.saveEventOverlay = async function () {
+    $app.methods.saveEventOverlay = async function (configKey = '') {
+        if (configKey === 'VRCX_PhotonEventOverlay') {
+            this.photonEventOverlay = !this.photonEventOverlay;
+        } else if (configKey === 'VRCX_TimeoutHudOverlay') {
+            this.timeoutHudOverlay = !this.timeoutHudOverlay;
+        }
         await configRepository.setBool(
             'VRCX_PhotonEventOverlay',
             this.photonEventOverlay
@@ -8492,7 +8797,13 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_logEmptyAvatars',
         false
     );
-    $app.methods.saveLoggingOptions = async function () {
+    $app.methods.saveLoggingOptions = async function (configKey = '') {
+        if (configKey === 'VRCX_logResourceLoad') {
+            this.logResourceLoad = !this.logResourceLoad;
+        } else {
+            this.logEmptyAvatars = !this.logEmptyAvatars;
+        }
+
         await configRepository.setBool(
             'VRCX_logResourceLoad',
             this.logResourceLoad
@@ -8528,11 +8839,14 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_autoAcceptInviteRequests',
         'Off'
     );
-    $app.methods.saveAutomationOptions = async function () {
-        await configRepository.setBool(
-            'VRCX_autoStateChangeEnabled',
-            this.autoStateChangeEnabled
-        );
+    $app.methods.saveAutomationOptions = async function (configKey = '') {
+        if (configKey === 'VRCX_autoStateChangeEnabled') {
+            this.autoStateChangeEnabled = !this.autoStateChangeEnabled;
+            await configRepository.setBool(
+                'VRCX_autoStateChangeEnabled',
+                this.autoStateChangeEnabled
+            );
+        }
         await configRepository.setBool(
             'VRCX_autoStateChangeNoFriends',
             this.autoStateChangeNoFriends
@@ -8844,7 +9158,10 @@ console.log(`isLinux: ${LINUX}`);
         )
     );
 
-    $app.methods.updatetrustColor = async function () {
+    $app.methods.updatetrustColor = async function (setRandomColor = false) {
+        if (setRandomColor) {
+            this.randomUserColours = !this.randomUserColours;
+        }
         if (typeof API.currentUser?.id === 'undefined') {
             return;
         }
@@ -9157,11 +9474,13 @@ console.log(`isLinux: ${LINUX}`);
         speechSynthesis.speak(tts);
     };
 
-    $app.methods.refreshConfigTreeData = function () {
+    $app.methods.refreshConfigTreeData = async function () {
+        await API.getConfig();
         this.configTreeData = $utils.buildTreeData(API.cachedConfig);
     };
 
-    $app.methods.refreshCurrentUserTreeData = function () {
+    $app.methods.refreshCurrentUserTreeData = async function () {
+        await API.getCurrentUser();
         this.currentUserTreeData = $utils.buildTreeData(API.currentUser);
     };
 
@@ -12078,6 +12397,7 @@ console.log(`isLinux: ${LINUX}`);
                                         message: 'Imposter deleted',
                                         type: 'success'
                                     });
+                                    this.showAvatarDialog(D.id);
                                     return args;
                                 });
                                 break;
@@ -12091,6 +12411,26 @@ console.log(`isLinux: ${LINUX}`);
                                     });
                                     return args;
                                 });
+                                break;
+                            case 'Regenerate Imposter':
+                                API.deleteImposter({
+                                    avatarId: D.id
+                                })
+                                    .then((args) => {
+                                        return args;
+                                    })
+                                    .finally(() => {
+                                        API.createImposter({
+                                            avatarId: D.id
+                                        }).then((args) => {
+                                            this.$message({
+                                                message:
+                                                    'Imposter deleted and queued for creation',
+                                                type: 'success'
+                                            });
+                                            return args;
+                                        });
+                                    });
                                 break;
                         }
                     }
@@ -16335,15 +16675,21 @@ console.log(`isLinux: ${LINUX}`);
         AppApi.OpenShortcutFolder();
     };
 
-    $app.methods.updateAppLauncherSettings = async function () {
-        await configRepository.setBool(
-            'VRCX_enableAppLauncher',
-            this.enableAppLauncher
-        );
-        await configRepository.setBool(
-            'VRCX_enableAppLauncherAutoClose',
-            this.enableAppLauncherAutoClose
-        );
+    $app.methods.updateAppLauncherSettings = async function (configKey = '') {
+        if (configKey === 'VRCX_enableAppLauncher') {
+            this.enableAppLauncher = !this.enableAppLauncher;
+            await configRepository.setBool(
+                'VRCX_enableAppLauncher',
+                this.enableAppLauncher
+            );
+        } else {
+            this.enableAppLauncherAutoClose = !this.enableAppLauncherAutoClose;
+            await configRepository.setBool(
+                'VRCX_enableAppLauncherAutoClose',
+                this.enableAppLauncherAutoClose
+            );
+        }
+
         await AppApi.SetAppLauncherSettings(
             this.enableAppLauncher,
             this.enableAppLauncherAutoClose
@@ -16352,7 +16698,16 @@ console.log(`isLinux: ${LINUX}`);
 
     // Screenshot Helper
 
-    $app.methods.saveScreenshotHelper = async function () {
+    $app.methods.saveScreenshotHelper = async function (configKey = '') {
+        if (configKey === 'VRCX_screenshotHelper') {
+            this.screenshotHelper = !this.screenshotHelper;
+        } else if (configKey === 'VRCX_screenshotHelperModifyFilename') {
+            this.screenshotHelperModifyFilename =
+                !this.screenshotHelperModifyFilename;
+        } else if (configKey === 'VRCX_screenshotHelperCopyToClipboard') {
+            this.screenshotHelperCopyToClipboard =
+                !this.screenshotHelperCopyToClipboard;
+        }
         await configRepository.setBool(
             'VRCX_screenshotHelper',
             this.screenshotHelper
@@ -16787,7 +17142,15 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
-    $app.methods.changeYouTubeApi = async function () {
+    $app.methods.changeYouTubeApi = async function (configKey = '') {
+        if (configKey === 'VRCX_youtubeAPI') {
+            this.youTubeApi = !this.youTubeApi;
+        } else if (configKey === 'VRCX_progressPie') {
+            this.progressPie = !this.progressPie;
+        } else if (configKey === 'VRCX_progressPieFilter') {
+            this.progressPieFilter = !this.progressPieFilter;
+        }
+
         await configRepository.setBool('VRCX_youtubeAPI', this.youTubeApi);
         await configRepository.setBool('VRCX_progressPie', this.progressPie);
         await configRepository.setBool(
@@ -17759,19 +18122,62 @@ console.log(`isLinux: ${LINUX}`);
             .replace(/T/g, '_')
             .replace(/Z/g, '');
         var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
-        var status = await AppApi.SaveStickerToFile(
+        var filePath = await AppApi.SaveStickerToFile(
             imageUrl,
             this.ugcFolderPath,
             monthFolder,
             fileName
         );
-        if (status) {
+        if (filePath) {
             console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
         }
     };
 
     // #endregion
     // #region | Prints
+    $app.methods.cropPrintsChanged = function () {
+        if (!this.cropInstancePrints) return;
+        this.$confirm(
+            $t(
+                'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'
+            ),
+            {
+                confirmButtonText: $t(
+                    'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'
+                ),
+                cancelButtonText: $t(
+                    'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'
+                ),
+                type: 'info',
+                showInput: false,
+                callback: async (action) => {
+                    if (action === 'confirm') {
+                        var msgBox = this.$message({
+                            message: 'Batch print cropping in progress...',
+                            type: 'warning',
+                            duration: 0
+                        });
+                        try {
+                            await AppApi.CropAllPrints(this.ugcFolderPath);
+                            this.$message({
+                                message: 'Batch print cropping complete',
+                                type: 'success'
+                            });
+                        } catch (err) {
+                            console.error(err);
+                            this.$message({
+                                message: `Batch print cropping failed: ${err}`,
+                                type: 'error'
+                            });
+                        } finally {
+                            msgBox.close();
+                        }
+                    }
+                }
+            }
+        );
+    };
+
     API.$on('LOGIN', function () {
         $app.printTable = [];
     });
@@ -17941,6 +18347,11 @@ console.log(`isLinux: ${LINUX}`);
         false
     );
 
+    $app.data.cropInstancePrints = await configRepository.getBool(
+        'VRCX_cropInstancePrints',
+        false
+    );
+
     $app.data.saveInstanceStickers = await configRepository.getBool(
         'VRCX_saveInstanceStickers',
         false
@@ -17982,13 +18393,29 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.data.printCache = [];
+    $app.data.printQueue = [];
+    $app.data.printQueueWorker = undefined;
 
-    $app.methods.trySavePrintToFile = async function (printId) {
+    $app.methods.queueSavePrintToFile = function (printId) {
         if ($app.printCache.includes(printId)) return;
         $app.printCache.push(printId);
         if ($app.printCache.length > 100) {
             $app.printCache.shift();
         }
+
+        $app.printQueue.push(printId);
+
+        if (!$app.printQueueWorker) {
+            $app.printQueueWorker = workerTimers.setInterval(() => {
+                let printId = $app.printQueue.shift();
+                if (printId) {
+                    $app.trySavePrintToFile(printId);
+                }
+            }, 2_500);
+        }
+    };
+
+    $app.methods.trySavePrintToFile = async function (printId) {
         var args = await API.getPrint({ printId });
         var imageUrl = args.json?.files?.image;
         if (!imageUrl) {
@@ -17998,14 +18425,23 @@ console.log(`isLinux: ${LINUX}`);
         var createdAt = this.getPrintLocalDate(args.json);
         var monthFolder = createdAt.toISOString().slice(0, 7);
         var fileName = this.getPrintFileName(args.json);
-        var status = await AppApi.SavePrintToFile(
+        var filePath = await AppApi.SavePrintToFile(
             imageUrl,
             this.ugcFolderPath,
             monthFolder,
             fileName
         );
-        if (status) {
+        if (filePath) {
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
+
+            if (this.cropInstancePrints) {
+                await AppApi.CropPrintImage(filePath);
+            }
+        }
+
+        if ($app.printQueue.length == 0) {
+            workerTimers.clearInterval($app.printQueueWorker);
+            $app.printQueueWorker = undefined;
         }
     };
 
@@ -19064,7 +19500,10 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_dtIsoFormat',
         false
     );
-    $app.methods.setDatetimeFormat = async function () {
+    $app.methods.setDatetimeFormat = async function (setIsoFormat = false) {
+        if (setIsoFormat) {
+            this.dtIsoFormat = !this.dtIsoFormat;
+        }
         var currentCulture = await AppApi.CurrentCulture();
         var hour12 = await configRepository.getBool('VRCX_dtHour12');
         var isoFormat = await configRepository.getBool('VRCX_dtIsoFormat');
@@ -21467,7 +21906,9 @@ console.log(`isLinux: ${LINUX}`);
                     ref.name.toLowerCase().includes(search) ||
                     ref.authorName.toLowerCase().includes(search)
                 ) {
-                    results.push(ref);
+                    if (!results.some((r) => r.id == ref.id)) {
+                        results.push(ref);
+                    }
                 }
             }
         }
@@ -21481,7 +21922,9 @@ console.log(`isLinux: ${LINUX}`);
                 ref.name.toLowerCase().includes(search) ||
                 ref.authorName.toLowerCase().includes(search)
             ) {
-                results.push(ref);
+                if (!results.some((r) => r.id == ref.id)) {
+                    results.push(ref);
+                }
             }
         }
 
@@ -22366,26 +22809,26 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | V-Bucks
+    // #region | VRChat Credits
 
-    API.$on('VBUCKS', function (args) {
-        this.currentUser.$vbucks = args.json?.balance;
+    API.$on('VRCCREDITS', function (args) {
+        this.currentUser.$vrchatcredits = args.json?.balance;
     });
 
-    API.getVbucks = function () {
+    API.getVRChatCredits = function () {
         return this.call(`user/${this.currentUser.id}/balance`, {
             method: 'GET'
         }).then((json) => {
             var args = {
                 json
             };
-            this.$emit('VBUCKS', args);
+            this.$emit('VRCCREDITS', args);
             return args;
         });
     };
 
-    $app.methods.getVbucks = function () {
-        API.getVbucks();
+    $app.methods.getVRChatCredits = function () {
+        API.getVRChatCredits();
     };
 
     // #endregion

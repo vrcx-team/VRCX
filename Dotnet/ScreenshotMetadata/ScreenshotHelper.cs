@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -286,6 +286,34 @@ namespace VRCX
             return true;
         }
 
+        public static bool CopyTXt(string sourceImage, string targetImage)
+        {
+            if (!File.Exists(sourceImage) || !IsPNGFile(sourceImage) ||
+                !File.Exists(targetImage) || !IsPNGFile(targetImage)) 
+                return false;
+
+            var sourceMetadata = ReadTXt(sourceImage);
+
+            if (sourceMetadata == null) 
+                return false;
+
+            var targetImageData = File.ReadAllBytes(targetImage);
+
+            var newChunkIndex = FindEndOfChunk(targetImageData, "IHDR");
+            if (newChunkIndex == -1) return false;
+
+            // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
+            var existingiTXt = FindChunkIndex(targetImageData, "iTXt");
+            if (existingiTXt != -1) return false;
+
+            var newFile = targetImageData.ToList();
+            newFile.InsertRange(newChunkIndex, sourceMetadata.ConstructChunkByteArray());
+
+            File.WriteAllBytes(targetImage, newFile.ToArray());
+
+            return true;
+        }
+
         /// <summary>
         ///     Reads a text description from a PNG file at the specified path.
         ///     Reads any existing iTXt PNG chunk in the target file, using the Description tag.
@@ -304,6 +332,30 @@ namespace VRCX
                 if (existingiTXt == null) return null;
 
                 return existingiTXt.GetText("Description");
+            }
+        }
+
+        public static bool HasTXt(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return false;
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
+            {
+                var existingiTXt = FindChunk(stream, "iTXt", true);
+
+                return existingiTXt != null;
+            }
+        }
+
+        public static PNGChunk ReadTXt(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return null;
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
+            {
+                var existingiTXt = FindChunk(stream, "iTXt", true);
+
+                return existingiTXt;
             }
         }
 

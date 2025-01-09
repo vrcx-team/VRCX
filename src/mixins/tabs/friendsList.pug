@@ -34,6 +34,8 @@ mixin friendsListTab()
                         el-button(type="text" size="mini" @click.stop)
                             el-checkbox(v-model="scope.row.$selected" @change="friendsListBulkUnfriendForceUpdate++")
                 el-table-column(:label="$t('table.friendList.no')" width="70" prop="$friendNumber" sortable="custom")
+                    template(v-once #default="scope")
+                        span {{ scope.row.$friendNumber ? scope.row.$friendNumber : '' }}
                 el-table-column(:label="$t('table.friendList.avatar')" width="70" prop="photo")
                     template(v-once #default="scope")
                         el-popover(placement="right" height="500px" trigger="hover")

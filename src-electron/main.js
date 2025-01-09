@@ -88,6 +88,16 @@ ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
     new Notification(notification).show();
 });
 
+ipcMain.handle('app:restart', () => {
+    if (process.platform === 'linux') {
+        app.relaunch();
+        app.exit();
+    } else {
+        app.relaunch();
+        app.quit();
+    }
+});
+
 function createWindow() {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 
@@ -284,14 +294,7 @@ async function installVRCX() {
         console.log('VRCX is already installed.');
         return;
     }
-
-    dialog.showMessageBox({
-        type: 'info',
-        title: 'VRCX',
-        message: 'VRCX is being installed into the Applications folder.',
-        buttons: []
-    });
-
+    
     const targetPath = path.join(app.getPath('home'), 'Applications');
     console.log('AppImage Path:', appImagePath);
     console.log('Target Path:', targetPath);
@@ -301,13 +304,15 @@ async function installVRCX() {
         fs.mkdirSync(targetPath);
     }
 
-    // Extract the filename from the AppImage path
-    const appImageName = path.basename(appImagePath);
-    const targetAppImagePath = path.join(targetPath, appImageName);
+    const targetAppImagePath = path.join(targetPath, 'VRCX.AppImage');
 
     // Move the AppImage to the target directory
     try {
+        if (fs.existsSync(targetAppImagePath)) {
+            fs.unlinkSync(targetAppImagePath);
+        }
         fs.renameSync(appImagePath, targetAppImagePath);
+        appImagePath = targetAppImagePath;
         console.log('AppImage moved to:', targetAppImagePath);
     } catch (err) {
         console.error('Error moving AppImage:', err);
@@ -315,22 +320,18 @@ async function installVRCX() {
         return;
     }
 
-    interopApi.getDotNetObject('Update').Init(targetAppImagePath);
-
     // Download the icon and save it to the target directory
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-    const iconPath = '~/.local/share/icons/VRCX.png';
-    const expandedPath = iconPath.replace('~', process.env.HOME);
-    const targetIconPath = path.join(expandedPath);    
-    downloadIcon(iconUrl, targetIconPath)
+    const targetIconPath = path.join(targetPath, 'VRCX.png');
+    await downloadIcon(iconUrl, targetIconPath)
         .then(() => {
             console.log('Icon downloaded and saved to:', targetIconPath);
 
             // Create a .desktop file in ~/.local/share/applications/
             const desktopFile = `[Desktop Entry]
 Name=VRCX
-Exec=${targetAppImagePath}
+Exec=${appImagePath}
 Icon=VRCX
 Type=Application
 Categories=Network;InstantMessaging;Game;
@@ -355,6 +356,13 @@ StartupWMClass=VRCX
             console.error('Error downloading icon:', err);
             dialog.showErrorBox('Error', 'Failed to download the icon.');
         });
+
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'VRCX',
+        message: 'VRCX has been installed successfully.',
+        detail: 'You can now find VRCX in your ~/Applications folder.'
+    });
 }
 
 // Function to download the icon and save it to a specific path
