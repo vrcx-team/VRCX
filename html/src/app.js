@@ -192,8 +192,8 @@ speechSynthesis.getVoices();
             this.loginForm.savedCredentials =
                 (await configRepository.getString('savedCredentials')) !== null
                     ? JSON.parse(
-                        await configRepository.getString('savedCredentials')
-                    )
+                          await configRepository.getString('savedCredentials')
+                      )
                     : {};
             this.loginForm.lastUserLoggedIn =
                 await configRepository.getString('lastUserLoggedIn');
@@ -202,11 +202,11 @@ speechSynthesis.getVoices();
                 if (
                     !this.enablePrimaryPassword &&
                     (await configRepository.getString('lastUserLoggedIn')) !==
-                    null
+                        null
                 ) {
                     var user =
                         this.loginForm.savedCredentials[
-                        this.loginForm.lastUserLoggedIn
+                            this.loginForm.lastUserLoggedIn
                         ];
                     if (user?.loginParmas?.endpoint) {
                         API.endpointDomain = user.loginParmas.endpoint;
@@ -1892,7 +1892,10 @@ speechSynthesis.getVoices();
     };
 
     API.$on('AVATAR:IMPOSTER:DELETE', function (args) {
-        if (args.json && $app.avatarDialog.visible) {
+        if (
+            $app.avatarDialog.visible &&
+            args.params.avatarId === $app.avatarDialog.id
+        ) {
             $app.showAvatarDialog($app.avatarDialog.id);
         }
     });
@@ -2035,7 +2038,7 @@ speechSynthesis.getVoices();
                     if (object === Object(object)) {
                         details = object;
                     }
-                } catch (err) { }
+                } catch (err) {}
             }
             ref.details = details;
         }
@@ -3844,7 +3847,7 @@ speechSynthesis.getVoices();
         if (this.loginForm.lastUserLoggedIn) {
             var user =
                 this.loginForm.savedCredentials[
-                this.loginForm.lastUserLoggedIn
+                    this.loginForm.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
                 await webApiService.clearCookies();
@@ -4746,7 +4749,7 @@ speechSynthesis.getVoices();
                     });
                     worldName = args.ref.name;
                 }
-            } catch (err) { }
+            } catch (err) {}
         }
         return worldName;
     };
@@ -4769,7 +4772,7 @@ speechSynthesis.getVoices();
                 groupId
             });
             groupName = args.ref.name;
-        } catch (err) { }
+        } catch (err) {}
         return groupName;
     };
 
@@ -5677,7 +5680,7 @@ speechSynthesis.getVoices();
             props.currentAvatarThumbnailImageUrl[0] &&
             props.currentAvatarThumbnailImageUrl[1] &&
             props.currentAvatarThumbnailImageUrl[0] ===
-            props.currentAvatarThumbnailImageUrl[1]
+                props.currentAvatarThumbnailImageUrl[1]
         ) {
             imageMatches = true;
         }
@@ -5736,7 +5739,7 @@ speechSynthesis.getVoices();
                     avatarInfo = await $app.getAvatarName(
                         currentAvatarImageUrl
                     );
-                } catch (err) { }
+                } catch (err) {}
                 var previousAvatarInfo = {
                     ownerId: '',
                     avatarName: ''
@@ -5745,7 +5748,7 @@ speechSynthesis.getVoices();
                     previousAvatarInfo = await $app.getAvatarName(
                         previousCurrentAvatarImageUrl
                     );
-                } catch (err) { }
+                } catch (err) {}
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Avatar',
@@ -5859,7 +5862,10 @@ speechSynthesis.getVoices();
      * @param {string} str2
      * @returns {number[][]} A matrix that contains the longest common subsequence between both strings
      */
-    $app.methods.longestCommonSubsequence = function longestCommonSubsequence(str1, str2) {
+    $app.methods.longestCommonSubsequence = function longestCommonSubsequence(
+        str1,
+        str2
+    ) {
         let lcs = [];
         for (let i = 0; i <= str1.length; i++) {
             lcs.push(new Array(str2.length + 1).fill(0));
@@ -5874,7 +5880,7 @@ speechSynthesis.getVoices();
             }
         }
         return lcs;
-    }
+    };
 
     /**
      * Merge differences in both strings to get the longest common subsequence
@@ -5883,8 +5889,8 @@ speechSynthesis.getVoices();
      */
     $app.methods.regoupDifferences = function regoupDifferences(res) {
         let regrouped = [];
-        let text = "";
-        let type = "";
+        let text = '';
+        let type = '';
         for (let i = 0; i < res.length; i++) {
             if (i == 0) {
                 text = res[i].text;
@@ -5899,7 +5905,7 @@ speechSynthesis.getVoices();
         }
         regrouped.push({ text: text, type: type });
         return regrouped;
-    }
+    };
 
     /**
      * Function that format the differences between two strings with HTML tags
@@ -5916,112 +5922,138 @@ speechSynthesis.getVoices();
         markerAddition = '<span class="x-text-added">{{text}}</span>',
         markerDeletion = '<span class="x-text-removed">{{text}}</span>'
     ) {
-        [oldString, newString] = [oldString, newString].map((s) => s
-            .replaceAll(/&/g, '&amp;')
-            .replaceAll(/</g, '&lt;')
-            .replaceAll(/>/g, '&gt;')
-            .replaceAll(/"/g, '&quot;')
-            .replaceAll(/'/g, '&#039;')
-            .replaceAll(/\n/g, '<br>')
+        [oldString, newString] = [oldString, newString].map((s) =>
+            s
+                .replaceAll(/&/g, '&amp;')
+                .replaceAll(/</g, '&lt;')
+                .replaceAll(/>/g, '&gt;')
+                .replaceAll(/"/g, '&quot;')
+                .replaceAll(/'/g, '&#039;')
+                .replaceAll(/\n/g, '<br>')
         );
 
-        const oldWords = oldString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
-        const newWords = newString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
-      
+        const oldWords = oldString
+            .split(/\s+/)
+            .flatMap((word) => word.split(/(<br>)/));
+        const newWords = newString
+            .split(/\s+/)
+            .flatMap((word) => word.split(/(<br>)/));
+
         function findLongestMatch(oldStart, oldEnd, newStart, newEnd) {
-          let bestOldStart = oldStart;
-          let bestNewStart = newStart;
-          let bestSize = 0;
-      
-          const lookup = new Map();
-          for (let i = oldStart; i < oldEnd; i++) {
-            const word = oldWords[i];
-            if (!lookup.has(word)) lookup.set(word, []);
-            lookup.get(word).push(i);
-          }
-      
-          for (let j = newStart; j < newEnd; j++) {
-            const word = newWords[j];
-            if (!lookup.has(word)) continue;
-      
-            for (const i of lookup.get(word)) {
-              let size = 0;
-              while (
-                i + size < oldEnd &&
-                j + size < newEnd &&
-                oldWords[i + size] === newWords[j + size]
-              ) {
-                size++;
-              }
-              if (size > bestSize) {
-                bestOldStart = i;
-                bestNewStart = j;
-                bestSize = size;
-              }
+            let bestOldStart = oldStart;
+            let bestNewStart = newStart;
+            let bestSize = 0;
+
+            const lookup = new Map();
+            for (let i = oldStart; i < oldEnd; i++) {
+                const word = oldWords[i];
+                if (!lookup.has(word)) lookup.set(word, []);
+                lookup.get(word).push(i);
             }
-          }
-      
-          return { oldStart: bestOldStart, newStart: bestNewStart, size: bestSize };
-        }
-      
-        function buildDiff(oldStart, oldEnd, newStart, newEnd) {
-          const result = [];
-          const match = findLongestMatch(oldStart, oldEnd, newStart, newEnd);
-      
-          if (match.size > 0) {
-            // Handle differences before the match
-            if (oldStart < match.oldStart || newStart < match.newStart) {
-              result.push(
-                ...buildDiff(oldStart, match.oldStart, newStart, match.newStart)
-              );
-            }
-      
-            // Add the matched words
-            result.push(oldWords.slice(match.oldStart, match.oldStart + match.size).join(" "));
-      
-            // Handle differences after the match
-            if (match.oldStart + match.size < oldEnd || match.newStart + match.size < newEnd) {
-              result.push(
-                ...buildDiff(
-                  match.oldStart + match.size,
-                  oldEnd,
-                  match.newStart + match.size,
-                  newEnd
-                )
-              );
-            }
-          } else {
-            function build(words, start, end, pattern) {
-                let r = [];
-                let ts = words.slice(start, end)
-                    .filter((w) => w.length > 0)
-                    .join(" ")
-                    .split("<br>");
-                for (let i = 0; i < ts.length; i++) {
-                    if (i > 0) r.push("<br>");
-                    if (ts[i].length < 1) continue;
-                    r.push(pattern.replace("{{text}}", ts[i]));
+
+            for (let j = newStart; j < newEnd; j++) {
+                const word = newWords[j];
+                if (!lookup.has(word)) continue;
+
+                for (const i of lookup.get(word)) {
+                    let size = 0;
+                    while (
+                        i + size < oldEnd &&
+                        j + size < newEnd &&
+                        oldWords[i + size] === newWords[j + size]
+                    ) {
+                        size++;
+                    }
+                    if (size > bestSize) {
+                        bestOldStart = i;
+                        bestNewStart = j;
+                        bestSize = size;
+                    }
                 }
-                return r;
             }
-    
-            // Add deletions
-            if (oldStart < oldEnd)
-                result.push(...build(oldWords, oldStart, oldEnd, markerDeletion));
-            
-            // Add insertions
-            if (newStart < newEnd)
-                result.push(...build(newWords, newStart, newEnd, markerAddition));
-          }
-      
-          return result;
+
+            return {
+                oldStart: bestOldStart,
+                newStart: bestNewStart,
+                size: bestSize
+            };
+        }
+
+        function buildDiff(oldStart, oldEnd, newStart, newEnd) {
+            const result = [];
+            const match = findLongestMatch(oldStart, oldEnd, newStart, newEnd);
+
+            if (match.size > 0) {
+                // Handle differences before the match
+                if (oldStart < match.oldStart || newStart < match.newStart) {
+                    result.push(
+                        ...buildDiff(
+                            oldStart,
+                            match.oldStart,
+                            newStart,
+                            match.newStart
+                        )
+                    );
+                }
+
+                // Add the matched words
+                result.push(
+                    oldWords
+                        .slice(match.oldStart, match.oldStart + match.size)
+                        .join(' ')
+                );
+
+                // Handle differences after the match
+                if (
+                    match.oldStart + match.size < oldEnd ||
+                    match.newStart + match.size < newEnd
+                ) {
+                    result.push(
+                        ...buildDiff(
+                            match.oldStart + match.size,
+                            oldEnd,
+                            match.newStart + match.size,
+                            newEnd
+                        )
+                    );
+                }
+            } else {
+                function build(words, start, end, pattern) {
+                    let r = [];
+                    let ts = words
+                        .slice(start, end)
+                        .filter((w) => w.length > 0)
+                        .join(' ')
+                        .split('<br>');
+                    for (let i = 0; i < ts.length; i++) {
+                        if (i > 0) r.push('<br>');
+                        if (ts[i].length < 1) continue;
+                        r.push(pattern.replace('{{text}}', ts[i]));
+                    }
+                    return r;
+                }
+
+                // Add deletions
+                if (oldStart < oldEnd)
+                    result.push(
+                        ...build(oldWords, oldStart, oldEnd, markerDeletion)
+                    );
+
+                // Add insertions
+                if (newStart < newEnd)
+                    result.push(
+                        ...build(newWords, newStart, newEnd, markerAddition)
+                    );
+            }
+
+            return result;
         }
 
         return buildDiff(0, oldWords.length, 0, newWords.length)
-        .join(" ")
-        .replace(/<br>[ ]+<br>/g, "<br><br>")
-        .replace(/<br> /g, "<br>");
-    }
+            .join(' ')
+            .replace(/<br>[ ]+<br>/g, '<br><br>')
+            .replace(/<br> /g, '<br>');
+    };
 
     // #endregion
     // #region | App: gameLog
@@ -6271,8 +6303,8 @@ speechSynthesis.getVoices();
 
     $app.methods.formatSeconds = function (duration) {
         var pad = function (num, size) {
-            return `000${num}`.slice(size * -1);
-        },
+                return `000${num}`.slice(size * -1);
+            },
             time = parseFloat(duration).toFixed(3),
             hours = Math.floor(time / 60 / 60),
             minutes = Math.floor(time / 60) % 60,
@@ -8441,7 +8473,7 @@ speechSynthesis.getVoices();
         speechSynthesis.cancel();
         if (
             (await configRepository.getString('VRCX_notificationTTS')) ===
-            'Never' &&
+                'Never' &&
             this.notificationTTS !== 'Never'
         ) {
             this.speak('Notification text-to-speech enabled');
@@ -8599,6 +8631,10 @@ speechSynthesis.getVoices();
             case 'VRCX_saveInstancePrints':
                 this.saveInstancePrints = !this.saveInstancePrints;
                 break;
+            case 'VRCX_cropInstancePrints':
+                this.cropInstancePrints = !this.cropInstancePrints;
+                this.cropPrintsChanged();
+                break;
             case 'VRCX_saveInstanceStickers':
                 this.saveInstanceStickers = !this.saveInstanceStickers;
                 break;
@@ -8636,6 +8672,7 @@ speechSynthesis.getVoices();
             'VRCX_cropInstancePrints',
             this.cropInstancePrints
         );
+
         await configRepository.setBool(
             'VRCX_saveInstanceStickers',
             this.saveInstanceStickers
@@ -10716,8 +10753,9 @@ speechSynthesis.getVoices();
         if (type === 'search') {
             try {
                 var response = await webApiService.execute({
-                    url: `${this.avatarRemoteDatabaseProvider
-                        }?${type}=${encodeURIComponent(search)}&n=5000`,
+                    url: `${
+                        this.avatarRemoteDatabaseProvider
+                    }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
                         Referer: 'https://vrcx.app'
@@ -12343,17 +12381,22 @@ speechSynthesis.getVoices();
                             case 'Regenerate Imposter':
                                 API.deleteImposter({
                                     avatarId: D.id
-                                }).then((args) => {return args;});
-                                API.createImposter({
-                                    avatarId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Imposter deleted and queued for creation',
-                                        type: 'success'
+                                })
+                                    .then((args) => {
+                                        return args;
+                                    })
+                                    .finally(() => {
+                                        API.createImposter({
+                                            avatarId: D.id
+                                        }).then((args) => {
+                                            this.$message({
+                                                message:
+                                                    'Imposter deleted and queued for creation',
+                                                type: 'success'
+                                            });
+                                            return args;
+                                        });
                                     });
-                                    this.showAvatarDialog(D.id);
-                                    return args;
-                                });
                                 break;
                         }
                     }
@@ -17570,7 +17613,7 @@ speechSynthesis.getVoices();
             try {
                 var args = await API.getFavoriteWorlds(params);
                 worldLists.push([list.displayName, list.visibility, args.json]);
-            } catch (err) { }
+            } catch (err) {}
         }
         this.userFavoriteWorlds = worldLists;
         this.userDialog.isFavoriteWorldsLoading = false;
@@ -17742,7 +17785,7 @@ speechSynthesis.getVoices();
 
     $app.methods.sortCurrentUserGroups = async function () {
         var D = this.userDialog;
-        var sortMethod = function () { };
+        var sortMethod = function () {};
 
         switch (D.groupSorting.value) {
             case 'alphabetical':
@@ -18152,24 +18195,47 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | Prints
     $app.methods.cropPrintsChanged = function () {
-        if (!this.cropInstancePrints)
-            return;
+        if (!this.cropInstancePrints) return;
         this.$confirm(
-            $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'), 
-            { 
-                confirmButtonText: $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'), 
-                cancelButtonText: $t('view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'), 
-                type: 'info', 
-                showInput: false, 
-                callback: (action) => { 
-                    if (action === 'confirm') { 
-                        AppApi.CropAllPrints(this.ugcFolderPath); 
-                    } 
-                } 
-            });
-        
-        this.saveVRCXWindowOption();
-    }
+            $t(
+                'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'
+            ),
+            {
+                confirmButtonText: $t(
+                    'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'
+                ),
+                cancelButtonText: $t(
+                    'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'
+                ),
+                type: 'info',
+                showInput: false,
+                callback: async (action) => {
+                    if (action === 'confirm') {
+                        var msgBox = this.$message({
+                            message: 'Batch print cropping in progress...',
+                            type: 'warning',
+                            duration: 0
+                        });
+                        try {
+                            await AppApi.CropAllPrints(this.ugcFolderPath);
+                            this.$message({
+                                message: 'Batch print cropping complete',
+                                type: 'success'
+                            });
+                        } catch (err) {
+                            console.error(err);
+                            this.$message({
+                                message: `Batch print cropping failed: ${err}`,
+                                type: 'error'
+                            });
+                        } finally {
+                            msgBox.close();
+                        }
+                    }
+                }
+            }
+        );
+    };
 
     API.$on('LOGIN', function () {
         $app.printTable = [];
@@ -18406,7 +18472,7 @@ speechSynthesis.getVoices();
                 }
             }, 2_500);
         }
-    }
+    };
 
     $app.methods.trySavePrintToFile = async function (printId) {
         var args = await API.getPrint({ printId });
