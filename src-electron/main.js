@@ -12,13 +12,22 @@ const {
 const fs = require('fs');
 const https = require('https');
 
+if (!isDotNetInstalled()) {
+    dialog.showErrorBox('VRCX', 'Please install .NET 8.0 Runtime to run VRCX.');
+    app.quit();
+    return;
+}
+
+tryCopyFromWinePrefix();
+
 const rootDir = app.getAppPath();
 require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
 
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
 
-interopApi.getDotNetObject('ProgramElectron').PreInit();
+const version = getVersion();
+interopApi.getDotNetObject('ProgramElectron').PreInit(version);
 interopApi.getDotNetObject('VRCXStorage').Load();
 interopApi.getDotNetObject('ProgramElectron').Init();
 interopApi.getDotNetObject('SQLiteLegacy').Init();
@@ -35,8 +44,7 @@ let mainWindow = undefined;
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
 let isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
-const AppApiElectron = interopApi.getDotNetObject('AppApiElectron');
-const version = AppApiElectron.GetVersion();
+let appImagePath = process.env.APPIMAGE;
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -138,7 +146,7 @@ function createWindow() {
     // }
 
     // Open the DevTools.
-    //mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     mainWindow.webContents.on('before-input-event', (event, input) => {
         if (input.control && input.key === '=') {
@@ -267,7 +275,6 @@ async function installVRCXappImageLauncher() {
 */
 
 async function installVRCX() {
-    let appImagePath = process.env.APPIMAGE;
     console.log('AppImage path:', appImagePath);
     if (!appImagePath) {
         console.error('AppImage path is not available!');
@@ -281,7 +288,9 @@ async function installVRCX() {
     }
     */
 
-    if (appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))) {
+    if (
+        appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))
+    ) {
         /*
         if (appImageLauncherInstalled) {
             installVRCXappImageLauncher();
@@ -307,9 +316,13 @@ async function installVRCX() {
         }
     }
 
-    if (process.env.APPIMAGE.startsWith(path.join(app.getPath('home'), 'Applications'))
-        && path.basename(process.env.APPIMAGE) === 'VRCX.AppImage') {
-        interopApi.getDotNetObject('Update').Init(process.env.APPIMAGE);
+    if (
+        process.env.APPIMAGE.startsWith(
+            path.join(app.getPath('home'), 'Applications')
+        ) &&
+        path.basename(process.env.APPIMAGE) === 'VRCX.AppImage'
+    ) {
+        interopApi.getDotNetObject('Update').Init(appImagePath);
         console.log('VRCX is already installed.');
         return;
     }
@@ -341,12 +354,13 @@ async function installVRCX() {
     // Download the icon and save it to the target directory
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-    const iconPath = '~/.local/share/icons/VRCX.png';
-    const expandedPath = iconPath.replace('~', process.env.HOME);
-    const targetIconPath = path.join(expandedPath);    
-    await downloadIcon(iconUrl, targetIconPath)
+    const iconPath = path.join(
+        app.getPath('home'),
+        '.local/share/icons/VRCX.png'
+    );
+    await downloadIcon(iconUrl, iconPath)
         .then(() => {
-            console.log('Icon downloaded and saved to:', targetIconPath);
+            console.log('Icon downloaded and saved to:', iconPath);
             const desktopFile = `[Desktop Entry]
 Name=VRCX
 Comment=Friendship management tool for VRChat
@@ -375,7 +389,6 @@ StartupWMClass=VRCX
             console.error('Error downloading icon:', err);
             dialog.showErrorBox('VRCX', 'Failed to download the icon.');
         });
-
     dialog.showMessageBox({
         type: 'info',
         title: 'VRCX',
@@ -419,6 +432,58 @@ function getVRCXPath() {
     return '';
 }
 
+function getVersion() {
+    let version = 'VRCX (Linux) Build';
+    try {
+        version = `VRCX (Linux) ${fs.readFileSync(path.join(rootDir, 'Version'), 'utf8').trim()}`;
+    } catch (err) {
+        console.error('Error reading Version:', err);
+    }
+    return version;
+}
+
+function isDotNetInstalled() {
+    const result = require('child_process').spawnSync(
+        'dotnet',
+        ['--list-runtimes'],
+        {
+            encoding: 'utf-8'
+        }
+    );
+    return result.stdout.includes('.NETCore.App 8.0');
+}
+
+function tryCopyFromWinePrefix() {
+    try {
+        if (!fs.existsSync(getVRCXPath())) {
+            // try copy from old wine path
+            const userName = process.env.USER;
+            const oldPath = path.join(
+                app.getPath('home'),
+                '.local/share/vrcx/drive_c/users',
+                userName,
+                'AppData/Roaming/VRCX'
+            );
+            const newPath = getVRCXPath();
+            if (fs.existsSync(oldPath)) {
+                fs.mkdirSync(newPath, { recursive: true });
+                const files = fs.readdirSync(oldPath);
+                for (const file of files) {
+                    const oldFilePath = path.join(oldPath, file);
+                    const newFilePath = path.join(newPath, file);
+                    fs.copyFileSync(oldFilePath, newFilePath);
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Error copying from wine prefix:', err);
+        dialog.showErrorBox(
+            'VRCX',
+            'Failed to copy database from wine prefix.'
+        );
+    }
+}
+
 function applyWindowState() {
     if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true') {
         if (isCloseToTray) {
@@ -456,9 +521,9 @@ app.whenReady().then(() => {
     });
 });
 
-//app.on('before-quit', function () {
+// app.on('before-quit', function () {
 //    mainWindow.webContents.send('windowClosed');
-//});
+// });
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit();

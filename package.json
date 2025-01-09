@@ -76,7 +76,8 @@
             "build/html/**/*",
             "src-electron/*",
             "VRCX.png",
-            "images/tray.png"
+            "images/tray.png",
+            "Version"
         ],
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",

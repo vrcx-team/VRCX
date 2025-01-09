@@ -70,11 +70,8 @@ namespace VRCX
 
         private static void GetVersion()
         {
-#if !LINUX
             var buildName = "VRCX";
-#else
-            var buildName = "VRCX (Linux)";
-#endif
+            
             try
             {
                 Version = $"{buildName} {File.ReadAllText(Path.Combine(BaseDirectory, "Version"))}";
@@ -262,8 +259,9 @@ namespace VRCX
             ProcessMonitor.Instance.Exit();
         }
 #else
-        public static void PreInit()
+        public static void PreInit(string version)
         {
+            Version = version;
             StartupArgs.ArgsCheck();
             SetProgramDirectories();
         }
@@ -271,7 +269,6 @@ namespace VRCX
         public static void Init()
         {
             ConfigureLogger();
-            GetVersion();
             Update.Check();
 
             logger.Info("{0} Starting...", Version);
@@ -285,9 +282,9 @@ namespace VRCX
 #if LINUX
     public class ProgramElectron
     {
-        public void PreInit()
+        public void PreInit(string version)
         {
-            Program.PreInit();
+            Program.PreInit(version);
         }
 
         public void Init()
