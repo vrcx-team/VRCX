@@ -30,6 +30,12 @@ export default class extends baseClass {
                 name: 'Nightly',
                 urlReleases: 'https://api0.vrcx.app/releases/nightly',
                 urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
+            },
+            LinuxTest: {
+                name: 'LinuxTest',
+                urlReleases: 'https://api.github.com/repos/rs189/VRCX/releases',
+                urlLatest:
+                    'https://api.github.com/repos/rs189/VRCX/releases/latest'
             }
         },
         updateProgress: 0,
@@ -45,9 +51,6 @@ export default class extends baseClass {
             D.visible = true;
             D.updatePendingIsLatest = false;
             D.updatePending = await AppApi.CheckForUpdateExe();
-            if (!D.updatePending) {
-                this.pendingVRCXInstall = '';
-            }
             this.loadBranchVersions();
         },
 
@@ -121,8 +124,10 @@ export default class extends baseClass {
                         continue;
                     }
                     if (
-                        asset.content_type === 'application/x-msdownload' ||
-                        asset.content_type === 'application/x-msdos-program'
+                        WINDOWS &&
+                        (asset.content_type === 'application/x-msdownload' ||
+                            asset.content_type ===
+                                'application/x-msdos-program')
                     ) {
                         downloadUrl = asset.browser_download_url;
                         downloadName = asset.name;
@@ -321,8 +326,11 @@ export default class extends baseClass {
         },
 
         restartVRCX(isUpgrade) {
-            // TODO: Linux support
-            AppApi.RestartApplication(isUpgrade);
+            if (!LINUX) {
+                AppApi.RestartApplication(isUpgrade);
+            } else {
+                window.electron.restartApp();
+            }
         },
 
         async saveAutoUpdateVRCX() {

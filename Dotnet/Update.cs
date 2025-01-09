@@ -221,6 +221,7 @@ namespace VRCX
             if (data.Length != downloadSize)
             {
                 File.Delete(TempDownload);
+                logger.Error("Downloaded file size does not match expected size");
                 throw new Exception("Downloaded file size does not match expected size");
             }
             if (File.Exists(HashLocation))
@@ -247,8 +248,8 @@ namespace VRCX
                         !hashString.Equals(expectedHash, StringComparison.OrdinalIgnoreCase))
                     {
                         logger.Error($"Hash check failed file:{hashString} web:{expectedHash}");
+                        throw new Exception("Hash check failed");
                         // can't delete file yet because it's in use
-                        return;
                     }
                 }
                 File.Delete(HashLocation);
@@ -257,6 +258,7 @@ namespace VRCX
 
             if (string.IsNullOrEmpty(AppImagePath))
             {
+                // Windows
                 if (File.Exists(UpdateExecutable))
                     File.Delete(UpdateExecutable);
                 File.Move(TempDownload, UpdateExecutable);
@@ -268,6 +270,16 @@ namespace VRCX
                     File.Delete(AppImagePathOld);
                 File.Move(AppImagePath, AppImagePathOld);
                 File.Move(TempDownload, AppImagePath);
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "chmod",
+                        Arguments = $"+x {AppImagePath}"
+                    }
+                };
+                process.Start();
+                await process.WaitForExitAsync();
             }
 
             UpdateProgress = 0;

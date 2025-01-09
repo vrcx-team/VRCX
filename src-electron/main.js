@@ -89,6 +89,11 @@ ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
     new Notification(notification).show();
 });
 
+ipcMain.handle('app:restart', () => {
+    app.relaunch();
+    app.quit();
+});
+
 function createWindow() {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 
@@ -234,22 +239,6 @@ async function installVRCX() {
         console.error('AppImage path is not available!');
         return;
     }
-
-    let currentName = path.basename(appImagePath);
-    let newName = currentName.replace(/VRCX_\d{8}/, 'VRCX');
-    if (currentName !== newName) {
-        const newPath = path.join(path.dirname(appImagePath), newName);
-        try {
-            fs.renameSync(appImagePath, newPath);
-            console.log('AppImage renamed to:', newPath);
-            appImagePath = newPath;
-        } catch (err) {
-            console.error('Error renaming AppImage:', err);
-            dialog.showErrorBox('Error', 'Failed to rename AppImage.');
-            return;
-        }
-    }
-
     if (
         appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))
     ) {
@@ -266,12 +255,13 @@ async function installVRCX() {
         fs.mkdirSync(targetPath);
     }
 
-    // Extract the filename from the AppImage path
-    const appImageName = path.basename(appImagePath);
-    const targetAppImagePath = path.join(targetPath, appImageName);
+    const targetAppImagePath = path.join(targetPath, 'VRCX.AppImage');
 
     // Move the AppImage to the target directory
     try {
+        if (fs.existsSync(targetAppImagePath)) {
+            fs.unlinkSync(targetAppImagePath);
+        }
         fs.renameSync(appImagePath, targetAppImagePath);
         appImagePath = targetAppImagePath;
         console.log('AppImage moved to:', targetAppImagePath);
@@ -285,7 +275,7 @@ async function installVRCX() {
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
     const targetIconPath = path.join(targetPath, 'VRCX.png');
-    downloadIcon(iconUrl, targetIconPath)
+    await downloadIcon(iconUrl, targetIconPath)
         .then(() => {
             console.log('Icon downloaded and saved to:', targetIconPath);
 
@@ -317,6 +307,11 @@ StartupWMClass=VRCX
             console.error('Error downloading icon:', err);
             dialog.showErrorBox('Error', 'Failed to download the icon.');
         });
+    dialog.showMessageBoxSync({
+        type: 'info',
+        message: 'VRCX has been installed successfully.',
+        detail: 'You can now find VRCX in your ~/Applications folder.'
+    });
 }
 
 // Function to download the icon and save it to a specific path

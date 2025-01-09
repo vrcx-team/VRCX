@@ -19,7 +19,7 @@ mixin vrcx()
         template(#footer)
             el-button(v-if="updateInProgress" type="primary" size="small" @click="cancelUpdate") {{ $t('dialog.vrcx_updater.cancel') }}
             el-button(v-if="VRCXUpdateDialog.release !== pendingVRCXInstall" :disabled="updateInProgress" type="primary" size="small" @click="installVRCXUpdate") {{ $t('dialog.vrcx_updater.download') }}
-            el-button(v-if="!updateInProgress && VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX(true)") {{ $t('dialog.vrcx_updater.install') }}
+            el-button(v-if="!updateInProgress && pendingVRCXInstall" type="primary" size="small" @click="restartVRCX(true)") {{ $t('dialog.vrcx_updater.install') }}
 
     //- dialog: change log
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px" top="5vh")
