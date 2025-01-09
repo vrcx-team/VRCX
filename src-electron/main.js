@@ -90,8 +90,13 @@ ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
 });
 
 ipcMain.handle('app:restart', () => {
-    app.relaunch();
-    app.quit();
+    if (process.platform === 'linux') {
+        app.relaunch();
+        app.exit();
+    } else {
+        app.relaunch();
+        app.quit();
+    }
 });
 
 function createWindow() {
@@ -307,7 +312,7 @@ StartupWMClass=VRCX
             console.error('Error downloading icon:', err);
             dialog.showErrorBox('Error', 'Failed to download the icon.');
         });
-    dialog.showMessageBoxSync({
+    dialog.showMessageBox({
         type: 'info',
         message: 'VRCX has been installed successfully.',
         detail: 'You can now find VRCX in your ~/Applications folder.'
