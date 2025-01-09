@@ -106,7 +106,6 @@
         "linux": {
             "artifactName": "VRCX_Version.${ext}",
             "target": [
-                "tar.xz",
                 "AppImage"
             ],
             "icon": "VRCX.png",
@@ -127,5 +126,6 @@
     "dependencies": {
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.8.19"
-    }
+    },
+    "version": "2024.12.30"
 }

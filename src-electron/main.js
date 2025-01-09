@@ -26,7 +26,6 @@ interopApi.getDotNetObject('AppApiElectron').Init();
 interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
 interopApi.getDotNetObject('LogWatcher').Init();
-interopApi.getDotNetObject('Update').Init(process.env.APPIMAGE);
 
 ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
@@ -235,8 +234,37 @@ async function installVRCX() {
         return;
     }
 
+    let appImageLauncherInstalled = false;
+    if (fs.existsSync('/usr/bin/AppImageLauncher')) {
+        appImageLauncherInstalled = true;
+    }
+
+    if (appImageLauncherInstalled) {
+        const desktopFiles = fs.readdirSync(
+            path.join(app.getPath('home'), '.local/share/applications')
+        );
+        for (const file of desktopFiles) {
+            if (file.includes('appimagekit_') && file.includes('VRCX')) {
+                console.log('AppImageLauncher shortcut found:', file);
+                try {
+                    fs.unlinkSync(
+                        path.join(
+                            app.getPath('home'),
+                            '.local/share/applications',
+                            file
+                        )
+                    );
+                    console.log('Deleted:', file);
+                } catch (err) {
+                    console.error('Error deleting shortcut:', err);
+                    return;
+                }
+            }
+        }
+    }
+    
     let currentName = path.basename(appImagePath);
-    let newName = currentName.replace(/VRCX_\d{8}/, 'VRCX');
+    let newName = 'VRCX.AppImage';
     if (currentName !== newName) {
         const newPath = path.join(path.dirname(appImagePath), newName);
         try {
@@ -250,12 +278,19 @@ async function installVRCX() {
         }
     }
 
-    if (
-        appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))
-    ) {
+    if (process.env.APPIMAGE.startsWith(path.join(app.getPath('home'), 'Applications'))
+        && path.basename(process.env.APPIMAGE) === 'VRCX.AppImage') {
+        interopApi.getDotNetObject('Update').Init(process.env.APPIMAGE);
         console.log('VRCX is already installed.');
         return;
     }
+
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'VRCX',
+        message: 'VRCX is being installed into the Applications folder.',
+        buttons: []
+    });
 
     const targetPath = path.join(app.getPath('home'), 'Applications');
     console.log('AppImage Path:', appImagePath);
@@ -280,10 +315,14 @@ async function installVRCX() {
         return;
     }
 
+    interopApi.getDotNetObject('Update').Init(targetAppImagePath);
+
     // Download the icon and save it to the target directory
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-    const targetIconPath = path.join(targetPath, 'VRCX.png');
+    const iconPath = '~/.local/share/icons/VRCX.png';
+    const expandedPath = iconPath.replace('~', process.env.HOME);
+    const targetIconPath = path.join(expandedPath);    
     downloadIcon(iconUrl, targetIconPath)
         .then(() => {
             console.log('Icon downloaded and saved to:', targetIconPath);
@@ -292,7 +331,7 @@ async function installVRCX() {
             const desktopFile = `[Desktop Entry]
 Name=VRCX
 Exec=${targetAppImagePath}
-Icon=${targetIconPath}
+Icon=VRCX
 Type=Application
 Categories=Network;InstantMessaging;Game;
 Terminal=false
