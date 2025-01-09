@@ -76,11 +76,11 @@ mixin settingsTab()
                             el-radio-button(label="Auto Download") {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
                 //- General | Application
                 +simpleSettingsCategory("view.settings.general.application.header")
-                    template(v-if="!isLinux")
+                    template(v-if="!isLinux()")
                         simple-switch(:label='$t("view.settings.general.application.startup")' :value='isStartAtWindowsStartup' @change='saveVRCXWindowOption("VRCX_StartAtWindowsStartup")')
                     simple-switch(:label='$t("view.settings.general.application.minimized")' :value='isStartAsMinimizedState' @change='saveVRCXWindowOption("VRCX_StartAsMinimizedState")')
                     simple-switch(:label='$t("view.settings.general.application.tray")' :value='isCloseToTray' @change='saveVRCXWindowOption("VRCX_CloseToTray")')
-                    template(v-if="!isLinux")
+                    template(v-if="!isLinux()")
                         simple-switch(:label='$t("view.settings.general.application.disable_gpu_acceleration")' :value='disableGpuAcceleration' @change='saveVRCXWindowOption("VRCX_DisableGpuAcceleration")' :tooltip='$t("view.settings.general.application.disable_gpu_acceleration_tooltip")')
                         simple-switch(:label='$t("view.settings.general.application.disable_vr_overlay_gpu_acceleration")' :value='disableVrOverlayGpuAcceleration' @change='saveVRCXWindowOption("VRCX_DisableVrOverlayGpuAcceleration")' :tooltip='$t("view.settings.general.application.disable_gpu_acceleration_tooltip")')
                     div.options-container-item
@@ -183,7 +183,7 @@ mixin settingsTab()
                                 el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_darkvanilla')" @click.native="saveThemeMode('darkvanilla')")
                                 el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_pink')" @click.native="saveThemeMode('pink')")
                                 el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_material3')" @click.native="saveThemeMode('material3')")
-                    div.options-container-item
+                    div.options-container-item(vif="!isLinux()")
                         span.name {{ $t('view.settings.appearance.appearance.zoom') }}
                         el-input-number(size="small" v-model="zoomLevel" @change="setZoomLevel" :precision="0" style="width:128px")
                     simple-switch(:label='$t("view.settings.appearance.appearance.vrcplus_profile_icons")' :value='displayVRCPlusIconsAsAvatar' @change='saveOpenVROption("displayVRCPlusIconsAsAvatar")')
@@ -312,12 +312,12 @@ mixin settingsTab()
                             el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
                             el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
-                    template(v-if="!isLinux")
+                    template(v-if="!isLinux()")
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay")' :value='openVR' @change='saveOpenVROption("openVR")')
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.overlay_notifications")' :value='overlayNotifications' @change='saveOpenVROption("VRCX_overlayNotifications")' :disabled="!openVR")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
-                    template(v-if="!isLinux")
+                    template(v-if="!isLinux()")
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications")' :value='xsNotifications' @change='saveOpenVROption("VRCX_xsNotifications")')
                     template(v-else)
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications")' :value='xsNotifications' @change='saveOpenVROption("VRCX_xsNotifications")')
