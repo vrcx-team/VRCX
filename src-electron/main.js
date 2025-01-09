@@ -237,42 +237,61 @@ function createTray() {
     });
 }
 
+/*
+async function installVRCXappImageLauncher() {
+    const iconUrl =
+    'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
+
+    let targetIconName;
+    const desktopFiles = fs.readdirSync(
+        path.join(app.getPath('home'), '.local/share/applications')
+    );
+    for (const file of desktopFiles) {
+        if (file.includes('appimagekit_') && file.includes('VRCX')) {
+            console.log('AppImageLauncher shortcut found:', file);
+            targetIconName = file.replace('.desktop', '.png');
+            targetIconName = targetIconName.replace('-', '_');
+            try {
+            } catch (err) {
+                console.error('Error deleting shortcut:', err);
+                return;
+            }
+        }
+    }
+
+    const iconPath = '~/.local/share/icons/' + targetIconName;
+    const expandedPath = iconPath.replace('~', process.env.HOME);
+    const targetIconPath = path.join(expandedPath);    
+    await downloadIcon(iconUrl, targetIconPath);
+}
+*/
+
 async function installVRCX() {
     let appImagePath = process.env.APPIMAGE;
+    console.log('AppImage path:', appImagePath);
     if (!appImagePath) {
         console.error('AppImage path is not available!');
         return;
     }
 
+    /*
     let appImageLauncherInstalled = false;
     if (fs.existsSync('/usr/bin/AppImageLauncher')) {
         appImageLauncherInstalled = true;
     }
+    */
 
-    if (appImageLauncherInstalled) {
-        const desktopFiles = fs.readdirSync(
-            path.join(app.getPath('home'), '.local/share/applications')
-        );
-        for (const file of desktopFiles) {
-            if (file.includes('appimagekit_') && file.includes('VRCX')) {
-                console.log('AppImageLauncher shortcut found:', file);
-                try {
-                    fs.unlinkSync(
-                        path.join(
-                            app.getPath('home'),
-                            '.local/share/applications',
-                            file
-                        )
-                    );
-                    console.log('Deleted:', file);
-                } catch (err) {
-                    console.error('Error deleting shortcut:', err);
-                    return;
-                }
-            }
+    if (appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))) {
+        /*
+        if (appImageLauncherInstalled) {
+            installVRCXappImageLauncher();
         }
+        */
+        interopApi.getDotNetObject('Update').Init(appImagePath);
+        console.log('VRCX is already installed.');
+        return;
     }
-    
+
     let currentName = path.basename(appImagePath);
     let newName = 'VRCX.AppImage';
     if (currentName !== newName) {
@@ -283,7 +302,7 @@ async function installVRCX() {
             appImagePath = newPath;
         } catch (err) {
             console.error('Error renaming AppImage:', err);
-            dialog.showErrorBox('Error', 'Failed to rename AppImage.');
+            dialog.showErrorBox('VRCX', 'Failed to rename AppImage.');
             return;
         }
     }
@@ -294,9 +313,8 @@ async function installVRCX() {
         console.log('VRCX is already installed.');
         return;
     }
-    
+
     const targetPath = path.join(app.getPath('home'), 'Applications');
-    console.log('AppImage Path:', appImagePath);
     console.log('Target Path:', targetPath);
 
     // Create target directory if it doesn't exist
@@ -316,21 +334,22 @@ async function installVRCX() {
         console.log('AppImage moved to:', targetAppImagePath);
     } catch (err) {
         console.error('Error moving AppImage:', err);
-        dialog.showErrorBox('Error', 'Failed to move AppImage.');
+        dialog.showErrorBox('VRCX', 'Failed to move AppImage.');
         return;
     }
 
     // Download the icon and save it to the target directory
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-    const targetIconPath = path.join(targetPath, 'VRCX.png');
+    const iconPath = '~/.local/share/icons/VRCX.png';
+    const expandedPath = iconPath.replace('~', process.env.HOME);
+    const targetIconPath = path.join(expandedPath);    
     await downloadIcon(iconUrl, targetIconPath)
         .then(() => {
             console.log('Icon downloaded and saved to:', targetIconPath);
-
-            // Create a .desktop file in ~/.local/share/applications/
             const desktopFile = `[Desktop Entry]
 Name=VRCX
+Comment=Friendship management tool for VRChat
 Exec=${appImagePath}
 Icon=VRCX
 Type=Application
@@ -348,13 +367,13 @@ StartupWMClass=VRCX
                 console.log('Desktop file created at:', desktopFilePath);
             } catch (err) {
                 console.error('Error creating desktop file:', err);
-                dialog.showErrorBox('Error', 'Failed to create desktop entry.');
+                dialog.showErrorBox('VRCX', 'Failed to create desktop entry.');
                 return;
             }
         })
         .catch((err) => {
             console.error('Error downloading icon:', err);
-            dialog.showErrorBox('Error', 'Failed to download the icon.');
+            dialog.showErrorBox('VRCX', 'Failed to download the icon.');
         });
 
     dialog.showMessageBox({
@@ -365,7 +384,6 @@ StartupWMClass=VRCX
     });
 }
 
-// Function to download the icon and save it to a specific path
 function downloadIcon(url, targetPath) {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(targetPath);

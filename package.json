@@ -108,7 +108,6 @@
         "linux": {
             "artifactName": "VRCX_Version.${ext}",
             "target": [
-                "tar.xz",
                 "AppImage"
             ],
             "icon": "VRCX.png",
