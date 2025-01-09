@@ -17,7 +17,7 @@ export default class extends baseClass {
             var lastUpdate = await configRepository.getString(
                 `VRCX_lastStoreTime_${API.currentUser.id}`
             );
-            if (lastUpdate == -3) {
+            if (lastUpdate == -4) {
                 // this means the backup was already applied
                 return;
             }
@@ -54,7 +54,7 @@ export default class extends baseClass {
             // }
             await configRepository.setString(
                 `VRCX_lastStoreTime_${API.currentUser.id}`,
-                -3
+                -4
             );
         },
 

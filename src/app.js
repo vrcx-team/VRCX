@@ -7408,6 +7408,9 @@ console.log(`isLinux: ${LINUX}`);
         if (!this.friendLogInitStatus || typeof ctx === 'undefined') {
             return;
         }
+        if (ctx.friendNumber) {
+            ref.$friendNumber = ctx.friendNumber;
+        }
         if (ctx.displayName !== ref.displayName) {
             if (ctx.displayName) {
                 var friendLogHistoryDisplayName = {
@@ -7479,9 +7482,6 @@ console.log(`isLinux: ${LINUX}`);
             this.updateSharedFeed(true);
         }
         ctx.trustLevel = ref.$trustLevel;
-        if (ctx.friendNumber) {
-            ref.$friendNumber = ctx.friendNumber;
-        }
     };
 
     $app.methods.deleteFriendLog = function (row) {
@@ -8476,7 +8476,7 @@ console.log(`isLinux: ${LINUX}`);
                     uniqueVoices.push(voice);
                 }
             });
-            uniqueVoices = uniqueVoices.filter(v => v.lang.startsWith('en'));
+            uniqueVoices = uniqueVoices.filter((v) => v.lang.startsWith('en'));
             this.TTSvoices = uniqueVoices;
         }
     };
@@ -8715,7 +8715,7 @@ console.log(`isLinux: ${LINUX}`);
             'VRCX_DisableVrOverlayGpuAcceleration',
             this.disableVrOverlayGpuAcceleration.toString()
         );
-        
+
         if (LINUX) {
             VRCXStorage.Set('VRCX_LocationX', this.locationX);
             VRCXStorage.Set('VRCX_LocationY', this.locationY);
