@@ -98,8 +98,13 @@ ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
 
 ipcMain.handle('app:restart', () => {
     if (process.platform === 'linux') {
-        app.relaunch();
-        app.exit();
+        const options = { args: process.argv.slice(1) };
+        if (appImagePath) {
+            options.execPath = appImagePath;
+            options.args.unshift('--appimage-extract-and-run');
+        }
+        app.relaunch(options);
+        app.exit(0);
     } else {
         app.relaunch();
         app.quit();
@@ -471,6 +476,9 @@ function tryCopyFromWinePrefix() {
                 for (const file of files) {
                     const oldFilePath = path.join(oldPath, file);
                     const newFilePath = path.join(newPath, file);
+                    if (fs.lstatSync(oldFilePath).isDirectory()) {
+                        continue;
+                    }
                     fs.copyFileSync(oldFilePath, newFilePath);
                 }
             }
