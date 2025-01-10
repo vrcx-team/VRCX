@@ -19525,7 +19525,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 11;
+        var databaseVersion = 12;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
