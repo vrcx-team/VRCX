@@ -100,6 +100,9 @@ namespace VRCX
             using var fileMemoryStream = new MemoryStream(imageData);
             var image = new Bitmap(fileMemoryStream);
 
+            if (image.Height > image.Width)
+                image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
             // increase size to 1920x1080
             if (image.Width < desiredWidth || image.Height < desiredHeight)
             {
