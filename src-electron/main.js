@@ -457,7 +457,7 @@ function tryCopyFromWinePrefix() {
     try {
         if (!fs.existsSync(getVRCXPath())) {
             // try copy from old wine path
-            const userName = process.env.USER;
+            const userName = process.env.USER || process.env.USERNAME;
             const oldPath = path.join(
                 app.getPath('home'),
                 '.local/share/vrcx/drive_c/users',

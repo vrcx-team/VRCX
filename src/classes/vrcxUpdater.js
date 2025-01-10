@@ -236,6 +236,11 @@ export default class extends baseClass {
                 this.branch = 'Stable';
                 await configRepository.setString('VRCX_branch', this.branch);
             }
+            if (typeof this.branches[this.branch] === 'undefined') {
+                // handle invalid branch
+                this.branch = 'Stable';
+                await configRepository.setString('VRCX_branch', this.branch);
+            }
             var url = this.branches[this.branch].urlLatest;
             this.checkingForVRCXUpdate = true;
             try {

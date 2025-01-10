@@ -59,11 +59,10 @@ namespace VRCX
 
             // Migrate cache to userdata for Cef 115 update
             var oldCachePath = Path.Combine(AppDataDirectory, "cache");
-            if (Directory.Exists(oldCachePath))
+            var newCachePath = Path.Combine(AppDataDirectory, "userdata", "cache");
+            if (Directory.Exists(oldCachePath) && !Directory.Exists(newCachePath))
             {
-                var newCachePath = Path.Combine(AppDataDirectory, "userdata", "cache");
-                if (Directory.Exists(newCachePath))
-                    Directory.Delete(newCachePath, true);
+                Directory.CreateDirectory(Path.Combine(AppDataDirectory, "userdata"));
                 Directory.Move(oldCachePath, newCachePath);
             }
         }

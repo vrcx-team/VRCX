@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <BaseIntermediateOutputPath>obj1\</BaseIntermediateOutputPath>
     <OutputPath>..\build\Electron\</OutputPath>
@@ -76,11 +76,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>openvr_api.dll</TargetPath>
     </None>
-    <None Include="libs\linux\SQLite.Interop.dll">
+    <None Include="libs\linux\SQLite.Interop.dll" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>SQLite.Interop.dll</TargetPath>
     </None>
-    <None Include="libs\linux\System.Data.SQLite.dll">
+    <None Include="libs\linux\System.Data.SQLite.dll" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>System.Data.SQLite.dll</TargetPath>
     </None>

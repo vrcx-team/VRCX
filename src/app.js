@@ -3722,6 +3722,7 @@ console.log(`isLinux: ${LINUX}`);
         if (!this.appVersion) {
             return;
         }
+        var currentVersion = this.appVersion.replace(' (Linux)', '');
         var lastVersion = await configRepository.getString(
             'VRCX_lastVRCXVersion',
             ''
@@ -3729,15 +3730,14 @@ console.log(`isLinux: ${LINUX}`);
         if (!lastVersion) {
             await configRepository.setString(
                 'VRCX_lastVRCXVersion',
-                this.appVersion
+                currentVersion
             );
             return;
         }
-        var currentVersion = this.appVersion.replace(' (Linux)', '');
         if (lastVersion !== currentVersion) {
             await configRepository.setString(
                 'VRCX_lastVRCXVersion',
-                this.appVersion
+                currentVersion
             );
             if (
                 (await configRepository.getString('VRCX_branch')) === 'Stable'
