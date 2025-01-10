@@ -40,7 +40,7 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_moderation (user_id TEXT PRIMARY KEY, updated_at TEXT, display_name TEXT, block INTEGER, mute INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_avatar_history (avatar_id TEXT PRIMARY KEY, created_at TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_avatar_history (avatar_id TEXT PRIMARY KEY, created_at TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
@@ -2617,6 +2617,7 @@ class Database {
         // if (version === 0) {
         await this.updateTableForGroupNames();
         await this.addFriendLogFriendNumber();
+        await this.updateTableForAvatarHistory();
         // }
         // await sqliteService.executeNonQuery('PRAGMA user_version = 1');
     }
@@ -2668,6 +2669,16 @@ class Database {
                 console.error(e);
             }
         }
+    }
+
+    async updateTableForAvatarHistory() {
+        await sqliteService.execute((dbRow) => {
+            const columnExists = dbRow.some(row => row.name === 'time');
+            if (!columnExists) {
+                sqliteService.executeNonQuery(`ALTER TABLE ${Database.userPrefix}_avatar_history ADD COLUMN 'time' INTEGER DEFAULT 0;`)
+            }
+        }, `PRAGMA table_info(${Database.userPrefix}_avatar_history);`);
+        
     }
 
     async fixCancelFriendRequestTypo() {
