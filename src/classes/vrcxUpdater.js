@@ -30,13 +30,13 @@ export default class extends baseClass {
                 name: 'Nightly',
                 urlReleases: 'https://api0.vrcx.app/releases/nightly',
                 urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
-            },
-            LinuxTest: {
-                name: 'LinuxTest',
-                urlReleases: 'https://api.github.com/repos/rs189/VRCX/releases',
-                urlLatest:
-                    'https://api.github.com/repos/rs189/VRCX/releases/latest'
             }
+            // LinuxTest: {
+            //     name: 'LinuxTest',
+            //     urlReleases: 'https://api.github.com/repos/rs189/VRCX/releases',
+            //     urlLatest:
+            //         'https://api.github.com/repos/rs189/VRCX/releases/latest'
+            // }
         },
         updateProgress: 0,
         updateInProgress: false
@@ -75,9 +75,6 @@ export default class extends baseClass {
                     size
                 );
                 this.pendingVRCXInstall = releaseName;
-                if (type === 'Manual') {
-                    this.showVRCXUpdateDialog();
-                }
             } catch (err) {
                 console.error(err);
                 this.$message({
