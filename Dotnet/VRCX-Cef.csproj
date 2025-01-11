@@ -108,11 +108,15 @@
   </Target>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(ProjectDir)..\build-tools\Topten.nvpatch.exe --enable VRCX.exe" WorkingDirectory="$(OutDir)" />
+    <Exec Command="$(ProjectDir)..\build-tools\Topten.nvpatch.exe --enable $(ProjectDir)..\build\Cef\VRCX.exe" />
   </Target>
 
   <ItemGroup>
     <Content Remove="obj1\**" />
     <Compile Remove="obj1\**" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(ProjectDir)..\build-scripts\make-junction.cmd" />
+  </Target>
 </Project>

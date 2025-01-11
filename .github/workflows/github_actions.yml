@@ -145,32 +145,13 @@ jobs:
           7z a -tzip ${file_name} * -mx=7 -xr0!*.log
           mv ${file_name} ../../${file_name}
           echo "Zip FileName: ${file_name}"
-
-      - name: Download Electron AppImage artifacts
-        uses: actions/download-artifact@v3
+      - name: Upload Setup artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: Electron-AppImage
-
-      - name: Generate hashes
-        run: |
-          sha256sum "VRCX_${{ needs.set_version.outputs.version }}_Setup.exe" "VRCX_${{ needs.set_version.outputs.version }}.AppImage" > "SHA256SUMS.txt"
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: VRCX-Setup
+          path: "VRCX_${{ needs.set_version.outputs.version }}_Setup.exe"
+      - name: Upload Zip artifact
+        uses: actions/upload-artifact@v3
         with:
-          tag_name: "${{ needs.set_version.outputs.version }}"
-          release_name: "VRCX Nightly ${{ needs.set_version.outputs.version }}"
-          draft: false
-          prerelease: false
-      - name: Upload multiple assets to release
-        uses: csexton/release-asset-action@v2
-        with:
-          files: |
-            VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
-            VRCX_${{ needs.set_version.outputs.version }}.zip
-            VRCX_${{ needs.set_version.outputs.version }}.AppImage
-            SHA256SUMS.txt
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          release-url: ${{ steps.create_release.outputs.upload_url }}
+          name: VRCX-Zip
+          path: "VRCX_${{ needs.set_version.outputs.version }}.zip"
