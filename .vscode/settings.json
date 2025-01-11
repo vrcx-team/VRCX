@@ -1,12 +1,12 @@
 {
-  "i18n-ally.localesPaths": ["html/src/localization"],
-  "i18n-ally.keystyle": "nested",
-  "i18n-ally.sourceLanguage": "en",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "omnisharp.enableRoslynAnalyzers": true,
-  "omnisharp.useModernNet": false,
-  "[csharp]": {
-    "editor.defaultFormatter": "ms-dotnettools.csharp"
-  }
+    "i18n-ally.localesPaths": ["src/localization"],
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.sourceLanguage": "en",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.useModernNet": false,
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
+    }
 }

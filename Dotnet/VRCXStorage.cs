@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 
 namespace VRCX
@@ -24,12 +25,12 @@ namespace VRCX
             Instance = new VRCXStorage();
         }
 
-        public static void Load()
+        public void Load()
         {
             m_Lock.EnterWriteLock();
             try
             {
-                JsonSerializer.Deserialize(m_JsonPath, ref m_Storage);
+                JsonFileSerializer.Deserialize(m_JsonPath, ref m_Storage);
                 m_Dirty = false;
             }
             finally
@@ -38,14 +39,14 @@ namespace VRCX
             }
         }
 
-        public static void Save()
+        public void Save()
         {
             m_Lock.EnterReadLock();
             try
             {
                 if (m_Dirty)
                 {
-                    JsonSerializer.Serialize(m_JsonPath, m_Storage);
+                    JsonFileSerializer.Serialize(m_JsonPath, m_Storage);
                     m_Dirty = false;
                 }
             }
@@ -129,7 +130,7 @@ namespace VRCX
             m_Lock.EnterReadLock();
             try
             {
-                return System.Text.Json.JsonSerializer.Serialize(m_Storage);
+                return JsonSerializer.Serialize(m_Storage);
             }
             finally
             {

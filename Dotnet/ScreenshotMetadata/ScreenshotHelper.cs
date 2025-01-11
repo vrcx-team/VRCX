@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,9 +13,8 @@ namespace VRCX
 {
     internal static class ScreenshotHelper
     {
-        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-        private static readonly byte[] pngSignatureBytes = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-        private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(System.IO.Path.Combine(Program.AppDataDirectory, "metadataCache.db"));
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(Path.Combine(Program.AppDataDirectory, "metadataCache.db"));
         private static readonly Dictionary<string, ScreenshotMetadata> metadataCache = new Dictionary<string, ScreenshotMetadata>();
 
         public enum ScreenshotSearchType
@@ -385,6 +384,8 @@ namespace VRCX
         /// <returns></returns>
         public static bool IsPNGFile(string path)
         {
+            var pngSignatureBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+            
             // Read only the first 8 bytes of the file to check if it's a PNG file instead of reading the entire thing into memory just to see check a couple bytes.
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {

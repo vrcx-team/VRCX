@@ -5,12 +5,18 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
+using NLog;
+
+#if !LINUX
 using CefSharp;
+#endif
 
 namespace VRCX
 {
@@ -20,16 +26,17 @@ namespace VRCX
     public class LogWatcher
     {
         public static readonly LogWatcher Instance;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
-        private readonly Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
-        private readonly DirectoryInfo m_LogDirectoryInfo;
-        private readonly List<string[]> m_LogList;
-        private readonly ReaderWriterLockSlim m_LogListLock;
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
+        private DirectoryInfo m_LogDirectoryInfo;
+        private List<string[]> m_LogList;
+        private ReaderWriterLockSlim m_LogListLock;
         private bool m_FirstRun = true;
         private bool m_ResetLog;
         private Thread m_Thread;
         private DateTime tillDate = DateTime.UtcNow;
         public bool VrcClosedGracefully;
+        private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -39,9 +46,9 @@ namespace VRCX
             Instance = new LogWatcher();
         }
 
-        private LogWatcher()
+        public void Init()
         {
-            var logPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
+            var logPath = Program.AppApiInstance.GetVRChatAppDataLocation();
             m_LogDirectoryInfo = new DirectoryInfo(logPath);
             m_LogContextMap = new Dictionary<string, LogContext>();
             m_LogListLock = new ReaderWriterLockSlim();
@@ -50,14 +57,10 @@ namespace VRCX
             {
                 IsBackground = true
             };
-        }
-
-        internal void Init()
-        {
             m_Thread.Start();
         }
 
-        internal void Exit()
+        public void Exit()
         {
             var thread = m_Thread;
             m_Thread = null;
@@ -290,9 +293,13 @@ namespace VRCX
             {
                 if (!m_FirstRun)
                 {
-                    var logLine = System.Text.Json.JsonSerializer.Serialize(item);
+                    var logLine = JsonSerializer.Serialize(item);
+#if LINUX
+                    m_LogQueue.Enqueue(logLine);
+#else
                     if (MainForm.Instance != null && MainForm.Instance.Browser != null)
                         MainForm.Instance.Browser.ExecuteScriptAsync("$app.addGameLogEvent", logLine);
+#endif
                 }
 
                 m_LogList.Add(item);
@@ -301,6 +308,16 @@ namespace VRCX
             {
                 m_LogListLock.ExitWriteLock();
             }
+        }
+
+        public List<string> GetLogLines()
+        {
+            // for electron
+            var logLines = new List<string>();
+            while (m_LogQueue.TryDequeue(out var logLine))
+                logLines.Add(logLine);
+
+            return logLines;
         }
 
         private string ConvertLogTimeToISO8601(string line)
@@ -673,7 +690,9 @@ namespace VRCX
 
             var data = line.Substring(offset + 13);
 
+#if !LINUX
             WorldDBManager.Instance.ProcessLogWorldDataRequest(data);
+#endif
             return true;
         }
 

@@ -129,7 +129,7 @@ namespace VRCX
         /// <summary>
         /// Kills all running child processes.
         /// </summary>
-        internal void KillChildProcesses()
+        private void KillChildProcesses()
         {
             UpdateChildProcesses(); // Ensure the list contains all current child processes.
 
@@ -240,7 +240,7 @@ namespace VRCX
         /// Updates the child processes list.
         /// Removes any processes that have exited.
         /// </summary>
-        internal void UpdateChildProcesses()
+        private void UpdateChildProcesses()
         {
             foreach (var pair in startedProcesses.ToArray())
             {
@@ -269,17 +269,17 @@ namespace VRCX
         /// <returns>
         ///   <c>true</c> if child process running; otherwise, <c>false</c>.
         /// </returns>
-        internal bool IsChildProcessRunning(string path)
+        private bool IsChildProcessRunning(string path)
         {
             return startedProcesses.ContainsKey(path);
         }
 
-        internal void Init()
+        public void Init()
         {
             // What are you lookin at? :eyes:
         }
 
-        internal void Exit()
+        public void Exit()
         {
             childUpdateTimer.Stop();
 

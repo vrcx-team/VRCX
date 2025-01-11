@@ -32,12 +32,12 @@ namespace VRCX
             m_Timer = new Timer(TimerCallback, null, -1, -1);
         }
 
-        internal void Init()
+        public void Init()
         {
             m_Timer.Change(0, 1000);
         }
 
-        internal void Exit()
+        public void Exit()
         {
             lock (this)
             {

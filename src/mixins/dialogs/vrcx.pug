@@ -1,0 +1,33 @@
+mixin vrcx()
+    //- dialog: update VRCX
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" :title="$t('dialog.vrcx_updater.header')" width="400px")
+        div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")
+            template(v-if="updateInProgress")
+                el-progress(:percentage="updateProgress" :format="updateProgressText")
+                br
+            template(v-else)
+                div(v-if="VRCXUpdateDialog.updatePending" style="margin-bottom:15px")
+                    span(v-text="pendingVRCXInstall")
+                    br
+                    span {{ $t('dialog.vrcx_updater.ready_for_update') }}
+                el-select(v-model="branch" @change="loadBranchVersions" style="display:inline-block;width:150px;margin-right:15px")
+                    el-option(v-once v-for="branch in branches" :key="branch.name" :label="branch.name" :value="branch.name")
+                el-select(v-model="VRCXUpdateDialog.release" style="display:inline-block;width:150px")
+                    el-option(v-for="item in VRCXUpdateDialog.releases" :key="item.name" :label="item.tag_name" :value="item.name")
+                div(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion" style="margin-top:15px")
+                    span {{ $t('dialog.vrcx_updater.latest_version') }}
+        template(#footer)
+            el-button(v-if="updateInProgress" type="primary" size="small" @click="cancelUpdate") {{ $t('dialog.vrcx_updater.cancel') }}
+            el-button(v-if="VRCXUpdateDialog.release !== pendingVRCXInstall" :disabled="updateInProgress" type="primary" size="small" @click="installVRCXUpdate") {{ $t('dialog.vrcx_updater.download') }}
+            el-button(v-if="!updateInProgress && pendingVRCXInstall" type="primary" size="small" @click="restartVRCX(true)") {{ $t('dialog.vrcx_updater.install') }}
+
+    //- dialog: change log
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px" top="5vh")
+        .changelog-dialog(v-if="changeLogDialog.visible")
+            h2(v-text="changeLogDialog.buildName")
+            span {{ $t('dialog.change_log.description') }} #[a.x-link(@click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')") Patreon], #[a.x-link(@click="openExternalLink('https://ko-fi.com/natsumi_sama')") Ko-fi].
+            vue-markdown(:source="changeLogDialog.changeLog" :linkify="false" style="height:62vh;overflow-y:auto;margin-top:10px")
+        template(#footer)
+            el-button(type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')") {{ $t('dialog.change_log.github') }}
+            el-button(type="small" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')") {{ $t('dialog.change_log.donate') }}
+            el-button(type="small" @click="changeLogDialog.visible = false") {{ $t('dialog.change_log.close') }}
