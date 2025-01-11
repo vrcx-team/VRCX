@@ -1,0 +1,120 @@
+mixin feedTab()
+    .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'feed'")
+        data-tables(v-bind="feedTable" v-loading="feedTable.loading")
+            template(#tool)
+                div(style="margin:0 0 10px;display:flex;align-items:center")
+                    div(style="flex:none;margin-right:10px;display:flex;align-items:center;")
+                        el-tooltip(placement="bottom" :content="$t('view.feed.favorites_only_tooltip')" :disabled="hideTooltips")
+                            el-switch(v-model="feedTable.vip" @change="feedTableLookup" active-color="#13ce66")
+                    el-select(v-model="feedTable.filter" @change="feedTableLookup" multiple clearable style="flex:1;height:40px;" :placeholder="$t('view.feed.filter_placeholder')")
+                        el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio']" :key="type" :label="$t('view.feed.filters.' + type)" :value="type")
+                    el-input(v-model="feedTable.search" :placeholder="$t('view.feed.search_placeholder')" @keyup.native.13="feedTableLookup" @change="feedTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
+            el-table-column(type="expand" width="20")
+                template(v-once #default="scope")
+                    div(style="position:relative;font-size:14px")
+                        template(v-if="scope.row.type === 'GPS'")
+                            location(v-if="scope.row.previousLocation" :location="scope.row.previousLocation")
+                            el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ timeToText(scope.row.time) }}
+                            br
+                            span(style="margin-right:5px")
+                                i.el-icon-right
+                            location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
+                        template(v-else-if="scope.row.type === 'Offline'")
+                            template(v-if="scope.row.location")
+                                location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
+                                el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ timeToText(scope.row.time) }}
+                        template(v-else-if="scope.row.type === 'Online'")
+                            location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
+                        template(v-else-if="scope.row.type === 'Avatar'")
+                            el-popover(placement="right" width="500px" trigger="click")
+                                div(slot="reference" style="display:inline-block;vertical-align:top;width:160px")
+                                    template(v-if="scope.row.previousCurrentAvatarThumbnailImageUrl")
+                                        img.x-link(v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                        br
+                                    avatar-info(:imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.previousOwnerId" :hintavatarname="scope.row.previousAvatarName" :avatartags="scope.row.previousCurrentAvatarTags")
+                                img.x-link(v-lazy="scope.row.previousCurrentAvatarImageUrl" style="width:500px;height:375px" @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)")
+                            span(style="position:relative;vertical-align:top;margin:0 5px")
+                                i.el-icon-right
+                            el-popover(placement="right" width="500px" trigger="click")
+                                div(slot="reference" style="display:inline-block;vertical-align:top;width:160px")
+                                    template(v-if="scope.row.currentAvatarThumbnailImageUrl")
+                                        img.x-link(v-lazy="scope.row.currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                        br
+                                    avatar-info(:imageurl="scope.row.currentAvatarThumbnailImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName" :avatartags="scope.row.currentAvatarTags")
+                                img.x-link(v-lazy="scope.row.currentAvatarImageUrl" style="width:500px;height:375px" @click="showFullscreenImageDialog(scope.row.currentAvatarImageUrl)")
+                        template(v-else-if="scope.row.type === 'Status'")
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span(v-if="scope.row.previousStatus === 'active'") {{ $t('dialog.user.status.active') }}
+                                    span(v-else-if="scope.row.previousStatus === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                    span(v-else-if="scope.row.previousStatus === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                    span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                    span(v-else) {{ $t('dialog.user.status.offline') }}
+                                i.x-user-status(:class="statusClass(scope.row.previousStatus)")
+                            span(v-text="scope.row.previousStatusDescription" style="margin-left:5px")
+                            br
+                            span
+                                i.el-icon-right
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                    span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                    span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                    span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                    span(v-else) {{ $t('dialog.user.status.offline') }}
+                                i.x-user-status(:class="statusClass(scope.row.status)" style="margin:0 5px")
+                            span(v-text="scope.row.statusDescription")
+                        template(v-else-if="scope.row.type === 'Bio'")
+                            pre(v-html="formatDifference(scope.row.previousBio, scope.row.bio)" style="font-family:inherit;font-size:12px;white-space:pre-wrap;line-height:25px;line-height: 22px;")
+            el-table-column(:label="$t('table.feed.date')" prop="created_at" sortable="custom" width="120")
+                template(v-once #default="scope")
+                    el-tooltip(placement="right")
+                        template(#content)
+                            span {{ scope.row.created_at | formatDate('long') }}
+                        span {{ scope.row.created_at | formatDate('short') }}
+            el-table-column(:label="$t('table.feed.type')" prop="type" width="70")
+                template(v-once #default="scope")
+                    span.x-link(v-text="$t('view.feed.filters.' + scope.row.type)")
+            el-table-column(:label="$t('table.feed.user')" prop="displayName" width="180")
+                template(v-once #default="scope")
+                    span.x-link(v-text="scope.row.displayName" @click="showUserDialog(scope.row.userId)" style="padding-right:10px")
+            el-table-column(:label="$t('table.feed.detail')")
+                template(v-once #default="scope")
+                    template(v-if="scope.row.type === 'GPS'")
+                        location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
+                    template(v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'")
+                        location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
+                    template(v-else-if="scope.row.type === 'Status'")
+                        template(v-if="scope.row.statusDescription === scope.row.previousStatusDescription")
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span(v-if="scope.row.previousStatus === 'active'") {{ $t('dialog.user.status.active') }}
+                                    span(v-else-if="scope.row.previousStatus === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                    span(v-else-if="scope.row.previousStatus === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                    span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                    span(v-else) {{ $t('dialog.user.status.offline') }}
+                                i.x-user-status(:class="statusClass(scope.row.previousStatus)")
+                            span(style="margin:0 5px")
+                                i.el-icon-right
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                    span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                    span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                    span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                    span(v-else) {{ $t('dialog.user.status.offline') }}
+                                i.x-user-status(:class="statusClass(scope.row.status)")
+                        template(v-else)
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                    span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                    span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                    span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                    span(v-else) {{ $t('dialog.user.status.offline') }}
+                                i.x-user-status(:class="statusClass(scope.row.status)" style="margin-right:3px")
+                            span(v-text="scope.row.statusDescription")
+                    template(v-else-if="scope.row.type === 'Avatar'")
+                        avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName" :avatartags="scope.row.currentAvatarTags")
+                    template(v-else-if="scope.row.type === 'Bio'")
+                        span(v-text="scope.row.bio")

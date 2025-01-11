@@ -1,0 +1,94 @@
+{
+    "root": true,
+    "extends": ["eslint:all", "prettier"],
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "impliedStrict": true,
+            "jsx": true
+        },
+        "requireConfigFile": false,
+        "babelOptions": {
+            "parserOpts": {
+                "plugins": ["importAssertions"]
+            }
+        }
+    },
+    "globals": {
+        "CefSharp": "readonly",
+        "VRCX": "readonly",
+        "VRCXStorage": "readonly",
+        "SQLite": "readonly",
+        "LogWatcher": "readonly",
+        "Discord": "readonly",
+        "AppApi": "readonly",
+        "AppApiVr": "readonly",
+        "SharedVariable": "readonly",
+        "WebApi": "readonly",
+        "AssetBundleManager": "readonly"
+    },
+    "rules": {
+        "arrow-body-style": 0,
+        "block-scoped-var": 0,
+        "camelcase": 0,
+        "capitalized-comments": 0,
+        "class-methods-use-this": 0,
+        "complexity": 0,
+        "default-case": 0,
+        "func-names": 0,
+        "func-style": 0,
+        "guard-for-in": 0,
+        "id-length": 0,
+        "line-comment-position": 0,
+        "max-depth": 0,
+        "max-lines": 0,
+        "max-lines-per-function": 0,
+        "max-params": 0,
+        "max-statements": 0,
+        "multiline-comment-style": 0,
+        "new-cap": 0,
+        "no-await-in-loop": 0,
+        "no-console": 0,
+        "no-continue": 0,
+        "no-control-regex": 0,
+        "no-empty": [
+            "error",
+            {
+                "allowEmptyCatch": true
+            }
+        ],
+        "no-inline-comments": 0,
+        "no-invalid-this": 0,
+        "no-loop-func": 0,
+        "no-magic-numbers": 0,
+        "no-negated-condition": 0,
+        "no-plusplus": 0,
+        "no-redeclare": 0,
+        "no-ternary": 0,
+        "no-throw-literal": 0,
+        "no-underscore-dangle": 0,
+        "no-var": 0,
+        "no-void": 0,
+        "no-warning-comments": 0,
+        "one-var": 0,
+        "prefer-arrow-callback": 0,
+        "prefer-const": 0,
+        "prefer-destructuring": 0,
+        "prefer-named-capture-group": 0,
+        "require-unicode-regexp": 0,
+        "sort-imports": 0,
+        "sort-keys": 0,
+        "sort-vars": 0,
+        "strict": 0,
+        "vars-on-top": 0,
+        "object-curly-spacing": ["error", "always"],
+        "require-atomic-updates": 0
+    }
+}

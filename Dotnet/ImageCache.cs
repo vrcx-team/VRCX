@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -28,6 +28,7 @@ internal static class ImageCache
             httpClientHandler.Proxy = WebApi.Proxy;
             
         httpClient = new HttpClient(httpClientHandler);
+        httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
     }
 
     public static async Task<string> GetImage(string url, string fileId, string version)
@@ -56,15 +57,11 @@ internal static class ImageCache
             foreach (Cookie cookie in cookies)
                 cookieString += $"{cookie.Name}={cookie.Value};";
         }
-            
-        var request = new HttpRequestMessage(HttpMethod.Get, url)
-        {
-            Headers =
-            {
-                { "Cookie", cookieString },
-                { "User-Agent", Program.Version }
-            }
-        };
+
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        if (!string.IsNullOrEmpty(cookieString))
+            request.Headers.Add("Cookie", cookieString);
+        
         using (var response = await httpClient.SendAsync(request))
         {
             response.EnsureSuccessStatusCode();
@@ -104,15 +101,11 @@ internal static class ImageCache
             foreach (Cookie cookie in cookies)
                 cookieString += $"{cookie.Name}={cookie.Value};";
         }
-            
-        var request = new HttpRequestMessage(HttpMethod.Get, url)
-        {
-            Headers =
-            {
-                { "Cookie", cookieString },
-                { "User-Agent", Program.Version }
-            }
-        };
+        
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        if (!string.IsNullOrEmpty(cookieString))
+            request.Headers.Add("Cookie", cookieString);
+        
         using var response = await httpClient.SendAsync(request);
         if (!response.IsSuccessStatusCode)
             return false;

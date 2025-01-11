@@ -1,0 +1,603 @@
+mixin simpleSettingsCategory(headerTrKey)
+    div.options-container
+        span.header {{ $t('#{headerTrKey}') }}
+        if block
+            block
+        else
+            p No Content
+
+mixin simpleTwoLabelSwitch(nameTrKey, model, onChange="")
+    div.options-container-item
+        span.name {{ $t('#{nameTrKey}') }}
+        el-switch(v-model=model @change=onChange)
+
+mixin simpleRadioGroup(nameTrKey, model, options, onChange="")
+    div.options-container-item
+        span.name {{ $t('#{nameTrKey}') }}
+        br
+        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
+            each option in options
+                el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
+
+mixin simpleRadioGroupWithTooltip(nameTrKey, tooltipContent, model, options, onChange="")
+    div.options-container-item
+        span.name {{ $t('#{nameTrKey}') }}
+            el-tooltip(placement="top" style="margin-left:5px" :content=tooltipContent)
+                i.el-icon-info
+        br
+        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
+            each option in options
+                el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
+
+mixin settingsTab()
+    .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
+        div.options-container(style="margin-top:0;padding:5px")
+            span.header {{ $t("view.settings.header") }}
+        el-tabs(type="card" style="height: calc(100% - 51px)")
+
+            //- General Tab
+            el-tab-pane(:label="$t('view.settings.category.general')")
+                //- General | General
+                div.options-container(style="margin-top:0")
+                    span.header {{ $t("view.settings.general.general.header") }}
+                    .x-friend-list(style="margin-top:10px")
+                        //- General | General | Version
+                        .x-friend-item(style="cursor:default")
+                            .detail
+                                span.name {{ $t("view.settings.general.general.version") }}
+                                span.extra(v-text="appVersion")
+                        //- General | General | Latest App Version
+                        .x-friend-item(@click="checkForVRCXUpdate")
+                            .detail
+                                span.name {{ $t("view.settings.general.general.latest_app_version") }}
+                                span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
+                                span.extra(v-else) {{ $t("view.settings.general.general.latest_app_version_refresh") }}
+                        //- General | General | Repository URL
+                        .x-friend-item(@click="openExternalLink('https://github.com/vrcx-team/VRCX')")
+                            .detail
+                                span.name {{ $t("view.settings.general.general.repository_url") }}
+                                span.extra https://github.com/vrcx-team/VRCX
+                        //- General | General | Support
+                        .x-friend-item(@click="openExternalLink('https://vrcx.app/discord')")
+                            .detail
+                                span.name {{ $t("view.settings.general.general.support") }}
+                                span.extra https://vrcx.app/discord
+                //- General | VRCX Updater
+                +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
+                        el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.vrcx_updater.update_action') }}
+                        br
+                        el-radio-group(v-model="autoUpdateVRCX" size="mini" style="margin-top:5px")
+                            el-radio-button(label="Off") {{ $t('view.settings.general.vrcx_updater.auto_update_off') }}
+                            el-radio-button(label="Notify") {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
+                            el-radio-button(label="Auto Download") {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
+                //- General | Application
+                +simpleSettingsCategory("view.settings.general.application.header")
+                    template(v-if="!isLinux()")
+                        simple-switch(:label='$t("view.settings.general.application.startup")' :value='isStartAtWindowsStartup' @change='saveVRCXWindowOption("VRCX_StartAtWindowsStartup")')
+                    simple-switch(:label='$t("view.settings.general.application.minimized")' :value='isStartAsMinimizedState' @change='saveVRCXWindowOption("VRCX_StartAsMinimizedState")')
+                    simple-switch(:label='$t("view.settings.general.application.tray")' :value='isCloseToTray' @change='saveVRCXWindowOption("VRCX_CloseToTray")')
+                    template(v-if="!isLinux()")
+                        simple-switch(:label='$t("view.settings.general.application.disable_gpu_acceleration")' :value='disableGpuAcceleration' @change='saveVRCXWindowOption("VRCX_DisableGpuAcceleration")' :tooltip='$t("view.settings.general.application.disable_gpu_acceleration_tooltip")')
+                        simple-switch(:label='$t("view.settings.general.application.disable_vr_overlay_gpu_acceleration")' :value='disableVrOverlayGpuAcceleration' @change='saveVRCXWindowOption("VRCX_DisableVrOverlayGpuAcceleration")' :tooltip='$t("view.settings.general.application.disable_gpu_acceleration_tooltip")')
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
+                //- General | Favorite
+                +simpleSettingsCategory("view.settings.general.favorites.header")
+                    br
+                    el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends" style="margin-top:8px")
+                        el-option-group(:label="$t('view.settings.general.favorites.group_placeholder')")
+                            el-option.x-friend-item(v-for="group in API.favoriteFriendGroups" :key="group.key" :label="group.displayName ? group.displayName : group.name" :value="group.key")
+                                .detail
+                                    span.name(v-text="group.displayName ? group.displayName : group.name")
+                //- General | Game Log
+                div.options-container
+                    span.header {{ $t('view.settings.general.logging.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.advanced.cache_debug.udon_exception_logging")' :value='udonExceptionLogging' @change='saveOpenVROption("VRCX_udonExceptionLogging")')
+                    simple-switch(:label='$t("view.settings.general.logging.resource_load")' :value='logResourceLoad' @change='saveLoggingOptions("VRCX_logResourceLoad")')
+                    simple-switch(:label='$t("view.settings.general.logging.empty_avatar")' :value='logEmptyAvatars' @change='saveLoggingOptions("VRCX_logEmptyAvatars")')
+                //- General | Automation
+                div.options-container
+                    span.header {{ $t('view.settings.general.automation.header') }}
+                    simple-switch(:label='$t("view.settings.general.automation.auto_change_status")' :value='autoStateChangeEnabled' @change='saveAutomationOptions("VRCX_autoStateChangeEnabled")' :tooltip='$t("view.settings.general.automation.auto_state_change_tooltip")')
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.alone_status') }}
+                        el-select(v-model="autoStateChangeAloneStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px" size="small")
+                            el-option(:label="$t('dialog.user.status.join_me')" value="join me").
+                                #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
+                            el-option(:label="$t('dialog.user.status.online')" value="active").
+                                #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
+                            el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
+                                #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
+                            el-option(:label="$t('dialog.user.status.busy')" value="busy").
+                                #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.company_status') }}
+                        el-select(v-model="autoStateChangeCompanyStatus" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" style="margin-top:8px" size="small")
+                            el-option(:label="$t('dialog.user.status.join_me')" value="join me").
+                                #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
+                            el-option(:label="$t('dialog.user.status.online')" value="active").
+                                #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
+                            el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
+                                #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
+                            el-option(:label="$t('dialog.user.status.busy')" value="busy").
+                                #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.allowed_instance_types') }}
+                        el-select(v-model="autoStateChangeInstanceTypes" :disabled="!autoStateChangeEnabled" multiple clearable :placeholder="$t('view.settings.general.automation.instance_type_placeholder')" @change="saveAutomationOptions" style="margin-top:8px" size="small")
+                            el-option-group(:label="$t('view.settings.general.automation.allowed_instance_types')")
+                                el-option.x-friend-item(v-for="instanceType in instanceTypes" :key="instanceType" :label="instanceType" :value="instanceType")
+                                    .detail
+                                        span.name(v-text="instanceType")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.alone_condition') }}
+                        el-radio-group(v-model="autoStateChangeNoFriends" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" )
+                            el-radio(:label="false") {{ $t('view.settings.general.automation.alone') }}
+                            el-radio(:label="true") {{ $t('view.settings.general.automation.no_friends') }}
+                    +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_invite_request_accept", "$t('view.settings.general.automation.auto_invite_request_accept_tooltip')", "autoAcceptInviteRequests", [
+                        { label: "Off", translationKey: "view.settings.general.automation.auto_invite_request_accept_off" },
+                        { label: "All Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_favs" },
+                        { label: "Selected Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_selected_favs" },
+                    ], "saveAutomationOptions")
+                //- General | Contributors
+                div.options-container
+                    span.header {{ $t("view.settings.general.contributors.header" )}}
+                    div.options-container-item
+                        img(src="https://contrib.rocks/image?repo=vrcx-team/VRCX", alt="Contributors" @click="openExternalLink('https://github.com/vrcx-team/VRCX/graphs/contributors')" style="cursor: pointer")
+                //- General | Legal Notice
+                div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
+                    span.header {{ $t("view.settings.general.legal_notice.header" )}}
+                    div.options-container-item
+                        p &copy; 2019-2024 #[a.x-link(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] &amp; #[a.x-link(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
+                        p {{ $t("view.settings.general.legal_notice.info" )}}
+                        p {{ $t("view.settings.general.legal_notice.disclaimer1" )}}
+                        p {{ $t("view.settings.general.legal_notice.disclaimer2" )}}
+                    div.options-container-item
+                        el-button(@click="ossDialog = true" size="small") {{ $t("view.settings.general.legal_notice.open_source_software_notice" )}}
+
+            //- Appearance Tab
+            el-tab-pane(:label="$t('view.settings.category.appearance')")
+                //- Appearance | Appearance
+                div.options-container(style="margin-top:0")
+                    span.header {{ $t("view.settings.appearance.appearance.header") }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.language') }}
+                        el-dropdown(@click.native.stop trigger="click" size="small")
+                            el-button(size="mini")
+                                span {{ $i18n.messages[appLanguage]?.language }} #[i.el-icon-arrow-down.el-icon--right]
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-for="(obj, language) in $i18n.messages" v-text="obj.language" @click.native="changeAppLanguage(language)")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.theme_mode') }}
+                        el-dropdown(@click.native.stop trigger="click" size="small")
+                            el-button(size="mini")
+                                span {{ $t(`view.settings.appearance.appearance.theme_mode_${themeMode}`) }} #[i.el-icon-arrow-down.el-icon--right]
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_system')" @click.native="saveThemeMode('system')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_light')" @click.native="saveThemeMode('light')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_dark')" @click.native="saveThemeMode('dark')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_darkvanillaold')" @click.native="saveThemeMode('darkvanillaold')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_darkvanilla')" @click.native="saveThemeMode('darkvanilla')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_pink')" @click.native="saveThemeMode('pink')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_material3')" @click.native="saveThemeMode('material3')")
+                    div.options-container-item(vif="!isLinux()")
+                        span.name {{ $t('view.settings.appearance.appearance.zoom') }}
+                        el-input-number(size="small" v-model="zoomLevel" @change="setZoomLevel" :precision="0" style="width:128px")
+                    simple-switch(:label='$t("view.settings.appearance.appearance.vrcplus_profile_icons")' :value='displayVRCPlusIconsAsAvatar' @change='saveOpenVROption("displayVRCPlusIconsAsAvatar")')
+                    simple-switch(:label='$t("view.settings.appearance.appearance.nicknames")' :value='hideNicknames' @change='saveOpenVROption("VRCX_hideNicknames")')
+                    simple-switch(:label='$t("view.settings.appearance.appearance.tooltips")' :value='!hideTooltips' @change='saveOpenVROption("VRCX_hideTooltips")')
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.sort_favorite_by') }}
+                        el-radio-group(v-model="sortFavorites" @change="saveSortFavoritesOption")
+                            el-radio(:label="false") {{ $t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                            el-radio(:label="true") {{ $t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.sort_instance_users_by') }}
+                        el-radio-group(v-model="instanceUsersSortAlphabetical" @change="saveOpenVROption")
+                            el-radio(:label="false") {{ $t('view.settings.appearance.appearance.sort_instance_users_by_time') }}
+                            el-radio(:label="true") {{ $t('view.settings.appearance.appearance.sort_instance_users_by_alphabet') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-notebook-1" @click="promptMaxTableSizeDialog" style="margin-right:10px") {{ $t('view.settings.appearance.appearance.table_max_size') }}
+                        el-dropdown(@click.native.stop trigger="click" size="small")
+                            el-button(size="small")
+                                span {{ $t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }} #[i.el-icon-arrow-down.el-icon--right]
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-for="(number) in [10, 15, 25, 50, 100]" v-text="number" @click.native="setTablePageSize(number)")
+                    div.options-container-item
+                //- Appearance | Time/Date
+                div.options-container
+                    span.header {{ $t('view.settings.appearance.timedate.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.timedate.time_format') }}
+                        el-radio-group(v-model="dtHour12" @change="setDatetimeFormat")
+                            el-radio(:label="true") {{ $t('view.settings.appearance.timedate.time_format_12') }}
+                            el-radio(:label="false") {{ $t('view.settings.appearance.timedate.time_format_24') }}
+                    simple-switch(:label='$t("view.settings.appearance.timedate.force_iso_date_format")' :value='dtIsoFormat' @change='setDatetimeFormat(true)')
+                //- Appearance | Side Panel
+                div.options-container
+                    span.header {{ $t('view.settings.appearance.side_panel.header') }}
+                    br
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.side_panel.sorting.header') }}
+                        el-select(v-model="sidebarSortMethod1" style="width:170px" :placeholder="$t('view.settings.appearance.side_panel.sorting.placeholder')" @change="saveSidebarSortOrder")
+                            el-option-group(:label="$t('view.settings.appearance.side_panel.sorting.dropdown_header')")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.alphabetical')" value="Sort Alphabetically")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
+                        i.el-icon-arrow-right(style="margin:16px 5px")
+                        el-select(v-model="sidebarSortMethod2" :disabled="!sidebarSortMethod1" style="width:170px" clearable :placeholder="$t('view.settings.appearance.side_panel.sorting.placeholder')" @change="saveSidebarSortOrder")
+                            el-option-group(:label="$t('view.settings.appearance.side_panel.sorting.dropdown_header')")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.alphabetical')" value="Sort Alphabetically")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
+                        i.el-icon-arrow-right(style="margin:16px 5px")
+                        el-select(v-model="sidebarSortMethod3" :disabled="!sidebarSortMethod2" style="width:170px" clearable :placeholder="$t('view.settings.appearance.side_panel.sorting.placeholder')" @change="saveSidebarSortOrder")
+                            el-option-group(:label="$t('view.settings.appearance.side_panel.sorting.dropdown_header')")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.alphabetical')" value="Sort Alphabetically")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_seen')" value="Sort by Last Seen")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
+                    div.options-container-item
+                        span.name(style="vertical-align:top;padding-top:10px") {{ $t('view.settings.appearance.side_panel.width') }}
+                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{300: ''}" :min="200" :max="500" style="display:inline-block;width:300px")
+                //- Appearance | User Dialog
+                div.options-container
+                    span.header {{ $t('view.settings.appearance.user_dialog.header') }}
+                    simple-switch(:label='$t("view.settings.appearance.user_dialog.vrchat_notes")' :value='hideUserNotes' @change='saveUserDialogOption("VRCX_hideUserNotes")')
+                    simple-switch(:label='$t("view.settings.appearance.user_dialog.vrcx_memos")' :value='hideUserMemos' @change='saveUserDialogOption("VRCX_hideUserMemos")')
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes') }}
+                        br
+                        el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog" style="margin-top:5px") {{ $t('view.settings.appearance.user_dialog.export_notes') }}
+                //- Appearance | Friend Log
+                div.options-container
+                    span.header {{ $t('view.settings.appearance.friend_log.header') }}
+                    simple-switch(:label='$t("view.settings.appearance.friend_log.hide_unfriends")' :value='hideUnfriends' @change='saveFriendLogOptions')
+                //- Appearance | User Colors
+                div.options-container
+                    span.header {{ $t('view.settings.appearance.user_colors.header') }}
+                    simple-switch(:label='$t("view.settings.appearance.user_colors.random_colors_from_user_id")' :value='randomUserColours' @change='updatetrustColor(true)')
+                    div.options-container-item
+                        div
+                            el-color-picker(v-model="trustColor.untrusted" @change="updatetrustColor" size="mini" :predefine="['#CCCCCC']")
+                            span.color-picker(slot="trigger" class="x-tag-untrusted") Visitor
+                        div
+                            el-color-picker(v-model="trustColor.basic" @change="updatetrustColor" size="mini" :predefine="['#1778ff']")
+                            span.color-picker(slot="trigger" class="x-tag-basic") New User
+                        div
+                            el-color-picker(v-model="trustColor.known" @change="updatetrustColor" size="mini" :predefine="['#2bcf5c']")
+                            span.color-picker(slot="trigger" class="x-tag-known") User
+                        div
+                            el-color-picker(v-model="trustColor.trusted" @change="updatetrustColor" size="mini" :predefine="['#ff7b42']")
+                            span.color-picker(slot="trigger" class="x-tag-trusted") Known User
+                        div
+                            el-color-picker(v-model="trustColor.veteran" @change="updatetrustColor" size="mini" :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']")
+                            span.color-picker(slot="trigger" class="x-tag-veteran") Trusted User
+                        div
+                            el-color-picker(v-model="trustColor.vip" @change="updatetrustColor" size="mini" :predefine="['#ff2626']")
+                            span.color-picker(slot="trigger" class="x-tag-vip") VRChat Team
+                        div
+                            el-color-picker(v-model="trustColor.troll" @change="updatetrustColor" size="mini" :predefine="['#782f2f']")
+                            span.color-picker(slot="trigger" class="x-tag-troll") Nuisance
+
+            //- Notifications Tab
+            el-tab-pane(:label="$t('view.settings.category.notifications')")
+                //- Notifications | Notifications
+                div.options-container(style="margin-top:0")
+                    span.header {{ $t('view.settings.notifications.notifications.header') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog") {{ $t('view.settings.notifications.notifications.notification_filter') }}
+                //- Notifications | Notifications | SteamVR Notifications
+                div.options-container
+                    span.sub-header {{ $t('view.settings.notifications.notifications.steamvr_notifications.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
+                        br
+                        el-radio-group(v-model="overlayToast" @change="saveOpenVROption" size="mini" :disabled="(!overlayNotifications || !openVR) && !xsNotifications && !ovrtHudNotifications && !ovrtWristNotifications" style="margin-top:5px")
+                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
+                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
+                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
+                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
+                    template(v-if="!isLinux()")
+                        simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay")' :value='openVR' @change='saveOpenVROption("openVR")')
+                        simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.overlay_notifications")' :value='overlayNotifications' @change='saveOpenVROption("VRCX_overlayNotifications")' :disabled="!openVR")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
+                    template(v-if="!isLinux()")
+                        simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications")' :value='xsNotifications' @change='saveOpenVROption("VRCX_xsNotifications")')
+                    template(v-else)
+                        simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications")' :value='xsNotifications' @change='saveOpenVROption("VRCX_xsNotifications")')
+                    simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications")' :value='ovrtHudNotifications' @change='saveOpenVROption("VRCX_ovrtHudNotifications")')
+                    simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications")' :value='ovrtWristNotifications' @change='saveOpenVROption("VRCX_ovrtWristNotifications")')
+                    simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.user_images")' :value='imageNotifications' @change='saveOpenVROption("VRCX_imageNotifications")')
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout') }}
+                //- Notifications | Notifications | Desktop Notifications
+                div.options-container
+                    span.sub-header {{ $t('view.settings.notifications.notifications.desktop_notifications.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display') }}
+                        br
+                        el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini" style="margin-top:5px")
+                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
+                            el-radio-button(label="Desktop Mode") {{ $t('view.settings.notifications.notifications.conditions.desktop') }}
+                            el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.conditions.inside_vr') }}
+                            el-radio-button(label="Outside VR") {{ $t('view.settings.notifications.notifications.conditions.outside_vr') }}
+                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
+                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
+                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
+                    simple-switch(:label='$t("view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk")' :value='afkDesktopToast' @change='saveOpenVROption("VRCX_afkDesktopToast")')
+                //- Notifications | Notifications | Text-to-Speech Options
+                div.options-container
+                    span.sub-header {{ $t('view.settings.notifications.notifications.text_to_speech.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.text_to_speech.when_to_play') }}
+                        br
+                        el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini" style="margin-top:5px")
+                            el-radio-button(label="Never") {{ $t('view.settings.notifications.notifications.conditions.never') }}
+                            el-radio-button(label="Inside VR") {{ $t('view.settings.notifications.notifications.conditions.inside_vr') }}
+                            el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
+                            el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
+                            el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.conditions.always') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.text_to_speech.tts_voice') }}
+                        el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
+                            el-button(size="mini" :disabled="notificationTTS === 'Never'")
+                                span {{ getTTSVoiceName() }} #[i.el-icon-arrow-down.el-icon--right]
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
+                    simple-switch(:label='$t("view.settings.notifications.notifications.text_to_speech.use_memo_nicknames")' :value='notificationTTSNickName' @change='saveOpenVROption("VRCX_notificationTTSNickName")' :disabled='notificationTTS === "Never"')
+                    simple-switch(:label='$t("view.settings.notifications.notifications.text_to_speech.tts_test_placeholder")' :value='isTestTTSVisible' @change='isTestTTSVisible = !isTestTTSVisible')
+                    div(v-if="isTestTTSVisible" style="margin-top:5px")
+                        el-input(type="textarea" v-model="notificationTTSTest" :placeholder="$t('view.settings.notifications.notifications.text_to_speech.tts_test_placeholder')" :rows="1" style="width:175px;display:inline-block")
+                        el-button(size="small" icon="el-icon-video-play" @click="testNotificationTTS" style="margin-left:10px") {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
+
+            //- Wrist Overlay Tab
+            el-tab-pane(:label="$t('view.settings.category.wrist_overlay')" v-if="!isLinux()")
+                //- Wrist Overlay | SteamVR Wrist Overlay
+                div.options-container(style="margin-top:0")
+                    span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog" :disabled="!openVR || !overlayWrist") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}
+                    div.options-container-item
+                        span {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.description') }}
+                        br
+                        br
+                        span {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.grip') }}
+                        br
+                        span {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.menu') }}
+                        br
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.steamvr_overlay")' :value='openVR' @change='saveOpenVROption("openVR")')
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_overlay")' :value='overlayWrist' @change='saveOpenVROption("VRCX_overlayWrist")' :disabled="!openVR")
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds")' :value='hidePrivateFromFeed' @change='saveOpenVROption("VRCX_hidePrivateFromFeed")')
+                    div.options-container-item(style="min-width:118px")
+                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with') }}
+                        el-radio-group(v-model="openVRAlways" @change="saveOpenVROption" :disabled="!openVR")
+                            el-radio(:label="false") {{ "VRChat" }}
+                            el-radio(:label="true") {{ "SteamVR" }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button') }}
+                        el-radio-group(v-model="overlaybutton" @change="saveOpenVROption"  :disabled="!openVR || !overlayWrist")
+                            el-radio(:label="false") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_grip') }}
+                            el-radio(:label="true") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_menu') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on') }}
+                        el-radio-group(v-model="overlayHand" @change="saveOpenVROption" size="mini")
+                            el-radio-button(label="1") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_left') }}
+                            el-radio-button(label="2") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right') }}
+                            el-radio-button(label="0") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both') }}
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background")' :value='vrBackgroundEnabled' @change='saveOpenVROption("VRCX_vrBackgroundEnabled")' :disabled="!openVR || !overlayWrist")
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons")' :value='minimalFeed' @change='saveOpenVROption("VRCX_minimalFeed")' :disabled="!openVR || !overlayWrist")
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.show_vr_devices")' :value='!hideDevicesFromFeed' @change='saveOpenVROption("VRCX_hideDevicesFromFeed")' :disabled="!openVR || !overlayWrist")
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.show_cpu_usage")' :value='vrOverlayCpuUsage' @change='saveOpenVROption("VRCX_vrOverlayCpuUsage")' :disabled="!openVR || !overlayWrist")
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime")' :value='!hideUptimeFromFeed' @change='saveOpenVROption("VRCX_hideUptimeFromFeed")' :disabled="!openVR || !overlayWrist")
+                    simple-switch(:label='$t("view.settings.wrist_overlay.steamvr_wrist_overlay.show_pc_uptime")' :value='pcUptimeOnFeed' @change='saveOpenVROption("VRCX_pcUptimeOnFeed")' :disabled="!openVR || !overlayWrist")
+
+            //- Discord Presence Tab
+            el-tab-pane(:label="$t('view.settings.category.discord_presence')")
+                div.options-container(style="margin-top:0")
+                    span.header {{ $t('view.settings.discord_presence.discord_presence.header') }}
+                    div.options-container-item
+                        span {{ $t('view.settings.discord_presence.discord_presence.description') }}
+                    simple-switch(:label='$t("view.settings.discord_presence.discord_presence.enable")' :value='discordActive' @change='saveDiscordOption("discordActive")' :tooltip='$t("view.settings.discord_presence.discord_presence.enable_tooltip")')
+                    simple-switch(:label='$t("view.settings.discord_presence.discord_presence.instance_type_player_count")' :value='discordInstance' @change='saveDiscordOption("discordInstance")' :disabled="!discordActive")
+                    simple-switch(:label='$t("view.settings.discord_presence.discord_presence.show_details_in_private")' :value='!discordHideInvite' @change='saveDiscordOption("discordHideInvite")' :disabled="!discordActive")
+                    simple-switch(:label='$t("view.settings.discord_presence.discord_presence.join_button")' :value='discordJoinButton' @change='saveDiscordOption("discordJoinButton")' :disabled="!discordActive")
+                    simple-switch(:label='$t("view.settings.discord_presence.discord_presence.show_images")' :value='!discordHideImage' @change='saveDiscordOption("discordHideImage")' :disabled="!discordActive")
+
+            //- "Advanced" Tab
+            el-tab-pane(:label="$t('view.settings.category.advanced')")
+                //- Advanced | Advanced
+                div.options-container(style="margin-top:0")
+                    span.header {{ $t('view.settings.advanced.advanced.header') }}
+                    div.options-container-item(style="margin-top:15px")
+                        el-button-group
+                            el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
+                            el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") {{ $t('view.settings.advanced.advanced.launch_options') }}
+                            el-button(size="small" icon="el-icon-picture" @click="showScreenshotMetadataDialog()") {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
+                            el-button(size="small" icon="el-icon-goods" @click="showRegistryBackupDialog()") {{ $t('view.settings.advanced.advanced.vrc_registry_backup') }}
+                //- Advanced | Common Folders
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.common_folders') }}
+                    div.options-container-item(style="margin-top:15px")
+                        el-button-group
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcxAppDataFolder()") AppData (VRCX)
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcAppDataFolder()") AppData
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcPhotosFolder()") Photos
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcScreenshotsFolder()") Screenshots
+                            el-button(size="small" icon="el-icon-folder" @click="openCrashVrcCrashDumps()") Crash Dumps
+                //- Advanced | Primary Password
+                div.options-container
+                    //- Advanced | Primary Password Header
+                    span.sub-header {{ $t('view.settings.advanced.advanced.primary_password.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.advanced.primary_password.description")' :value='enablePrimaryPassword' @change='enablePrimaryPasswordChange' :disabled="!enablePrimaryPassword" :long-label='true')
+                    span.sub-header {{ $t('view.settings.advanced.advanced.relaunch_vrchat.header') }}
+                    //- Advanced | Relaunch VRChat After Crash
+                    simple-switch(:label='$t("view.settings.advanced.advanced.relaunch_vrchat.description")' :value='relaunchVRChatAfterCrash' @change='saveOpenVROption("VRCX_relaunchVRChatAfterCrash")' :long-label='true')
+                    //- Advanced | VRChat Quit Fix
+                    template(v-if="!isLinux()")
+                        span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}
+                        simple-switch(:label='$t("view.settings.advanced.advanced.vrchat_quit_fix.description")' :value='vrcQuitFix' @change='saveOpenVROption("VRCX_vrcQuitFix")' :long-label='true')
+                    //- Advanced | Auto Cache Management
+                    span.sub-header {{ $t('view.settings.advanced.advanced.auto_cache_management.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.advanced.auto_cache_management.description")' :value='autoSweepVRChatCache' @change='saveOpenVROption("VRCX_autoSweepVRChatCache")' :long-label='true')
+                    //- Advanced | Disable local world database
+                    template(v-if="!isLinux()")
+                        span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
+                        simple-switch(:label='$t("view.settings.advanced.advanced.local_world_persistence.description")' :value='!disableWorldDatabase' @change='saveVRCXWindowOption("VRCX_DisableWorldDatabase")' :long-label='true')
+
+                //- Advanced | User Generated Content
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.user_generated_content.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.user_generated_content.description') }}
+                        br
+                        el-button(size="small" icon="el-icon-folder" @click="openUGCFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.user_generated_content.folder') }}
+                        el-button(size="small" icon="el-icon-folder-opened" @click="openUGCFolderSelector()") {{ $t('view.settings.advanced.advanced.user_generated_content.set_folder') }}
+                        el-button(size="small" icon="el-icon-delete" @click="resetUGCFolder()" v-if="ugcFolderPath") {{ $t('view.settings.advanced.advanced.user_generated_content.reset_override') }}
+                    br
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.header') }}
+                        el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')")
+                            i.el-icon-info
+                    simple-switch(:label='$t("view.settings.advanced.advanced.save_instance_prints_to_file.description")' :value='saveInstancePrints' @change='saveVRCXWindowOption("VRCX_saveInstancePrints")' :long-label='true')
+                    simple-switch(:label='$t("view.settings.advanced.advanced.save_instance_prints_to_file.crop")' :value='cropInstancePrints' @change='saveVRCXWindowOption("VRCX_cropInstancePrints")' :long-label='true')
+                    br
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.advanced.save_instance_stickers_to_file.description")' :value='saveInstanceStickers' @change='saveVRCXWindowOption("VRCX_saveInstanceStickers")' :long-label='true')
+                //- Advanced | Remote Avatar Database
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.advanced.remote_database.enable")' :value='avatarRemoteDatabase' @change='saveOpenVROption("VRCX_avatarRemoteDatabase")' :long-label='true')
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog") {{ $t('view.settings.advanced.advanced.remote_database.avatar_database_provider') }}
+                //- Advanced | Automatic App Launcher
+                template(v-if="!isLinux()")
+                    +simpleSettingsCategory("view.settings.advanced.advanced.app_launcher.header")
+                        br
+                        el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.app_launcher.folder_tooltip')")
+                                i.el-icon-info
+                        simple-switch(:label='$t("view.settings.advanced.advanced.remote_database.enable")' :value='enableAppLauncher' @change='updateAppLauncherSettings("VRCX_enableAppLauncher")' :long-label='true')
+                        simple-switch(:label='$t("view.settings.advanced.advanced.app_launcher.auto_close")' :value='enableAppLauncherAutoClose' @change='updateAppLauncherSettings("VRCX_enableAppLauncherAutoClose")' :long-label='true')
+
+                //- Advanced | Screenshot Helper
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.screenshot_helper.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.description') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')")
+                                i.el-icon-info
+                    simple-switch(:label='$t("view.settings.advanced.advanced.screenshot_helper.enable")' :value='screenshotHelper' @change='saveScreenshotHelper("VRCX_screenshotHelper")' :long-label='true')
+                    simple-switch(:label='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename")' :value='screenshotHelperModifyFilename' @change='saveScreenshotHelper("VRCX_screenshotHelperModifyFilename")' :disabled="!screenshotHelper" :tooltip="$t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')" :long-label='true')
+
+
+                    simple-switch(:label='$t("view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard")' :value='screenshotHelperCopyToClipboard' @change='saveScreenshotHelper("VRCX_screenshotHelperCopyToClipboard")' :long-label='true')
+
+                //- Advanced | YouTube API
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.youtube_api.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.advanced.youtube_api.enable")' :value='youTubeApi' @change='changeYouTubeApi("VRCX_youtubeAPI")' :tooltip="$t('view.settings.advanced.advanced.youtube_api.enable_tooltip')" :long-label='true')
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") {{ $t('view.settings.advanced.advanced.youtube_api.youtube_api_key') }}
+                //- Advanced | Video Progress Pie
+                div.options-container(v-if="!isLinux()")
+                    span.header {{ $t('view.settings.advanced.advanced.video_progress_pie.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.advanced.video_progress_pie.enable")' :value='progressPie' @change='changeYouTubeApi("VRCX_progressPie")' :disabled="!openVR" :tooltip="$t('view.settings.advanced.advanced.video_progress_pie.enable_tooltip')" :long-label='true')
+                    simple-switch(:label='$t("view.settings.advanced.advanced.video_progress_pie.dance_world_only")' :value='progressPieFilter' @change='changeYouTubeApi("VRCX_progressPieFilter")' :disabled="!openVR" :long-label='true')
+
+                //- Advanced | Photon Logging (This section doesn't actually exist, the template is all nonsense generated by ChatGPT to throw off the trail of the androids. Spooky. Trust me, bro.)
+                div.options-container(v-if="photonLoggingEnabled")
+                    span.header {{ $t('view.settings.advanced.photon.header') }}
+                    div.options-container-item
+                    span.sub-header {{ $t('view.settings.advanced.photon.event_hud.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.photon.event_hud.enable")' :value='photonEventOverlay' @change='saveEventOverlay("VRCX_PhotonEventOverlay")' :disabled="!openVR" :tooltip="$t('view.settings.advanced.photon.event_hud.enable_tooltip')")
+
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.photon.event_hud.filter') }}
+                        el-radio-group(v-model="photonEventOverlayFilter" @change="saveEventOverlay" size="mini" :disabled="!openVR || !photonEventOverlay")
+                            el-radio-button(label="VIP") {{ $t('view.settings.advanced.photon.event_hud.filter_favorites') }}
+                            el-radio-button(label="Friends") {{ $t('view.settings.advanced.photon.event_hud.filter_friends') }}
+                            el-radio-button(label="Everyone") {{ $t('view.settings.advanced.photon.event_hud.filter_everyone') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-time" @click="promptPhotonOverlayMessageTimeout" :disabled="!openVR") {{ $t('view.settings.advanced.photon.event_hud.message_timeout') }}
+                    div.options-container-item
+                        el-select(v-model="photonEventTableTypeOverlayFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+                            el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
+                    br
+                    span.sub-header {{ $t('view.settings.advanced.photon.timeout_hud.header') }}
+                    simple-switch(:label='$t("view.settings.advanced.photon.timeout_hud.enable")' :value='timeoutHudOverlay' @change='saveEventOverlay("VRCX_TimeoutHudOverlay")' :disabled="!openVR" :tooltip="$t('view.settings.advanced.photon.timeout_hud.enable_tooltip')")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.photon.timeout_hud.filter') }}
+                        el-radio-group(v-model="timeoutHudOverlayFilter" @change="saveEventOverlay" size="mini" :disabled="!openVR || !timeoutHudOverlay")
+                            el-radio-button(label="VIP") {{ $t('view.settings.advanced.photon.timeout_hud.filter_favorites') }}
+                            el-radio-button(label="Friends") {{ $t('view.settings.advanced.photon.timeout_hud.filter_friends') }}
+                            el-radio-button(label="Everyone") {{ $t('view.settings.advanced.photon.timeout_hud.filter_everyone') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-time" @click="promptPhotonLobbyTimeoutThreshold" :disabled="!openVR") {{ $t('view.settings.advanced.photon.timeout_hud.timeout_threshold') }}
+                //- Advanced | VRCX Instance Cache/Debug
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.cache_debug.header') }}
+                    br
+                    div.options-container-item
+                        simple-switch(:label='$t("view.settings.advanced.advanced.cache_debug.disable_gamelog")' :value='gameLogDisabled' @change='disableGameLogDialog()' :long-label='true')
+                        span.name(style="margin-left:15px") {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.user_cache') }} #[span(v-text="API.cachedUsers.size")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.world_cache') }} #[span(v-text="API.cachedWorlds.size")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.avatar_cache') }} #[span(v-text="API.cachedAvatars.size")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.group_cache') }} #[span(v-text="API.cachedGroups.size")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }} #[span(v-text="API.cachedAvatarNames.size")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.instance_cache') }} #[span(v-text="API.cachedInstances.size")]
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") {{ $t('view.settings.advanced.advanced.cache_debug.clear_cache') }}
+                        el-button(size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency") {{ $t('view.settings.advanced.advanced.cache_debug.auto_clear_cache') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-tickets" @click="showConsole") {{ $t('view.settings.advanced.advanced.cache_debug.show_console') }}
+                //- Advanced | VRCX Table Stats
+                div.options-container
+                    span.sub-header {{ $t('view.settings.advanced.advanced.sqlite_table_size.header') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-refresh" @click="getSqliteTableSizes") {{ $t('view.settings.advanced.advanced.sqlite_table_size.refresh') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.gps') }} #[span(v-text="sqliteTableSizes.gps")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.status') }} #[span(v-text="sqliteTableSizes.status")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.bio') }} #[span(v-text="sqliteTableSizes.bio")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.avatar') }} #[span(v-text="sqliteTableSizes.avatar")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.online_offline') }} #[span(v-text="sqliteTableSizes.onlineOffline")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.friend_log_history') }} #[span(v-text="sqliteTableSizes.friendLogHistory")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.notification') }} #[span(v-text="sqliteTableSizes.notification")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.location') }} #[span(v-text="sqliteTableSizes.location")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.join_leave') }} #[span(v-text="sqliteTableSizes.joinLeave")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.portal_spawn') }} #[span(v-text="sqliteTableSizes.portalSpawn")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.video_play') }} #[span(v-text="sqliteTableSizes.videoPlay")]
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.sqlite_table_size.event') }} #[span(v-text="sqliteTableSizes.event")]
