@@ -31,8 +31,42 @@ namespace VRCX
                 _steamPath = flatpakSteamPath;
             }
             _steamUserdataPath = Path.Combine(_homeDirectory, ".steam/steam/userdata");
-            _vrcPrefixPath = Path.Combine(_steamPath, "steamapps/compatdata/438100/pfx");
+
+            string vrchatAppid = "438100";
+            string libraryfoldersVdfPath = Path.Combine(_steamPath, "config", "libraryfolders.vdf");
+            string maybeSteamLibraryPath = null;
+            if (!File.Exists(libraryfoldersVdfPath))
+            {
+                logger.Error("libraryfolders.vdf not found");
+            } else {
+                maybeSteamLibraryPath = GetLibraryWithAppId(libraryfoldersVdfPath, vrchatAppid);
+            }
+
+            string vrcLibraryPath = null;
+            if (maybeSteamLibraryPath == null)
+            {
+                logger.Warn("falling back to default VRChat path as libraryfolders.vdf was not found OR libraryfolders.vdf does not contain VRChat's appid (438100)");
+                vrcLibraryPath = _steamPath;
+            } else {
+                logger.Info($"Using steam library path {maybeSteamLibraryPath}");
+                vrcLibraryPath = maybeSteamLibraryPath;
+            }
+            _vrcPrefixPath = Path.Combine(vrcLibraryPath, $"steamapps/compatdata/{vrchatAppid}/pfx");
             _vrcAppDataPath = Path.Combine(_vrcPrefixPath, "drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+        }
+
+        private static string? GetLibraryWithAppId(string pathToLibraryFolders, string appid)
+        {
+            string? libraryPath = null;
+            foreach (var line in File.ReadLines(pathToLibraryFolders))
+            {
+                // Assumes line will be \t\t"path"\t\t"pathToLibrary"
+                if (line.Contains("\"path\"")) libraryPath = line.Split("\t")[4].Replace("\"", "");
+
+                if (line.Contains($"\"{appid}\"")) return libraryPath;
+            }
+
+            return null;
         }
         
         public override string GetVRChatAppDataLocation()
