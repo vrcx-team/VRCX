@@ -259,95 +259,95 @@
                     "auto_invite_request_accept_selected_favs": "VRCX oblíbení"
                 },
                 "legal_notice": {
-                    "header": "Legal Notice",
-                    "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",
-                    "disclaimer1": "VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy & Natsumi are not responsible for any problems caused by VRCX. Use at your own risk!",
-                    "open_source_software_notice": "Open Source Software Notice"
+                    "header": "Právní oznámení",
+                    "info": "VRCX je asistenční aplikace pro VRChat, která poskytuje informace o přátelství a jeho správě. Tato aplikace využívá neoficiální SDK API VRChat.",
+                    "disclaimer1": "VRCX není schváleno VRChatem a neodráží názory nebo stanoviska VRChatu ani kohokoli oficiálně zapojeného do tvorby nebo správy vlastností VRChat. VRChat a všechny související vlastnosti jsou ochranné známky nebo registrované ochranné známky společnosti VRChat Inc. VRChat © VRChat Inc.",
+                    "disclaimer2": "Pypy a Natsumi nenesou odpovědnost za jakékoli problémy způsobené VRCX. Používáte na vlastní riziko!",
+                    "open_source_software_notice": "Oznámení o open source softwaru"
                 },
                 "contributors": {
-                    "header": "Contributors"
+                    "header": "Příspěvatelé"
                 }
             },
             "appearance": {
                 "appearance": {
-                    "header": "Appearance",
-                    "language": "Language",
-                    "theme_mode": "Theme",
-                    "theme_mode_system": "System",
-                    "theme_mode_light": "Light",
-                    "theme_mode_dark": "Dark",
-                    "theme_mode_darkvanillaold": "Dark Vanilla (old)",
-                    "theme_mode_darkvanilla": "Dark Vanilla",
-                    "theme_mode_pink": "Pink",
+                    "header": "Vzhled",
+                    "language": "Jazyk",
+                    "theme_mode": "Téma",
+                    "theme_mode_system": "Systémové",
+                    "theme_mode_light": "Světlé",
+                    "theme_mode_dark": "Tmavé",
+                    "theme_mode_darkvanillaold": "Tmavá Vanilka (starý)",
+                    "theme_mode_darkvanilla": "Tmavá vanilka",
+                    "theme_mode_pink": "Růžový",
                     "theme_mode_material3": "Material 3",
-                    "zoom": "Zoom",
-                    "vrcplus_profile_icons": "VRCPlus Profile Icons",
-                    "tooltips": "Tooltips",
-                    "nicknames": "Memo Nicknames",
-                    "sort_favorite_by": "Sort Favorites by",
-                    "sort_favorite_by_name": "name",
-                    "sort_favorite_by_date": "date",
-                    "sort_instance_users_by": "Sort Instance Users by",
-                    "sort_instance_users_by_time": "time",
-                    "sort_instance_users_by_alphabet": "alphabetical",
-                    "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:"
+                    "zoom": "Přiblížení",
+                    "vrcplus_profile_icons": "VRCPlus Profilové ikony",
+                    "tooltips": "Popisky",
+                    "nicknames": "Přezdívky v poznámkách",
+                    "sort_favorite_by": "Řadit oblíbené podle",
+                    "sort_favorite_by_name": "jména",
+                    "sort_favorite_by_date": "data",
+                    "sort_instance_users_by": "Řadit uživatele v instanci podle",
+                    "sort_instance_users_by_time": "času",
+                    "sort_instance_users_by_alphabet": "abecedně",
+                    "table_max_size": "Magimální velikost tabulky",
+                    "page_size": "Velikost stránky:"
                 },
                 "timedate": {
-                    "header": "Time/Date",
-                    "time_format": "Time Format",
-                    "time_format_24": "24 Hour",
-                    "time_format_12": "12 Hour",
-                    "force_iso_date_format": "Force ISO Date Format"
+                    "header": "Čas/Datum",
+                    "time_format": "Časový formát",
+                    "time_format_24": "24 Hodin",
+                    "time_format_12": "12 Hodin",
+                    "force_iso_date_format": "Vynutit formát data ISO"
                 },
                 "side_panel": {
-                    "header": "Side Panel",
+                    "header": "Postranní panel",
                     "sorting": {
-                        "header": "Sort Order",
-                        "alphabetical": "Alphabetical",
-                        "private_to_bottom": "Private to Bottom",
+                        "header": "Řazení",
+                        "alphabetical": "Abecedně",
+                        "private_to_bottom": "Soukromé dolů",
                         "status": "Status",
-                        "status_and_private_to_bottom": "Status and Private to Bottom",
-                        "location": "Location",
-                        "last_active": "Last Active",
-                        "last_seen": "Last Seen",
-                        "time_in_instance": "Time in Instance",
-                        "placeholder": "Sort Order",
-                        "dropdown_header": "Choose Sort Order"
+                        "status_and_private_to_bottom": "Status a soukromé dolů",
+                        "location": "Lokace",
+                        "last_active": "Naposledy aktivní",
+                        "last_seen": "Naposledy viděn",
+                        "time_in_instance": "Čas v instanci",
+                        "placeholder": "Řazení",
+                        "dropdown_header": "Vybrat způsob řazení"
                     },
-                    "width": "Width"
+                    "width": "Šířka"
                 },
                 "user_dialog": {
-                    "header": "User Dialog",
-                    "vrchat_notes": "VRChat Notes",
-                    "vrcx_memos": "VRCX Memos",
-                    "export_vrcx_memos_into_vrchat_notes": "Export VRCX Memos into VRChat notes",
-                    "export_notes": "Export Notes"
+                    "header": "Dialog uživatele",
+                    "vrchat_notes": "VRChat poznámky",
+                    "vrcx_memos": "VRCX poznámky",
+                    "export_vrcx_memos_into_vrchat_notes": "Exportovat VRCX poznámky do VRChat poznámek",
+                    "export_notes": "Exportovat poznámky"
                 },
                 "user_colors": {
-                    "header": "User Colors",
-                    "random_colors_from_user_id": "Random Colors from User ID"
+                    "header": "Uživatelské barvy",
+                    "random_colors_from_user_id": "Náhodné barvy z uživatelského ID"
                 },
                 "friend_log": {
-                    "header": "Friend Log",
-                    "hide_unfriends": "Hide Unfriends"
+                    "header": "Záznam přátel",
+                    "hide_unfriends": "Skrýt odebrané přátele"
                 }
             },
             "notifications": {
                 "notifications": {
-                    "header": "Notifications",
-                    "notification_filter": "Notification Filter",
+                    "header": "Oznámení",
+                    "notification_filter": "Filtr oznámení",
                     "steamvr_notifications": {
-                        "header": "SteamVR Notifications",
+                        "header": "SteamVR oznámení",
                         "steamvr_overlay": "SteamVR Overlay",
-                        "overlay_notifications": "Overlay Notifications",
-                        "notification_position": "Notification Position",
-                        "xsoverlay_notifications": "XSOverlay Notifications",
-                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
-                        "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
-                        "user_images": "User Images (slower)",
-                        "notification_timeout": "Notification Timeout"
+                        "overlay_notifications": "Overlay Oznámení",
+                        "notification_position": "Pozice oznámení",
+                        "xsoverlay_notifications": "XSOverlay oznámení",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Oznámení",
+                        "ovrtoolkit_wrist_notifications": "Oznámení náramku OVR Toolkit",
+                        "user_images": "Obrázky uživatelů (pomalejší)",
+                        "notification_timeout": "Časový limit oznámení"
                     },
                     "conditions": {
                         "never": "Never",
