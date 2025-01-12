@@ -10532,6 +10532,8 @@ console.log(`isLinux: ${LINUX}`);
         bundleSizes: [],
         lastUpdated: ''
     };
+
+    $app.data.currentInstanceWorldDescriptionExpanded = false;
     $app.data.currentInstanceLocation = {};
 
     $app.methods.updateCurrentInstanceWorld = function () {

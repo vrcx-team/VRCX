@@ -781,6 +781,7 @@ i.x-status-icon.red {
 }
 
 .avatar-info {
+    margin-top: 2px;
     cursor: pointer;
     width: fit-content;
     vertical-align: top;
@@ -818,8 +819,10 @@ i.x-status-icon.red {
     width: unset;
     height: 16px;
     margin-right: 0;
-    margin-left: 3px;
+    margin-left: 1px;
+    margin-top: 4px;
     border-radius: 2px;
+    margin-bottom: -1px;
 }
 
 .el-pagination .el-select .el-input .el-input__inner,
@@ -921,7 +924,7 @@ i.x-status-icon.red {
 
 // feed table detail time tag line-height
 .el-table__expanded-cell .el-tag--mini {
-    line-height: 17px;
+    line-height: 18px;
 }
 
 // User dialog memo: input count background color
