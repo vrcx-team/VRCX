@@ -536,7 +536,7 @@ mixin settingsTab()
                         el-button(size="small" icon="el-icon-time" @click="promptPhotonOverlayMessageTimeout" :disabled="!openVR") {{ $t('view.settings.advanced.photon.event_hud.message_timeout') }}
                     div.options-container-item
                         el-select(v-model="photonEventTableTypeOverlayFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                            el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
+                            el-option(v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
                     br
                     span.sub-header {{ $t('view.settings.advanced.photon.timeout_hud.header') }}
                     simple-switch(:label='$t("view.settings.advanced.photon.timeout_hud.enable")' :value='timeoutHudOverlay' @change='saveEventOverlay("VRCX_TimeoutHudOverlay")' :disabled="!openVR" :tooltip="$t('view.settings.advanced.photon.timeout_hud.enable_tooltip')")

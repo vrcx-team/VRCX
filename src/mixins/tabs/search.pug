@@ -8,7 +8,7 @@ mixin searchTab()
             el-tab-pane(:label="$t('view.search.user.header')" v-loading="isSearchUserLoading" style="min-height:60px")
                 .x-friend-list(style="min-height:500px")
                     .x-friend-item(v-for="user in searchUserResults" :key="user.id" @click="showUserDialog(user.id)")
-                        template(v-once)
+                        template
                             .avatar
                                 img(v-lazy="userImage(user)")
                             .detail
@@ -26,7 +26,7 @@ mixin searchTab()
                 el-checkbox(v-model="searchWorldLabs" style="margin-left:10px") {{ $t('view.search.world.community_lab') }}
                 .x-friend-list(style="min-height:500px")
                     .x-friend-item(v-for="world in searchWorldResults" :key="world.id" @click="showWorldDialog(world.id)")
-                        template(v-once)
+                        template
                             .avatar
                                 img(v-lazy="world.thumbnailImageUrl")
                             .detail
@@ -63,7 +63,7 @@ mixin searchTab()
                         el-radio(label="created") {{ $t('view.search.avatar.sort_created') }}
                 .x-friend-list(style="margin-top:20px;min-height:500px")
                     .x-friend-item(v-for="avatar in searchAvatarPage" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
-                        template(v-once)
+                        template
                             .avatar
                                 img(v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl")
                                 img(v-else-if="avatar.imageUrl" v-lazy="avatar.imageUrl")
@@ -79,7 +79,7 @@ mixin searchTab()
             el-tab-pane(:label="$t('view.search.group.header')" v-loading="isSearchGroupLoading" style="min-height:60px")
                 .x-friend-list(style="min-height:500px")
                     .x-friend-item(v-for="group in searchGroupResults" :key="group.id" @click="showGroupDialog(group.id)")
-                        template(v-once)
+                        template
                             .avatar
                                 img(v-lazy="group.iconUrl")
                             .detail
