@@ -4301,10 +4301,13 @@ console.log(`isLinux: ${LINUX}`);
         $app.friends.clear();
         $app.pendingActiveFriends.clear();
         $app.friendNumber = 0;
+        $app.isFriendsGroupMe = true;
         $app.isVIPFriends = true;
         $app.isOnlineFriends = true;
         $app.isActiveFriends = true;
         $app.isOfflineFriends = false;
+        $app.isGroupInstances = false;
+        $app.groupInstances = [];
         $app.vipFriends_ = [];
         $app.onlineFriends_ = [];
         $app.activeFriends_ = [];
@@ -4313,6 +4316,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.sortOnlineFriends = false;
         $app.sortActiveFriends = false;
         $app.sortOfflineFriends = false;
+        $app.updateInGameGroupOrder();
     });
 
     API.$on('USER:CURRENT', function (args) {
@@ -8579,7 +8583,7 @@ console.log(`isLinux: ${LINUX}`);
             document.head.appendChild($appThemeStyle);
         }
         this.updateVRConfigVars();
-        await this.updatetrustColor();
+        await this.updateTrustColor();
         await this.applyWineEmojis();
     };
 
@@ -9158,7 +9162,7 @@ console.log(`isLinux: ${LINUX}`);
         )
     );
 
-    $app.methods.updatetrustColor = async function (setRandomColor = false) {
+    $app.methods.updateTrustColor = async function (setRandomColor = false) {
         if (setRandomColor) {
             this.randomUserColours = !this.randomUserColours;
         }
@@ -9184,10 +9188,10 @@ console.log(`isLinux: ${LINUX}`);
                 API.applyUserTrustLevel(ref);
             });
         }
-        await this.updatetrustColorClasses();
+        await this.updateTrustColorClasses();
     };
 
-    $app.methods.updatetrustColorClasses = async function () {
+    $app.methods.updateTrustColorClasses = async function () {
         var trustColor = JSON.parse(
             await configRepository.getString(
                 'VRCX_trustColor',
@@ -9215,7 +9219,7 @@ console.log(`isLinux: ${LINUX}`);
         style.innerHTML = newCSS;
         document.getElementsByTagName('head')[0].appendChild(style);
     };
-    await $app.methods.updatetrustColorClasses();
+    await $app.methods.updateTrustColorClasses();
 
     $app.data.notificationPosition = await configRepository.getString(
         'VRCX_notificationPosition',
@@ -16754,9 +16758,11 @@ console.log(`isLinux: ${LINUX}`);
                 location.worldId,
                 this.screenshotHelperModifyFilename
             );
+            console.log('Screenshot metadata added', newPath);
         }
         if (this.screenshotHelperCopyToClipboard) {
             await AppApi.CopyImageToClipboard(newPath);
+            console.log('Screenshot copied to clipboard', newPath);
         }
     };
 
@@ -17705,6 +17711,9 @@ console.log(`isLinux: ${LINUX}`);
             var json = await this.getVRChatRegistryKey(
                 `VRC_GROUP_ORDER_${API.currentUser.id}`
             );
+            if (!json) {
+                return;
+            }
             this.inGameGroupOrder = JSON.parse(json);
         } catch (err) {
             console.error(err);
@@ -17714,6 +17723,21 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.sortGroupsByInGame = function (a, b) {
         var aIndex = this.inGameGroupOrder.indexOf(a?.id);
         var bIndex = this.inGameGroupOrder.indexOf(b?.id);
+        if (aIndex === -1 && bIndex === -1) {
+            return 0;
+        }
+        if (aIndex === -1) {
+            return 1;
+        }
+        if (bIndex === -1) {
+            return -1;
+        }
+        return aIndex - bIndex;
+    };
+
+    $app.methods.sortGroupInstancesByInGame = function (a, b) {
+        var aIndex = this.inGameGroupOrder.indexOf(a?.group?.id);
+        var bIndex = this.inGameGroupOrder.indexOf(b?.group?.id);
         if (aIndex === -1 && bIndex === -1) {
             return 0;
         }

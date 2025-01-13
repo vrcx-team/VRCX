@@ -18,6 +18,10 @@ if (!isDotNetInstalled()) {
     return;
 }
 
+// get launch arguments
+const args = process.argv.slice(1);
+const noInstall = args.some((val) => val === '--no-install');
+
 tryCopyFromWinePrefix();
 
 const rootDir = app.getAppPath();
@@ -285,6 +289,10 @@ async function installVRCX() {
         console.error('AppImage path is not available!');
         return;
     }
+    if (noInstall) {
+        console.log('Skipping installation.');
+        return;
+    }
 
     /*
     let appImageLauncherInstalled = false;
@@ -455,7 +463,7 @@ function isDotNetInstalled() {
             encoding: 'utf-8'
         }
     );
-    return result.stdout.includes('.NETCore.App 8.0');
+    return result.stdout?.includes('.NETCore.App 8.0');
 }
 
 function tryCopyFromWinePrefix() {
