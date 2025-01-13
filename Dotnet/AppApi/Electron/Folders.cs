@@ -49,10 +49,10 @@ namespace VRCX
         {
             if (!File.Exists(libraryFoldersVdfPath))
                 return null;
-            
+
+            string? libraryPath = null;
             foreach (var line in File.ReadLines(libraryFoldersVdfPath))
-            {
-                string? libraryPath = null;
+            {                
                 // Assumes line will be \t\t"path"\t\t"pathToLibrary"
                 if (line.Contains("\"path\""))
                 {
