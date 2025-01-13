@@ -22,6 +22,7 @@ namespace VRCX
         
         static AppApiElectron()
         {
+            const string vrchatAppid = "438100";
             _homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             _steamPath = Path.Combine(_homeDirectory, ".local/share/Steam");
             var flatpakSteamPath = Path.Combine(_homeDirectory, ".var/app/com.valvesoftware.Steam/.local/share/Steam");
@@ -31,8 +32,42 @@ namespace VRCX
                 _steamPath = flatpakSteamPath;
             }
             _steamUserdataPath = Path.Combine(_homeDirectory, ".steam/steam/userdata");
-            _vrcPrefixPath = Path.Combine(_steamPath, "steamapps/compatdata/438100/pfx");
+            
+            var libraryFoldersVdfPath = Path.Combine(_steamPath, "config/libraryfolders.vdf");
+            var vrcLibraryPath = GetLibraryWithAppId(libraryFoldersVdfPath, vrchatAppid);
+            if (string.IsNullOrEmpty(vrcLibraryPath))
+            {
+                logger.Warn("Falling back to default VRChat path as libraryfolders.vdf was not found OR libraryfolders.vdf does not contain VRChat's appid (438100)");
+                vrcLibraryPath = _steamPath;
+            }
+            logger.Info($"Using steam library path {vrcLibraryPath}");
+            _vrcPrefixPath = Path.Combine(vrcLibraryPath, $"steamapps/compatdata/{vrchatAppid}/pfx");
             _vrcAppDataPath = Path.Combine(_vrcPrefixPath, "drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+        }
+
+        private static string? GetLibraryWithAppId(string libraryFoldersVdfPath, string appId)
+        {
+            if (!File.Exists(libraryFoldersVdfPath))
+                return null;
+            
+            foreach (var line in File.ReadLines(libraryFoldersVdfPath))
+            {
+                string? libraryPath = null;
+                // Assumes line will be \t\t"path"\t\t"pathToLibrary"
+                if (line.Contains("\"path\""))
+                {
+                    var parts = line.Split("\t");
+                    if (parts.Length < 4)
+                        continue;
+                    
+                    libraryPath = parts[4].Replace("\"", "");
+                }
+
+                if (line.Contains($"\"{appId}\""))
+                    return libraryPath;
+            }
+
+            return null;
         }
         
         public override string GetVRChatAppDataLocation()

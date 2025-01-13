@@ -1239,6 +1239,7 @@ export default class extends baseClass {
                     instance: this.applyInstance(json)
                 });
             }
+            $app.groupInstances.sort(this.sortGroupInstancesByInGame);
         });
 
         /**

@@ -187,7 +187,7 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.appearance.appearance.zoom') }}
                         el-input-number(size="small" v-model="zoomLevel" @change="setZoomLevel" :precision="0" style="width:128px")
                     simple-switch(:label='$t("view.settings.appearance.appearance.vrcplus_profile_icons")' :value='displayVRCPlusIconsAsAvatar' @change='saveOpenVROption("displayVRCPlusIconsAsAvatar")')
-                    simple-switch(:label='$t("view.settings.appearance.appearance.nicknames")' :value='hideNicknames' @change='saveOpenVROption("VRCX_hideNicknames")')
+                    simple-switch(:label='$t("view.settings.appearance.appearance.nicknames")' :value='!hideNicknames' @change='saveOpenVROption("VRCX_hideNicknames")')
                     simple-switch(:label='$t("view.settings.appearance.appearance.tooltips")' :value='!hideTooltips' @change='saveOpenVROption("VRCX_hideTooltips")')
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.sort_favorite_by') }}
@@ -257,8 +257,8 @@ mixin settingsTab()
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
-                    simple-switch(:label='$t("view.settings.appearance.user_dialog.vrchat_notes")' :value='hideUserNotes' @change='saveUserDialogOption("VRCX_hideUserNotes")')
-                    simple-switch(:label='$t("view.settings.appearance.user_dialog.vrcx_memos")' :value='hideUserMemos' @change='saveUserDialogOption("VRCX_hideUserMemos")')
+                    simple-switch(:label='$t("view.settings.appearance.user_dialog.vrchat_notes")' :value='!hideUserNotes' @change='saveUserDialogOption("VRCX_hideUserNotes")')
+                    simple-switch(:label='$t("view.settings.appearance.user_dialog.vrcx_memos")' :value='!hideUserMemos' @change='saveUserDialogOption("VRCX_hideUserMemos")')
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes') }}
                         br
@@ -270,28 +270,28 @@ mixin settingsTab()
                 //- Appearance | User Colors
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_colors.header') }}
-                    simple-switch(:label='$t("view.settings.appearance.user_colors.random_colors_from_user_id")' :value='randomUserColours' @change='updatetrustColor(true)')
+                    simple-switch(:label='$t("view.settings.appearance.user_colors.random_colors_from_user_id")' :value='randomUserColours' @change='updateTrustColor(true)')
                     div.options-container-item
                         div
-                            el-color-picker(v-model="trustColor.untrusted" @change="updatetrustColor" size="mini" :predefine="['#CCCCCC']")
+                            el-color-picker(v-model="trustColor.untrusted" @change="updateTrustColor(false)" size="mini" :predefine="['#CCCCCC']")
                             span.color-picker(slot="trigger" class="x-tag-untrusted") Visitor
                         div
-                            el-color-picker(v-model="trustColor.basic" @change="updatetrustColor" size="mini" :predefine="['#1778ff']")
+                            el-color-picker(v-model="trustColor.basic" @change="updateTrustColor(false)" size="mini" :predefine="['#1778ff']")
                             span.color-picker(slot="trigger" class="x-tag-basic") New User
                         div
-                            el-color-picker(v-model="trustColor.known" @change="updatetrustColor" size="mini" :predefine="['#2bcf5c']")
+                            el-color-picker(v-model="trustColor.known" @change="updateTrustColor(false)" size="mini" :predefine="['#2bcf5c']")
                             span.color-picker(slot="trigger" class="x-tag-known") User
                         div
-                            el-color-picker(v-model="trustColor.trusted" @change="updatetrustColor" size="mini" :predefine="['#ff7b42']")
+                            el-color-picker(v-model="trustColor.trusted" @change="updateTrustColor(false)" size="mini" :predefine="['#ff7b42']")
                             span.color-picker(slot="trigger" class="x-tag-trusted") Known User
                         div
-                            el-color-picker(v-model="trustColor.veteran" @change="updatetrustColor" size="mini" :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']")
+                            el-color-picker(v-model="trustColor.veteran" @change="updateTrustColor(false)" size="mini" :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']")
                             span.color-picker(slot="trigger" class="x-tag-veteran") Trusted User
                         div
-                            el-color-picker(v-model="trustColor.vip" @change="updatetrustColor" size="mini" :predefine="['#ff2626']")
+                            el-color-picker(v-model="trustColor.vip" @change="updateTrustColor(false)" size="mini" :predefine="['#ff2626']")
                             span.color-picker(slot="trigger" class="x-tag-vip") VRChat Team
                         div
-                            el-color-picker(v-model="trustColor.troll" @change="updatetrustColor" size="mini" :predefine="['#782f2f']")
+                            el-color-picker(v-model="trustColor.troll" @change="updateTrustColor(false)" size="mini" :predefine="['#782f2f']")
                             span.color-picker(slot="trigger" class="x-tag-troll") Nuisance
 
             //- Notifications Tab
@@ -391,7 +391,7 @@ mixin settingsTab()
                             el-radio(:label="true") {{ "SteamVR" }}
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button') }}
-                        el-radio-group(v-model="overlaybutton" @change="saveOpenVROption"  :disabled="!openVR || !overlayWrist")
+                        el-radio-group(v-model="overlaybutton" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                             el-radio(:label="false") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_grip') }}
                             el-radio(:label="true") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_menu') }}
                     div.options-container-item

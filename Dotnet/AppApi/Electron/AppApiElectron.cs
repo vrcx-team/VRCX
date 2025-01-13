@@ -83,7 +83,29 @@ namespace VRCX
         
         public override string GetClipboard()
         {
-            return string.Empty;
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "xclip",
+                    Arguments = "-o",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            try
+            {
+                process.Start();
+                var output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return output;
+            }
+            catch (Exception ex)
+            {
+                logger.Error($"Failed to get clipboard: {ex.Message}");
+                return string.Empty;
+            }
         }
 
         public override void SetStartup(bool enabled)

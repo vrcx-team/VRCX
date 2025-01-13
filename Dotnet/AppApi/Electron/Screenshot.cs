@@ -14,7 +14,7 @@ namespace VRCX
     {
         public override string AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
         {
-            var winePrefix = Path.Combine(_vrcPrefixPath, "/drive_c/");
+            var winePrefix = Path.Join(_vrcPrefixPath, "drive_c");
             var winePath = path.Substring(3).Replace("\\", "/");
             path = Path.Combine(winePrefix, winePath);
             
