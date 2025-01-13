@@ -22,6 +22,9 @@ import elements_pl from 'element-ui/lib/locale/lang/pl';
 import pt from './pt/en.json' assert { type: 'JSON' };
 import elements_pt from 'element-ui/lib/locale/lang/pt';
 
+import cz from './cz/en.json' assert { type: 'JSON' };
+import elements_cz from 'element-ui/lib/locale/lang/cs-CZ';
+
 import ru_RU from './ru/en.json' assert { type: 'JSON' };
 import elements_ru from 'element-ui/lib/locale/lang/ru-RU';
 
@@ -42,6 +45,7 @@ const localized_ja = { ...ja, ...elements_ja };
 const localized_ko = { ...ko, ...elements_ko };
 const localized_pl = { ...pl, ...elements_pl };
 const localized_pt = { ...pt, ...elements_pt };
+const localized_cz = { ...cz, ...elements_cz };
 const localized_ru = { ...ru_RU, ...elements_ru };
 const localized_vi = { ...vi, ...elements_vi };
 const localized_zh_CN = { ...zh_CN, ...elements_zh_CN };
@@ -56,6 +60,7 @@ export {
     localized_ko as ko,
     localized_pl as pl,
     localized_pt as pt,
+    localized_cz as cz,
     localized_ru as ru_RU,
     localized_vi as vi,
     localized_zh_CN as zh_CN,
