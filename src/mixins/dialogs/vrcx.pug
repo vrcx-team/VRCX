@@ -11,7 +11,7 @@ mixin vrcx()
                     br
                     span {{ $t('dialog.vrcx_updater.ready_for_update') }}
                 el-select(v-model="branch" @change="loadBranchVersions" style="display:inline-block;width:150px;margin-right:15px")
-                    el-option(v-once v-for="branch in branches" :key="branch.name" :label="branch.name" :value="branch.name")
+                    el-option(v-for="branch in branches" :key="branch.name" :label="branch.name" :value="branch.name")
                 el-select(v-model="VRCXUpdateDialog.release" style="display:inline-block;width:150px")
                     el-option(v-for="item in VRCXUpdateDialog.releases" :key="item.name" :label="item.tag_name" :value="item.name")
                 div(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion" style="margin-top:15px")
