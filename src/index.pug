@@ -71,8 +71,12 @@ html
                 +friendLogTab()
 
                 //- moderation
-                include ./mixins/tabs/moderation.pug
-                +moderationTab()
+                moderation-tab(
+                v-if="$refs.menu?.activeIndex === 'moderation'"
+                :Api='API'
+                :table-data='playerModerationTable'
+                :show-user-dialog='showUserDialog'
+                :shift-held='shiftHeld')
 
                 //- notification
                 include ./mixins/tabs/notifications.pug
