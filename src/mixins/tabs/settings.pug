@@ -1,34 +1,3 @@
-mixin simpleSettingsCategory(headerTrKey)
-    div.options-container
-        span.header {{ $t('#{headerTrKey}') }}
-        if block
-            block
-        else
-            p No Content
-
-mixin simpleTwoLabelSwitch(nameTrKey, model, onChange="")
-    div.options-container-item
-        span.name {{ $t('#{nameTrKey}') }}
-        el-switch(v-model=model @change=onChange)
-
-mixin simpleRadioGroup(nameTrKey, model, options, onChange="")
-    div.options-container-item
-        span.name {{ $t('#{nameTrKey}') }}
-        br
-        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
-            each option in options
-                el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
-
-mixin simpleRadioGroupWithTooltip(nameTrKey, tooltipContent, model, options, onChange="")
-    div.options-container-item
-        span.name {{ $t('#{nameTrKey}') }}
-            el-tooltip(placement="top" style="margin-left:5px" :content=tooltipContent)
-                i.el-icon-info
-        br
-        el-radio-group(v-model=model @change=onChange size="mini" style="margin-top:5px")
-            each option in options
-                el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
-
 mixin settingsTab()
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
         div.options-container(style="margin-top:0;padding:5px")
@@ -63,7 +32,8 @@ mixin settingsTab()
                                 span.name {{ $t("view.settings.general.general.support") }}
                                 span.extra https://vrcx.app/discord
                 //- General | VRCX Updater
-                +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
+                div.options-container
+                    span.header {{ $t('view.settings.general.vrcx_updater.header') }}
                     div.options-container-item
                         el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
                         el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
@@ -75,7 +45,8 @@ mixin settingsTab()
                             el-radio-button(label="Notify") {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
                             el-radio-button(label="Auto Download") {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
                 //- General | Application
-                +simpleSettingsCategory("view.settings.general.application.header")
+                div.options-container
+                    span.header {{ $t('view.settings.general.application.header') }}
                     template(v-if="!isLinux()")
                         simple-switch(:label='$t("view.settings.general.application.startup")' :value='isStartAtWindowsStartup' @change='saveVRCXWindowOption("VRCX_StartAtWindowsStartup")')
                     simple-switch(:label='$t("view.settings.general.application.minimized")' :value='isStartAsMinimizedState' @change='saveVRCXWindowOption("VRCX_StartAsMinimizedState")')
@@ -86,7 +57,8 @@ mixin settingsTab()
                     div.options-container-item
                         el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
                 //- General | Favorite
-                +simpleSettingsCategory("view.settings.general.favorites.header")
+                div.options-container
+                    span.header {{ $t('view.settings.general.favorites.header') }}
                     br
                     el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends" style="margin-top:8px")
                         el-option-group(:label="$t('view.settings.general.favorites.group_placeholder')")
@@ -137,11 +109,16 @@ mixin settingsTab()
                         el-radio-group(v-model="autoStateChangeNoFriends" :disabled="!autoStateChangeEnabled" @change="saveAutomationOptions" )
                             el-radio(:label="false") {{ $t('view.settings.general.automation.alone') }}
                             el-radio(:label="true") {{ $t('view.settings.general.automation.no_friends') }}
-                    +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_invite_request_accept", "$t('view.settings.general.automation.auto_invite_request_accept_tooltip')", "autoAcceptInviteRequests", [
-                        { label: "Off", translationKey: "view.settings.general.automation.auto_invite_request_accept_off" },
-                        { label: "All Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_favs" },
-                        { label: "Selected Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_selected_favs" },
-                    ], "saveAutomationOptions")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.general.automation.auto_invite_request_accept') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.automation.auto_invite_request_accept_tooltip')")
+                                i.el-icon-info
+                        br
+                        el-radio-group(v-model="autoAcceptInviteRequests" @change="saveAutomationOptions" size="mini" style="margin-top:5px")
+                            el-radio-button(label="Off") {{ $t('view.settings.general.automation.auto_invite_request_accept_off') }}
+                            el-radio-button(label="All Favorites") {{ $t('view.settings.general.automation.auto_invite_request_accept_favs') }}
+                            el-radio-button(label="Selected Favorites") {{ $t('view.settings.general.automation.auto_invite_request_accept_selected_favs') }}
+
                 //- General | Contributors
                 div.options-container
                     span.header {{ $t("view.settings.general.contributors.header" )}}
@@ -486,7 +463,8 @@ mixin settingsTab()
                         el-button(size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog") {{ $t('view.settings.advanced.advanced.remote_database.avatar_database_provider') }}
                 //- Advanced | Automatic App Launcher
                 template(v-if="!isLinux()")
-                    +simpleSettingsCategory("view.settings.advanced.advanced.app_launcher.header")
+                    div.options-container
+                        span.header {{ $t('view.settings.advanced.advanced.app_launcher.header') }}
                         br
                         el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()" style="margin-top:5px") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.app_launcher.folder_tooltip')")
