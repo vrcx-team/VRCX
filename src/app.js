@@ -32,7 +32,7 @@ import _apiRequestHandler from './classes/apiRequestHandler.js';
 import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 
 // tabs
-import ModerationTab from './views/tabs/moderation.vue';
+import ModerationTab from './views/tabs/Moderation.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
@@ -7554,26 +7554,6 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
     });
-
-    $app.methods.deletePlayerModeration = function (row) {
-        API.deletePlayerModeration({
-            moderated: row.targetUserId,
-            type: row.type
-        });
-    };
-
-    $app.methods.deletePlayerModerationPrompt = function (row) {
-        this.$confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    this.deletePlayerModeration(row);
-                }
-            }
-        });
-    };
 
     // #endregion
     // #region | App: Notification

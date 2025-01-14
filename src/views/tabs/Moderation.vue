@@ -6,7 +6,7 @@
             :filters="filters"
             :tableProps="tableProps"
             :paginationProps="paginationProps"
-            v-loading="moderationState.isPlayerModerationsLoading"
+            v-loading="Api.isPlayerModerationsLoading"
         >
             <template slot="tool">
                 <div class="tool-slot">
@@ -37,10 +37,8 @@
                     >
                         <el-button
                             type="default"
-                            :loading="
-                                moderationState.isPlayerModerationsLoading
-                            "
-                            @click="moderationState.refreshPlayerModerations()"
+                            :loading="Api.isPlayerModerationsLoading"
+                            @click="Api.refreshPlayerModerations()"
                             icon="el-icon-refresh"
                             circle
                         />
@@ -108,10 +106,7 @@
             >
                 <template slot-scope="scope">
                     <template
-                        v-if="
-                            scope.row.sourceUserId ===
-                            moderationState.currentUser.id
-                        "
+                        v-if="scope.row.sourceUserId === Api.currentUser.id"
                     >
                         <el-button
                             v-if="shiftHeld"
@@ -141,12 +136,10 @@
     export default {
         name: 'ModerationTab',
         props: {
-            moderationState: Object,
+            Api: Object,
             tableData: Object,
             showUserDialog: Function,
-            shiftHeld: Boolean,
-            deletePlayerModeration: Function,
-            deletePlayerModerationPrompt: Function
+            shiftHeld: Boolean
         },
         created: async function () {
             this.filters[0].value = JSON.parse(
@@ -200,6 +193,28 @@
                 configRepository.setString(
                     'VRCX_playerModerationTableFilters',
                     JSON.stringify(this.filters[0].value)
+                );
+            },
+            deletePlayerModeration(row) {
+                this.Api.deletePlayerModeration({
+                    moderated: row.targetUserId,
+                    type: row.type
+                });
+            },
+            deletePlayerModerationPrompt(row) {
+                this.$confirm(
+                    `Continue? Delete Moderation ${row.type}`,
+                    'Confirm',
+                    {
+                        confirmButtonText: 'Confirm',
+                        cancelButtonText: 'Cancel',
+                        type: 'info',
+                        callback: (action) => {
+                            if (action === 'confirm') {
+                                this.deletePlayerModeration(row);
+                            }
+                        }
+                    }
                 );
             }
         }
