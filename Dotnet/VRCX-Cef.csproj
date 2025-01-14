@@ -4,7 +4,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net9-windows10.0.19041.0</TargetFramework>
     <Platforms>x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationRevision>0</ApplicationRevision>
