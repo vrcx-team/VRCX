@@ -1,3 +1,9 @@
+### Download and run AppImage from [Releases](https://github.com/vrcx-team/VRCX/releases)
+
+---
+
+### Legacy Wine guide
+
 VRCX on Linux was made possible by these people:
 
 @RinLovesYou, @galister, @BenjaminZehowlt, @regalialong

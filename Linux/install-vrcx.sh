@@ -14,7 +14,8 @@ set -u
 
 # Ensure Wine version >= 9.0
 wine_version=$(wine --version | grep -Po '(?<=wine-)([0-9.]+)')
-if [ "${1-}" != "force" ] && [[ $wine_version < 9.0 ]]; then
+if [ "${1-}" != "force" ] && awk "BEGIN {exit !($wine_version < 9.0)}"; then
+	echo "Your Wine version: $wine_version"
 	echo "Please upgrade your Wine version to 9.0 or higher."
 	echo "If you want to try anyway, run: install-vrcx.sh force"
 	exit 1

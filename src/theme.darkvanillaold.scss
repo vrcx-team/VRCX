@@ -1,0 +1,320 @@
+/*
+ * VRCX Dark-Vanilla theme by MintLily
+ * https://github.com/MintLily/Dark-Vanilla
+ */
+@import 'theme.dark.scss';
+:root {
+    --ThemeName: 'Dark Vanilla';
+    --ThemeVersion: 'v1.7';
+    --ThemeAuthor: 'MintLily'; /* Discord: MintLily#0001 */
+
+    --blur: 3px;
+    --blur-more: 8px;
+    --farback: #131719;
+    --mid: #191f22;
+    --top: #1e2427;
+    --top-border: #151a1c;
+    --theme-text: #eecce0;
+    --theme-text-muted: #906d92;
+    --theme-text-rgb: 238, 204, 224;
+    --theme-text-muted-rgb: 144, 109, 146;
+}
+
+div.options-container[style='margin-top: 45px; border-top: 1px solid rgb(238, 238, 238); padding-top: 30px;']:after {
+    content: var(--ThemeName) ' ' var(--ThemeVersion) ' by ' var(--ThemeAuthor);
+    color: var(--theme-text);
+    float: right;
+    padding-bottom: 10px;
+    padding-right: 10px;
+}
+
+a {
+    color: var(--theme-text) !important;
+}
+.x-menu-container {
+    background: var(--top) !important;
+}
+.x-container {
+    background: var(--farback) !important;
+}
+.x-aside-container {
+    background: var(--mid) !important;
+}
+
+.el-tooltip__popper.is-dark {
+    background: rgba(var(--theme-text-muted-rgb), 0.2) !important;
+    backdrop-filter: blur(var(--blur));
+}
+
+.el-menu-item:focus,
+.el-menu-item:hover {
+    background: var(--theme-text-muted) !important;
+}
+.el-menu-item.is-active {
+    color: var(--theme-text) !important;
+}
+.el-menu-item.is-active::before {
+    background: var(--theme-text) !important;
+}
+.el-menu-item.notify::after {
+    background: var(--theme-text) !important;
+}
+.el-collapse-item__content,
+.el-collapse-item__wrap {
+    background: var(--mid) !important;
+}
+
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled) {
+    background: var(--top) !important;
+    border: var(--top-border) !important;
+}
+
+.el-input__inner,
+.el-textarea__inner,
+.el-textarea .el-input__count,
+.el-input .el-input__count .el-input__count-inner {
+    background: transparent;
+    border: var(--top-border) !important;
+}
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background: transparent;
+}
+
+.el-table th.is-leaf {
+    background: var(--top) !important;
+    /*border: 1px solid var(--top-border) !important;*/
+}
+
+.el-table td,
+.el-table th.is-leaf {
+    background: var(--top) !important;
+}
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+    background: var(--mid) !important;
+}
+
+.el-dialog,
+.el-pager li,
+.el-pagination .btn-next,
+.el-pagination .btn-prev {
+    background: var(--mid) !important;
+}
+.el-pager li.active {
+    color: var(--theme-text) !important;
+}
+.el-pager li.btn-quicknext,
+.el-pager li.btn-quickprev {
+    color: var(--theme-text-muted) !important;
+}
+.el-pager li:hover,
+.el-pagination button:hover {
+    color: var(--theme-text) !important;
+}
+
+.x-friend-item:hover,
+.x-change-image-item:hover {
+    background: var(--theme-text-muted) !important;
+}
+
+.el-popover,
+.el-dropdown-menu {
+    background: var(--top) !important;
+    border: var(--top-border) !important;
+}
+
+.el-select-dropdown {
+    background: var(--top) !important;
+    border: var(--top-border) !important;
+}
+
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled) {
+    background: var(--mid) !important;
+}
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):focus,
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):hover {
+    background: var(--farback) !important;
+    border: var(--top-border) !important;
+    color: white !important;
+}
+
+.el-tree,
+.el-message-box {
+    background: rgba(38, 50, 56, 0.2) !important;
+    border-color: rgba(38, 50, 56, 0.2) !important;
+    backdrop-filter: blur(var(--blur));
+}
+.el-tree-node__content:hover {
+    background: rgba(58, 69, 74, 0.6) !important;
+    backdrop-filter: blur(var(--blur-more));
+}
+.el-tree-node:focus > .el-tree-node__content {
+    background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.el-tabs__item.is-active,
+.el-radio__input.is-checked + .el-radio__label {
+    color: var(--theme-text) !important;
+}
+.el-tabs__active-bar {
+    background-color: var(--theme-text) !important;
+}
+.el-tabs__item:hover {
+    color: var(--theme-text-muted) !important;
+}
+.el-radio__input.is-checked .el-radio__inner {
+    border-color: var(--theme-text) !important;
+    background: var(--theme-text) !important;
+}
+.el-radio__inner:hover {
+    border-color: var(--theme-text) !important;
+}
+
+.el-checkbox__input.is-checked + .el-checkbox__label {
+    color: var(--theme-text-muted) !important;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+    border-color: var(--theme-text-muted) !important;
+    background: var(--theme-text-muted) !important;
+}
+
+.el-icon-star-on {
+    color: var(--theme-text) !important;
+}
+
+.el-tag.el-tag--info {
+    background: var(--farback) !important;
+}
+
+.el-loading-spinner .path {
+    stroke: var(--theme-text) !important;
+}
+
+.noty_theme__mint.noty_type__success {
+    background-color: var(--theme-text-muted) !important;
+    border-bottom: var(--theme-text) !important;
+}
+
+.noty_theme__mint.noty_type__error {
+    background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.el-button--primary {
+    border-color: var(--theme-text) !important;
+    background: var(--theme-text) !important;
+    color: black !important;
+}
+.el-button--primary:focus,
+.el-button--primary:hover {
+    border-color: var(--theme-text-muted) !important;
+    background: var(--theme-text-muted) !important;
+    color: var(--theme-text) !important;
+}
+
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):focus,
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):hover {
+    border-color: var(--theme-text-muted) !important;
+    background: var(--theme-text-muted) !important;
+    color: var(--theme-text) !important;
+}
+
+.el-radio-button__inner {
+    background-color: var(--top) !important;
+    border-color: var(--top) !important;
+}
+.el-radio-button__inner:hover {
+    color: var(--theme-text) !important;
+}
+.el-radio-button__orig-radio:checked + .el-radio-button__inner {
+    background-color: var(--theme-text-muted) !important;
+    border-color: var(--theme-text-muted) !important;
+    box-shadow: -1px 0 0 0 var(--theme-text-muted) !important;
+}
+.el-switch.is-checked .el-switch__core {
+    background-color: var(--theme-text-muted) !important;
+    border-color: var(--theme-text-muted) !important;
+}
+.el-switch__label.is-active {
+    color: var(--theme-text) !important;
+}
+.el-tag {
+    background: var(--farback);
+    border-color: var(--farback);
+    color: var(--theme-text);
+}
+.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+    border-bottom-color: var(--theme-text);
+}
+
+.toggle-switch li[data-v-3cf97114] > label {
+    background-color: var(--top) !important;
+    border-color: var(--top) !important;
+    color: lightgrey !important;
+}
+
+.toggle-switch li[data-v-3cf97114] > label:hover {
+    background-color: var(--mid) !important;
+    border-color: var(--mid) !important;
+    color: var(--theme-text-muted) !important;
+}
+
+.toggle-switch li[data-v-3cf97114] > label.selected {
+    background-color: var(--mid) !important;
+    border-color: var(--mid) !important;
+    color: var(--theme-text) !important;
+}
+
+.el-slider__bar {
+    background-color: var(--theme-text-muted) !important;
+}
+.el-slider__button {
+    border-color: var(--theme-text-muted) !important;
+}
+.el-table .descending .sort-caret.descending,
+.el-table .ascending .sort-caret.ascending {
+    border-top-color: var(--theme-text) !important;
+}
+
+.el-select-dropdown__item.selected {
+    color: var(--theme-text);
+}
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+    background-color: var(--farback);
+}
+
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover {
+    background-color: var(--farback);
+    color: var(--theme-text);
+}
+
+.el-dialog__headerbtn:focus .el-dialog__close,
+.el-dialog__headerbtn:hover .el-dialog__close {
+    color: var(--theme-text);
+}
+
+.el-progress-bar__inner {
+    background-color: var(--theme-text);
+}
+.el-progress-bar__outer {
+    background-color: var(--farback);
+}
+.el-button--text:focus,
+.el-button--text:hover {
+    color: var(--theme-text);
+}
+
+path[stroke='#20a0ff'] {
+    stroke: var(--theme-text) !important;
+}
+path[stroke='#e5e9f2'] {
+    stroke: var(--farback) !important;
+}
+
+.el-collapse-item .el-tag--mini {
+    border: transparent;
+    background-color: #333 !important;
+}

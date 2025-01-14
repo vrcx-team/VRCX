@@ -1,0 +1,326 @@
+mixin favoritesTab()            
+    .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'")
+        div(style="font-size:13px;position:absolute;display:flex;right:0;z-index:1;margin-right:15px")
+            div(v-if="editFavoritesMode" style="display:inline-block;margin-right:10px")
+                el-button(size="small" @click="clearBulkFavoriteSelection ") {{ $t('view.favorite.clear') }}
+                el-button(size="small" @click="bulkCopyFavoriteSelection") {{ $t('view.favorite.copy') }}
+                el-button(size="small" @click="showBulkUnfavoriteSelectionConfirm") {{ $t('view.favorite.bulk_unfavorite') }}
+            div(style="display:flex;align-items: center;margin-right:10px")
+                span.name {{ $t('view.favorite.edit_mode') }}
+                el-switch(v-model="editFavoritesMode" style="margin-left:5px")
+            el-tooltip(placement="bottom" :content="$t('view.favorite.refresh_tooltip')" :disabled="hideTooltips")
+                el-button(type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorites(); getLocalWorldFavorites()" size="small" icon="el-icon-refresh" circle)
+        el-tabs(ref="favoriteTabRef" type="card" v-loading="API.isFavoriteLoading" style="height:100%")
+            el-tab-pane(:label="$t('view.favorite.friends.header')")
+                el-collapse(v-if="$refs.menu && $refs.menu.activeIndex === 'favorite' && $refs.favoriteTabRef && $refs.favoriteTabRef.currentName === '0'" style="border:0")
+                    div(style="display:flex;align-items:center;justify-content:space-between")
+                        div
+                            el-button(size="small" @click="showFriendExportDialog") {{ $t('view.favorite.export') }}
+                            el-button(size="small" @click="showFriendImportDialog" style="margin-left:5px") {{ $t('view.favorite.import') }}
+                        div(style="display:flex;align-items:center;font-size:13px;margin-right:10px")
+                            span.name(style="margin-right:5px;line-height:10px;") {{ $t('view.favorite.sort_by') }}
+                            el-radio-group(v-model="sortFavorites" @change="saveSortFavoritesOption")
+                                el-radio(:label="false") {{ $t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                                el-radio(:label="true") {{ $t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                    el-collapse-item(v-for="group in API.favoriteFriendGroups" :key="group.name")
+                        template(slot="title")
+                            span(v-text="group.displayName ? group.displayName : group.name" style="font-weight:bold;font-size:14px;margin-left:10px")
+                            span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
+                            el-tooltip(placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+                            el-tooltip(placement="right" :content="$t('view.favorite.clear_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        .x-friend-list(v-if="group.count" style="margin-top:10px")
+                            div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteFriends" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showUserDialog(favorite.id)")
+                                .x-friend-item
+                                    template(v-if="favorite.ref")
+                                        .avatar(:class="userStatusClass(favorite.ref)")
+                                            img(v-lazy="userImage(favorite.ref)")
+                                        .detail
+                                            span.name(v-text="favorite.ref.displayName" :style="{'color':favorite.ref.$userColour}")
+                                            location.extra(v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :traveling="favorite.ref.travelingToLocation" :link="false")
+                                            span(v-else v-text="favorite.ref.statusDescription")
+                                        template(v-if="editFavoritesMode")
+                                            el-tooltip(placement="left" :content="$t('view.favorite.move_tooltip')" :disabled="hideTooltips")
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-back" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        template(v-if="groupAPI.name !== group.name" v-for="groupAPI in API.favoriteFriendGroups" :key="groupAPI.name")
+                                                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="moveFavorite(favorite.ref, groupAPI, 'friend')" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                            el-button(type="text" size="mini" @click.stop style="margin-left:5px")
+                                                el-checkbox(v-model="favorite.$selected")
+                                        template(v-else)
+                                            el-tooltip(placement="right" :content="$t('view.favorite.unfavorite_tooltip')" :disabled="hideTooltips")
+                                                el-button(v-if="shiftHeld" @click.stop="deleteFavorite(favorite.id)" size="mini" icon="el-icon-close" circle style="color:#f56c6c;margin-left:5px")
+                                                el-button(v-else @click.stop="showFavoriteDialog('friend', favorite.id)" type="default" icon="el-icon-star-on" size="mini" circle style="margin-left:5px")
+                                    template(v-else)
+                                        .avatar
+                                        .detail
+                                            span(v-text="favorite.name || favorite.id")
+                                        el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
+                        div(v-else style="height:20px;width:100%;display:flex;align-items:center;justify-content:center;color:rgb(144, 147, 153)")
+                            span No Data
+            el-tab-pane(:label="$t('view.favorite.worlds.header')")
+                el-collapse(v-if="$refs.menu && $refs.menu.activeIndex === 'favorite' && $refs.favoriteTabRef && $refs.favoriteTabRef.currentName === '1'" style="border:0")
+                    div(style="display:flex;align-items:center;justify-content:space-between")
+                        div
+                            el-button(size="small" @click="showWorldExportDialog") {{ $t('view.favorite.export') }}
+                            el-button(size="small" @click="showWorldImportDialog" style="margin-left:5px") {{ $t('view.favorite.import') }}
+                        div(style="display:flex;align-items:center;font-size:13px;margin-right:10px")
+                            span.name(style="margin-right:5px;line-height:10px;") {{ $t('view.favorite.sort_by') }}
+                            el-radio-group(v-model="sortFavorites" @change="saveSortFavoritesOption" style="margin-right:12px")
+                                el-radio(:label="false") {{ $t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                                el-radio(:label="true") {{ $t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                            el-input(v-model="worldFavoriteSearch" @input="searchWorldFavorites" clearable size="mini" :placeholder="$t('view.favorite.worlds.search')" style="width:200px;")
+                    .x-friend-list(style="margin-top:10px")
+                        div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in worldFavoriteSearchResults" :key="favorite.id" @click="showWorldDialog(favorite.id)")
+                            .x-friend-item
+                                template(v-if="favorite.name")
+                                    .avatar
+                                        img(v-lazy="favorite.thumbnailImageUrl")
+                                    .detail
+                                        span.name(v-text="favorite.name")
+                                        span.extra(v-if="favorite.occupants") {{ favorite.authorName }} ({{ favorite.occupants }})
+                                        span.extra(v-else v-text="favorite.authorName")
+                                template(v-else)
+                                    .avatar
+                                    .detail
+                                        span(v-text="favorite.id")
+
+                    span(style="display:block;margin-top:20px") {{ $t('view.favorite.worlds.vrchat_favorites') }}
+                    el-collapse-item(v-for="group in API.favoriteWorldGroups" :key="group.name")
+                        template(slot="title")
+                            div(style="display:flex;align-items:center;")
+                                span(v-text="group.displayName ? group.displayName : group.name" style="font-weight:bold;font-size:14px;margin-left:10px")
+                                el-tag(style="margin:1px 0 0 5px" size="mini" :type="userFavoriteWorldsStatusForFavTab(group.visibility)" effect="plain") {{ group.visibility.charAt(0).toUpperCase() + group.visibility.slice(1) }}
+                                span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
+                                el-tooltip(placement="top" :content="$t('view.favorite.visibility_tooltip')" :disabled="hideTooltips")
+                                    el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:10px")
+                                        el-button(type="default" icon="el-icon-view" size="mini" circle)
+                                        el-dropdown-menu(#default="dropdown")
+                                            el-dropdown-item(v-if="group.visibility !== visibility" v-for="visibility in worldGroupVisibilityOptions" :key="visibility" style="display:block;margin:10px 0" v-text="visibility.charAt(0).toUpperCase() + visibility.slice(1)" @click.native="changeWorldGroupVisibility(group.name, visibility)")
+                                el-tooltip(placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips")
+                                    el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:5px")
+                                el-tooltip(placement="right" :content="$t('view.favorite.clear_tooltip')" :disabled="hideTooltips")
+                                    el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        .x-friend-list(v-if="group.count" style="margin-top:10px")
+                            div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteWorlds" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showWorldDialog(favorite.id)")
+                                .x-friend-item
+                                    template(v-if="favorite.ref")
+                                        .avatar
+                                            img(v-lazy="favorite.ref.thumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="favorite.ref.name")
+                                            span.extra(v-if="favorite.ref.occupants") {{ favorite.ref.authorName }} ({{ favorite.ref.occupants }})
+                                            span.extra(v-else v-text="favorite.ref.authorName")
+                                        template(v-if="editFavoritesMode")
+                                            el-tooltip(placement="left" :content="$t('view.favorite.move_tooltip')" :disabled="hideTooltips")
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-back" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        template(v-if="groupAPI.name !== group.name" v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
+                                                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="moveFavorite(favorite.ref, groupAPI, 'world')" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                            el-button(type="text" size="mini" @click.stop style="margin-left:5px")
+                                                el-checkbox(v-model="favorite.$selected")
+                                        template(v-else)
+                                            el-tooltip(v-if="favorite.deleted" placement="left" :content="$t('view.favorite.unavailable_tooltip')")
+                                                i.el-icon-warning(style="color:#f56c6c;margin-left:5px")
+                                            el-tooltip(v-if="favorite.ref.releaseStatus === 'private'" placement="left" :content="$t('view.favorite.private')")
+                                                i.el-icon-warning(style="color:#e6a23c;margin-left:5px")
+                                            el-tooltip(placement="left" :content="$t('view.favorite.self_invite_tooltip')" :disabled="hideTooltips")
+                                                el-button(@click.stop="newInstanceSelfInvite(favorite.id)" size="mini" icon="el-icon-message" circle style="margin-left:5px")
+                                            el-tooltip(placement="right" :content="$t('view.favorite.unfavorite_tooltip')" :disabled="hideTooltips")
+                                                el-button(v-if="shiftHeld" @click.stop="deleteFavorite(favorite.id)" size="mini" icon="el-icon-close" circle style="color:#f56c6c;margin-left:5px")
+                                                el-button(v-else @click.stop="showFavoriteDialog('world', favorite.id)" type="default" icon="el-icon-star-on" size="mini" circle style="margin-left:5px")
+                                    template(v-else)
+                                        .avatar
+                                        .detail
+                                            span(v-text="favorite.name || favorite.id")
+                                            el-tooltip(v-if="favorite.deleted" placement="left" :content="$t('view.favorite.unavailable_tooltip')")
+                                                i.el-icon-warning(style="color:#f56c6c;margin-left:5px")
+                                        el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
+                        div(v-else style="height:20px;width:100%;display:flex;align-items:center;justify-content:center;color:rgb(144, 147, 153)")
+                            span No Data
+                    span(style="display:block;margin-top:20px") {{ $t('view.favorite.worlds.local_favorites') }}
+                    br
+                    el-button(size="small" @click="promptNewLocalWorldFavoriteGroup") {{ $t('view.favorite.worlds.new_group') }}
+                    el-button(v-if="!refreshingLocalFavorites" size="small" @click="refreshLocalWorldFavorites" style="margin-left:5px") {{ $t('view.favorite.worlds.refresh') }}
+                    el-button(v-else size="small" @click="refreshingLocalFavorites = false" style="margin-left:5px")
+                        i.el-icon-loading(style="margin-right:5px")
+                        span {{ $t('view.favorite.worlds.cancel_refresh') }}
+                    el-collapse-item(v-for="group in localWorldFavoriteGroups" v-if="localWorldFavorites[group]" :key="group")
+                        template(slot="title")
+                            span(v-text="group" style="font-weight:bold;font-size:14px;margin-left:10px")
+                            span(style="color:#909399;font-size:12px;margin-left:10px") {{ getLocalWorldFavoriteGroupLength(group) }}
+                            el-tooltip(placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="promptLocalWorldFavoriteGroupRename(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+                            el-tooltip(placement="right" :content="$t('view.favorite.delete_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="promptLocalWorldFavoriteGroupDelete(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        .x-friend-list(style="margin-top:10px" v-if="localWorldFavorites[group].length")
+                            div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in localWorldFavorites[group]" :key="favorite.id" @click="showWorldDialog(favorite.id)")
+                                .x-friend-item
+                                    template(v-if="favorite.name")
+                                        .avatar
+                                            img(v-lazy="favorite.thumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="favorite.name")
+                                            span.extra(v-if="favorite.occupants") {{ favorite.authorName }} ({{ favorite.occupants }})
+                                            span.extra(v-else v-text="favorite.authorName")
+                                        template(v-if="editFavoritesMode")
+                                            el-tooltip(placement="left" :content="$t('view.favorite.copy_tooltip')" :disabled="hideTooltips")
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-s-order" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
+                                                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="addFavoriteWorld(favorite, groupAPI, true)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                        template(v-else)
+                                            el-tooltip(placement="left" :content="$t('view.favorite.self_invite_tooltip')" :disabled="hideTooltips")
+                                                el-button(@click.stop="newInstanceSelfInvite(favorite.id)" size="mini" icon="el-icon-message" circle style="margin-left:5px")
+                                        el-tooltip(placement="right" :content="$t('view.favorite.unfavorite_tooltip')" :disabled="hideTooltips")
+                                            el-button(v-if="shiftHeld" @click.stop="removeLocalWorldFavorite(favorite.id, group)" size="mini" icon="el-icon-close" circle style="color:#f56c6c;margin-left:5px")
+                                            el-button(v-else @click.stop="showFavoriteDialog('world', favorite.id)" type="default" icon="el-icon-star-on" size="mini" circle style="margin-left:5px")
+                                    template(v-else)
+                                        .avatar
+                                        .detail
+                                            span(v-text="favorite.id")
+                                        el-button(type="text" icon="el-icon-close" size="mini" @click.stop="removeLocalWorldFavorite(favorite.id, group)" style="margin-left:5px")
+                        div(v-else style="height:20px;width:100%;display:flex;align-items:center;justify-content:center;color:rgb(144, 147, 153)")
+                            span No Data
+            el-tab-pane(:label="$t('view.favorite.avatars.header')")
+                el-collapse(v-if="$refs.menu && $refs.menu.activeIndex === 'favorite' && $refs.favoriteTabRef && $refs.favoriteTabRef.currentName === '2'" style="border:0")
+                    div(style="display:flex;align-items:center;justify-content:space-between")
+                        div
+                            el-button(size="small" @click="showAvatarExportDialog") {{ $t('view.favorite.export') }}
+                            el-button(size="small" @click="showAvatarImportDialog" style="margin-left:5px") {{ $t('view.favorite.import') }}
+                        div(style="display:flex;align-items:center;font-size:13px;margin-right:10px")
+                            span.name(style="margin-right:5px;line-height:10px;") {{ $t('view.favorite.sort_by') }}
+                            el-radio-group(v-model="sortFavorites" @change="saveSortFavoritesOption" style="margin-right:12px")
+                                el-radio(:label="false") {{ $t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                                el-radio(:label="true") {{ $t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                            el-input(v-model="avatarFavoriteSearch" @input="searchAvatarFavorites" clearable size="mini" :placeholder="$t('view.favorite.avatars.search')" style="width:200px;")
+                    .x-friend-list(style="margin-top:10px")
+                        div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in avatarFavoriteSearchResults" :key="favorite.id" @click="showAvatarDialog(favorite.id)")
+                            .x-friend-item
+                                template(v-if="favorite.name")
+                                    .avatar
+                                        img(v-lazy="favorite.thumbnailImageUrl")
+                                    .detail
+                                        span.name(v-text="favorite.name")
+                                        span.extra(v-text="favorite.authorName")
+                                template(v-else)
+                                    .avatar
+                                    .detail
+                                        span.name(v-text="favorite.id")
+
+                    span(style="display:block;margin-top:20px") {{ $t('view.favorite.avatars.vrchat_favorites') }}
+                    el-collapse-item(v-for="group in API.favoriteAvatarGroups" :key="group.name")
+                        template(slot="title")
+                            span(v-text="group.displayName ? group.displayName : group.name" style="font-weight:bold;font-size:14px;margin-left:10px")
+                            span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
+                            el-tooltip(placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+                            el-tooltip(placement="right" :content="$t('view.favorite.clear_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        .x-friend-list(v-if="group.count" style="margin-top:10px")
+                            div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteAvatars" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showAvatarDialog(favorite.id)")
+                                .x-friend-item
+                                    template(v-if="favorite.ref")
+                                        .avatar
+                                            img(v-lazy="favorite.ref.thumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="favorite.ref.name")
+                                            span.extra(v-text="favorite.ref.authorName")
+                                        template(v-if="editFavoritesMode")
+                                            el-tooltip(placement="top" :content="$t('view.favorite.move_tooltip')" :disabled="hideTooltips")
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-back" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        template(v-if="groupAPI.name !== group.name" v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
+                                                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="moveFavorite(favorite.ref, groupAPI, 'avatar')" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                            el-button(type="text" size="mini" @click.stop style="margin-left:5px")
+                                                el-checkbox(v-model="favorite.$selected")
+                                        template(v-else)
+                                            el-tooltip(v-if="favorite.deleted" placement="left" :content="$t('view.favorite.unavailable_tooltip')")
+                                                i.el-icon-warning(style="color:#f56c6c;margin-left:5px")
+                                            el-tooltip(v-if="favorite.ref.releaseStatus === 'private'" placement="left" :content="$t('view.favorite.private')")
+                                                i.el-icon-warning(style="color:#e6a23c;margin-left:5px")
+                                            el-tooltip(v-if="favorite.ref.releaseStatus !== 'private' && !favorite.deleted" placement="left" :content="$t('view.favorite.select_avatar_tooltip')" :disabled="hideTooltips")
+                                                el-button(@click.stop="selectAvatarWithConfirmation(favorite.id)" :disabled="API.currentUser.currentAvatar === favorite.id" size="mini" icon="el-icon-check" circle style="margin-left:5px")
+                                            el-tooltip(placement="right" :content="$t('view.favorite.unfavorite_tooltip')" :disabled="hideTooltips")
+                                                el-button(v-if="shiftHeld" @click.stop="deleteFavorite(favorite.id)" size="mini" icon="el-icon-close" circle style="color:#f56c6c;margin-left:5px")
+                                                el-button(v-else @click.stop="showFavoriteDialog('avatar', favorite.id)" type="default" icon="el-icon-star-on" size="mini" circle style="margin-left:5px")
+                                    template(v-else)
+                                        .avatar
+                                        .detail
+                                            span.name(v-text="favorite.name || favorite.id")
+                                        el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
+                        div(v-else style="height:20px;width:100%;display:flex;align-items:center;justify-content:center;color:rgb(144, 147, 153)")
+                            span No Data
+                    el-collapse-item
+                        template(slot="title")
+                            span(style="font-weight:bold;font-size:14px;margin-left:10px") Local History
+                            span(style="color:#909399;font-size:12px;margin-left:10px") {{ avatarHistoryArray.length }}/100
+                            el-tooltip(placement="right" content="Clear" :disabled="hideTooltips")
+                                el-button(@click.stop="promptClearAvatarHistory" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        .x-friend-list(v-if="avatarHistoryArray.length" style="margin-top:10px")
+                            div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in avatarHistoryArray" :key="favorite.id" @click="showAvatarDialog(favorite.id)")
+                                .x-friend-item
+                                    .avatar
+                                        img(v-lazy="favorite.thumbnailImageUrl")
+                                    .detail
+                                        span.name(v-text="favorite.name")
+                                        span.extra(v-text="favorite.authorName")
+                                    el-tooltip(placement="left" :content="$t('view.favorite.select_avatar_tooltip')" :disabled="hideTooltips")
+                                            el-button(@click.stop="selectAvatarWithConfirmation(favorite.id)" :disabled="API.currentUser.currentAvatar === favorite.id" size="mini" icon="el-icon-check" circle style="margin-left:5px")
+                                    template(v-if="API.cachedFavoritesByObjectId.has(favorite.id)")
+                                        el-tooltip(placement="right" content="Unfavorite" :disabled="hideTooltips")
+                                            el-button(@click.stop="showFavoriteDialog('avatar', favorite.id)" type="default" icon="el-icon-star-on" size="mini" circle style="margin-left:5px")
+                                    template(v-else)
+                                        el-tooltip(placement="right" content="Favorite" :disabled="hideTooltips")
+                                            el-button(@click.stop="showFavoriteDialog('avatar', favorite.id)" type="default" icon="el-icon-star-off" size="mini" circle style="margin-left:5px")
+                        div(v-else style="height:20px;width:100%;display:flex;align-items:center;justify-content:center;color:rgb(144, 147, 153)")
+                            span No Data
+                    span(style="display:block;margin-top:20px") {{ $t('view.favorite.avatars.local_favorites') }}
+                    br
+                    el-button(size="small" :disabled="!isLocalUserVrcplusSupporter()" @click="promptNewLocalAvatarFavoriteGroup") {{ $t('view.favorite.avatars.new_group') }}
+                    el-button(v-if="!refreshingLocalFavorites" size="small" @click="refreshLocalAvatarFavorites" style=";margin-left:5px") {{ $t('view.favorite.avatars.refresh') }}
+                    el-button(v-else size="small" @click="refreshingLocalFavorites = false" style="margin-left:5px")
+                        i.el-icon-loading(style="margin-right:5px")
+                        span {{ $t('view.favorite.avatars.cancel_refresh') }}
+                    el-collapse-item(v-for="group in localAvatarFavoriteGroups" v-if="localAvatarFavorites[group]" :key="group")
+                        template(slot="title")
+                            span(v-text="group" style="font-weight:bold;font-size:14px;margin-left:10px")
+                            span(style="color:#909399;font-size:12px;margin-left:10px") {{ getLocalAvatarFavoriteGroupLength(group) }}
+                            el-tooltip(placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="promptLocalAvatarFavoriteGroupRename(group)" size="mini" icon="el-icon-edit" circle style="margin-left:5px")
+                            el-tooltip(placement="right" :content="$t('view.favorite.delete_tooltip')" :disabled="hideTooltips")
+                                el-button(@click.stop="promptLocalAvatarFavoriteGroupDelete(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        .x-friend-list(style="margin-top:10px" v-if="localAvatarFavorites[group].length")
+                            div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in localAvatarFavorites[group]" :key="favorite.id" @click="showAvatarDialog(favorite.id)")
+                                .x-friend-item
+                                    template(v-if="favorite.name")
+                                        .avatar
+                                            img(v-lazy="favorite.thumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="favorite.name")
+                                            span.extra(v-text="favorite.authorName")
+                                        template(v-if="editFavoritesMode")
+                                            el-tooltip(placement="left" :content="$t('view.favorite.copy_tooltip')" :disabled="hideTooltips")
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-s-order" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
+                                                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="addFavoriteAvatar(favorite, groupAPI, true)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                        template(v-else)
+                                            el-tooltip(placement="left" :content="$t('view.favorite.select_avatar_tooltip')" :disabled="hideTooltips")
+                                                el-button(@click.stop="selectAvatarWithConfirmation(favorite.id)" :disabled="API.currentUser.currentAvatar === favorite.id" size="mini" icon="el-icon-check" circle style="margin-left:5px")
+                                        el-tooltip(placement="right" :content="$t('view.favorite.unfavorite_tooltip')" :disabled="hideTooltips")
+                                            el-button(v-if="shiftHeld" @click.stop="removeLocalAvatarFavorite(favorite.id, group)" size="mini" icon="el-icon-close" circle style="color:#f56c6c;margin-left:5px")
+                                            el-button(v-else @click.stop="showFavoriteDialog('avatar', favorite.id)" type="default" icon="el-icon-star-on" size="mini" circle style="margin-left:5px")
+                                    template(v-else)
+                                        .avatar
+                                        .detail
+                                            span(v-text="favorite.id")
+                                        el-button(type="text" icon="el-icon-close" size="mini" @click.stop="removeLocalAvatarFavorite(favorite.id, group)" style="margin-left:5px")
+                        div(v-else style="height:20px;width:100%;display:flex;align-items:center;justify-content:center;color:rgb(144, 147, 153)")
+                            span No Data

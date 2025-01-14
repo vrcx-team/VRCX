@@ -1,0 +1,49 @@
+mixin loginPage()
+    .x-login-container(v-if="!API.isLoggedIn" v-loading="loginForm.loading")
+        .x-login
+            div(style="position:fixed; top: 0; left: 0; margin:5px")
+                el-tooltip(placement="top" :content="$t('view.login.updater')" :disabled="hideTooltips")
+                    el-button(type="default" @click="showVRCXUpdateDialog" size="mini" icon="el-icon-download" circle)
+                el-tooltip(placement="top" :content="$t('view.login.proxy_settings')" :disabled="hideTooltips")
+                    el-button(type="default" @click="promptProxySettings" size="mini" icon="el-icon-connection" style="margin-left:5px" circle)
+
+            div.x-login-form-container
+                div
+                    h2(style="font-weight:bold;text-align:center;margin:0") {{ $t("view.login.login") }}
+                    el-form(ref="loginForm" :model="loginForm" :rules="loginForm.rules" @submit.native.prevent="login()")
+                        el-form-item(:label="$t('view.login.field.username')" prop="username" required)
+                            el-input(v-model="loginForm.username" name="username" :placeholder="$t('view.login.field.username')" clearable)
+                        el-form-item(:label="$t('view.login.field.password')" prop="password" required style="margin-top:10px")
+                            el-input(type="password" v-model="loginForm.password" name="password" :placeholder="$t('view.login.field.password')" clearable show-password)
+                        el-checkbox(v-model="loginForm.saveCredentials" style="margin-top:15px") {{ $t("view.login.field.saveCredentials") }}
+                        el-checkbox(v-model="enableCustomEndpoint" @change="toggleCustomEndpoint" style="margin-top:10px") {{ $t("view.login.field.devEndpoint") }}
+                        el-form-item(v-if="enableCustomEndpoint" :label="$t('view.login.field.endpoint')" prop="endpoint" style="margin-top:10px")
+                            el-input(v-model="loginForm.endpoint" name="endpoint" :placeholder="API.endpointDomainVrchat" clearable)
+                        el-form-item(v-if="enableCustomEndpoint" :label="$t('view.login.field.websocket')" prop="endpoint" style="margin-top:10px")
+                            el-input(v-model="loginForm.websocket" name="websocket" :placeholder="API.websocketDomainVrchat" clearable)
+                        el-form-item(style="margin-top:15px")
+                            el-button(native-type="submit" type="primary" style="width:100%") {{ $t("view.login.login") }}
+                    el-button(type="primary" @click="openExternalLink('https://vrchat.com/register')" style="width:100%") {{ $t("view.login.register") }}
+                
+                hr.x-vertical-divider(v-if="Object.keys(loginForm.savedCredentials).length !== 0")/
+
+                div(v-if="Object.keys(loginForm.savedCredentials).length !== 0")
+                    h2(style="font-weight:bold;text-align:center;margin:0") {{ $t("view.login.savedAccounts") }}
+                    .x-scroll-wrapper(style="margin-top:10px")
+                        .x-saved-account-list
+                            .x-friend-item(v-for="user in loginForm.savedCredentials" :key="user.user.id" @click="relogin(user)")
+                                .avatar
+                                    img(v-lazy="userImage(user.user)")
+                                .detail
+                                    span.name(v-text="user.user.displayName")
+                                    span.extra(v-text="user.user.username")
+                                    span.extra(v-text="user.loginParmas.endpoint")
+                                el-button(type="default" @click.stop="deleteSavedLogin(user.user.id)" size="mini" icon="el-icon-delete" style="margin-left:10px" circle)
+            
+            div.x-legal-notice-container
+                div(style="text-align:center;font-size:12px")
+                    p #[a.x-link(@click="openExternalLink('https://vrchat.com/home/password')") {{ $t("view.login.forgotPassword") }}]
+                    p &copy; 2019-2024 #[a.x-link(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] &amp; #[a.x-link(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
+                    p {{ $t("view.settings.general.legal_notice.info") }}
+                    p {{ $t("view.settings.general.legal_notice.disclaimer1") }}
+                    p {{ $t("view.settings.general.legal_notice.disclaimer2") }}

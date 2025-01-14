@@ -5,12 +5,18 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
+using NLog;
+
+#if !LINUX
 using CefSharp;
+#endif
 
 namespace VRCX
 {
@@ -20,16 +26,17 @@ namespace VRCX
     public class LogWatcher
     {
         public static readonly LogWatcher Instance;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
-        private readonly Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
-        private readonly DirectoryInfo m_LogDirectoryInfo;
-        private readonly List<string[]> m_LogList;
-        private readonly ReaderWriterLockSlim m_LogListLock;
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
+        private DirectoryInfo m_LogDirectoryInfo;
+        private List<string[]> m_LogList;
+        private ReaderWriterLockSlim m_LogListLock;
         private bool m_FirstRun = true;
         private bool m_ResetLog;
         private Thread m_Thread;
         private DateTime tillDate = DateTime.UtcNow;
         public bool VrcClosedGracefully;
+        private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -39,9 +46,9 @@ namespace VRCX
             Instance = new LogWatcher();
         }
 
-        private LogWatcher()
+        public void Init()
         {
-            var logPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
+            var logPath = Program.AppApiInstance.GetVRChatAppDataLocation();
             m_LogDirectoryInfo = new DirectoryInfo(logPath);
             m_LogContextMap = new Dictionary<string, LogContext>();
             m_LogListLock = new ReaderWriterLockSlim();
@@ -50,14 +57,10 @@ namespace VRCX
             {
                 IsBackground = true
             };
-        }
-
-        internal void Init()
-        {
             m_Thread.Start();
         }
 
-        internal void Exit()
+        public void Exit()
         {
             var thread = m_Thread;
             m_Thread = null;
@@ -172,116 +175,114 @@ namespace VRCX
         /// <param name="logContext">The log context to update.</param>
         private void ParseLog(FileInfo fileInfo, LogContext logContext)
         {
+            var line = string.Empty;
             try
             {
-                using (var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan))
+                using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan);
+                stream.Position = logContext.Position;
+                using var streamReader = new StreamReader(stream, Encoding.UTF8);
+                while (true)
                 {
-                    stream.Position = logContext.Position;
-                    using (var streamReader = new StreamReader(stream, Encoding.UTF8))
+                    line = streamReader.ReadLine();
+                    if (line == null)
                     {
-                        while (true)
+                        logContext.Position = stream.Position;
+                        break;
+                    }
+
+                    if (line.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+                    // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+
+                    if (ParseLogUdonException(fileInfo, line))
+                        continue;
+
+                    if (line.Length <= 36 ||
+                        line[31] != '-')
+                    {
+                        continue;
+                    }
+
+                    if (DateTime.TryParseExact(
+                            line.Substring(0, 19),
+                            "yyyy.MM.dd HH:mm:ss",
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out var lineDate
+                        ))
+                    {
+                        lineDate = lineDate.ToUniversalTime();
+                        // check if date is older than last database entry
+                        if (DateTime.Compare(lineDate, tillDate) <= 0)
                         {
-                            var line = streamReader.ReadLine();
-                            if (line == null)
-                            {
-                                logContext.Position = stream.Position;
-                                break;
-                            }
+                            // logger.Warn("Invalid log time, too old: {0}", line);
+                            continue;
+                        }
+                        // check if datetime is over an hour into the future (compensate for gamelog not handling daylight savings time correctly)
+                        if (DateTime.UtcNow.AddMinutes(61) < lineDate)
+                        {
+                            logger.Warn("Invalid log time, too new: {0}", line);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        logger.Warn("Failed to parse log date: {0}", line);
+                        continue;
+                    }
 
-                            if (line.Length == 0)
-                            {
-                                continue;
-                            }
-
-                            // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
-                            // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
-
-                            if (ParseLogUdonException(fileInfo, line))
-                                continue;
-
-                            if (line.Length <= 36 ||
-                                line[31] != '-')
-                            {
-                                continue;
-                            }
-
-                            if (DateTime.TryParseExact(
-                                    line.Substring(0, 19),
-                                    "yyyy.MM.dd HH:mm:ss",
-                                    CultureInfo.InvariantCulture,
-                                    DateTimeStyles.None,
-                                    out var lineDate
-                                ))
-                            {
-                                lineDate = lineDate.ToUniversalTime();
-                                // check if date is older than last database entry
-                                if (DateTime.Compare(lineDate, tillDate) <= 0)
-                                {
-                                    continue;
-                                }
-                                // check if datetime is over an hour into the future (compensate for gamelog not handling daylight savings time correctly)
-                                if (DateTime.UtcNow.AddMinutes(61) < lineDate)
-                                {
-                                    logger.Warn("Invalid log time, too new: {0}", line);
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                logger.Warn("Failed to parse log date: {0}", line);
-                                continue;
-                            }
-
-                            var offset = 34;
-                            if (line[offset] == '[')
-                            {
-                                if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) ||
-                                    ParseLogLocation(fileInfo, logContext, line, offset) ||
-                                    ParseLogLocationDestination(fileInfo, logContext, line, offset) ||
-                                    ParseLogPortalSpawn(fileInfo, logContext, line, offset) ||
-                                    ParseLogNotification(fileInfo, logContext, line, offset) ||
-                                    ParseLogAPIRequest(fileInfo, logContext, line, offset) ||
-                                    ParseLogAvatarChange(fileInfo, logContext, line, offset) ||
-                                    ParseLogJoinBlocked(fileInfo, logContext, line, offset) ||
-                                    ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) ||
-                                    ParseLogVideoError(fileInfo, logContext, line, offset) ||
-                                    ParseLogVideoChange(fileInfo, logContext, line, offset) ||
-                                    ParseLogAVProVideoChange(fileInfo, logContext, line, offset) ||
-                                    ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) ||
-                                    ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) ||
-                                    ParseLogWorldVRCX(fileInfo, logContext, line, offset) ||
-                                    ParseLogWorldDataVRCX(fileInfo, logContext, line, offset) ||
-                                    ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) ||
-                                    ParseLogScreenshot(fileInfo, logContext, line, offset) ||
-                                    ParseLogStringDownload(fileInfo, logContext, line, offset) ||
-                                    ParseLogImageDownload(fileInfo, logContext, line, offset) ||
-                                    ParseVoteKick(fileInfo, logContext, line, offset) ||
-                                    ParseFailedToJoin(fileInfo, logContext, line, offset) ||
-                                    ParseInstanceResetWarning(fileInfo, logContext, line, offset) ||
-                                    ParseVoteKickInitiation(fileInfo, logContext, line, offset) ||
-                                    ParseVoteKickSuccess(fileInfo, logContext, line, offset) ||
-                                    ParseStickerSpawn(fileInfo, logContext, line, offset))
-                                {
-                                }
-                            }
-                            else
-                            {
-                                if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, offset) ||
-                                    ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) ||
-                                    ParseApplicationQuit(fileInfo, logContext, line, offset) ||
-                                    ParseOpenVRInit(fileInfo, logContext, line, offset) ||
-                                    ParseDesktopMode(fileInfo, logContext, line, offset) ||
-                                    ParseOscFailedToStart(fileInfo, logContext, line, offset))
-                                {
-                                }
-                            }
+                    var offset = 34;
+                    if (line[offset] == '[')
+                    {
+                        if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) ||
+                            ParseLogLocation(fileInfo, logContext, line, offset) ||
+                            ParseLogLocationDestination(fileInfo, logContext, line, offset) ||
+                            ParseLogPortalSpawn(fileInfo, logContext, line, offset) ||
+                            ParseLogNotification(fileInfo, logContext, line, offset) ||
+                            ParseLogAPIRequest(fileInfo, logContext, line, offset) ||
+                            ParseLogAvatarChange(fileInfo, logContext, line, offset) ||
+                            ParseLogJoinBlocked(fileInfo, logContext, line, offset) ||
+                            ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) ||
+                            ParseLogVideoError(fileInfo, logContext, line, offset) ||
+                            ParseLogVideoChange(fileInfo, logContext, line, offset) ||
+                            ParseLogAVProVideoChange(fileInfo, logContext, line, offset) ||
+                            ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) ||
+                            ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) ||
+                            ParseLogWorldVRCX(fileInfo, logContext, line, offset) ||
+                            ParseLogWorldDataVRCX(fileInfo, logContext, line, offset) ||
+                            ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) ||
+                            ParseLogScreenshot(fileInfo, logContext, line, offset) ||
+                            ParseLogStringDownload(fileInfo, logContext, line, offset) ||
+                            ParseLogImageDownload(fileInfo, logContext, line, offset) ||
+                            ParseVoteKick(fileInfo, logContext, line, offset) ||
+                            ParseFailedToJoin(fileInfo, logContext, line, offset) ||
+                            ParseInstanceResetWarning(fileInfo, logContext, line, offset) ||
+                            ParseVoteKickInitiation(fileInfo, logContext, line, offset) ||
+                            ParseVoteKickSuccess(fileInfo, logContext, line, offset) ||
+                            ParseStickerSpawn(fileInfo, logContext, line, offset))
+                        {
+                        }
+                    }
+                    else
+                    {
+                        if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, offset) ||
+                            ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) ||
+                            ParseApplicationQuit(fileInfo, logContext, line, offset) ||
+                            ParseOpenVRInit(fileInfo, logContext, line, offset) ||
+                            ParseDesktopMode(fileInfo, logContext, line, offset) ||
+                            ParseOscFailedToStart(fileInfo, logContext, line, offset))
+                        {
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.Warn("Failed to parse log file: {0} {1}", fileInfo.FullName, ex.Message);
+                logger.Warn(ex, "Failed to parse log file: {0} {1} {2}", fileInfo.FullName, line, ex.Message);
             }
         }
 
@@ -292,9 +293,13 @@ namespace VRCX
             {
                 if (!m_FirstRun)
                 {
-                    var logLine = System.Text.Json.JsonSerializer.Serialize(item);
+                    var logLine = JsonSerializer.Serialize(item);
+#if LINUX
+                    m_LogQueue.Enqueue(logLine);
+#else
                     if (MainForm.Instance != null && MainForm.Instance.Browser != null)
                         MainForm.Instance.Browser.ExecuteScriptAsync("$app.addGameLogEvent", logLine);
+#endif
                 }
 
                 m_LogList.Add(item);
@@ -303,6 +308,16 @@ namespace VRCX
             {
                 m_LogListLock.ExitWriteLock();
             }
+        }
+
+        public List<string> GetLogLines()
+        {
+            // for electron
+            var logLines = new List<string>();
+            while (m_LogQueue.TryDequeue(out var logLine))
+                logLines.Add(logLine);
+
+            return logLines;
         }
 
         private string ConvertLogTimeToISO8601(string line)
@@ -341,7 +356,7 @@ namespace VRCX
 
             if (line.Contains("[Behaviour] Entering Room: "))
             {
-                var lineOffset = line.LastIndexOf("] Entering Room: ");
+                var lineOffset = line.LastIndexOf("] Entering Room: ", StringComparison.Ordinal);
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 17;
@@ -355,7 +370,7 @@ namespace VRCX
 
             if (line.Contains("[Behaviour] Joining ") && !line.Contains("] Joining or Creating Room: ") && !line.Contains("] Joining friend: "))
             {
-                var lineOffset = line.LastIndexOf("] Joining ");
+                var lineOffset = line.LastIndexOf("] Joining ", StringComparison.Ordinal);
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 10;
@@ -393,12 +408,18 @@ namespace VRCX
             if (!line.Contains("[VRC Camera] Took screenshot to: "))
                 return false;
 
-            var lineOffset = line.LastIndexOf("] Took screenshot to: ");
+            var lineOffset = line.LastIndexOf("] Took screenshot to: ", StringComparison.Ordinal);
             if (lineOffset < 0)
                 return true;
 
             var screenshotPath = line.Substring(lineOffset + 22);
-            AppendLog(new[] { fileInfo.Name, ConvertLogTimeToISO8601(line), "screenshot", screenshotPath });
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "screenshot",
+                screenshotPath
+            });
             return true;
         }
 
@@ -426,7 +447,7 @@ namespace VRCX
 
             if (line.Contains("[Behaviour] Destination fetching: "))
             {
-                var lineOffset = line.LastIndexOf("] Destination fetching: ");
+                var lineOffset = line.LastIndexOf("] Destination fetching: ", StringComparison.Ordinal);
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 24;
@@ -462,7 +483,7 @@ namespace VRCX
 
             if (line.Contains("[Behaviour] OnPlayerJoined") && !line.Contains("] OnPlayerJoined:"))
             {
-                var lineOffset = line.LastIndexOf("] OnPlayerJoined");
+                var lineOffset = line.LastIndexOf("] OnPlayerJoined", StringComparison.Ordinal);
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 17;
@@ -485,7 +506,7 @@ namespace VRCX
 
             if (line.Contains("[Behaviour] OnPlayerLeft") && !line.Contains("] OnPlayerLeftRoom") && !line.Contains("] OnPlayerLeft:"))
             {
-                var lineOffset = line.LastIndexOf("] OnPlayerLeft");
+                var lineOffset = line.LastIndexOf("] OnPlayerLeft", StringComparison.Ordinal);
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 15;
@@ -669,7 +690,9 @@ namespace VRCX
 
             var data = line.Substring(offset + 13);
 
+#if !LINUX
             WorldDBManager.Instance.ProcessLogWorldDataRequest(data);
+#endif
             return true;
         }
 
@@ -680,7 +703,7 @@ namespace VRCX
             if (string.Compare(line, offset, "[Video Playback] Attempting to resolve URL '", 0, 44, StringComparison.Ordinal) != 0)
                 return false;
 
-            var pos = line.LastIndexOf("'");
+            var pos = line.LastIndexOf('\'');
             if (pos < 0)
                 return false;
 
@@ -705,7 +728,7 @@ namespace VRCX
             if (string.Compare(line, offset, "[Video Playback] Resolving URL '", 0, 32, StringComparison.Ordinal) != 0)
                 return false;
 
-            var pos = line.LastIndexOf("'");
+            var pos = line.LastIndexOf('\'');
             if (pos < 0)
                 return false;
 
@@ -730,7 +753,7 @@ namespace VRCX
             if (string.Compare(line, offset, "User ", 0, 5, StringComparison.Ordinal) != 0)
                 return false;
 
-            var pos = line.LastIndexOf(" added URL ");
+            var pos = line.LastIndexOf(" added URL ", StringComparison.Ordinal);
             if (pos < 0)
                 return false;
 
@@ -756,7 +779,7 @@ namespace VRCX
             if (string.Compare(line, offset, "[USharpVideo] Started video load for URL: ", 0, 42, StringComparison.Ordinal) != 0)
                 return false;
 
-            var pos = line.LastIndexOf(", requested by ");
+            var pos = line.LastIndexOf(", requested by ", StringComparison.Ordinal);
             if (pos < 0)
                 return false;
 
@@ -802,7 +825,7 @@ namespace VRCX
             if (string.Compare(line, offset, "[API] Received Notification: <", 0, 30, StringComparison.Ordinal) != 0)
                 return false;
 
-            var pos = line.LastIndexOf("> received at ");
+            var pos = line.LastIndexOf("> received at ", StringComparison.Ordinal);
             if (pos < 0)
                 return false;
 
@@ -827,7 +850,7 @@ namespace VRCX
             if (string.Compare(line, offset, "[API] [", 0, 7, StringComparison.Ordinal) != 0)
                 return false;
 
-            var pos = line.LastIndexOf("] Sending Get request to ");
+            var pos = line.LastIndexOf("] Sending Get request to ", StringComparison.Ordinal);
             if (pos < 0)
                 return false;
 
@@ -851,7 +874,7 @@ namespace VRCX
             if (string.Compare(line, offset, "[Behaviour] Switching ", 0, 22, StringComparison.Ordinal) != 0)
                 return false;
             
-            var pos = line.LastIndexOf(" to avatar ");
+            var pos = line.LastIndexOf(" to avatar ", StringComparison.Ordinal);
             if (pos < 0)
                 return false;
             
@@ -972,6 +995,7 @@ namespace VRCX
             // 2022.03.15 03:40:34 Log        -  [Always] uSpeak: SetInputDevice 0 (3 total) 'Index HMD Mic (Valve VR Radio & HMD Mic)'
             // 2022.03.15 04:02:22 Log        -  [Always] uSpeak: OnAudioConfigurationChanged - devicesChanged = True, resetting mic..
             // 2022.03.15 04:02:22 Log        -  [Always] uSpeak: SetInputDevice by name 'Index HMD Mic (Valve VR Radio & HMD Mic)' (3 total)
+            // 2025.01.03 19:11:42 Log        -  [Always] uSpeak: SetInputDevice 0 (2 total) 'Microphone (NVIDIA Broadcast)'
 
             if (line.Contains("[Always] uSpeak: OnAudioConfigurationChanged"))
             {
@@ -981,12 +1005,16 @@ namespace VRCX
 
             if (line.Contains("[Always] uSpeak: SetInputDevice 0"))
             {
-                var lineOffset = line.LastIndexOf(") '");
+                var lineOffset = line.LastIndexOf(") '", StringComparison.Ordinal);
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 3;
                 var endPos = line.Length - 1;
-                var audioDevice = line.Substring(lineOffset, endPos - lineOffset);
+                var length = Math.Min(endPos - lineOffset + 1, line.Length - lineOffset);
+                if (length <= 0)
+                    return true;
+
+                var audioDevice = line.Substring(lineOffset, length);
                 if (string.IsNullOrEmpty(logContext.LastAudioDevice))
                 {
                     logContext.AudioDeviceChanged = false;
@@ -1031,7 +1059,7 @@ namespace VRCX
                 return true;
             }
             
-            var lineOffset = line.IndexOf(" ---> VRC.Udon.VM.UdonVMException: ");
+            var lineOffset = line.IndexOf(" ---> VRC.Udon.VM.UdonVMException: ", StringComparison.Ordinal);
             if (lineOffset < 0)
                 return false;
 
@@ -1115,7 +1143,7 @@ namespace VRCX
             if (!line.Contains(check))
                 return false;
 
-            var lineOffset = line.LastIndexOf(check);
+            var lineOffset = line.LastIndexOf(check, StringComparison.Ordinal);
             if (lineOffset < 0)
                 return true;
 
@@ -1142,7 +1170,7 @@ namespace VRCX
             if (!line.Contains(check))
                 return false;
 
-            var lineOffset = line.LastIndexOf(check);
+            var lineOffset = line.LastIndexOf(check, StringComparison.Ordinal);
             if (lineOffset < 0)
                 return true;
 
@@ -1220,7 +1248,7 @@ namespace VRCX
             if (!line.Contains("[ModerationManager] This instance will be reset in "))
                 return false;
 
-            int index = line.IndexOf("[ModerationManager] This instance will be reset in ") + 20;
+            int index = line.IndexOf("[ModerationManager] This instance will be reset in ", StringComparison.Ordinal) + 20;
 
             AppendLog(new[]
             {
@@ -1236,10 +1264,10 @@ namespace VRCX
         private bool ParseVoteKickInitiation(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2024.08.29 02:04:47 Log        -  [ModerationManager] A vote kick has been initiated against בורקס במאווררים 849d, do you agree?
-            if (!line.Contains("[ModerationManager] A vote kick has been initiated against "))
+            if (!line.Contains("[ModerationManager] A vote kick has been initiated against ", StringComparison.Ordinal))
                 return false;
 
-            int index = line.IndexOf("[ModerationManager] A vote kick has been initiated against ") + 20;
+            int index = line.IndexOf("[ModerationManager] A vote kick has been initiated against ", StringComparison.Ordinal) + 20;
 
             AppendLog(new[]
             {
@@ -1255,10 +1283,10 @@ namespace VRCX
         private bool ParseVoteKickSuccess(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2024.08.29 02:05:21 Log        -  [ModerationManager] Vote to kick בורקס במאווררים 849d succeeded
-            if (!line.Contains("[ModerationManager] Vote to kick "))
+            if (!line.Contains("[ModerationManager] Vote to kick ", StringComparison.Ordinal))
                 return false;
 
-            int index = line.IndexOf("[ModerationManager] Vote to kick ") + 20;
+            int index = line.IndexOf("[ModerationManager] Vote to kick ", StringComparison.Ordinal) + 20;
 
             AppendLog(new[]
             {
@@ -1273,7 +1301,7 @@ namespace VRCX
 
         private bool ParseStickerSpawn(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
-            var index = line.IndexOf("[StickersManager] User ");
+            var index = line.IndexOf("[StickersManager] User ", StringComparison.Ordinal);
             if (index == -1 || !line.Contains("file_") || !line.Contains("spawned sticker"))
                 return false;
 
@@ -1281,7 +1309,7 @@ namespace VRCX
 
             var (userId, displayName) = ParseUserInfo(info);
 
-            var fileIdIndex = info.IndexOf("file_");
+            var fileIdIndex = info.IndexOf("file_", StringComparison.Ordinal);
             string fileId = info.Substring(fileIdIndex);
 
             AppendLog(new[]
@@ -1337,7 +1365,7 @@ namespace VRCX
             string userDisplayName;
             string userId;
 
-            int pos = userInfo.LastIndexOf(" (");
+            int pos = userInfo.LastIndexOf(" (", StringComparison.Ordinal);
             if (pos >= 0)
             {
                 userDisplayName = userInfo.Substring(0, pos);

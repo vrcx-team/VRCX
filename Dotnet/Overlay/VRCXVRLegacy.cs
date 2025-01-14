@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using CefSharp;
+using NLog;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -22,7 +23,7 @@ namespace VRCX
     public class VRCXVRLegacy : VRCXVRInterface
     {
         public static VRCXVRInterface Instance;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly float[] _rotation = { 0f, 0f, 0f };
         private static readonly float[] _translation = { 0f, 0f, 0f };
         private static readonly float[] _translationLeft = { -7f / 100f, -5f / 100f, 6f / 100f };
@@ -43,7 +44,6 @@ namespace VRCX
         private Thread _thread;
         private bool _wristOverlayActive;
         private DateTime _nextOverlayUpdate;
-        public bool IsHmdAfk { get; private set; }
 
         static VRCXVRLegacy()
         {
@@ -330,7 +330,7 @@ namespace VRCX
                         if (isHmdAfk != IsHmdAfk)
                         {
                             IsHmdAfk = isHmdAfk;
-                            AppApi.Instance.CheckGameRunning();
+                            Program.AppApiInstance.CheckGameRunning();
                         }
 
                         var headsetErr = ETrackedPropertyError.TrackedProp_Success;

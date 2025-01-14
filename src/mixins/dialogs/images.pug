@@ -1,0 +1,61 @@
+mixin images()
+    //- dialog: Change avatar image
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" :title="$t('dialog.change_content_image.avatar')" width="850px")
+        div(v-if="changeAvatarImageDialogVisible" v-loading="changeAvatarImageDialogLoading")
+            input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
+            span {{ $t('dialog.change_content_image.description') }}
+            br
+            el-button-group(style="padding-bottom:10px;padding-top:10px")
+                el-button(type="default" size="small" @click="displayPreviousImages('Avatar', 'Change')" icon="el-icon-refresh") {{ $t('dialog.change_content_image.refresh') }}
+                el-button(type="default" size="small" @click="uploadAvatarImage" icon="el-icon-upload2") {{ $t('dialog.change_content_image.upload') }}
+                //- el-button(type="default" size="small" @click="deleteAvatarImage" icon="el-icon-delete") Delete Latest Image
+            br
+            div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
+                .x-change-image-item(@click="setAvatarImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
+                    img.image(v-lazy="image.file.url")
+
+    //- dialog: Change world image
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" :title="$t('dialog.change_content_image.world')" width="850px")
+        div(v-if="changeWorldImageDialogVisible" v-loading="changeWorldImageDialogLoading")
+            input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
+            span {{ $t('dialog.change_content_image.description') }}
+            br
+            el-button-group(style="padding-bottom:10px;padding-top:10px")
+                el-button(type="default" size="small" @click="displayPreviousImages('World', 'Change')" icon="el-icon-refresh") {{ $t('dialog.change_content_image.refresh') }}
+                el-button(type="default" size="small" @click="uploadWorldImage" icon="el-icon-upload2") {{ $t('dialog.change_content_image.upload') }}
+                //- el-button(type="default" size="small" @click="deleteWorldImage" icon="el-icon-delete") Delete Latest Image
+            br
+            div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
+                .x-change-image-item(@click="setWorldImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
+                    img.image(v-lazy="image.file.url")
+
+    //- dialog: Display previous avatar/world images
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" :title="$t('dialog.previous_images.header')" width="800px")
+        div(v-if="previousImagesDialogVisible")
+            div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
+                el-popover.x-change-image-item(placement="right" width="500px" trigger="click")
+                    img.x-link(slot="reference" v-lazy="image.file.url")
+                    img.x-link(v-lazy="image.file.url" style="width:500px;height:375px" @click="showFullscreenImageDialog(image.file.url)")
+
+    //- dialog: gallery select
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="gallerySelectDialog" :visible.sync="gallerySelectDialog.visible" :title="$t('dialog.gallery_select.header')" width="100%")
+        div(v-if="gallerySelectDialog.visible")
+            span(slot="label") {{ $t('dialog.gallery_select.gallery') }}
+            span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
+            br
+            input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+            el-button-group
+                el-button(type="default" size="small" @click="selectImageGallerySelect('', '')" icon="el-icon-close") {{ $t('dialog.gallery_select.none') }}
+                el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_select.refresh') }}
+                el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_select.upload') }}
+            br
+            .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
+                .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)")
+                    img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
+
+    //- dialog: full screen image
+    el-dialog.x-dialog(ref="fullscreenImageDialog" :before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="fullscreenImageDialog.visible" top="3vh" width="97vw")
+        div(style="margin:0 0 5px 5px")
+            el-button(@click="copyImageUrl(fullscreenImageDialog.imageUrl)" size="mini" icon="el-icon-s-order" circle)
+            el-button(type="default" size="mini" icon="el-icon-download" circle @click="downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)" style="margin-left:5px")
+        img(v-lazy="fullscreenImageDialog.imageUrl" style="width:100%;height:100vh;object-fit:contain")

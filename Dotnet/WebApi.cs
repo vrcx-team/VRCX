@@ -1,22 +1,26 @@
-using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Cookie = System.Net.Cookie;
-using System.Windows;
+using NLog;
+using Timer = System.Threading.Timer;
+
+#if !LINUX
+using CefSharp;
+using System.Windows.Forms;
+#endif
 
 namespace VRCX
 {
     public class WebApi
     {
-        public static readonly WebApi Instance;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static WebApi Instance;
         
         public static bool ProxySet;
         public static string ProxyUrl = "";
@@ -35,6 +39,10 @@ namespace VRCX
 
         public WebApi()
         {
+#if LINUX
+            if (Instance == null)
+                Instance = this;
+#endif
             _cookieContainer = new CookieContainer();
             _timer = new Timer(TimerCallback, null, -1, -1);
         }
@@ -45,12 +53,13 @@ namespace VRCX
             {
                 SaveCookies();
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Error($"Failed to save cookies: {e.Message}");
             }
         }
 
-        internal void Init()
+        public void Init()
         {
             SetProxy();
             LoadCookies();
@@ -80,12 +89,16 @@ namespace VRCX
             catch (UriFormatException)
             {
                 VRCXStorage.Instance.Set("VRCX_ProxyServer", string.Empty);
-                MessageBox.Show("The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.", "Invalid Proxy URI", MessageBoxButton.OK);
+                var message = "The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.";
+#if !LINUX
+                System.Windows.Forms.MessageBox.Show(message, "Invalid Proxy URI", MessageBoxButtons.OK, MessageBoxIcon.Error);
+#endif
+                Logger.Error(message);
                 Environment.Exit(0);
             }
         }
 
-        internal void Exit()
+        public void Exit()
         {
             _timer.Change(-1, -1);
             SaveCookies();
@@ -97,32 +110,30 @@ namespace VRCX
             SaveCookies();
         }
 
-        internal void LoadCookies()
+        private void LoadCookies()
         {
             SQLiteLegacy.Instance.ExecuteNonQuery("CREATE TABLE IF NOT EXISTS `cookies` (`key` TEXT PRIMARY KEY, `value` TEXT)");
-            SQLiteLegacy.Instance.Execute((values) =>
-            {
-                try
+            var values = SQLiteLegacy.Instance.Execute("SELECT `value` FROM `cookies` WHERE `key` = @key",
+                new Dictionary<string, object>
                 {
-                    using (var stream = new MemoryStream(Convert.FromBase64String((string)values[0])))
-                    {
-                        _cookieContainer = new CookieContainer();
-                        _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
-                        //_cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
-                    }
-                }
-                catch
-                {
-                }
-            },
-                "SELECT `value` FROM `cookies` WHERE `key` = @key",
-                new Dictionary<string, object>() {
-                    {"@key", "default"}
+                    { "@key", "default" }
                 }
             );
+            try
+            {
+                var item = (object[])values.Item2[0];
+                using var stream = new MemoryStream(Convert.FromBase64String((string)item[0]));
+                _cookieContainer = new CookieContainer();
+                _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
+                // _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream); // from .NET framework
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to load cookies: {e.Message}");
+            }
         }
 
-        internal void SaveCookies()
+        public void SaveCookies()
         {
             if (_cookieDirty == false)
             {
@@ -148,8 +159,9 @@ namespace VRCX
                 }
                 _cookieDirty = false;
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Error($"Failed to save cookies: {e.Message}");
             }
         }
 
@@ -157,19 +169,15 @@ namespace VRCX
         {
             _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
 
-            using (var memoryStream = new MemoryStream())
-            {
-                System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
-                //new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
-                return Convert.ToBase64String(memoryStream.ToArray());
-            }
+            using var memoryStream = new MemoryStream();
+            System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
+            return Convert.ToBase64String(memoryStream.ToArray());
         }
 
         public void SetCookies(string cookies)
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(cookies)))
             {
-                //_cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
                 _cookieContainer = new CookieContainer();
                 _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
             }
@@ -200,7 +208,7 @@ namespace VRCX
                 }
             }
             var imageData = options["imageData"] as string;
-            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false);
+            byte[] fileToUpload = Program.AppApiInstance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false);
             string fileFormKey = "image";
             string fileName = "image.png";
             string fileMimeType = "image/png";
@@ -269,7 +277,7 @@ namespace VRCX
             }
             var imageData = options["imageData"] as string;
             var matchingDimensions = options["matchingDimensions"] as bool? ?? false;
-            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), matchingDimensions);
+            byte[] fileToUpload = Program.AppApiInstance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), matchingDimensions);
 
             string fileFormKey = "file";
             string fileName = "blob";
@@ -306,7 +314,7 @@ namespace VRCX
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             var requestStream = request.GetRequestStream();
             var imageData = options["imageData"] as string;
-            var fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false, 1920, 1080);
+            var fileToUpload = Program.AppApiInstance.ResizePrintImage(Convert.FromBase64String(imageData));
             const string fileFormKey = "image";
             const string fileName = "image";
             const string fileMimeType = "image/png";
@@ -347,159 +355,135 @@ namespace VRCX
             await requestStream.WriteAsync(endBytes);
             requestStream.Close();
         }
+        
+        public async Task<string> ExecuteJson(string options)
+        {
+            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(options);
+            Logger.Info(JsonConvert.SerializeObject(data));
+            var result = await Execute(data);
+            return System.Text.Json.JsonSerializer.Serialize(new
+            {
+                status = result.Item1,
+                message = result.Item2
+            });
+        }
 
-#pragma warning disable CS4014
-
-        public async void Execute(IDictionary<string, object> options, IJavascriptCallback callback)
+        public async Task<Tuple<int, string>> Execute(IDictionary<string, object> options)
         {
             try
             {
+                // TODO: switch to HttpClient
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
                 var request = WebRequest.CreateHttp((string)options["url"]);
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 if (ProxySet)
                     request.Proxy = Proxy;
-                
+
                 request.CookieContainer = _cookieContainer;
                 request.KeepAlive = true;
                 request.UserAgent = Program.Version;
                 request.AutomaticDecompression = DecompressionMethods.All;
 
-                if (options.TryGetValue("headers", out object headers))
+                if (options.TryGetValue("headers", out var headers))
                 {
-                    foreach (var header in (IEnumerable<KeyValuePair<string, object>>)headers)
+                    Dictionary<string, string> headersDict;
+                    if (headers.GetType() == typeof(JObject))
                     {
-                        var key = header.Key;
-                        var value = header.Value.ToString();
+                        headersDict = ((JObject)headers).ToObject<Dictionary<string, string>>();
+                    }
+                    else
+                    {
+                        var headersKvp = (IEnumerable<KeyValuePair<string, object>>)headers;
+                        headersDict = new Dictionary<string, string>();
+                        foreach (var (key, value) in headersKvp)
+                            headersDict.Add(key, value.ToString());
+                    }
 
+                    foreach (var (key, value) in headersDict)
+                    {
                         if (string.Compare(key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
                             request.ContentType = value;
-                        }
                         else if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
                             request.Referer = value;
-                        }
                         else
-                        {
                             request.Headers.Add(key, value);
-                        }
                     }
                 }
 
-                if (options.TryGetValue("method", out object method))
+                if (options.TryGetValue("method", out var method))
                 {
-                    var _method = (string)method;
-                    request.Method = _method;
-
-                    if (string.Compare(_method, "GET", StringComparison.OrdinalIgnoreCase) != 0 &&
-                        options.TryGetValue("body", out object body) == true)
+                    request.Method = (string)method;
+                    if (string.Compare(request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0 &&
+                        options.TryGetValue("body", out var body))
                     {
-                        using (var stream = await request.GetRequestStreamAsync())
-                        using (var streamWriter = new StreamWriter(stream))
-                        {
-                            await streamWriter.WriteAsync((string)body);
-                        }
+                        await using var bodyStream = await request.GetRequestStreamAsync();
+                        await using var streamWriter = new StreamWriter(bodyStream);
+                        await streamWriter.WriteAsync((string)body);
                     }
                 }
-                
+
                 if (options.TryGetValue("uploadImage", out _))
-                {
                     await ImageUpload(request, options);
-                }
-                
+
                 if (options.TryGetValue("uploadFilePUT", out _))
-                {
                     await UploadFilePut(request, options);
-                }
 
                 if (options.TryGetValue("uploadImageLegacy", out _))
-                {
                     await LegacyImageUpload(request, options);
-                }
-                
+
                 if (options.TryGetValue("uploadImagePrint", out _))
-                {
                     await PrintImageUpload(request, options);
+
+                using var response = await request.GetResponseAsync() as HttpWebResponse;
+                if (response?.Headers["Set-Cookie"] != null)
+                    _cookieDirty = true;
+
+                await using var imageStream = response.GetResponseStream();
+                using var streamReader = new StreamReader(imageStream);
+                if (response.ContentType.Contains("image/") ||
+                    response.ContentType.Contains("application/octet-stream"))
+                {
+                    // base64 response data for image
+                    using var memoryStream = new MemoryStream();
+                    await imageStream.CopyToAsync(memoryStream);
+                    return new Tuple<int, string>(
+                        (int)response.StatusCode,
+                        $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}"
+                    );
                 }
 
-                try
+                return new Tuple<int, string>(
+                    (int)response.StatusCode,
+                    await streamReader.ReadToEndAsync()
+                );
+            }
+            catch (WebException webException)
+            {
+                if (webException.Response is HttpWebResponse response)
                 {
-                    using (var response = await request.GetResponseAsync() as HttpWebResponse)
-                    {
-                        if (response.Headers["Set-Cookie"] != null)
-                        {
-                            _cookieDirty = true;
-                        }
-                        using (var stream = response.GetResponseStream())
-                        using (var streamReader = new StreamReader(stream))
-                        {
-                            if (callback.CanExecute == true)
-                            {
-                                if (response.ContentType.Contains("image/") || response.ContentType.Contains("application/octet-stream"))
-                                {
-                                    // base64 response data for image
-                                    using (var memoryStream = new MemoryStream())
-                                    {
-                                        await stream.CopyToAsync(memoryStream);
-                                        callback.ExecuteAsync(null, new
-                                        {
-                                            data = $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}",
-                                            status = response.StatusCode
-                                        });
-                                    }
-                                }
-                                else
-                                {
-                                    callback.ExecuteAsync(null, new
-                                    {
-                                        data = await streamReader.ReadToEndAsync(),
-                                        status = response.StatusCode
-                                    });
-                                }
-                            }
-                        }
-                    }
+                    if (response.Headers["Set-Cookie"] != null)
+                        _cookieDirty = true;
+
+                    await using var stream = response.GetResponseStream();
+                    using var streamReader = new StreamReader(stream);
+                    return new Tuple<int, string>(
+                        (int)response.StatusCode,
+                        await streamReader.ReadToEndAsync()
+                    );
                 }
-                catch (WebException webException)
-                {
-                    if (webException.Response is HttpWebResponse response)
-                    {
-                        if (response.Headers["Set-Cookie"] != null)
-                        {
-                            _cookieDirty = true;
-                        }
-                        using (var stream = response.GetResponseStream())
-                        using (var streamReader = new StreamReader(stream))
-                        {
-                            if (callback.CanExecute == true)
-                            {
-                                callback.ExecuteAsync(null, new
-                                {
-                                    data = await streamReader.ReadToEndAsync(),
-                                    status = response.StatusCode
-                                });
-                            }
-                        }
-                    }
-                    else if (callback.CanExecute == true)
-                    {
-                        callback.ExecuteAsync(webException.Message, null);
-                    }
-                }
+
+                return new Tuple<int, string>(
+                    -1,
+                    webException.Message
+                );
             }
             catch (Exception e)
             {
-                if (callback.CanExecute == true)
-                {
-                    // FIXME: 브라우저는 종료되었는데 얘는 이후에 실행되면 터짐
-                    callback.ExecuteAsync(e.Message, null);
-                }
+                return new Tuple<int, string>(
+                    -1,
+                    e.Message
+                );
             }
-
-            callback.Dispose();
         }
-
-#pragma warning restore CS4014
     }
 }

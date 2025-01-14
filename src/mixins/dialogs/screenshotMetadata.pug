@@ -1,0 +1,54 @@
+mixin screenshotMetadata()
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="1050px")
+        div(v-if="screenshotMetadataDialog.visible" v-loading="screenshotMetadataDialog.loading" @dragover.prevent @dragenter.prevent @drop="handleDrop" style="-webkit-app-region: drag")
+            span(style="margin-left:5px;color:#909399;font-family:monospace") {{ $t('dialog.screenshot_metadata.drag') }}
+            br
+            br
+            el-button(size="small" icon="el-icon-folder-opened" @click="getAndDisplayScreenshotFromFile()") {{ $t('dialog.screenshot_metadata.browse') }}
+            el-button(size="small" icon="el-icon-picture-outline" @click="getAndDisplayLastScreenshot()") {{ $t('dialog.screenshot_metadata.last_screenshot') }}
+            el-button(size="small" icon="el-icon-copy-document" @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.copy_image') }}
+            el-button(size="small" icon="el-icon-folder" @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.open_folder') }}
+            el-button(v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath" size="small" icon="el-icon-upload2" @click="uploadScreenshotToGallery") {{ $t('dialog.screenshot_metadata.upload') }}
+            br
+            br
+            //- Search bar input
+            el-input(v-model="screenshotMetadataDialog.search" size="small" placeholder="Search" clearable style="width:200px" @input="screenshotMetadataSearch")
+            //- Search index/total label
+            template(v-if="screenshotMetadataDialog.searchIndex != null")
+                span(style="white-space:pre-wrap;font-size:12px;margin-left:10px") {{ (screenshotMetadataDialog.searchIndex + 1) + "/" + screenshotMetadataDialog.searchResults.length }}
+            //- Search type dropdown
+            el-select(v-model="screenshotMetadataDialog.searchType" size="small" placeholder="Search Type" style="width:150px;margin-left:10px" @change="screenshotMetadataSearch")
+                el-option(v-for="type in screenshotMetadataDialog.searchTypes" :key="type" :label="type" :value="type")
+            br
+            br
+            span(v-text="screenshotMetadataDialog.metadata.fileName")
+            br
+            template(v-if="screenshotMetadataDialog.metadata.note")
+                span(v-text="screenshotMetadataDialog.metadata.note")
+                br
+            span(v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-right:5px") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
+            span(v-if="screenshotMetadataDialog.metadata.fileResolution" v-text="screenshotMetadataDialog.metadata.fileResolution" style="margin-right:5px")
+            el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" v-text="screenshotMetadataDialog.metadata.fileSize")
+            br
+            location(v-if="screenshotMetadataDialog.metadata.world" :location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")
+            br
+            display-name(v-if="screenshotMetadataDialog.metadata.author" :userid="screenshotMetadataDialog.metadata.author.id" :hint="screenshotMetadataDialog.metadata.author.displayName" style="color:#909399;font-family:monospace")
+            br
+            el-carousel(ref="screenshotMetadataCarousel" :interval="0" initial-index="1" indicator-position="none" arrow="always" height="600px" style="margin-top:10px" @change="screenshotMetadataCarouselChange")
+                el-carousel-item
+                    span(placement="top" width="700px" trigger="click")
+                        img.x-link(slot="reference" :src="screenshotMetadataDialog.metadata.previousFilePath" style="width:100%;height:100%;object-fit:contain")
+                el-carousel-item
+                    span(placement="top" width="700px" trigger="click" @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)")
+                        img.x-link(slot="reference" :src="screenshotMetadataDialog.metadata.filePath" style="width:100%;height:100%;object-fit:contain")
+                el-carousel-item
+                    span(placement="top" width="700px" trigger="click")
+                        img.x-link(slot="reference" :src="screenshotMetadataDialog.metadata.nextFilePath" style="width:100%;height:100%;object-fit:contain")
+            br
+            template(v-if="screenshotMetadataDialog.metadata.error")
+                pre(v-text="screenshotMetadataDialog.metadata.error" style="white-space:pre-wrap;font-size:12px")
+                br
+            span(v-for="user in screenshotMetadataDialog.metadata.players" style="margin-top:5px")
+                span.x-link(v-text="user.displayName" @click="lookupUser(user)")
+                span(v-if="user.pos" v-text="'('+user.pos.x+', '+user.pos.y+', '+user.pos.z+')'" style="margin-left:5px;color:#909399;font-family:monospace")
+                br
