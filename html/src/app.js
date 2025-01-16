@@ -11770,6 +11770,7 @@ speechSynthesis.getVoices();
         treeData: [],
         bundleSizes: [],
         platformInfo: {},
+        timeSpent: 0,
         lastUpdated: '',
         inCache: false,
         cacheSize: 0,
@@ -11820,6 +11821,7 @@ speechSynthesis.getVoices();
         D.lastUpdated = '';
         D.bundleSizes = [];
         D.platformInfo = {};
+        D.timeSpent = 0,
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (this.isLocalUserVrcplusSupporter() &&
@@ -19482,9 +19484,19 @@ speechSynthesis.getVoices();
     $app.methods.addAvatarToHistory = function (avatarId) {
         API.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
-            if (ref.authorId === API.currentUser.id) {
-                return;
+            // if (ref.authorId === API.currentUser.id) {
+            //     return;
+            // }
+            console.log(`prev: ${API.currentUser.$previousAvatar}\nFunc: ${avatarId}\nCurr: ${API.currentUser.currentAvatar}`);
+            if (API.currentUser.$previousAvatar && API.currentUser.$previousAvatar !== avatarId) {
+                const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
+                console.log(`prev time: ${API.currentUser.$previousAvatarSwapTime}\nCurr Time: ${Date.now()}`)
+                database.addAvatarTimeSpent(API.currentUser.$previousAvatar, timeSpent);
+                console.log("smile");
             }
+            API.currentUser.$previousAvatar = avatarId;
+            API.currentUser.$previousAvatarSwapTime = Date.now();
+            
             var historyArray = this.avatarHistoryArray;
             for (var i = 0; i < historyArray.length; ++i) {
                 if (historyArray[i].id === ref.id) {
