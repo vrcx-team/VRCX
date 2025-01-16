@@ -2189,10 +2189,30 @@ class Database {
 
     addAvatarToHistory(avatarId) {
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${Database.userPrefix}_avatar_history (avatar_id, created_at) VALUES (@avatar_id, @created_at)`,
+            `INSERT INTO ${Database.userPrefix}_avatar_history (avatar_id, created_at, time)
+            VALUES (@avatar_id, @created_at, 0)
+            ON CONFLICT(avatar_id) DO UPDATE
+            SET created_at = @created_at, time = COALESCE(${Database.userPrefix}_avatar_history.time, 0)`,
             {
                 '@avatar_id': avatarId,
                 '@created_at': new Date().toJSON()
+            }
+        );
+    }
+
+    async getAvatarTimeSpent(avatarId) {
+        return sqliteService.execute(() => {
+            `SELECT time FROM ${Database.userPrefix}_avatar_history WHERE avatar_id != "${avatarId}"`
+        })
+    }
+
+    
+    addAvatarTimeSpent(avatarId, timeSpent) {
+        sqliteService.executeNonQuery(
+            `UPDATE ${Database.userPrefix}_avatar_history SET time = time + @timeSpent WHERE avatar_id = @avatarId`,
+            {
+                '@avatarId': avatarId,
+                '@timeSpent': timeSpent
             }
         );
     }
@@ -2202,16 +2222,16 @@ class Database {
         await sqliteService.execute((dbRow) => {
             var row = {
                 id: dbRow[0],
-                authorId: dbRow[4],
-                authorName: dbRow[5],
-                created_at: dbRow[6],
-                description: dbRow[7],
-                imageUrl: dbRow[8],
-                name: dbRow[9],
-                releaseStatus: dbRow[10],
-                thumbnailImageUrl: dbRow[11],
-                updated_at: dbRow[12],
-                version: dbRow[13]
+                authorId: dbRow[5],
+                authorName: dbRow[6],
+                created_at: dbRow[7],
+                description: dbRow[8],
+                imageUrl: dbRow[9],
+                name: dbRow[10],
+                releaseStatus: dbRow[11],
+                thumbnailImageUrl: dbRow[12],
+                updated_at: dbRow[13],
+                version: dbRow[14]
             };
             data.push(row);
         }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id WHERE author_id != "${currentUserId}" ORDER BY ${Database.userPrefix}_avatar_history.created_at DESC LIMIT ${limit}`);

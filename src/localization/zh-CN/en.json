@@ -856,6 +856,7 @@
                 "last_updated": "最后更新",
                 "version": "版本",
                 "platform": "平台",
+                "time_spent": "总停留时长",
                 "memo": "本地备注",
                 "memo_placeholder": "点击添加备注"
             },

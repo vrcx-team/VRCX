@@ -848,6 +848,7 @@
                 "last_updated": "Actualizado por última vez",
                 "version": "Versión",
                 "platform": "Plataforma",
+                "time_spent": "Tiempo invertido",
                 "memo": "Nota de VRCX",
                 "memo_placeholder": "Haga clic aquí para añadir una nota"
             },
