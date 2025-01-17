@@ -106,7 +106,6 @@ export default class extends baseClass {
                 travelingToInstance = json.presence.travelingToInstance;
                 travelingToWorld = json.presence.travelingToWorld;
             }
-
             this.applyUser({
                 allowAvatarCopying: json.allowAvatarCopying,
                 badges: json.badges,
@@ -166,7 +165,6 @@ export default class extends baseClass {
             if (this.isLoggedIn) {
                 if (json.currentAvatar !== ref.currentAvatar) {
                     $app.addAvatarToHistory(json.currentAvatar);
-                    console.log("applyCurrentUser");
                 }
                 Object.assign(ref, json);
                 if (ref.homeLocation !== ref.$homeLocation.tag) {

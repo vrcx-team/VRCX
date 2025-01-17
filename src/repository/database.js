@@ -2201,12 +2201,23 @@ class Database {
     }
 
     async getAvatarTimeSpent(avatarId) {
-        return sqliteService.execute(() => {
-            `SELECT time FROM ${Database.userPrefix}_avatar_history WHERE avatar_id != "${avatarId}"`
-        })
+        var ref = {
+            timeSpent: 0,
+            avatarId
+        };
+        await sqliteService.execute(
+            (row) => {
+                ref.timeSpent = row[0];
+            },
+            `SELECT time FROM ${Database.userPrefix}_avatar_history WHERE avatar_id = @avatarId`,
+            {
+                '@avatarId': avatarId
+            }
+        );
+
+        return ref;
     }
 
-    
     addAvatarTimeSpent(avatarId, timeSpent) {
         sqliteService.executeNonQuery(
             `UPDATE ${Database.userPrefix}_avatar_history SET time = time + @timeSpent WHERE avatar_id = @avatarId`,
@@ -2693,12 +2704,13 @@ class Database {
 
     async updateTableForAvatarHistory() {
         await sqliteService.execute((dbRow) => {
-            const columnExists = dbRow.some(row => row.name === 'time');
+            const columnExists = dbRow.some((row) => row.name === 'time');
             if (!columnExists) {
-                sqliteService.executeNonQuery(`ALTER TABLE ${Database.userPrefix}_avatar_history ADD COLUMN 'time' INTEGER DEFAULT 0;`)
+                sqliteService.executeNonQuery(
+                    `ALTER TABLE ${Database.userPrefix}_avatar_history ADD COLUMN 'time' INTEGER DEFAULT 0;`
+                );
             }
         }, `PRAGMA table_info(${Database.userPrefix}_avatar_history);`);
-        
     }
 
     async fixCancelFriendRequestTypo() {
