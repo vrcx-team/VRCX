@@ -11821,7 +11821,7 @@ speechSynthesis.getVoices();
         D.lastUpdated = '';
         D.bundleSizes = [];
         D.platformInfo = {};
-        D.timeSpent = 0,
+        D.timeSpent = 0;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (this.isLocalUserVrcplusSupporter() &&
@@ -11840,6 +11840,9 @@ speechSynthesis.getVoices();
                 return;
             }
         }
+        database.getAvatarTimeSpent(avatarId).then((aviTime) => {
+            D.timeSpent = aviTime.timeSpent;
+        });
         API.getAvatar({ avatarId })
             .then((args) => {
                 var { ref } = args;
@@ -19487,16 +19490,20 @@ speechSynthesis.getVoices();
             // if (ref.authorId === API.currentUser.id) {
             //     return;
             // }
-            console.log(`prev: ${API.currentUser.$previousAvatar}\nFunc: ${avatarId}\nCurr: ${API.currentUser.currentAvatar}`);
-            if (API.currentUser.$previousAvatar && API.currentUser.$previousAvatar !== avatarId) {
-                const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
-                console.log(`prev time: ${API.currentUser.$previousAvatarSwapTime}\nCurr Time: ${Date.now()}`)
-                database.addAvatarTimeSpent(API.currentUser.$previousAvatar, timeSpent);
-                console.log("smile");
+            if (
+                API.currentUser.$previousAvatar &&
+                API.currentUser.$previousAvatar !== avatarId
+            ) {
+                const timeSpent =
+                    Date.now() - API.currentUser.$previousAvatarSwapTime;
+                database.addAvatarTimeSpent(
+                    API.currentUser.$previousAvatar,
+                    timeSpent
+                );
             }
             API.currentUser.$previousAvatar = avatarId;
             API.currentUser.$previousAvatarSwapTime = Date.now();
-            
+
             var historyArray = this.avatarHistoryArray;
             for (var i = 0; i < historyArray.length; ++i) {
                 if (historyArray[i].id === ref.id) {

@@ -100,7 +100,7 @@ mixin avatarDialog()
                                 span.name {{ $t('dialog.avatar.info.version') }}
                                 span.extra(v-if="avatarDialog.ref.version !== 0" v-text="avatarDialog.ref.version")
                                 span.extra(v-else) -
-                        .x-friend-item(style="cursor:default")
+                        .x-friend-item(style="width:100%;cursor:default")
                             .detail
                                 span.name {{ $t('dialog.avatar.info.platform') }}
                                 span.extra(v-if="avatarDialogPlatform" v-text="avatarDialogPlatform")
@@ -108,8 +108,8 @@ mixin avatarDialog()
                         .x-friend-item(style="cursor:default")
                             .detail
                                 span.name {{ $t('dialog.avatar.info.time_spent') }}
-                                span.extra(v-if="avatarDialog.timeSpent" v-text="avatarDialog.ref.timeSpent") 
-                                span.extra(v-else) -
+                                span.extra(v-if="avatarDialog.timeSpent === 0") -
+                                span.extra(v-else) {{ timeToText(avatarDialog.timeSpent) }}
                 el-tab-pane(:label="$t('dialog.avatar.json.header')")
                     el-button(type="default" @click="refreshAvatarDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
                     el-tooltip(placement="top" :content="$t('dialog.avatar.json.file_analysis')" :disabled="hideTooltips")
