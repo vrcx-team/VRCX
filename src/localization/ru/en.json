@@ -34,11 +34,30 @@
         "feed": {
             "favorites_only_tooltip": "Фильтровать только избранных",
             "filter_placeholder": "Фильтр",
-            "search_placeholder": "Поиск"
+            "search_placeholder": "Поиск",
+            "filters": {
+                "GPS": "GPS",
+                "Online": "Онлайн",
+                "Offline": "Офлайн",
+                "Status": "Статус",
+                "Avatar": "Аватар",
+                "Bio": "Био"
+            }
         },
         "game_log": {
             "filter_placeholder": "Фильтр",
-            "search_placeholder": "Поиск"
+            "search_placeholder": "Поиск",
+            "filters": {
+                "Location": "Местоимение",
+                "OnPlayerJoined": "Игрог подключился",
+                "OnPlayerLeft": "Игрок отключился",
+                "PortalSpawn": "Спавн портала",
+                "VideoPlay": "Проигрованние видео",
+                "Event": "Эвент",
+                "External": "Внешние",
+                "StringLoad": "Строка загружена",
+                "ImageLoad": "Изо загружено"
+            }        
         },
         "player_list": {
             "photon": {
@@ -112,6 +131,7 @@
             "import": "Импорт",
             "move_tooltip": "Переместить",
             "copy_tooltip": "Копировать",
+            "self_invite_tooltip": "Пригласить себя", 
             "unfavorite_tooltip": "Удалить из избранного",
             "visibility_tooltip": "Изменить видимость",
             "rename_tooltip": "Переименовать",
@@ -124,17 +144,64 @@
         },
         "friend_log": {
             "filter_placeholder": "Фильтр",
-            "search_placeholder": "Поиск"
+            "search_placeholder": "Поиск",
+            "filters": {
+                "Friend": "Новый друг",
+                "Unfriend": "Удалён из друзей",
+                "FriendRequest": "Запрос в друзья",
+                "CancelFriendRequest": "Отменйнные запросы в друзья",
+                "DisplayName": "Выводное имя",
+                "TrustLevel": "Уровнь доверия"
+            }
         },
         "moderation": {
             "filter_placeholder": "Фильтр",
             "search_placeholder": "Поиск",
-            "refresh_tooltip": "Обновить"
+            "refresh_tooltip": "Обновить",
+            "filters": {
+                "block": "Заблокировать",
+                "unblock": "Разблокировать",
+                "mute": "Заглушить",
+                "unmute": "Включить звук",
+                "interactOn": "Включить взаимодействие",
+                "interactOff": "Отключить взаимодействие",
+                "muteChat": "Заглушить Чатбокс"
+            }
         },
         "notification": {
             "filter_placeholder": "Фильтр",
             "search_placeholder": "Поиск",
-            "refresh_tooltip": "Обновить"
+            "refresh_tooltip": "Обновить",
+            "filters": {
+                "requestInvite": "Запрос на приглашение",
+                "invite": "Приглашение",
+                "requestInviteResponse": "Ответ на запрос приглашения",
+                "inviteResponse": "Ответ на приглашение",
+                "friendRequest": "Запрос в друзья",
+                "ignoredFriendRequest": "Проигнорированный запрос в друзья",
+                "message": "Сообщение",
+                "boop": "Буп",
+                "groupChange": "Изменение группы",
+                "group": {
+                    "announcement": "Объявление",
+                    "informative": "Информативное сообщение",
+                    "invite": "Приглашение",
+                    "joinRequest": "Запрос на вступление",
+                    "transfer": "Передача",
+                    "queueReady": "Очередь готова"
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "Предупреждение модерации группы"
+                    },
+                    "report": {
+                        "closed": "Запрос модерации закрыт"
+                    }
+                },
+                "instance": {
+                    "closed": "Инстанс закрыт"
+                }
+            }
         },
         "friend_list": {
             "header": "Список друзей",
@@ -215,7 +282,6 @@
                     "header": "Обновление VRCX",
                     "change_build": "Изменить сборку",
                     "update_action": "Действия по обновлению",
-                    "auto_update": "Автоматическое обновление",
                     "auto_update_off": "Выкл",
                     "auto_update_notify": "Оповестить",
                     "auto_update_download": "Автозагрузка",
@@ -1451,7 +1517,9 @@
     },
     "message": {
         "vrcx_updater": {
-            "failed": "Не удалось проверить наличие обновлений,  {message}"
+            "failed": "Не удалось проверить наличие обновлений,  {message}",
+            "failed_install": "Не удалось установить обновление",
+            "checking_hash": "Проверка хэша..."
         },
         "api_handler": {
             "avatar_private_or_deleted": "Аватар является приватным или удален"
