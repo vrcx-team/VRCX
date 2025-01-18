@@ -5459,6 +5459,10 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.dontLogMeOut = false;
 
     API.$on('LOGIN', async function (args) {
+        // early loading indicator
+        this.isRefreshFriendsLoading = true;
+        $app.feedTable.loading = true;
+
         $app.friendLog = new Map();
         $app.feedTable.data = [];
         $app.feedSessionTable = [];
@@ -22254,7 +22258,10 @@ console.log(`isLinux: ${LINUX}`);
         try {
             var loggingEnabled =
                 await this.getVRChatRegistryKey('LOGGING_ENABLED');
-            if (loggingEnabled === null) {
+            if (
+                loggingEnabled === null ||
+                typeof loggingEnabled === 'undefined'
+            ) {
                 // key not found
                 return;
             }
