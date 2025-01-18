@@ -31,6 +31,9 @@ import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';
 import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 
+// tabs
+import ModerationTab from './views/tabs/Moderation.vue';
+
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
 
@@ -96,7 +99,8 @@ console.log(`isLinux: ${LINUX}`);
     const i18n = new VueI18n({
         locale: 'en',
         fallbackLocale: 'en',
-        messages: localizedStrings
+        messages: localizedStrings,
+        silentTranslationWarn: true
     });
     const $t = i18n.t.bind(i18n);
     Vue.use(ElementUI, {
@@ -157,6 +161,11 @@ console.log(`isLinux: ${LINUX}`);
         },
         watch: {},
         components: {
+            // tabs
+            ModerationTab,
+
+            // components
+            // - settings
             SimpleSwitch
         },
         el: '#x-app',
@@ -3838,12 +3847,15 @@ console.log(`isLinux: ${LINUX}`);
 
         workerTimers.setTimeout(() => {
             // fix some weird sorting bug when disabling data tables
-            if (
-                typeof this.$refs.playerModerationTableRef?.sortData !==
-                'undefined'
-            ) {
-                this.$refs.playerModerationTableRef.sortData.prop = 'created';
-            }
+
+            // looks like it's not needed anymore
+            // if (
+            //     typeof this.$refs.playerModerationTableRef?.sortData !==
+            //     'undefined'
+            // ) {
+            //     this.$refs.playerModerationTableRef.sortData.prop = 'created';
+            // }
+
             if (
                 typeof this.$refs.notificationTableRef?.sortData !== 'undefined'
             ) {
@@ -7511,33 +7523,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.playerModerationTable = {
         data: [],
-        lastRunLength: 0,
-        filters: [
-            {
-                prop: 'type',
-                value: [],
-                filterFn: (row, filter) =>
-                    filter.value.some((v) => v === row.type)
-            },
-            {
-                prop: ['sourceDisplayName', 'targetDisplayName'],
-                value: ''
-            }
-        ],
-        tableProps: {
-            stripe: true,
-            size: 'mini',
-            defaultSort: {
-                prop: 'created',
-                order: 'descending'
-            }
-        },
-        pageSize: $app.data.tablePageSize,
-        paginationProps: {
-            small: true,
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
-        }
+        pageSize: $app.data.tablePageSize
     };
 
     API.$on('LOGIN', function () {
@@ -7545,10 +7531,10 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     API.$on('PLAYER-MODERATION', function (args) {
-        var { ref } = args;
-        var array = $app.playerModerationTable.data;
-        var { length } = array;
-        for (var i = 0; i < length; ++i) {
+        let { ref } = args;
+        let array = $app.playerModerationTable.data;
+        let { length } = array;
+        for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
                 Vue.set(array, i, ref);
                 return;
@@ -7558,36 +7544,16 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     API.$on('PLAYER-MODERATION:@DELETE', function (args) {
-        var { ref } = args;
-        var array = $app.playerModerationTable.data;
-        var { length } = array;
-        for (var i = 0; i < length; ++i) {
+        let { ref } = args;
+        let array = $app.playerModerationTable.data;
+        let { length } = array;
+        for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
                 array.splice(i, 1);
                 return;
             }
         }
     });
-
-    $app.methods.deletePlayerModeration = function (row) {
-        API.deletePlayerModeration({
-            moderated: row.targetUserId,
-            type: row.type
-        });
-    };
-
-    $app.methods.deletePlayerModerationPrompt = function (row) {
-        this.$confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    this.deletePlayerModeration(row);
-                }
-            }
-        });
-    };
 
     // #endregion
     // #region | App: Notification
@@ -7845,10 +7811,6 @@ console.log(`isLinux: ${LINUX}`);
             JSON.stringify(this.friendLogTable.filters[0].value)
         );
         await configRepository.setString(
-            'VRCX_playerModerationTableFilters',
-            JSON.stringify(this.playerModerationTable.filters[0].value)
-        );
-        await configRepository.setString(
             'VRCX_notificationTableFilters',
             JSON.stringify(this.notificationTable.filters[0].value)
         );
@@ -7870,12 +7832,6 @@ console.log(`isLinux: ${LINUX}`);
     );
     $app.data.friendLogTable.filters[0].value = JSON.parse(
         await configRepository.getString('VRCX_friendLogTableFilters', '[]')
-    );
-    $app.data.playerModerationTable.filters[0].value = JSON.parse(
-        await configRepository.getString(
-            'VRCX_playerModerationTableFilters',
-            '[]'
-        )
     );
     $app.data.notificationTable.filters[0].value = JSON.parse(
         await configRepository.getString('VRCX_notificationTableFilters', '[]')
