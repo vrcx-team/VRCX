@@ -284,6 +284,8 @@ async function installVRCXappImageLauncher() {
 */
 
 async function installVRCX() {
+    let homePath = getHomePath();
+    console.log('True Home path:', homePath);
     console.log('AppImage path:', appImagePath);
     if (!appImagePath) {
         console.error('AppImage path is not available!');
@@ -300,9 +302,9 @@ async function installVRCX() {
         appImageLauncherInstalled = true;
     }
     */
-
+    
     if (
-        appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))
+        appImagePath.startsWith(path.join(homePath, 'Applications'))
     ) {
         /*
         if (appImageLauncherInstalled) {
@@ -331,7 +333,7 @@ async function installVRCX() {
 
     if (
         process.env.APPIMAGE.startsWith(
-            path.join(app.getPath('home'), 'Applications')
+            path.join(homePath, 'Applications')
         ) &&
         path.basename(process.env.APPIMAGE) === 'VRCX.AppImage'
     ) {
@@ -340,7 +342,7 @@ async function installVRCX() {
         return;
     }
 
-    const targetPath = path.join(app.getPath('home'), 'Applications');
+    const targetPath = path.join(homePath, 'Applications');
     console.log('Target Path:', targetPath);
 
     // Create target directory if it doesn't exist
@@ -368,7 +370,7 @@ async function installVRCX() {
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
     const iconPath = path.join(
-        app.getPath('home'),
+        homePath,
         '.local/share/icons/VRCX.png'
     );
     await downloadIcon(iconUrl, iconPath)
@@ -386,7 +388,7 @@ StartupWMClass=VRCX
 `;
 
             const desktopFilePath = path.join(
-                app.getPath('home'),
+                homePath,
                 '.local/share/applications/VRCX.desktop'
             );
             try {
@@ -443,6 +445,20 @@ function getVRCXPath() {
         return path.join(process.env.HOME, 'Library/Application Support/VRCX');
     }
     return '';
+}
+
+function getHomePath() {
+    let relativeHomePath = path.join(app.getPath('home'));
+    // console.log('Relative Home Path: ' + relativeHomePath);
+    try {
+        let absoluteHomePath = fs.realpathSync(relativeHomePath);
+        // console.log('readlink output: ' + absoluteHomePath);
+        return absoluteHomePath;        
+    }
+    catch (err) {
+        return relativeHomePath;
+    }
+    
 }
 
 function getVersion() {
