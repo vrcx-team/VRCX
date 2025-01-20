@@ -3755,6 +3755,15 @@ speechSynthesis.getVoices();
             this.nextDiscordUpdate = 0;
             console.log(new Date(), 'isGameRunning', isGameRunning);
         }
+
+        if (isGameRunning) {
+            API.currentUser.$previousAvatar = API.currentUser.currentAvatar;
+            API.currentUser.$previousAvatarSwapTime = Date.now();
+        } else if (API.currentUser.$previousAvatar) {
+            this.addAvatarWearTime();
+            API.currentUser.$previousAvatar = '';
+        }
+
         if (isSteamVRRunning !== this.isSteamVRRunning) {
             this.isSteamVRRunning = isSteamVRRunning;
             console.log('isSteamVRRunning:', isSteamVRRunning);
@@ -19487,22 +19496,21 @@ speechSynthesis.getVoices();
     $app.methods.addAvatarToHistory = function (avatarId) {
         API.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
-            // if (ref.authorId === API.currentUser.id) {
-            //     return;
-            // }
             if (
                 API.currentUser.$previousAvatar &&
                 API.currentUser.$previousAvatar !== avatarId
             ) {
-                const timeSpent =
-                    Date.now() - API.currentUser.$previousAvatarSwapTime;
-                database.addAvatarTimeSpent(
-                    API.currentUser.$previousAvatar,
-                    timeSpent
-                );
+                this.addAvatarWearTime();
             }
             API.currentUser.$previousAvatar = avatarId;
             API.currentUser.$previousAvatarSwapTime = Date.now();
+
+            database.addAvatarToCache(ref);
+            database.addAvatarToHistory(ref.id);
+
+            if (ref.authorId === API.currentUser.id) {
+                return;
+            }
 
             var historyArray = this.avatarHistoryArray;
             for (var i = 0; i < historyArray.length; ++i) {
@@ -19510,13 +19518,16 @@ speechSynthesis.getVoices();
                     historyArray.splice(i, 1);
                 }
             }
-            this.avatarHistoryArray.unshift(ref);
-            database.addAvatarToCache(ref);
 
+            this.avatarHistoryArray.unshift(ref);
             this.avatarHistory.delete(ref.id);
             this.avatarHistory.add(ref.id);
-            database.addAvatarToHistory(ref.id);
         });
+    };
+
+    $app.methods.addAvatarWearTime = function () {
+        const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
+        database.addAvatarTimeSpent(API.currentUser.$previousAvatar, timeSpent);
     };
 
     $app.methods.promptClearAvatarHistory = function () {
