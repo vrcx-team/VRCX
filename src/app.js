@@ -185,9 +185,6 @@ console.log(`isLinux: ${LINUX}`);
                 this.checkForVRCXUpdate();
             }
             await AppApi.CheckGameRunning();
-            console.log(
-                await configRepository.getBool('VRCX_sidebarGroupByInstance')
-            );
             this.isSidebarGroupByInstance =
                 (await configRepository.getBool(
                     'VRCX_sidebarGroupByInstance'
