@@ -171,7 +171,8 @@
                     'unmute',
                     'interactOn',
                     'interactOff',
-                    'muteChat'
+                    'muteChat',
+                    'unmuteChat'
                 ],
                 tableProps: {
                     stripe: true,

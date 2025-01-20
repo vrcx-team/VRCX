@@ -165,7 +165,8 @@
                 "unmute": "Unmute",
                 "interactOn": "Interact On",
                 "interactOff": "Interact Off",
-                "muteChat": "Mute chat"
+                "muteChat": "Mute chat",
+                "unmuteChat": "Unmute chat"
             }
         },
         "notification": {

@@ -76,16 +76,17 @@ namespace VRCX
                     if (metadata == null || metadata.Error != null)
                     {
                         addToCache.Add(dbEntry);
-                        metadataCache.Add(file, null);
+                        metadataCache.TryAdd(file, null);
                         continue;
                     }
 
                     dbEntry.Metadata = JsonConvert.SerializeObject(metadata);
                     addToCache.Add(dbEntry);
-                    metadataCache.Add(file, metadata);
+                    metadataCache.TryAdd(file, metadata);
                 }
 
-                if (metadata == null) continue;
+                if (metadata == null)
+                    continue;
 
                 switch (searchType)
                 {
@@ -121,18 +122,13 @@ namespace VRCX
             return result;
         }
 
-        /// <summary>
-        /// Retrieves metadata from a PNG screenshot file and attempts to parse it.
-        /// </summary>
-        /// <param name="path">The path to the PNG screenshot file.</param>
-        /// <returns>A JObject containing the metadata or null if no metadata was found.</returns>
-        public static ScreenshotMetadata GetScreenshotMetadata(string path, bool includeJSON = false)
+        public static ScreenshotMetadata? GetScreenshotMetadata(string path, bool includeJSON = false)
         {
             // Early return if file doesn't exist, or isn't a PNG(Check both extension and file header)
             if (!File.Exists(path) || !path.EndsWith(".png") || !IsPNGFile(path))
                 return null;
 
-            ///if (metadataCache.TryGetValue(path, out var cachedMetadata))
+            // if (metadataCache.TryGetValue(path, out var cachedMetadata))
             //    return cachedMetadata;
 
             string metadataString;

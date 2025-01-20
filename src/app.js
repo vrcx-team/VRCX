@@ -8126,7 +8126,7 @@ console.log(`isLinux: ${LINUX}`);
             '[ "https://avtr.just-h.party/vrcx_search.php" ]'
         )
     );
-    $app.data.pendingOfflineDelay = 130000;
+    $app.data.pendingOfflineDelay = 180000;
     if (await configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
         var avatarRemoteDatabaseProvider = await configRepository.getString(
@@ -16769,9 +16769,12 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getAndDisplayLastScreenshot = function () {
         this.screenshotMetadataResetSearch();
-        AppApi.GetLastScreenshot().then((path) =>
-            this.getAndDisplayScreenshot(path)
-        );
+        AppApi.GetLastScreenshot().then((path) => {
+            if (!path) {
+                return;
+            }
+            this.getAndDisplayScreenshot(path);
+        });
     };
 
     /**
@@ -17054,6 +17057,9 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.copyImageToClipboard = function (path) {
+        if (!path) {
+            return;
+        }
         AppApi.CopyImageToClipboard(path).then(() => {
             this.$message({
                 message: 'Image copied to clipboard',
@@ -17063,6 +17069,9 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.openImageFolder = function (path) {
+        if (!path) {
+            return;
+        }
         AppApi.OpenFolderAndSelectItem(path).then(() => {
             this.$message({
                 message: 'Opened image folder',

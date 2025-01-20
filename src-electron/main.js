@@ -17,11 +17,12 @@ if (!isDotNetInstalled()) {
     app.quit();
     return;
 }
+console.log('DOTNET_ROOT:', process.env.DOTNET_ROOT);
 
 // get launch arguments
 const args = process.argv.slice(1);
 const noInstall = args.some((val) => val === '--no-install');
-
+const homePath = getHomePath();
 tryCopyFromWinePrefix();
 
 const rootDir = app.getAppPath();
@@ -261,7 +262,7 @@ async function installVRCXappImageLauncher() {
 
     let targetIconName;
     const desktopFiles = fs.readdirSync(
-        path.join(app.getPath('home'), '.local/share/applications')
+        path.join(homePath, '.local/share/applications')
     );
     for (const file of desktopFiles) {
         if (file.includes('appimagekit_') && file.includes('VRCX')) {
@@ -284,8 +285,7 @@ async function installVRCXappImageLauncher() {
 */
 
 async function installVRCX() {
-    let homePath = getHomePath();
-    console.log('True Home path:', homePath);
+    console.log('Home path:', homePath);
     console.log('AppImage path:', appImagePath);
     if (!appImagePath) {
         console.error('AppImage path is not available!');
@@ -302,10 +302,8 @@ async function installVRCX() {
         appImageLauncherInstalled = true;
     }
     */
-    
-    if (
-        appImagePath.startsWith(path.join(homePath, 'Applications'))
-    ) {
+
+    if (appImagePath.startsWith(path.join(homePath, 'Applications'))) {
         /*
         if (appImageLauncherInstalled) {
             installVRCXappImageLauncher();
@@ -332,9 +330,7 @@ async function installVRCX() {
     }
 
     if (
-        process.env.APPIMAGE.startsWith(
-            path.join(homePath, 'Applications')
-        ) &&
+        process.env.APPIMAGE.startsWith(path.join(homePath, 'Applications')) &&
         path.basename(process.env.APPIMAGE) === 'VRCX.AppImage'
     ) {
         interopApi.getDotNetObject('Update').Init(appImagePath);
@@ -369,10 +365,7 @@ async function installVRCX() {
     // Download the icon and save it to the target directory
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-    const iconPath = path.join(
-        homePath,
-        '.local/share/icons/VRCX.png'
-    );
+    const iconPath = path.join(homePath, '.local/share/icons/VRCX.png');
     await downloadIcon(iconUrl, iconPath)
         .then(() => {
             console.log('Icon downloaded and saved to:', iconPath);
@@ -448,17 +441,13 @@ function getVRCXPath() {
 }
 
 function getHomePath() {
-    let relativeHomePath = path.join(app.getPath('home'));
-    // console.log('Relative Home Path: ' + relativeHomePath);
+    const relativeHomePath = path.join(app.getPath('home'));
     try {
-        let absoluteHomePath = fs.realpathSync(relativeHomePath);
-        // console.log('readlink output: ' + absoluteHomePath);
-        return absoluteHomePath;        
-    }
-    catch (err) {
+        const absoluteHomePath = fs.realpathSync(relativeHomePath);
+        return absoluteHomePath;
+    } catch (err) {
         return relativeHomePath;
     }
-    
 }
 
 function getVersion() {
@@ -488,7 +477,7 @@ function tryCopyFromWinePrefix() {
             // try copy from old wine path
             const userName = process.env.USER || process.env.USERNAME;
             const oldPath = path.join(
-                app.getPath('home'),
+                homePath,
                 '.local/share/vrcx/drive_c/users',
                 userName,
                 'AppData/Roaming/VRCX'

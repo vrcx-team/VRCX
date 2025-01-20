@@ -57,7 +57,7 @@ namespace VRCX
         /// Any error that occurred while parsing the file. This being true implies nothing else is set.
         /// </summary>
         [JsonIgnore]
-        internal string Error;
+        internal string? Error;
 
         [JsonIgnore]
         internal string JSON;
