@@ -383,7 +383,9 @@
                         "placeholder": "Sort Order",
                         "dropdown_header": "Choose Sort Order"
                     },
-                    "width": "Width"
+                    "width": "Width",
+                    "group_by_instance": "Group by Instance",
+                    "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance."
                 },
                 "user_dialog": {
                     "header": "User Dialog",

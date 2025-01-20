@@ -152,12 +152,87 @@ console.log(`isLinux: ${LINUX}`);
             isRunningUnderWine: false,
             appVersion: '',
             latestAppVersion: '',
-            shiftHeld: false
+            shiftHeld: false,
+            isSidebarGroupByInstance: true
         },
         i18n,
-        computed: {},
+        computed: {
+            // friendsListSidebar
+            //  - SidebarGroupByInstance
+            onlineFriendsInSameInstance() {
+                const groupedItems = {};
+
+                this.onlineFriends.forEach((item) => {
+                    const key = item.ref?.$location.tag;
+                    if (!key || key === 'private' || key === 'offline') return;
+                    if (!groupedItems[key]) {
+                        groupedItems[key] = [];
+                    }
+                    groupedItems[key].push(item);
+                });
+
+                return Object.values(groupedItems)
+                    .map((val) => {
+                        return val.sort(
+                            (a, b) => a.ref?.$location_at - b.ref?.$location_at
+                        );
+                    })
+                    .filter((val) => val.length > 1)
+                    .sort((a, b) => b.length - a.length);
+            },
+            onlineFriendsNotInSameInstance() {
+                return this.onlineFriends.filter(
+                    (friend) =>
+                        !this.onlineFriendsInSameInstance
+                            .flat()
+                            .some(
+                                (friendInSameInstance) =>
+                                    friendInSameInstance.id === friend.id
+                            )
+                );
+            },
+            vipFriendsInSameInstance() {
+                const groupedItems = {};
+
+                this.vipFriends.forEach((item) => {
+                    const key = item.ref?.$location.tag;
+                    if (!key || key === 'private' || key === 'offline') return;
+                    if (!groupedItems[key]) {
+                        groupedItems[key] = [];
+                    }
+                    groupedItems[key].push(item);
+                });
+
+                return Object.values(groupedItems)
+                    .map((val) => {
+                        return val.sort(
+                            (a, b) => a.ref?.$location_at - b.ref?.$location_at
+                        );
+                    })
+                    .filter((val) => val.length > 1)
+                    .sort((a, b) => b.length - a.length);
+            },
+            vipFriendsNotInSameInstance() {
+                return this.vipFriends.filter(
+                    (friend) =>
+                        !this.vipFriendsInSameInstance
+                            .flat()
+                            .some(
+                                (friendInSameInstance) =>
+                                    friendInSameInstance.id === friend.id
+                            )
+                );
+            }
+        },
         methods: {
-            ...$utils
+            ...$utils,
+            async handleSwitchGroupByInstance() {
+                this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
+                await configRepository.setBool(
+                    'VRCX_sidebarGroupByInstance',
+                    this.isSidebarGroupByInstance
+                );
+            }
         },
         watch: {},
         components: {
@@ -185,6 +260,9 @@ console.log(`isLinux: ${LINUX}`);
                 this.checkForVRCXUpdate();
             }
             await AppApi.CheckGameRunning();
+            this.isSidebarGroupByInstance = await configRepository.getBool(
+                'VRCX_sidebarGroupByInstance'
+            );
             this.isGameNoVR = await configRepository.getBool('isGameNoVR');
             await AppApi.SetAppLauncherSettings(
                 this.enableAppLauncher,
