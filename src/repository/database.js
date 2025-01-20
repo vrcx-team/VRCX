@@ -2189,10 +2189,13 @@ class Database {
 
     addAvatarToHistory(avatarId) {
         sqliteService.executeNonQuery(
-            `INSERT INTO ${Database.userPrefix}_avatar_history (avatar_id, created_at, time)
-            VALUES (@avatar_id, @created_at, 0)
-            ON CONFLICT(avatar_id) DO UPDATE
-            SET created_at = @created_at, time = COALESCE(${Database.userPrefix}_avatar_history.time, 0)`,
+            `UPDATE ${Database.userPrefix}_avatar_history
+            SET created_at = @created_at, time = COALESCE(time, 0)
+            WHERE avatar_id = @avatar_id;
+
+            INSERT INTO ${Database.userPrefix}_avatar_history (avatar_id, created_at, time)
+            SELECT @avatar_id, @created_at, 0
+            WHERE NOT EXISTS (SELECT * FROM ${Database.userPrefix}_avatar_history WHERE avatar_id = @avatar_id)`,
             {
                 '@avatar_id': avatarId,
                 '@created_at': new Date().toJSON()
@@ -2664,7 +2667,7 @@ class Database {
                     `ALTER TABLE ${tableName} ADD friend_number INTEGER DEFAULT 0`
                 );
             } catch (e) {
-                e = e.toString();   
+                e = e.toString();
                 if (e.indexOf('duplicate column name') === -1) {
                     console.error(e);
                 }
@@ -2683,7 +2686,7 @@ class Database {
                     `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
                 );
             } catch (e) {
-                e = e.toString();    
+                e = e.toString();
                 if (e.indexOf('duplicate column name') === -1) {
                     console.error(e);
                 }
