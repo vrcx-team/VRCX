@@ -326,6 +326,8 @@ export default class extends baseClass {
                                     ),
                                     type: 'success'
                                 });
+                                API.refreshFavorites();
+                                this.getLocalWorldFavorites();
                                 return args;
                             });
                         }

@@ -3157,6 +3157,7 @@ console.log(`isLinux: ${LINUX}`);
             console.error(err);
         }
         this.expireFavorites();
+        this.cachedFavoriteGroupsByTypeName.clear();
         this.bulk({
             fn: 'getFavorites',
             N: -1,
@@ -7086,9 +7087,16 @@ console.log(`isLinux: ${LINUX}`);
         if (!objectId) {
             return;
         }
+        this.favoriteDialog.visible = true;
         API.deleteFavorite({
             objectId
-        });
+        })
+            .then(() => {
+                this.favoriteDialog.visible = false;
+            })
+            .finally(() => {
+                this.favoriteDialog.loading = false;
+            });
     };
 
     $app.methods.clearFavoriteGroup = function (ctx) {
@@ -12531,11 +12539,15 @@ console.log(`isLinux: ${LINUX}`);
             favoriteId: D.objectId,
             tags: group.name
         })
+            .then(() => {
+                D.visible = false;
+                new Noty({
+                    type: 'success',
+                    text: 'Favorite added'
+                }).show();
+            })
             .finally(() => {
                 D.loading = false;
-            })
-            .then((args) => {
-                return args;
             });
     };
 
