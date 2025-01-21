@@ -923,6 +923,7 @@
                 "last_updated": "Dernière mise à jour",
                 "version": "Version",
                 "platform": "Plateforme",
+                "time_spent": "Temps passé",
                 "memo": "Mémo",
                 "memo_placeholder": "Cliquez pour ajouter un mémo"
             },

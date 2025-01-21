@@ -383,7 +383,9 @@
                         "placeholder": "Sort Order",
                         "dropdown_header": "Choose Sort Order"
                     },
-                    "width": "Width"
+                    "width": "Width",
+                    "group_by_instance": "Group by Instance",
+                    "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance."
                 },
                 "user_dialog": {
                     "header": "User Dialog",
@@ -927,6 +929,7 @@
                 "last_updated": "Last Updated",
                 "version": "Version",
                 "platform": "Platform",
+                "time_spent": "Time Spent",
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo"
             },
@@ -1487,7 +1490,8 @@
             "choose_roles_placeholder": "Choose Roles",
             "selected_roles": "Selected Roles",
             "remove_roles": "Remove Roles",
-            "add_roles": "Add Roles"
+            "add_roles": "Add Roles",
+            "export_logs": "Export Logs"
         },
         "group_post_edit": {
             "header": "Create/Edit Post",

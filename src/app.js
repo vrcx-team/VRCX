@@ -185,6 +185,10 @@ console.log(`isLinux: ${LINUX}`);
                 this.checkForVRCXUpdate();
             }
             await AppApi.CheckGameRunning();
+            this.isSidebarGroupByInstance =
+                (await configRepository.getBool(
+                    'VRCX_sidebarGroupByInstance'
+                )) ?? true;
             this.isGameNoVR = await configRepository.getBool('isGameNoVR');
             await AppApi.SetAppLauncherSettings(
                 this.enableAppLauncher,
@@ -3800,6 +3804,14 @@ console.log(`isLinux: ${LINUX}`);
             this.nextDiscordUpdate = 0;
             console.log(new Date(), 'isGameRunning', isGameRunning);
         }
+
+        if (isGameRunning) {
+            API.currentUser.$previousAvatarSwapTime = Date.now();
+        } else if (API.currentUser.$previousAvatarSwapTime) {
+            this.addAvatarWearTime(API.currentUser.currentAvatar);
+            API.currentUser.$previousAvatarSwapTime = '';
+        }
+
         if (isSteamVRRunning !== this.isSteamVRRunning) {
             this.isSteamVRRunning = isSteamVRRunning;
             console.log('isSteamVRRunning:', isSteamVRRunning);
@@ -12092,6 +12104,7 @@ console.log(`isLinux: ${LINUX}`);
         treeData: [],
         bundleSizes: [],
         platformInfo: {},
+        timeSpent: 0,
         lastUpdated: '',
         inCache: false,
         cacheSize: 0,
@@ -12142,6 +12155,7 @@ console.log(`isLinux: ${LINUX}`);
         D.lastUpdated = '';
         D.bundleSizes = [];
         D.platformInfo = {};
+        D.timeSpent = 0;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (this.isLocalUserVrcplusSupporter() &&
@@ -12160,6 +12174,9 @@ console.log(`isLinux: ${LINUX}`);
                 return;
             }
         }
+        database.getAvatarTimeSpent(avatarId).then((aviTime) => {
+            D.timeSpent = aviTime.timeSpent;
+        });
         API.getAvatar({ avatarId })
             .then((args) => {
                 var { ref } = args;
@@ -19863,22 +19880,30 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.addAvatarToHistory = function (avatarId) {
         API.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
+
+            database.addAvatarToCache(ref);
+            database.addAvatarToHistory(ref.id);
+
             if (ref.authorId === API.currentUser.id) {
                 return;
             }
+
             var historyArray = this.avatarHistoryArray;
             for (var i = 0; i < historyArray.length; ++i) {
                 if (historyArray[i].id === ref.id) {
                     historyArray.splice(i, 1);
                 }
             }
-            this.avatarHistoryArray.unshift(ref);
-            database.addAvatarToCache(ref);
 
+            this.avatarHistoryArray.unshift(ref);
             this.avatarHistory.delete(ref.id);
             this.avatarHistory.add(ref.id);
-            database.addAvatarToHistory(ref.id);
         });
+    };
+
+    $app.methods.addAvatarWearTime = function (avatar) {
+        const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
+        database.addAvatarTimeSpent(avatar, timeSpent);
     };
 
     $app.methods.promptClearAvatarHistory = function () {
@@ -19906,7 +19931,7 @@ console.log(`isLinux: ${LINUX}`);
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 11;
+        var databaseVersion = 12;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
@@ -23089,7 +23114,8 @@ console.log(`isLinux: ${LINUX}`);
         return LINUX;
     };
 
-    // groupSidebar
+    // friendsListSiderBar
+    // - GroupedGroupByInstances
     $app.methods.toggleGroupSidebarCollapse = function (groupId) {
         $app.groupInstancesCfg[groupId].isCollapsed =
             !$app.groupInstancesCfg[groupId].isCollapsed;
@@ -23112,6 +23138,90 @@ console.log(`isLinux: ${LINUX}`);
                 Infinity;
             return getSortValue(a) - getSortValue(b);
         });
+    };
+
+    // friendsListSidebar
+    //  - SidebarGroupByInstance
+
+    $app.methods.handleSwitchGroupByInstance = async function () {
+        this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
+        await configRepository.setBool(
+            'VRCX_sidebarGroupByInstance',
+            this.isSidebarGroupByInstance
+        );
+    };
+
+    $app.data.isSidebarGroupByInstance = true;
+    $app.computed.onlineFriendsInSameInstance = function () {
+        const groupedItems = {};
+
+        this.onlineFriends.forEach((item) => {
+            const key = item.ref?.$location.tag;
+            if (!key || key === 'private' || key === 'offline') return;
+            if (!groupedItems[key]) {
+                groupedItems[key] = [];
+            }
+            groupedItems[key].push(item);
+        });
+
+        const sortedGroups = [];
+        for (const group of Object.values(groupedItems)) {
+            if (group.length > 1) {
+                sortedGroups.push(
+                    group.sort(
+                        (a, b) => a.ref?.$location_at - b.ref?.$location_at
+                    )
+                );
+            }
+        }
+
+        return sortedGroups.sort((a, b) => b.length - a.length);
+    };
+
+    $app.computed.onlineFriendsNotInSameInstance = function () {
+        const friendsInSameInstance = new Set(
+            this.onlineFriendsInSameInstance.flat().map((friend) => friend.id)
+        );
+
+        return this.onlineFriends.filter(
+            (friend) => !friendsInSameInstance.has(friend.id)
+        );
+    };
+
+    $app.computed.vipFriendsInSameInstance = function () {
+        const groupedItems = {};
+
+        this.vipFriends.forEach((item) => {
+            const key = item.ref?.$location.tag;
+            if (!key || key === 'private' || key === 'offline') return;
+            if (!groupedItems[key]) {
+                groupedItems[key] = [];
+            }
+            groupedItems[key].push(item);
+        });
+
+        const sortedGroups = [];
+        for (const group of Object.values(groupedItems)) {
+            if (group.length > 1) {
+                sortedGroups.push(
+                    group.sort(
+                        (a, b) => a.ref?.$location_at - b.ref?.$location_at
+                    )
+                );
+            }
+        }
+
+        return sortedGroups.sort((a, b) => b.length - a.length);
+    };
+
+    $app.computed.vipFriendsNotInSameInstance = function () {
+        const friendsInSameInstance = new Set(
+            this.vipFriendsInSameInstance.flat().map((friend) => friend.id)
+        );
+
+        return this.vipFriends.filter(
+            (friend) => !friendsInSameInstance.has(friend.id)
+        );
     };
 
     // #endregion
