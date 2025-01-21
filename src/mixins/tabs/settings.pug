@@ -231,6 +231,8 @@ mixin settingsTab()
                     div.options-container-item
                         span.name(style="vertical-align:top;padding-top:10px") {{ $t('view.settings.appearance.side_panel.width') }}
                         el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{300: ''}" :min="200" :max="500" style="display:inline-block;width:300px")
+                    div.options-container-item
+                        simple-switch(:label='$t("view.settings.appearance.side_panel.group_by_instance")' :value='isSidebarGroupByInstance' @change='handleSwitchGroupByInstance' :tooltip='$t("view.settings.appearance.side_panel.group_by_instance_tooltip")')
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
