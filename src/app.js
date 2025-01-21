@@ -3800,6 +3800,14 @@ console.log(`isLinux: ${LINUX}`);
             this.nextDiscordUpdate = 0;
             console.log(new Date(), 'isGameRunning', isGameRunning);
         }
+
+        if (isGameRunning) {
+            API.currentUser.$previousAvatarSwapTime = Date.now();
+        } else if (API.currentUser.$previousAvatarSwapTime) {
+            this.addAvatarWearTime(API.currentUser.currentAvatar);
+            API.currentUser.$previousAvatarSwapTime = '';
+        }
+
         if (isSteamVRRunning !== this.isSteamVRRunning) {
             this.isSteamVRRunning = isSteamVRRunning;
             console.log('isSteamVRRunning:', isSteamVRRunning);
@@ -12090,6 +12098,7 @@ console.log(`isLinux: ${LINUX}`);
         treeData: [],
         bundleSizes: [],
         platformInfo: {},
+        timeSpent: 0,
         lastUpdated: '',
         inCache: false,
         cacheSize: 0,
@@ -12140,6 +12149,7 @@ console.log(`isLinux: ${LINUX}`);
         D.lastUpdated = '';
         D.bundleSizes = [];
         D.platformInfo = {};
+        D.timeSpent = 0;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (this.isLocalUserVrcplusSupporter() &&
@@ -12158,6 +12168,9 @@ console.log(`isLinux: ${LINUX}`);
                 return;
             }
         }
+        database.getAvatarTimeSpent(avatarId).then((aviTime) => {
+            D.timeSpent = aviTime.timeSpent;
+        });
         API.getAvatar({ avatarId })
             .then((args) => {
                 var { ref } = args;
@@ -19861,22 +19874,30 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.addAvatarToHistory = function (avatarId) {
         API.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
+
+            database.addAvatarToCache(ref);
+            database.addAvatarToHistory(ref.id);
+
             if (ref.authorId === API.currentUser.id) {
                 return;
             }
+
             var historyArray = this.avatarHistoryArray;
             for (var i = 0; i < historyArray.length; ++i) {
                 if (historyArray[i].id === ref.id) {
                     historyArray.splice(i, 1);
                 }
             }
-            this.avatarHistoryArray.unshift(ref);
-            database.addAvatarToCache(ref);
 
+            this.avatarHistoryArray.unshift(ref);
             this.avatarHistory.delete(ref.id);
             this.avatarHistory.add(ref.id);
-            database.addAvatarToHistory(ref.id);
         });
+    };
+
+    $app.methods.addAvatarWearTime = function (avatar) {
+        const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
+        database.addAvatarTimeSpent(avatar, timeSpent);
     };
 
     $app.methods.promptClearAvatarHistory = function () {
@@ -19904,7 +19925,7 @@ console.log(`isLinux: ${LINUX}`);
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 11;
+        var databaseVersion = 12;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({

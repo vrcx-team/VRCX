@@ -856,6 +856,7 @@
                 "last_updated": "最後更新",
                 "version": "版本",
                 "platform": "平台",
+                "time_spent": "停留時長",
                 "memo": "備註",
                 "memo_placeholder": "點擊新增備忘錄"
             },
