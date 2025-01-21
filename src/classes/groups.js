@@ -1216,7 +1216,8 @@ export default class extends baseClass {
 
         API.$on('GROUP:USER:INSTANCES', function (args) {
             $app.groupInstances = [];
-            for (var json of args.json.instances) {
+            const groupMap = new Map();
+            for (const json of args.json.instances) {
                 if (args.json.fetchedAt) {
                     // tack on fetchedAt
                     json.$fetchedAt = args.json.fetchedAt;
@@ -1227,19 +1228,41 @@ export default class extends baseClass {
                         fetchedAt: args.json.fetchedAt
                     }
                 });
-                var ref = this.cachedGroups.get(json.ownerId);
+                const ref = this.cachedGroups.get(json.ownerId);
                 if (typeof ref === 'undefined') {
                     if ($app.friendLogInitStatus) {
                         this.getGroup({ groupId: json.ownerId });
                     }
                     return;
                 }
-                $app.groupInstances.push({
+
+                if (!groupMap.has(ref.groupId)) {
+                    groupMap.set(ref.groupId, []);
+                }
+                groupMap.get(ref.groupId).push({
                     group: ref,
                     instance: this.applyInstance(json)
                 });
+                if (!$app.groupInstancesCfg[ref.groupId]) {
+                    $app.groupInstancesCfg[ref.groupId] = {
+                        sort: Infinity,
+                        isCollapsed: false
+                    };
+                }
             }
-            $app.groupInstances.sort(this.sortGroupInstancesByInGame);
+            $app.groupInstances = Array.from(groupMap.values())
+                .map((item) => item.sort(this.sortGroupInstancesByInGame))
+                .sort((a, b) => {
+                    const aGroupId = a[0]?.group?.groupId;
+                    const bGroupId = b[0]?.group?.groupId;
+
+                    const aSort =
+                        $app.groupInstancesCfg[aGroupId]?.sort ?? Infinity;
+                    const bSort =
+                        $app.groupInstancesCfg[bGroupId]?.sort ?? Infinity;
+
+                    return aSort - bSort;
+                });
         });
 
         /**

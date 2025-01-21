@@ -4213,6 +4213,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.isOfflineFriends = false;
     $app.data.isGroupInstances = false;
     $app.data.groupInstances = [];
+    $app.data.groupInstancesCfg = {};
     $app.data.vipFriends_ = [];
     $app.data.onlineFriends_ = [];
     $app.data.activeFriends_ = [];
