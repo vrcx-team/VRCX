@@ -104,6 +104,8 @@ mixin avatarDialog()
                         .x-friend-item(style="cursor:default")
                             .detail
                                 span.name {{ $t('dialog.avatar.info.time_spent') }}
+                                    el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.world.info.accuracy_notice')")
+                                        i.el-icon-warning
                                 span.extra(v-if="avatarDialog.timeSpent === 0") -
                                 span.extra(v-else) {{ timeToText(avatarDialog.timeSpent) }}
                         .x-friend-item(style="width:100%;cursor:default")

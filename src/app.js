@@ -185,10 +185,6 @@ console.log(`isLinux: ${LINUX}`);
                 this.checkForVRCXUpdate();
             }
             await AppApi.CheckGameRunning();
-            this.isSidebarGroupByInstance =
-                (await configRepository.getBool(
-                    'VRCX_sidebarGroupByInstance'
-                )) ?? true;
             this.isGameNoVR = await configRepository.getBool('isGameNoVR');
             await AppApi.SetAppLauncherSettings(
                 this.enableAppLauncher,
@@ -3785,6 +3781,7 @@ console.log(`isLinux: ${LINUX}`);
             if (isGameRunning) {
                 API.currentUser.$online_for = Date.now();
                 API.currentUser.$offline_for = '';
+                API.currentUser.$previousAvatarSwapTime = Date.now();
             } else {
                 await configRepository.setBool('isGameNoVR', this.isGameNoVR);
                 API.currentUser.$online_for = '';
@@ -3793,6 +3790,8 @@ console.log(`isLinux: ${LINUX}`);
                 this.autoVRChatCacheManagement();
                 this.checkIfGameCrashed();
                 this.ipcTimeout = 0;
+                this.addAvatarWearTime(API.currentUser.currentAvatar);
+                API.currentUser.$previousAvatarSwapTime = '';
             }
             this.lastLocationReset();
             this.clearNowPlaying();
@@ -3803,13 +3802,6 @@ console.log(`isLinux: ${LINUX}`);
             );
             this.nextDiscordUpdate = 0;
             console.log(new Date(), 'isGameRunning', isGameRunning);
-        }
-
-        if (isGameRunning) {
-            API.currentUser.$previousAvatarSwapTime = Date.now();
-        } else if (API.currentUser.$previousAvatarSwapTime) {
-            this.addAvatarWearTime(API.currentUser.currentAvatar);
-            API.currentUser.$previousAvatarSwapTime = '';
         }
 
         if (isSteamVRRunning !== this.isSteamVRRunning) {
@@ -12173,7 +12165,16 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         database.getAvatarTimeSpent(avatarId).then((aviTime) => {
-            D.timeSpent = aviTime.timeSpent;
+            if (D.id === aviTime.avatarId) {
+                D.timeSpent = aviTime.timeSpent;
+                if (
+                    D.id === API.currentUser.currentAvatar &&
+                    API.currentUser.$previousAvatarSwapTime
+                ) {
+                    D.timeSpent +=
+                        Date.now() - API.currentUser.$previousAvatarSwapTime;
+                }
+            }
         });
         API.getAvatar({ avatarId })
             .then((args) => {
@@ -19870,8 +19871,12 @@ console.log(`isLinux: ${LINUX}`);
         var historyArray = await database.getAvatarHistory(API.currentUser.id);
         this.avatarHistoryArray = historyArray;
         for (var i = 0; i < historyArray.length; i++) {
-            this.avatarHistory.add(historyArray[i].id);
-            API.applyAvatar(historyArray[i]);
+            var avatar = historyArray[i];
+            if (avatar.authorId === API.currentUser.id) {
+                continue;
+            }
+            this.avatarHistory.add(avatar.id);
+            API.applyAvatar(avatar);
         }
     };
 
@@ -19899,9 +19904,12 @@ console.log(`isLinux: ${LINUX}`);
         });
     };
 
-    $app.methods.addAvatarWearTime = function (avatar) {
+    $app.methods.addAvatarWearTime = function (avatarId) {
+        if (!API.currentUser.$previousAvatarSwapTime || !avatarId) {
+            return;
+        }
         const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
-        database.addAvatarTimeSpent(avatar, timeSpent);
+        database.addAvatarTimeSpent(avatarId, timeSpent);
     };
 
     $app.methods.promptClearAvatarHistory = function () {
@@ -23124,7 +23132,10 @@ console.log(`isLinux: ${LINUX}`);
     // friendsListSidebar
     //  - SidebarGroupByInstance
 
-    $app.data.isSidebarGroupByInstance = true;
+    $app.data.isSidebarGroupByInstance = await configRepository.getBool(
+        'VRCX_sidebarGroupByInstance',
+        true
+    );
     $app.computed.onlineFriendsInSameInstance = function () {
         const groupedItems = {};
 
