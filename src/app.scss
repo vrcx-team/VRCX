@@ -955,3 +955,34 @@ i.x-status-icon.red {
     padding: 2px 2px;
     border-radius: 4px;
 }
+
+// group sidebar
+.sidebar-group-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.sidebar-group-title > div:last-child i {
+    font-size: 14px;
+    display: none;
+    color: #c7c7c7;
+}
+.sidebar-group-title > div:last-child i:hover {
+    color: #fff;
+    cursor: grab;
+}
+.sidebar-group-title:hover > div:last-child i {
+    display: block;
+}
+.sidebar-group-title.x-link:hover {
+    text-decoration: none;
+}
+.sidebar-group-title:hover > div:first-child {
+    text-decoration: underline;
+}
+.sidebar-group-title .el-icon-arrow-right.rotate {
+    transform: rotate(90deg);
+}
+.sidebar-group-title .el-icon-arrow-right {
+    transition: transform 0.3s;
+}
