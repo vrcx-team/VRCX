@@ -1490,7 +1490,8 @@
             "choose_roles_placeholder": "Choose Roles",
             "selected_roles": "Selected Roles",
             "remove_roles": "Remove Roles",
-            "add_roles": "Add Roles"
+            "add_roles": "Add Roles",
+            "export_logs": "Export Logs"
         },
         "group_post_edit": {
             "header": "Create/Edit Post",
