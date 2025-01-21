@@ -243,7 +243,7 @@ mixin groups()
                                             span.name(v-text="getAuditLogTypeName(type)")
                             el-input(v-model="groupLogsModerationTable.filters[0].value" :placeholder="$t('dialog.group_member_moderation.search_placeholder')" style="display:inline-block;width:150px;margin:10px")
                         div
-                            el-button(@click="showGroupLogsExportDialog") {{ $t('view.favorite.export') }}
+                            el-button(@click="showGroupLogsExportDialog") {{ $t('dialog.group_member_moderation.export_logs') }}
                     br
                     data-tables(v-bind="groupLogsModerationTable" style="margin-top:10px")
                         el-table-column(:label="$t('dialog.group_member_moderation.created_at')" width="170" prop="created_at" sortable)
