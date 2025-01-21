@@ -116,14 +116,11 @@ public partial class AppApi
             var path = GetVRChatPhotosLocation();
             if (!Directory.Exists(path))
                 return null;
-
-            var lastDirectory = Directory.GetDirectories(path).OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
-            if (lastDirectory == null)
-                return null;
-
-            var lastScreenshot = Directory.GetFiles(lastDirectory, "*.png").OrderByDescending(File.GetCreationTime).FirstOrDefault();
-            if (lastScreenshot == null)
-                return null;
+            
+            // exclude folder names that contain "Prints" or "Stickers"
+            var imageFiles = Directory.GetFiles(path, "*.png", SearchOption.AllDirectories)
+                .Where(x => !Regex.IsMatch(x, @"\\Prints\\|\\Stickers\\", RegexOptions.IgnoreCase));
+            var lastScreenshot = imageFiles.OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
 
             return lastScreenshot;
         }
