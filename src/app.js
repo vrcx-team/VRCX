@@ -3802,11 +3802,10 @@ console.log(`isLinux: ${LINUX}`);
         }
 
         if (isGameRunning) {
-            API.currentUser.$previousAvatar = API.currentUser.currentAvatar;
             API.currentUser.$previousAvatarSwapTime = Date.now();
-        } else if (API.currentUser.$previousAvatar) {
-            this.addAvatarWearTime();
-            API.currentUser.$previousAvatar = '';
+        } else if (API.currentUser.$previousAvatarSwapTime) {
+            this.addAvatarWearTime(API.currentUser.currentAvatar);
+            API.currentUser.$previousAvatarSwapTime = '';
         }
 
         if (isSteamVRRunning !== this.isSteamVRRunning) {
@@ -19875,14 +19874,6 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.addAvatarToHistory = function (avatarId) {
         API.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
-            if (
-                API.currentUser.$previousAvatar &&
-                API.currentUser.$previousAvatar !== avatarId
-            ) {
-                this.addAvatarWearTime();
-            }
-            API.currentUser.$previousAvatar = avatarId;
-            API.currentUser.$previousAvatarSwapTime = Date.now();
 
             database.addAvatarToCache(ref);
             database.addAvatarToHistory(ref.id);
@@ -19904,9 +19895,9 @@ console.log(`isLinux: ${LINUX}`);
         });
     };
 
-    $app.methods.addAvatarWearTime = function () {
+    $app.methods.addAvatarWearTime = function (avatar) {
         const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
-        database.addAvatarTimeSpent(API.currentUser.$previousAvatar, timeSpent);
+        database.addAvatarTimeSpent(avatar, timeSpent);
     };
 
     $app.methods.promptClearAvatarHistory = function () {

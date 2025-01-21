@@ -165,6 +165,8 @@ export default class extends baseClass {
             if (this.isLoggedIn) {
                 if (json.currentAvatar !== ref.currentAvatar) {
                     $app.addAvatarToHistory(json.currentAvatar);
+                    $app.addAvatarWearTime(ref.currentAvatar);
+                    this.currentUser.$previousAvatarSwapTime = Date.now();
                 }
                 Object.assign(ref, json);
                 if (ref.homeLocation !== ref.$homeLocation.tag) {
@@ -276,7 +278,6 @@ export default class extends baseClass {
                     $offline_for: '',
                     $location_at: Date.now(),
                     $travelingToTime: Date.now(),
-                    $previousAvatar: '',
                     $previousAvatarSwapTime: Date.now(),
                     $homeLocation: {},
                     $isVRCPlus: false,
