@@ -2710,7 +2710,7 @@ class Database {
             const columnExists = dbRow.some((row) => row.name === 'time');
             if (!columnExists) {
                 sqliteService.executeNonQuery(
-                    `ALTER TABLE ${Database.userPrefix}_avatar_history ADD COLUMN 'time' INTEGER DEFAULT 0;`
+                    `ALTER TABLE ${Database.userPrefix}_avatar_history ADD time INTEGER DEFAULT 0`
                 );
             }
         }, `PRAGMA table_info(${Database.userPrefix}_avatar_history);`);

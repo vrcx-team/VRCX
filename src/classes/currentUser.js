@@ -165,8 +165,10 @@ export default class extends baseClass {
             if (this.isLoggedIn) {
                 if (json.currentAvatar !== ref.currentAvatar) {
                     $app.addAvatarToHistory(json.currentAvatar);
-                    $app.addAvatarWearTime(ref.currentAvatar);
-                    this.currentUser.$previousAvatarSwapTime = Date.now();
+                    if ($app.isGameRunning) {
+                        $app.addAvatarWearTime(ref.currentAvatar);
+                        ref.$previousAvatarSwapTime = Date.now();
+                    }
                 }
                 Object.assign(ref, json);
                 if (ref.homeLocation !== ref.$homeLocation.tag) {
@@ -278,7 +280,7 @@ export default class extends baseClass {
                     $offline_for: '',
                     $location_at: Date.now(),
                     $travelingToTime: Date.now(),
-                    $previousAvatarSwapTime: Date.now(),
+                    $previousAvatarSwapTime: '',
                     $homeLocation: {},
                     $isVRCPlus: false,
                     $isModerator: false,
@@ -294,6 +296,9 @@ export default class extends baseClass {
                     $vrchatcredits: null,
                     ...json
                 };
+                if ($app.isGameRunning) {
+                    ref.$previousAvatarSwapTime = Date.now();
+                }
                 ref.$homeLocation = $app.parseLocation(ref.homeLocation);
                 ref.$isVRCPlus = ref.tags.includes('system_supporter');
                 this.applyUserTrustLevel(ref);
