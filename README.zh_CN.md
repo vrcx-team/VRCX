@@ -8,7 +8,7 @@
 [![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
-[English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | **简体中文** | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
+| [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | **简体中文** | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
 
 VRCX 是一款用于 VRChat 的外部辅助小工具，可以比 VRChat 游戏客户端（无论是 PC 模式或 VR 模式）以及它的官网更方便地提供与 VRChat 相关的信息，同时能让你更轻松地完成各种操作。此外，它还提供了一些好用的功能。
 
