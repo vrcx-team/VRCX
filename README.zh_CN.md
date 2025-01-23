@@ -126,7 +126,7 @@ VRCX 是一款用于 VRChat 的外部辅助小工具，可以比 VRChat 游戏�
 <!-- The other images will be similar to this -->
 </div>
 
-## VRCX 是否违反了 VRChat 的服务条款？
+## VRCX 有没有违反 VRChat 的服务条款？
 
 **简而言之：没有违反**
 
