@@ -23,6 +23,7 @@ console.log('DOTNET_ROOT:', process.env.DOTNET_ROOT);
 // get launch arguments
 const args = process.argv.slice(1);
 const noInstall = args.some((val) => val === '--no-install');
+const x11 = args.some((val) => val === '--x11');
 const homePath = getHomePath();
 tryCopyFromWinePrefix();
 
@@ -145,7 +146,7 @@ function relaunchWithArgs(args) {
 }
 
 function createWindow() {
-    if (process.platform === 'linux' && !process.argv.includes('--ozone-platform-hint=auto')) {
+    if (process.platform === 'linux' && !process.argv.includes('--ozone-platform-hint=auto') && !x11) {
         relaunchWithArgs(process.argv.slice(1));
     }
 
