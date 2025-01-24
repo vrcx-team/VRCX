@@ -20,6 +20,12 @@
                 "pugAttributeSeparator": "none",
                 "pugBracketSameLine": true
             }
+        },
+        {
+            "files": "*.vue",
+            "options": {
+                "printWidth": 120
+            }
         }
     ]
 }

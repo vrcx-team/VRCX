@@ -36,6 +36,7 @@ import ModerationTab from './views/tabs/Moderation.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
+import GroupsSidebar from './components/sidebar/GroupsSidebar.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -166,7 +167,11 @@ console.log(`isLinux: ${LINUX}`);
 
             // components
             // - settings
-            SimpleSwitch
+            SimpleSwitch,
+
+            // components
+            // - sidebar(friendsListSidebar)
+            GroupsSidebar
         },
         el: '#x-app',
         async mounted() {
@@ -4217,8 +4222,6 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.isOfflineFriends = false;
     $app.data.isGroupInstances = false;
     $app.data.groupInstances = [];
-    $app.data.groupInstancesCfg = {};
-    $app.data.isGroupSidebarSortMode = false;
     $app.data.vipFriends_ = [];
     $app.data.onlineFriends_ = [];
     $app.data.activeFriends_ = [];
@@ -23122,32 +23125,6 @@ console.log(`isLinux: ${LINUX}`);
         return LINUX;
     };
 
-    // friendsListSiderBar
-    // - GroupedGroupByInstances
-    $app.methods.toggleGroupSidebarCollapse = function (groupId) {
-        $app.groupInstancesCfg[groupId].isCollapsed =
-            !$app.groupInstancesCfg[groupId].isCollapsed;
-    };
-
-    $app.computed.groupedGroupInstances = function () {
-        const groupMap = new Map();
-
-        $app.groupInstances.forEach((ref) => {
-            const groupId = ref.group.groupId;
-            if (!groupMap.has(groupId)) {
-                groupMap.set(groupId, []);
-            }
-            groupMap.get(groupId).push(ref);
-        });
-
-        return Array.from(groupMap.values()).sort((a, b) => {
-            const getSortValue = (group) =>
-                $app.groupInstancesCfg[group[0]?.group?.groupId]?.sort ??
-                Infinity;
-            return getSortValue(a) - getSortValue(b);
-        });
-    };
-
     // friendsListSidebar
     //  - SidebarGroupByInstance
 
@@ -23158,9 +23135,6 @@ console.log(`isLinux: ${LINUX}`);
             this.isSidebarGroupByInstance
         );
     };
-
-    // friendsListSidebar
-    //  - SidebarGroupByInstance
 
     $app.data.isSidebarGroupByInstance = await configRepository.getBool(
         'VRCX_sidebarGroupByInstance',
