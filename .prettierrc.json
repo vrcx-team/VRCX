@@ -8,5 +8,24 @@
     "bracketSpacing": true,
     "arrowParens": "always",
     "vueIndentScriptAndStyle": true,
-    "endOfLine": "auto"
+    "endOfLine": "auto",
+    "plugins": [
+        "@prettier/plugin-pug"
+    ],
+    "overrides": [
+        {
+            "files": "*.pug",
+            "options": {
+                "pugPrintWidth": 120,
+                "pugAttributeSeparator": "none",
+                "pugBracketSameLine": true
+            }
+        },
+        {
+            "files": "*.vue",
+            "options": {
+                "printWidth": 120
+            }
+        }
+    ]
 }

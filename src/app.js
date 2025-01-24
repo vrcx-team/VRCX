@@ -36,6 +36,7 @@ import ModerationTab from './views/tabs/Moderation.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
+import GroupsSidebar from './components/sidebar/GroupsSidebar.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -166,7 +167,11 @@ console.log(`isLinux: ${LINUX}`);
 
             // components
             // - settings
-            SimpleSwitch
+            SimpleSwitch,
+
+            // components
+            // - sidebar(friendsListSidebar)
+            GroupsSidebar
         },
         el: '#x-app',
         async mounted() {
@@ -23122,6 +23127,14 @@ console.log(`isLinux: ${LINUX}`);
 
     // friendsListSidebar
     //  - SidebarGroupByInstance
+
+    $app.methods.handleSwitchGroupByInstance = async function () {
+        this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
+        await configRepository.setBool(
+            'VRCX_sidebarGroupByInstance',
+            this.isSidebarGroupByInstance
+        );
+    };
 
     $app.data.isSidebarGroupByInstance = await configRepository.getBool(
         'VRCX_sidebarGroupByInstance',

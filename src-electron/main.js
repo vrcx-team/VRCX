@@ -9,6 +9,7 @@ const {
     dialog,
     Notification
 } = require('electron');
+const { spawn } = require('child_process');
 const fs = require('fs');
 const https = require('https');
 
@@ -22,6 +23,7 @@ console.log('DOTNET_ROOT:', process.env.DOTNET_ROOT);
 // get launch arguments
 const args = process.argv.slice(1);
 const noInstall = args.some((val) => val === '--no-install');
+const x11 = args.some((val) => val === '--x11');
 const homePath = getHomePath();
 tryCopyFromWinePrefix();
 
@@ -116,9 +118,40 @@ ipcMain.handle('app:restart', () => {
     }
 });
 
-function createWindow() {
-    app.commandLine.appendSwitch('enable-speech-dispatcher');
+function relaunchWithArgs(args) {
+    if (process.argv.includes('--ozone-platform-hint=auto')) {
+        console.log('Already running with correct arguments');
+        return;
+    }
 
+    const fullArgs = ['--ozone-platform-hint=auto', ...args];
+    
+    let execPath = process.execPath;
+    
+    if (appImagePath) {
+        execPath = appImagePath;
+        fullArgs.unshift('--appimage-extract-and-run');
+    }
+    
+    console.log('Relaunching with args:', fullArgs);
+    
+    const child = spawn(execPath, fullArgs, {
+        detached: true,
+        stdio: 'inherit'
+    });
+    
+    child.unref();
+
+    app.exit(0);
+}
+
+function createWindow() {
+    if (process.platform === 'linux' && !process.argv.includes('--ozone-platform-hint=auto') && !x11) {
+        relaunchWithArgs(process.argv.slice(1));
+    }
+
+    app.commandLine.appendSwitch('enable-speech-dispatcher');
+    
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = parseInt(VRCXStorage.Get('VRCX_SizeWidth')) || 1920;
@@ -372,7 +405,7 @@ async function installVRCX() {
             const desktopFile = `[Desktop Entry]
 Name=VRCX
 Comment=Friendship management tool for VRChat
-Exec=${appImagePath}
+Exec=${appImagePath} --ozone-platform-hint=auto
 Icon=VRCX
 Type=Application
 Categories=Network;InstantMessaging;Game;

@@ -1216,7 +1216,7 @@ export default class extends baseClass {
 
         API.$on('GROUP:USER:INSTANCES', function (args) {
             $app.groupInstances = [];
-            for (var json of args.json.instances) {
+            for (const json of args.json.instances) {
                 if (args.json.fetchedAt) {
                     // tack on fetchedAt
                     json.$fetchedAt = args.json.fetchedAt;
@@ -1227,7 +1227,7 @@ export default class extends baseClass {
                         fetchedAt: args.json.fetchedAt
                     }
                 });
-                var ref = this.cachedGroups.get(json.ownerId);
+                const ref = this.cachedGroups.get(json.ownerId);
                 if (typeof ref === 'undefined') {
                     if ($app.friendLogInitStatus) {
                         this.getGroup({ groupId: json.ownerId });
