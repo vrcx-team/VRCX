@@ -340,45 +340,4 @@ mixin friendsListSidebar
                 template(#label)
                     span {{ $t('side_panel.groups') }}
                     span(style='color: #909399; font-size: 12px; margin-left: 10px') ({{ groupInstances.length }})
-                //- .x-friend-list(style='padding: 10px 5px')
-                //-     template(v-if='isGroupSidebarSortMode')
-                //-         .sidebar-group-drag-title(
-                //-             v-for='(group, index) in groupedGroupInstances'
-                //-             :key='group[0].group?.groupId'
-                //-             :style='{ paddingTop: index === 0 ? "0px" : undefined }'
-                //-             draggable='true'
-                //-             @dragover='(e) => e.preventDefault()'
-                //-             @dragstart='onDragStart($event, index)'
-                //-             @dragend='onDragEnd($event, index)')
-                //-             div
-                //-                 i.el-icon-rank
-                //-                 span(style='margin-left: 5px') {{ group[0].group.name }} &horbar; {{ group.length }}
-                //-     template(v-else v-for='(group, index) in groupedGroupInstances' :key='group[0].group?.groupId')
-                //-         .x-friend-group.x-link.sidebar-group-title(
-                //-             :style='{ padding: index === 0 ? "0px 0px 5px" : undefined }')
-                //-             div(
-                //-                 @click='toggleGroupSidebarCollapse(group[0].group?.groupId)'
-                //-                 style='display: flex; align-items: center')
-                //-                 i.el-icon-arrow-right(
-                //-                     :class='{ rotate: !groupInstancesCfg[group[0].group?.groupId]?.isCollapsed }')
-                //-                 span(style='margin-left: 5px') {{ group[0].group.name }} &horbar; {{ group.length }}
-                //-         div(v-if='!isGroupSidebarSortMode && !groupInstancesCfg[group[0].group?.groupId]?.isCollapsed')
-                //-             .x-friend-item(
-                //-                 v-for='ref in group'
-                //-                 :key='ref.instance?.id'
-                //-                 @click='showGroupDialog(ref.instance.ownerId)')
-                //-                 .avatar
-                //-                     img(v-lazy='ref.group?.iconUrl')
-                //-                 .detail
-                //-                     span.name
-                //-                         span(v-text='ref.group.name')
-                //-                         span(style='font-weight: normal; margin-left: 5px') ({{ ref.instance?.userCount }}/{{ ref.instance?.capacity }})
-                //-                     location.extra(:location='ref.instance?.location' :link='false')
-                //-     el-button.sidebar-group-sort-button(
-                //-         v-if='groupInstances.length > 1'
-                //-         :style='{ color: isGroupSidebarSortMode ? "#54ff00" : undefined }'
-                //-         @click='isGroupSidebarSortMode = !isGroupSidebarSortMode'
-                //-         size='small'
-                //-         :icon='isGroupSidebarSortMode ? "el-icon-check" : "el-icon-sort"'
-                //-         circle)
                 groups-sidebar(:group-instances='groupInstances' @show-group-dialog='showGroupDialog')
