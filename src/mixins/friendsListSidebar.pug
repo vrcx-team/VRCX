@@ -110,7 +110,7 @@ mixin friendsListSidebar
                             i.el-icon-arrow-right(:class='{ rotate: isSidebarGroupByInstanceCollapsed }')
                             span(style='margin-left: 5px') {{ $t('side_panel.same_instance') }} &horbar; {{ friendsInSameInstance.length }}
                         div(v-show='!isSidebarGroupByInstanceCollapsed')
-                            div(v-for='friendArr in friendsInSameInstance' :key='friendArr[0].ref?.location.tag')
+                            div(v-for='friendArr in friendsInSameInstance' :key='friendArr[0].ref?.$location.tag')
                                 div(style='margin-bottom: 3px')
                                     location.extra(:location='getFriendsLocations(friendArr)' style='color: #c7c7c7')
                                     span(style='margin-left: 5px') {{ `(${friendArr.length})` }}
