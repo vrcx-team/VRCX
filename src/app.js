@@ -15361,9 +15361,13 @@ console.log(`isLinux: ${LINUX}`);
             }
             i++;
             this.friendsListLoadingProgress = `${i}/${length}`;
-            await API.getUser({
-                userId
-            });
+            try {
+                await API.getUser({
+                    userId
+                });
+            } catch (err) {
+                console.error(err);
+            }
         }
         this.friendsListLoadingProgress = '';
         this.friendsListLoading = false;
