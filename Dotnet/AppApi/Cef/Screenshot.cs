@@ -28,7 +28,7 @@ namespace VRCX
             if (changeFilename)
             {
                 var newFileName = $"{fileName}_{worldId}";
-                var newPath = Path.Combine(Path.GetDirectoryName(path), newFileName + Path.GetExtension(path));
+                var newPath = Path.Join(Path.GetDirectoryName(path), newFileName + Path.GetExtension(path));
                 File.Move(path, newPath);
                 path = newPath;
             }

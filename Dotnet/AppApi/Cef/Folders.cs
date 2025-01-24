@@ -35,7 +35,7 @@ namespace VRCX
                 }
             }
 
-            return Path.Combine(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
+            return Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
         }
 
         public override string GetVRChatPhotosLocation()
@@ -54,7 +54,7 @@ namespace VRCX
                 }
             }
 
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
         }
         
         public override string GetUGCPhotoLocation(string path = "")
@@ -81,7 +81,7 @@ namespace VRCX
 
         private string GetSteamUserdataPathFromRegistry()
         {
-            string steamUserdataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Steam\userdata");
+            string steamUserdataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Steam\userdata");
 
             try
             {
@@ -92,7 +92,7 @@ namespace VRCX
                         object o = key.GetValue("InstallPath");
                         if (o != null)
                         {
-                            steamUserdataPath = Path.Combine(o.ToString(), @"userdata");
+                            steamUserdataPath = Path.Join(o.ToString(), @"userdata");
                         }
                     }
                 }
@@ -117,7 +117,7 @@ namespace VRCX
             var steamUserDirs = Directory.GetDirectories(steamUserdataPath);
             foreach (var steamUserDir in steamUserDirs)
             {
-                var screenshotDir = Path.Combine(steamUserDir, @"760\remote\438100\screenshots");
+                var screenshotDir = Path.Join(steamUserDir, @"760\remote\438100\screenshots");
                 if (!Directory.Exists(screenshotDir))
                     continue;
 
@@ -184,7 +184,7 @@ namespace VRCX
 
         public override bool OpenCrashVrcCrashDumps()
         {
-            var path = Path.Combine(Path.GetTempPath(), "VRChat", "VRChat", "Crashes");
+            var path = Path.Join(Path.GetTempPath(), "VRChat", "VRChat", "Crashes");
             if (!Directory.Exists(path))
                 return false;
 

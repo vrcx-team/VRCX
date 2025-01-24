@@ -22,7 +22,7 @@ internal static class ImageCache
 
     static ImageCache()
     {
-        cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
+        cacheLocation = Path.Join(Program.AppDataDirectory, "ImageCache");
         var httpClientHandler = new HttpClientHandler();
         if (WebApi.ProxySet)
             httpClientHandler.Proxy = WebApi.Proxy;
@@ -33,8 +33,8 @@ internal static class ImageCache
 
     public static async Task<string> GetImage(string url, string fileId, string version)
     {
-        var directoryLocation = Path.Combine(cacheLocation, fileId);
-        var fileLocation = Path.Combine(directoryLocation, $"{version}.png");
+        var directoryLocation = Path.Join(cacheLocation, fileId);
+        var fileLocation = Path.Join(directoryLocation, $"{version}.png");
 
         if (File.Exists(fileLocation))
         {

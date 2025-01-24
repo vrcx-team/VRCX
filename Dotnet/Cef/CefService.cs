@@ -19,11 +19,11 @@ namespace VRCX
 
         internal void Init()
         {
-            var userDataDir = Path.Combine(Program.AppDataDirectory, "userdata");
+            var userDataDir = Path.Join(Program.AppDataDirectory, "userdata");
             var cefSettings = new CefSettings
             {
                 RootCachePath = userDataDir,
-                CachePath = Path.Combine(userDataDir, "cache"),
+                CachePath = Path.Join(userDataDir, "cache"),
                 LogSeverity = LogSeverity.Disable,
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,
@@ -37,7 +37,7 @@ namespace VRCX
                 SchemeName = "file",
                 DomainName = "vrcx",
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(
-                    Path.Combine(Program.BaseDirectory, "html"),
+                    Path.Join(Program.BaseDirectory, "html"),
                     "file",
                     defaultPage: "index.html"
                 ),

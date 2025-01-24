@@ -24,16 +24,16 @@ namespace VRCX
         {
             const string vrchatAppid = "438100";
             _homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            _steamPath = Path.Combine(_homeDirectory, ".local/share/Steam");
-            var flatpakSteamPath = Path.Combine(_homeDirectory, ".var/app/com.valvesoftware.Steam/.local/share/Steam");
+            _steamPath = Path.Join(_homeDirectory, ".local/share/Steam");
+            var flatpakSteamPath = Path.Join(_homeDirectory, ".var/app/com.valvesoftware.Steam/.local/share/Steam");
             if (!Directory.Exists(_steamPath) && Directory.Exists(flatpakSteamPath))
             {
                 logger.Info("Flatpak Steam detected.");
                 _steamPath = flatpakSteamPath;
             }
-            _steamUserdataPath = Path.Combine(_homeDirectory, ".steam/steam/userdata");
+            _steamUserdataPath = Path.Join(_homeDirectory, ".steam/steam/userdata");
             
-            var libraryFoldersVdfPath = Path.Combine(_steamPath, "config/libraryfolders.vdf");
+            var libraryFoldersVdfPath = Path.Join(_steamPath, "config/libraryfolders.vdf");
             var vrcLibraryPath = GetLibraryWithAppId(libraryFoldersVdfPath, vrchatAppid);
             if (string.IsNullOrEmpty(vrcLibraryPath))
             {
@@ -41,8 +41,8 @@ namespace VRCX
                 vrcLibraryPath = _steamPath;
             }
             logger.Info($"Using steam library path {vrcLibraryPath}");
-            _vrcPrefixPath = Path.Combine(vrcLibraryPath, $"steamapps/compatdata/{vrchatAppid}/pfx");
-            _vrcAppDataPath = Path.Combine(_vrcPrefixPath, "drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
+            _vrcPrefixPath = Path.Join(vrcLibraryPath, $"steamapps/compatdata/{vrchatAppid}/pfx");
+            _vrcAppDataPath = Path.Join(_vrcPrefixPath, "drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat");
         }
 
         private static string? GetLibraryWithAppId(string libraryFoldersVdfPath, string appId)
@@ -91,12 +91,12 @@ namespace VRCX
                 }
             }
             
-            return Path.Combine(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
+            return Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
         }
 
         public override string GetVRChatPhotosLocation()
         {
-            return Path.Combine(_vrcPrefixPath, "drive_c/users/steamuser/Pictures/VRChat");
+            return Path.Join(_vrcPrefixPath, "drive_c/users/steamuser/Pictures/VRChat");
         }
         
         public override string GetUGCPhotoLocation(string path = "")
@@ -138,7 +138,7 @@ namespace VRCX
         public override string GetVRChatScreenshotsLocation()
         {
             // program files steam userdata screenshots
-            return Path.Combine(_steamUserdataPath, "760/remote/438100/screenshots");
+            return Path.Join(_steamUserdataPath, "760/remote/438100/screenshots");
         }
 
         public override bool OpenVrcxAppDataFolder()

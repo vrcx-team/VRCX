@@ -23,10 +23,10 @@ namespace VRCX
     public class Update
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        private static readonly string VrcxSetupExecutable = Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe");
-        private static readonly string UpdateExecutable = Path.Combine(Program.AppDataDirectory, "update.exe");
-        private static readonly string TempDownload = Path.Combine(Program.AppDataDirectory, "tempDownload");
-        private static readonly string HashLocation = Path.Combine(Program.AppDataDirectory, "sha256sum.txt");
+        private static readonly string VrcxSetupExecutable = Path.Join(Program.AppDataDirectory, "VRCX_Setup.exe");
+        private static readonly string UpdateExecutable = Path.Join(Program.AppDataDirectory, "update.exe");
+        private static readonly string TempDownload = Path.Join(Program.AppDataDirectory, "tempDownload");
+        private static readonly string HashLocation = Path.Join(Program.AppDataDirectory, "sha256sum.txt");
         private static readonly HttpClient httpClient;
         private static CancellationToken _cancellationToken;
         public static int UpdateProgress;
@@ -138,9 +138,9 @@ namespace VRCX
                 throw new Exception($"Failed to download the file. Status code: {response.StatusCode}");
 
             var fileName = GetFileNameFromContentDisposition(response);
-            var tempPath = Path.Combine(Path.GetTempPath(), "VRCX");
+            var tempPath = Path.Join(Path.GetTempPath(), "VRCX");
             Directory.CreateDirectory(tempPath);
-            var filePath = Path.Combine(tempPath, fileName);
+            var filePath = Path.Join(tempPath, fileName);
             await using var fileStream = File.Create(filePath);
             await response.Content.CopyToAsync(fileStream, cancellationToken);
             return filePath;

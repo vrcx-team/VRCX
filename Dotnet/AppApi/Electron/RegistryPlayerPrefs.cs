@@ -85,7 +85,7 @@ namespace VRCX
         private static string GetSteamVdfCompatTool()
         {
             string steamPath = _steamPath;
-            string configVdfPath = Path.Combine(steamPath, "config", "config.vdf");
+            string configVdfPath = Path.Join(steamPath, "config", "config.vdf");
             if (!File.Exists(configVdfPath))
             {
                 logger.Error("config.vdf not found");
@@ -240,14 +240,14 @@ namespace VRCX
             }
 
             string steamPath = _steamPath;
-            string steamAppsCommonPath = Path.Combine(steamPath, "steamapps", "common");
-            string compatabilityToolsPath = Path.Combine(steamPath, "compatibilitytools.d");
-            string protonPath = Path.Combine(steamAppsCommonPath, compatTool);
-            string compatToolPath = Path.Combine(compatabilityToolsPath, compatTool);
+            string steamAppsCommonPath = Path.Join(steamPath, "steamapps", "common");
+            string compatabilityToolsPath = Path.Join(steamPath, "compatibilitytools.d");
+            string protonPath = Path.Join(steamAppsCommonPath, compatTool);
+            string compatToolPath = Path.Join(compatabilityToolsPath, compatTool);
             string winePath = "";
             if (Directory.Exists(compatToolPath))
             {
-                winePath = Path.Combine(compatToolPath, "files", "bin", "wine");
+                winePath = Path.Join(compatToolPath, "files", "bin", "wine");
                 if (!File.Exists(winePath))
                 {
                     Console.WriteLine("Wine not found in CompatTool path");
@@ -256,7 +256,7 @@ namespace VRCX
             }
             else if (Directory.Exists(protonPath))
             {
-                winePath = Path.Combine(protonPath, "dist", "bin", "wine");
+                winePath = Path.Join(protonPath, "dist", "bin", "wine");
                 if (!File.Exists(winePath))
                 {
                     logger.Error("Wine not found in Proton path");
@@ -270,7 +270,7 @@ namespace VRCX
                 {
                     if (dir.Contains(compatTool))
                     {
-                        winePath = Path.Combine(dir, "files", "bin", "wine");
+                        winePath = Path.Join(dir, "files", "bin", "wine");
                         if (File.Exists(winePath))
                         {
                             break;
@@ -338,7 +338,7 @@ namespace VRCX
         private string GetWineRegCommandEx(string regCommand)
         {
             string winePrefix = _vrcPrefixPath;
-            string filePath = Path.Combine(winePrefix, "user.reg");
+            string filePath = Path.Join(winePrefix, "user.reg");
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"Registry file not found at {filePath}");
 

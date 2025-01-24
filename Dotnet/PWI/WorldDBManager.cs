@@ -34,7 +34,7 @@ namespace VRCX
             listener = new HttpListener();
             listener.Prefixes.Add(WorldDBServerUrl);
 
-            worldDB = new WorldDatabase(Path.Combine(Program.AppDataDirectory, "VRCX-WorldData.db"));
+            worldDB = new WorldDatabase(Path.Join(Program.AppDataDirectory, "VRCX-WorldData.db"));
         }
 
         public void Init()

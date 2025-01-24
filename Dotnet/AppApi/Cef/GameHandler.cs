@@ -30,7 +30,7 @@ namespace VRCX
 
             if (Wine.GetIfWine())
             {
-                var wineTmpPath = Path.Combine(Program.AppDataDirectory, "wine.tmp");
+                var wineTmpPath = Path.Join(Program.AppDataDirectory, "wine.tmp");
                 if (File.Exists(wineTmpPath))
                 {
                     var wineTmp = File.ReadAllText(wineTmpPath);
@@ -122,7 +122,7 @@ namespace VRCX
         public override bool StartGameFromPath(string path, string arguments)
         {
             if (!path.EndsWith(".exe"))
-                path = Path.Combine(path, "launch.exe");
+                path = Path.Join(path, "launch.exe");
 
             if (!path.EndsWith("launch.exe") || !File.Exists(path))
                 return false;
