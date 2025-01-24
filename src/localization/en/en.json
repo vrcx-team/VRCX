@@ -633,6 +633,7 @@
         "friends": "Friends",
         "me": "ME",
         "favorite": "FAVORITES",
+        "same_instance": "Same Instance",
         "online": "ONLINE",
         "active": "ACTIVE",
         "offline": "OFFLINE",

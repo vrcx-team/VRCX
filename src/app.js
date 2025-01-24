@@ -23140,22 +23140,48 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_sidebarGroupByInstance',
         true
     );
-    $app.computed.onlineFriendsInSameInstance = function () {
-        const groupedItems = {};
 
-        this.onlineFriends.forEach((item) => {
-            const key = item.ref?.$location.tag;
+    $app.methods.handleSwitchGroupByInstance = function () {
+        this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
+        configRepository.setBool(
+            'VRCX_sidebarGroupByInstance',
+            this.isSidebarGroupByInstance
+        );
+    };
+
+    $app.data.isSidebarGroupByInstanceCollapsed =
+        await configRepository.getBool(
+            'VRCX_sidebarGroupByInstanceCollapsed',
+            false
+        );
+
+    $app.methods.toggleSwitchGroupByInstanceCollapsed = function () {
+        this.isSidebarGroupByInstanceCollapsed =
+            !this.isSidebarGroupByInstanceCollapsed;
+        configRepository.setBool(
+            'VRCX_sidebarGroupByInstanceCollapsed',
+            this.isSidebarGroupByInstanceCollapsed
+        );
+    };
+
+    $app.computed.friendsInSameInstance = function () {
+        const friendsList = {};
+
+        const allFriends = [...this.vipFriends, ...this.onlineFriends];
+
+        allFriends.forEach((friend) => {
+            const key = friend.ref?.$location.tag;
             if (!key || key === 'private' || key === 'offline') return;
-            if (!groupedItems[key]) {
-                groupedItems[key] = [];
+            if (!friendsList[key]) {
+                friendsList[key] = [];
             }
-            groupedItems[key].push(item);
+            friendsList[key].push(friend);
         });
 
-        const sortedGroups = [];
-        for (const group of Object.values(groupedItems)) {
+        const sortedFriendsList = [];
+        for (const group of Object.values(friendsList)) {
             if (group.length > 1) {
-                sortedGroups.push(
+                sortedFriendsList.push(
                     group.sort(
                         (a, b) => a.ref?.$location_at - b.ref?.$location_at
                     )
@@ -23163,53 +23189,37 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
 
-        return sortedGroups.sort((a, b) => b.length - a.length);
+        return sortedFriendsList.sort((a, b) => b.length - a.length);
     };
 
-    $app.computed.onlineFriendsNotInSameInstance = function () {
-        const friendsInSameInstance = new Set(
-            this.onlineFriendsInSameInstance.flat().map((friend) => friend.id)
+    $app.computed.onlineFriendsByGroupStatus = function () {
+        const sameInstanceTag = new Set(
+            this.friendsInSameInstance.flatMap((item) =>
+                item.map((friend) => friend.ref?.$location.tag)
+            )
         );
 
         return this.onlineFriends.filter(
-            (friend) => !friendsInSameInstance.has(friend.id)
+            (item) => !sameInstanceTag.has(item.ref?.$location.tag)
         );
     };
 
-    $app.computed.vipFriendsInSameInstance = function () {
-        const groupedItems = {};
-
-        this.vipFriends.forEach((item) => {
-            const key = item.ref?.$location.tag;
-            if (!key || key === 'private' || key === 'offline') return;
-            if (!groupedItems[key]) {
-                groupedItems[key] = [];
-            }
-            groupedItems[key].push(item);
-        });
-
-        const sortedGroups = [];
-        for (const group of Object.values(groupedItems)) {
-            if (group.length > 1) {
-                sortedGroups.push(
-                    group.sort(
-                        (a, b) => a.ref?.$location_at - b.ref?.$location_at
-                    )
-                );
-            }
-        }
-
-        return sortedGroups.sort((a, b) => b.length - a.length);
-    };
-
-    $app.computed.vipFriendsNotInSameInstance = function () {
-        const friendsInSameInstance = new Set(
-            this.vipFriendsInSameInstance.flat().map((friend) => friend.id)
+    $app.computed.vipFriendsByGroupStatus = function () {
+        const sameInstanceTag = new Set(
+            this.friendsInSameInstance.flatMap((item) =>
+                item.map((friend) => friend.ref?.$location.tag)
+            )
         );
 
         return this.vipFriends.filter(
-            (friend) => !friendsInSameInstance.has(friend.id)
+            (item) => !sameInstanceTag.has(item.ref?.$location.tag)
         );
+    };
+
+    $app.methods.getFriendsLocations = function (friendsArr) {
+        // prevent the instance title display as "Traveling".
+        return friendsArr.find((friend) => !friend.ref?.$location?.isTraveling)
+            ?.ref?.location;
     };
 
     // #endregion

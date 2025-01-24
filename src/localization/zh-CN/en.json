@@ -633,6 +633,7 @@
         "friends": "好友",
         "me": "我",
         "favorite": "星标好友",
+        "same_instance": "同一房间",
         "online": "在线",
         "active": "活跃中（仅登录网页端）",
         "offline": "离线",
