@@ -79,7 +79,7 @@ namespace VRCX
                     return false;
                 }
 
-                var steamExecutable = Path.Combine(steamPath, "steam.sh");
+                var steamExecutable = Path.Join(steamPath, "steam.sh");
                 if (!File.Exists(steamExecutable))
                 {
                     logger.Error("Steam executable not found.");
@@ -105,7 +105,7 @@ namespace VRCX
         public override bool StartGameFromPath(string path, string arguments)
         {
             if (!path.EndsWith(".exe"))
-                path = Path.Combine(path, "launch.exe");
+                path = Path.Join(path, "launch.exe");
 
             if (!path.EndsWith("launch.exe") || !File.Exists(path))
                 return false;

@@ -489,7 +489,7 @@ namespace VRCX
                         return err;
                     }
 
-                    var iconPath = Path.Combine(Program.BaseDirectory, "VRCX.png");
+                    var iconPath = Path.Join(Program.BaseDirectory, "VRCX.png");
                     err = overlay.SetOverlayFromFile(thumbnailHandle, iconPath);
                     if (err != EVROverlayError.None)
                     {

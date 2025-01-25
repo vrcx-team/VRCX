@@ -62,9 +62,9 @@ mixin settingsTab()
                     br
                     el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends" style="margin-top:8px")
                         el-option-group(:label="$t('view.settings.general.favorites.group_placeholder')")
-                            el-option.x-friend-item(v-for="group in API.favoriteFriendGroups" :key="group.key" :label="group.displayName ? group.displayName : group.name" :value="group.key")
+                            el-option.x-friend-item(v-for="group in API.favoriteFriendGroups" :key="group.key" :label="group.displayName" :value="group.key")
                                 .detail
-                                    span.name(v-text="group.displayName ? group.displayName : group.name")
+                                    span.name(v-text="group.displayName")
                 //- General | Game Log
                 div.options-container
                     span.header {{ $t('view.settings.general.logging.header') }}
@@ -233,6 +233,8 @@ mixin settingsTab()
                         el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{300: ''}" :min="200" :max="500" style="display:inline-block;width:300px")
                     div.options-container-item
                         simple-switch(:label='$t("view.settings.appearance.side_panel.group_by_instance")' :value='isSidebarGroupByInstance' @change='handleSwitchGroupByInstance' :tooltip='$t("view.settings.appearance.side_panel.group_by_instance_tooltip")')
+                    div.options-container-item
+                        simple-switch(:label='$t("view.settings.appearance.side_panel.split_favorite_friends")' :value='isSidebarDivideByFriendGroup' @change='handleSwitchDivideByFriendGroup' :tooltip='$t("view.settings.appearance.side_panel.split_favorite_friends_tooltip")')
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}

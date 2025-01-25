@@ -75,7 +75,7 @@ namespace VRCX
         public string CustomVrScriptPath()
         {
             var output = string.Empty;
-            var filePath = Path.Combine(Program.AppDataDirectory, "customvr.js");
+            var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
             if (File.Exists(filePath))
                 output = filePath;
             return output;

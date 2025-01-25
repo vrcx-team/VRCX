@@ -116,7 +116,7 @@ namespace VRCX
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe"),
+                    FileName = Path.Join(Program.BaseDirectory, "VRCX.exe"),
                     Arguments = string.Join(' ', args),
                     UseShellExecute = true,
                     WorkingDirectory = Program.BaseDirectory
@@ -128,7 +128,7 @@ namespace VRCX
         
         public override bool CheckForUpdateExe()
         {
-            return File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe"));
+            return File.Exists(Path.Join(Program.AppDataDirectory, "update.exe"));
         }
         
         public override void ExecuteAppFunction(string function, string json)

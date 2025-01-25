@@ -385,7 +385,9 @@
                     },
                     "width": "Width",
                     "group_by_instance": "Group by Instance",
-                    "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance."
+                    "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance.",
+                    "split_favorite_friends": "Split Favorite Friends",
+                    "split_favorite_friends_tooltip": "Separate favorite friends into their individual groups."
                 },
                 "user_dialog": {
                     "header": "User Dialog",
