@@ -2925,9 +2925,16 @@ console.log(`isLinux: ${LINUX}`);
         // 애초에 $isDeleted인데 여기로 올 수 가 있나..?
         this.cachedFavoritesByObjectId.delete(args.params.objectId);
         $app.localFavoriteFriends.delete(args.params.objectId);
-        for (var group of $app.localFavoriteFriendsDivideByGroup.values()) {
-            group.delete(args.params.objectId);
-        }
+        $app.localFavoriteFriendsDivideByGroup.forEach((key, group) => {
+            for (let i = group.length - 1; i >= 0; i--) {
+                if (group[i].id === args.params.objectId) {
+                    group.splice(i, 1);
+                }
+            }
+            if (group.length === 0) {
+                $app.localFavoriteFriendsDivideByGroup.delete(key);
+            }
+        });
         $app.updateSidebarFriendsList();
         if (ref.$isDeleted) {
             return;
@@ -2982,9 +2989,16 @@ console.log(`isLinux: ${LINUX}`);
             }
             this.cachedFavoritesByObjectId.delete(ref.favoriteId);
             $app.localFavoriteFriends.delete(ref.favoriteId);
-            for (var group of $app.localFavoriteFriendsDivideByGroup.values()) {
-                group.delete(ref.favoriteId);
-            }
+            $app.localFavoriteFriendsDivideByGroup.forEach((key, group) => {
+                for (let i = group.length - 1; i >= 0; i--) {
+                    if (group[i].id === ref.favoriteId) {
+                        group.splice(i, 1);
+                    }
+                }
+                if (group.length === 0) {
+                    $app.localFavoriteFriendsDivideByGroup.delete(key);
+                }
+            });
             $app.updateSidebarFriendsList();
             ref.$isDeleted = true;
             API.$emit('FAVORITE:@DELETE', {
@@ -3052,9 +3066,6 @@ console.log(`isLinux: ${LINUX}`);
                     $app.localFavoriteFriendsGroups.includes(ref.groupKey))
             ) {
                 $app.localFavoriteFriends.add(ref.favoriteId);
-                $app.localFavoriteFriendsDivideByGroup
-                    .get(ref.$groupKey)
-                    .push(ref.favoriteId);
                 $app.updateSidebarFriendsList();
             }
         } else {
@@ -3062,6 +3073,16 @@ console.log(`isLinux: ${LINUX}`);
             ref.$isExpired = false;
         }
         ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
+        if (!$app.localFavoriteFriendsDivideByGroup.has(ref.$groupKey)) {
+            $app.localFavoriteFriendsDivideByGroup.set(ref.$groupKey, [
+                ref.favoriteId
+            ]);
+        } else {
+            $app.localFavoriteFriendsDivideByGroup
+                .get(ref.$groupKey)
+                .push(ref.favoriteId);
+        }
+
         if (ref.$isDeleted === false && ref.$groupRef === null) {
             var group = this.cachedFavoriteGroupsByTypeName.get(ref.$groupKey);
             if (typeof group !== 'undefined') {
@@ -3280,7 +3301,9 @@ console.log(`isLinux: ${LINUX}`);
             for (var group of groups) {
                 if (group.assign === false && group.name === ref.name) {
                     group.assign = true;
-                    group.displayName = ref.displayName;
+                    if (ref.displayName) {
+                        group.displayName = ref.displayName;
+                    }
                     group.visibility = ref.visibility;
                     ref.$groupRef = group;
                     assigns.add(ref.id);
@@ -4509,11 +4532,14 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 $app.removeFromArray(this.vipFriends_, ctx);
-                this.vipFriendsDivideByGroup_.forEach((group) => {
+                this.vipFriendsDivideByGroup_.forEach((key, group) => {
                     for (let i = group.length - 1; i >= 0; i--) {
                         if (group[i].id === ctx.id) {
                             group.splice(i, 1);
                         }
+                    }
+                    if (group.length === 0) {
+                        this.vipFriendsDivideByGroup_.delete(key);
                     }
                 });
             } else {
@@ -4594,11 +4620,14 @@ console.log(`isLinux: ${LINUX}`);
                         this.sortVIPFriends = true;
                     } else {
                         $app.removeFromArray(this.vipFriends_, ctx);
-                        this.vipFriendsDivideByGroup_.forEach((group) => {
+                        this.vipFriendsDivideByGroup_.forEach((key, group) => {
                             for (let i = group.length - 1; i >= 0; i--) {
                                 if (group[i].id === ctx.id) {
                                     group.splice(i, 1);
                                 }
+                            }
+                            if (group.length === 0) {
+                                this.vipFriendsDivideByGroup_.delete(key);
                             }
                         });
                         this.onlineFriends_.push(ctx);
@@ -4794,11 +4823,14 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 $app.removeFromArray(this.vipFriends_, ctx);
-                this.vipFriendsDivideByGroup_.forEach((group) => {
+                this.vipFriendsDivideByGroup_.forEach((key, group) => {
                     for (let i = group.length - 1; i >= 0; i--) {
                         if (group[i].id === ctx.id) {
                             group.splice(i, 1);
                         }
+                    }
+                    if (group.length === 0) {
+                        this.vipFriendsDivideByGroup_.delete(key);
                     }
                 });
             } else {
@@ -5184,8 +5216,8 @@ console.log(`isLinux: ${LINUX}`);
         return this.vipFriends_;
     };
 
-    // VIP friends devide by group
-    $app.computed.vipFriendsDividebyGroup = function () {
+    // VIP friends divide by group
+    $app.computed.vipFriendsDivideByGroup = function () {
         if (this.sortVIPFriends) {
             this.vipFriendsDivideByGroup_.forEach((group) => {
                 group.sort(getFriendsSortFunction(this.sidebarSortMethods));
@@ -5204,14 +5236,16 @@ console.log(`isLinux: ${LINUX}`);
             });
         }
         // 对this.vipFriendsDivideByGroup_的每一项的value值数组进行filter操作，只留下id存在于this.vipFriendsByGroupStatus中的所有项的id中的项
-        const vipFriendsByGroupStatusIds = new Set(
-            this.vipFriendsByGroupStatus.map((friend) => friend.id)
-        );
-        arr.forEach((group) => {
-            group.value = group.value.filter((friend) =>
-                vipFriendsByGroupStatusIds.has(friend.id)
+        if (this.isSidebarGroupByInstance) {
+            const vipFriendsByGroupStatusIds = new Set(
+                this.vipFriendsByGroupStatus.map((friend) => friend.id)
             );
-        });
+            arr.forEach((group) => {
+                group.value = group.value.filter((friend) =>
+                    vipFriendsByGroupStatusIds.has(friend.id)
+                );
+            });
+        }
         return arr;
     };
 
@@ -22113,11 +22147,14 @@ console.log(`isLinux: ${LINUX}`);
                 this.sortVIPFriends = true;
             } else {
                 $app.removeFromArray(this.vipFriends_, ctx);
-                this.vipFriendsDivideByGroup_.forEach((group) => {
+                this.vipFriendsDivideByGroup_.forEach((key, group) => {
                     for (let i = group.length - 1; i >= 0; i--) {
                         if (group[i].id === ctx.id) {
                             group.splice(i, 1);
                         }
+                    }
+                    if (group.length === 0) {
+                        this.vipFriendsDivideByGroup_.delete(key);
                     }
                 });
                 this.onlineFriends_.push(ctx);
@@ -23235,6 +23272,22 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // friendsListSidebar
+
+    //  - DivideByFriendGroup
+
+    $app.data.isSidebarDivideByFriendGroup = await configRepository.getBool(
+        'VRCX_sidebarDivideByFriendGroup',
+        true
+    );
+
+    $app.methods.handleSwitchDivideByFriendGroup = async function () {
+        this.isSidebarDivideByFriendGroup = !this.isSidebarDivideByFriendGroup;
+        await configRepository.setBool(
+            'VRCX_sidebarDivideByFriendGroup',
+            this.isSidebarDivideByFriendGroup
+        );
+    };
+
     //  - SidebarGroupByInstance
 
     $app.methods.handleSwitchGroupByInstance = async function () {

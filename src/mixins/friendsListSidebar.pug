@@ -63,7 +63,7 @@ mixin friendsListSidebar
                                     :traveling='lastLocationDestination'
                                     :link='false')
                                 location.extra(
-                                    v-else-if='isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)' 
+                                    v-else-if='isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)'
                                     :location='API.currentUser.$locationTag'
                                     :traveling='API.currentUser.$travelingToLocation'
                                     :link='false')
@@ -73,25 +73,73 @@ mixin friendsListSidebar
                         v-show='vipFriendsByGroupStatus.length')
                         i.el-icon-arrow-right(:class='{ rotate: isVIPFriends }')
                         span(style='margin-left: 5px') {{ $t('side_panel.favorite') }} &horbar; {{ vipFriendsByGroupStatus.length }}
-                    div(v-show="isVIPFriends")
-                        div(v-for="(group, idx) in vipFriendsDividebyGroup" :key="idx")
-                            div(style="margin-bottom: 3px")
-                                span(style="color:#c7c7c7") {{ group.displayName }}
-                                span(style="margin-left: 5px") {{ `(${group.value.length})` }}
-                            div(style="margin-bottom: 10px")
-                                div.x-friend-item(v-if="group.value && group.value.length" v-for="friend in group.value" :key="friend.id" @click="showUserDialog(friend.id)")
-                                    template(v-if="friend.ref")
-                                        .avatar(:class="userStatusClass(friend.ref, friend.pendingOffline)")
-                                            img(v-lazy="userImage(friend.ref)")
-                                        .detail
-                                            span.name(v-if="!hideNicknames && friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
-                                            span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                            span.extra(v-if="friend.pendingOffline") #[i.el-icon-warning-outline] {{ $t('side_panel.pending_offline') }}
-                                            location.extra(v-else :location="friend.ref.location" :traveling="friend.ref.travelingToLocation" :link="false")
-                                    template(v-else)
-                                        span(v-text="friend.name || friend.id")
-                                        el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-
+                    div(v-show='isVIPFriends')
+                        template(v-if='isSidebarDivideByFriendGroup')
+                            div(v-for='(group, idx) in vipFriendsDivideByGroup' :key='idx')
+                                div(style='margin-bottom: 3px')
+                                    span.extra {{ group.displayName }}
+                                    span.extra(style='margin-left: 5px') {{ `(${group.value.length})` }}
+                                div(style='margin-bottom: 10px')
+                                    .x-friend-item(
+                                        v-if='group.value && group.value.length'
+                                        v-for='friend in group.value'
+                                        :key='friend.id'
+                                        @click='showUserDialog(friend.id)')
+                                        template(v-if='friend.ref')
+                                            .avatar(:class='userStatusClass(friend.ref, friend.pendingOffline)')
+                                                img(v-lazy='userImage(friend.ref)')
+                                            .detail
+                                                span.name(
+                                                    v-if='!hideNicknames && friend.$nickName'
+                                                    :style='{ color: friend.ref.$userColour }') {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                                span.name(
+                                                    v-else
+                                                    v-text='friend.ref.displayName'
+                                                    :style='{ color: friend.ref.$userColour }')
+                                                span.extra(v-if='friend.pendingOffline') #[i.el-icon-warning-outline] {{ $t('side_panel.pending_offline') }}
+                                                location.extra(
+                                                    v-else
+                                                    :location='friend.ref.location'
+                                                    :traveling='friend.ref.travelingToLocation'
+                                                    :link='false')
+                                        template(v-else)
+                                            span(v-text='friend.name || friend.id')
+                                            el-button(
+                                                type='text'
+                                                icon='el-icon-close'
+                                                size='mini'
+                                                @click.stop='confirmDeleteFriend(friend.id)'
+                                                style='margin-left: 5px')
+                        template(v-else)
+                            .x-friend-item(
+                                v-for='friend in vipFriendsByGroupStatus'
+                                :key='friend.id'
+                                @click='showUserDialog(friend.id)')
+                                template(v-if='friend.ref')
+                                    .avatar(:class='userStatusClass(friend.ref, friend.pendingOffline)')
+                                        img(v-lazy='userImage(friend.ref)')
+                                    .detail
+                                        span.name(
+                                            v-if='!hideNicknames && friend.$nickName'
+                                            :style='{ color: friend.ref.$userColour }') {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                        span.name(
+                                            v-else
+                                            v-text='friend.ref.displayName'
+                                            :style='{ color: friend.ref.$userColour }')
+                                        span.extra(v-if='friend.pendingOffline') #[i.el-icon-warning-outline] {{ $t('side_panel.pending_offline') }}
+                                        location.extra(
+                                            v-else
+                                            :location='friend.ref.location'
+                                            :traveling='friend.ref.travelingToLocation'
+                                            :link='false')
+                                template(v-else)
+                                    span(v-text='friend.name || friend.id')
+                                    el-button(
+                                        type='text'
+                                        icon='el-icon-close'
+                                        size='mini'
+                                        @click.stop='confirmDeleteFriend(friend.id)'
+                                        style='margin-left: 5px')
                     //- Group By Instance
                     template(v-if='isSidebarGroupByInstance && friendsInSameInstance.length')
                         .x-friend-group.x-link(@click='toggleSwitchGroupByInstanceCollapsed')
