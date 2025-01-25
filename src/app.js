@@ -2925,6 +2925,9 @@ console.log(`isLinux: ${LINUX}`);
         // 애초에 $isDeleted인데 여기로 올 수 가 있나..?
         this.cachedFavoritesByObjectId.delete(args.params.objectId);
         $app.localFavoriteFriends.delete(args.params.objectId);
+        for (var group of $app.localFavoriteFriendsDivideByGroup.values()) {
+            group.delete(args.params.objectId);
+        }
         $app.updateSidebarFriendsList();
         if (ref.$isDeleted) {
             return;
@@ -2979,6 +2982,9 @@ console.log(`isLinux: ${LINUX}`);
             }
             this.cachedFavoritesByObjectId.delete(ref.favoriteId);
             $app.localFavoriteFriends.delete(ref.favoriteId);
+            for (var group of $app.localFavoriteFriendsDivideByGroup.values()) {
+                group.delete(ref.favoriteId);
+            }
             $app.updateSidebarFriendsList();
             ref.$isDeleted = true;
             API.$emit('FAVORITE:@DELETE', {
@@ -3046,6 +3052,9 @@ console.log(`isLinux: ${LINUX}`);
                     $app.localFavoriteFriendsGroups.includes(ref.groupKey))
             ) {
                 $app.localFavoriteFriends.add(ref.favoriteId);
+                $app.localFavoriteFriendsDivideByGroup
+                    .get(ref.$groupKey)
+                    .push(ref.favoriteId);
                 $app.updateSidebarFriendsList();
             }
         } else {
@@ -4223,6 +4232,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.isGroupInstances = false;
     $app.data.groupInstances = [];
     $app.data.vipFriends_ = [];
+    $app.data.vipFriendsDivideByGroup_ = new Map();
     $app.data.onlineFriends_ = [];
     $app.data.activeFriends_ = [];
     $app.data.offlineFriends_ = [];
@@ -4330,6 +4340,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.isGroupInstances = false;
         $app.groupInstances = [];
         $app.vipFriends_ = [];
+        $app.vipFriendsDivideByGroup_.clear();
         $app.onlineFriends_ = [];
         $app.activeFriends_ = [];
         $app.offlineFriends_ = [];
@@ -4465,6 +4476,16 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 this.vipFriends_.push(ctx);
+                const key =
+                    Array.from(
+                        this.localFavoriteFriendsDivideByGroup.entries()
+                    ).find(([_, ids]) => ids.includes(ctx.id))?.[0] || '';
+                if (!this.vipFriendsDivideByGroup_.has(key)) {
+                    this.vipFriendsDivideByGroup_.set(key, [ctx]);
+                } else {
+                    this.vipFriendsDivideByGroup_.get(key).push(ctx);
+                }
+
                 this.sortVIPFriends = true;
             } else {
                 this.onlineFriends_.push(ctx);
@@ -4488,6 +4509,13 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 $app.removeFromArray(this.vipFriends_, ctx);
+                this.vipFriendsDivideByGroup_.forEach((group) => {
+                    for (let i = group.length - 1; i >= 0; i--) {
+                        if (group[i].id === ctx.id) {
+                            group.splice(i, 1);
+                        }
+                    }
+                });
             } else {
                 $app.removeFromArray(this.onlineFriends_, ctx);
             }
@@ -4552,9 +4580,27 @@ console.log(`isLinux: ${LINUX}`);
                     if (ctx.isVIP) {
                         $app.removeFromArray(this.onlineFriends_, ctx);
                         this.vipFriends_.push(ctx);
+                        const key =
+                            Array.from(
+                                this.localFavoriteFriendsDivideByGroup.entries()
+                            ).find(([_, ids]) => ids.includes(ctx.id))?.[0] ||
+                            '';
+                        if (!this.vipFriendsDivideByGroup_.has(key)) {
+                            this.vipFriendsDivideByGroup_.set(key, [ctx]);
+                        } else {
+                            this.vipFriendsDivideByGroup_.get(key).push(ctx);
+                        }
+
                         this.sortVIPFriends = true;
                     } else {
                         $app.removeFromArray(this.vipFriends_, ctx);
+                        this.vipFriendsDivideByGroup_.forEach((group) => {
+                            for (let i = group.length - 1; i >= 0; i--) {
+                                if (group[i].id === ctx.id) {
+                                    group.splice(i, 1);
+                                }
+                            }
+                        });
                         this.onlineFriends_.push(ctx);
                         this.sortOnlineFriends = true;
                     }
@@ -4748,6 +4794,13 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 $app.removeFromArray(this.vipFriends_, ctx);
+                this.vipFriendsDivideByGroup_.forEach((group) => {
+                    for (let i = group.length - 1; i >= 0; i--) {
+                        if (group[i].id === ctx.id) {
+                            group.splice(i, 1);
+                        }
+                    }
+                });
             } else {
                 $app.removeFromArray(this.onlineFriends_, ctx);
             }
@@ -4759,6 +4812,16 @@ console.log(`isLinux: ${LINUX}`);
         if (newState === 'online') {
             if (isVIP) {
                 this.vipFriends_.push(ctx);
+                const key =
+                    Array.from(
+                        this.localFavoriteFriendsDivideByGroup.entries()
+                    ).find(([_, ids]) => ids.includes(ctx.id))?.[0] || '';
+                if (!this.vipFriendsDivideByGroup_.has(key)) {
+                    this.vipFriendsDivideByGroup_.set(key, [ctx]);
+                } else {
+                    this.vipFriendsDivideByGroup_.get(key).push(ctx);
+                }
+
                 this.sortVIPFriends = true;
             } else {
                 this.onlineFriends_.push(ctx);
@@ -5119,6 +5182,37 @@ console.log(`isLinux: ${LINUX}`);
 
         this.vipFriends_.sort(getFriendsSortFunction(this.sidebarSortMethods));
         return this.vipFriends_;
+    };
+
+    // VIP friends devide by group
+    $app.computed.vipFriendsDividebyGroup = function () {
+        if (this.sortVIPFriends) {
+            this.vipFriendsDivideByGroup_.forEach((group) => {
+                group.sort(getFriendsSortFunction(this.sidebarSortMethods));
+            });
+        }
+        this.sortVIPFriends = false;
+
+        const arr = [];
+        for (const [key, value] of this.vipFriendsDivideByGroup_) {
+            arr.push({
+                key: key,
+                value: value,
+                displayName: API.favoriteFriendGroups.find(
+                    (group) => group.key === key
+                )?.displayName
+            });
+        }
+        // 对this.vipFriendsDivideByGroup_的每一项的value值数组进行filter操作，只留下id存在于this.vipFriendsByGroupStatus中的所有项的id中的项
+        const vipFriendsByGroupStatusIds = new Set(
+            this.vipFriendsByGroupStatus.map((friend) => friend.id)
+        );
+        arr.forEach((group) => {
+            group.value = group.value.filter((friend) =>
+                vipFriendsByGroupStatusIds.has(friend.id)
+            );
+        });
+        return arr;
     };
 
     // Online friends
@@ -21953,6 +22047,7 @@ console.log(`isLinux: ${LINUX}`);
     // #region | Local Favorite Friends
 
     $app.data.localFavoriteFriends = new Set();
+    $app.data.localFavoriteFriendsDivideByGroup = new Map();
     $app.data.localFavoriteFriendsGroups = JSON.parse(
         await configRepository.getString(
             'VRCX_localFavoriteFriendsGroups',
@@ -21962,6 +22057,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.updateLocalFavoriteFriends = function () {
         this.localFavoriteFriends.clear();
+        this.localFavoriteFriendsDivideByGroup.clear();
         for (var ref of API.cachedFavorites.values()) {
             if (
                 !ref.$isDeleted &&
@@ -21970,6 +22066,17 @@ console.log(`isLinux: ${LINUX}`);
                     this.localFavoriteFriendsGroups.includes(ref.$groupKey))
             ) {
                 this.localFavoriteFriends.add(ref.favoriteId);
+                if (
+                    !this.localFavoriteFriendsDivideByGroup.has(ref.$groupKey)
+                ) {
+                    this.localFavoriteFriendsDivideByGroup.set(ref.$groupKey, [
+                        ref.favoriteId
+                    ]);
+                } else {
+                    this.localFavoriteFriendsDivideByGroup
+                        .get(ref.$groupKey)
+                        .push(ref.favoriteId);
+                }
             }
         }
         this.updateSidebarFriendsList();
@@ -21993,9 +22100,26 @@ console.log(`isLinux: ${LINUX}`);
             if (ctx.isVIP) {
                 $app.removeFromArray(this.onlineFriends_, ctx);
                 this.vipFriends_.push(ctx);
+                const key =
+                    Array.from(
+                        this.localFavoriteFriendsDivideByGroup.entries()
+                    ).find(([_, ids]) => ids.includes(ctx.id))?.[0] || '';
+                if (!this.vipFriendsDivideByGroup_.has(key)) {
+                    this.vipFriendsDivideByGroup_.set(key, [ctx]);
+                } else {
+                    this.vipFriendsDivideByGroup_.get(key).push(ctx);
+                }
+
                 this.sortVIPFriends = true;
             } else {
                 $app.removeFromArray(this.vipFriends_, ctx);
+                this.vipFriendsDivideByGroup_.forEach((group) => {
+                    for (let i = group.length - 1; i >= 0; i--) {
+                        if (group[i].id === ctx.id) {
+                            group.splice(i, 1);
+                        }
+                    }
+                });
                 this.onlineFriends_.push(ctx);
                 this.sortOnlineFriends = true;
             }
