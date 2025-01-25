@@ -95,13 +95,13 @@ mixin friendsListSidebar
                     //- Group By Instance
                     template(v-if='isSidebarGroupByInstance && friendsInSameInstance.length')
                         .x-friend-group.x-link(@click='toggleSwitchGroupByInstanceCollapsed')
-                            i.el-icon-arrow-right(:class='{ rotate: isSidebarGroupByInstanceCollapsed }')
+                            i.el-icon-arrow-right(:class='{ rotate: !isSidebarGroupByInstanceCollapsed }')
                             span(style='margin-left: 5px') {{ $t('side_panel.same_instance') }} &horbar; {{ friendsInSameInstance.length }}
                         div(v-show='!isSidebarGroupByInstanceCollapsed')
                             div(v-for='friendArr in friendsInSameInstance' :key='friendArr[0].ref?.$location.tag')
                                 div(style='margin-bottom: 3px')
-                                    location.extra(:location='getFriendsLocations(friendArr)' style='color: #c7c7c7')
-                                    span(style='margin-left: 5px') {{ `(${friendArr.length})` }}
+                                    location.extra(:location='getFriendsLocations(friendArr)')
+                                    span.extra(style='margin-left: 5px') {{ `(${friendArr.length})` }}
                                 div
                                     .x-friend-item(
                                         v-if='friendArr && friendArr.length'
@@ -113,11 +113,11 @@ mixin friendsListSidebar
                                             .avatar(:class='userStatusClass(friend.ref, friend.pendingOffline)')
                                                 img(v-lazy='userImage(friend.ref)')
                                             .detail
-                                                div(style='display: flex; align-items: center')
-                                                    span.name(
+                                                span.name(style='display: flex; align-items: center')
+                                                    span(
                                                         v-if='!hideNicknames && friend.$nickName'
                                                         :style='{ color: friend.ref.$userColour }') {{ friend.ref.displayName }} ({{ friend.$nickName }})
-                                                    span.name(
+                                                    span(
                                                         v-else
                                                         v-text='friend.ref.displayName'
                                                         :style='{ color: friend.ref.$userColour }')
@@ -129,7 +129,7 @@ mixin friendsListSidebar
                                                     i.el-icon.el-icon-loading(
                                                         v-if='friend.ref.travelingToLocation'
                                                         style='display: inline-block; margin-right: 5px')
-                                                    timer(:epoch='friend.ref?.$location_at' style='color: #c7c7c7')
+                                                    timer.extra(:epoch='friend.ref?.$location_at')
                                         template(v-else)
                                             span(v-text='friend.name || friend.id')
                                             el-button(

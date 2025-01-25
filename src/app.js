@@ -23276,7 +23276,8 @@ console.log(`isLinux: ${LINUX}`);
     $app.computed.friendsInSameInstance = function () {
         const friendsList = {};
 
-        this.friends.forEach((friend) => {
+        const allFriends = [...this.vipFriends, ...this.onlineFriends];
+        allFriends.forEach((friend) => {
             if (!friend.ref?.$location.isRealInstance) return;
 
             const key = friend.ref.$location.tag;
