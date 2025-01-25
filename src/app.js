@@ -5186,24 +5186,12 @@ console.log(`isLinux: ${LINUX}`);
 
     // VIP friends devide by group
     $app.computed.vipFriendsDividebyGroup = function () {
-        if (!this.sortVIPFriends) {
-            const arr = [];
-            for (const [key, value] of this.vipFriendsDivideByGroup_) {
-                arr.push({
-                    key: key,
-                    value: value,
-                    displayName: API.favoriteFriendGroups.find(
-                        (group) => group.key === key
-                    )?.displayName
-                });
-            }
-            return arr;
+        if (this.sortVIPFriends) {
+            this.vipFriendsDivideByGroup_.forEach((group) => {
+                group.sort(getFriendsSortFunction(this.sidebarSortMethods));
+            });
         }
         this.sortVIPFriends = false;
-
-        this.vipFriendsDivideByGroup_.forEach((group) => {
-            group.sort(getFriendsSortFunction(this.sidebarSortMethods));
-        });
 
         const arr = [];
         for (const [key, value] of this.vipFriendsDivideByGroup_) {
@@ -5215,6 +5203,15 @@ console.log(`isLinux: ${LINUX}`);
                 )?.displayName
             });
         }
+        // 对this.vipFriendsDivideByGroup_的每一项的value值数组进行filter操作，只留下id存在于this.vipFriendsByGroupStatus中的所有项的id中的项
+        const vipFriendsByGroupStatusIds = new Set(
+            this.vipFriendsByGroupStatus.map((friend) => friend.id)
+        );
+        arr.forEach((group) => {
+            group.value = group.value.filter((friend) =>
+                vipFriendsByGroupStatusIds.has(friend.id)
+            );
+        });
         return arr;
     };
 
