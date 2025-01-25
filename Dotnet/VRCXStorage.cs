@@ -17,7 +17,7 @@ namespace VRCX
         public static readonly VRCXStorage Instance;
         private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static Dictionary<string, string> m_Storage = new Dictionary<string, string>();
-        private static readonly string m_JsonPath = Path.Combine(Program.AppDataDirectory, "VRCX.json");
+        private static readonly string m_JsonPath = Path.Join(Program.AppDataDirectory, "VRCX.json");
         private static bool m_Dirty;
 
         static VRCXStorage()

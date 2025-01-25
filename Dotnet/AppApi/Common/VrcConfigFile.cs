@@ -8,7 +8,7 @@ namespace VRCX
         public string ReadConfigFile()
         {
             var path = GetVRChatAppDataLocation();
-            var configFile = Path.Combine(path, "config.json");
+            var configFile = Path.Join(path, "config.json");
             if (!Directory.Exists(path) || !File.Exists(configFile))
             {
                 return string.Empty;
@@ -21,7 +21,7 @@ namespace VRCX
         public void WriteConfigFile(string json)
         {
             var path = GetVRChatAppDataLocation();
-            var configFile = Path.Combine(path, "config.json");
+            var configFile = Path.Join(path, "config.json");
             File.WriteAllText(configFile, json);
         }
     }

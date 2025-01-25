@@ -30,39 +30,39 @@ namespace VRCX
         private static void SetProgramDirectories()
         {
             if (string.IsNullOrEmpty(AppDataDirectory))
-                AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                AppDataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     "VRCX");
 
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            ConfigLocation = Path.Combine(AppDataDirectory, "VRCX.sqlite3");
+            ConfigLocation = Path.Join(AppDataDirectory, "VRCX.sqlite3");
 
             if (!Directory.Exists(AppDataDirectory))
             {
                 Directory.CreateDirectory(AppDataDirectory);
 
                 // Migrate config to AppData
-                if (File.Exists(Path.Combine(BaseDirectory, "VRCX.json")))
+                if (File.Exists(Path.Join(BaseDirectory, "VRCX.json")))
                 {
-                    File.Move(Path.Combine(BaseDirectory, "VRCX.json"), Path.Combine(AppDataDirectory, "VRCX.json"));
-                    File.Copy(Path.Combine(AppDataDirectory, "VRCX.json"),
-                        Path.Combine(AppDataDirectory, "VRCX-backup.json"));
+                    File.Move(Path.Join(BaseDirectory, "VRCX.json"), Path.Join(AppDataDirectory, "VRCX.json"));
+                    File.Copy(Path.Join(AppDataDirectory, "VRCX.json"),
+                        Path.Join(AppDataDirectory, "VRCX-backup.json"));
                 }
 
-                if (File.Exists(Path.Combine(BaseDirectory, "VRCX.sqlite3")))
+                if (File.Exists(Path.Join(BaseDirectory, "VRCX.sqlite3")))
                 {
-                    File.Move(Path.Combine(BaseDirectory, "VRCX.sqlite3"),
-                        Path.Combine(AppDataDirectory, "VRCX.sqlite3"));
-                    File.Copy(Path.Combine(AppDataDirectory, "VRCX.sqlite3"),
-                        Path.Combine(AppDataDirectory, "VRCX-backup.sqlite3"));
+                    File.Move(Path.Join(BaseDirectory, "VRCX.sqlite3"),
+                        Path.Join(AppDataDirectory, "VRCX.sqlite3"));
+                    File.Copy(Path.Join(AppDataDirectory, "VRCX.sqlite3"),
+                        Path.Join(AppDataDirectory, "VRCX-backup.sqlite3"));
                 }
             }
 
             // Migrate cache to userdata for Cef 115 update
-            var oldCachePath = Path.Combine(AppDataDirectory, "cache");
-            var newCachePath = Path.Combine(AppDataDirectory, "userdata", "cache");
+            var oldCachePath = Path.Join(AppDataDirectory, "cache");
+            var newCachePath = Path.Join(AppDataDirectory, "userdata", "cache");
             if (Directory.Exists(oldCachePath) && !Directory.Exists(newCachePath))
             {
-                Directory.CreateDirectory(Path.Combine(AppDataDirectory, "userdata"));
+                Directory.CreateDirectory(Path.Join(AppDataDirectory, "userdata"));
                 Directory.Move(oldCachePath, newCachePath);
             }
         }
@@ -73,7 +73,7 @@ namespace VRCX
             
             try
             {
-                Version = $"{buildName} {File.ReadAllText(Path.Combine(BaseDirectory, "Version"))}";
+                Version = $"{buildName} {File.ReadAllText(Path.Join(BaseDirectory, "Version"))}";
             }
             catch (Exception)
             {
@@ -89,12 +89,12 @@ namespace VRCX
             {
                 var fileTarget = new FileTarget("fileTarget")
                 {
-                    FileName = Path.Combine(AppDataDirectory, "logs", "VRCX.log"),
+                    FileName = Path.Join(AppDataDirectory, "logs", "VRCX.log"),
                     //Layout = "${longdate} [${level:uppercase=true}] ${logger} - ${message} ${exception:format=tostring}",
                     // Layout with padding between the level/logger and message so that the message always starts at the same column
                     Layout =
                         "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
-                    ArchiveFileName = Path.Combine(AppDataDirectory, "logs", "VRCX.{#}.log"),
+                    ArchiveFileName = Path.Join(AppDataDirectory, "logs", "VRCX.{#}.log"),
                     ArchiveNumbering = ArchiveNumberingMode.DateAndSequence,
                     ArchiveEvery = FileArchivePeriod.Day,
                     MaxArchiveFiles = 4,

@@ -102,16 +102,16 @@ namespace VRCX
         {
             var cachePath = GetVRChatCacheLocation();
             var idHash = GetAssetId(id, variant);
-            var topDir = Path.Combine(cachePath, idHash);
+            var topDir = Path.Join(cachePath, idHash);
             var versionLocation = GetAssetVersion(version, variantVersion);
             if (!Directory.Exists(topDir))
-                return Path.Combine(topDir, versionLocation);
+                return Path.Join(topDir, versionLocation);
             var versionSearchPattern = string.Concat("*", versionLocation.AsSpan(8));
             var dirs = Directory.GetDirectories(topDir, versionSearchPattern);
             if (dirs.Length > 0)
                 return dirs.OrderByDescending(dir => ReverseHexToDecimal(Path.GetFileName(dir)).Item2).First();
             
-            return Path.Combine(topDir, versionLocation);
+            return Path.Join(topDir, versionLocation);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace VRCX
             if (!Directory.Exists(fullLocation))
                 fullLocation = GetVRChatCacheFullLocation(id, version, variant, variantVersion);
             
-            var fileLocation = Path.Combine(fullLocation, "__data");
+            var fileLocation = Path.Join(fullLocation, "__data");
             var cachePath = string.Empty;
             if (File.Exists(fileLocation))
             {
@@ -138,7 +138,7 @@ namespace VRCX
                 FileInfo data = new FileInfo(fileLocation);
                 fileSize = data.Length;
             }
-            if (File.Exists(Path.Combine(fullLocation, "__lock")))
+            if (File.Exists(Path.Join(fullLocation, "__lock")))
             {
                 isLocked = true;
             }
@@ -204,7 +204,7 @@ namespace VRCX
                     if (index == versionDirectories.Length - 1)
                         continue; // skip last version
 
-                    if (File.Exists(Path.Combine(versionDirectory.FullName, "__lock")))
+                    if (File.Exists(Path.Join(versionDirectory.FullName, "__lock")))
                         continue; // skip locked version
                     
                     versionDirectory.Delete(true);

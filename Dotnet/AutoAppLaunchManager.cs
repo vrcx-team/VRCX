@@ -64,7 +64,7 @@ namespace VRCX
 
         public AutoAppLaunchManager()
         {
-            AppShortcutDirectory = Path.Combine(Program.AppDataDirectory, "startup");
+            AppShortcutDirectory = Path.Join(Program.AppDataDirectory, "startup");
 
             if (!Directory.Exists(AppShortcutDirectory))
             {

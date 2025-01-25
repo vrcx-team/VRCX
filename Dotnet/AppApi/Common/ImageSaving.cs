@@ -171,7 +171,7 @@ namespace VRCX
         
         public async Task CropAllPrints(string ugcFolderPath)
         {
-            var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Prints");
+            var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Prints");
             var files = Directory.GetFiles(folder, "*.png", SearchOption.AllDirectories);
             foreach (var file in files)
             {
@@ -210,9 +210,9 @@ namespace VRCX
         
         public async Task<string> SavePrintToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
         {
-            var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Prints", MakeValidFileName(monthFolder));
+            var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Prints", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
-            var filePath = Path.Combine(folder, MakeValidFileName(fileName));
+            var filePath = Path.Join(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))
                 return null;
 
@@ -223,9 +223,9 @@ namespace VRCX
 
         public async Task<string> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
         {
-            var folder = Path.Combine(GetUGCPhotoLocation(ugcFolderPath), "Stickers", MakeValidFileName(monthFolder));
+            var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Stickers", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
-            var filePath = Path.Combine(folder, MakeValidFileName(fileName));
+            var filePath = Path.Join(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))
                 return null;
 
