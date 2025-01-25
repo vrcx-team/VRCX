@@ -84,6 +84,23 @@ export default {
         return s.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
     },
 
+    isRealInstance(instanceId) {
+        if (!instanceId) {
+            return false;
+        }
+        switch (instanceId) {
+            case 'offline':
+            case 'offline:offline':
+            case 'private':
+            case 'private:private':
+            case 'traveling':
+            case 'traveling:traveling':
+            case instanceId.startsWith('local'):
+                return false;
+        }
+        return true;
+    },
+
     parseLocation(tag) {
         var _tag = String(tag || '');
         var ctx = {
@@ -91,6 +108,7 @@ export default {
             isOffline: false,
             isPrivate: false,
             isTraveling: false,
+            isRealInstance: false,
             worldId: '',
             instanceId: '',
             instanceName: '',
@@ -114,7 +132,8 @@ export default {
             ctx.isPrivate = true;
         } else if (_tag === 'traveling' || _tag === 'traveling:traveling') {
             ctx.isTraveling = true;
-        } else if (_tag.startsWith('local') === false) {
+        } else if (!_tag.startsWith('local')) {
+            ctx.isRealInstance = true;
             var sep = _tag.indexOf(':');
             // technically not part of instance id, but might be there when coping id from url so why not support it
             var shortNameQualifier = '&shortName=';

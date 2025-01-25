@@ -36,6 +36,7 @@ import ModerationTab from './views/tabs/Moderation.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
+import GroupsSidebar from './components/sidebar/GroupsSidebar.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -166,7 +167,11 @@ console.log(`isLinux: ${LINUX}`);
 
             // components
             // - settings
-            SimpleSwitch
+            SimpleSwitch,
+
+            // components
+            // - sidebar(friendsListSidebar)
+            GroupsSidebar
         },
         el: '#x-app',
         async mounted() {
@@ -483,12 +488,12 @@ console.log(`isLinux: ${LINUX}`);
 
     API.applyPresenceLocation = function (ref) {
         var presence = ref.presence;
-        if ($app.isRealInstance(presence.world)) {
+        if ($utils.isRealInstance(presence.world)) {
             ref.$locationTag = `${presence.world}:${presence.instance}`;
         } else {
             ref.$locationTag = presence.world;
         }
-        if ($app.isRealInstance(presence.travelingToWorld)) {
+        if ($utils.isRealInstance(presence.travelingToWorld)) {
             ref.$travelingToLocation = `${presence.travelingToWorld}:${presence.travelingToInstance}`;
         } else {
             ref.$travelingToLocation = presence.travelingToWorld;
@@ -971,13 +976,13 @@ console.log(`isLinux: ${LINUX}`);
             userLocation
         );
 
-        if ($app.isRealInstance(userLocation)) {
+        if ($utils.isRealInstance(userLocation)) {
             console.warn('PWI: returning user location', userLocation);
             const L = $utils.parseLocation(userLocation);
             return L.worldId;
         }
 
-        if ($app.isRealInstance(gameLogLocation)) {
+        if ($utils.isRealInstance(gameLogLocation)) {
             console.warn(`PWI: returning gamelog location: `, gameLogLocation);
             const L = $utils.parseLocation(gameLogLocation);
             return L.worldId;
@@ -4620,7 +4625,7 @@ console.log(`isLinux: ${LINUX}`);
                 fromGetCurrentUser &&
                 ctx.state !== 'online' &&
                 typeof ref !== 'undefined' &&
-                this.isRealInstance(ref.location)
+                $utils.isRealInstance(ref.location)
             ) {
                 if (this.debugFriendState) {
                     console.log(
@@ -4841,17 +4846,15 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getWorldName = async function (location) {
         var worldName = '';
-        if (this.isRealInstance(location)) {
-            try {
-                var L = $utils.parseLocation(location);
-                if (L.worldId) {
-                    var args = await API.getCachedWorld({
-                        worldId: L.worldId
-                    });
-                    worldName = args.ref.name;
-                }
-            } catch (err) {}
-        }
+        try {
+            var L = $utils.parseLocation(location);
+            if (L.isRealInstance && L.worldId) {
+                var args = await API.getCachedWorld({
+                    worldId: L.worldId
+                });
+                worldName = args.ref.name;
+            }
+        } catch (err) {}
         return worldName;
     };
 
@@ -10270,7 +10273,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         var L = $utils.parseLocation(D.ref.$location.tag);
-        if (updateInstanceOccupants && this.isRealInstance(L.tag)) {
+        if (updateInstanceOccupants && L.isRealInstance) {
             API.getInstance({
                 worldId: L.worldId,
                 instanceId: L.instanceId
@@ -10370,7 +10373,7 @@ console.log(`isLinux: ${LINUX}`);
                 ref: {}
             };
         }
-        if (!this.isRealInstance(L.tag)) {
+        if (!L.isRealInstance) {
             D.instance = {
                 id: L.instanceId,
                 tag: L.tag,
@@ -10689,7 +10692,7 @@ console.log(`isLinux: ${LINUX}`);
                 });
             });
         }
-        if (this.isRealInstance(instanceId)) {
+        if ($utils.isRealInstance(instanceId)) {
             var ref = API.cachedInstances.get(instanceId);
             if (typeof ref !== 'undefined') {
                 this.currentInstanceWorld.instance = ref;
@@ -11411,7 +11414,7 @@ console.log(`isLinux: ${LINUX}`);
         D.stickersDisabled = ref.tags?.includes('feature_stickers_disabled');
         $app.applyWorldDialogInstances();
         for (var room of D.rooms) {
-            if ($app.isRealInstance(room.tag)) {
+            if ($utils.isRealInstance(room.tag)) {
                 API.getInstance({
                     worldId: D.id,
                     instanceId: room.id
@@ -11953,7 +11956,7 @@ console.log(`isLinux: ${LINUX}`);
             var ref = API.cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 room.ref = ref;
-            } else if ($app.isRealInstance(room.tag)) {
+            } else if ($utils.isRealInstance(room.tag)) {
                 API.getInstance({
                     worldId: room.$location.worldId,
                     instanceId: room.$location.instanceId
@@ -12856,7 +12859,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.showInviteDialog = function (tag) {
-        if (!this.isRealInstance(tag)) {
+        if (!$utils.isRealInstance(tag)) {
             return;
         }
         this.$nextTick(() => $app.adjustDialogZ(this.$refs.inviteDialog.$el));
@@ -13268,10 +13271,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.selfInvite = function (location, shortName) {
-        if (!this.isRealInstance(location)) {
+        var L = $utils.parseLocation(location);
+        if (!L.isRealInstance) {
             return;
         }
-        var L = $utils.parseLocation(location);
         API.selfInvite({
             instanceId: L.instanceId,
             worldId: L.worldId,
@@ -13341,7 +13344,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.showNewInstanceDialog = async function (tag) {
-        if (!this.isRealInstance(tag)) {
+        if (!$utils.isRealInstance(tag)) {
             return;
         }
         this.$nextTick(() =>
@@ -13964,7 +13967,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.showLaunchDialog = function (tag, shortName) {
-        if (!this.isRealInstance(tag)) {
+        if (!$utils.isRealInstance(tag)) {
             return;
         }
         this.$nextTick(() => $app.adjustDialogZ(this.$refs.launchDialog.$el));
@@ -15453,9 +15456,13 @@ console.log(`isLinux: ${LINUX}`);
             }
             i++;
             this.friendsListLoadingProgress = `${i}/${length}`;
-            await API.getUser({
-                userId
-            });
+            try {
+                await API.getUser({
+                    userId
+                });
+            } catch (err) {
+                console.error(err);
+            }
         }
         this.friendsListLoadingProgress = '';
         this.friendsListLoading = false;
@@ -17446,7 +17453,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         var { location } = this.lastLocation;
         AppApi.VrcClosedGracefully().then((result) => {
-            if (result || !this.isRealInstance(location)) {
+            if (result || !$utils.isRealInstance(location)) {
                 return;
             }
             // wait a bit for SteamVR to potentially close before deciding to relaunch
@@ -19824,23 +19831,6 @@ console.log(`isLinux: ${LINUX}`);
         return false;
     };
 
-    $app.methods.isRealInstance = function (instanceId) {
-        if (!instanceId) {
-            return false;
-        }
-        switch (instanceId) {
-            case 'offline':
-            case 'offline:offline':
-            case 'private':
-            case 'private:private':
-            case 'traveling':
-            case 'traveling:traveling':
-            case instanceId.startsWith('local'):
-                return false;
-        }
-        return true;
-    };
-
     $app.methods.onPlayerTraveling = function (ref) {
         if (
             !this.isGameRunning ||
@@ -19930,7 +19920,7 @@ console.log(`isLinux: ${LINUX}`);
         this.lastLocationDestination = '';
         this.lastLocationDestinationTime = 0;
 
-        if (this.isRealInstance(location)) {
+        if ($utils.isRealInstance(location)) {
             var dt = new Date().toJSON();
             var L = $utils.parseLocation(location);
 
@@ -23247,7 +23237,9 @@ console.log(`isLinux: ${LINUX}`);
         return LINUX;
     };
 
-    // friendsListSiderBar
+    // friendsListSidebar
+    //  - SidebarGroupByInstance
+
     $app.methods.handleSwitchGroupByInstance = async function () {
         this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
         await configRepository.setBool(
@@ -23256,29 +23248,51 @@ console.log(`isLinux: ${LINUX}`);
         );
     };
 
-    // friendsListSidebar
-    //  - SidebarGroupByInstance
-
     $app.data.isSidebarGroupByInstance = await configRepository.getBool(
         'VRCX_sidebarGroupByInstance',
         true
     );
-    $app.computed.onlineFriendsInSameInstance = function () {
-        const groupedItems = {};
 
-        this.onlineFriends.forEach((item) => {
-            const key = item.ref?.$location.tag;
-            if (!key || key === 'private' || key === 'offline') return;
-            if (!groupedItems[key]) {
-                groupedItems[key] = [];
+    $app.methods.handleSwitchGroupByInstance = function () {
+        this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
+        configRepository.setBool(
+            'VRCX_sidebarGroupByInstance',
+            this.isSidebarGroupByInstance
+        );
+    };
+
+    $app.data.isSidebarGroupByInstanceCollapsed =
+        await configRepository.getBool(
+            'VRCX_sidebarGroupByInstanceCollapsed',
+            false
+        );
+
+    $app.methods.toggleSwitchGroupByInstanceCollapsed = function () {
+        this.isSidebarGroupByInstanceCollapsed =
+            !this.isSidebarGroupByInstanceCollapsed;
+        configRepository.setBool(
+            'VRCX_sidebarGroupByInstanceCollapsed',
+            this.isSidebarGroupByInstanceCollapsed
+        );
+    };
+
+    $app.computed.friendsInSameInstance = function () {
+        const friendsList = {};
+
+        this.friends.forEach((friend) => {
+            if (!friend.ref?.$location.isRealInstance) return;
+
+            const key = friend.ref.$location.tag;
+            if (!friendsList[key]) {
+                friendsList[key] = [];
             }
-            groupedItems[key].push(item);
+            friendsList[key].push(friend);
         });
 
-        const sortedGroups = [];
-        for (const group of Object.values(groupedItems)) {
+        const sortedFriendsList = [];
+        for (const group of Object.values(friendsList)) {
             if (group.length > 1) {
-                sortedGroups.push(
+                sortedFriendsList.push(
                     group.sort(
                         (a, b) => a.ref?.$location_at - b.ref?.$location_at
                     )
@@ -23286,53 +23300,37 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
 
-        return sortedGroups.sort((a, b) => b.length - a.length);
+        return sortedFriendsList.sort((a, b) => b.length - a.length);
     };
 
-    $app.computed.onlineFriendsNotInSameInstance = function () {
-        const friendsInSameInstance = new Set(
-            this.onlineFriendsInSameInstance.flat().map((friend) => friend.id)
+    $app.computed.onlineFriendsByGroupStatus = function () {
+        const sameInstanceTag = new Set(
+            this.friendsInSameInstance.flatMap((item) =>
+                item.map((friend) => friend.ref?.$location.tag)
+            )
         );
 
         return this.onlineFriends.filter(
-            (friend) => !friendsInSameInstance.has(friend.id)
+            (item) => !sameInstanceTag.has(item.ref?.$location.tag)
         );
     };
 
-    $app.computed.vipFriendsInSameInstance = function () {
-        const groupedItems = {};
-
-        this.vipFriends.forEach((item) => {
-            const key = item.ref?.$location.tag;
-            if (!key || key === 'private' || key === 'offline') return;
-            if (!groupedItems[key]) {
-                groupedItems[key] = [];
-            }
-            groupedItems[key].push(item);
-        });
-
-        const sortedGroups = [];
-        for (const group of Object.values(groupedItems)) {
-            if (group.length > 1) {
-                sortedGroups.push(
-                    group.sort(
-                        (a, b) => a.ref?.$location_at - b.ref?.$location_at
-                    )
-                );
-            }
-        }
-
-        return sortedGroups.sort((a, b) => b.length - a.length);
-    };
-
-    $app.computed.vipFriendsNotInSameInstance = function () {
-        const friendsInSameInstance = new Set(
-            this.vipFriendsInSameInstance.flat().map((friend) => friend.id)
+    $app.computed.vipFriendsByGroupStatus = function () {
+        const sameInstanceTag = new Set(
+            this.friendsInSameInstance.flatMap((item) =>
+                item.map((friend) => friend.ref?.$location.tag)
+            )
         );
 
         return this.vipFriends.filter(
-            (friend) => !friendsInSameInstance.has(friend.id)
+            (item) => !sameInstanceTag.has(item.ref?.$location.tag)
         );
+    };
+
+    $app.methods.getFriendsLocations = function (friendsArr) {
+        // prevent the instance title display as "Traveling".
+        return friendsArr.find((friend) => !friend.ref?.$location?.isTraveling)
+            ?.ref?.location;
     };
 
     // #endregion

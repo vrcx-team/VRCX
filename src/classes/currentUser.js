@@ -94,7 +94,7 @@ export default class extends baseClass {
             var travelingToWorld = $travelingLocation.worldId;
             var travelingToInstance = $travelingLocation.instanceId;
             if (!$app.isGameRunning && json.presence) {
-                if ($app.isRealInstance(json.presence.world)) {
+                if ($utils.isRealInstance(json.presence.world)) {
                     location = `${json.presence.world}:${json.presence.instance}`;
                     travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
                 } else {
