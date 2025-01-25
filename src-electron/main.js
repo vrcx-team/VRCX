@@ -9,6 +9,7 @@ const {
     dialog,
     Notification
 } = require('electron');
+const { spawn } = require('child_process');
 const fs = require('fs');
 const https = require('https');
 
@@ -17,11 +18,13 @@ if (!isDotNetInstalled()) {
     app.quit();
     return;
 }
+console.log('DOTNET_ROOT:', process.env.DOTNET_ROOT);
 
 // get launch arguments
 const args = process.argv.slice(1);
 const noInstall = args.some((val) => val === '--no-install');
-
+const x11 = args.some((val) => val === '--x11');
+const homePath = getHomePath();
 tryCopyFromWinePrefix();
 
 const rootDir = app.getAppPath();
@@ -115,9 +118,40 @@ ipcMain.handle('app:restart', () => {
     }
 });
 
-function createWindow() {
-    app.commandLine.appendSwitch('enable-speech-dispatcher');
+function relaunchWithArgs(args) {
+    if (process.argv.includes('--ozone-platform-hint=auto')) {
+        console.log('Already running with correct arguments');
+        return;
+    }
 
+    const fullArgs = ['--ozone-platform-hint=auto', ...args];
+    
+    let execPath = process.execPath;
+    
+    if (appImagePath) {
+        execPath = appImagePath;
+        fullArgs.unshift('--appimage-extract-and-run');
+    }
+    
+    console.log('Relaunching with args:', fullArgs);
+    
+    const child = spawn(execPath, fullArgs, {
+        detached: true,
+        stdio: 'inherit'
+    });
+    
+    child.unref();
+
+    app.exit(0);
+}
+
+function createWindow() {
+    if (process.platform === 'linux' && !process.argv.includes('--ozone-platform-hint=auto') && !x11) {
+        relaunchWithArgs(process.argv.slice(1));
+    }
+
+    app.commandLine.appendSwitch('enable-speech-dispatcher');
+    
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = parseInt(VRCXStorage.Get('VRCX_SizeWidth')) || 1920;
@@ -261,7 +295,7 @@ async function installVRCXappImageLauncher() {
 
     let targetIconName;
     const desktopFiles = fs.readdirSync(
-        path.join(app.getPath('home'), '.local/share/applications')
+        path.join(homePath, '.local/share/applications')
     );
     for (const file of desktopFiles) {
         if (file.includes('appimagekit_') && file.includes('VRCX')) {
@@ -284,6 +318,7 @@ async function installVRCXappImageLauncher() {
 */
 
 async function installVRCX() {
+    console.log('Home path:', homePath);
     console.log('AppImage path:', appImagePath);
     if (!appImagePath) {
         console.error('AppImage path is not available!');
@@ -301,9 +336,7 @@ async function installVRCX() {
     }
     */
 
-    if (
-        appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))
-    ) {
+    if (appImagePath.startsWith(path.join(homePath, 'Applications'))) {
         /*
         if (appImageLauncherInstalled) {
             installVRCXappImageLauncher();
@@ -330,9 +363,7 @@ async function installVRCX() {
     }
 
     if (
-        process.env.APPIMAGE.startsWith(
-            path.join(app.getPath('home'), 'Applications')
-        ) &&
+        process.env.APPIMAGE.startsWith(path.join(homePath, 'Applications')) &&
         path.basename(process.env.APPIMAGE) === 'VRCX.AppImage'
     ) {
         interopApi.getDotNetObject('Update').Init(appImagePath);
@@ -340,7 +371,7 @@ async function installVRCX() {
         return;
     }
 
-    const targetPath = path.join(app.getPath('home'), 'Applications');
+    const targetPath = path.join(homePath, 'Applications');
     console.log('Target Path:', targetPath);
 
     // Create target directory if it doesn't exist
@@ -367,17 +398,14 @@ async function installVRCX() {
     // Download the icon and save it to the target directory
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-    const iconPath = path.join(
-        app.getPath('home'),
-        '.local/share/icons/VRCX.png'
-    );
+    const iconPath = path.join(homePath, '.local/share/icons/VRCX.png');
     await downloadIcon(iconUrl, iconPath)
         .then(() => {
             console.log('Icon downloaded and saved to:', iconPath);
             const desktopFile = `[Desktop Entry]
 Name=VRCX
 Comment=Friendship management tool for VRChat
-Exec=${appImagePath}
+Exec=${appImagePath} --ozone-platform-hint=auto
 Icon=VRCX
 Type=Application
 Categories=Network;InstantMessaging;Game;
@@ -386,7 +414,7 @@ StartupWMClass=VRCX
 `;
 
             const desktopFilePath = path.join(
-                app.getPath('home'),
+                homePath,
                 '.local/share/applications/VRCX.desktop'
             );
             try {
@@ -445,6 +473,16 @@ function getVRCXPath() {
     return '';
 }
 
+function getHomePath() {
+    const relativeHomePath = path.join(app.getPath('home'));
+    try {
+        const absoluteHomePath = fs.realpathSync(relativeHomePath);
+        return absoluteHomePath;
+    } catch (err) {
+        return relativeHomePath;
+    }
+}
+
 function getVersion() {
     let version = 'VRCX (Linux) Build';
     try {
@@ -472,7 +510,7 @@ function tryCopyFromWinePrefix() {
             // try copy from old wine path
             const userName = process.env.USER || process.env.USERNAME;
             const oldPath = path.join(
-                app.getPath('home'),
+                homePath,
                 '.local/share/vrcx/drive_c/users',
                 userName,
                 'AppData/Roaming/VRCX'

@@ -15,6 +15,7 @@ export default class extends baseClass {
     async init() {
         API.isLoggedIn = false;
         API.attemptingAutoLogin = false;
+        API.autoLoginAttempts = new Set();
 
         /**
          * @param {{ username: string, password: string }} params credential to login
@@ -126,9 +127,25 @@ export default class extends baseClass {
                 return;
             }
             if ($app.enablePrimaryPassword) {
+                console.error(
+                    'Primary password is enabled, this disables auto login.'
+                );
+                this.attemptingAutoLogin = false;
                 this.logout();
                 return;
             }
+            var attemptsInLastHour = Array.from(this.autoLoginAttempts).filter(
+                (timestamp) => timestamp > new Date().getTime() - 3600000
+            ).length;
+            if (attemptsInLastHour >= 3) {
+                console.error(
+                    'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
+                );
+                this.attemptingAutoLogin = false;
+                this.logout();
+                return;
+            }
+            this.autoLoginAttempts.add(new Date().getTime());
             $app.relogin(user)
                 .then(() => {
                     if (this.errorNoty) {
@@ -167,6 +184,7 @@ export default class extends baseClass {
 
         API.$on('LOGOUT', function () {
             this.attemptingAutoLogin = false;
+            this.autoLoginAttempts.clear();
         });
 
         API.logout = function () {

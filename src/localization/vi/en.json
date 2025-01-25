@@ -808,6 +808,7 @@
                 "last_updated": "Lần cập nhật cuối",
                 "version": "Phiên bản",
                 "platform": "Nền tảng",
+                "time_spent": "Thời gian đã ở",
                 "memo": "Ghi nhớ",
                 "memo_placeholder": "Bấm để tạo ghi nhớ"
             },

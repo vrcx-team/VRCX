@@ -40,7 +40,7 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_moderation (user_id TEXT PRIMARY KEY, updated_at TEXT, display_name TEXT, block INTEGER, mute INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_avatar_history (avatar_id TEXT PRIMARY KEY, created_at TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_avatar_history (avatar_id TEXT PRIMARY KEY, created_at TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
@@ -2189,10 +2189,44 @@ class Database {
 
     addAvatarToHistory(avatarId) {
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${Database.userPrefix}_avatar_history (avatar_id, created_at) VALUES (@avatar_id, @created_at)`,
+            `UPDATE ${Database.userPrefix}_avatar_history
+            SET created_at = @created_at, time = COALESCE(time, 0)
+            WHERE avatar_id = @avatar_id;
+
+            INSERT INTO ${Database.userPrefix}_avatar_history (avatar_id, created_at, time)
+            SELECT @avatar_id, @created_at, 0
+            WHERE NOT EXISTS (SELECT * FROM ${Database.userPrefix}_avatar_history WHERE avatar_id = @avatar_id)`,
             {
                 '@avatar_id': avatarId,
                 '@created_at': new Date().toJSON()
+            }
+        );
+    }
+
+    async getAvatarTimeSpent(avatarId) {
+        var ref = {
+            timeSpent: 0,
+            avatarId
+        };
+        await sqliteService.execute(
+            (row) => {
+                ref.timeSpent = row[0];
+            },
+            `SELECT time FROM ${Database.userPrefix}_avatar_history WHERE avatar_id = @avatarId`,
+            {
+                '@avatarId': avatarId
+            }
+        );
+
+        return ref;
+    }
+
+    addAvatarTimeSpent(avatarId, timeSpent) {
+        sqliteService.executeNonQuery(
+            `UPDATE ${Database.userPrefix}_avatar_history SET time = time + @timeSpent WHERE avatar_id = @avatarId`,
+            {
+                '@avatarId': avatarId,
+                '@timeSpent': timeSpent
             }
         );
     }
@@ -2202,16 +2236,16 @@ class Database {
         await sqliteService.execute((dbRow) => {
             var row = {
                 id: dbRow[0],
-                authorId: dbRow[4],
-                authorName: dbRow[5],
-                created_at: dbRow[6],
-                description: dbRow[7],
-                imageUrl: dbRow[8],
-                name: dbRow[9],
-                releaseStatus: dbRow[10],
-                thumbnailImageUrl: dbRow[11],
-                updated_at: dbRow[12],
-                version: dbRow[13]
+                authorId: dbRow[5],
+                authorName: dbRow[6],
+                created_at: dbRow[7],
+                description: dbRow[8],
+                imageUrl: dbRow[9],
+                name: dbRow[10],
+                releaseStatus: dbRow[11],
+                thumbnailImageUrl: dbRow[12],
+                updated_at: dbRow[13],
+                version: dbRow[14]
             };
             data.push(row);
         }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id WHERE author_id != "${currentUserId}" ORDER BY ${Database.userPrefix}_avatar_history.created_at DESC LIMIT ${limit}`);
@@ -2617,6 +2651,7 @@ class Database {
         // if (version === 0) {
         await this.updateTableForGroupNames();
         await this.addFriendLogFriendNumber();
+        await this.updateTableForAvatarHistory();
         // }
         // await sqliteService.executeNonQuery('PRAGMA user_version = 1');
     }
@@ -2632,7 +2667,7 @@ class Database {
                     `ALTER TABLE ${tableName} ADD friend_number INTEGER DEFAULT 0`
                 );
             } catch (e) {
-                e = e.toString();   
+                e = e.toString();
                 if (e.indexOf('duplicate column name') === -1) {
                     console.error(e);
                 }
@@ -2651,7 +2686,7 @@ class Database {
                     `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
                 );
             } catch (e) {
-                e = e.toString();    
+                e = e.toString();
                 if (e.indexOf('duplicate column name') === -1) {
                     console.error(e);
                 }
@@ -2668,6 +2703,17 @@ class Database {
                 console.error(e);
             }
         }
+    }
+
+    async updateTableForAvatarHistory() {
+        await sqliteService.execute((dbRow) => {
+            const columnExists = dbRow.some((row) => row.name === 'time');
+            if (!columnExists) {
+                sqliteService.executeNonQuery(
+                    `ALTER TABLE ${Database.userPrefix}_avatar_history ADD time INTEGER DEFAULT 0`
+                );
+            }
+        }, `PRAGMA table_info(${Database.userPrefix}_avatar_history);`);
     }
 
     async fixCancelFriendRequestTypo() {

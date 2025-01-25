@@ -419,7 +419,7 @@ export default class extends baseClass {
 
         updateSharedFeedNotificationTable(forceUpdate) {
             // invite, requestInvite, requestInviteResponse, inviteResponse, friendRequest
-            var notificationTable = this.notificationTable;
+            var notificationTable = this.notificationTable.data;
             var i = notificationTable.length;
             if (i > 0) {
                 if (
@@ -471,7 +471,7 @@ export default class extends baseClass {
 
         updateSharedFeedFriendLogTable(forceUpdate) {
             // TrustLevel, Friend, FriendRequest, Unfriend, DisplayName
-            var friendLog = this.friendLogTable;
+            var friendLog = this.friendLogTable.data;
             var i = friendLog.length;
             if (i > 0) {
                 if (

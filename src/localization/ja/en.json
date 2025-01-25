@@ -831,6 +831,7 @@
                 "last_updated": "最終更新日時",
                 "version": "バージョン",
                 "platform": "プラットフォーム",
+                "time_spent": "過ごした時間",
                 "memo": "メモ (VRCX)",
                 "memo_placeholder": "クリックしてメモを追加"
             },
