@@ -63,7 +63,7 @@ mixin friendsListSidebar
                                     :traveling='lastLocationDestination'
                                     :link='false')
                                 location.extra(
-                                    v-else-if='isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)'
+                                    v-else-if='isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)' 
                                     :location='API.currentUser.$locationTag'
                                     :traveling='API.currentUser.$travelingToLocation'
                                     :link='false')
@@ -74,7 +74,7 @@ mixin friendsListSidebar
                         i.el-icon-arrow-right(:class='{ rotate: isVIPFriends }')
                         span(style='margin-left: 5px') {{ $t('side_panel.favorite') }} &horbar; {{ vipFriendsByGroupStatus.length }}
                     div(v-show='isVIPFriends')
-                        template(v-if='isSidebarDivideByFriendGroup')
+                        template(v-if='isSidebarDivideByFriendGroup && localFavoriteFriendsGroups.length')
                             div(v-for='(group, idx) in vipFriendsDivideByGroup' :key='idx')
                                 div(style='margin-bottom: 3px')
                                     span.extra {{ group.displayName }}
