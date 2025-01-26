@@ -33,11 +33,14 @@ mixin groupDialog
                     .group-header(style='flex: 1')
                         span(v-if='groupDialog.ref.ownerId === API.currentUser.id' style='margin-right: 5px') 👑
                         span.dialog-title(v-text='groupDialog.ref.name' style='margin-right: 5px')
-                        span.group-discriminator.x-grey(style='font-family: monospace; font-size: 12px; margin-right: 5px') {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
+                        span.group-discriminator.x-grey(
+                            style='font-family: monospace; font-size: 12px; margin-right: 5px') {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         el-tooltip(v-for='item in groupDialog.ref.$languages' :key='item.key' placement='top')
                             template(#content)
                                 span {{ item.value }} ({{ item.key }})
-                            span.flags(:class='languageClass(item.key)' style='display: inline-block; margin-right: 5px')
+                            span.flags(
+                                :class='languageClass(item.key)'
+                                style='display: inline-block; margin-right: 5px')
                         div(style='margin-top: 5px')
                             span.x-link.x-grey(
                                 v-text='groupDialog.ownerDisplayName'
@@ -218,7 +221,11 @@ mixin groupDialog
                                     circle
                                     @click='joinGroup(groupDialog.id)'
                                     style='margin-left: 5px')
-                        el-dropdown(trigger='click' @command='groupDialogCommand' size='small' style='margin-left: 5px')
+                        el-dropdown(
+                            trigger='click'
+                            @command='groupDialogCommand'
+                            size='small'
+                            style='margin-left: 5px')
                             el-button(
                                 :type='groupDialog.ref.membershipStatus === "userblocked" ? "danger" : "default"'
                                 icon='el-icon-more'
@@ -276,7 +283,9 @@ mixin groupDialog
                                 style='width: 854px; height: 480px'
                                 @click='showFullscreenImageDialog(groupDialog.ref.bannerUrl)')
                     .x-friend-list(style='max-height: none')
-                        span(v-if='groupDialog.instances.length' style='font-size: 12px; font-weight: bold; margin: 5px') {{ $t('dialog.group.info.instances') }}
+                        span(
+                            v-if='groupDialog.instances.length'
+                            style='font-size: 12px; font-weight: bold; margin: 5px') {{ $t('dialog.group.info.instances') }}
                         div(v-for='room in groupDialog.instances' :key='room.tag' style='width: 100%')
                             div(style='margin: 5px 0')
                                 location(:location='room.tag')
@@ -295,7 +304,9 @@ mixin groupDialog
                                     :instance='room.ref'
                                     :friendcount='room.friendCount'
                                     :updateelement='updateInstanceInfo')
-                            .x-friend-list(style='margin: 10px 0; padding: 0; max-height: unset' v-if='room.users.length')
+                            .x-friend-list(
+                                style='margin: 10px 0; padding: 0; max-height: unset'
+                                v-if='room.users.length')
                                 .x-friend-item.x-friend-item-border(
                                     v-for='user in room.users'
                                     :key='user.id'
@@ -560,7 +571,9 @@ mixin groupDialog
                                 v-if='groupDialog.memberSearch.length'
                                 style='font-size: 14px; margin-left: 5px; margin-right: 5px') {{ groupDialog.memberSearchResults.length }}/{{ groupDialog.ref.memberCount }}
                             span(v-else style='font-size: 14px; margin-left: 5px; margin-right: 5px') {{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}
-                            div(v-if='hasGroupPermission(groupDialog.ref, "group-members-manage")' style='float: right')
+                            div(
+                                v-if='hasGroupPermission(groupDialog.ref, "group-members-manage")'
+                                style='float: right')
                                 span(style='margin-right: 5px') {{ $t('dialog.group.members.sort_by') }}
                                 el-dropdown(
                                     @click.native.stop

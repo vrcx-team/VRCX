@@ -63,7 +63,7 @@ mixin friendsListSidebar
                                     :traveling='lastLocationDestination'
                                     :link='false')
                                 location.extra(
-                                    v-else-if='isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)' 
+                                    v-else-if='isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)'
                                     :location='API.currentUser.$locationTag'
                                     :traveling='API.currentUser.$travelingToLocation'
                                     :link='false')

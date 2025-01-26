@@ -917,7 +917,9 @@ mixin userDialog
                             el-tab-pane
                                 span(slot='label')
                                     span(v-text='list[0]' style='font-weight: bold; font-size: 16px')
-                                    i.x-status-icon(style='margin-left: 5px' :class='userFavoriteWorldsStatus(list[1])')
+                                    i.x-status-icon(
+                                        style='margin-left: 5px'
+                                        :class='userFavoriteWorldsStatus(list[1])')
                                     span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ list[2].length }}/{{ API.favoriteLimits.maxFavoritesPerGroup.world }}
                                 .x-friend-list(style='margin-top: 10px; margin-bottom: 15px; min-height: 60px')
                                     .x-friend-item.x-friend-item-border(
