@@ -23395,6 +23395,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.computed.onlineFriendsByGroupStatus = function () {
+        if (!this.isSidebarGroupByInstance) {
+            return this.onlineFriends;
+        }
+
         const sameInstanceTag = new Set(
             this.friendsInSameInstance.flatMap((item) =>
                 item.map((friend) => friend.ref?.$location.tag)
@@ -23407,6 +23411,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.computed.vipFriendsByGroupStatus = function () {
+        if (!this.isSidebarGroupByInstance) {
+            return this.vipFriends;
+        }
+
         const sameInstanceTag = new Set(
             this.friendsInSameInstance.flatMap((item) =>
                 item.map((friend) => friend.ref?.$location.tag)
