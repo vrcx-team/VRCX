@@ -22128,7 +22128,8 @@ console.log(`isLinux: ${LINUX}`);
             if (
                 !ref.$isDeleted &&
                 ref.type === 'friend' &&
-                this.localFavoriteFriendsGroups.includes(ref.$groupKey)
+                (this.localFavoriteFriendsGroups.includes(ref.$groupKey) ||
+                    this.localFavoriteFriendsGroups.length === 0)
             ) {
                 this.localFavoriteFriends.add(ref.favoriteId);
                 if (
