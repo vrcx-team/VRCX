@@ -2848,7 +2848,7 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('LOGIN', function () {
         $app.localFavoriteFriends.clear();
         $app.currentUserGroupsInit = false;
-        $app.localFavoriteFriendsDivideByGroup = new Map();
+        $app.localFavoriteFriendsDivideByGroup.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         this.cachedFavoriteGroups.clear();
@@ -2927,11 +2927,7 @@ console.log(`isLinux: ${LINUX}`);
         this.cachedFavoritesByObjectId.delete(args.params.objectId);
         $app.localFavoriteFriends.delete(args.params.objectId);
         $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
-            for (let i = group.length - 1; i >= 0; i--) {
-                if (group[i] === args.params.objectId) {
-                    group.splice(i, 1);
-                }
-            }
+            $app.removeFromArray(group, args.params.objectId);
             if (group.length === 0) {
                 $app.localFavoriteFriendsDivideByGroup.delete(key);
             }
@@ -2991,11 +2987,7 @@ console.log(`isLinux: ${LINUX}`);
             this.cachedFavoritesByObjectId.delete(ref.favoriteId);
             $app.localFavoriteFriends.delete(ref.favoriteId);
             $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
-                for (let i = group.length - 1; i >= 0; i--) {
-                    if (group[i] === ref.favoriteId) {
-                        group.splice(i, 1);
-                    }
-                }
+                $app.removeFromArray(group, ref.favoriteId);
                 if (group.length === 0) {
                     $app.localFavoriteFriendsDivideByGroup.delete(key);
                 }
@@ -3067,10 +3059,6 @@ console.log(`isLinux: ${LINUX}`);
                     $app.localFavoriteFriendsGroups.includes(ref.groupKey))
             ) {
                 $app.localFavoriteFriends.add(ref.favoriteId);
-                $app.localFavoriteFriendsDivideByGroup.get(ref.$groupKey) &&
-                    $app.localFavoriteFriendsDivideByGroup
-                        .get(ref.$groupKey)
-                        .push(ref.favoriteId);
                 $app.updateSidebarFriendsList();
             }
         } else {
@@ -3083,10 +3071,9 @@ console.log(`isLinux: ${LINUX}`);
                 ref.favoriteId
             ]);
         } else {
-            $app.localFavoriteFriendsDivideByGroup.get(ref.$groupKey) &&
-                $app.localFavoriteFriendsDivideByGroup
-                    .get(ref.$groupKey)
-                    .push(ref.favoriteId);
+            $app.localFavoriteFriendsDivideByGroup
+                .get(ref.$groupKey)
+                .push(ref.favoriteId);
         }
 
         if (ref.$isDeleted === false && ref.$groupRef === null) {
@@ -3101,7 +3088,7 @@ console.log(`isLinux: ${LINUX}`);
 
     API.expireFavorites = function () {
         $app.localFavoriteFriends.clear();
-        $app.localFavoriteFriendsDivideByGroup = new Map();
+        $app.localFavoriteFriendsDivideByGroup.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         $app.favoriteObjects.clear();
@@ -5163,38 +5150,43 @@ console.log(`isLinux: ${LINUX}`);
 
     // VIP friends divide by group
     $app.computed.vipFriendsDivideByGroup = function () {
-        const friendMap = new Map();
-
         const array = [];
+        const helloYesThisIsDynamic = this.vipFriends_;
 
         for (const [key, value] of this.localFavoriteFriendsDivideByGroup) {
+            let friends = [];
+            for (const item of value) {
+                const friend = this.vipFriendsByGroupStatus.find(
+                    (friend) => friend.id === item
+                );
+                if (friend) {
+                    friends.push(friend);
+                }
+            }
+            if (friends.length === 0) {
+                continue;
+            }
+            friends.sort(getFriendsSortFunction(this.sidebarSortMethods));
+
+            let groupName = API.favoriteFriendGroups.find(
+                (item) => item.key === key
+            )?.displayName;
+            if (!groupName) {
+                groupName = key;
+            }
+
             array.push({
                 key: key,
-                value: value
-                    .map((item) => {
-                        return this.vipFriendsByGroupStatus.find(
-                            (friend) => friend.id === item
-                        );
-                    })
-                    .filter((item) => item !== undefined),
-                displayName: API.favoriteFriendGroups.find(
-                    (item) => item.key === key
-                )?.displayName
+                value: friends,
+                displayName: groupName
             });
         }
 
-        const filteredArray = array.filter((item) => {
-            return !(Array.isArray(item.value) && item.value.length === 0);
+        array.sort((a, b) => {
+            return a.key.localeCompare(b.key);
         });
 
-        if (this.sortVIPFriends) {
-            this.filteredArray.forEach((group) => {
-                group.sort(getFriendsSortFunction(this.sidebarSortMethods));
-            });
-        }
-        this.sortVIPFriends = false;
-
-        return filteredArray;
+        return array;
     };
 
     // Online friends
@@ -22060,15 +22052,9 @@ console.log(`isLinux: ${LINUX}`);
             '[]'
         )
     );
-    $app.data.localFavoriteFriendsDivideByGroup = JSON.parse(
-        await configRepository.getString(
-            'VRCX_localFavoriteFriendsDivideByGroup',
-            '[]'
-        )
-    );
     $app.methods.updateLocalFavoriteFriends = function () {
         this.localFavoriteFriends.clear();
-        this.localFavoriteFriendsDivideByGroup = new Map();
+        this.localFavoriteFriendsDivideByGroup.clear();
         for (var ref of API.cachedFavorites.values()) {
             if (
                 !ref.$isDeleted &&
@@ -22084,10 +22070,9 @@ console.log(`isLinux: ${LINUX}`);
                         ref.favoriteId
                     ]);
                 } else {
-                    this.localFavoriteFriendsDivideByGroup.get(ref.$groupKey) &&
-                        this.localFavoriteFriendsDivideByGroup
-                            .get(ref.$groupKey)
-                            .push(ref.favoriteId);
+                    this.localFavoriteFriendsDivideByGroup
+                        .get(ref.$groupKey)
+                        .push(ref.favoriteId);
                 }
             }
         }
@@ -22096,10 +22081,6 @@ console.log(`isLinux: ${LINUX}`);
         configRepository.setString(
             'VRCX_localFavoriteFriendsGroups',
             JSON.stringify(this.localFavoriteFriendsGroups)
-        );
-        configRepository.setString(
-            'VRCX_localFavoriteFriendsDivideByGroup',
-            JSON.stringify(this.localFavoriteFriendsDivideByGroup)
         );
     };
 
