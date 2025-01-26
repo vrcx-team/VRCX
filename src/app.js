@@ -2928,7 +2928,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.localFavoriteFriends.delete(args.params.objectId);
         $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
             for (let i = group.length - 1; i >= 0; i--) {
-                if (group[i].id === args.params.objectId) {
+                if (group[i] === args.params.objectId) {
                     group.splice(i, 1);
                 }
             }
@@ -2992,7 +2992,7 @@ console.log(`isLinux: ${LINUX}`);
             $app.localFavoriteFriends.delete(ref.favoriteId);
             $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
                 for (let i = group.length - 1; i >= 0; i--) {
-                    if (group[i].id === ref.favoriteId) {
+                    if (group[i] === ref.favoriteId) {
                         group.splice(i, 1);
                     }
                 }
@@ -5182,7 +5182,7 @@ console.log(`isLinux: ${LINUX}`);
             });
         }
 
-        const filteredArray = array.filter(item => {
+        const filteredArray = array.filter((item) => {
             return !(Array.isArray(item.value) && item.value.length === 0);
         });
 
