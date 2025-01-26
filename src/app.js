@@ -23331,8 +23331,18 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getFriendsLocations = function (friendsArr) {
         // prevent the instance title display as "Traveling".
-        return friendsArr.find((friend) => !friend.ref?.$location?.isTraveling)
-            ?.ref?.location;
+        if (!friendsArr?.length) {
+            return '';
+        }
+        for (const friend of friendsArr) {
+            if (friend.ref?.location !== 'traveling') {
+                return friend.ref.location;
+            }
+            if ($utils.isRealInstance(friend.ref?.travelingToLocation)) {
+                return friend.ref.travelingToLocation;
+            }
+        }
+        return friendsArr[0].ref?.location;
     };
 
     // #endregion
