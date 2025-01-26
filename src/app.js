@@ -2928,7 +2928,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.localFavoriteFriends.delete(args.params.objectId);
         $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
             for (let i = group.length - 1; i >= 0; i--) {
-                if (group[i].id === args.params.objectId) {
+                if (group[i] === args.params.objectId) {
                     group.splice(i, 1);
                 }
             }
@@ -2992,7 +2992,7 @@ console.log(`isLinux: ${LINUX}`);
             $app.localFavoriteFriends.delete(ref.favoriteId);
             $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
                 for (let i = group.length - 1; i >= 0; i--) {
-                    if (group[i].id === ref.favoriteId) {
+                    if (group[i] === ref.favoriteId) {
                         group.splice(i, 1);
                     }
                 }
@@ -4262,7 +4262,6 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.isGroupInstances = false;
     $app.data.groupInstances = [];
     $app.data.vipFriends_ = [];
-    $app.data.vipFriendsDivideByGroup_ = new Map();
     $app.data.onlineFriends_ = [];
     $app.data.activeFriends_ = [];
     $app.data.offlineFriends_ = [];
@@ -4370,7 +4369,6 @@ console.log(`isLinux: ${LINUX}`);
         $app.isGroupInstances = false;
         $app.groupInstances = [];
         $app.vipFriends_ = [];
-        $app.vipFriendsDivideByGroup_.clear();
         $app.onlineFriends_ = [];
         $app.activeFriends_ = [];
         $app.offlineFriends_ = [];
@@ -4506,18 +4504,6 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 this.vipFriends_.push(ctx);
-                const key =
-                    Array.from(
-                        this.localFavoriteFriendsDivideByGroup.entries()
-                    ).find(([_, ids]) => ids.includes(ctx.id))?.[0] || '';
-                if (key) {
-                    if (!this.vipFriendsDivideByGroup_.has(key)) {
-                        this.vipFriendsDivideByGroup_.set(key, [ctx]);
-                    } else {
-                        this.vipFriendsDivideByGroup_.get(key).push(ctx);
-                    }
-                }
-
                 this.sortVIPFriends = true;
             } else {
                 this.onlineFriends_.push(ctx);
@@ -4541,20 +4527,6 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 $app.removeFromArray(this.vipFriends_, ctx);
-                this.vipFriendsDivideByGroup_.forEach((group, key) => {
-                    for (let i = group.length - 1; i >= 0; i--) {
-                        if (group[i].id === ctx.id) {
-                            group.splice(i, 1);
-                        }
-                    }
-                    if (group.length === 0) {
-                        this.vipFriendsDivideByGroup_.delete(key);
-                    }
-                });
-                const mapClone = new Map(
-                    Array.from(this.vipFriendsDivideByGroup_)
-                );
-                this.vipFriendsDivideByGroup_ = mapClone;
             } else {
                 $app.removeFromArray(this.onlineFriends_, ctx);
             }
@@ -4619,38 +4591,9 @@ console.log(`isLinux: ${LINUX}`);
                     if (ctx.isVIP) {
                         $app.removeFromArray(this.onlineFriends_, ctx);
                         this.vipFriends_.push(ctx);
-                        const key =
-                            Array.from(
-                                this.localFavoriteFriendsDivideByGroup.entries()
-                            ).find(([_, ids]) => ids.includes(ctx.id))?.[0] ||
-                            '';
-                        if (key) {
-                            if (!this.vipFriendsDivideByGroup_.has(key)) {
-                                this.vipFriendsDivideByGroup_.set(key, [ctx]);
-                            } else {
-                                this.vipFriendsDivideByGroup_
-                                    .get(key)
-                                    .push(ctx);
-                            }
-                        }
-
                         this.sortVIPFriends = true;
                     } else {
                         $app.removeFromArray(this.vipFriends_, ctx);
-                        this.vipFriendsDivideByGroup_.forEach((group, key) => {
-                            for (let i = group.length - 1; i >= 0; i--) {
-                                if (group[i].id === ctx.id) {
-                                    group.splice(i, 1);
-                                }
-                            }
-                            if (group.length === 0) {
-                                this.vipFriendsDivideByGroup_.delete(key);
-                            }
-                        });
-                        const mapClone = new Map(
-                            Array.from(this.vipFriendsDivideByGroup_)
-                        );
-                        this.vipFriendsDivideByGroup_ = mapClone;
                         this.onlineFriends_.push(ctx);
                         this.sortOnlineFriends = true;
                     }
@@ -4844,20 +4787,6 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
                 $app.removeFromArray(this.vipFriends_, ctx);
-                this.vipFriendsDivideByGroup_.forEach((group, key) => {
-                    for (let i = group.length - 1; i >= 0; i--) {
-                        if (group[i].id === ctx.id) {
-                            group.splice(i, 1);
-                        }
-                    }
-                    if (group.length === 0) {
-                        this.vipFriendsDivideByGroup_.delete(key);
-                    }
-                });
-                const mapClone = new Map(
-                    Array.from(this.vipFriendsDivideByGroup_)
-                );
-                this.vipFriendsDivideByGroup_ = mapClone;
             } else {
                 $app.removeFromArray(this.onlineFriends_, ctx);
             }
@@ -4869,18 +4798,6 @@ console.log(`isLinux: ${LINUX}`);
         if (newState === 'online') {
             if (isVIP) {
                 this.vipFriends_.push(ctx);
-                const key =
-                    Array.from(
-                        this.localFavoriteFriendsDivideByGroup.entries()
-                    ).find(([_, ids]) => ids.includes(ctx.id))?.[0] || '';
-                if (key) {
-                    if (!this.vipFriendsDivideByGroup_.has(key)) {
-                        this.vipFriendsDivideByGroup_.set(key, [ctx]);
-                    } else {
-                        this.vipFriendsDivideByGroup_.get(key).push(ctx);
-                    }
-                }
-
                 this.sortVIPFriends = true;
             } else {
                 this.onlineFriends_.push(ctx);
@@ -5245,35 +5162,38 @@ console.log(`isLinux: ${LINUX}`);
 
     // VIP friends divide by group
     $app.computed.vipFriendsDivideByGroup = function () {
+        const friendMap = new Map();
+
+        const array = [];
+
+        for (const [key, value] of this.localFavoriteFriendsDivideByGroup) {
+            array.push({
+                key: key,
+                value: value
+                    .map((item) => {
+                        return this.vipFriendsByGroupStatus.find(
+                            (friend) => friend.id === item
+                        );
+                    })
+                    .filter((item) => item !== undefined),
+                displayName: API.favoriteFriendGroups.find(
+                    (item) => item.key === key
+                )?.displayName
+            });
+        }
+
+        const filteredArray = array.filter((item) => {
+            return !(Array.isArray(item.value) && item.value.length === 0);
+        });
+
         if (this.sortVIPFriends) {
-            this.vipFriendsDivideByGroup_.forEach((group) => {
+            this.filteredArray.forEach((group) => {
                 group.sort(getFriendsSortFunction(this.sidebarSortMethods));
             });
         }
         this.sortVIPFriends = false;
 
-        const arr = [];
-        for (const [key, value] of this.vipFriendsDivideByGroup_) {
-            arr.push({
-                key: key,
-                value: value,
-                displayName: API.favoriteFriendGroups.find(
-                    (group) => group.key === key
-                )?.displayName
-            });
-        }
-
-        if (this.isSidebarGroupByInstance) {
-            const vipFriendsByGroupStatusIds = new Set(
-                this.vipFriendsByGroupStatus.map((friend) => friend.id)
-            );
-            arr.forEach((group) => {
-                group.value = group.value.filter((friend) =>
-                    vipFriendsByGroupStatusIds.has(friend.id)
-                );
-            });
-        }
-        return arr;
+        return filteredArray;
     };
 
     // Online friends
@@ -22128,7 +22048,8 @@ console.log(`isLinux: ${LINUX}`);
             if (
                 !ref.$isDeleted &&
                 ref.type === 'friend' &&
-                this.localFavoriteFriendsGroups.includes(ref.$groupKey)
+                (this.localFavoriteFriendsGroups.includes(ref.$groupKey) ||
+                    this.localFavoriteFriendsGroups.length === 0)
             ) {
                 this.localFavoriteFriends.add(ref.favoriteId);
                 if (
@@ -22170,33 +22091,9 @@ console.log(`isLinux: ${LINUX}`);
             if (ctx.isVIP) {
                 $app.removeFromArray(this.onlineFriends_, ctx);
                 this.vipFriends_.push(ctx);
-                const key =
-                    Array.from(
-                        this.localFavoriteFriendsDivideByGroup.entries()
-                    ).find(([_, ids]) => ids.includes(ctx.id))?.[0] || '';
-                if (!this.vipFriendsDivideByGroup_.has(key)) {
-                    this.vipFriendsDivideByGroup_.set(key, [ctx]);
-                } else {
-                    this.vipFriendsDivideByGroup_.get(key).push(ctx);
-                }
-
                 this.sortVIPFriends = true;
             } else {
                 $app.removeFromArray(this.vipFriends_, ctx);
-                this.vipFriendsDivideByGroup_.forEach((group, key) => {
-                    for (let i = group.length - 1; i >= 0; i--) {
-                        if (group[i].id === ctx.id) {
-                            group.splice(i, 1);
-                        }
-                    }
-                    if (group.length === 0) {
-                        this.vipFriendsDivideByGroup_.delete(key);
-                    }
-                });
-                const mapClone = new Map(
-                    Array.from(this.vipFriendsDivideByGroup_)
-                );
-                this.vipFriendsDivideByGroup_ = mapClone;
                 this.onlineFriends_.push(ctx);
                 this.sortOnlineFriends = true;
             }
