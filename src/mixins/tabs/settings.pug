@@ -296,9 +296,8 @@ mixin settingsTab()
                     template(v-if="!isLinux()")
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay")' :value='openVR' @change='saveOpenVROption("openVR")')
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.overlay_notifications")' :value='overlayNotifications' @change='saveOpenVROption("VRCX_overlayNotifications")' :disabled="!openVR")
-                    div.options-container-item
-                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
-                    template(v-if="!isLinux()")
+                        div.options-container-item
+                            el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications")' :value='xsNotifications' @change='saveOpenVROption("VRCX_xsNotifications")')
                     template(v-else)
                         simple-switch(:label='$t("view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications")' :value='xsNotifications' @change='saveOpenVROption("VRCX_xsNotifications")')
