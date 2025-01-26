@@ -1468,6 +1468,9 @@ img.x-link.el-popover__reference {
     [style='flex: 1 1 0%; display: flex; align-items: center; margin-left: 15px;']
     > :last-child {
     width: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 [style='flex: 0 0 auto; margin-left: 10px;'] > .el-dropdown {
     margin: 0 !important;

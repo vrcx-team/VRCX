@@ -956,3 +956,12 @@ i.x-status-icon.red {
     padding: 2px 2px;
     border-radius: 4px;
 }
+
+// FIXME
+// Something changed the CSS of element-ui
+// The other parts are the same
+// It feels like can't fundamentally modify it
+// And can only fix it bit by bit by overriding
+.el-switch__core:after {
+    top: 1.5px;
+}

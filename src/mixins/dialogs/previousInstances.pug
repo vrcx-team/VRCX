@@ -1,75 +1,165 @@
-mixin previousInstances()
+mixin previousInstances
     //- dialog Table: Previous Instances User
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" :title="$t('dialog.previous_instances.header')" width="1000px")
-        span(v-text="previousInstancesUserDialog.userRef.displayName" style="font-size:14px")
-        el-input(v-model="previousInstancesUserDialogTable.filters[0].value" :placeholder="$t('dialog.previous_instances.search_placeholder')" style="display:block;width:150px;margin-top:15px")
-        data-tables(v-if="previousInstancesUserDialog.visible" v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
-            el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="170")
-                template(#default="scope")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='previousInstancesUserDialog'
+        :visible.sync='previousInstancesUserDialog.visible'
+        :title='$t("dialog.previous_instances.header")'
+        width='1000px')
+        span(v-text='previousInstancesUserDialog.userRef.displayName' style='font-size: 14px')
+        el-input(
+            v-model='previousInstancesUserDialogTable.filters[0].value'
+            :placeholder='$t("dialog.previous_instances.search_placeholder")'
+            style='display: block; width: 150px; margin-top: 15px')
+        data-tables(
+            v-if='previousInstancesUserDialog.visible'
+            v-bind='previousInstancesUserDialogTable'
+            v-loading='previousInstancesUserDialog.loading'
+            style='margin-top: 10px')
+            el-table-column(:label='$t("table.previous_instances.date")' prop='created_at' sortable width='170')
+                template(#default='scope')
                     span {{ scope.row.created_at | formatDate('long') }}
-            el-table-column(:label="$t('table.previous_instances.world')" prop="name" sortable)
-                template(#default="scope")
-                    location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
-            el-table-column(:label="$t('table.previous_instances.instance_creator')" prop="location" width="170")
-                template(#default="scope")
-                    display-name(:userid="scope.row.$location.userId" :location="scope.row.$location.tag" :key="previousInstancesUserDialog.forceUpdate")
-            el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="100" sortable)
-                template(#default="scope")
-                    span(v-text="scope.row.timer")
-            el-table-column(:label="$t('table.previous_instances.action')" width="90" align="right")
-                template(#default="scope")
-                    el-button(type="text" icon="el-icon-info" size="mini" @click="showLaunchDialog(scope.row.location)")
-                    el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
-                    el-button(v-if="shiftHeld" style="color:#f56c6c" type="text" icon="el-icon-close" size="mini" @click="deleteGameLogUserInstance(scope.row)")
-                    el-button(v-else type="text" icon="el-icon-close" size="mini" @click="deleteGameLogUserInstancePrompt(scope.row)")
+            el-table-column(:label='$t("table.previous_instances.world")' prop='name' sortable)
+                template(#default='scope')
+                    location(
+                        :location='scope.row.location'
+                        :hint='scope.row.worldName'
+                        :grouphint='scope.row.groupName')
+            el-table-column(:label='$t("table.previous_instances.instance_creator")' prop='location' width='170')
+                template(#default='scope')
+                    display-name(
+                        :userid='scope.row.$location.userId'
+                        :location='scope.row.$location.tag'
+                        :key='previousInstancesUserDialog.forceUpdate')
+            el-table-column(:label='$t("table.previous_instances.time")' prop='time' width='100' sortable)
+                template(#default='scope')
+                    span(v-text='scope.row.timer')
+            el-table-column(:label='$t("table.previous_instances.action")' width='90' align='right')
+                template(#default='scope')
+                    el-button(
+                        type='text'
+                        icon='el-icon-info'
+                        size='mini'
+                        @click='showLaunchDialog(scope.row.location)')
+                    el-button(
+                        type='text'
+                        icon='el-icon-tickets'
+                        size='mini'
+                        @click='showPreviousInstanceInfoDialog(scope.row.location)')
+                    el-button(
+                        v-if='shiftHeld'
+                        style='color: #f56c6c'
+                        type='text'
+                        icon='el-icon-close'
+                        size='mini'
+                        @click='deleteGameLogUserInstance(scope.row)')
+                    el-button(
+                        v-else
+                        type='text'
+                        icon='el-icon-close'
+                        size='mini'
+                        @click='deleteGameLogUserInstancePrompt(scope.row)')
 
     //- dialog Table: Previous Instances World
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" :title="$t('dialog.previous_instances.header')" width="1000px")
-        span(v-text="previousInstancesWorldDialog.worldRef.name" style="font-size:14px")
-        el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" :placeholder="$t('dialog.previous_instances.search_placeholder')" style="display:block;width:150px;margin-top:15px")
-        data-tables(v-if="previousInstancesWorldDialog.visible" v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
-            el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="170")
-                template(#default="scope")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='previousInstancesWorldDialog'
+        :visible.sync='previousInstancesWorldDialog.visible'
+        :title='$t("dialog.previous_instances.header")'
+        width='1000px')
+        span(v-text='previousInstancesWorldDialog.worldRef.name' style='font-size: 14px')
+        el-input(
+            v-model='previousInstancesWorldDialogTable.filters[0].value'
+            :placeholder='$t("dialog.previous_instances.search_placeholder")'
+            style='display: block; width: 150px; margin-top: 15px')
+        data-tables(
+            v-if='previousInstancesWorldDialog.visible'
+            v-bind='previousInstancesWorldDialogTable'
+            v-loading='previousInstancesWorldDialog.loading'
+            style='margin-top: 10px')
+            el-table-column(:label='$t("table.previous_instances.date")' prop='created_at' sortable width='170')
+                template(#default='scope')
                     span {{ scope.row.created_at | formatDate('long') }}
-            el-table-column(:label="$t('table.previous_instances.instance_name')" prop="name")
-                template(#default="scope")
-                    location-world(:locationobject="scope.row.$location" :grouphint="scope.row.groupName" :currentuserid="API.currentUser.id")
-            el-table-column(:label="$t('table.previous_instances.instance_creator')" prop="location")
-                template(#default="scope")
-                    display-name(:userid="scope.row.$location.userId" :location="scope.row.$location.tag" :key="previousInstancesWorldDialog.forceUpdate")
-            el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="100" sortable)
-                template(#default="scope")
-                    span(v-text="scope.row.timer")
-            el-table-column(:label="$t('table.previous_instances.action')" width="90" align="right")
-                template(#default="scope")
-                    el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
-                    el-button(v-if="shiftHeld" style="color:#f56c6c" type="text" icon="el-icon-close" size="mini" @click="deleteGameLogWorldInstance(scope.row)")
-                    el-button(v-else type="text" icon="el-icon-close" size="mini" @click="deleteGameLogWorldInstancePrompt(scope.row)")
+            el-table-column(:label='$t("table.previous_instances.instance_name")' prop='name')
+                template(#default='scope')
+                    location-world(
+                        :locationobject='scope.row.$location'
+                        :grouphint='scope.row.groupName'
+                        :currentuserid='API.currentUser.id')
+            el-table-column(:label='$t("table.previous_instances.instance_creator")' prop='location')
+                template(#default='scope')
+                    display-name(
+                        :userid='scope.row.$location.userId'
+                        :location='scope.row.$location.tag'
+                        :key='previousInstancesWorldDialog.forceUpdate')
+            el-table-column(:label='$t("table.previous_instances.time")' prop='time' width='100' sortable)
+                template(#default='scope')
+                    span(v-text='scope.row.timer')
+            el-table-column(:label='$t("table.previous_instances.action")' width='90' align='right')
+                template(#default='scope')
+                    el-button(
+                        type='text'
+                        icon='el-icon-tickets'
+                        size='mini'
+                        @click='showPreviousInstanceInfoDialog(scope.row.location)')
+                    el-button(
+                        v-if='shiftHeld'
+                        style='color: #f56c6c'
+                        type='text'
+                        icon='el-icon-close'
+                        size='mini'
+                        @click='deleteGameLogWorldInstance(scope.row)')
+                    el-button(
+                        v-else
+                        type='text'
+                        icon='el-icon-close'
+                        size='mini'
+                        @click='deleteGameLogWorldInstancePrompt(scope.row)')
 
     //- dialog Table: Previous Instance Info
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstanceInfoDialog" :visible.sync="previousInstanceInfoDialog.visible" :title="$t('dialog.previous_instances.info')" width="800px")
-        location(:location="previousInstanceInfoDialog.$location.tag" style="font-size:14px")
-        el-input(v-model="previousInstanceInfoDialogTable.filters[0].value" :placeholder="$t('dialog.previous_instances.search_placeholder')" style="display:block;width:150px;margin-top:15px" clearable)
-        data-tables(v-if="previousInstanceInfoDialog.visible" v-bind="previousInstanceInfoDialogTable" v-loading="previousInstanceInfoDialog.loading" style="margin-top:10px")
-            el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="110")
-                template(v-once #default="scope")
-                    el-tooltip(placement="left")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='previousInstanceInfoDialog'
+        :visible.sync='previousInstanceInfoDialog.visible'
+        :title='$t("dialog.previous_instances.info")'
+        width='800px')
+        div(style='display: flex; align-items: center; justify-content: space-between')
+            location(:location='previousInstanceInfoDialog.$location.tag' style='font-size: 14px')
+            el-input(
+                v-model='previousInstanceInfoDialogTable.filters[0].value'
+                :placeholder='$t("dialog.previous_instances.search_placeholder")'
+                style='width: 150px'
+                clearable)
+        data-tables(
+            v-if='previousInstanceInfoDialog.visible'
+            v-bind='previousInstanceInfoDialogTable'
+            v-loading='previousInstanceInfoDialog.loading'
+            style='margin-top: 10px')
+            el-table-column(:label='$t("table.previous_instances.date")' prop='created_at' sortable width='110')
+                template(v-once #default='scope')
+                    el-tooltip(placement='left')
                         template(#content)
                             span {{ scope.row.created_at | formatDate('long') }}
                         span {{ scope.row.created_at | formatDate('short') }}
-            el-table-column(:label="$t('table.gameLog.icon')" prop="isFriend" width="70" align="center")
-                template(#default="scope")
-                    template(v-if="gameLogIsFriend(scope.row)")
-                        el-tooltip(v-if="gameLogIsFavorite(scope.row)" placement="top" content="Favorite")
+            el-table-column(:label='$t("table.gameLog.icon")' prop='isFriend' width='70' align='center')
+                template(#default='scope')
+                    template(v-if='gameLogIsFriend(scope.row)')
+                        el-tooltip(v-if='gameLogIsFavorite(scope.row)' placement='top' content='Favorite')
                             span ⭐
-                        el-tooltip(v-else placement="top" content="Friend")
+                        el-tooltip(v-else placement='top' content='Friend')
                             span 💚
-            el-table-column(:label="$t('table.previous_instances.display_name')" prop="displayName" sortable)
-                template(#default="scope")
-                    span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
-            el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="100" sortable)
-                template(#default="scope")
-                    span(v-text="scope.row.timer")
-            el-table-column(:label="$t('table.previous_instances.count')" prop="count" width="100" sortable)
-                template(#default="scope")
-                    span(v-text="scope.row.count")
+            el-table-column(:label='$t("table.previous_instances.display_name")' prop='displayName' sortable)
+                template(#default='scope')
+                    span.x-link(v-text='scope.row.displayName' @click='lookupUser(scope.row)')
+            el-table-column(:label='$t("table.previous_instances.time")' prop='time' width='100' sortable)
+                template(#default='scope')
+                    span(v-text='scope.row.timer')
+            el-table-column(:label='$t("table.previous_instances.count")' prop='count' width='100' sortable)
+                template(#default='scope')
+                    span(v-text='scope.row.count')
