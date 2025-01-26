@@ -385,7 +385,9 @@
                     },
                     "width": "侧边栏宽度",
                     "group_by_instance": "将好友按所在房间进行分类排序",
-                    "group_by_instance_tooltip": "如果启用，将会在有多名好友在同一房间时，按所在房间对好友进行分类排序。"
+                    "group_by_instance_tooltip": "如果启用，将会在有多名好友在同一房间时，按所在房间对好友进行分类排序。",
+                    "split_favorite_friends": "将星标好友按照好友分组显示",
+                    "split_favorite_friends_tooltip": "如果启用，将会显示星标好友时按照其所在的好友分组显示。"
                 },
                 "user_dialog": {
                     "header": "用户信息",
