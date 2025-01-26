@@ -174,10 +174,14 @@ mixin friendsListSidebar
                                                         style='color: #ffd700; margin: 1px 0 0 2px')
                                                 span.extra(v-if='friend.pendingOffline') #[i.el-icon-warning-outline] {{ $t('side_panel.pending_offline') }}
                                                 template(v-else)
-                                                    i.el-icon.el-icon-loading(
-                                                        v-if='friend.ref.travelingToLocation'
-                                                        style='display: inline-block; margin-right: 5px')
-                                                    timer.extra(:epoch='friend.ref?.$location_at')
+                                                    template(v-if='friend.ref.travelingToLocation')
+                                                        i.el-icon.el-icon-loading(
+                                                            style='display: inline-block; margin-right: 5px')
+                                                        timer.extra(
+                                                            :epoch='friend.ref?.$travelingToTime'
+                                                            style='display: inline-block; overflow: unset')
+                                                    template(v-else)
+                                                        timer.extra(:epoch='friend.ref?.$location_at')
                                         template(v-else)
                                             span(v-text='friend.name || friend.id')
                                             el-button(
