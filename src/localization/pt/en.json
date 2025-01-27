@@ -808,6 +808,7 @@
                 "last_updated": "Última Atualização",
                 "version": "Versão",
                 "platform": "Plataforma",
+                "time_spent": "Tempo Gasto",
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo"
             },

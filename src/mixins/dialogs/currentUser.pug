@@ -1,189 +1,445 @@
-mixin currentUser()
+mixin currentUser
     //- dialog: social status
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" :title="$t('dialog.social_status.header')" width="400px")
-        div(v-loading="socialStatusDialog.loading")
-            el-collapse(style="border:0")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='socialStatusDialog'
+        :visible.sync='socialStatusDialog.visible'
+        :title='$t("dialog.social_status.header")'
+        width='400px')
+        div(v-loading='socialStatusDialog.loading')
+            el-collapse(style='border: 0')
                 el-collapse-item
-                    template(slot="title")
-                        span(style="font-size:16px") {{ $t('dialog.social_status.history') }}
-                    data-tables(v-bind="socialStatusHistoryTable" @row-click="setSocialStatusFromHistory" style="cursor:pointer")
-                        el-table-column(:label="$t('table.social_status.no')" prop="no" width="50")
-                        el-table-column(:label="$t('table.social_status.status')" prop="status")
-            el-select(v-model="socialStatusDialog.status" style="display:block;margin-top:10px")
-                el-option(:label="$t('dialog.user.status.join_me')" value="join me").
+                    template(slot='title')
+                        span(style='font-size: 16px') {{ $t('dialog.social_status.history') }}
+                    data-tables(
+                        v-bind='socialStatusHistoryTable'
+                        @row-click='setSocialStatusFromHistory'
+                        style='cursor: pointer')
+                        el-table-column(:label='$t("table.social_status.no")' prop='no' width='50')
+                        el-table-column(:label='$t("table.social_status.status")' prop='status')
+            el-select(v-model='socialStatusDialog.status' style='display: block; margin-top: 10px')
+                el-option(:label='$t("dialog.user.status.join_me")' value='join me').
                     #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
-                el-option(:label="$t('dialog.user.status.online')" value="active").
+                el-option(:label='$t("dialog.user.status.online")' value='active').
                     #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
-                el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
+                el-option(:label='$t("dialog.user.status.ask_me")' value='ask me').
                     #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
-                el-option(:label="$t('dialog.user.status.busy')" value="busy").
+                el-option(:label='$t("dialog.user.status.busy")' value='busy').
                     #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
-                el-option(v-if="API.currentUser.$isModerator" :label="$t('dialog.user.status.offline')" value="offline").
+                el-option(
+                    v-if='API.currentUser.$isModerator'
+                    :label='$t("dialog.user.status.offline")'
+                    value='offline').
                     #[i.x-user-status.offline] {{ $t('dialog.user.status.offline') }}
-            el-input(v-model="socialStatusDialog.statusDescription" :placeholder="$t('dialog.social_status.status_placeholder')" maxlength="32" show-word-limit style="display:block;margin-top:10px")
+            el-input(
+                v-model='socialStatusDialog.statusDescription'
+                :placeholder='$t("dialog.social_status.status_placeholder")'
+                maxlength='32'
+                show-word-limit
+                style='display: block; margin-top: 10px')
         template(#footer)
-            el-button(type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus") {{ $t('dialog.social_status.update') }}
+            el-button(type='primary' size='small' :disabled='socialStatusDialog.loading' @click='saveSocialStatus') {{ $t('dialog.social_status.update') }}
 
     //- dialog: language
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="languageDialog" :visible.sync="languageDialog.visible" :title="$t('dialog.language.header')" width="400px")
-        div(v-loading="languageDialog.loading")
-            div(style="margin:5px 0")
-                el-tag(v-for="item in API.currentUser.$languages" :key="item.key" size="small" type="info" effect="plain" closable @close="removeUserLanguage(item.key)" style="margin-right:5px")
-                    span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='languageDialog'
+        :visible.sync='languageDialog.visible'
+        :title='$t("dialog.language.header")'
+        width='400px')
+        div(v-loading='languageDialog.loading')
+            div(style='margin: 5px 0')
+                el-tag(
+                    v-for='item in API.currentUser.$languages'
+                    :key='item.key'
+                    size='small'
+                    type='info'
+                    effect='plain'
+                    closable
+                    @close='removeUserLanguage(item.key)'
+                    style='margin-right: 5px')
+                    span.flags(:class='languageClass(item.key)' style='display: inline-block; margin-right: 5px')
                     | {{ item.value }} ({{ item.key }})
-            div(v-if="languageDialog.languageChoice === true")
-                el-select(v-model="languageDialog.languageValue" :placeholder="$t('dialog.language.select_language')" size="mini")
-                    el-option(v-for="item in languageDialog.languages" :key="item.key" :value="item.key" :label="item.value")
-                        span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+            div(v-if='languageDialog.languageChoice === true')
+                el-select(
+                    v-model='languageDialog.languageValue'
+                    :placeholder='$t("dialog.language.select_language")'
+                    size='mini')
+                    el-option(
+                        v-for='item in languageDialog.languages'
+                        :key='item.key'
+                        :value='item.key'
+                        :label='item.value')
+                        span.flags(:class='languageClass(item.key)' style='display: inline-block; margin-right: 5px')
                         | {{ item.value }} ({{ item.key }})
-                el-button(@click="languageDialog.languageChoice=false; addUserLanguage(languageDialog.languageValue)" size="mini") {{ $t('dialog.language.ok') }}
-                el-button(@click="languageDialog.languageChoice=false" size="mini" style="margin-left:0") {{ $t('dialog.language.cancel') }}
+                el-button(
+                    @click='languageDialog.languageChoice = false; addUserLanguage(languageDialog.languageValue)'
+                    size='mini') {{ $t('dialog.language.ok') }}
+                el-button(@click='languageDialog.languageChoice = false' size='mini' style='margin-left: 0') {{ $t('dialog.language.cancel') }}
             div(v-else)
-                el-button(@click="languageDialog.languageValue='';languageDialog.languageChoice=true" size="mini") {{ $t('dialog.language.add_language') }}
+                el-button(@click='languageDialog.languageValue = ""; languageDialog.languageChoice = true' size='mini') {{ $t('dialog.language.add_language') }}
 
     //- dialog: bio
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="bioDialog" :visible.sync="bioDialog.visible" :title="$t('dialog.bio.header')" width="600px")
-        div(v-loading="bioDialog.loading")
-            el-input(type="textarea" v-model="bioDialog.bio" size="mini" maxlength="512" show-word-limit :autosize="{ minRows:2, maxRows:5 }" :placeholder="$t('dialog.bio.bio_placeholder')")
-            el-input(v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px")
-                img(slot="prepend" :src="getFaviconUrl(link)" style="width:16px;height:16px")
-                el-button(slot="append" icon="el-icon-delete" @click="bioDialog.bioLinks.splice(index, 1)")
-            el-button(@click="bioDialog.bioLinks.push('')" :disabled="bioDialog.bioLinks.length >= 3" size="mini" style="margin-top:5px") {{ $t('dialog.bio.add_link') }}
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='bioDialog'
+        :visible.sync='bioDialog.visible'
+        :title='$t("dialog.bio.header")'
+        width='600px')
+        div(v-loading='bioDialog.loading')
+            el-input(
+                type='textarea'
+                v-model='bioDialog.bio'
+                size='mini'
+                maxlength='512'
+                show-word-limit
+                :autosize='{ minRows: 2, maxRows: 5 }'
+                :placeholder='$t("dialog.bio.bio_placeholder")')
+            el-input(
+                v-for='(link, index) in bioDialog.bioLinks'
+                :key='index'
+                :value='link'
+                v-model='bioDialog.bioLinks[index]'
+                size='small'
+                style='margin-top: 5px')
+                img(slot='prepend' :src='getFaviconUrl(link)' style='width: 16px; height: 16px')
+                el-button(slot='append' icon='el-icon-delete' @click='bioDialog.bioLinks.splice(index, 1)')
+            el-button(
+                @click='bioDialog.bioLinks.push("")'
+                :disabled='bioDialog.bioLinks.length >= 3'
+                size='mini'
+                style='margin-top: 5px') {{ $t('dialog.bio.add_link') }}
         template(#footer)
-            el-button(type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio") {{ $t('dialog.bio.update') }}
+            el-button(type='primary' size='small' :disabled='bioDialog.loading' @click='saveBio') {{ $t('dialog.bio.update') }}
 
     //- dialog: pronouns
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="pronounsDialog" :visible.sync="pronounsDialog.visible" :title="$t('dialog.pronouns.header')" width="600px")
-        div(v-loading="pronounsDialog.loading")
-            el-input(type="textarea" v-model="pronounsDialog.pronouns" size="mini" maxlength="32" show-word-limit :autosize="{ minRows:2, maxRows:5 }" :placeholder="$t('dialog.pronouns.pronouns_placeholder')")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='pronounsDialog'
+        :visible.sync='pronounsDialog.visible'
+        :title='$t("dialog.pronouns.header")'
+        width='600px')
+        div(v-loading='pronounsDialog.loading')
+            el-input(
+                type='textarea'
+                v-model='pronounsDialog.pronouns'
+                size='mini'
+                maxlength='32'
+                show-word-limit
+                :autosize='{ minRows: 2, maxRows: 5 }'
+                :placeholder='$t("dialog.pronouns.pronouns_placeholder")')
         template(#footer)
-            el-button(type="primary" size="small" :disabled="pronounsDialog.loading" @click="savePronouns") {{ $t('dialog.pronouns.update') }}
+            el-button(type='primary' size='small' :disabled='pronounsDialog.loading' @click='savePronouns') {{ $t('dialog.pronouns.update') }}
 
     //- dialog: Gallery/VRCPlusIcons
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" :title="$t('dialog.gallery_icons.header')" width="100%")
-        el-tabs(type="card" ref="galleryTabs")
-            el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
-                span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
-                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
-                input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        ref='galleryDialog'
+        :visible.sync='galleryDialogVisible'
+        :title='$t("dialog.gallery_icons.header")'
+        width='100%')
+        el-tabs(type='card' ref='galleryTabs')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogGalleryLoading')
+                span(slot='label') {{ $t('dialog.gallery_icons.gallery') }}
+                    span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ galleryTable.length }}/64
+                input#GalleryUploadButton(
+                    type='file'
+                    accept='image/*'
+                    @change='onFileChangeGallery'
+                    style='display: none')
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
                 br
                 br
                 el-button-group
-                    el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
-                    el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
-                    el-button(type="default" size="small" @click="setProfilePicOverride('')" icon="el-icon-close" :disabled="!API.currentUser.profilePicOverride") {{ $t('dialog.gallery_icons.clear') }}
+                    el-button(type='default' size='small' @click='refreshGalleryTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
+                    el-button(
+                        type='default'
+                        size='small'
+                        @click='displayGalleryUpload'
+                        icon='el-icon-upload2'
+                        :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
+                    el-button(
+                        type='default'
+                        size='small'
+                        @click='setProfilePicOverride("")'
+                        icon='el-icon-close'
+                        :disabled='!API.currentUser.profilePicOverride') {{ $t('dialog.gallery_icons.clear') }}
                 br
-                .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                    .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setProfilePicOverride(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }")
-                        img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
-                    div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-picture-outline" circle)
-                        el-button(type="default" @click="deleteGalleryImage(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
-            el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
-                span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
-                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
-                input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                .x-friend-item(
+                    v-if='image.versions && image.versions.length > 0'
+                    v-for='image in galleryTable'
+                    :key='image.id'
+                    style='display: inline-block; margin-top: 10px; width: unset; cursor: default')
+                    .vrcplus-icon(
+                        v-if='image.versions[image.versions.length - 1].file.url'
+                        @click='setProfilePicOverride(image.id)'
+                        :class='{ "current-vrcplus-icon": compareCurrentProfilePic(image.id) }')
+                        img.avatar(v-lazy='image.versions[image.versions.length - 1].file.url')
+                    div(style='float: right; margin-top: 5px')
+                        el-button(
+                            type='default'
+                            @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)'
+                            size='mini'
+                            icon='el-icon-picture-outline'
+                            circle)
+                        el-button(
+                            type='default'
+                            @click='deleteGalleryImage(image.id)'
+                            size='mini'
+                            icon='el-icon-delete'
+                            circle
+                            style='margin-left: 5px')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogIconsLoading')
+                span(slot='label') {{ $t('dialog.gallery_icons.icons') }}
+                    span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ VRCPlusIconsTable.length }}/64
+                input#VRCPlusIconUploadButton(
+                    type='file'
+                    accept='image/*'
+                    @change='onFileChangeVRCPlusIcon'
+                    style='display: none')
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 2048x2048px (1:1)
                 br
                 br
                 el-button-group
-                    el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
-                    el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
-                    el-button(type="default" size="small" @click="setVRCPlusIcon('')" icon="el-icon-close" :disabled="!API.currentUser.userIcon") {{ $t('dialog.gallery_icons.clear') }}
+                    el-button(type='default' size='small' @click='refreshVRCPlusIconsTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
+                    el-button(
+                        type='default'
+                        size='small'
+                        @click='displayVRCPlusIconUpload'
+                        icon='el-icon-upload2'
+                        :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
+                    el-button(
+                        type='default'
+                        size='small'
+                        @click='setVRCPlusIcon("")'
+                        icon='el-icon-close'
+                        :disabled='!API.currentUser.userIcon') {{ $t('dialog.gallery_icons.clear') }}
                 br
-                .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in VRCPlusIconsTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                    .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setVRCPlusIcon(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }")
-                        img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
-                    div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-picture-outline" circle)
-                        el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
-            el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogEmojisLoading")
-                span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
-                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
-                input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                .x-friend-item(
+                    v-if='image.versions && image.versions.length > 0'
+                    v-for='image in VRCPlusIconsTable'
+                    :key='image.id'
+                    style='display: inline-block; margin-top: 10px; width: unset; cursor: default')
+                    .vrcplus-icon(
+                        v-if='image.versions[image.versions.length - 1].file.url'
+                        @click='setVRCPlusIcon(image.id)'
+                        :class='{ "current-vrcplus-icon": compareCurrentVRCPlusIcon(image.id) }')
+                        img.avatar(v-lazy='image.versions[image.versions.length - 1].file.url')
+                    div(style='float: right; margin-top: 5px')
+                        el-button(
+                            type='default'
+                            @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)'
+                            size='mini'
+                            icon='el-icon-picture-outline'
+                            circle)
+                        el-button(
+                            type='default'
+                            @click='deleteVRCPlusIcon(image.id)'
+                            size='mini'
+                            icon='el-icon-delete'
+                            circle
+                            style='margin-left: 5px')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogEmojisLoading')
+                span(slot='label') {{ $t('dialog.gallery_icons.emojis') }}
+                    span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ emojiTable.length }}/9
+                input#EmojiUploadButton(type='file' accept='image/*' @change='onFileChangeEmoji' style='display: none')
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1024x1024px (1:1)
                 br
                 br
-                el-button-group(style="margin-right:10px")
-                    el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
-                    el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
-                el-select(v-model="emojiAnimationStyle" popper-class="max-height-el-select")
+                el-button-group(style='margin-right: 10px')
+                    el-button(type='default' size='small' @click='refreshEmojiTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
+                    el-button(
+                        type='default'
+                        size='small'
+                        @click='displayEmojiUpload'
+                        icon='el-icon-upload2'
+                        :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
+                el-select(v-model='emojiAnimationStyle' popper-class='max-height-el-select')
                     el-option-group {{ $t('dialog.gallery_icons.emoji_animation_styles') }}
-                        el-option.x-friend-item(v-for="(fileName, styleName) in emojiAnimationStyleList" :key="fileName" :label="styleName" :value="styleName" style="height:auto")
-                            .avatar(style="width:200px;height:200px")
-                                img(v-lazy="`${emojiAnimationStyleUrl}${fileName}`")
+                        el-option.x-friend-item(
+                            v-for='(fileName, styleName) in emojiAnimationStyleList'
+                            :key='fileName'
+                            :label='styleName'
+                            :value='styleName'
+                            style='height: auto')
+                            .avatar(style='width: 200px; height: 200px')
+                                img(v-lazy='`${emojiAnimationStyleUrl}${fileName}`')
                             .detail
-                                span.name(v-text="styleName" style="margin-right:100px")
-                el-checkbox(v-model="emojiAnimType" style="margin-left:10px;margin-right:10px")
+                                span.name(v-text='styleName' style='margin-right: 100px')
+                el-checkbox(v-model='emojiAnimType' style='margin-left: 10px; margin-right: 10px')
                     span {{ $t('dialog.gallery_icons.emoji_animation_type') }}
-                template(v-if="emojiAnimType")
-                    span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_fps') }}
-                    el-input-number(size="small" v-model="emojiAnimFps" :min="1" :max="64" style="margin-right:10px;width:112px")
-                    span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }}
-                    el-input-number(size="small" v-model="emojiAnimFrameCount" :min="2" :max="64" style="margin-right:10px;width:112px")
-                    el-checkbox(v-model="emojiAnimLoopPingPong" style="margin-left:10px;margin-right:10px")
+                template(v-if='emojiAnimType')
+                    span(style='margin-right: 10px') {{ $t('dialog.gallery_icons.emoji_animation_fps') }}
+                    el-input-number(
+                        size='small'
+                        v-model='emojiAnimFps'
+                        :min='1'
+                        :max='64'
+                        style='margin-right: 10px; width: 112px')
+                    span(style='margin-right: 10px') {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }}
+                    el-input-number(
+                        size='small'
+                        v-model='emojiAnimFrameCount'
+                        :min='2'
+                        :max='64'
+                        style='margin-right: 10px; width: 112px')
+                    el-checkbox(v-model='emojiAnimLoopPingPong' style='margin-left: 10px; margin-right: 10px')
                         span {{ $t('dialog.gallery_icons.emoji_loop_pingpong') }}
                     br
                     br
                     span {{ $t('dialog.gallery_icons.flipbook_info') }}
                 br
-                .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                    .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))") 
-                        template(v-if="image.frames")
-                            .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)")
+                .x-friend-item(
+                    v-if='image.versions && image.versions.length > 0'
+                    v-for='image in emojiTable'
+                    :key='image.id'
+                    style='display: inline-block; margin-top: 10px; width: unset; cursor: default')
+                    .vrcplus-icon(
+                        v-if='image.versions[image.versions.length - 1].file.url'
+                        style='overflow: hidden'
+                        @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))') 
+                        template(v-if='image.frames')
+                            .avatar(
+                                :style='generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)')
                         template(v-else)
-                            img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
-                    div(style="display:inline-block;margin:5px")
-                        span(v-if="image.loopStyle === 'pingpong'") #[i.el-icon-refresh.el-icon--left]
-                        span(style="margin-right:5px") {{ image.animationStyle }}
-                        span(v-if="image.framesOverTime" style="margin-right:5px") {{ image.framesOverTime }}fps
-                        span(v-if="image.frames" style="margin-right:5px") {{ image.frames }}frames
+                            img.avatar(v-lazy='image.versions[image.versions.length - 1].file.url')
+                    div(style='display: inline-block; margin: 5px')
+                        span(v-if='image.loopStyle === "pingpong"') #[i.el-icon-refresh.el-icon--left]
+                        span(style='margin-right: 5px') {{ image.animationStyle }}
+                        span(v-if='image.framesOverTime' style='margin-right: 5px') {{ image.framesOverTime }}fps
+                        span(v-if='image.frames' style='margin-right: 5px') {{ image.frames }}frames
                     br
-                    div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))" size="mini" icon="el-icon-picture-outline" circle)
-                        el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
-            el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogStickersLoading")
-                span(slot="label") {{ $t('dialog.gallery_icons.stickers') }}
-                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ stickerTable.length }}/9
-                input(type="file" accept="image/*" @change="onFileChangeSticker" id="StickerUploadButton" style="display:none")
+                    div(style='float: right; margin-top: 5px')
+                        el-button(
+                            type='default'
+                            @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))'
+                            size='mini'
+                            icon='el-icon-picture-outline'
+                            circle)
+                        el-button(
+                            type='default'
+                            @click='deleteEmoji(image.id)'
+                            size='mini'
+                            icon='el-icon-delete'
+                            circle
+                            style='margin-left: 5px')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogStickersLoading')
+                span(slot='label') {{ $t('dialog.gallery_icons.stickers') }}
+                    span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ stickerTable.length }}/9
+                input#StickerUploadButton(
+                    type='file'
+                    accept='image/*'
+                    @change='onFileChangeSticker'
+                    style='display: none')
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1024x1024px (1:1)
                 br
                 br
                 el-button-group
-                    el-button(type="default" size="small" @click="refreshStickerTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
-                    el-button(type="default" size="small" @click="displayStickerUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                    el-button(type='default' size='small' @click='refreshStickerTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
+                    el-button(
+                        type='default'
+                        size='small'
+                        @click='displayStickerUpload'
+                        icon='el-icon-upload2'
+                        :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
                 br
-                .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in stickerTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                    .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)") 
-                        img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
-                    div(style="float:right;margin-top:5px")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-picture-outline" circle)
-                        el-button(type="default" @click="deleteSticker(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
-            el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogPrintsLoading")
-                span(slot="label") {{ $t('dialog.gallery_icons.prints') }}
-                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ printTable.length }}/64
-                input(type="file" accept="image/*" @change="onFileChangePrint" id="PrintUploadButton" style="display:none")
+                .x-friend-item(
+                    v-if='image.versions && image.versions.length > 0'
+                    v-for='image in stickerTable'
+                    :key='image.id'
+                    style='display: inline-block; margin-top: 10px; width: unset; cursor: default')
+                    .vrcplus-icon(
+                        v-if='image.versions[image.versions.length - 1].file.url'
+                        style='overflow: hidden'
+                        @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)') 
+                        img.avatar(v-lazy='image.versions[image.versions.length - 1].file.url')
+                    div(style='float: right; margin-top: 5px')
+                        el-button(
+                            type='default'
+                            @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)'
+                            size='mini'
+                            icon='el-icon-picture-outline'
+                            circle)
+                        el-button(
+                            type='default'
+                            @click='deleteSticker(image.id)'
+                            size='mini'
+                            icon='el-icon-delete'
+                            circle
+                            style='margin-left: 5px')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogPrintsLoading')
+                span(slot='label') {{ $t('dialog.gallery_icons.prints') }}
+                    span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ printTable.length }}/64
+                input#PrintUploadButton(type='file' accept='image/*' @change='onFileChangePrint' style='display: none')
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1920x1080px (16:9)
                 br
                 br
                 el-button-group
-                    el-button(type="default" size="small" @click="refreshPrintTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
-                    el-button(type="default" size="small" @click="displayPrintUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
-                el-input(type="textarea" v-model="printUploadNote" size="mini" rows="1" resize="none" maxlength="32" style="margin-left:10px;width:300px" :placeholder="$t('dialog.gallery_icons.note')")
+                    el-button(type='default' size='small' @click='refreshPrintTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
+                    el-button(
+                        type='default'
+                        size='small'
+                        @click='displayPrintUpload'
+                        icon='el-icon-upload2'
+                        :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
+                el-input(
+                    type='textarea'
+                    v-model='printUploadNote'
+                    size='mini'
+                    rows='1'
+                    resize='none'
+                    maxlength='32'
+                    style='margin-left: 10px; width: 300px'
+                    :placeholder='$t("dialog.gallery_icons.note")')
                 br
-                .x-friend-item(v-for="image in printTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                    .vrcplus-icon(style="overflow:hidden" @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))") 
-                        img.avatar(v-lazy="image.files.image")
-                    div(style="margin-top:5px;width:208px")
-                        span.x-ellipsis(v-if="image.note" v-text="image.note" style="display:block")
-                        span(v-else style="display:block") &nbsp;
-                        location.x-ellipsis(v-if="image.worldId" :location="image.worldId" :hint="image.worldName" style="display:block")
-                        span(v-else style="display:block") &nbsp;
-                        display-name.x-ellipsis(v-if="image.authorId" :userid="image.authorId" :hint="image.authorName" style="color:#909399;font-family:monospace;display:block")
-                        span(v-else style="font-family:monospace;display:block") &nbsp;
-                        span.x-ellipsis(v-if="image.createdAt" style="color:#909399;font-family:monospace;font-size:11px;display:block") {{ image.createdAt | formatDate('long') }}
-                        span(v-else style="display:block") &nbsp;
-                    div(style="float:right")
-                        el-button(type="default" @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))" size="mini" icon="el-icon-picture-outline" circle)
-                        el-button(type="default" @click="deletePrint(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                .x-friend-item(
+                    v-for='image in printTable'
+                    :key='image.id'
+                    style='display: inline-block; margin-top: 10px; width: unset; cursor: default')
+                    .vrcplus-icon(
+                        style='overflow: hidden'
+                        @click='showFullscreenImageDialog(image.files.image, getPrintFileName(image))') 
+                        img.avatar(v-lazy='image.files.image')
+                    div(style='margin-top: 5px; width: 208px')
+                        span.x-ellipsis(v-if='image.note' v-text='image.note' style='display: block')
+                        span(v-else style='display: block') &nbsp;
+                        location.x-ellipsis(
+                            v-if='image.worldId'
+                            :location='image.worldId'
+                            :hint='image.worldName'
+                            style='display: block')
+                        span(v-else style='display: block') &nbsp;
+                        display-name.x-ellipsis(
+                            v-if='image.authorId'
+                            :userid='image.authorId'
+                            :hint='image.authorName'
+                            style='color: #909399; font-family: monospace; display: block')
+                        span(v-else style='font-family: monospace; display: block') &nbsp;
+                        span.x-ellipsis(
+                            v-if='image.createdAt'
+                            style='color: #909399; font-family: monospace; font-size: 11px; display: block') {{ image.createdAt | formatDate('long') }}
+                        span(v-else style='display: block') &nbsp;
+                    div(style='float: right')
+                        el-button(
+                            type='default'
+                            @click='showFullscreenImageDialog(image.files.image, getPrintFileName(image))'
+                            size='mini'
+                            icon='el-icon-picture-outline'
+                            circle)
+                        el-button(
+                            type='default'
+                            @click='deletePrint(image.id)'
+                            size='mini'
+                            icon='el-icon-delete'
+                            circle
+                            style='margin-left: 5px')

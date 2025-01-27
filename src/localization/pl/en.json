@@ -808,6 +808,7 @@
                 "last_updated": "Ostatnia aktualizacja",
                 "version": "Wersja",
                 "platform": "Platforma",
+                "time_spent": "Spędzony czas",
                 "memo": "Notatka VRCX",
                 "memo_placeholder": "Kliknij, aby dodać notatkę VRCX"
             },

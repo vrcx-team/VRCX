@@ -397,7 +397,8 @@ button {
     color: #fff;
 }
 
-.x-friend-item > .detail > .extra {
+.x-friend-item > .detail > .extra,
+.extra {
     color: #c7c7c7;
 }
 
@@ -411,4 +412,8 @@ button {
 
 .x-grey {
     color: #b3b3b3;
+}
+
+.el-color-picker__panel {
+    background-color: #222;
 }

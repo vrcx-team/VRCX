@@ -1216,7 +1216,7 @@ export default class extends baseClass {
 
         API.$on('GROUP:USER:INSTANCES', function (args) {
             $app.groupInstances = [];
-            for (var json of args.json.instances) {
+            for (const json of args.json.instances) {
                 if (args.json.fetchedAt) {
                     // tack on fetchedAt
                     json.$fetchedAt = args.json.fetchedAt;
@@ -1227,7 +1227,7 @@ export default class extends baseClass {
                         fetchedAt: args.json.fetchedAt
                     }
                 });
-                var ref = this.cachedGroups.get(json.ownerId);
+                const ref = this.cachedGroups.get(json.ownerId);
                 if (typeof ref === 'undefined') {
                     if ($app.friendLogInitStatus) {
                         this.getGroup({ groupId: json.ownerId });
@@ -1549,6 +1549,7 @@ export default class extends baseClass {
         isGroupGalleryLoading: false,
         loadMoreGroupMembersParams: {},
         groupMemberModerationTableForceUpdate: 0,
+        isGroupLogsExportDialogVisible: false,
 
         groupDialog: {
             visible: false,
@@ -1701,7 +1702,37 @@ export default class extends baseClass {
                 layout: 'sizes,prev,pager,next,total',
                 pageSizes: [10, 15, 25, 50, 100]
             }
-        }
+        },
+        checkedGroupLogsExportLogsOptions: [
+            'created_at',
+            'eventType',
+            'actorDisplayName',
+            'description',
+            'data'
+        ],
+        checkGroupsLogsExportLogsOptions: [
+            {
+                label: 'created_at',
+                text: 'dialog.group_member_moderation.created_at'
+            },
+            {
+                label: 'eventType',
+                text: 'dialog.group_member_moderation.type'
+            },
+            {
+                label: 'actorDisplayName',
+                text: 'dialog.group_member_moderation.display_name'
+            },
+            {
+                label: 'description',
+                text: 'dialog.group_member_moderation.description'
+            },
+            {
+                label: 'data',
+                text: 'dialog.group_member_moderation.data'
+            }
+        ],
+        groupLogsExportContent: ''
     };
 
     _methods = {
@@ -3565,6 +3596,62 @@ export default class extends baseClass {
             D.selectedUsers.set(member.userId, member);
             D.selectedUsersArray = Array.from(D.selectedUsers.values());
             this.groupMemberModerationTableForceUpdate++;
+        },
+        showGroupLogsExportDialog() {
+            this.$nextTick(() =>
+                $app.adjustDialogZ(this.$refs.groupLogsExportDialogRef.$el)
+            );
+            this.groupLogsExportContent = '';
+            this.updateGrouptLogsExporContent();
+            this.isGroupLogsExportDialogVisible = true;
+        },
+        handleCopyGroupLogsExportContent(event) {
+            event.target.tagName === 'TEXTAREA' && event.target.select();
+            navigator.clipboard
+                .writeText(this.groupLogsExportContent)
+                .then(() => {
+                    this.$message({
+                        message: 'Copied successfully!',
+                        type: 'success',
+                        duration: 2000
+                    });
+                })
+                .catch((err) => {
+                    console.error('Copy failed:', err);
+                    this.$message.error('Copy failed!');
+                });
+        },
+        updateGrouptLogsExporContent() {
+            const formatter = (str) =>
+                /[\x00-\x1f,"]/.test(str)
+                    ? `"${str.replace(/"/g, '""')}"`
+                    : str;
+
+            const sortedCheckedOptions = this.checkGroupsLogsExportLogsOptions
+                .filter((option) =>
+                    this.checkedGroupLogsExportLogsOptions.includes(
+                        option.label
+                    )
+                )
+                .map((option) => option.label);
+
+            const header = sortedCheckedOptions.join(',') + '\n';
+
+            const content = this.groupLogsModerationTable.data
+                .map((item) =>
+                    sortedCheckedOptions
+                        .map((key) =>
+                            formatter(
+                                key === 'data'
+                                    ? JSON.stringify(item[key])
+                                    : item[key]
+                            )
+                        )
+                        .join(',')
+                )
+                .join('\n');
+
+            this.groupLogsExportContent = header + content;
         }
     };
 }

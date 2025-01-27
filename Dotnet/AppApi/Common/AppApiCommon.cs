@@ -83,7 +83,7 @@ namespace VRCX
         public string CustomCssPath()
         {
             var output = string.Empty;
-            var filePath = Path.Combine(Program.AppDataDirectory, "custom.css");
+            var filePath = Path.Join(Program.AppDataDirectory, "custom.css");
             if (File.Exists(filePath))
                 output = filePath;
             return output;
@@ -92,7 +92,7 @@ namespace VRCX
         public string CustomScriptPath()
         {
             var output = string.Empty;
-            var filePath = Path.Combine(Program.AppDataDirectory, "custom.js");
+            var filePath = Path.Join(Program.AppDataDirectory, "custom.js");
             if (File.Exists(filePath))
                 output = filePath;
             return output;

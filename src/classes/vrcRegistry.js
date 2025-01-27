@@ -146,12 +146,12 @@ export default class extends baseClass {
                 fileInput.accept = '.json';
                 fileInput.style.display = 'none';
                 document.body.appendChild(fileInput);
-                
-                fileInput.onchange = function(event) {
+
+                fileInput.onchange = function (event) {
                     const file = event.target.files[0];
                     if (file) {
                         const reader = new FileReader();
-                        reader.onload = function() {
+                        reader.onload = function () {
                             fileInput.remove();
                             resolve(reader.result);
                         };
@@ -161,15 +161,19 @@ export default class extends baseClass {
                         resolve(null);
                     }
                 };
-                
+
                 fileInput.click();
             });
         },
 
         async restoreVrcRegistryFromFile() {
             if (WINDOWS) {
-                var filePath = await AppApi.OpenFileSelectorDialog(null, ".json", "JSON Files (*.json)|*.json");
-                if (filePath === "") {
+                var filePath = await AppApi.OpenFileSelectorDialog(
+                    null,
+                    '.json',
+                    'JSON Files (*.json)|*.json'
+                );
+                if (filePath === '') {
                     return;
                 }
             }
@@ -180,7 +184,7 @@ export default class extends baseClass {
             } else {
                 json = await AppApi.ReadVrcRegJsonFile(filePath);
             }
-            
+
             try {
                 var data = JSON.parse(json);
                 if (!data || typeof data !== 'object') {

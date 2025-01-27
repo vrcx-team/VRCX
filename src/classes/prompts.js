@@ -326,7 +326,8 @@ export default class extends baseClass {
                                     ),
                                     type: 'success'
                                 });
-                                return args;
+                                // load new group name
+                                API.refreshFavoriteGroups();
                             });
                         }
                     }

@@ -1,12 +1,18 @@
-mixin openSourceSoftwareNotice()
+mixin openSourceSoftwareNotice
     //- dialog: open source software notice
-    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
-        div(v-if="ossDialog" style="height:350px;overflow:hidden scroll;word-break:break-all")
+    el-dialog.x-dialog(
+        :before-close='beforeDialogClose'
+        @mousedown.native='dialogMouseDown'
+        @mouseup.native='dialogMouseUp'
+        :visible.sync='ossDialog'
+        :title='$t("dialog.open_source.header")'
+        width='650px')
+        div(v-if='ossDialog' style='height: 350px; overflow: hidden scroll; word-break: break-all')
             div
                 span {{ $t('dialog.open_source.description') }}
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") animate.css
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') animate.css
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright (c) 2019 Daniel Eden
@@ -28,9 +34,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") CefSharp
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') CefSharp
+                pre(style='font-size: 12px; white-space: pre-line').
                     // Copyright © The CefSharp Authors. All rights reserved.
                     //
                     // Redistribution and use in source and binary forms, with or without
@@ -61,9 +67,9 @@ mixin openSourceSoftwareNotice()
                     // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
                     // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
                     // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") DiscordRichPresence
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') DiscordRichPresence
+                pre(style='font-size: 12px; white-space: pre-line').
                     MIT License
 
                     Copyright (c) 2018 Lachee
@@ -85,9 +91,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") element
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') element
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright (c) 2016-present ElemeFE
@@ -109,9 +115,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") librsync.net
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') librsync.net
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright (c) 2015 Brad Dodson
@@ -133,9 +139,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") Newtonsoft.Json
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') Newtonsoft.Json
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright (c) 2007 James Newton-King
@@ -145,9 +151,9 @@ mixin openSourceSoftwareNotice()
                     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
                     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") normalize
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') normalize
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright © Nicolas Gallagher and Jonathan Neal
@@ -157,9 +163,9 @@ mixin openSourceSoftwareNotice()
                     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
                     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") noty
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') noty
+                pre(style='font-size: 12px; white-space: pre-line').
                     Copyright (c) 2012 Nedim Arabacı
 
                     Permission is hereby granted, free of charge, to any person obtaining
@@ -180,9 +186,9 @@ mixin openSourceSoftwareNotice()
                     LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
                     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
                     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") OpenVR SDK
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') OpenVR SDK
+                pre(style='font-size: 12px; white-space: pre-line').
                     Copyright (c) 2015, Valve Corporation
                     All rights reserved.
 
@@ -210,9 +216,9 @@ mixin openSourceSoftwareNotice()
                     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
                     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
                     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") Twemoji
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') Twemoji
+                pre(style='font-size: 12px; white-space: pre-line').
                     MIT License
 
                     Copyright (c) 2021 Twitter
@@ -234,9 +240,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") SharpDX
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') SharpDX
+                pre(style='font-size: 12px; white-space: pre-line').
                     Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 
                     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -256,9 +262,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
                     THE SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") vue
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') vue
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright (c) 2013-present, Yuxi (Evan) You
@@ -280,9 +286,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
                     THE SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") vue-data-tables
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') vue-data-tables
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright (c) 2018 Leon Zhang
@@ -304,9 +310,9 @@ mixin openSourceSoftwareNotice()
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     SOFTWARE.
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") vue-lazyload
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') vue-lazyload
+                pre(style='font-size: 12px; white-space: pre-line').
                     The MIT License (MIT)
 
                     Copyright (c) 2016 Awe
@@ -329,9 +335,9 @@ mixin openSourceSoftwareNotice()
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                     SOFTWARE.
 
-            div(style="margin-top:15px")
-                p(style="font-weight:bold") Encode Sans Font (from Dark Vanilla)
-                pre(style="font-size:12px;white-space:pre-line").
+            div(style='margin-top: 15px')
+                p(style='font-weight: bold') Encode Sans Font (from Dark Vanilla)
+                pre(style='font-size: 12px; white-space: pre-line').
                     SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
                     Copyright (c) 2020 June 20, Impallari Type, Andres Torresi, Jacques Le Bailly 
                     (https://fonts.google.com/specimen/Encode+Sans),

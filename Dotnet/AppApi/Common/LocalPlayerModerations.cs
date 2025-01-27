@@ -12,7 +12,7 @@ namespace VRCX
         {
             // 004 = hideAvatar
             // 005 = showAvatar
-            var filePath = Path.Combine(GetVRChatAppDataLocation(), @$"LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset");
+            var filePath = Path.Join(GetVRChatAppDataLocation(), @$"LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset");
             if (!File.Exists(filePath))
                 return null;
 
@@ -35,7 +35,7 @@ namespace VRCX
         
         public short GetVRChatUserModeration(string currentUserId, string userId)
         {
-            var filePath = Path.Combine(GetVRChatAppDataLocation(), @$"LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset");
+            var filePath = Path.Join(GetVRChatAppDataLocation(), @$"LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset");
             if (!File.Exists(filePath))
                 return 0;
 
@@ -58,7 +58,7 @@ namespace VRCX
 
         public bool SetVRChatUserModeration(string currentUserId, string userId, int type)
         {
-            var filePath = Path.Combine(GetVRChatAppDataLocation(), @$"LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset");
+            var filePath = Path.Join(GetVRChatAppDataLocation(), @$"LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset");
             if (!File.Exists(filePath))
                 return false;
 

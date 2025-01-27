@@ -227,7 +227,7 @@
                 "vrchat_credits": "VRChat Credits",
                 "refresh": "Click to refresh",
                 "logout": "Logout",
-                "manage_gallery_icon": "Manage Photos/Icons/Emojis/Stickers",
+                "manage_gallery_icon": "Manage VRC+ Images",
                 "export_friend_list": "Export Friends List",
                 "export_own_avatars": "Export Own Avatars",
                 "discord_names": "Discord Names",
@@ -383,7 +383,11 @@
                         "placeholder": "Sort Order",
                         "dropdown_header": "Choose Sort Order"
                     },
-                    "width": "Width"
+                    "width": "Width",
+                    "group_by_instance": "Group by Instance",
+                    "group_by_instance_tooltip": "Enabling this will group friends by instance when there is more than one friend in the same instance.",
+                    "split_favorite_friends": "Split Favorite Friends",
+                    "split_favorite_friends_tooltip": "Separate favorite friends into their individual groups."
                 },
                 "user_dialog": {
                     "header": "User Dialog",
@@ -631,6 +635,7 @@
         "friends": "Friends",
         "me": "ME",
         "favorite": "FAVORITES",
+        "same_instance": "Same Instance",
         "online": "ONLINE",
         "active": "ACTIVE",
         "offline": "OFFLINE",
@@ -927,6 +932,7 @@
                 "last_updated": "Last Updated",
                 "version": "Version",
                 "platform": "Platform",
+                "time_spent": "Time Spent",
                 "memo": "Memo",
                 "memo_placeholder": "Click to add a memo"
             },
@@ -1487,7 +1493,8 @@
             "choose_roles_placeholder": "Choose Roles",
             "selected_roles": "Selected Roles",
             "remove_roles": "Remove Roles",
-            "add_roles": "Add Roles"
+            "add_roles": "Add Roles",
+            "export_logs": "Export Logs"
         },
         "group_post_edit": {
             "header": "Create/Edit Post",

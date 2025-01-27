@@ -94,7 +94,7 @@ export default class extends baseClass {
             var travelingToWorld = $travelingLocation.worldId;
             var travelingToInstance = $travelingLocation.instanceId;
             if (!$app.isGameRunning && json.presence) {
-                if ($app.isRealInstance(json.presence.world)) {
+                if ($utils.isRealInstance(json.presence.world)) {
                     location = `${json.presence.world}:${json.presence.instance}`;
                     travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
                 } else {
@@ -106,7 +106,6 @@ export default class extends baseClass {
                 travelingToInstance = json.presence.travelingToInstance;
                 travelingToWorld = json.presence.travelingToWorld;
             }
-
             this.applyUser({
                 allowAvatarCopying: json.allowAvatarCopying,
                 badges: json.badges,
@@ -166,6 +165,10 @@ export default class extends baseClass {
             if (this.isLoggedIn) {
                 if (json.currentAvatar !== ref.currentAvatar) {
                     $app.addAvatarToHistory(json.currentAvatar);
+                    if ($app.isGameRunning) {
+                        $app.addAvatarWearTime(ref.currentAvatar);
+                        ref.$previousAvatarSwapTime = Date.now();
+                    }
                 }
                 Object.assign(ref, json);
                 if (ref.homeLocation !== ref.$homeLocation.tag) {
@@ -277,6 +280,7 @@ export default class extends baseClass {
                     $offline_for: '',
                     $location_at: Date.now(),
                     $travelingToTime: Date.now(),
+                    $previousAvatarSwapTime: '',
                     $homeLocation: {},
                     $isVRCPlus: false,
                     $isModerator: false,
@@ -292,6 +296,9 @@ export default class extends baseClass {
                     $vrchatcredits: null,
                     ...json
                 };
+                if ($app.isGameRunning) {
+                    ref.$previousAvatarSwapTime = Date.now();
+                }
                 ref.$homeLocation = $app.parseLocation(ref.homeLocation);
                 ref.$isVRCPlus = ref.tags.includes('system_supporter');
                 this.applyUserTrustLevel(ref);

@@ -519,7 +519,8 @@ img.friends-list-avatar {
     color: #303133;
 }
 
-.x-friend-item > .detail > .extra {
+.x-friend-item > .detail > .extra,
+.extra {
     font-weight: normal;
     color: #606266;
 }
@@ -954,4 +955,13 @@ i.x-status-icon.red {
     background-color: rgba(76, 255, 80, 0.2);
     padding: 2px 2px;
     border-radius: 4px;
+}
+
+// FIXME
+// Something changed the CSS of element-ui
+// The other parts are the same
+// It feels like can't fundamentally modify it
+// And can only fix it bit by bit by overriding
+.el-switch__core:after {
+    top: 1.5px;
 }

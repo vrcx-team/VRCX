@@ -16,7 +16,7 @@ namespace VRCX
         {
             var winePrefix = Path.Join(_vrcPrefixPath, "drive_c");
             var winePath = path.Substring(3).Replace("\\", "/");
-            path = Path.Combine(winePrefix, winePath);
+            path = Path.Join(winePrefix, winePath);
             
             var fileName = Path.GetFileNameWithoutExtension(path);
             if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_"))
@@ -25,7 +25,7 @@ namespace VRCX
             if (changeFilename)
             {
                 var newFileName = $"{fileName}_{worldId}";
-                var newPath = Path.Combine(Path.GetDirectoryName(path), newFileName + Path.GetExtension(path));
+                var newPath = Path.Join(Path.GetDirectoryName(path), newFileName + Path.GetExtension(path));
                 File.Move(path, newPath);
                 path = newPath;
             }
