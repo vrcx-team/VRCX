@@ -7201,6 +7201,21 @@ console.log(`isLinux: ${LINUX}`);
         return this.favoriteFriendsSorted;
     };
 
+    $app.computed.groupedByGroupKeyFavoriteFriends = function () {
+        const groupedByGroupKeyFavoriteFriends = {};
+
+        this.favoriteFriends.forEach((friend) => {
+            if (friend.groupKey) {
+                if (!groupedByGroupKeyFavoriteFriends[friend.groupKey]) {
+                    groupedByGroupKeyFavoriteFriends[friend.groupKey] = [];
+                }
+                groupedByGroupKeyFavoriteFriends[friend.groupKey].push(friend);
+            }
+        });
+
+        return groupedByGroupKeyFavoriteFriends;
+    };
+
     $app.computed.favoriteWorlds = function () {
         if (this.sortFavoriteWorlds) {
             this.sortFavoriteWorlds = false;
@@ -7212,6 +7227,21 @@ console.log(`isLinux: ${LINUX}`);
         return this.favoriteWorldsSorted;
     };
 
+    $app.computed.groupedByGroupKeyFavoriteWorlds = function () {
+        const groupedByGroupKeyFavoriteWorlds = {};
+
+        this.favoriteWorlds.forEach((world) => {
+            if (world.groupKey) {
+                if (!groupedByGroupKeyFavoriteWorlds[world.groupKey]) {
+                    groupedByGroupKeyFavoriteWorlds[world.groupKey] = [];
+                }
+                groupedByGroupKeyFavoriteWorlds[world.groupKey].push(world);
+            }
+        });
+
+        return groupedByGroupKeyFavoriteWorlds;
+    };
+
     $app.computed.favoriteAvatars = function () {
         if (this.sortFavoriteAvatars) {
             this.sortFavoriteAvatars = false;
@@ -7221,6 +7251,20 @@ console.log(`isLinux: ${LINUX}`);
             return this.favoriteAvatars_;
         }
         return this.favoriteAvatarsSorted;
+    };
+
+    $app.computed.groupedByGroupKeyFavoriteAvatars = function () {
+        const groupedByGroupKeyFavoriteAvatars = {};
+        this.favoriteAvatars.forEach((avatar) => {
+            if (avatar.groupKey) {
+                if (!groupedByGroupKeyFavoriteAvatars[avatar.groupKey]) {
+                    groupedByGroupKeyFavoriteAvatars[avatar.groupKey] = [];
+                }
+                groupedByGroupKeyFavoriteAvatars[avatar.groupKey].push(avatar);
+            }
+        });
+
+        return groupedByGroupKeyFavoriteAvatars;
     };
 
     // #endregion
@@ -23343,6 +23387,27 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         return friendsArr[0].ref?.location;
+    };
+
+    // favorites Tab
+    // - local favorites
+    //   - local world & avatar
+    $app.data.localFavoriteShowDelayedContent = [false, false];
+
+    $app.methods.onFavTabClick = function (el) {
+        if (el.index === '0') {
+            this.localFavoriteShowDelayedContent = [false, false];
+        } else {
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    if (el.index === '1') {
+                        this.localFavoriteShowDelayedContent = [true, false];
+                    } else if (el.index === '2') {
+                        this.localFavoriteShowDelayedContent = [false, true];
+                    }
+                });
+            }, 300);
+        }
     };
 
     // #endregion
