@@ -7953,10 +7953,12 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_feedTableVIPFilter',
         false
     );
-    $app.data.gameLogTable.vip = await configRepository.getBool(
-        'VRCX_gameLogTableVIPFilter',
-        false
-    );
+    $app.data.gameLogTable.vip = false;
+    // gameLog loads before favorites
+    // await configRepository.getBool(
+    //     'VRCX_gameLogTableVIPFilter',
+    //     false
+    // );
     $app.data.gameLogTable.filter = JSON.parse(
         await configRepository.getString('VRCX_gameLogTableFilters', '[]')
     );
@@ -16639,12 +16641,14 @@ console.log(`isLinux: ${LINUX}`);
             },
             cache_directory: {
                 name: $t('dialog.config_json.cache_directory'),
-                default: '%AppData%\\..\\LocalLow\\VRChat\\VRChat'
+                default: '%AppData%\\..\\LocalLow\\VRChat\\VRChat',
+                folderBrowser: true
             },
             picture_output_folder: {
                 name: $t('dialog.config_json.picture_directory'),
                 // my pictures folder
-                default: `%UserProfile%\\Pictures\\VRChat`
+                default: `%UserProfile%\\Pictures\\VRChat`,
+                folderBrowser: true
             },
             // dynamic_bone_max_affected_transform_count: {
             //     name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
@@ -16674,6 +16678,20 @@ console.log(`isLinux: ${LINUX}`);
         if (!this.VRChatUsedCacheSize) {
             this.getVRChatCacheSize();
         }
+    };
+
+    $app.methods.openConfigFolderBrowser = async function (value) {
+        var oldPath = this.VRChatConfigFile[value];
+        var newPath = await this.folderSelectorDialog(oldPath);
+        if (newPath) {
+            this.VRChatConfigFile[value] = newPath;
+        }
+        this.redrawVRChatConfigDialog();
+    };
+
+    $app.methods.redrawVRChatConfigDialog = function () {
+        this.VRChatConfigDialog.visible = false;
+        this.VRChatConfigDialog.visible = true;
     };
 
     $app.methods.saveVRChatConfigFile = function () {
@@ -16760,11 +16778,13 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.setVRChatCameraResolution = function (res) {
         this.VRChatConfigFile.camera_res_height = res.height;
         this.VRChatConfigFile.camera_res_width = res.width;
+        this.redrawVRChatConfigDialog();
     };
 
     $app.methods.setVRChatScreenshotResolution = function (res) {
         this.VRChatConfigFile.screenshot_res_height = res.height;
         this.VRChatConfigFile.screenshot_res_width = res.width;
+        this.redrawVRChatConfigDialog();
     };
 
     $app.methods.getVRChatSpoutResolution = function () {
@@ -16781,6 +16801,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.setVRChatSpoutResolution = function (res) {
         this.VRChatConfigFile.camera_spout_res_height = res.height;
         this.VRChatConfigFile.camera_spout_res_width = res.width;
+        this.redrawVRChatConfigDialog();
     };
 
     // Auto Launch Shortcuts
@@ -21055,9 +21076,7 @@ console.log(`isLinux: ${LINUX}`);
         ''
     );
 
-    $app.data.userGeneratedContentDialog = {
-        visible: false
-    };
+    $app.data.folderSelectorDialogVisible = false;
 
     $app.methods.setUGCFolderPath = async function (path) {
         await configRepository.setString('VRCX_userGeneratedContentPath', path);
@@ -21075,24 +21094,27 @@ console.log(`isLinux: ${LINUX}`);
         await AppApi.OpenUGCPhotosFolder(this.ugcFolderPath);
     };
 
-    $app.methods.openUGCFolderSelector = async function () {
-        var D = this.userGeneratedContentDialog;
-
-        if (D.visible) return;
-
-        D.visible = true;
-        var newUGCFolder;
-        if (LINUX) {
-            newUGCFolder = await window.electron.openDirectoryDialog();
-        } else {
-            newUGCFolder = await AppApi.OpenFolderSelectorDialog(
-                this.ugcFolderPath
-            );
+    $app.methods.folderSelectorDialog = async function (oldPath) {
+        if (this.folderSelectorDialogVisible) return;
+        if (!oldPath) {
+            oldPath = '';
         }
 
-        D.visible = false;
+        this.folderSelectorDialogVisible = true;
+        var newFolder = '';
+        if (LINUX) {
+            newFolder = await window.electron.openDirectoryDialog();
+        } else {
+            newFolder = await AppApi.OpenFolderSelectorDialog(oldPath);
+        }
 
-        await this.setUGCFolderPath(newUGCFolder);
+        this.folderSelectorDialogVisible = false;
+        return newFolder;
+    };
+
+    $app.methods.openUGCFolderSelector = async function () {
+        var path = await this.folderSelectorDialog(this.ugcFolderPath);
+        await this.setUGCFolderPath(path);
     };
 
     // avatar database provider

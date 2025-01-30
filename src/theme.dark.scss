@@ -417,3 +417,18 @@ button {
 .el-color-picker__panel {
     background-color: #222;
 }
+
+.x-text-removed {
+    text-decoration: line-through;
+    color: #ff4444;
+    background-color: rgba(255, 0, 0, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
+
+.x-text-added {
+    color: rgb(76, 255, 80);
+    background-color: rgba(76, 255, 80, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
