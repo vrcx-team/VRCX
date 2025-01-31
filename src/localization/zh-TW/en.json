@@ -193,10 +193,10 @@
                 },
                 "moderation": {
                     "warning": {
-                        "group": "群組管理警告"
+                        "group": "群組警告"
                     },
                     "report": {
-                        "closed": "管理回報關閉"
+                        "closed": "檢舉已完成"
                     }
                 },
                 "instance": {
