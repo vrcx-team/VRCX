@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -87,7 +87,7 @@ namespace VRCX
                     {
                         if (string.IsNullOrEmpty(packet))
                             continue;
-                        
+
 #if !LINUX
                         if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                             MainForm.Instance.Browser.ExecuteScriptAsync("$app.ipcEvent", packet);

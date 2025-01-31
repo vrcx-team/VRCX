@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -107,7 +107,7 @@ namespace VRCX
                     Encoding = System.Text.Encoding.UTF8
                 };
                 builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
-                
+
                 var consoleTarget = new ConsoleTarget("consoleTarget")
                 {
                     Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
