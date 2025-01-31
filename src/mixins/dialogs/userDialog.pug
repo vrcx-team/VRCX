@@ -15,17 +15,12 @@ mixin userDialog
                     placement='right'
                     width='500px'
                     trigger='click')
-                    template(slot='reference')
-                        img.x-link(
-                            v-if='userDialog.ref.profilePicOverrideThumbnail'
-                            v-lazy='userDialog.ref.profilePicOverrideThumbnail'
-                            style='flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover')
-                        img.x-link(
-                            v-else
-                            v-lazy='userDialog.ref.profilePicOverride'
-                            style='flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover')
                     img.x-link(
-                        v-lazy='userDialog.ref.profilePicOverride'
+                        slot='reference'
+                        v-lazy='userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride'
+                        style='flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover')
+                    img.x-link(
+                        :src='userDialog.ref.profilePicOverride'
                         style='height: 400px'
                         @click='showFullscreenImageDialog(userDialog.ref.profilePicOverride)')
                 el-popover(v-else placement='right' width='500px' trigger='click')
@@ -34,7 +29,7 @@ mixin userDialog
                         v-lazy='userDialog.ref.currentAvatarThumbnailImageUrl'
                         style='flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover')
                     img.x-link(
-                        v-lazy='userDialog.ref.currentAvatarImageUrl'
+                        :src='userDialog.ref.currentAvatarImageUrl'
                         style='height: 500px'
                         @click='showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)')
                 div(style='flex: 1; display: flex; align-items: center; margin-left: 15px')
@@ -167,11 +162,11 @@ mixin userDialog
                                     el-popover(placement='right' width='300px' trigger='click')
                                         img.x-link.x-user-badge(
                                             slot='reference'
-                                            v-lazy='badge.badgeImageUrl'
+                                            :src='badge.badgeImageUrl'
                                             style='flex: none; height: 32px; width: 32px; border-radius: 3px; object-fit: cover; margin-top: 5px; margin-right: 5px'
                                             :class='{ "x-user-badge-hidden": badge.hidden }')
                                         img.x-link(
-                                            v-lazy='badge.badgeImageUrl'
+                                            :src='badge.badgeImageUrl'
                                             style='width: 300px'
                                             @click='showFullscreenImageDialog(badge.badgeImageUrl)')
                                         br
@@ -200,10 +195,10 @@ mixin userDialog
                         el-popover(placement='right' width='500px' trigger='click')
                             img.x-link(
                                 slot='reference'
-                                v-lazy='userDialog.ref.userIcon'
+                                :src='userDialog.ref.userIcon'
                                 style='flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover')
                             img.x-link(
-                                v-lazy='userDialog.ref.userIcon'
+                                :src='userDialog.ref.userIcon'
                                 style='height: 500px'
                                 @click='showFullscreenImageDialog(userDialog.ref.userIcon)')
                     div(style='flex: none')
@@ -377,7 +372,7 @@ mixin userDialog
                                     @click='showUserDialog(userDialog.$location.userId)')
                                     template(v-if='userDialog.$location.user')
                                         .avatar(:class='userStatusClass(userDialog.$location.user)')
-                                            img(v-lazy='userImage(userDialog.$location.user)')
+                                            img(:src='userImage(userDialog.$location.user)')
                                         .detail
                                             span.name(
                                                 v-text='userDialog.$location.user.displayName'
@@ -389,7 +384,7 @@ mixin userDialog
                                     :key='user.id'
                                     @click='showUserDialog(user.id)')
                                     .avatar(:class='userStatusClass(user)')
-                                        img(v-lazy='userImage(user)')
+                                        img(:src='userImage(user)')
                                     .detail
                                         span.name(v-text='user.displayName' :style='{ color: user.$userColour }')
                                         span.extra(v-if='user.location === "traveling"')

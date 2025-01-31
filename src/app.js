@@ -10039,7 +10039,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         this.$nextTick(() => $app.adjustDialogZ(this.$refs.userDialog.$el));
-        var D = this.userDialog;
+        const D = this.userDialog;
         D.id = userId;
         D.treeData = [];
         D.memo = '';
@@ -10048,12 +10048,11 @@ console.log(`isLinux: ${LINUX}`);
         this.getUserMemo(userId).then((memo) => {
             if (memo.userId === userId) {
                 D.memo = memo.memo;
-                var ref = this.friends.get(userId);
+                const ref = this.friends.get(userId);
                 if (ref) {
                     ref.memo = String(memo.memo || '');
                     if (memo.memo) {
-                        var array = memo.memo.split('\n');
-                        ref.$nickName = array[0];
+                        ref.$nickName = memo.memo.split('\n')[0];
                     } else {
                         ref.$nickName = '';
                     }
@@ -10121,7 +10120,6 @@ console.log(`isLinux: ${LINUX}`);
             .then((args) => {
                 if (args.ref.id === D.id) {
                     requestAnimationFrame(() => {
-                        D.loading = false;
                         D.ref = args.ref;
                         D.friend = this.friends.get(D.id);
                         D.isFriend = Boolean(D.friend);
@@ -10157,6 +10155,8 @@ console.log(`isLinux: ${LINUX}`);
                             D.outgoingRequest = true;
                         }
                         this.applyUserDialogLocation(true);
+
+                        // init last acitve tab data
                         if (this.$refs.userDialogTabs.currentName === '0') {
                             this.userDialogLastActiveTab = $t(
                                 'dialog.user.info.header'
@@ -10212,6 +10212,8 @@ console.log(`isLinux: ${LINUX}`);
                             );
                             this.refreshUserDialogTreeData();
                         }
+                        // init last acitve tab data - end
+
                         if (args.cache) {
                             API.getUser(args.params);
                         }
@@ -10294,8 +10296,8 @@ console.log(`isLinux: ${LINUX}`);
                         }
                         API.getRepresentedGroup({ userId }).then((args1) => {
                             D.representedGroup = args1.json;
-                            return args1;
                         });
+                        D.loading = false;
                     });
                 }
             });
