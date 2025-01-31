@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -27,7 +27,7 @@ namespace VRCX
     public partial class AppApiCef : AppApi
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        
+
         /// <summary>
         /// Shows the developer tools for the main browser window.
         /// </summary>
@@ -95,7 +95,7 @@ namespace VRCX
                 logger.Error(ex, "Unknown error when sending desktop notification");
             }
         }
-        
+
         public override void RestartApplication(bool isUpgrade)
         {
             var args = new List<string>();
@@ -125,12 +125,12 @@ namespace VRCX
             vrcxProcess.Start();
             Environment.Exit(0);
         }
-        
+
         public override bool CheckForUpdateExe()
         {
             return File.Exists(Path.Join(Program.AppDataDirectory, "update.exe"));
         }
-        
+
         public override void ExecuteAppFunction(string function, string json)
         {
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
@@ -153,7 +153,7 @@ namespace VRCX
             StartupArgs.LaunchArguments.LaunchCommand = string.Empty;
             return command;
         }
-        
+
         public override void FocusWindow()
         {
             MainForm.Instance.Invoke(new Action(() => { MainForm.Instance.Focus_Window(); }));
@@ -168,7 +168,7 @@ namespace VRCX
         {
             WinformThemer.DoFunny();
         }
-        
+
         public override string GetClipboard()
         {
             var clipboard = string.Empty;
@@ -189,7 +189,7 @@ namespace VRCX
                     logger.Warn("Failed to open startup registry key");
                     return;
                 }
-                
+
                 if (enabled)
                 {
                     var path = Application.ExecutablePath;
@@ -216,7 +216,7 @@ namespace VRCX
                  !path.EndsWith(".bmp") &&
                  !path.EndsWith(".webp")))
                 return;
-            
+
             MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
             {
                 var image = Image.FromFile(path);
@@ -227,12 +227,12 @@ namespace VRCX
                 Clipboard.SetDataObject(data, true);
             }));
         }
-        
+
         public override void FlashWindow()
         {
             MainForm.Instance.BeginInvoke(new MethodInvoker(() => { WinformThemer.Flash(MainForm.Instance); }));
         }
-        
+
         public override void SetUserAgent()
         {
             using var client = MainForm.Instance.Browser.GetDevToolsClient();

@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -618,7 +618,7 @@ namespace VRCX
         {
             // 2021.04.08 06:37:45 Error -  [Video Playback] ERROR: Video unavailable
             // 2021.04.08 06:40:07 Error -  [Video Playback] ERROR: Private video
-            
+
             // 2024.07.31 22:28:47 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
             // 2024.07.31 23:04:15 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
 
@@ -639,7 +639,7 @@ namespace VRCX
 
                 return true;
             }
-            
+
             if (line.Contains("[AVProVideo] Error: "))
             {
                 var data = line.Substring(offset + 20);
@@ -870,17 +870,17 @@ namespace VRCX
         private bool ParseLogAvatarChange(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.11.05 14:45:57 Log        -  [Behaviour] Switching K․MOG to avatar MoeSera
-            
+
             if (string.Compare(line, offset, "[Behaviour] Switching ", 0, 22, StringComparison.Ordinal) != 0)
                 return false;
-            
+
             var pos = line.LastIndexOf(" to avatar ", StringComparison.Ordinal);
             if (pos < 0)
                 return false;
-            
+
             var displayName = line.Substring(offset + 22, pos - (offset + 22));
             var avatarName = line.Substring(pos + 11);
-            
+
             AppendLog(new[]
             {
                 fileInfo.Name,
@@ -889,7 +889,7 @@ namespace VRCX
                 displayName,
                 avatarName
             });
-            
+
             return true;
         }
 
@@ -1046,7 +1046,7 @@ namespace VRCX
         {
             // 2022.11.29 04:27:33 Error      -  [UdonBehaviour] An exception occurred during Udon execution, this UdonBehaviour will be halted.
             // VRC.Udon.VM.UdonVMException: An exception occurred in an UdonVM, execution will be halted. --->VRC.Udon.VM.UdonVMException: An exception occurred during EXTERN to 'VRCSDKBaseVRCPlayerApi.__get_displayName__SystemString'. --->System.NullReferenceException: Object reference not set to an instance of an object.
-            
+
             if (line.Contains("[PyPyDance]"))
             {
                 AppendLog(new[]
@@ -1058,7 +1058,7 @@ namespace VRCX
                 });
                 return true;
             }
-            
+
             var lineOffset = line.IndexOf(" ---> VRC.Udon.VM.UdonVMException: ", StringComparison.Ordinal);
             if (lineOffset < 0)
                 return false;
@@ -1102,7 +1102,7 @@ namespace VRCX
 
             // 2023.04.22 16:52:28 Log        -  Initializing VRSDK.
             // 2023.04.22 16:52:29 Log        -  StartVRSDK: Open VR Loader
-            
+
             // 2024.07.26 01:48:56 Log        -  STEAMVR HMD Model: Index
 
             if (string.Compare(line, offset, "Initializing VRSDK.", 0, 19, StringComparison.Ordinal) != 0 &&
@@ -1152,7 +1152,7 @@ namespace VRCX
 
             if (stringData.StartsWith("http://127.0.0.1:22500") || stringData.StartsWith("http://localhost:22500"))
                 return true; // ignore own requests
-            
+
             AppendLog(new[]
             {
                 fileInfo.Name,
@@ -1176,10 +1176,10 @@ namespace VRCX
 
             var imageData = line.Substring(lineOffset + check.Length);
             imageData = imageData.Remove(imageData.Length - 1);
-            
+
             if (imageData.StartsWith("http://127.0.0.1:22500") || imageData.StartsWith("http://localhost:22500"))
                 return true; // ignore own requests
-            
+
             AppendLog(new[]
             {
                 fileInfo.Name,
@@ -1189,7 +1189,7 @@ namespace VRCX
             });
             return true;
         }
-        
+
         private bool ParseVoteKick(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.06.02 01:08:04 Log        -  [Behaviour] Received executive message: You have been kicked from the instance by majority vote
@@ -1207,7 +1207,7 @@ namespace VRCX
             });
             return true;
         }
-        
+
         private bool ParseFailedToJoin(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.09.01 10:42:19 Warning    -  [Behaviour] Failed to join instance 'wrld_78eb6b52-fd5a-4954-ba28-972c92c8cc77:82384~hidden(usr_a9bf892d-b447-47ce-a572-20c83dbfffd8)~region(eu)' due to 'That instance is using an outdated version of VRChat. You won't be able to join them until they update!'
@@ -1228,7 +1228,7 @@ namespace VRCX
         private bool ParseOscFailedToStart(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.09.26 04:12:57 Warning    -  Could not Start OSC: Address already in use
-            
+
             if (string.Compare(line, offset, "Could not Start OSC: ", 0, 21, StringComparison.Ordinal) != 0)
                 return false;
 

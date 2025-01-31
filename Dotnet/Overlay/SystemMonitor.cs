@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -31,7 +31,7 @@ namespace VRCX
         {
             if (enabled == _enabled)
                 return;
-            
+
             _enabled = enabled;
             if (enabled)
                 StartThread();
@@ -61,11 +61,11 @@ namespace VRCX
             _performanceCounterUpTime?.Dispose();
             _performanceCounterUpTime = null;
         }
-        
+
         private void StartThread()
         {
             Exit();
-            
+
             try
             {
                 _performanceCounterCpuUsage = new PerformanceCounter(
@@ -99,7 +99,7 @@ namespace VRCX
                     logger.Warn($"Failed to create \"Processor Time\" PerformanceCounter ${ex}");
                 }
             }
-            
+
             try
             {
                 _performanceCounterUpTime = new PerformanceCounter("System", "System Up Time");
@@ -117,14 +117,14 @@ namespace VRCX
                 return;
             }
             logger.Info("SystemMonitor started");
-            
+
             _thread = new Thread(ThreadProc)
             {
                 IsBackground = true
             };
             _thread.Start();
         }
-        
+
         private void ThreadProc()
         {
             try
@@ -136,7 +136,7 @@ namespace VRCX
 
                     if (_performanceCounterUpTime != null)
                         UpTime = TimeSpan.FromSeconds(_performanceCounterUpTime.NextValue()).TotalMilliseconds;
-                    
+
                     Thread.Sleep(1000);
                 }
             }
