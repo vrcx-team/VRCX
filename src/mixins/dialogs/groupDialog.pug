@@ -344,7 +344,7 @@ mixin groupDialog
                                         template(#content)
                                             span {{ $t('dialog.group.posts.visibility') }}
                                             br
-                                            template(v-for='roleId in groupDialog.announcement.roleIds' :key='roleId')
+                                            template(v-for='roleId in groupDialog.announcement.roleIds')
                                                 span(
                                                     v-for='(role, rIndex) in groupDialog.ref.roles'
                                                     :key='rIndex'
@@ -454,8 +454,8 @@ mixin groupDialog
                                         span.name {{ $t('dialog.group.info.roles') }}
                                         span.extra(v-if='groupDialog.memberRoles.length === 0') -
                                         span.extra(v-else)
-                                            template(v-for='(role, rIndex) in groupDialog.memberRoles' :key='rIndex')
-                                                el-tooltip(placement='top')
+                                            template(v-for='(role, rIndex) in groupDialog.memberRoles')
+                                                el-tooltip(:key='rIndex' placement='top')
                                                     template(#content)
                                                         span {{ $t('dialog.group.info.role') }} {{ role.name }}
                                                         br
@@ -507,7 +507,7 @@ mixin groupDialog
                                             template(#content)
                                                 span {{ $t('dialog.group.posts.visibility') }}
                                                 br
-                                                template(v-for='roleId in post.roleIds' :key='roleId')
+                                                template(v-for='roleId in post.roleIds')
                                                     span(
                                                         v-for='(role, rIndex) in groupDialog.ref.roles'
                                                         :key='rIndex'
@@ -586,6 +586,7 @@ mixin groupDialog
                                     el-dropdown-menu(#default='dropdown')
                                         el-dropdown-item(
                                             v-for='item in groupDialogSortingOptions'
+                                            :key='item.name'
                                             v-text='item.name'
                                             @click.native='setGroupMemberSortOrder(item)')
                                 span(style='margin-right: 5px') {{ $t('dialog.group.members.filter') }}
@@ -600,10 +601,12 @@ mixin groupDialog
                                     el-dropdown-menu(#default='dropdown')
                                         el-dropdown-item(
                                             v-for='item in groupDialogFilterOptions'
+                                            :key='item.name'
                                             v-text='item.name'
                                             @click.native='setGroupMemberFilter(item)')
                                         el-dropdown-item(
                                             v-for='item in groupDialog.ref.roles'
+                                            :key='item.name'
                                             v-if='!item.defaultRole'
                                             v-text='item.name'
                                             @click.native='setGroupMemberFilter(item)')
@@ -648,7 +651,7 @@ mixin groupDialog
                                                     br
                                                     span {{ user.managerNotes }}
                                                 i.el-icon-edit-outline(style='margin-right: 5px')
-                                        template(v-for='roleId in user.roleIds' :key='roleId')
+                                        template(v-for='roleId in user.roleIds')
                                             span(
                                                 v-for='(role, rIndex) in groupDialog.ref.roles'
                                                 :key='rIndex'
@@ -689,7 +692,7 @@ mixin groupDialog
                                                     br
                                                     span {{ user.managerNotes }}
                                                 i.el-icon-edit-outline(style='margin-right: 5px')
-                                        template(v-for='roleId in user.roleIds' :key='roleId')
+                                        template(v-for='roleId in user.roleIds')
                                             span(
                                                 v-for='(role, rIndex) in groupDialog.ref.roles'
                                                 :key='rIndex'

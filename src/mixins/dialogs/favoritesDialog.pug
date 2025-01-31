@@ -22,24 +22,28 @@ mixin favoritesDialog
                     @click='addFavorite(group)') {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
         div(v-if='favoriteDialog.visible && favoriteDialog.type === "world"' style='margin-top: 20px')
             span(style='display: block; text-align: center') {{ $t('dialog.favorite.local_favorites') }}
-            template(v-for='group in localWorldFavoriteGroups' :key='group')
+            template(v-for='group in localWorldFavoriteGroups')
                 el-button(
                     v-if='hasLocalWorldFavorite(favoriteDialog.objectId, group)'
+                    :key='group'
                     style='display: block; width: 100%; margin: 10px 0'
                     @click='removeLocalWorldFavorite(favoriteDialog.objectId, group)') #[i.el-icon-check] {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                 el-button(
                     v-else
                     style='display: block; width: 100%; margin: 10px 0'
+                    :key='group'
                     @click='addLocalWorldFavorite(favoriteDialog.objectId, group)') {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
         div(v-if='favoriteDialog.visible && favoriteDialog.type === "avatar"' style='margin-top: 20px')
             span(style='display: block; text-align: center') {{ $t('dialog.favorite.local_avatar_favorites') }}
-            template(v-for='group in localAvatarFavoriteGroups' :key='group')
+            template(v-for='group in localAvatarFavoriteGroups')
                 el-button(
                     v-if='hasLocalAvatarFavorite(favoriteDialog.objectId, group)'
+                    :key='group'
                     style='display: block; width: 100%; margin: 10px 0'
                     @click='removeLocalAvatarFavorite(favoriteDialog.objectId, group)') #[i.el-icon-check] {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 el-button(
                     v-else
+                    :key='group'
                     style='display: block; width: 100%; margin: 10px 0'
                     :disabled='!isLocalUserVrcplusSupporter()'
                     @click='addLocalAvatarFavorite(favoriteDialog.objectId, group)') {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
@@ -108,16 +112,17 @@ mixin favoritesDialog
             v-model='exportSelectedOptions'
             @change='updateWorldExportDialog()'
             style='margin-bottom: 10px')
-            template(v-for='option in exportSelectOptions' :key='option.value')
-                el-checkbox(:label='option.label')
+            template(v-for='option in exportSelectOptions')
+                el-checkbox(:key='option.value' :label='option.label')
         el-dropdown(@click.native.stop trigger='click' size='small')
             el-button(size='mini')
                 span(v-if='worldExportFavoriteGroup') {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
                 span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
             el-dropdown-menu(#default='dropdown')
                 el-dropdown-item(style='display: block; margin: 10px 0' @click.native='selectWorldExportGroup(null)') None
-                template(v-for='groupAPI in API.favoriteWorldGroups' :key='groupAPI.name')
+                template(v-for='groupAPI in API.favoriteWorldGroups')
                     el-dropdown-item(
+                        :key='groupAPI.name'
                         style='display: block; margin: 10px 0'
                         @click.native='selectWorldExportGroup(groupAPI)') {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
         el-dropdown(@click.native.stop trigger='click' size='small' style='margin-left: 10px')
@@ -125,9 +130,12 @@ mixin favoritesDialog
                 span(v-if='worldExportLocalFavoriteGroup') {{ worldExportLocalFavoriteGroup }} ({{ getLocalWorldFavoriteGroupLength(worldExportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
                 span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
             el-dropdown-menu(#default='dropdown')
-                el-dropdown-item(style='display: block; margin: 10px 0' @click.native='selectWorldExportLocalGroup(null)') None
-                template(v-for='group in localWorldFavoriteGroups' :key='group')
+                el-dropdown-item(
+                    style='display: block; margin: 10px 0'
+                    @click.native='selectWorldExportLocalGroup(null)') None
+                template(v-for='group in localWorldFavoriteGroups')
                     el-dropdown-item(
+                        :key='group'
                         style='display: block; margin: 10px 0'
                         @click.native='selectWorldExportLocalGroup(group)') {{ group }} ({{ localWorldFavorites[group].length }})
         br
@@ -171,8 +179,9 @@ mixin favoritesDialog
                         span(v-if='worldImportDialog.worldImportFavoriteGroup') {{ worldImportDialog.worldImportFavoriteGroup.displayName }} ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{ worldImportDialog.worldImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
                         span(v-else) {{ $t('dialog.world_import.select_vrchat_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default='dropdown')
-                        template(v-for='groupAPI in API.favoriteWorldGroups' :key='groupAPI.name')
+                        template(v-for='groupAPI in API.favoriteWorldGroups')
                             el-dropdown-item(
+                                :key='groupAPI.name'
                                 style='display: block; margin: 10px 0'
                                 @click.native='selectWorldImportGroup(groupAPI)'
                                 :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
@@ -181,8 +190,9 @@ mixin favoritesDialog
                         span(v-if='worldImportDialog.worldImportLocalFavoriteGroup') {{ worldImportDialog.worldImportLocalFavoriteGroup }} ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
                         span(v-else) {{ $t('dialog.world_import.select_local_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default='dropdown')
-                        template(v-for='group in localWorldFavoriteGroups' :key='group')
+                        template(v-for='group in localWorldFavoriteGroups')
                             el-dropdown-item(
+                                :key='group'
                                 style='display: block; margin: 10px 0'
                                 @click.native='selectWorldImportLocalGroup(group)') {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                 span(v-if='worldImportDialog.worldImportFavoriteGroup' style='margin-left: 5px') {{ worldImportTable.data.length }} / {{ worldImportDialog.worldImportFavoriteGroup.capacity - worldImportDialog.worldImportFavoriteGroup.count }}
@@ -241,16 +251,17 @@ mixin favoritesDialog
             v-model='exportSelectedOptions'
             @change='updateAvatarExportDialog()'
             style='margin-bottom: 10px')
-            template(v-for='option in exportSelectOptions' :key='option.value')
-                el-checkbox(:label='option.label')
+            template(v-for='option in exportSelectOptions')
+                el-checkbox(:key='option.value' :label='option.label')
         el-dropdown(@click.native.stop trigger='click' size='small')
             el-button(size='mini')
                 span(v-if='avatarExportFavoriteGroup') {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{ avatarExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
                 span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
             el-dropdown-menu(#default='dropdown')
                 el-dropdown-item(style='display: block; margin: 10px 0' @click.native='selectAvatarExportGroup(null)') All Favorites
-                template(v-for='groupAPI in API.favoriteAvatarGroups' :key='groupAPI.name')
+                template(v-for='groupAPI in API.favoriteAvatarGroups')
                     el-dropdown-item(
+                        :key='groupAPI.name'
                         style='display: block; margin: 10px 0'
                         @click.native='selectAvatarExportGroup(groupAPI)') {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
         el-dropdown(@click.native.stop trigger='click' size='small' style='margin-left: 10px')
@@ -261,8 +272,9 @@ mixin favoritesDialog
                 el-dropdown-item(
                     style='display: block; margin: 10px 0'
                     @click.native='selectAvatarExportLocalGroup(null)') None
-                template(v-for='group in localAvatarFavoriteGroups' :key='group')
+                template(v-for='group in localAvatarFavoriteGroups')
                     el-dropdown-item(
+                        :key='group'
                         style='display: block; margin: 10px 0'
                         @click.native='selectAvatarExportLocalGroup(group)') {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
         br
@@ -306,8 +318,9 @@ mixin favoritesDialog
                         span(v-if='avatarImportDialog.avatarImportFavoriteGroup') {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{ avatarImportDialog.avatarImportFavoriteGroup.count }}/{{ avatarImportDialog.avatarImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
                         span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default='dropdown')
-                        template(v-for='groupAPI in API.favoriteAvatarGroups' :key='groupAPI.name')
+                        template(v-for='groupAPI in API.favoriteAvatarGroups')
                             el-dropdown-item(
+                                :key='groupAPI.name'
                                 style='display: block; margin: 10px 0'
                                 @click.native='selectAvatarImportGroup(groupAPI)'
                                 :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
@@ -316,8 +329,9 @@ mixin favoritesDialog
                         span(v-if='avatarImportDialog.avatarImportLocalFavoriteGroup') {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
                         span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default='dropdown')
-                        template(v-for='group in localAvatarFavoriteGroups' :key='group')
+                        template(v-for='group in localAvatarFavoriteGroups')
                             el-dropdown-item(
+                                :key='group'
                                 style='display: block; margin: 10px 0'
                                 @click.native='selectAvatarImportLocalGroup(group)') {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 span(v-if='avatarImportDialog.avatarImportFavoriteGroup' style='margin-left: 5px') {{ avatarImportTable.data.length }} / {{ avatarImportDialog.avatarImportFavoriteGroup.capacity - avatarImportDialog.avatarImportFavoriteGroup.count }}
@@ -378,8 +392,9 @@ mixin favoritesDialog
                 span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
             el-dropdown-menu(#default='dropdown')
                 el-dropdown-item(style='display: block; margin: 10px 0' @click.native='selectFriendExportGroup(null)') All Favorites
-                template(v-for='groupAPI in API.favoriteFriendGroups' :key='groupAPI.name')
+                template(v-for='groupAPI in API.favoriteFriendGroups')
                     el-dropdown-item(
+                        :key='groupAPI.name'
                         style='display: block; margin: 10px 0'
                         @click.native='selectFriendExportGroup(groupAPI)') {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
         br
@@ -423,8 +438,9 @@ mixin favoritesDialog
                         span(v-if='friendImportDialog.friendImportFavoriteGroup') {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{ friendImportDialog.friendImportFavoriteGroup.count }}/{{ friendImportDialog.friendImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
                         span(v-else) {{ $t('dialog.friend_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default='dropdown')
-                        template(v-for='groupAPI in API.favoriteFriendGroups' :key='groupAPI.name')
+                        template(v-for='groupAPI in API.favoriteFriendGroups')
                             el-dropdown-item(
+                                :key='groupAPI.name'
                                 style='display: block; margin: 10px 0'
                                 @click.native='selectFriendImportGroup(groupAPI)'
                                 :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})

@@ -223,6 +223,7 @@ mixin settingsTab
                             el-dropdown-menu(#default='dropdown')
                                 el-dropdown-item(
                                     v-for='(obj, language) in $i18n.messages'
+                                    :key='language'
                                     v-text='obj.language'
                                     @click.native='changeAppLanguage(language)')
                     .options-container-item
@@ -294,6 +295,7 @@ mixin settingsTab
                             el-dropdown-menu(#default='dropdown')
                                 el-dropdown-item(
                                     v-for='number in [10, 15, 25, 50, 100]'
+                                    :key='number'
                                     v-text='number'
                                     @click.native='setTablePageSize(number)')
                     .options-container-item
