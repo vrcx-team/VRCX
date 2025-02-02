@@ -290,4 +290,7 @@ mixin friendsListSidebar
                 template(#label)
                     span {{ $t('side_panel.groups') }}
                     span(style='color: #909399; font-size: 12px; margin-left: 10px') ({{ groupInstances.length }})
-                groups-sidebar(:group-instances='groupInstances' @show-group-dialog='showGroupDialog')
+                groups-sidebar(
+                    :group-instances='groupInstances'
+                    :group-order='inGameGroupOrder'
+                    @show-group-dialog='showGroupDialog')

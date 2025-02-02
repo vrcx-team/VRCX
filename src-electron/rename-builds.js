@@ -7,7 +7,7 @@ const buildDir = path.join(rootDir, 'build');
 
 let version = '';
 try {
-    version = fs.readFileSync(versionFilePath, 'utf8').trim();
+    version = fs.readFileSync(versionFilePath, 'utf8').trim().replaceAll('.', '');
 } catch (err) {
     console.error('Error reading Version file:', err);
     process.exit(1);
