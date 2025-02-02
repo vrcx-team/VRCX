@@ -2084,27 +2084,29 @@ export default class extends baseClass {
             }
 
             if (groups) {
-                for (var i = 0; i < groups.length; i++) {
-                    var groupId = groups[i];
-                    var groupRef = API.cachedGroups.get(groupId);
+                const promises = groups.map(async (groupId) => {
+                    const groupRef = API.cachedGroups.get(groupId);
+
                     if (
                         typeof groupRef !== 'undefined' &&
                         groupRef.myMember?.roleIds?.length > 0
                     ) {
-                        continue;
+                        return;
                     }
 
                     try {
-                        var args = await API.getGroup({
+                        const args = await API.getGroup({
                             groupId,
                             includeRoles: true
                         });
-                        var ref = API.applyGroup(args.json);
+                        const ref = API.applyGroup(args.json);
                         API.currentUserGroups.set(groupId, ref);
                     } catch (err) {
                         console.error(err);
                     }
-                }
+                });
+
+                await Promise.allSettled(promises);
             }
 
             this.currentUserGroupsInit = true;
