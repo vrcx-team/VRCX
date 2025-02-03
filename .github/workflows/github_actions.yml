@@ -39,7 +39,7 @@ jobs:
       - name: Build Cef .NET Application
         run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
       - name: Upload Cef dotnet artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Cef-Release
           path: build/Cef
@@ -62,7 +62,7 @@ jobs:
       - name: Build Electron .NET Application
         run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
       - name: Upload Electron dotnet artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Electron-Release
           path: build/Electron
@@ -87,7 +87,7 @@ jobs:
       - name: Build Cef-html
         run: npm run prod
       - name: Upload Cef-html artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Cef-html
           path: build/html
@@ -102,7 +102,7 @@ jobs:
       - name: Build AppImage
         run: npm run build-electron
       - name: Upload Electron AppImage artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Electron-AppImage
           path: "build/VRCX_${{ needs.set_version.outputs.version }}.AppImage"
