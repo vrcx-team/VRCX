@@ -2088,7 +2088,7 @@ export default class extends baseClass {
 
                     if (
                         typeof groupRef !== 'undefined' &&
-                        groupRef.myMember?.roleIds?.length > 0
+                        groupRef.roles?.length > 0
                     ) {
                         return;
                     }
