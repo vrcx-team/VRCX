@@ -84,8 +84,7 @@ mixin avatarDialog
                                 @click='openFolderGeneric(avatarDialog.cachePath)'
                                 style='margin-right: 5px; margin-top: 5px')
                                 span(v-text='avatarDialog.cacheSize')
-                                |
-                                | {{ $t('dialog.avatar.tags.cache') }}
+                                | &nbsp;{{ $t('dialog.avatar.tags.cache') }}
                             el-tag(
                                 v-if='avatarDialog.isQuestFallback'
                                 type='info'
