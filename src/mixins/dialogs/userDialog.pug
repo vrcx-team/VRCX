@@ -15,17 +15,12 @@ mixin userDialog
                     placement='right'
                     width='500px'
                     trigger='click')
-                    template(slot='reference')
-                        img.x-link(
-                            v-if='userDialog.ref.profilePicOverrideThumbnail'
-                            v-lazy='userDialog.ref.profilePicOverrideThumbnail'
-                            style='flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover')
-                        img.x-link(
-                            v-else
-                            v-lazy='userDialog.ref.profilePicOverride'
-                            style='flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover')
                     img.x-link(
-                        v-lazy='userDialog.ref.profilePicOverride'
+                        slot='reference'
+                        v-lazy='userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride'
+                        style='flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover')
+                    img.x-link(
+                        :src='userDialog.ref.profilePicOverride'
                         style='height: 400px'
                         @click='showFullscreenImageDialog(userDialog.ref.profilePicOverride)')
                 el-popover(v-else placement='right' width='500px' trigger='click')
@@ -34,7 +29,7 @@ mixin userDialog
                         v-lazy='userDialog.ref.currentAvatarThumbnailImageUrl'
                         style='flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover')
                     img.x-link(
-                        v-lazy='userDialog.ref.currentAvatarImageUrl'
+                        :src='userDialog.ref.currentAvatarImageUrl'
                         style='height: 500px'
                         @click='showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)')
                 div(style='flex: 1; display: flex; align-items: center; margin-left: 15px')
@@ -54,7 +49,10 @@ mixin userDialog
                                 el-tooltip(placement='bottom')
                                     template(#content)
                                         span {{ $t('dialog.user.previous_display_names') }}
-                                        div(v-for='displayName in userDialog.previousDisplayNames' placement='top')
+                                        div(
+                                            v-for='displayName in userDialog.previousDisplayNames'
+                                            :key='displayName'
+                                            placement='top')
                                             span(v-text='displayName')
                                     i.el-icon-caret-bottom
                             el-popover(placement='top' trigger='click')
@@ -156,7 +154,7 @@ mixin userDialog
                                 :style='{ color: userDialog.ref.$customTagColour, "border-color": userDialog.ref.$customTagColour }'
                                 style='margin-right: 5px; margin-top: 5px')
                             br
-                            template(v-for='badge in userDialog.ref.badges')
+                            template(v-for='badge in userDialog.ref.badges' :key='badge.badgeId')
                                 el-tooltip(placement='top')
                                     template(#content)
                                         span {{ badge.badgeName }}
@@ -164,11 +162,11 @@ mixin userDialog
                                     el-popover(placement='right' width='300px' trigger='click')
                                         img.x-link.x-user-badge(
                                             slot='reference'
-                                            v-lazy='badge.badgeImageUrl'
+                                            :src='badge.badgeImageUrl'
                                             style='flex: none; height: 32px; width: 32px; border-radius: 3px; object-fit: cover; margin-top: 5px; margin-right: 5px'
                                             :class='{ "x-user-badge-hidden": badge.hidden }')
                                         img.x-link(
-                                            v-lazy='badge.badgeImageUrl'
+                                            :src='badge.badgeImageUrl'
                                             style='width: 300px'
                                             @click='showFullscreenImageDialog(badge.badgeImageUrl)')
                                         br
@@ -197,10 +195,10 @@ mixin userDialog
                         el-popover(placement='right' width='500px' trigger='click')
                             img.x-link(
                                 slot='reference'
-                                v-lazy='userDialog.ref.userIcon'
+                                :src='userDialog.ref.userIcon'
                                 style='flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover')
                             img.x-link(
-                                v-lazy='userDialog.ref.userIcon'
+                                :src='userDialog.ref.userIcon'
                                 style='height: 500px'
                                 @click='showFullscreenImageDialog(userDialog.ref.userIcon)')
                     div(style='flex: none')
@@ -326,7 +324,7 @@ mixin userDialog
                                             divided
                                             style='color: #f56c6c') {{ $t('dialog.user.actions.unfriend') }}
             el-tabs(ref='userDialogTabs' @tab-click='userDialogTabClick')
-                el-tab-pane(:label='$t("dialog.user.info.header")')
+                el-tab-pane(:label='$t("dialog.user.info.header")' lazy)
                     template(v-if='isFriendOnline(userDialog.friend) || API.currentUser.id === userDialog.id')
                         div(
                             v-if='userDialog.ref.location'
@@ -374,7 +372,7 @@ mixin userDialog
                                     @click='showUserDialog(userDialog.$location.userId)')
                                     template(v-if='userDialog.$location.user')
                                         .avatar(:class='userStatusClass(userDialog.$location.user)')
-                                            img(v-lazy='userImage(userDialog.$location.user)')
+                                            img(:src='userImage(userDialog.$location.user)')
                                         .detail
                                             span.name(
                                                 v-text='userDialog.$location.user.displayName'
@@ -386,7 +384,7 @@ mixin userDialog
                                     :key='user.id'
                                     @click='showUserDialog(user.id)')
                                     .avatar(:class='userStatusClass(user)')
-                                        img(v-lazy='userImage(user)')
+                                        img(:src='userImage(user)')
                                     .detail
                                         span.name(v-text='user.displayName' :style='{ color: user.$userColour }')
                                         span.extra(v-if='user.location === "traveling"')
@@ -452,10 +450,10 @@ mixin userDialog
                                         el-popover(placement='right' width='500px' trigger='click')
                                             img.x-link(
                                                 slot='reference'
-                                                v-lazy='userDialog.representedGroup.iconUrl'
+                                                :src='userDialog.representedGroup.iconUrl'
                                                 style='flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover')
                                             img.x-link(
-                                                v-lazy='userDialog.representedGroup.iconUrl'
+                                                :src='userDialog.representedGroup.iconUrl'
                                                 style='height: 500px'
                                                 @click='showFullscreenImageDialog(userDialog.representedGroup.iconUrl)')
                                     span(
@@ -480,10 +478,7 @@ mixin userDialog
                                         @click='showBioDialog'
                                         style='margin-left: 5px')
                                 div(style='margin-top: 5px')
-                                    el-tooltip(
-                                        v-if='link'
-                                        v-for='(link, index) in userDialog.ref.bioLinks'
-                                        :key='index')
+                                    el-tooltip(v-for='(link, index) in userDialog.ref.bioLinks' :key='index')
                                         template(#content)
                                             span(v-text='link')
                                         img(
@@ -641,7 +636,7 @@ mixin userDialog
                                                 el-dropdown-item(@click.native='copyUserURL(userDialog.id)') {{ $t('dialog.user.info.copy_url') }}
                                                 el-dropdown-item(
                                                     @click.native='copyUserDisplayName(userDialog.ref.displayName)') {{ $t('dialog.user.info.copy_display_name') }}
-                el-tab-pane(:label='$t("dialog.user.groups.header")')
+                el-tab-pane(:label='$t("dialog.user.groups.header")' lazy)
                     div(style='display: flex; align-items: center; justify-content: space-between')
                         div(style='display: flex; align-items: center')
                             el-button(
@@ -668,7 +663,8 @@ mixin userDialog
                                     el-dropdown-menu(#default='dropdown')
                                         el-dropdown-item(
                                             :disabled='item === userDialogGroupSortingOptions.inGame && userDialog.id !== API.currentUser.id'
-                                            v-for='item in userDialogGroupSortingOptions'
+                                            v-for='(item, key) in userDialogGroupSortingOptions'
+                                            :key='key'
                                             v-text='item.name'
                                             @click.native='setUserDialogGroupSorting(item)')
                             el-button(
@@ -850,7 +846,7 @@ mixin userDialog
                                                         span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
                                                     i.el-icon-view(style='margin-right: 5px')
                                                 span ({{ group.memberCount }})
-                el-tab-pane(:label='$t("dialog.user.worlds.header")')
+                el-tab-pane(:label='$t("dialog.user.worlds.header")' lazy)
                     div(style='display: flex; align-items: center; justify-content: space-between')
                         div(style='display: flex; align-items: center')
                             el-button(
@@ -873,7 +869,8 @@ mixin userDialog
                                     span {{ userDialog.worldSorting.name }} #[i.el-icon-arrow-down.el-icon--right]
                                 el-dropdown-menu(#default='dropdown')
                                     el-dropdown-item(
-                                        v-for='item in userDialogWorldSortingOptions'
+                                        v-for='(item, key) in userDialogWorldSortingOptions'
+                                        :key='key'
                                         v-text='item.name'
                                         @click.native='setUserDialogWorldSorting(item)')
                             span(style='margin: 0 5px') {{ $t('dialog.user.worlds.order_by') }}
@@ -887,7 +884,8 @@ mixin userDialog
                                     span {{ userDialog.worldOrder.name }} #[i.el-icon-arrow-down.el-icon--right]
                                 el-dropdown-menu(#default='dropdown')
                                     el-dropdown-item(
-                                        v-for='item in userDialogWorldOrderOptions'
+                                        v-for='(item, key) in userDialogWorldOrderOptions'
+                                        :key='key'
                                         v-text='item.name'
                                         @click.native='setUserDialogWorldOrder(item)')
                     .x-friend-list(v-loading='userDialog.isWorldsLoading' style='margin-top: 10px; min-height: 60px')
@@ -900,7 +898,7 @@ mixin userDialog
                             .detail
                                 span.name(v-text='world.name')
                                 span.extra(v-if='world.occupants') ({{ world.occupants }})
-                el-tab-pane(:label='$t("dialog.user.favorite_worlds.header")')
+                el-tab-pane(:label='$t("dialog.user.favorite_worlds.header")' lazy)
                     el-button(
                         type='default'
                         :loading='userDialog.isFavoriteWorldsLoading'
@@ -913,8 +911,8 @@ mixin userDialog
                         ref='favoriteWorlds'
                         v-loading='userDialog.isFavoriteWorldsLoading'
                         style='margin-top: 10px')
-                        template(v-for='(list, index) in userFavoriteWorlds' v-if='list')
-                            el-tab-pane
+                        template(v-for='(list, index) in userFavoriteWorlds' :key='index')
+                            el-tab-pane(lazy)
                                 span(slot='label')
                                     span(v-text='list[0]' style='font-weight: bold; font-size: 16px')
                                     i.x-status-icon(
@@ -931,7 +929,7 @@ mixin userDialog
                                         .detail
                                             span.name(v-text='world.name')
                                             span.extra(v-if='world.occupants') ({{ world.occupants }})
-                el-tab-pane(:label='$t("dialog.user.avatars.header")')
+                el-tab-pane(:label='$t("dialog.user.avatars.header")' lazy)
                     div(style='display: flex; align-items: center; justify-content: space-between')
                         div(style='display: flex; align-items: center')
                             el-button(
@@ -970,6 +968,7 @@ mixin userDialog
                     .x-friend-list(style='margin-top: 10px; min-height: 60px')
                         .x-friend-item.x-friend-item-border(
                             v-for='avatar in userDialogAvatars'
+                            :key='avatar.id'
                             @click='showAvatarDialog(avatar.id)')
                             .avatar
                                 img(v-if='avatar.thumbnailImageUrl' v-lazy='avatar.thumbnailImageUrl')
@@ -984,7 +983,7 @@ mixin userDialog
                                     v-else-if='avatar.releaseStatus === "private"'
                                     style='color: #f56c6c')
                                 span.extra(v-text='avatar.releaseStatus' v-else)
-                el-tab-pane(:label='$t("dialog.user.json.header")')
+                el-tab-pane(:label='$t("dialog.user.json.header")' lazy)
                     el-button(
                         type='default'
                         @click='refreshUserDialogTreeData()'
