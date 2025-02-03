@@ -17683,7 +17683,9 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getUserFavoriteWorlds = async function (userId) {
         this.userDialog.isFavoriteWorldsLoading = true;
-        this.$refs.favoriteWorlds.currentName = '0'; // select first tab
+        if (typeof this.$refs.favoriteWorlds !== 'undefined') {
+            this.$refs.favoriteWorlds.currentName = '0'; // select first tab
+        }
         this.userFavoriteWorlds = [];
         var worldLists = [];
         var params = {

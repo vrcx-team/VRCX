@@ -922,7 +922,7 @@ mixin userDialog
                                 .x-friend-list(style='margin-top: 10px; margin-bottom: 15px; min-height: 60px')
                                     .x-friend-item.x-friend-item-border(
                                         v-for='world in list[2]'
-                                        :key='world.id'
+                                        :key='world.favoriteId'
                                         @click='showWorldDialog(world.id)')
                                         .avatar
                                             img(v-lazy='world.thumbnailImageUrl')
