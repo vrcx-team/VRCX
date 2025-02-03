@@ -14,7 +14,10 @@ const fs = require('fs');
 const https = require('https');
 
 if (!isDotNetInstalled()) {
-    dialog.showErrorBox('VRCX', 'Please install .NET 8.0 Runtime to run VRCX.');
+    dialog.showErrorBox(
+        'VRCX',
+        'Please install .NET 9.0 Runtime "dotnet-runtime-9.0" to run VRCX.'
+    );
     app.quit();
     return;
 }
@@ -508,7 +511,7 @@ function isDotNetInstalled() {
             encoding: 'utf-8'
         }
     );
-    return result.stdout?.includes('.NETCore.App 8.0');
+    return result.stdout?.includes('.NETCore.App 9.0');
 }
 
 function tryCopyFromWinePrefix() {

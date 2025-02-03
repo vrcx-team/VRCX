@@ -1,5 +1,6 @@
 {
     "name": "VRCX",
+    "description": "Friendship management tool for VRChat",
     "private": true,
     "main": "src-electron/main.js",
     "scripts": {
@@ -19,7 +20,7 @@
     "keywords": [
         "vrchat"
     ],
-    "author": "pypy <git@pypy.moe>",
+    "author": "VRCX Team",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/vrcx-team/VRCX/issues"
@@ -82,7 +83,7 @@
         ],
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",
-            "node_modules/node-api-dotnet/net8.0/**/*",
+            "node_modules/node-api-dotnet/net9.0/**/*",
             "build/Electron/*",
             "build/Electron/**"
         ],
@@ -96,12 +97,12 @@
                 "to": "app.asar.unpacked/build/Electron/"
             },
             {
-                "from": "node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.dll",
-                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.dll"
+                "from": "node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.dll",
+                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.dll"
             },
             {
-                "from": "node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll",
-                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net8.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll"
+                "from": "node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll",
+                "to": "app.asar.unpacked/node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll"
             }
         ],
         "directories": {
@@ -129,6 +130,6 @@
     },
     "dependencies": {
         "hazardous": "^0.3.0",
-        "node-api-dotnet": "^0.8.19"
+        "node-api-dotnet": "^0.9.1"
     }
 }
