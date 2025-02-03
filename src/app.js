@@ -10039,7 +10039,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         this.$nextTick(() => $app.adjustDialogZ(this.$refs.userDialog.$el));
-        var D = this.userDialog;
+        const D = this.userDialog;
         D.id = userId;
         D.treeData = [];
         D.memo = '';
@@ -10048,12 +10048,11 @@ console.log(`isLinux: ${LINUX}`);
         this.getUserMemo(userId).then((memo) => {
             if (memo.userId === userId) {
                 D.memo = memo.memo;
-                var ref = this.friends.get(userId);
+                const ref = this.friends.get(userId);
                 if (ref) {
                     ref.memo = String(memo.memo || '');
                     if (memo.memo) {
-                        var array = memo.memo.split('\n');
-                        ref.$nickName = array[0];
+                        ref.$nickName = memo.memo.split('\n')[0];
                     } else {
                         ref.$nickName = '';
                     }
@@ -10120,172 +10119,187 @@ console.log(`isLinux: ${LINUX}`);
             })
             .then((args) => {
                 if (args.ref.id === D.id) {
-                    D.loading = false;
-                    D.ref = args.ref;
-                    D.friend = this.friends.get(D.id);
-                    D.isFriend = Boolean(D.friend);
-                    D.note = String(D.ref.note || '');
-                    D.incomingRequest = false;
-                    D.outgoingRequest = false;
-                    D.isBlock = false;
-                    D.isMute = false;
-                    D.isInteractOff = false;
-                    D.isMuteChat = false;
-                    for (var ref of API.cachedPlayerModerations.values()) {
-                        if (
-                            ref.targetUserId === D.id &&
-                            ref.sourceUserId === API.currentUser.id
-                        ) {
-                            if (ref.type === 'block') {
-                                D.isBlock = true;
-                            } else if (ref.type === 'mute') {
-                                D.isMute = true;
-                            } else if (ref.type === 'hideAvatar') {
-                                D.isHideAvatar = true;
-                            } else if (ref.type === 'interactOff') {
-                                D.isInteractOff = true;
-                            } else if (ref.type === 'muteChat') {
-                                D.isMuteChat = true;
+                    requestAnimationFrame(() => {
+                        D.ref = args.ref;
+                        D.friend = this.friends.get(D.id);
+                        D.isFriend = Boolean(D.friend);
+                        D.note = String(D.ref.note || '');
+                        D.incomingRequest = false;
+                        D.outgoingRequest = false;
+                        D.isBlock = false;
+                        D.isMute = false;
+                        D.isInteractOff = false;
+                        D.isMuteChat = false;
+                        for (const ref of API.cachedPlayerModerations.values()) {
+                            if (
+                                ref.targetUserId === D.id &&
+                                ref.sourceUserId === API.currentUser.id
+                            ) {
+                                if (ref.type === 'block') {
+                                    D.isBlock = true;
+                                } else if (ref.type === 'mute') {
+                                    D.isMute = true;
+                                } else if (ref.type === 'hideAvatar') {
+                                    D.isHideAvatar = true;
+                                } else if (ref.type === 'interactOff') {
+                                    D.isInteractOff = true;
+                                } else if (ref.type === 'muteChat') {
+                                    D.isMuteChat = true;
+                                }
                             }
                         }
-                    }
-                    D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-                    if (D.ref.friendRequestStatus === 'incoming') {
-                        D.incomingRequest = true;
-                    } else if (D.ref.friendRequestStatus === 'outgoing') {
-                        D.outgoingRequest = true;
-                    }
-                    this.applyUserDialogLocation(true);
-                    if (this.$refs.userDialogTabs.currentName === '0') {
-                        this.userDialogLastActiveTab = $t(
-                            'dialog.user.info.header'
-                        );
-                    } else if (this.$refs.userDialogTabs.currentName === '1') {
-                        this.userDialogLastActiveTab = $t(
-                            'dialog.user.groups.header'
-                        );
-                        if (this.userDialogLastGroup !== userId) {
-                            this.userDialogLastGroup = userId;
-                            this.getUserGroups(userId);
+                        D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
+                        if (D.ref.friendRequestStatus === 'incoming') {
+                            D.incomingRequest = true;
+                        } else if (D.ref.friendRequestStatus === 'outgoing') {
+                            D.outgoingRequest = true;
                         }
-                    } else if (this.$refs.userDialogTabs.currentName === '2') {
-                        this.userDialogLastActiveTab = $t(
-                            'dialog.user.worlds.header'
-                        );
-                        this.setUserDialogWorlds(userId);
-                        if (this.userDialogLastWorld !== userId) {
-                            this.userDialogLastWorld = userId;
-                            this.refreshUserDialogWorlds();
+                        this.applyUserDialogLocation(true);
+
+                        // init last acitve tab data
+                        if (this.$refs.userDialogTabs.currentName === '0') {
+                            this.userDialogLastActiveTab = $t(
+                                'dialog.user.info.header'
+                            );
+                        } else if (
+                            this.$refs.userDialogTabs.currentName === '1'
+                        ) {
+                            this.userDialogLastActiveTab = $t(
+                                'dialog.user.groups.header'
+                            );
+                            if (this.userDialogLastGroup !== userId) {
+                                this.userDialogLastGroup = userId;
+                                this.getUserGroups(userId);
+                            }
+                        } else if (
+                            this.$refs.userDialogTabs.currentName === '2'
+                        ) {
+                            this.userDialogLastActiveTab = $t(
+                                'dialog.user.worlds.header'
+                            );
+                            this.setUserDialogWorlds(userId);
+                            if (this.userDialogLastWorld !== userId) {
+                                this.userDialogLastWorld = userId;
+                                this.refreshUserDialogWorlds();
+                            }
+                        } else if (
+                            this.$refs.userDialogTabs.currentName === '3'
+                        ) {
+                            this.userDialogLastActiveTab = $t(
+                                'dialog.user.favorite_worlds.header'
+                            );
+                            if (this.userDialogLastFavoriteWorld !== userId) {
+                                this.userDialogLastFavoriteWorld = userId;
+                                this.getUserFavoriteWorlds(userId);
+                            }
+                        } else if (
+                            this.$refs.userDialogTabs.currentName === '4'
+                        ) {
+                            this.userDialogLastActiveTab = $t(
+                                'dialog.user.avatars.header'
+                            );
+                            this.setUserDialogAvatars(userId);
+                            this.userDialogLastAvatar = userId;
+                            if (userId === API.currentUser.id) {
+                                this.refreshUserDialogAvatars();
+                            }
+                            this.setUserDialogAvatarsRemote(userId);
+                        } else if (
+                            this.$refs.userDialogTabs.currentName === '5'
+                        ) {
+                            this.userDialogLastActiveTab = $t(
+                                'dialog.user.json.header'
+                            );
+                            this.refreshUserDialogTreeData();
                         }
-                    } else if (this.$refs.userDialogTabs.currentName === '3') {
-                        this.userDialogLastActiveTab = $t(
-                            'dialog.user.favorite_worlds.header'
-                        );
-                        if (this.userDialogLastFavoriteWorld !== userId) {
-                            this.userDialogLastFavoriteWorld = userId;
-                            this.getUserFavoriteWorlds(userId);
+                        // init last acitve tab data - end
+
+                        if (args.cache) {
+                            API.getUser(args.params);
                         }
-                    } else if (this.$refs.userDialogTabs.currentName === '4') {
-                        this.userDialogLastActiveTab = $t(
-                            'dialog.user.avatars.header'
-                        );
-                        this.setUserDialogAvatars(userId);
-                        this.userDialogLastAvatar = userId;
-                        if (userId === API.currentUser.id) {
-                            this.refreshUserDialogAvatars();
+                        let inCurrentWorld = false;
+                        if (this.lastLocation.playerList.has(D.ref.id)) {
+                            inCurrentWorld = true;
                         }
-                        this.setUserDialogAvatarsRemote(userId);
-                    } else if (this.$refs.userDialogTabs.currentName === '5') {
-                        this.userDialogLastActiveTab = $t(
-                            'dialog.user.json.header'
-                        );
-                        this.refreshUserDialogTreeData();
-                    }
-                    if (args.cache) {
-                        API.getUser(args.params);
-                    }
-                    var inCurrentWorld = false;
-                    if (this.lastLocation.playerList.has(D.ref.id)) {
-                        inCurrentWorld = true;
-                    }
-                    if (userId !== API.currentUser.id) {
-                        database
-                            .getUserStats(D.ref, inCurrentWorld)
-                            .then((ref1) => {
-                                if (ref1.userId === D.id) {
-                                    D.lastSeen = ref1.lastSeen;
-                                    D.joinCount = ref1.joinCount;
-                                    D.timeSpent = ref1.timeSpent;
-                                }
-                                var displayNameMap = ref1.previousDisplayNames;
-                                this.friendLogTable.data.forEach((ref2) => {
-                                    if (ref2.userId === D.id) {
-                                        if (ref2.type === 'DisplayName') {
-                                            displayNameMap.set(
-                                                ref2.previousDisplayName,
-                                                ref2.created_at
-                                            );
-                                        }
-                                        if (!D.dateFriended) {
-                                            if (ref2.type === 'Unfriend') {
-                                                D.unFriended = true;
-                                                if (!this.hideUnfriends) {
+                        if (userId !== API.currentUser.id) {
+                            database
+                                .getUserStats(D.ref, inCurrentWorld)
+                                .then((ref1) => {
+                                    if (ref1.userId === D.id) {
+                                        D.lastSeen = ref1.lastSeen;
+                                        D.joinCount = ref1.joinCount;
+                                        D.timeSpent = ref1.timeSpent;
+                                    }
+                                    let displayNameMap =
+                                        ref1.previousDisplayNames;
+                                    this.friendLogTable.data.forEach((ref2) => {
+                                        if (ref2.userId === D.id) {
+                                            if (ref2.type === 'DisplayName') {
+                                                displayNameMap.set(
+                                                    ref2.previousDisplayName,
+                                                    ref2.created_at
+                                                );
+                                            }
+                                            if (!D.dateFriended) {
+                                                if (ref2.type === 'Unfriend') {
+                                                    D.unFriended = true;
+                                                    if (!this.hideUnfriends) {
+                                                        D.dateFriended =
+                                                            ref2.created_at;
+                                                    }
+                                                }
+                                                if (ref2.type === 'Friend') {
+                                                    D.unFriended = false;
                                                     D.dateFriended =
                                                         ref2.created_at;
                                                 }
                                             }
-                                            if (ref2.type === 'Friend') {
-                                                D.unFriended = false;
-                                                D.dateFriended =
-                                                    ref2.created_at;
+                                            if (
+                                                ref2.type === 'Friend' ||
+                                                (ref2.type === 'Unfriend' &&
+                                                    !this.hideUnfriends)
+                                            ) {
+                                                D.dateFriendedInfo.push(ref2);
                                             }
                                         }
-                                        if (
-                                            ref2.type === 'Friend' ||
-                                            (ref2.type === 'Unfriend' &&
-                                                !this.hideUnfriends)
-                                        ) {
-                                            D.dateFriendedInfo.push(ref2);
-                                        }
-                                    }
+                                    });
+                                    const displayNameMapSorted = new Map(
+                                        [...displayNameMap.entries()].sort(
+                                            (a, b) => b[1] - a[1]
+                                        )
+                                    );
+                                    D.previousDisplayNames = Array.from(
+                                        displayNameMapSorted.keys()
+                                    );
                                 });
-                                var displayNameMapSorted = new Map(
-                                    [...displayNameMap.entries()].sort(
-                                        (a, b) => b[1] - a[1]
-                                    )
-                                );
-                                D.previousDisplayNames = Array.from(
-                                    displayNameMapSorted.keys()
-                                );
-                            });
-                        AppApi.GetVRChatUserModeration(
-                            API.currentUser.id,
-                            userId
-                        ).then((result) => {
-                            D.avatarModeration = result;
-                            if (result === 4) {
-                                D.isHideAvatar = true;
-                            } else if (result === 5) {
-                                D.isShowAvatar = true;
-                            }
-                        });
-                    } else {
-                        database
-                            .getUserStats(D.ref, inCurrentWorld)
-                            .then((ref1) => {
-                                if (ref1.userId === D.id) {
-                                    D.lastSeen = ref1.lastSeen;
-                                    D.joinCount = ref1.joinCount;
-                                    D.timeSpent = ref1.timeSpent;
+                            AppApi.GetVRChatUserModeration(
+                                API.currentUser.id,
+                                userId
+                            ).then((result) => {
+                                D.avatarModeration = result;
+                                if (result === 4) {
+                                    D.isHideAvatar = true;
+                                } else if (result === 5) {
+                                    D.isShowAvatar = true;
                                 }
                             });
-                    }
-                    API.getRepresentedGroup({ userId }).then((args1) => {
-                        D.representedGroup = args1.json;
-                        return args1;
+                        } else {
+                            database
+                                .getUserStats(D.ref, inCurrentWorld)
+                                .then((ref1) => {
+                                    if (ref1.userId === D.id) {
+                                        D.lastSeen = ref1.lastSeen;
+                                        D.joinCount = ref1.joinCount;
+                                        D.timeSpent = ref1.timeSpent;
+                                    }
+                                });
+                        }
+                        API.getRepresentedGroup({ userId }).then((args1) => {
+                            D.representedGroup = args1.json;
+                        });
+                        D.loading = false;
                     });
                 }
-                return args;
             });
         this.showUserDialogHistory.delete(userId);
         this.showUserDialogHistory.add(userId);
