@@ -22,24 +22,31 @@ namespace VRCX
         public override string GetVRChatCacheLocation()
         {
             var defaultPath = Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
-            
-            var json = ReadConfigFile();
-            if (string.IsNullOrEmpty(json))
+            try
+            {
+                var json = ReadConfigFile();
+                if (string.IsNullOrEmpty(json))
+                    return defaultPath;
+
+                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                if (obj["cache_directory"] == null)
+                    return defaultPath;
+
+                var cacheDir = (string)obj["cache_directory"];
+                if (string.IsNullOrEmpty(cacheDir))
+                    return defaultPath;
+
+                var cachePath = Path.Join(cacheDir, "Cache-WindowsPlayer");
+                if (!Directory.Exists(cacheDir))
+                    return defaultPath;
+                
+                return cachePath;
+            }
+            catch (Exception e)
+            {
+                logger.Error(e);
                 return defaultPath;
-            
-            var obj = JsonConvert.DeserializeObject<JObject>(json);
-            if (obj["cache_directory"] == null)
-                return defaultPath;
-            
-            var cacheDir = (string)obj["cache_directory"];
-            if (string.IsNullOrEmpty(cacheDir))
-                return defaultPath;
-            
-            var cachePath = Path.Join(cacheDir, "Cache-WindowsPlayer");
-            if (!Directory.Exists(cacheDir))
-                return defaultPath;
-            
-            return cachePath;
+            }
         }
 
         public override string GetVRChatPhotosLocation()

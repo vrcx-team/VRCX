@@ -1660,10 +1660,13 @@ class Database {
         let vipQuery = '';
         if (vipList.length > 0) {
             vipQuery = 'AND user_id IN (';
-            vipList.forEach((vip, i) => {
-                vipQuery += `'${vip.replaceAll("'", "''")}', `;
-            });
-            vipQuery += "'')";
+            for (var i = 0; i < vipList.length; i++) {
+                vipQuery += `'${vipList[i].replaceAll("'", "''")}'`;
+                if (i < vipList.length - 1) {
+                    vipQuery += ', ';
+                }
+            }
+            vipQuery += ')';
         }
         var location = true;
         var onplayerjoined = true;

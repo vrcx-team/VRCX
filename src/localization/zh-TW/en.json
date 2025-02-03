@@ -34,11 +34,30 @@
         "feed": {
             "favorites_only_tooltip": "僅篩選收藏",
             "filter_placeholder": "篩選動態",
-            "search_placeholder": "搜尋動態"
+            "search_placeholder": "搜尋動態",
+            "filters": {
+                "GPS": "位置",
+                "Online": "上線",
+                "Offline": "離線",
+                "Status": "狀態",
+                "Avatar": "角色",
+                "Bio": "自我介紹"
+            }
         },
         "game_log": {
             "filter_placeholder": "篩選遊戲紀錄",
-            "search_placeholder": "搜尋遊戲紀錄"
+            "search_placeholder": "搜尋遊戲紀錄",
+            "filters": {
+                "Location": "地點",
+                "OnPlayerJoined": "玩家加入",
+                "OnPlayerLeft": "玩家離開",
+                "PortalSpawn": "開啟傳送門",
+                "VideoPlay": "影片播放",
+                "Event": "事件",
+                "External": "外部",
+                "StringLoad": "字串載入",
+                "ImageLoad": "圖片載入"
+            }
         },
         "player_list": {
             "photon": {
@@ -125,17 +144,65 @@
         },
         "friend_log": {
             "filter_placeholder": "篩選好友紀錄",
-            "search_placeholder": "搜尋好友紀錄"
+            "search_placeholder": "搜尋好友紀錄",
+            "filters": {
+                "Friend": "新好友",
+                "Unfriend": "解除好友",
+                "FriendRequest": "好友請求",
+                "CancelFriendRequest": "取消好友請求",
+                "DisplayName": "顯示名字",
+                "TrustLevel": "信用等級"
+            }
         },
         "moderation": {
             "filter_placeholder": "篩選玩家處置",
             "search_placeholder": "搜尋玩家處置",
-            "refresh_tooltip": "重新整理"
+            "refresh_tooltip": "重新整理",
+            "filters": {
+                "block": "封鎖",
+                "unblock": "解除封鎖",
+                "mute": "靜音",
+                "unmute": "解除靜音",
+                "interactOn": "角色互動開啟",
+                "interactOff": "角色互動關閉",
+                "muteChat": "隱藏聊天框",
+                "unmuteChat": "顯示聊天框"
+            }
         },
         "notification": {
             "filter_placeholder": "篩選通知",
             "search_placeholder": "搜尋通知",
-            "refresh_tooltip": "重新整理"
+            "refresh_tooltip": "重新整理",
+            "filters": {
+                "requestInvite": "請求邀請",
+                "invite": "邀請",
+                "requestInviteResponse": "請求邀請回復",
+                "inviteResponse": "邀請回復",
+                "friendRequest": "好友請求",
+                "ignoredFriendRequest": "忽略好友請求",
+                "message": "訊息",
+                "boop": "戳",
+                "groupChange": "群組變更",
+                "group": {
+                    "announcement": "公告",
+                    "informative": "資訊",
+                    "invite": "邀請",
+                    "joinRequest": "加入請求",
+                    "transfer": "轉移",
+                    "queueReady": "排隊準備"
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "群組管理警告"
+                    },
+                    "report": {
+                        "closed": "管理回報關閉"
+                    }
+                },
+                "instance": {
+                    "closed": "房間關閉"
+                }
+            }
         },
         "friend_list": {
             "header": "好友列表",
@@ -316,7 +383,11 @@
                         "placeholder": "排序順序",
                         "dropdown_header": "選擇排序順序"
                     },
-                    "width": "寬度"
+                    "width": "寬度",
+                    "group_by_instance": "依照房間分類",
+                    "group_by_instance_tooltip": "當同一個房間中有超過一位好友時，啟用此功能將按房間將好友分組。",
+                    "split_favorite_friends": "分類收藏好友",
+                    "split_favorite_friends_tooltip": "將收藏的朋友依照分組別類。"
                 },
                 "user_dialog": {
                     "header": "玩家資訊",
@@ -442,7 +513,11 @@
                     "save_instance_prints_to_file": {
                         "header": "將房間拍立得保存到檔案",
                         "header_tooltip": "需要 \"--enable-sdk-log-levels\" VRC 啟動選項",
-                        "description": "將產生的拍立得保存到你的 VRChat 圖片資料夾"
+                        "description": "將產生的拍立得保存到你的 VRChat 圖片資料夾",
+                        "crop": "自動移除拍立得的白邊",
+                        "crop_convert_old": "你想裁剪所有已儲存的列印嗎？",
+                        "crop_convert_old_confirm": "是",
+                        "crop_convert_old_cancel": "否"
                     },
                     "save_instance_stickers_to_file": {
                         "header": "將房間貼紙保存到檔案",
@@ -457,7 +532,7 @@
                         "header": "YouTube API",
                         "enable": "啟用",
                         "youtube_api_key": "YouTube API 金鑰",
-                        "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
+                        "enable_tooltip": "擷取影片標題，以便與 GameLog 搭配使用，並擷取時間長度，以便覆蓋進度條"
                     },
                     "video_progress_pie": {
                         "header": "影片進度圓餅疊層",
@@ -560,6 +635,7 @@
         "friends": "好友",
         "me": "我",
         "favorite": "收藏",
+        "same_instance": "Same Instance",
         "online": "上線",
         "active": "活躍",
         "offline": "離線",
@@ -1119,7 +1195,8 @@
             "latest_version": "VRCX 已是最新版本。",
             "ready_for_update": "已準備好安裝更新，重新啟動 VRCX 來套用更新。",
             "download": "下載",
-            "install": "安裝"
+            "install": "安裝",
+            "cancel": "取消"
         },
         "launch": {
             "header": "啟動",
@@ -1416,7 +1493,8 @@
             "choose_roles_placeholder": "選擇身分",
             "selected_roles": "已選擇身分",
             "remove_roles": "移除身份組",
-            "add_roles": "新增身份組"
+            "add_roles": "新增身份組",
+            "export_logs": "輸出日誌"
         },
         "group_post_edit": {
             "header": "創建/編輯貼文",
@@ -1454,7 +1532,9 @@
     },
     "message": {
         "vrcx_updater": {
-            "failed": "檢查更新失敗，{message}"
+            "failed": "檢查更新失敗，{message}",
+            "failed_install": "安裝更新失敗",
+            "checking_hash": "檢查 hash..."
         },
         "api_handler": {
             "avatar_private_or_deleted": "角色為私人或已刪除"

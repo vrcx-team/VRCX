@@ -18,7 +18,6 @@ if (!isDotNetInstalled()) {
     app.quit();
     return;
 }
-console.log('DOTNET_ROOT:', process.env.DOTNET_ROOT);
 
 // get launch arguments
 const args = process.argv.slice(1);
@@ -125,33 +124,37 @@ function relaunchWithArgs(args) {
     }
 
     const fullArgs = ['--ozone-platform-hint=auto', ...args];
-    
+
     let execPath = process.execPath;
-    
+
     if (appImagePath) {
         execPath = appImagePath;
         fullArgs.unshift('--appimage-extract-and-run');
     }
-    
+
     console.log('Relaunching with args:', fullArgs);
-    
+
     const child = spawn(execPath, fullArgs, {
         detached: true,
         stdio: 'inherit'
     });
-    
+
     child.unref();
 
     app.exit(0);
 }
 
 function createWindow() {
-    if (process.platform === 'linux' && !process.argv.includes('--ozone-platform-hint=auto') && !x11) {
+    if (
+        process.platform === 'linux' &&
+        !process.argv.includes('--ozone-platform-hint=auto') &&
+        !x11
+    ) {
         relaunchWithArgs(process.argv.slice(1));
     }
 
     app.commandLine.appendSwitch('enable-speech-dispatcher');
-    
+
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = parseInt(VRCXStorage.Get('VRCX_SizeWidth')) || 1920;
@@ -395,6 +398,16 @@ async function installVRCX() {
         return;
     }
 
+    await createDesktopFile();
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'VRCX',
+        message: 'VRCX has been installed successfully.',
+        detail: 'You can now find VRCX in your ~/Applications folder.'
+    });
+}
+
+async function createDesktopFile() {
     // Download the icon and save it to the target directory
     const iconUrl =
         'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
@@ -430,12 +443,6 @@ StartupWMClass=VRCX
             console.error('Error downloading icon:', err);
             dialog.showErrorBox('VRCX', 'Failed to download the icon.');
         });
-    dialog.showMessageBox({
-        type: 'info',
-        title: 'VRCX',
-        message: 'VRCX has been installed successfully.',
-        detail: 'You can now find VRCX in your ~/Applications folder.'
-    });
 }
 
 function downloadIcon(url, targetPath) {

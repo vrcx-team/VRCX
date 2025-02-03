@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -28,7 +28,7 @@ namespace VRCX
         public static void ArgsCheck()
         {
             var args = Environment.GetCommandLineArgs();
-            
+
             Debug.Assert(Program.LaunchDebug = true);
 
             var currentProcessArgs = ParseArgs(args);
@@ -77,7 +77,7 @@ namespace VRCX
 
                 if (arg.StartsWith(VrcxLaunchArguments.IsDebugPrefix))
                     arguments.IsDebug = true;
-                
+
                 if (arg.StartsWith(VrcxLaunchArguments.LaunchCommandPrefix) && arg.Length > VrcxLaunchArguments.LaunchCommandPrefix.Length)
                     arguments.LaunchCommand = arg.Substring(VrcxLaunchArguments.LaunchCommandPrefix.Length);
 
@@ -115,7 +115,7 @@ namespace VRCX
             {
                 if (process.Id == Environment.ProcessId)
                     continue;
-                
+
                 var commandLine = string.Empty;
                 try
                 {
