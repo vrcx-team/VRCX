@@ -149,6 +149,7 @@ mixin groups
                                 el-dropdown-menu(#default='dropdown')
                                     el-dropdown-item(
                                         v-for='item in groupDialogSortingOptions'
+                                        :key='item.name'
                                         v-text='item.name'
                                         @click.native='setGroupMemberSortOrder(item)')
                             span(style='margin-right: 5px') {{ $t('dialog.group.members.filter') }}
@@ -163,10 +164,12 @@ mixin groups
                                 el-dropdown-menu(#default='dropdown')
                                     el-dropdown-item(
                                         v-for='item in groupDialogFilterOptions'
+                                        :key='item.name'
                                         v-text='item.name'
                                         @click.native='setGroupMemberFilter(item)')
                                     el-dropdown-item(
                                         v-for='item in groupDialog.ref.roles'
+                                        :key='item.name'
                                         v-if='!item.defaultRole'
                                         v-text='item.name'
                                         @click.native='setGroupMemberFilter(item)')
@@ -209,7 +212,7 @@ mixin groups
                                     span(v-else v-text='scope.row.user.displayName')
                         el-table-column(:label='$t("dialog.group_member_moderation.roles")' prop='roleIds' sortable)
                             template(#default='scope')
-                                template(v-for='roleId in scope.row.roleIds' :key='roleId')
+                                template(v-for='roleId in scope.row.roleIds')
                                     span(
                                         v-for='(role, rIndex) in groupMemberModeration.groupRef.roles'
                                         :key='rIndex'
@@ -286,7 +289,7 @@ mixin groups
                                     span(v-else v-text='scope.row.user.displayName')
                         el-table-column(:label='$t("dialog.group_member_moderation.roles")' prop='roleIds' sortable)
                             template(#default='scope')
-                                template(v-for='roleId in scope.row.roleIds' :key='roleId')
+                                template(v-for='roleId in scope.row.roleIds')
                                     span(
                                         v-for='(role, rIndex) in groupMemberModeration.groupRef.roles'
                                         :key='rIndex'
@@ -726,8 +729,8 @@ mixin groups
             v-model='checkedGroupLogsExportLogsOptions'
             @change='updateGrouptLogsExporContent()'
             style='margin-bottom: 10px')
-            template(v-for='option in checkGroupsLogsExportLogsOptions' :key='option.label')
-                el-checkbox(:label='option.label') {{ $t(option.text) }}
+            template(v-for='option in checkGroupsLogsExportLogsOptions')
+                el-checkbox(:key='option.label' :label='option.label') {{ $t(option.text) }}
         br
         el-input(
             type='textarea'
