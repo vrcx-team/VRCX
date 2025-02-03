@@ -2155,8 +2155,10 @@ console.log(`isLinux: ${LINUX}`);
             }
         } catch (err) {
             console.error(err);
+        } finally {
+            this.isNotificationsLoading = false;
+            $app.notificationInitStatus = true;
         }
-        this.isNotificationsLoading = false;
     };
 
     /** @typedef {{
@@ -4041,6 +4043,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         this.isLoggedIn = false;
         $app.friendLogInitStatus = false;
+        $app.notificationInitStatus = false;
     });
 
     API.$on('LOGIN', function (args) {
@@ -5542,6 +5545,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.feedTable.data = [];
         $app.feedSessionTable = [];
         $app.friendLogInitStatus = false;
+        $app.notificationInitStatus = false;
         await database.initUserTables(args.json.id);
         $app.$refs.menu.activeIndex = 'feed';
         await $app.updateDatabaseVersion();
@@ -5557,7 +5561,6 @@ console.log(`isLinux: ${LINUX}`);
         $app.notificationTable.data = await database.getNotifications();
         this.refreshNotifications();
         $app.loadCurrentUserGroups(args.json.id, args.json?.presence?.groups);
-        $app.getCurrentUserGroups();
         try {
             if (
                 await configRepository.getBool(`friendLogInit_${args.json.id}`)
@@ -7359,6 +7362,7 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.data.friendLogInitStatus = false;
+    $app.data.notificationInitStatus = false;
 
     $app.methods.initFriendLog = async function (currentUser) {
         this.refreshFriends(currentUser, true);
@@ -7805,7 +7809,7 @@ console.log(`isLinux: ${LINUX}`);
             ) {
                 database.addNotificationToDatabase(ref);
             }
-            if ($app.friendLogInitStatus) {
+            if ($app.friendLogInitStatus && $app.notificationInitStatus) {
                 if (
                     $app.notificationTable.filters[0].value.length === 0 ||
                     $app.notificationTable.filters[0].value.includes(ref.type)
@@ -17830,19 +17834,6 @@ console.log(`isLinux: ${LINUX}`);
         }
         await this.sortCurrentUserGroups();
         this.userDialog.isGroupsLoading = false;
-    };
-
-    $app.methods.getCurrentUserGroups = async function () {
-        var args = await API.getGroups({ userId: API.currentUser.id });
-        API.currentUserGroups.clear();
-        for (var group of args.json) {
-            var ref = API.applyGroup(group);
-            if (!API.currentUserGroups.has(group.id)) {
-                API.currentUserGroups.set(group.id, ref);
-            }
-        }
-        await API.getGroupPermissions({ userId: API.currentUser.id });
-        this.saveCurrentUserGroups();
     };
 
     $app.data.inGameGroupOrder = [];

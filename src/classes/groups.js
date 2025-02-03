@@ -2094,6 +2094,9 @@ export default class extends baseClass {
                     }
 
                     try {
+                        console.log(
+                            `Fetching group with missing roles ${groupId}`
+                        );
                         const args = await API.getGroup({
                             groupId,
                             includeRoles: true
@@ -2109,6 +2112,20 @@ export default class extends baseClass {
             }
 
             this.currentUserGroupsInit = true;
+            this.getCurrentUserGroups();
+        },
+
+        async getCurrentUserGroups() {
+            var args = await API.getGroups({ userId: API.currentUser.id });
+            API.currentUserGroups.clear();
+            for (var group of args.json) {
+                var ref = API.applyGroup(group);
+                if (!API.currentUserGroups.has(group.id)) {
+                    API.currentUserGroups.set(group.id, ref);
+                }
+            }
+            await API.getGroupPermissions({ userId: API.currentUser.id });
+            this.saveCurrentUserGroups();
         },
 
         showGroupDialog(groupId) {
