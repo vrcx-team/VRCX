@@ -5555,12 +5555,9 @@ console.log(`isLinux: ${LINUX}`);
         await $app.feedTableLookup();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
-        await this.refreshNotifications();
-        await $app.loadCurrentUserGroups(
-            args.json.id,
-            args.json?.presence?.groups
-        );
-        await $app.getCurrentUserGroups();
+        this.refreshNotifications();
+        $app.loadCurrentUserGroups(args.json.id, args.json?.presence?.groups);
+        $app.getCurrentUserGroups();
         try {
             if (
                 await configRepository.getBool(`friendLogInit_${args.json.id}`)
