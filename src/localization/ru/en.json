@@ -625,6 +625,7 @@
         "friends": "Друзья",
         "me": "Я",
         "favorite": "ИЗБРАННЫЕ",
+        "same_instance": "В одинаковых инстансах",
         "online": "ОНЛАЙН",
         "active": "АКТИВНЫЙ",
         "offline": "ОФЛАЙН",
@@ -733,7 +734,8 @@
                 "instance_full": "заполнен",
                 "instance_closed": "закрыт",
                 "instance_hard_closed": "жёстко закрыт",
-                "close_instance": "Закрыть инстанс"
+                "close_instance": "Закрыть инстанс",
+                "instance_age_gated": "ограничение по возросту"
             },
             "groups": {
                 "header": "Группы",
@@ -1480,7 +1482,8 @@
             "choose_roles_placeholder": "Выбор ролей",
             "selected_roles": "Выбранные роли",
             "remove_roles": "Удалить роли",
-            "add_roles": "Добавить роли"
+            "add_roles": "Добавить роли",
+            "export_logs": "Экспорт логов"
         },
         "group_post_edit": {
             "header": "Создать/Редактировать обьявление",
