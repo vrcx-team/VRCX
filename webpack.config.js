@@ -73,10 +73,7 @@ module.exports = {
     resolve: {
         extensions: ['.css', '.js', '.scss'],
         alias: {
-            vue: path.join(
-                __dirname,
-                './node_modules/vue/dist/vue.common.prod.js'
-            )
+            vue: 'vue/dist/vue.common.js'
         }
     },
     performance: {

@@ -1,4 +1,4 @@
-const dotnet = require('node-api-dotnet/net8.0');
+const dotnet = require('node-api-dotnet/net9.0');
 
 class InteropApi {
     constructor() {

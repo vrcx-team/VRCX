@@ -46,6 +46,10 @@
             groupInstances: {
                 type: Array,
                 default: () => []
+            },
+            groupOrder: {
+                type: Array,
+                default: () => []
             }
         },
         data() {
@@ -76,7 +80,7 @@
                     }
                 });
 
-                return Array.from(groupMap.values());
+                return Array.from(groupMap.values()).sort(this.sortGroupInstancesByInGame);
             }
         },
         methods: {
@@ -88,6 +92,20 @@
             },
             getGroupId(group) {
                 return group[0]?.group?.groupId || '';
+            },
+            sortGroupInstancesByInGame(a, b) {
+                var aIndex = this.groupOrder.indexOf(a[0]?.group?.id);
+                var bIndex = this.groupOrder.indexOf(b[0]?.group?.id);
+                if (aIndex === -1 && bIndex === -1) {
+                    return 0;
+                }
+                if (aIndex === -1) {
+                    return 1;
+                }
+                if (bIndex === -1) {
+                    return -1;
+                }
+                return aIndex - bIndex;
             }
         }
     };
