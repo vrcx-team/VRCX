@@ -19916,7 +19916,6 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.updateCurrentUserLocation = function () {
-        API.currentUser.$travelingToTime = this.lastLocationDestinationTime;
         var ref = API.cachedUsers.get(API.currentUser.id);
         if (typeof ref === 'undefined') {
             return;
@@ -19924,7 +19923,8 @@ console.log(`isLinux: ${LINUX}`);
 
         // update cached user with both gameLog and API locations
         var currentLocation = API.currentUser.$locationTag;
-        if (API.currentUser.$location === 'traveling') {
+        var L = $utils.parseLocation(currentLocation);
+        if (L.isTraveling) {
             currentLocation = API.currentUser.$travelingToLocation;
         }
         ref.location = API.currentUser.$locationTag;
@@ -19956,13 +19956,18 @@ console.log(`isLinux: ${LINUX}`);
         } else {
             ref.$location_at = this.lastLocation.date;
             ref.$travelingToTime = this.lastLocationDestinationTime;
+            API.currentUser.$travelingToTime = this.lastLocationDestinationTime;
         }
     };
 
-    $app.methods.setCurrentUserLocation = async function (location) {
+    $app.methods.setCurrentUserLocation = async function (
+        location,
+        travelingToLocation
+    ) {
         API.currentUser.$location_at = Date.now();
         API.currentUser.$travelingToTime = Date.now();
         API.currentUser.$locationTag = location;
+        API.currentUser.$travelingToLocation = travelingToLocation;
         this.updateCurrentUserLocation();
 
         // janky gameLog support for Quest
