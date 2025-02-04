@@ -1,33 +1,32 @@
 mixin feedTab
     .x-container(v-show='$refs.menu && $refs.menu.activeIndex === \'feed\'')
-        data-tables(v-bind='feedTable' v-loading='feedTable.loading')
-            template(#tool)
-                div(style='margin: 0 0 10px; display: flex; align-items: center')
-                    div(style='flex: none; margin-right: 10px; display: flex; align-items: center')
-                        el-tooltip(
-                            placement='bottom'
-                            :content='$t("view.feed.favorites_only_tooltip")'
-                            :disabled='hideTooltips')
-                            el-switch(v-model='feedTable.vip' @change='feedTableLookup' active-color='#13ce66')
-                    el-select(
-                        v-model='feedTable.filter'
-                        @change='feedTableLookup'
-                        multiple
-                        clearable
-                        style='flex: 1; height: 40px'
-                        :placeholder='$t("view.feed.filter_placeholder")')
-                        el-option(
-                            v-for='type in ["GPS", "Online", "Offline", "Status", "Avatar", "Bio"]'
-                            :key='type'
-                            :label='$t("view.feed.filters." + type)'
-                            :value='type')
-                    el-input(
-                        v-model='feedTable.search'
-                        :placeholder='$t("view.feed.search_placeholder")'
-                        @keyup.native.13='feedTableLookup'
-                        @change='feedTableLookup'
-                        clearable
-                        style='flex: none; width: 150px; margin: 0 10px')
+        div(style='margin: 0 0 10px; display: flex; align-items: center')
+            div(style='flex: none; margin-right: 10px; display: flex; align-items: center')
+                el-tooltip(
+                    placement='bottom'
+                    :content='$t("view.feed.favorites_only_tooltip")'
+                    :disabled='hideTooltips')
+                    el-switch(v-model='feedTable.vip' @change='feedTableLookup' active-color='#13ce66')
+            el-select(
+                v-model='feedTable.filter'
+                @change='feedTableLookup'
+                multiple
+                clearable
+                style='flex: 1; height: 40px'
+                :placeholder='$t("view.feed.filter_placeholder")')
+                el-option(
+                    v-for='type in ["GPS", "Online", "Offline", "Status", "Avatar", "Bio"]'
+                    :key='type'
+                    :label='$t("view.feed.filters." + type)'
+                    :value='type')
+            el-input(
+                v-model='feedTable.search'
+                :placeholder='$t("view.feed.search_placeholder")'
+                @keyup.native.13='feedTableLookup'
+                @change='feedTableLookup'
+                clearable
+                style='flex: none; width: 150px; margin: 0 10px')
+        data-tables(v-bind='feedTable' v-loading='feedTable.loading' lazy) 
             el-table-column(type='expand' width='20')
                 template(#default='scope')
                     div(style='position: relative; font-size: 14px')
@@ -58,7 +57,9 @@ mixin feedTab
                         template(v-else-if='scope.row.type === "Avatar"')
                             div(style='display: flex; align-items: center')
                                 el-popover(placement='right' width='500px' trigger='click')
-                                    div(slot='reference' style='display: inline-block; vertical-align: top; width: 160px')
+                                    div(
+                                        slot='reference'
+                                        style='display: inline-block; vertical-align: top; width: 160px')
                                         template(v-if='scope.row.previousCurrentAvatarThumbnailImageUrl')
                                             img.x-link(
                                                 v-lazy='scope.row.previousCurrentAvatarThumbnailImageUrl'
@@ -77,7 +78,9 @@ mixin feedTab
                                 span(style='position: relative; margin: 0 10px')
                                     i.el-icon-right
                                 el-popover(placement='right' width='500px' trigger='click')
-                                    div(slot='reference' style='display: inline-block; vertical-align: top; width: 160px')
+                                    div(
+                                        slot='reference'
+                                        style='display: inline-block; vertical-align: top; width: 160px')
                                         template(v-if='scope.row.currentAvatarThumbnailImageUrl')
                                             img.x-link(
                                                 v-lazy='scope.row.currentAvatarThumbnailImageUrl'

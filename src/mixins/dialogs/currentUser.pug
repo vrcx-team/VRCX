@@ -99,8 +99,9 @@ mixin currentUser
                 size='mini'
                 maxlength='512'
                 show-word-limit
-                :autosize='{ minRows: 2, maxRows: 5 }'
-                :placeholder='$t("dialog.bio.bio_placeholder")')
+                :autosize='{ minRows: 5, maxRows: 20 }'
+                :placeholder='$t("dialog.bio.bio_placeholder")'
+                style='margin-bottom: 10px')
             el-input(
                 v-for='(link, index) in bioDialog.bioLinks'
                 :key='index'
