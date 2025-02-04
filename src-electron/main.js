@@ -504,6 +504,10 @@ function getVersion() {
 }
 
 function isDotNetInstalled() {
+    if (process.platform === 'darwin') {
+        // Assume .NET is already installed on macOS
+        return true;
+    }
     const result = require('child_process').spawnSync(
         'dotnet',
         ['--list-runtimes'],

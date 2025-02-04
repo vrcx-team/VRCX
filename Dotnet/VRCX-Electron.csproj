@@ -80,9 +80,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>SQLite.Interop.dll</TargetPath>
     </None>
-    <None Include="libs\linux\System.Data.SQLite.dll" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <None Include="libs\macos\SQLite.Interop.dll" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>System.Data.SQLite.dll</TargetPath>
+      <TargetPath>SQLite.Interop.dll</TargetPath>
     </None>
     <Content Include="..\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
