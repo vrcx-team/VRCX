@@ -448,8 +448,7 @@ mixin playerListTab
                     el-table-column(:label='$t("table.playerList.status")' min-width='180' prop='ref.status')
                         template(#default='scope')
                             template(v-if='scope.row.ref.status')
-                                i.x-user-status(:class='statusClass(scope.row.ref.status)')
-                                span ‎
+                                i.x-user-status(:class='statusClass(scope.row.ref.status)' style='margin-right: 3px')
                                 span(v-text='scope.row.ref.statusDescription')
                     //- el-table-column(label="Group" min-width="180" prop="groupOnNameplate" sortable)
                     //-     template(v-once #default="scope")

@@ -148,7 +148,9 @@ mixin currentUser
         ref='galleryDialog'
         :visible.sync='galleryDialogVisible'
         :title='$t("dialog.gallery_icons.header")'
-        width='100%')
+        width='97vw'
+        top='5vh'
+        destroy-on-close)
         el-tabs(type='card' ref='galleryTabs')
             el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogGalleryLoading')
                 span(slot='label') {{ $t('dialog.gallery_icons.gallery') }}
@@ -200,7 +202,7 @@ mixin currentUser
                             icon='el-icon-delete'
                             circle
                             style='margin-left: 5px')
-            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogIconsLoading')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogIconsLoading' lazy)
                 span(slot='label') {{ $t('dialog.gallery_icons.icons') }}
                     span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ VRCPlusIconsTable.length }}/64
                 input#VRCPlusIconUploadButton(
@@ -250,7 +252,7 @@ mixin currentUser
                             icon='el-icon-delete'
                             circle
                             style='margin-left: 5px')
-            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogEmojisLoading')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogEmojisLoading' lazy)
                 span(slot='label') {{ $t('dialog.gallery_icons.emojis') }}
                     span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ emojiTable.length }}/9
                 input#EmojiUploadButton(type='file' accept='image/*' @change='onFileChangeEmoji' style='display: none')
@@ -269,7 +271,7 @@ mixin currentUser
                     el-option-group {{ $t('dialog.gallery_icons.emoji_animation_styles') }}
                         el-option.x-friend-item(
                             v-for='(fileName, styleName) in emojiAnimationStyleList'
-                            :key='fileName'
+                            :key='styleName'
                             :label='styleName'
                             :value='styleName'
                             style='height: auto')
@@ -334,7 +336,7 @@ mixin currentUser
                             icon='el-icon-delete'
                             circle
                             style='margin-left: 5px')
-            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogStickersLoading')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogStickersLoading' lazy)
                 span(slot='label') {{ $t('dialog.gallery_icons.stickers') }}
                     span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ stickerTable.length }}/9
                 input#StickerUploadButton(
@@ -378,7 +380,7 @@ mixin currentUser
                             icon='el-icon-delete'
                             circle
                             style='margin-left: 5px')
-            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogPrintsLoading')
+            el-tab-pane(v-if='galleryDialogVisible' v-loading='galleryDialogPrintsLoading' lazy)
                 span(slot='label') {{ $t('dialog.gallery_icons.prints') }}
                     span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ printTable.length }}/64
                 input#PrintUploadButton(type='file' accept='image/*' @change='onFileChangePrint' style='display: none')

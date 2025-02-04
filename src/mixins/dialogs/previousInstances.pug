@@ -32,7 +32,7 @@ mixin previousInstances
                     display-name(
                         :userid='scope.row.$location.userId'
                         :location='scope.row.$location.tag'
-                        :key='previousInstancesUserDialog.forceUpdate')
+                        :force-update-key='previousInstancesUserDialog.forceUpdate')
             el-table-column(:label='$t("table.previous_instances.time")' prop='time' width='100' sortable)
                 template(#default='scope')
                     span(v-text='scope.row.timer')
@@ -95,7 +95,7 @@ mixin previousInstances
                     display-name(
                         :userid='scope.row.$location.userId'
                         :location='scope.row.$location.tag'
-                        :key='previousInstancesWorldDialog.forceUpdate')
+                        :force-update-key='previousInstancesWorldDialog.forceUpdate')
             el-table-column(:label='$t("table.previous_instances.time")' prop='time' width='100' sortable)
                 template(#default='scope')
                     span(v-text='scope.row.timer')

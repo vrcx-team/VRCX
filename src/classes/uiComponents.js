@@ -566,7 +566,7 @@ export default class extends baseClass {
             props: {
                 userid: String,
                 location: String,
-                key: Number,
+                forceUpdateKey: Number,
                 hint: {
                     type: String,
                     default: ''
@@ -603,7 +603,7 @@ export default class extends baseClass {
                 location() {
                     this.parse();
                 },
-                key() {
+                forceUpdateKey() {
                     this.parse();
                 },
                 userid() {
