@@ -23301,24 +23301,29 @@ console.log(`isLinux: ${LINUX}`);
 
     //  - SidebarGroupByInstance
 
-    $app.methods.handleSwitchGroupByInstance = async function () {
-        this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
-        await configRepository.setBool(
-            'VRCX_sidebarGroupByInstance',
-            this.isSidebarGroupByInstance
-        );
-    };
-
     $app.data.isSidebarGroupByInstance = await configRepository.getBool(
         'VRCX_sidebarGroupByInstance',
         true
     );
 
-    $app.methods.handleSwitchGroupByInstance = function () {
+    $app.methods.toggleGroupByInstance = function () {
         this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
         configRepository.setBool(
             'VRCX_sidebarGroupByInstance',
             this.isSidebarGroupByInstance
+        );
+    };
+
+    $app.data.isHideFriendsInSameInstance = await configRepository.getBool(
+        'VRCX_hideFriendsInSameInstance',
+        false
+    );
+
+    $app.methods.toggleHideFriendsInSameInstance = function () {
+        this.isHideFriendsInSameInstance = !this.isHideFriendsInSameInstance;
+        configRepository.setBool(
+            'VRCX_hideFriendsInSameInstance',
+            this.isHideFriendsInSameInstance
         );
     };
 
@@ -23366,7 +23371,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.computed.onlineFriendsByGroupStatus = function () {
-        if (!this.isSidebarGroupByInstance) {
+        if (
+            !this.isSidebarGroupByInstance ||
+            (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
+        ) {
             return this.onlineFriends;
         }
 
@@ -23382,7 +23390,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.computed.vipFriendsByGroupStatus = function () {
-        if (!this.isSidebarGroupByInstance) {
+        if (
+            !this.isSidebarGroupByInstance ||
+            (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
+        ) {
             return this.vipFriends;
         }
 
