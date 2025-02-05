@@ -8,7 +8,7 @@ mixin launch
         :visible.sync='launchDialog.visible'
         :title='$t("dialog.launch.header")'
         width='450px')
-        el-form(:model='launchDialog' label-width='80px')
+        el-form(:model='launchDialog' label-width='100px')
             el-form-item(:label='$t("dialog.launch.url")')
                 el-input(
                     v-model='launchDialog.url'
