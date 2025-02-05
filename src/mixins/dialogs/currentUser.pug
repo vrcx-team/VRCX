@@ -259,28 +259,29 @@ mixin currentUser
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1024x1024px (1:1)
                 br
                 br
-                el-button-group(style='margin-right: 10px')
-                    el-button(type='default' size='small' @click='refreshEmojiTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
-                    el-button(
-                        type='default'
-                        size='small'
-                        @click='displayEmojiUpload'
-                        icon='el-icon-upload2'
-                        :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
-                el-select(v-model='emojiAnimationStyle' popper-class='max-height-el-select')
-                    el-option-group {{ $t('dialog.gallery_icons.emoji_animation_styles') }}
-                        el-option.x-friend-item(
-                            v-for='(fileName, styleName) in emojiAnimationStyleList'
-                            :key='styleName'
-                            :label='styleName'
-                            :value='styleName'
-                            style='height: auto')
-                            .avatar(style='width: 200px; height: 200px')
-                                img(v-lazy='`${emojiAnimationStyleUrl}${fileName}`')
-                            .detail
-                                span.name(v-text='styleName' style='margin-right: 100px')
-                el-checkbox(v-model='emojiAnimType' style='margin-left: 10px; margin-right: 10px')
-                    span {{ $t('dialog.gallery_icons.emoji_animation_type') }}
+                div(style='display: flex; align-items: center')
+                    el-button-group(style='margin-right: 10px')
+                        el-button(type='default' size='small' @click='refreshEmojiTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
+                        el-button(
+                            type='default'
+                            size='small'
+                            @click='displayEmojiUpload'
+                            icon='el-icon-upload2'
+                            :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
+                    el-select(v-model='emojiAnimationStyle' popper-class='max-height-el-select')
+                        el-option-group {{ $t('dialog.gallery_icons.emoji_animation_styles') }}
+                            el-option.x-friend-item(
+                                v-for='(fileName, styleName) in emojiAnimationStyleList'
+                                :key='styleName'
+                                :label='styleName'
+                                :value='styleName'
+                                style='height: auto')
+                                .avatar(style='width: 200px; height: 200px')
+                                    img(v-lazy='`${emojiAnimationStyleUrl}${fileName}`')
+                                .detail
+                                    span.name(v-text='styleName' style='margin-right: 100px')
+                    el-checkbox(v-model='emojiAnimType' style='margin-left: 10px; margin-right: 10px')
+                        span {{ $t('dialog.gallery_icons.emoji_animation_type') }}
                 template(v-if='emojiAnimType')
                     span(style='margin-right: 10px') {{ $t('dialog.gallery_icons.emoji_animation_fps') }}
                     el-input-number(
@@ -387,23 +388,24 @@ mixin currentUser
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1920x1080px (16:9)
                 br
                 br
-                el-button-group
-                    el-button(type='default' size='small' @click='refreshPrintTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
-                    el-button(
-                        type='default'
-                        size='small'
-                        @click='displayPrintUpload'
-                        icon='el-icon-upload2'
-                        :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
-                el-input(
-                    type='textarea'
-                    v-model='printUploadNote'
-                    size='mini'
-                    rows='1'
-                    resize='none'
-                    maxlength='32'
-                    style='margin-left: 10px; width: 300px'
-                    :placeholder='$t("dialog.gallery_icons.note")')
+                div(style='display: flex; align-items: center')
+                    el-button-group
+                        el-button(type='default' size='small' @click='refreshPrintTable' icon='el-icon-refresh') {{ $t('dialog.gallery_icons.refresh') }}
+                        el-button(
+                            type='default'
+                            size='small'
+                            @click='displayPrintUpload'
+                            icon='el-icon-upload2'
+                            :disabled='!API.currentUser.$isVRCPlus') {{ $t('dialog.gallery_icons.upload') }}
+                    el-input(
+                        type='textarea'
+                        v-model='printUploadNote'
+                        size='mini'
+                        rows='1'
+                        resize='none'
+                        maxlength='32'
+                        style='margin-left: 10px; width: 300px'
+                        :placeholder='$t("dialog.gallery_icons.note")')
                 br
                 .x-friend-item(
                     v-for='image in printTable'
