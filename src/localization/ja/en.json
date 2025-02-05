@@ -1788,7 +1788,7 @@
         },
         "local_favorite_group_rename": {
             "header": "グループ名を変更",
-            "description": "お気に入りグループの名前を入力してください。",
+            "description": "お気に入りグループ名を入力してください。",
             "cancel": "キャンセル",
             "save": "保存",
             "input_error": "名前を入力してください。",
