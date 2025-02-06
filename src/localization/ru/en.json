@@ -165,7 +165,8 @@
                 "unmute": "Включить звук",
                 "interactOn": "Включить взаимодействие",
                 "interactOff": "Отключить взаимодействие",
-                "muteChat": "Заглушить Чатбокс"
+                "muteChat": "Заглушить Чатбокс",
+                "unmuteChat": "Включить Чатбокс"
             }
         },
         "notification": {
@@ -309,14 +310,15 @@
                 },
                 "automation": {
                     "header": "Автоматизация",
-                    "auto_state_change": "Автосмена статуса",
+                    "auto_change_status": "Автосмена статуса",
                     "auto_state_change_tooltip": "Автоматически изменяет статус, когда в инстансе есть другие игроки (Один/Компания)",
-                    "auto_state_change_off": "Выкл",
-                    "auto_state_change_active_or_ask_me": "Спроси меня",
-                    "auto_state_change_active_or_busy": "Занят",
-                    "auto_state_change_join_me_or_ask_me": "Присоединяйтесь ко мне / Спросить меня",
-                    "auto_state_change_join_me_or_busy": "Присоединиться ко мне / Занят",
-                    "auto_state_change_ask_me_or_busy": "Спросить меня / Занят",
+                    "alone_condition": "Состояние одиночества",
+                    "alone": "Одинок",
+                    "no_friends": "Без друзей",
+                    "alone_status": "Статус Один",
+                    "company_status": "Статус в группе",
+                    "allowed_instance_types": "Разрешённые типы инстанцев",
+                    "instance_type_placeholder": "Все типы инстанцевs",
                     "auto_invite_request_accept": "Автоматическое принятие запросов на приглашение",
                     "auto_invite_request_accept_tooltip": "Автоматически принимать запросы на приглашение от избранных друзей",
                     "auto_invite_request_accept_off": "Выкл",
@@ -381,7 +383,11 @@
                         "placeholder": "Порядок сортировки",
                         "dropdown_header": "Выберите порядок сортировки"
                     },
-                    "width": "Ширина"
+                    "width": "Ширина",
+                    "group_by_instance": "Группировка по Инстансам",
+                    "group_by_instance_tooltip": "Если включить эту функцию, друзья будут группироваться по инстансам, когда в одном инстансе находится несколько друзей.",
+                    "split_favorite_friends": "Разделить избранных друзей",
+                    "split_favorite_friends_tooltip": "Разделите избранных друзей на отдельные группы."
                 },
                 "user_dialog": {
                     "header": "Меню пользователя",
@@ -507,7 +513,11 @@
                     "save_instance_prints_to_file": {
                         "header": "Сохранить снимки инстанса в файл",
                         "header_tooltip": "Требуется \"--enable-sdk-log-levels\" опция запуска VRC.",
-                        "description": "Сохраните созданные принты в папке «Изображения VRChat»."
+                        "description": "Сохраните созданные принты в папке «Изображения VRChat».",
+                        "crop": "Автоматически удаляйте белую рамку при печати",
+                        "crop_convert_old": "Хотите обрезать все принты, которые уже были сохранены?",
+                        "crop_convert_old_confirm": "Да",
+                        "crop_convert_old_cancel": "Нет"
                     },
                     "save_instance_stickers_to_file": {
                         "header": "Сохранить стикеры инстанса в файл",
