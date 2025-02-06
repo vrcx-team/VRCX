@@ -550,6 +550,7 @@ console.log(`isLinux: ${LINUX}`);
         if (typeof ref === 'undefined') {
             ref = {
                 ageVerificationStatus: '',
+                ageVerified: false,
                 allowAvatarCopying: false,
                 badges: [],
                 bio: '',
