@@ -629,7 +629,7 @@
         "search_result_active": "オフライン",
         "search_result_offline": "アクティブ",
         "search_result_more": "もっと検索:",
-        "direct_access_tooltip": "クリップボードのIDまたはURLからに直接アクセス",
+        "direct_access_tooltip": "クリップボードのIDまたはURLから直接アクセス",
         "refresh_tooltip": "フレンドを更新",
         "groups": "グループインスタンス",
         "friends": "フレンド",
