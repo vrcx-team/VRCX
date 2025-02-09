@@ -24,14 +24,22 @@ namespace VRCX
         {
             const string vrchatAppid = "438100";
             _homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            _steamUserdataPath = Path.Join(_homeDirectory, ".steam/steam/userdata");
             _steamPath = Path.Join(_homeDirectory, ".local/share/Steam");
+            
             var flatpakSteamPath = Path.Join(_homeDirectory, ".var/app/com.valvesoftware.Steam/.local/share/Steam");
             if (!Directory.Exists(_steamPath) && Directory.Exists(flatpakSteamPath))
             {
                 logger.Info("Flatpak Steam detected.");
                 _steamPath = flatpakSteamPath;
             }
-            _steamUserdataPath = Path.Join(_homeDirectory, ".steam/steam/userdata");
+            
+            var legacySteamPath = Path.Join(_homeDirectory, ".steam/steam");
+            if (!Directory.Exists(_steamPath) && Directory.Exists(legacySteamPath))
+            {
+                logger.Info("Legacy Steam path detected.");
+                _steamPath = legacySteamPath;
+            }
             
             var libraryFoldersVdfPath = Path.Join(_steamPath, "config/libraryfolders.vdf");
             var vrcLibraryPath = GetLibraryWithAppId(libraryFoldersVdfPath, vrchatAppid);
