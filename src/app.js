@@ -3882,6 +3882,8 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (index === 'notification') {
             this.unseenNotifications = [];
+        } else if (index === 'friendsList') {
+            this.friendsListSearchChange();
         }
 
         workerTimers.setTimeout(() => {

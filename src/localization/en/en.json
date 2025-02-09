@@ -656,7 +656,7 @@
             "previous_display_names": "Previous Display Names:",
             "pronouns": "Pronouns",
             "tags": {
-                "friend_no": "Friend No.{number}",
+                "friend_no": "Friend {number}",
                 "vrchat_team": "VRChat Team"
             },
             "badges": {
