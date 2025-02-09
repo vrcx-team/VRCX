@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892",
+    "translator": "Assault1892, Yuu198",
     "nav_tooltip": {
         "feed": "フィード",
         "game_log": "ゲームログ",
@@ -34,11 +34,30 @@
         "feed": {
             "favorites_only_tooltip": "お気に入りのみ",
             "filter_placeholder": "フィルター",
-            "search_placeholder": "検索"
+            "search_placeholder": "検索",
+            "filters": {
+                "GPS": "現在地",
+                "Online": "オンライン",
+                "Offline": "オフライン",
+                "Status": "ステータス",
+                "Avatar": "アバター",
+                "Bio": "自己紹介"
+            }
         },
         "game_log": {
             "filter_placeholder": "フィルター",
-            "search_placeholder": "検索"
+            "search_placeholder": "検索",
+            "filters": {
+                "Location": "場所",
+                "OnPlayerJoined": "プレイヤー参加",
+                "OnPlayerLeft": "プレイヤー退出",
+                "PortalSpawn": "ポータル作成",
+                "VideoPlay": "動画を再生",
+                "Event": "イベント",
+                "External": "外的",
+                "StringLoad": "URIの読み込み",
+                "ImageLoad": "画像の読み込み"
+            }
         },
         "player_list": {
             "photon": {
@@ -106,9 +125,7 @@
             "edit_mode": "編集モード",
             "copy": "コピー",
             "clear": "消去",
-            "bulk_unfavorite": "一括お気に入り解除",
             "bulk_unfavorite_mode": "一括お気に入り解除モード",
-            "bulk_unfavorite_selection": "お気に入り解除する",
             "refresh_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
             "import": "インポート",
@@ -127,7 +144,15 @@
         },
         "friend_log": {
             "filter_placeholder": "フィルター",
-            "search_placeholder": "検索"
+            "search_placeholder": "検索",
+            "filters": {
+                "Friend": "新しいフレンド",
+                "Unfriend": "フレンド解除",
+                "FriendRequest": "フレンドリクエスト",
+                "CancelFriendRequest": "キャンセルされたフレンドリクエスト",
+                "DisplayName": "表示名",
+                "TrustLevel": "トラストランク"
+            }
         },
         "moderation": {
             "filter_placeholder": "フィルター",
@@ -147,7 +172,37 @@
         "notification": {
             "filter_placeholder": "フィルター",
             "search_placeholder": "検索",
-            "refresh_tooltip": "更新"
+            "refresh_tooltip": "更新",
+            "filters": {
+                "requestInvite": "招待リクエスト",
+                "invite": "招待",
+                "requestInviteResponse": "招待リクエストへの返信",
+                "inviteResponse": "招待への返信",
+                "friendRequest": "フレンドリクエスト",
+                "ignoredFriendRequest": "無視したフレンドリクエスト",
+                "message": "メッセージ",
+                "boop": "Boop",
+                "groupChange": "グループ変更",
+                "group": {
+                    "announcement": "お知らせ",
+                    "informative": "インフォメーション",
+                    "invite": "招待",
+                    "joinRequest": "参加リクエスト",
+                    "transfer": "移動",
+                    "queueReady": "キューの準備が完了"
+                },
+                "moderation": {
+                    "warning": {
+                        "group": "グループモデレーションからの警告"
+                    },
+                    "report": {
+                        "closed": "モデレーションの通報が完了"
+                    }
+                },
+                "instance": {
+                    "closed": "閉じたインスタンス"
+                }
+            }
         },
         "friend_list": {
             "header": "フレンドリスト",
@@ -228,7 +283,6 @@
                     "header": "VRCXアップデーター",
                     "change_build": "ビルドを変更",
                     "update_action": "更新がリリースされたとき",
-                    "auto_update": "自動更新",
                     "auto_update_off": "何もしない",
                     "auto_update_notify": "通知のみ",
                     "auto_update_download": "自動ダウンロード",
@@ -257,7 +311,6 @@
                 "automation": {
                     "header": "オートメーション",
                     "auto_change_status": "自動ステータス変更",
-                    "auto_state_change": "自動ステータス変更",
                     "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。(一人/複数人)",
                     "alone_condition": "一人の判定条件",
                     "alone": "自分一人だけ",
@@ -266,12 +319,6 @@
                     "company_status": "複数人でいるときのステータス",
                     "allowed_instance_types": "自動化するインスタンスの種類",
                     "instance_type_placeholder": "すべての種類",
-                    "auto_state_change_off": "無効",
-                    "auto_state_change_active_or_ask_me": "オンライン/きいてみてね",
-                    "auto_state_change_active_or_busy": "オンライン/取り込み中",
-                    "auto_state_change_join_me_or_ask_me": "参加歓迎/きいてみてね",
-                    "auto_state_change_join_me_or_busy": "参加歓迎/取り込み中",
-                    "auto_state_change_ask_me_or_busy": "きいてみてね/取り込み中",
                     "auto_invite_request_accept": "招待リクエストを自動許可",
                     "auto_invite_request_accept_tooltip": "お気に入りに入れているフレンドからの招待リクエストを自動的に許可する",
                     "auto_invite_request_accept_off": "オフ",
@@ -582,7 +629,7 @@
         "search_result_active": "オフライン",
         "search_result_offline": "アクティブ",
         "search_result_more": "もっと検索:",
-        "direct_access_tooltip": "クリップボードのID/URLからに直接アクセス",
+        "direct_access_tooltip": "クリップボードのIDまたはURLから直接アクセス",
         "refresh_tooltip": "フレンドを更新",
         "groups": "グループインスタンス",
         "friends": "フレンド",
@@ -695,7 +742,7 @@
                 "copy_display_name": "表示名をコピー",
                 "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
                 "instance_full": "満員",
-                "instance_closed": "閉鎖済み",
+                "instance_closed": "閉じられました",
                 "instance_hard_closed": "hard closed",
                 "close_instance": "インスタンスを閉じる",
                 "instance_age_gated": "年齢制限あり"
@@ -930,7 +977,7 @@
                 "moderation_tools": "管理用ツール",
                 "leave": "グループから抜ける",
                 "block": "グループをブロック",
-                "unblock": "グループをブロック解除"
+                "unblock": "グループのブロックを解除"
             },
             "info": {
                 "header": "情報",
@@ -1041,7 +1088,7 @@
             "access_type_friend_plus": "フレンド+",
             "access_type_friend": "フレンド",
             "access_type_invite_plus": "インバイト+",
-            "access_type_invite": "招待を送信",
+            "access_type_invite": "インバイト",
             "group_access_type": "グループアクセス",
             "group_access_type_members": "メンバー",
             "group_access_type_plus": "プラス",
@@ -1107,7 +1154,7 @@
             "save": "保存"
         },
         "youtube_api": {
-            "header": "Youtube API",
+            "header": "YouTube API",
             "description": "YouTube APIキーを入力してください (任意)",
             "placeholder": "YouTube APIキー",
             "guide": "ガイド",
@@ -1472,7 +1519,7 @@
             "send": "送信"
         },
         "allowed_video_player_domains": {
-            "header": "ビデオプレーヤーで使用が許可されているのドメイン",
+            "header": "ビデオプレーヤーでの使用が許可されているのドメイン",
             "add_domain": "ドメイン追加",
             "save": "保存"
         }
@@ -1578,12 +1625,12 @@
         },
         "direct_access_user_id": {
             "header": "ダイレクトアクセス",
-            "description": "ユーザーURL/ID (UUID) を入力してください。",
+            "description": "ユーザーURLまたはID (UUID) を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "ユーザーURL/IDが必要です。",
+            "input_error": "ユーザーURLまたはIDが必要です。",
             "message": {
-                "error": "無効なURL/IDです。"
+                "error": "無効なURLまたはIDです。"
             }
         },
         "direct_access_username": {
@@ -1595,32 +1642,32 @@
         },
         "direct_access_world_id": {
             "header": "ダイレクトアクセス",
-            "description": "ワールドURL/ID (UUID) を入力してください。",
+            "description": "ワールドURLまたはID (UUID) を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "ワールドURL/IDが必要です。",
+            "input_error": "ワールドURLまたはIDが必要です。",
             "message": {
-                "error": "無効なURL/IDです。"
+                "error": "無効なURLまたはIDです。"
             }
         },
         "direct_access_avatar_id": {
             "header": "ダイレクトアクセス",
-            "description": "アバターURL/ID (UUID) を入力してください。",
+            "description": "アバターURLまたはID (UUID) を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "アバターURL/IDが必要です。",
+            "input_error": "アバターURLまたはIDが必要です。",
             "message": {
-                "error": "無効なURL/IDです。"
+                "error": "無効なURLまたはIDです。"
             }
         },
         "direct_access_omni": {
             "header": "ダイレクトアクセス",
-            "description": "ユーザー/ワールド/インスタンス/アバター/グループURL/ID (UUID) を入力してください。",
+            "description": "ユーザーまたはワールド、インスタンス、アバター、グループURLもしくはID (UUID) を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "URL/IDが必要です。",
+            "input_error": "URLまたはIDが必要です。",
             "message": {
-                "error": "無効なURL/IDです。"
+                "error": "無効なURLまたはIDです。"
             }
         },
         "notification_timeout": {
@@ -1679,7 +1726,7 @@
         },
         "change_world_capacity": {
             "header": "最大人数を変更",
-            "description": "ワールドの最大人数を入力してください。 (最高値: 40)",
+            "description": "ワールドの最大人数を入力してください。（ハードキャップ） 最高値: 80",
             "cancel": "キャンセル",
             "ok": "OK",
             "input_error": "有効な数字を入力してください。",
@@ -1698,14 +1745,14 @@
             }
         },
         "change_world_preview": {
-            "header": "YouTube プレビュー動画を変更",
-            "description": "ワールドのYouTube 動画リンクを入力してください。",
+            "header": "YouTubeプレビュー動画を変更",
+            "description": "ワールドのYouTube動画リンクを入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
             "input_error": "有効なYouTube URLを入力してください。",
             "message": {
                 "error": "無効なYouTube URLです。",
-                "success": "ワールドのYouTube プレビュー動画を変更しました。"
+                "success": "ワールドのYouTubeプレビュー動画を変更しました。"
             }
         },
         "change_table_size": {
@@ -1716,14 +1763,14 @@
             "input_error": "有効な数字を入力してください。"
         },
         "photon_lobby_timeout": {
-            "header": "ユーザータイムアウト しきい値",
+            "header": "ユーザータイムアウトのしきい値",
             "description": "タイムアウトまでの秒数を入力してください。 (デフォルト: 3)",
             "cancel": "キャンセル",
             "ok": "OK",
             "input_error": "有効な数字を入力してください。"
         },
         "auto_clear_cache": {
-            "header": "VRCX キャッシュの自動消去タイマー",
+            "header": "VRCXのキャッシュの自動消去タイマー",
             "description": "消去までの時間を入力してください。長い時間を指定するとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト: 24, 無効化: 0)",
             "cancel": "キャンセル",
             "ok": "OK",
@@ -1731,7 +1778,7 @@
         },
         "new_local_favorite_group": {
             "header": "新しいグループ",
-            "description": "お気に入りワールド グループ名を入力してください。",
+            "description": "お気に入りグループ名を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
             "input_error": "名前を入力してください。",
@@ -1741,7 +1788,7 @@
         },
         "local_favorite_group_rename": {
             "header": "グループ名を変更",
-            "description": "お気に入りワールド グループ名を入力してください。",
+            "description": "お気に入りグループ名を入力してください。",
             "cancel": "キャンセル",
             "save": "保存",
             "input_error": "名前を入力してください。",
@@ -1787,7 +1834,7 @@
             "platform": "プラットフォーム",
             "displayName": "表示名",
             "status": "ステータス",
-            "rank": "ランク",
+            "rank": "トラストランク",
             "language": "言語",
             "bioLink": "自己紹介リンク",
             "date": "日付",
@@ -1811,7 +1858,7 @@
         "notification": {
             "date": "日付",
             "type": "種類",
-            "user_group": "ユーザー/グループ",
+            "user_group": "ユーザーまたはグループ",
             "photo": "画像",
             "message": "メッセージ",
             "action": "アクション"
