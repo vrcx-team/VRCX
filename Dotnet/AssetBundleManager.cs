@@ -54,7 +54,7 @@ namespace VRCX
                 versionHex += b.ToString("X2");
             }
 
-            return versionHex.PadLeft(32, '0');
+            return versionHex.PadLeft(32, '0').ToLowerInvariant();
         }
 
         public (int, int) ReverseHexToDecimal(string hexString)
