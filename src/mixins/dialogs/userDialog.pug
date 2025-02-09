@@ -140,11 +140,11 @@ mixin userDialog
                                 size='mini'
                                 style='margin-right: 5px; margin-top: 5px') {{ userDialog.ref.last_platform }}
                             el-tag.x-tag-age-verification(
-                                v-if='userDialog.ref.ageVerified'
+                                v-if='userDialog.ref.ageVerificationStatus && userDialog.ref.ageVerificationStatus !== "hidden"'
                                 type='info'
                                 effect='plain'
                                 size='mini'
-                                style='margin-right: 5px; margin-top: 5px') 18+
+                                style='margin-right: 5px; margin-top: 5px') {{ userDialog.ref.ageVerificationStatus }}
                             el-tag.name(
                                 v-if='userDialog.ref.$customTag'
                                 type='info'
