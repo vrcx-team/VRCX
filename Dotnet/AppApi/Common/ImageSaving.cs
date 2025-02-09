@@ -42,8 +42,6 @@ namespace VRCX
                 return imageData;
             }
 
-            // FIXME: I think these are aspect ratio preserving calcs, but we can ask ImageSharp nicely to do this by
-            //        passing 0, see docs for Resize()
             if (image.Width > maxWidth)
             {
                 var sizingFactor = image.Width / (double)maxWidth;
@@ -58,18 +56,13 @@ namespace VRCX
             }
             if (matchingDimensions && image.Width != image.Height)
             {
-                var newSize = Math.Max(image.Width, image.Height);
-                using Image<Rgba32> resizedImage = new(newSize, newSize);
-                // regalialong: i think the access should be safe
-                // ReSharper disable AccessToModifiedClosure
-                // ReSharper disable AccessToDisposedClosure
-                resizedImage.Mutate(x => x.DrawImage(image,
-                    new Rectangle((newSize - image.Width) / 2, (newSize - image.Height) / 2, image.Width, image.Height), 
-                    0));
-                // ReSharper restore AccessToDisposedClosure
-                // ReSharper restore AccessToModifiedClosure
-                image.Dispose();
-                image = resizedImage;
+                var targetSize = Math.Max(image.Width, image.Height);
+                var squareCanvas = new Image<Rgba32>(targetSize, targetSize);
+                var xOffset = (targetSize - image.Width) / 2;
+                var yOffset = (targetSize - image.Height) / 2;
+                squareCanvas.Mutate(x => 
+                    x.DrawImage(image, new Point(xOffset, yOffset), 1f));
+                image = squareCanvas;
             }
 
             SaveToFileToUpload();
@@ -119,43 +112,37 @@ namespace VRCX
             using var fileMemoryStream = new MemoryStream(imageData);
             var image = Image.Load(fileMemoryStream);
 
-            if (image.Height > image.Width) image.Mutate(x => x.Rotate(RotateMode.Rotate90));
+            if (image.Height > image.Width)
+                image.Mutate(x => x.Rotate(RotateMode.Rotate270));
 
             // increase size to 1920x1080
             if (image.Width < desiredWidth || image.Height < desiredHeight)
             {
-                var newHeight = image.Height;
-                var newWidth = image.Width;
-                if (image.Width < desiredWidth)
+                const double expectedAspectRatio = 1920.0 / 1080.0;
+                var target = new Image<Rgba32>(1920, 1080);
+                var aspectRatio = (double)image.Width / image.Height;
+                int width, height, xOffset, yOffset;
+    
+                if (aspectRatio > expectedAspectRatio)
                 {
-                    var testHeight = (int)Math.Round(image.Height / (image.Width / (double)desiredWidth));
-                    if (testHeight <= desiredHeight)
-                    {
-                        newWidth = desiredWidth;
-                        newHeight = testHeight;
-                    }
+                    // Image is wider than 16:9 - scale based on width
+                    width = 1920;
+                    height = (int)(width / aspectRatio);
+                    xOffset = 0;
+                    yOffset = (1080 - height) / 2;
                 }
-                if (image.Height < desiredHeight)
+                else
                 {
-                    var testWidth = (int)Math.Round(image.Width / (image.Height / (double)desiredHeight));
-                    if (testWidth <= desiredWidth)
-                    {
-                        newHeight = desiredHeight;
-                        newWidth = testWidth;
-                    }
+                    // Image is taller than 16:9 - scale based on height
+                    height = 1080;
+                    width = (int)(height * aspectRatio);
+                    xOffset = (1920 - width) / 2;
+                    yOffset = 0;
                 }
-
-
-                using Image<Rgba32> resizedImage = new(desiredWidth, desiredHeight);
-                resizedImage.Mutate(x
-                    // ReSharper disable once AccessToModifiedClosure
-                    // ReSharper disable once AccessToDisposedClosure
-                    => x.Fill(Color.White).DrawImage(image,
-                        new Rectangle((desiredWidth - newWidth) / 2, (desiredHeight - newHeight) / 2, newWidth,
-                            newHeight), 0)
-                );
-                image.Dispose();
-                image = resizedImage;
+                using var scaledImage = image.Clone(ctx => ctx.Resize(width, height));
+                target.Mutate(x => x.Fill(Color.White)
+                    .DrawImage(scaledImage, new Point(xOffset, yOffset), 1f));
+                image = target;
             }
             
             // limit size to 1920x1080
@@ -174,13 +161,14 @@ namespace VRCX
 
             // add white border
             // wtf are these magic numbers
-            const int xOffset = 64; // 2048 / 32
-            const int yOffset = 69; // 1440 / 20.869
+            const int xBorderOffset = 64; // 2048 / 32
+            const int yBorderOffset = 69; // 1440 / 20.869
             using Image<Rgba32> newImage = new(2048, 1440);
             newImage.Mutate(x => x.Fill(Color.White));
             // graphics.DrawImage(image, new Rectangle(xOffset, yOffset, image.Width, image.Height));
             var newX = (2048 - image.Width) / 2;
-            newImage.Mutate(x => x.DrawImage(image, new Rectangle(newX, yOffset, image.Width, image.Height), 0));
+            var borderPoint = new Point(newX, yBorderOffset);
+            newImage.Mutate(x => x.DrawImage(image, borderPoint, 1f));
             using var imageSaveMemoryStream = new MemoryStream();
             newImage.SaveAsPng(imageSaveMemoryStream);
             return imageSaveMemoryStream.ToArray();
