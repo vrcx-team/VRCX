@@ -9811,6 +9811,7 @@ console.log(`isLinux: ${LINUX}`);
             privacy: '',
             shortCode: ''
         },
+        isRepresentedGroupLoading: false,
         joinCount: 0,
         timeSpent: 0,
         lastSeen: '',
@@ -10074,6 +10075,7 @@ console.log(`isLinux: ${LINUX}`);
             shortName: '',
             ref: {}
         };
+        D.isRepresentedGroupLoading = true;
         D.representedGroup = {
             bannerUrl: '',
             description: '',
@@ -10298,6 +10300,9 @@ console.log(`isLinux: ${LINUX}`);
                         }
                         API.getRepresentedGroup({ userId }).then((args1) => {
                             D.representedGroup = args1.json;
+                            if (!args1.json || !args1.json.isRepresenting) {
+                                D.isRepresentedGroupLoading = false;
+                            }
                         });
                         D.loading = false;
                     });

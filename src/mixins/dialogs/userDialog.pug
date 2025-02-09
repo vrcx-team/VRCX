@@ -445,18 +445,23 @@ mixin userDialog
                         .x-friend-item(style='width: 100%; cursor: default')
                             .detail
                                 span.name(style='margin-bottom: 5px') {{ $t('dialog.user.info.represented_group') }}
-                                .extra(v-if='userDialog.representedGroup?.isRepresenting')
+                                .extra(
+                                    v-if='userDialog.isRepresentedGroupLoading || (userDialog.representedGroup && userDialog.representedGroup.isRepresenting)')
                                     div(style='display: inline-block; flex: none; margin-right: 5px')
                                         el-popover(placement='right' width='500px' trigger='click')
-                                            img.x-link(
+                                            el-image.x-link(
                                                 slot='reference'
+                                                v-loading='userDialog.isRepresentedGroupLoading'
                                                 :src='userDialog.representedGroup.iconUrl'
-                                                style='flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover')
+                                                style='flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover; background: #f5f7fa'
+                                                @load='userDialog.isRepresentedGroupLoading = false')
+                                                div(slot='error')
                                             img.x-link(
-                                                :src='userDialog.representedGroup.iconUrl'
+                                                v-lazy='userDialog.representedGroup.iconUrl'
                                                 style='height: 500px'
                                                 @click='showFullscreenImageDialog(userDialog.representedGroup.iconUrl)')
                                     span(
+                                        v-if='userDialog.representedGroup.isRepresenting'
                                         style='vertical-align: top; cursor: pointer'
                                         @click='showGroupDialog(userDialog.representedGroup.groupId)')
                                         span(
@@ -691,12 +696,12 @@ mixin userDialog
                                         el-button(
                                             @click='moveGroupUp(group.id)'
                                             size='mini'
-                                            icon='el-icon-arrow-up'
-                                            style='display: block; padding: 7px; font-size: 9px; margin-left: 0')
+                                            icon='el-icon-download'
+                                            style='display: block; padding: 7px; font-size: 9px; margin-left: 0; rotate: 180deg')
                                         el-button(
                                             @click='moveGroupDown(group.id)'
                                             size='mini'
-                                            icon='el-icon-arrow-down'
+                                            icon='el-icon-download'
                                             style='display: block; padding: 7px; font-size: 9px; margin-left: 0')
                                     div(@click.stop style='margin-right: 10px')
                                         el-button(

@@ -169,9 +169,7 @@ mixin friendsListSidebar
                                                         v-else
                                                         v-text='friend.ref.displayName'
                                                         :style='{ color: friend.ref.$userColour }')
-                                                    i.el-icon-star-on(
-                                                        v-if='friend.isVIP'
-                                                        style='color: #ffd700; margin: 1px 0 0 2px')
+                                                    span(v-if='friend.isVIP' style='margin-left: 2px') ⭐
                                                 span.extra(v-if='friend.pendingOffline') #[i.el-icon-warning-outline] {{ $t('side_panel.pending_offline') }}
                                                 template(v-else)
                                                     template(v-if='friend.ref.travelingToLocation')

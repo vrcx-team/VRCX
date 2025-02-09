@@ -3,13 +3,16 @@
         <template v-for="(group, index) in groupedGroupInstances">
             <div
                 :key="getGroupId(group)"
-                class="x-friend-group x-link sidebar-group-title"
+                class="x-friend-group x-link"
                 :style="{ paddingTop: index === 0 ? '0px' : '10px' }"
             >
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">
                     <i
                         class="el-icon-arrow-right"
-                        :class="{ rotate: !groupInstancesCfg[getGroupId(group)].isCollapsed }"
+                        :style="{
+                            transform: groupInstancesCfg[getGroupId(group)].isCollapsed ? '' : 'rotate(90deg)',
+                            transition: 'transform 0.3s'
+                        }"
                     ></i>
                     <span style="margin-left: 5px">{{ group[0].group.name }} – {{ group.length }}</span>
                 </div>
@@ -79,7 +82,6 @@
                         };
                     }
                 });
-
                 return Array.from(groupMap.values()).sort(this.sortGroupInstancesByInGame);
             }
         },
@@ -110,3 +112,12 @@
         }
     };
 </script>
+
+<style scoped>
+    .x-link:hover {
+        text-decoration: none;
+    }
+    .x-link:hover span {
+        text-decoration: underline;
+    }
+</style>

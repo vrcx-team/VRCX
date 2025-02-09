@@ -8,7 +8,7 @@ mixin launch
         :visible.sync='launchDialog.visible'
         :title='$t("dialog.launch.header")'
         width='450px')
-        el-form(:model='launchDialog' label-width='80px')
+        el-form(:model='launchDialog' label-width='100px')
             el-form-item(:label='$t("dialog.launch.url")')
                 el-input(
                     v-model='launchDialog.url'
@@ -20,22 +20,27 @@ mixin launch
                         @click='copyInstanceMessage(launchDialog.url)'
                         size='mini'
                         icon='el-icon-s-order'
-                        style='margin-right: 5px'
+                        style='margin-left: 5px'
                         circle)
-            el-form-item(v-if='launchDialog.shortUrl' :label='$t("dialog.launch.short_url")')
-                el-tooltip(placement='top' style='margin-left: 5px' :content='$t("dialog.launch.short_url_notice")')
-                    i.el-icon-warning
+            el-form-item(v-if='launchDialog.shortUrl')
+                template(#label)
+                    span {{ $t('dialog.launch.short_url') }}
+                    el-tooltip(
+                        placement='top'
+                        style='margin-left: 5px'
+                        :content='$t("dialog.launch.short_url_notice")')
+                        i.el-icon-warning
                 el-input(
                     v-model='launchDialog.shortUrl'
                     size='mini'
                     @click.native='$event.target.tagName === "INPUT" && $event.target.select()'
-                    style='width: 241px')
+                    style='width: 260px')
                 el-tooltip(placement='right' :content='$t("dialog.launch.copy_tooltip")' :disabled='hideTooltips')
                     el-button(
                         @click='copyInstanceMessage(launchDialog.shortUrl)'
                         size='mini'
                         icon='el-icon-s-order'
-                        style='margin-right: 5px'
+                        style='margin-left: 5px'
                         circle)
             el-form-item(:label='$t("dialog.launch.location")')
                 el-input(
@@ -48,10 +53,10 @@ mixin launch
                         @click='copyInstanceMessage(launchDialog.location)'
                         size='mini'
                         icon='el-icon-s-order'
-                        style='margin-right: 5px'
+                        style='margin-left: 5px'
                         circle)
+        el-checkbox(v-model='launchDialog.desktop' @change='saveLaunchDialog' style='float: left; margin-top: 5px') {{ $t('dialog.launch.start_as_desktop') }}
         template(#footer)
-            el-checkbox(v-model='launchDialog.desktop' @change='saveLaunchDialog' style='float: left; margin-top: 5px') {{ $t('dialog.launch.start_as_desktop') }}
             el-button(size='small' @click='showPreviousInstanceInfoDialog(launchDialog.location)') {{ $t('dialog.launch.info') }}
             el-button(
                 size='small'

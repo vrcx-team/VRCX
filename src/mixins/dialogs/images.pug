@@ -136,7 +136,7 @@ mixin images
         @mousedown.native='dialogMouseDown'
         @mouseup.native='dialogMouseUp'
         :visible.sync='fullscreenImageDialog.visible'
-        top='3vh'
+        top='1vh'
         width='97vw')
         div(style='margin: 0 0 5px 5px')
             el-button(@click='copyImageUrl(fullscreenImageDialog.imageUrl)' size='mini' icon='el-icon-s-order' circle)
@@ -147,4 +147,4 @@ mixin images
                 circle
                 @click='downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)'
                 style='margin-left: 5px')
-        img(v-lazy='fullscreenImageDialog.imageUrl' style='width: 100%; height: 100vh; object-fit: contain')
+        img(v-lazy='fullscreenImageDialog.imageUrl' style='width: 100%; height: 85vh; object-fit: contain')

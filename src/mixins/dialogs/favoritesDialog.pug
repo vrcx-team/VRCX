@@ -158,7 +158,8 @@ mixin favoritesDialog
         ref='worldImportDialog'
         :visible.sync='worldImportDialog.visible'
         :title='$t("dialog.world_import.header")'
-        width='650px')
+        width='650px'
+        top='10vh')
         div(style='display: flex; align-items: center; justify-content: space-between')
             div(style='font-size: 12px') {{ $t('dialog.world_import.description') }}
             div(style='display: flex; align-items: center')
