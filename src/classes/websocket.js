@@ -427,12 +427,15 @@ export default class extends baseClass {
                         break;
                     }
 
-                    // content.user: {}
-                    // content.world: {}
+                    // content.user: {} // we don't trust this
+                    // content.world: {} // this is long gone
+                    // content.worldId // where did worldId go?
+                    // content.instance // without worldId, this is useless
 
-                    this.currentUser.presence.instance = content.instance;
-                    this.currentUser.presence.world = content.worldId;
-                    $app.setCurrentUserLocation(content.location);
+                    $app.setCurrentUserLocation(
+                        content.location,
+                        content.travelingToLocation
+                    );
                     break;
 
                 case 'group-joined':

@@ -36,7 +36,7 @@ html
                         circle
                         style='font-size: 14px; height: 50px; width: 50px')
 
-                el-menu(ref='menu' collapse @select='selectMenu')
+                el-menu(ref='menu' collapse @select='selectMenu' default-active='feed')
                     mixin menuitem(index, name, icon)
                         el-menu-item(index=index)
                             i(class=icon)

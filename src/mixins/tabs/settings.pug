@@ -414,18 +414,22 @@ mixin settingsTab
                             :min='200'
                             :max='500'
                             style='display: inline-block; width: 300px')
-                    .options-container-item
-                        simple-switch(
-                            :label='$t("view.settings.appearance.side_panel.group_by_instance")'
-                            :value='isSidebarGroupByInstance'
-                            @change='handleSwitchGroupByInstance'
-                            :tooltip='$t("view.settings.appearance.side_panel.group_by_instance_tooltip")')
-                    .options-container-item
-                        simple-switch(
-                            :label='$t("view.settings.appearance.side_panel.split_favorite_friends")'
-                            :value='isSidebarDivideByFriendGroup'
-                            @change='handleSwitchDivideByFriendGroup'
-                            :tooltip='$t("view.settings.appearance.side_panel.split_favorite_friends_tooltip")')
+                    simple-switch(
+                        :label='$t("view.settings.appearance.side_panel.group_by_instance")'
+                        :value='isSidebarGroupByInstance'
+                        @change='toggleGroupByInstance'
+                        :tooltip='$t("view.settings.appearance.side_panel.group_by_instance_tooltip")')
+                    simple-switch(
+                        v-if='isSidebarGroupByInstance'
+                        :label='$t("view.settings.appearance.side_panel.hide_friends_in_same_instance")'
+                        :value='isHideFriendsInSameInstance'
+                        @change='toggleHideFriendsInSameInstance'
+                        :tooltip='$t("view.settings.appearance.side_panel.hide_friends_in_same_instance_tooltip")')
+                    simple-switch(
+                        :label='$t("view.settings.appearance.side_panel.split_favorite_friends")'
+                        :value='isSidebarDivideByFriendGroup'
+                        @change='handleSwitchDivideByFriendGroup'
+                        :tooltip='$t("view.settings.appearance.side_panel.split_favorite_friends_tooltip")')
                 //- Appearance | User Dialog
                 .options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}

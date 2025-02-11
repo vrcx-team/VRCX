@@ -1,7 +1,16 @@
 using System;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using Color = SixLabors.ImageSharp.Color;
+using Image = SixLabors.ImageSharp.Image;
+using Point = SixLabors.ImageSharp.Point;
+using Rectangle = SixLabors.ImageSharp.Rectangle;
+using Size = SixLabors.ImageSharp.Size;
 
 namespace VRCX
 {
@@ -17,14 +26,15 @@ namespace VRCX
             return Convert.ToBase64String(ResizeImageToFitLimits(Convert.FromBase64String(base64data), false));
         }
 
-        public byte[] ResizeImageToFitLimits(byte[] imageData, bool matchingDimensions, int maxWidth = 2000, int maxHeight = 2000, long maxSize = 10_000_000)
+        public byte[] ResizeImageToFitLimits(byte[] imageData, bool matchingDimensions, int maxWidth = 2000,
+            int maxHeight = 2000, long maxSize = 10_000_000)
         {
             using var fileMemoryStream = new MemoryStream(imageData);
-            var image = new Bitmap(fileMemoryStream);
+            var image = Image.Load(fileMemoryStream);
 
             // for APNG, check if image is png format and less than maxSize
             if ((!matchingDimensions || image.Width == image.Height) &&
-                image.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Png) &&
+                image.Metadata.DecodedImageFormat == PngFormat.Instance &&
                 imageData.Length < maxSize &&
                 image.Width <= maxWidth &&
                 image.Height <= maxHeight)
@@ -36,27 +46,27 @@ namespace VRCX
             {
                 var sizingFactor = image.Width / (double)maxWidth;
                 var newHeight = (int)Math.Round(image.Height / sizingFactor);
-                image = new Bitmap(image, maxWidth, newHeight);
+                image.Mutate(x => x.Resize(maxWidth, newHeight));
             }
             if (image.Height > maxHeight)
             {
                 var sizingFactor = image.Height / (double)maxHeight;
                 var newWidth = (int)Math.Round(image.Width / sizingFactor);
-                image = new Bitmap(image, newWidth, maxHeight);
+                image.Mutate(x => x.Resize(newWidth, maxHeight));
             }
             if (matchingDimensions && image.Width != image.Height)
             {
-                var newSize = Math.Max(image.Width, image.Height);
-                var newImage = new Bitmap(newSize, newSize);
-                using var graphics = Graphics.FromImage(newImage);
-                graphics.Clear(Color.Transparent);
-                graphics.DrawImage(image, new Rectangle((newSize - image.Width) / 2, (newSize - image.Height) / 2, image.Width, image.Height));
-                image.Dispose();
-                image = newImage;
+                var targetSize = Math.Max(image.Width, image.Height);
+                var squareCanvas = new Image<Rgba32>(targetSize, targetSize);
+                var xOffset = (targetSize - image.Width) / 2;
+                var yOffset = (targetSize - image.Height) / 2;
+                squareCanvas.Mutate(x => 
+                    x.DrawImage(image, new Point(xOffset, yOffset), 1f));
+                image = squareCanvas;
             }
 
             SaveToFileToUpload();
-            for (int i = 0; i < 250 && imageData.Length > maxSize; i++)
+            for (var i = 0; i < 250 && imageData.Length > maxSize; i++)
             {
                 SaveToFileToUpload();
                 if (imageData.Length < maxSize)
@@ -74,7 +84,8 @@ namespace VRCX
                     newHeight = image.Height - 25;
                     newWidth = (int)Math.Round(image.Width / (image.Height / (double)newHeight));
                 }
-                image = new Bitmap(image, newWidth, newHeight);
+
+                image.Mutate(x => x.Resize(newWidth, newHeight));
             }
 
             if (imageData.Length > maxSize)
@@ -82,12 +93,13 @@ namespace VRCX
                 throw new Exception("Failed to get image into target filesize.");
             }
 
+            image.Dispose();
             return imageData;
 
             void SaveToFileToUpload()
             {
                 using var imageSaveMemoryStream = new MemoryStream();
-                image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                image.SaveAsPng(imageSaveMemoryStream);
                 imageData = imageSaveMemoryStream.ToArray();
             }
         }
@@ -98,42 +110,39 @@ namespace VRCX
             const int desiredHeight = 1080;
 
             using var fileMemoryStream = new MemoryStream(imageData);
-            var image = new Bitmap(fileMemoryStream);
+            var image = Image.Load(fileMemoryStream);
 
             if (image.Height > image.Width)
-                image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                image.Mutate(x => x.Rotate(RotateMode.Rotate270));
 
             // increase size to 1920x1080
             if (image.Width < desiredWidth || image.Height < desiredHeight)
             {
-                var newHeight = image.Height;
-                var newWidth = image.Width;
-                if (image.Width < desiredWidth)
+                const double expectedAspectRatio = 1920.0 / 1080.0;
+                var target = new Image<Rgba32>(1920, 1080);
+                var aspectRatio = (double)image.Width / image.Height;
+                int width, height, xOffset, yOffset;
+    
+                if (aspectRatio > expectedAspectRatio)
                 {
-                    var testHeight = (int)Math.Round(image.Height / (image.Width / (double)desiredWidth));
-                    if (testHeight <= desiredHeight)
-                    {
-                        newWidth = desiredWidth;
-                        newHeight = testHeight;
-                    }
+                    // Image is wider than 16:9 - scale based on width
+                    width = 1920;
+                    height = (int)(width / aspectRatio);
+                    xOffset = 0;
+                    yOffset = (1080 - height) / 2;
                 }
-                if (image.Height < desiredHeight)
+                else
                 {
-                    var testWidth = (int)Math.Round(image.Width / (image.Height / (double)desiredHeight));
-                    if (testWidth <= desiredWidth)
-                    {
-                        newHeight = desiredHeight;
-                        newWidth = testWidth;
-                    }
+                    // Image is taller than 16:9 - scale based on height
+                    height = 1080;
+                    width = (int)(height * aspectRatio);
+                    xOffset = (1920 - width) / 2;
+                    yOffset = 0;
                 }
-                var resizedImage = new Bitmap(desiredWidth, desiredHeight);
-                using var graphics1 = Graphics.FromImage(resizedImage);
-                graphics1.Clear(Color.White);
-                var x = (desiredWidth - newWidth) / 2;
-                var y = (desiredHeight - newHeight) / 2;
-                graphics1.DrawImage(image, new Rectangle(x, y, newWidth, newHeight));
-                image.Dispose();
-                image = resizedImage;
+                using var scaledImage = image.Clone(ctx => ctx.Resize(width, height));
+                target.Mutate(x => x.Fill(Color.White)
+                    .DrawImage(scaledImage, new Point(xOffset, yOffset), 1f));
+                image = target;
             }
             
             // limit size to 1920x1080
@@ -141,31 +150,27 @@ namespace VRCX
             {
                 var sizingFactor = image.Width / (double)desiredWidth;
                 var newHeight = (int)Math.Round(image.Height / sizingFactor);
-                image = new Bitmap(image, desiredWidth, newHeight);
+                image.Mutate(x => x.Resize(desiredWidth, newHeight));
             }
             if (image.Height > desiredHeight)
             {
                 var sizingFactor = image.Height / (double)desiredHeight;
                 var newWidth = (int)Math.Round(image.Width / sizingFactor);
-                image = new Bitmap(image, newWidth, desiredHeight);
+                image.Mutate(x => x.Resize(newWidth, desiredHeight));
             }
 
             // add white border
             // wtf are these magic numbers
-            const int xOffset = 64; // 2048 / 32
-            const int yOffset = 69; // 1440 / 20.869
-            var newImage = new Bitmap(2048, 1440);
-            using var graphics = Graphics.FromImage(newImage);
-            graphics.Clear(Color.White);
+            const int xBorderOffset = 64; // 2048 / 32
+            const int yBorderOffset = 69; // 1440 / 20.869
+            using Image<Rgba32> newImage = new(2048, 1440);
+            newImage.Mutate(x => x.Fill(Color.White));
             // graphics.DrawImage(image, new Rectangle(xOffset, yOffset, image.Width, image.Height));
             var newX = (2048 - image.Width) / 2;
-            var newY = yOffset;
-            graphics.DrawImage(image, new Rectangle(newX, newY, image.Width, image.Height));
-            image.Dispose();
-            image = newImage;
-
+            var borderPoint = new Point(newX, yBorderOffset);
+            newImage.Mutate(x => x.DrawImage(image, borderPoint, 1f));
             using var imageSaveMemoryStream = new MemoryStream();
-            image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            newImage.SaveAsPng(imageSaveMemoryStream);
             return imageSaveMemoryStream.ToArray();
         }
         
@@ -184,17 +189,15 @@ namespace VRCX
             var tempPath = path + ".temp";
             var bytes = await File.ReadAllBytesAsync(path);
             var ms = new MemoryStream(bytes);
-            Bitmap print = new Bitmap(ms);
+            var print = await Image.LoadAsync(ms);
             // validation step to ensure image is actually a print
-            if (print.Width != 2048 || print.Height != 1440)
-            {
-                return false;
-            }
+            if (print.Width != 2048 || print.Height != 1440) return false;
+         
             var point = new Point(64, 69);
             var size = new Size(1920, 1080);
             var rectangle = new Rectangle(point, size);
-            Bitmap cropped = print.Clone(rectangle, print.PixelFormat);
-            cropped.Save(tempPath);
+            print.Mutate(x => x.Crop(rectangle));
+            await print.SaveAsPngAsync(tempPath);
             if (ScreenshotHelper.HasTXt(path))
             {
                 var success = ScreenshotHelper.CopyTXt(path, tempPath);

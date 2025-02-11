@@ -550,6 +550,7 @@ console.log(`isLinux: ${LINUX}`);
         if (typeof ref === 'undefined') {
             ref = {
                 ageVerificationStatus: '',
+                ageVerified: false,
                 allowAvatarCopying: false,
                 badges: [],
                 bio: '',
@@ -9810,6 +9811,7 @@ console.log(`isLinux: ${LINUX}`);
             privacy: '',
             shortCode: ''
         },
+        isRepresentedGroupLoading: false,
         joinCount: 0,
         timeSpent: 0,
         lastSeen: '',
@@ -10073,6 +10075,7 @@ console.log(`isLinux: ${LINUX}`);
             shortName: '',
             ref: {}
         };
+        D.isRepresentedGroupLoading = true;
         D.representedGroup = {
             bannerUrl: '',
             description: '',
@@ -10297,6 +10300,9 @@ console.log(`isLinux: ${LINUX}`);
                         }
                         API.getRepresentedGroup({ userId }).then((args1) => {
                             D.representedGroup = args1.json;
+                            if (!args1.json || !args1.json.isRepresenting) {
+                                D.isRepresentedGroupLoading = false;
+                            }
                         });
                         D.loading = false;
                     });
@@ -19916,7 +19922,6 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.updateCurrentUserLocation = function () {
-        API.currentUser.$travelingToTime = this.lastLocationDestinationTime;
         var ref = API.cachedUsers.get(API.currentUser.id);
         if (typeof ref === 'undefined') {
             return;
@@ -19924,7 +19929,8 @@ console.log(`isLinux: ${LINUX}`);
 
         // update cached user with both gameLog and API locations
         var currentLocation = API.currentUser.$locationTag;
-        if (API.currentUser.$location === 'traveling') {
+        var L = $utils.parseLocation(currentLocation);
+        if (L.isTraveling) {
             currentLocation = API.currentUser.$travelingToLocation;
         }
         ref.location = API.currentUser.$locationTag;
@@ -19956,13 +19962,18 @@ console.log(`isLinux: ${LINUX}`);
         } else {
             ref.$location_at = this.lastLocation.date;
             ref.$travelingToTime = this.lastLocationDestinationTime;
+            API.currentUser.$travelingToTime = this.lastLocationDestinationTime;
         }
     };
 
-    $app.methods.setCurrentUserLocation = async function (location) {
+    $app.methods.setCurrentUserLocation = async function (
+        location,
+        travelingToLocation
+    ) {
         API.currentUser.$location_at = Date.now();
         API.currentUser.$travelingToTime = Date.now();
         API.currentUser.$locationTag = location;
+        API.currentUser.$travelingToLocation = travelingToLocation;
         this.updateCurrentUserLocation();
 
         // janky gameLog support for Quest
@@ -23303,24 +23314,29 @@ console.log(`isLinux: ${LINUX}`);
 
     //  - SidebarGroupByInstance
 
-    $app.methods.handleSwitchGroupByInstance = async function () {
-        this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
-        await configRepository.setBool(
-            'VRCX_sidebarGroupByInstance',
-            this.isSidebarGroupByInstance
-        );
-    };
-
     $app.data.isSidebarGroupByInstance = await configRepository.getBool(
         'VRCX_sidebarGroupByInstance',
         true
     );
 
-    $app.methods.handleSwitchGroupByInstance = function () {
+    $app.methods.toggleGroupByInstance = function () {
         this.isSidebarGroupByInstance = !this.isSidebarGroupByInstance;
         configRepository.setBool(
             'VRCX_sidebarGroupByInstance',
             this.isSidebarGroupByInstance
+        );
+    };
+
+    $app.data.isHideFriendsInSameInstance = await configRepository.getBool(
+        'VRCX_hideFriendsInSameInstance',
+        false
+    );
+
+    $app.methods.toggleHideFriendsInSameInstance = function () {
+        this.isHideFriendsInSameInstance = !this.isHideFriendsInSameInstance;
+        configRepository.setBool(
+            'VRCX_hideFriendsInSameInstance',
+            this.isHideFriendsInSameInstance
         );
     };
 
@@ -23368,7 +23384,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.computed.onlineFriendsByGroupStatus = function () {
-        if (!this.isSidebarGroupByInstance) {
+        if (
+            !this.isSidebarGroupByInstance ||
+            (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
+        ) {
             return this.onlineFriends;
         }
 
@@ -23384,7 +23403,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.computed.vipFriendsByGroupStatus = function () {
-        if (!this.isSidebarGroupByInstance) {
+        if (
+            !this.isSidebarGroupByInstance ||
+            (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
+        ) {
             return this.vipFriends;
         }
 

@@ -6,6 +6,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Library</OutputType>
     <Platforms>x64</Platforms>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
@@ -80,9 +81,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>SQLite.Interop.dll</TargetPath>
     </None>
-    <None Include="libs\linux\System.Data.SQLite.dll" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <None Include="libs\macos\SQLite.Interop.dll" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>System.Data.SQLite.dll</TargetPath>
+      <TargetPath>SQLite.Interop.dll</TargetPath>
     </None>
     <Content Include="..\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -100,6 +101,8 @@
     <PackageReference Include="NLog" Version="5.4.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />

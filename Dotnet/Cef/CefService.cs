@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using CefSharp;
 using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
@@ -72,6 +73,28 @@ namespace VRCX
                 logger.Info("Debug mode enabled");
                 cefSettings.RemoteDebuggingPort = 8089;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
+
+                var extensionsPath = Path.Join(Program.AppDataDirectory, "extensions");
+                Directory.CreateDirectory(extensionsPath);
+                
+                // extract Vue Devtools
+                var vueDevtoolsCrxPath = Path.Join(Program.BaseDirectory, @"..\..\build-tools\Vue-js-devtools.crx");
+                if (File.Exists(vueDevtoolsCrxPath))
+                {
+                    var VueDevtoolsPath = Path.Join(extensionsPath, "Vue-js-devtools");
+                    if (!Directory.Exists(VueDevtoolsPath))
+                    {
+                        Directory.CreateDirectory(VueDevtoolsPath);
+                        ZipFile.ExtractToDirectory(vueDevtoolsCrxPath, VueDevtoolsPath);
+                    }
+                }
+                
+                // load extensions
+                var folders = Directory.GetDirectories(extensionsPath);
+                foreach (var folder in folders)
+                {
+                    cefSettings.CefCommandLineArgs.Add("load-extension", folder);
+                }
             }
             
             CefSharpSettings.ShutdownOnExit = false;
