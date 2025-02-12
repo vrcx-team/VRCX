@@ -80,7 +80,7 @@ mixin playerListTab
                             effect='plain'
                             size='mini'
                             style='margin-right: 5px')
-                            span(v-text='currentInstanceWorld.cacheSize') {{ $t('dialog.world.tags.cache') }}
+                            span {{ currentInstanceWorld.cacheSize }} {{ $t('dialog.world.tags.cache') }}
                         div(style='margin-top: 5px')
                             location-world(
                                 :locationobject='currentInstanceLocation'
@@ -168,8 +168,10 @@ mixin playerListTab
                                         span(v-if='!scope.row.inCache' style='color: #aaa') #[i.el-icon-download]&nbsp;
                                         span.avatar-info-public(v-if='scope.row.avatar.releaseStatus === "public"') {{ $t('dialog.avatar.labels.public') }}
                                         span.avatar-info-own(v-else-if='scope.row.avatar.releaseStatus === "private"') {{ $t('dialog.avatar.labels.private') }}
-                                        template(
-                                            v-if='scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description') {{ scope.row.avatar.description }}
+                                        ttemplate(
+                                            v-if='scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description')
+                                            |
+                                            | - {{ scope.row.avatar.description }}
                                     template(v-else-if='scope.row.type === "ChangeStatus"')
                                         template(v-if='scope.row.status !== scope.row.previousStatus')
                                             el-tooltip(placement='top')
@@ -279,7 +281,9 @@ mixin playerListTab
                                         span.avatar-info-public(v-if='scope.row.avatar.releaseStatus === "public"') {{ $t('dialog.avatar.labels.public') }}
                                         span.avatar-info-own(v-else-if='scope.row.avatar.releaseStatus === "private"') {{ $t('dialog.avatar.labels.private') }}
                                         template(
-                                            v-if='scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description') {{ scope.row.avatar.description }}
+                                            v-if='scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description')
+                                            |
+                                            | - {{ scope.row.avatar.description }}
                                     template(v-else-if='scope.row.type === "ChangeStatus"')
                                         template(v-if='scope.row.status !== scope.row.previousStatus')
                                             el-tooltip(placement='top')
