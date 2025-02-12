@@ -154,8 +154,8 @@ mixin userDialog
                                 :style='{ color: userDialog.ref.$customTagColour, "border-color": userDialog.ref.$customTagColour }'
                                 style='margin-right: 5px; margin-top: 5px')
                             br
-                            template(v-for='badge in userDialog.ref.badges' :key='badge.badgeId')
-                                el-tooltip(placement='top')
+                            template(v-for='badge in userDialog.ref.badges')
+                                el-tooltip(placement='top' :key='badge.badgeId')
                                     template(#content)
                                         span {{ badge.badgeName }}
                                         span(v-if='badge.hidden') &nbsp;(Hidden)
@@ -324,7 +324,7 @@ mixin userDialog
                                             divided
                                             style='color: #f56c6c') {{ $t('dialog.user.actions.unfriend') }}
             el-tabs(ref='userDialogTabs' @tab-click='userDialogTabClick')
-                el-tab-pane(:label='$t("dialog.user.info.header")' lazy)
+                el-tab-pane(:label='$t("dialog.user.info.header")')
                     template(v-if='isFriendOnline(userDialog.friend) || API.currentUser.id === userDialog.id')
                         div(
                             v-if='userDialog.ref.location'
@@ -459,7 +459,8 @@ mixin userDialog
                                                 slot='reference'
                                                 v-loading='userDialog.isRepresentedGroupLoading'
                                                 :src='userDialog.representedGroup.iconUrl'
-                                                style='flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover; background: #f5f7fa'
+                                                style='flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover'
+                                                :style='{ background: userDialog.isRepresentedGroupLoading ? "#f5f7fa" : "" }'
                                                 @load='userDialog.isRepresentedGroupLoading = false')
                                                 div(slot='error')
                                             img.x-link(
@@ -922,8 +923,8 @@ mixin userDialog
                         ref='favoriteWorlds'
                         v-loading='userDialog.isFavoriteWorldsLoading'
                         style='margin-top: 10px')
-                        template(v-for='(list, index) in userFavoriteWorlds' :key='index')
-                            el-tab-pane(lazy)
+                        template(v-for='(list, index) in userFavoriteWorlds')
+                            el-tab-pane(:key='index' lazy)
                                 span(slot='label')
                                     span(v-text='list[0]' style='font-weight: bold; font-size: 16px')
                                     i.x-status-icon(

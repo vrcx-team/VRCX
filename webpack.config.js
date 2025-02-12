@@ -115,13 +115,20 @@ module.exports = {
                     to: './images/'
                 }
             ]
-        })
+        }),
+        new webpack.ProgressPlugin({})
     ],
     optimization: {
         minimizer: [
             new TerserPlugin({
-                extractComments: false
+                extractComments: false,
+                terserOptions: {
+                    ecma: 2020
+                }
             })
         ]
+    },
+    watchOptions: {
+        ignored: /node_modules/
     }
 };
