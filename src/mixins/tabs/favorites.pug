@@ -89,9 +89,9 @@ mixin favoritesTab
                                                 el-dropdown-menu(#default='dropdown')
                                                     template(
                                                         v-if='groupAPI.name !== group.name'
-                                                        v-for='groupAPI in API.favoriteFriendGroups'
-                                                        :key='groupAPI.name')
+                                                        v-for='groupAPI in API.favoriteFriendGroups')
                                                         el-dropdown-item(
+                                                            :key='groupAPI.name'
                                                             style='display: block; margin: 10px 0'
                                                             @click.native='moveFavorite(favorite.ref, groupAPI, "friend")'
                                                             :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
@@ -245,9 +245,9 @@ mixin favoritesTab
                                                 el-dropdown-menu(#default='dropdown')
                                                     template(
                                                         v-if='groupAPI.name !== group.name'
-                                                        v-for='groupAPI in API.favoriteWorldGroups'
-                                                        :key='groupAPI.name')
+                                                        v-for='groupAPI in API.favoriteWorldGroups')
                                                         el-dropdown-item(
+                                                            :key='groupAPI.name'
                                                             style='display: block; margin: 10px 0'
                                                             @click.native='moveFavorite(favorite.ref, groupAPI, "world")'
                                                             :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
@@ -378,10 +378,9 @@ mixin favoritesTab
                                                     :disabled='hideTooltips')
                                                     el-button(type='default' icon='el-icon-back' size='mini' circle)
                                                 el-dropdown-menu(#default='dropdown')
-                                                    template(
-                                                        v-for='groupAPI in API.favoriteWorldGroups'
-                                                        :key='groupAPI.name')
+                                                    template(v-for='groupAPI in API.favoriteWorldGroups')
                                                         el-dropdown-item(
+                                                            :key='groupAPI.name'
                                                             style='display: block; margin: 10px 0'
                                                             @click.native='addFavoriteWorld(favorite, groupAPI, true)'
                                                             :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
@@ -521,9 +520,9 @@ mixin favoritesTab
                                                 el-dropdown-menu(#default='dropdown')
                                                     template(
                                                         v-if='groupAPI.name !== group.name'
-                                                        v-for='groupAPI in API.favoriteAvatarGroups'
-                                                        :key='groupAPI.name')
+                                                        v-for='groupAPI in API.favoriteAvatarGroups')
                                                         el-dropdown-item(
+                                                            :key='groupAPI.name'
                                                             style='display: block; margin: 10px 0'
                                                             @click.native='moveFavorite(favorite.ref, groupAPI, "avatar")'
                                                             :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
@@ -709,10 +708,9 @@ mixin favoritesTab
                                                     :disabled='hideTooltips')
                                                     el-button(type='default' icon='el-icon-back' size='mini' circle)
                                                 el-dropdown-menu(#default='dropdown')
-                                                    template(
-                                                        v-for='groupAPI in API.favoriteAvatarGroups'
-                                                        :key='groupAPI.name')
+                                                    template(v-for='groupAPI in API.favoriteAvatarGroups')
                                                         el-dropdown-item(
+                                                            :key='groupAPI.name'
                                                             style='display: block; margin: 10px 0'
                                                             @click.native='addFavoriteAvatar(favorite, groupAPI, true)'
                                                             :disabled='groupAPI.count >= groupAPI.capacity') {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
