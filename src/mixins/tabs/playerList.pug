@@ -85,8 +85,10 @@ mixin playerListTab
                             location-world(
                                 :locationobject='currentInstanceLocation'
                                 :currentuserid='API.currentUser.id')
-                            span(v-if='lastLocation.playerList.size > 0' style='margin: 0 5px') {{ lastLocation.playerList.size }} {{ `(${lastLocation.friendList.size})` }}
-                            timer(v-if='lastLocation.date' :epoch='lastLocation.date')
+                            span(v-if='lastLocation.playerList.size > 0' style='margin-left: 5px')
+                                | {{ lastLocation.playerList.size }}
+                                |                                     #[template(v-if='lastLocation.friendList.size > 0') ({{ lastLocation.friendList.size }})]
+                            | &nbsp;&horbar; #[timer(v-if='lastLocation.date' :epoch='lastLocation.date')]
                     div(style='margin-top: 5px')
                         span(
                             v-show='currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description'
@@ -168,7 +170,7 @@ mixin playerListTab
                                         span(v-if='!scope.row.inCache' style='color: #aaa') #[i.el-icon-download]&nbsp;
                                         span.avatar-info-public(v-if='scope.row.avatar.releaseStatus === "public"') {{ $t('dialog.avatar.labels.public') }}
                                         span.avatar-info-own(v-else-if='scope.row.avatar.releaseStatus === "private"') {{ $t('dialog.avatar.labels.private') }}
-                                        ttemplate(
+                                        template(
                                             v-if='scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description')
                                             |
                                             | - {{ scope.row.avatar.description }}
