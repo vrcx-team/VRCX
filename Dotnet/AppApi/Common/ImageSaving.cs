@@ -177,6 +177,11 @@ namespace VRCX
         public async Task CropAllPrints(string ugcFolderPath)
         {
             var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Prints");
+
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
             var files = Directory.GetFiles(folder, "*.png", SearchOption.AllDirectories);
             foreach (var file in files)
             {
