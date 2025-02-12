@@ -180,7 +180,7 @@ namespace VRCX
 
             if (!Directory.Exists(folder))
             {
-                Directory.CreateDirectory(folder);
+                return;
             }
             var files = Directory.GetFiles(folder, "*.png", SearchOption.AllDirectories);
             foreach (var file in files)
