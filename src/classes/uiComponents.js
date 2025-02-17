@@ -469,8 +469,8 @@ export default class extends baseClass {
             template:
                 '<div @click="confirm" class="avatar-info">' +
                 '<span style="margin-right:5px">{{ avatarName }}</span>' +
-                '<span style="margin-right:5px" :class="color">{{ avatarType }}</span>' +
-                '<span style="color:#909399;font-family:monospace;font-size:12px;">{{ avatarTags }}</span>' +
+                '<span v-if="avatarType" style="margin-right:5px" :class="color">{{ avatarType }}</span>' +
+                '<span v-if="avatarTags" style="color:#909399;font-family:monospace;font-size:12px;">{{ avatarTags }}</span>' +
                 '</div>',
             props: {
                 imageurl: String,

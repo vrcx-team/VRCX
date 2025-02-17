@@ -177,6 +177,11 @@ namespace VRCX
         public async Task CropAllPrints(string ugcFolderPath)
         {
             var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Prints");
+
+            if (!Directory.Exists(folder))
+            {
+                return;
+            }
             var files = Directory.GetFiles(folder, "*.png", SearchOption.AllDirectories);
             foreach (var file in files)
             {
@@ -191,7 +196,8 @@ namespace VRCX
             var ms = new MemoryStream(bytes);
             var print = await Image.LoadAsync(ms);
             // validation step to ensure image is actually a print
-            if (print.Width != 2048 || print.Height != 1440) return false;
+            if (print.Width != 2048 || print.Height != 1440)
+                return false;
          
             var point = new Point(64, 69);
             var size = new Size(1920, 1080);
@@ -199,14 +205,7 @@ namespace VRCX
             print.Mutate(x => x.Crop(rectangle));
             await print.SaveAsPngAsync(tempPath);
             if (ScreenshotHelper.HasTXt(path))
-            {
-                var success = ScreenshotHelper.CopyTXt(path, tempPath);
-                if (!success)
-                {
-                    File.Delete(tempPath);
-                    return false;
-                }
-            }
+                ScreenshotHelper.CopyTXt(path, tempPath);
             File.Move(tempPath, path, true);
             return true;
         }

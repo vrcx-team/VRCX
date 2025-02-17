@@ -1,5 +1,7 @@
 ### Download and run AppImage from [Releases](https://github.com/vrcx-team/VRCX/releases)
 
+If you're using Fedora, you may need to reboot after installing .NET for [DOTNET_ROOT](https://src.fedoraproject.org/rpms/dotnet9.0/blob/rawhide/f/dotnet.sh.in#_3) environment variable to take affect.
+
 ---
 
 ### Legacy Wine guide
