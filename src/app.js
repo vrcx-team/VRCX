@@ -23366,13 +23366,27 @@ console.log(`isLinux: ${LINUX}`);
 
         const allFriends = [...this.vipFriends, ...this.onlineFriends];
         allFriends.forEach((friend) => {
-            if (!friend.ref?.$location.isRealInstance) return;
+            let locationTag;
 
-            const key = friend.ref.$location.tag;
-            if (!friendsList[key]) {
-                friendsList[key] = [];
+            if (friend.ref?.$location.isRealInstance) {
+                locationTag = friend.ref.$location.tag;
+            } else if (this.lastLocation.friendList.has(friend.id)) {
+                let $location = $utils.parseLocation(this.lastLocation.location);
+                if ($location.isRealInstance) {
+                    if ($location.tag === 'private') {
+                        locationTag = this.lastLocation.name;
+                    } else {
+                        locationTag = $location.tag;
+                    }
+                    
+                }
             }
-            friendsList[key].push(friend);
+            if (!locationTag) return;
+
+            if (!friendsList[locationTag]) {
+                friendsList[locationTag] = [];
+            }
+            friendsList[locationTag].push(friend);
         });
 
         const sortedFriendsList = [];
@@ -23438,6 +23452,9 @@ console.log(`isLinux: ${LINUX}`);
             }
             if ($utils.isRealInstance(friend.ref?.travelingToLocation)) {
                 return friend.ref.travelingToLocation;
+            }
+            if (this.lastLocation.friendList.has(friend.id)) {
+                return this.lastLocation.name;
             }
         }
         return friendsArr[0].ref?.location;
