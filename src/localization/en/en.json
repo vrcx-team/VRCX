@@ -742,6 +742,7 @@
                 "copy_id": "Copy ID",
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
+                "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
                 "accuracy_notice": "Info from local database may not be accurate",
                 "instance_full": "full",
                 "instance_closed": "closed",

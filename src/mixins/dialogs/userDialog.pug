@@ -441,7 +441,13 @@ mixin userDialog
                                     avatar-info(
                                         :imageurl='userDialog.ref.currentAvatarImageUrl'
                                         :userid='userDialog.id'
-                                        :avatartags='userDialog.ref.currentAvatarTags')
+                                        :avatartags='userDialog.ref.currentAvatarTags'
+                                        style='display: inline-block')
+                                    el-tooltip(
+                                        v-if='userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl && !hideTooltips'
+                                        placement='top'
+                                        :content='$t("dialog.user.info.vrcplus_hides_avatar")')
+                                        i.el-icon-warning
                         .x-friend-item(style='width: 100%; cursor: default')
                             .detail
                                 span.name(style='margin-bottom: 5px') {{ $t('dialog.user.info.represented_group') }}

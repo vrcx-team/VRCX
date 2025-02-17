@@ -89,6 +89,7 @@ export default {
             return false;
         }
         switch (instanceId) {
+            case ':':
             case 'offline':
             case 'offline:offline':
             case 'private':
