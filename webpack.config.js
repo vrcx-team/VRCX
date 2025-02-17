@@ -13,7 +13,8 @@ module.exports = {
             'noty',
             'vue',
             'vue-data-tables',
-            'vue-lazyload'
+            'vue-lazyload',
+            'dayjs'
         ],
         app: {
             import: ['./src/app.js', './src/app.scss'],

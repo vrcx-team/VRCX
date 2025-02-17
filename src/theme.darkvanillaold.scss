@@ -318,3 +318,10 @@ path[stroke='#e5e9f2'] {
     border: transparent;
     background-color: #333 !important;
 }
+.el-divider {
+    background-color: #606266;
+}
+.el-divider__text {
+    background: var(--farback);
+    color: #efefef;
+}

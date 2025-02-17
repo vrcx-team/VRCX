@@ -16,6 +16,10 @@ import VueLazyload from 'vue-lazyload';
 import VueI18n from 'vue-i18n';
 import { DataTables } from 'vue-data-tables';
 import ElementUI from 'element-ui';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
 
@@ -33,6 +37,7 @@ import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 
 // tabs
 import ModerationTab from './views/tabs/Moderation.vue';
+import ChartsTab from './views/tabs/Charts.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
@@ -109,6 +114,13 @@ console.log(`isLinux: ${LINUX}`);
     });
     // #endregion
 
+    // #region | date utility library
+    // - dayjs plugin init
+    dayjs.extend(duration);
+    dayjs.extend(utc);
+    dayjs.extend(timezone);
+    // #endregion
+
     // everything in this program is global stored in $app, I hate it, it is what it is
     let $app = {};
     const API = new _apiInit($app);
@@ -164,6 +176,7 @@ console.log(`isLinux: ${LINUX}`);
         components: {
             // tabs
             ModerationTab,
+            ChartsTab,
 
             // components
             // - settings
@@ -172,6 +185,12 @@ console.log(`isLinux: ${LINUX}`);
             // components
             // - sidebar(friendsListSidebar)
             GroupsSidebar
+        },
+        provide() {
+            return {
+                API,
+                showUserDialog: this.showUserDialog
+            };
         },
         el: '#x-app',
         async mounted() {
@@ -4824,7 +4843,9 @@ console.log(`isLinux: ${LINUX}`);
                 });
                 worldName = args.ref.name;
             }
-        } catch (err) {}
+        } catch (e) {
+            throw e;
+        }
         return worldName;
     };
 

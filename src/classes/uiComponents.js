@@ -89,7 +89,8 @@ export default class extends baseClass {
                 link: {
                     type: Boolean,
                     default: true
-                }
+                },
+                isOpenPreviousInstanceInfoDialog: Boolean
             },
             data() {
                 return {
@@ -177,7 +178,14 @@ export default class extends baseClass {
                             API.$emit('SHOW_WORLD_DIALOG_SHORTNAME', this.hint);
                             return;
                         }
-                        API.$emit('SHOW_WORLD_DIALOG', instanceId);
+                        if (this.isOpenPreviousInstanceInfoDialog) {
+                            this.$emit(
+                                'open-previous-instance-info-dialog',
+                                instanceId
+                            );
+                        } else {
+                            API.$emit('SHOW_WORLD_DIALOG', instanceId);
+                        }
                     }
                 },
                 showGroupDialog() {

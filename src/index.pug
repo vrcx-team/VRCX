@@ -51,6 +51,7 @@ html
                     +menuitem('moderation', "{{ $t('nav_tooltip.moderation') }}", 'el-icon-finished')
                     +menuitem('notification', "{{ $t('nav_tooltip.notification') }}", 'el-icon-bell')
                     +menuitem('friendsList', "{{ $t('nav_tooltip.friend_list') }}", 'el-icon-s-management')
+                    +menuitem('charts', "{{ $t('nav_tooltip.charts') }}", 'el-icon-data-analysis')
                     +menuitem('profile', "{{ $t('nav_tooltip.profile') }}", 'el-icon-user')
                     +menuitem('settings', "{{ $t('nav_tooltip.settings') }}", 'el-icon-s-tools')
 
@@ -83,10 +84,9 @@ html
                 //- moderation
                 moderation-tab(
                     v-if='$refs.menu?.activeIndex === "moderation"'
-                    :Api='API'
                     :table-data='playerModerationTable'
-                    :show-user-dialog='showUserDialog'
-                    :shift-held='shiftHeld')
+                    :shift-held='shiftHeld'
+                    :hide-tooltips='hideTooltips')
 
                 //- notification
                 include ./mixins/tabs/notifications.pug
@@ -99,6 +99,14 @@ html
                 //- friends list
                 include ./mixins/tabs/friendsList.pug
                 +friendsListTab
+
+                //- charts
+                keep-alive
+                    charts-tab(
+                        v-if='$refs.menu?.activeIndex === "charts"'
+                        :get-world-name='getWorldName'
+                        :is-dark-mode='isDarkMode'
+                        @open-previous-instance-info-dialog='showPreviousInstanceInfoDialog')
 
                 //- settings
                 include ./mixins/tabs/settings.pug

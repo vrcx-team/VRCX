@@ -2772,6 +2772,80 @@ class Database {
         );
         return instances;
     }
+
+    /**
+     *
+     * @param {string} startDate: utc string of startOfDay
+     * @param {string} endDate: utc string endOfDay
+     * @returns
+     */
+    async getInstanceActivity(startDate, endDate) {
+        const currentUserData = [];
+        const detailData = new Map();
+        await sqliteService.execute(
+            (row) => {
+                const rowData = {
+                    id: row[0],
+                    created_at: row[1],
+                    type: row[2],
+                    display_name: row[3],
+                    location: row[4],
+                    user_id: row[5],
+                    time: row[6]
+                };
+
+                // skip dirty data
+                if (!rowData.location || rowData.location === 'traveling') {
+                    return;
+                }
+
+                if (rowData.user_id === Database.userId) {
+                    currentUserData.push(rowData);
+                }
+                const instanceData = detailData.get(rowData.location);
+
+                detailData.set(rowData.location, [
+                    ...(instanceData || []),
+                    rowData
+                ]);
+            },
+            `SELECT
+                     *
+                FROM
+                    gamelog_join_leave
+                WHERE type = "OnPlayerLeft"
+                    AND (
+                        strftime('%Y-%m-%dT%H:%M:%SZ', created_at, '-' || (time * 1.0 / 1000) || ' seconds') BETWEEN @utc_start_date AND @utc_end_date
+                        OR created_at BETWEEN @utc_start_date AND @utc_end_date
+                    );`,
+            {
+                '@utc_start_date': startDate,
+                '@utc_end_date': endDate
+            }
+        );
+
+        return { currentUserData, detailData };
+    }
+
+    /**
+     * Get the All Date of Instance Activity for the current user
+     * @returns {Promise<null>}
+     */
+    async getDateOfInstanceActivity() {
+        let result = [];
+        await sqliteService.execute(
+            (row) => {
+                result.push(row[0]);
+            },
+            `SELECT created_at 
+                FROM gamelog_join_leave 
+                WHERE user_id = @userId`,
+            {
+                '@userId': Database.userId
+            }
+        );
+        return result;
+    }
 }
 
 var self = new Database();

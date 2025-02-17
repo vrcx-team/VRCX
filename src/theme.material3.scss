@@ -2012,3 +2012,10 @@ i.x-user-status {
 .el-dialog__body .el-tag--mini {
     line-height: 28px;
 }
+.el-divider {
+    background-color: #606266;
+}
+.el-divider__text {
+    background: rgba(var(--md-sys-color-background));
+    color: #efefef;
+}

@@ -366,3 +366,10 @@ input[type='checkbox']:checked + .el-switch__core {
     border: transparent;
     background-color: #333;
 }
+.el-divider {
+    background-color: #606266;
+}
+.el-divider__text {
+    background: var(--bg);
+    color: #efefef;
+}
