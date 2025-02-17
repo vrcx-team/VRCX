@@ -96,7 +96,7 @@ mixin userDialog
                                 type='info'
                                 effect='plain'
                                 size='mini'
-                                style='margin-right: 5px; margin-top: 5px') {{  $t('dialog.user.tags.friend_no', { number: userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : "?" })  }}
+                                style='margin-right: 5px; margin-top: 5px') {{  $t('dialog.user.tags.friend_no', { number: userDialog.ref.$friendNumber ? userDialog.ref.$friendNumber : "" })  }}
                             el-tag.x-tag-troll(
                                 v-if='userDialog.ref.$isTroll'
                                 type='info'
