@@ -30,6 +30,10 @@
                 type: Array,
                 required: true
             },
+            activityData: {
+                type: Array,
+                required: true
+            },
             isDarkMode: {
                 type: Boolean,
                 required: true
@@ -44,7 +48,14 @@
         },
         computed: {
             startTimeStamp() {
-                return this.activityDetailData[0].joinTime.valueOf();
+                return this.activityData
+                    .find((item) => item.location === this.activityDetailData[0].location)
+                    ?.joinTime.valueOf();
+            },
+            endTimeStamp() {
+                return this.activityData
+                    .findLast((item) => item.location === this.activityDetailData[0].location)
+                    ?.leaveTime.valueOf();
             }
         },
         created() {
@@ -73,7 +84,8 @@
                 const chartDom = this.$refs.activityDetailChart;
                 if (!this.echartsInstance) {
                     this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
-                        height: this.activityDetailData.length * 40 + 200
+                        height: this.activityDetailData.length * 40 + 200,
+                        useDirtyRect: this.activityDetailData.length > 30
                     });
                     this.resizeObserver.observe(chartDom);
                 }
@@ -145,9 +157,7 @@
                     xAxis: {
                         type: 'value',
                         min: 0,
-                        max:
-                            this.activityDetailData[this.activityDetailData.length - 1].leaveTime.valueOf() -
-                            this.startTimeStamp,
+                        max: this.endTimeStamp - this.startTimeStamp,
                         axisLine: { show: true },
                         axisLabel: {
                             formatter: (value) => dayjs(value + this.startTimeStamp).format('HH:mm')
@@ -183,7 +193,7 @@
                                 shadowOffsetX: 0.7,
                                 shadowOffsetY: 0.5
                             },
-                            data: this.activityDetailData.map((item) => item.leaveTime.valueOf() - this.startTimeStamp)
+                            data: this.activityDetailData.map((item) => item.time)
                         }
                     ]
                 };

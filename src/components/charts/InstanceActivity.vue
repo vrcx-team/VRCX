@@ -33,6 +33,7 @@
             v-for="arr in activityDetailData"
             :key="arr[0].location"
             ref="activityDetailChartRef"
+            :activity-data="activityData"
             :activity-detail-data="arr"
             :is-dark-mode="isDarkMode"
             style="width: 100%"
@@ -67,7 +68,7 @@
                 selectedDate: dayjs().add(-1, 'day'),
                 activityData: [],
                 activityDetailData: [],
-                previousDarkMode: this.isDarkMode,
+                // previousDarkMode: this.isDarkMode,
                 allDateOfActivity: null,
                 firstDateOfActivity: null,
                 worldNameArray: [],
@@ -87,11 +88,11 @@
             if (!this.echartsInstance) {
                 return;
             }
-            if (this.isDarkMode === this.previousDarkMode) {
-                // when tab activated, play animation
-                this.echartsInstance.clear();
-                this.initEcharts();
-            }
+            // if (this.isDarkMode === this.previousDarkMode) {
+            // when tab activated, play animation
+            this.echartsInstance.clear();
+            this.initEcharts();
+            // }
         },
         deactivated() {
             // prevent switch tab play resize animation
@@ -237,10 +238,8 @@
             handleIntersection(index, entries) {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        requestAnimationFrame(() => {
-                            this.$refs.activityDetailChartRef[index].initEcharts();
-                            this.intersectionObservers[index].unobserve(entry.target);
-                        });
+                        this.$refs.activityDetailChartRef[index].initEcharts();
+                        this.intersectionObservers[index].unobserve(entry.target);
                     }
                 });
             },
@@ -300,7 +299,7 @@
                         formatter: getTooltip
                     },
                     grid: {
-                        top: 60,
+                        top: 50,
                         left: 160,
                         right: 90
                     },
