@@ -696,3 +696,11 @@ i[class='el-icon-star-off']:not(.el-menu-item div.el-tooltip i) {
 .el-color-picker__panel {
     background-color: var(--dv_bg-top);
 }
+.el-divider {
+    background-color: #606266;
+}
+.el-divider__text {
+    background: var(--dv_bg-top);
+    color: #efefef;
+    padding-bottom: 2px;
+}

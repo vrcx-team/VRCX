@@ -40,13 +40,13 @@ export default {
         return obj;
     },
 
-    timeToText(sec) {
-        var n = Number(sec);
+    timeToText(sec, isNeedSeconds = false) {
+        let n = Number(sec);
         if (isNaN(n)) {
             return this.escapeTag(sec);
         }
         n = Math.floor(n / 1000);
-        var arr = [];
+        const arr = [];
         if (n < 0) {
             n = -n;
         }
@@ -62,7 +62,7 @@ export default {
             arr.push(`${Math.floor(n / 60)}m`);
             n %= 60;
         }
-        if (arr.length === 0 && n < 60) {
+        if (isNeedSeconds || (arr.length === 0 && n < 60)) {
             arr.push(`${n}s`);
         }
         return arr.join(' ');
