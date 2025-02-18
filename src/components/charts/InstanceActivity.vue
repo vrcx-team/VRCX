@@ -126,8 +126,8 @@
                     echarts = echartsModule;
                 }
                 if (this.activityData.length && echarts) {
-                    // actvity data is ready, but world name data isn't ready
-                    // so init echarts with empty data, redcuce the render time of init screen
+                    // activity data is ready, but world name data isn't ready
+                    // so init echarts with empty data, reduce the render time of init screen
                     // TODO: move to created lifecycle, init screen faster
                     this.initEcharts(true);
                     this.getAllDateOfActivity();
@@ -165,11 +165,11 @@
 
                 requestAnimationFrame(() => {
                     this.echartsInstance.setOption(this.getNewOption(isFirstTime), { lazyUpdate: true });
-                    this.echartsInstance.on('click', 'yAxis', this.hanleClickYAxisLable);
+                    this.echartsInstance.on('click', 'yAxis', this.handleClickYAxisLabel);
                     this.isLoading = false;
                 });
             },
-            hanleClickYAxisLable(params) {
+            handleClickYAxisLabel(params) {
                 const detailDataIdx = this.activityDetailData.findIndex(
                     (arr) => arr[0]?.location === this.activityData[params?.dataIndex]?.location
                 );

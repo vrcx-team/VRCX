@@ -24,7 +24,7 @@
 
     export default {
         name: 'InstanceActivityDetail',
-        inject: ['API'],
+        inject: ['API', 'showUserDialog'],
         props: {
             activityDetailData: {
                 type: Array,
@@ -98,10 +98,17 @@
                 });
 
                 this.echartsInstance.setOption(this.getNewOption(), { lazyUpdate: true });
+                this.echartsInstance.on('click', 'yAxis', this.handleClickYAxisLabel);
 
                 setTimeout(() => {
                     this.isLoading = false;
                 }, 200);
+            },
+            handleClickYAxisLabel(params) {
+                const userData = this.activityDetailData[params.dataIndex];
+                if (userData?.user_id) {
+                    this.showUserDialog(userData.user_id);
+                }
             },
             getNewOption() {
                 const getTooltip = (params) => {
@@ -152,7 +159,8 @@
                             formatter: (value) => (value.length > 20 ? `${value.slice(0, 20)}...` : value)
                         },
                         inverse: true,
-                        data: this.activityDetailData.map((item) => item.display_name)
+                        data: this.activityDetailData.map((item) => item.display_name),
+                        triggerEvent: true
                     },
                     xAxis: {
                         type: 'value',
