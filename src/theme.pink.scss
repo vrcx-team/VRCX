@@ -373,3 +373,43 @@ input[type='checkbox']:checked + .el-switch__core {
     background: var(--bg);
     color: #efefef;
 }
+.el-backtop {
+    background: var(--lighter-bg);
+    color: var(--theme)
+}
+
+// Date picker
+.el-date-picker {
+    background-color: var(--lighter-bg);
+}
+.el-date-table td.current:not(.disabled) span {
+    background-color: var(--lighter-bg);
+}
+.el-date-table td.today span {
+    color: var(--theme);
+}
+.el-date-table td.available:hover span {
+    background-color: var(--lighter-bg);
+    color: #fff;
+}
+.el-date-table td.available:hover {
+    color: #fff
+}
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+    color: var(--theme);
+}
+.el-month-table td.current:not(.disabled) .cell {
+    color: var(--theme);
+}
+.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
+    color: var(--theme);
+}
+.el-picker-panel__icon-btn:hover {
+    color: var(--theme);
+}
+.el-month-table td .cell:hover {
+    color: var(--theme);
+}
+.el-date-table td.disabled div {
+    background-color: #3a2b2b
+}

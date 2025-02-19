@@ -106,6 +106,7 @@ html
                         v-if='$refs.menu?.activeIndex === "charts"'
                         :get-world-name='getWorldName'
                         :is-dark-mode='isDarkMode'
+                        :dt-hour12='dtHour12'
                         @open-previous-instance-info-dialog='showPreviousInstanceInfoDialog')
 
                 //- settings

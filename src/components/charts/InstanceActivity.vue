@@ -31,12 +31,11 @@
         </transition>
         <instance-activity-detail
             v-for="arr in activityDetailData"
-            :key="arr[0].location"
+            :key="arr[0].location + arr[0].created_at"
             ref="activityDetailChartRef"
-            :activity-data="activityData"
             :activity-detail-data="arr"
             :is-dark-mode="isDarkMode"
-            style="width: 100%"
+            :dt-hour12="dtHour12"
             @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
         />
     </div>
@@ -58,7 +57,8 @@
         inject: ['API'],
         props: {
             getWorldName: Function,
-            isDarkMode: Boolean
+            isDarkMode: Boolean,
+            dtHour12: Boolean
         },
         data() {
             return {
@@ -68,7 +68,6 @@
                 selectedDate: dayjs().add(-1, 'day'),
                 activityData: [],
                 activityDetailData: [],
-                // previousDarkMode: this.isDarkMode,
                 allDateOfActivity: null,
                 firstDateOfActivity: null,
                 worldNameArray: [],
@@ -83,19 +82,30 @@
                 );
             }
         },
+        watch: {
+            isDarkMode() {
+                if (this.echartsInstance) {
+                    this.echartsInstance.dispose();
+                    this.echartsInstance = null;
+                    this.initEcharts();
+                }
+            },
+            dtHour12() {
+                if (this.echartsInstance) {
+                    this.echartsInstance.dispose();
+                    this.echartsInstance = null;
+                    this.initEcharts();
+                }
+            }
+        },
         activated() {
             // first time also call activated
-            if (!this.echartsInstance) {
-                return;
+            if (this.echartsInstance) {
+                this.handleSelectDate();
             }
-            // if (this.isDarkMode === this.previousDarkMode) {
-            // when tab activated, play animation
-            this.echartsInstance.clear();
-            this.initEcharts();
-            // }
         },
         deactivated() {
-            // prevent switch tab play resize animation
+            // prevent resize animation when switch tab
             this.resizeObserver.disconnect();
         },
         created() {
@@ -128,7 +138,6 @@
                 if (this.activityData.length && echarts) {
                     // activity data is ready, but world name data isn't ready
                     // so init echarts with empty data, reduce the render time of init screen
-                    // TODO: move to created lifecycle, init screen faster
                     this.initEcharts(true);
                     this.getAllDateOfActivity();
                     this.getWorldNameData();
@@ -170,9 +179,13 @@
                 });
             },
             handleClickYAxisLabel(params) {
-                const detailDataIdx = this.activityDetailData.findIndex(
-                    (arr) => arr[0]?.location === this.activityData[params?.dataIndex]?.location
-                );
+                const detailDataIdx = this.activityDetailData.findIndex((arr) => {
+                    const sameLocation = arr[0]?.location === this.activityData[params?.dataIndex]?.location;
+                    const sameJoinTime = arr
+                        .find((item) => item.user_id === this.API.currentUser.id)
+                        .joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
+                    return sameLocation && sameJoinTime;
+                });
                 if (detailDataIdx !== -1) {
                     this.$refs.activityDetailChartRef[detailDataIdx].$el.scrollIntoView({
                         behavior: 'smooth',
@@ -181,14 +194,13 @@
                 }
             },
             getDatePickerDisabledDate(time) {
-                if (time > Date.now() || time < this.firstDateOfActivity) {
+                if (time > Date.now() || time < this.firstDateOfActivity || !this.allDateOfActivity) {
                     return true;
                 }
                 return !this.allDateOfActivity.has(dayjs(time).format('YYYY-MM-DD'));
             },
             async getAllDateOfActivity() {
                 const utcDateStrings = await database.getDateOfInstanceActivity();
-
                 const uniqueDates = new Set();
                 this.firstDateOfActivity = dayjs.utc(utcDateStrings[0]).startOf('day');
 
@@ -213,20 +225,109 @@
 
                 this.activityData = dbData.currentUserData.map(transformData);
 
-                // FIXME: some detail data missing current user activity
-                this.activityDetailData = Array.from(dbData.detailData.values()).map((arr) =>
-                    arr.map(transformData).sort((a, b) => {
+                const transformAndSort = (arr) => {
+                    return arr.map(transformData).sort((a, b) => {
                         const timeDiff = Math.abs(a.joinTime.diff(b.joinTime, 'second'));
-                        // recording delay, under 2s is considered the same time entry, beautify the chart
-                        if (timeDiff < 2) {
-                            return a.leaveTime - b.leaveTime;
-                        }
-                        return a.joinTime - b.joinTime;
-                    })
+                        // recording delay, under 3s is considered the same time entry, beautify the chart
+                        return timeDiff < 3 ? a.leaveTime - b.leaveTime : a.joinTime - b.joinTime;
+                    });
+                };
+
+                const filterByLocation = (innerArray, locationSet) => {
+                    return innerArray.every((innerObject) => locationSet.has(innerObject.location));
+                };
+                const locationSet = new Set(this.activityData.map((item) => item.location));
+
+                const preSplitActivityDetailData = Array.from(dbData.detailData.values())
+                    .map(transformAndSort)
+                    .filter((innerArray) => filterByLocation(innerArray, locationSet));
+
+                this.activityDetailData = this.handleSplitActivityDetailData(
+                    preSplitActivityDetailData,
+                    this.API.currentUser.id
                 );
+
                 this.$nextTick(() => {
                     this.handleIntersectionObserver();
                 });
+            },
+            handleSplitActivityDetailData(activityDetailData, currentUserId) {
+                function countTargetIdOccurrences(innerArray, targetId) {
+                    let count = 0;
+                    for (const obj of innerArray) {
+                        if (obj.user_id === targetId) {
+                            count++;
+                        }
+                    }
+                    return count;
+                }
+
+                function areIntervalsOverlapping(objA, objB) {
+                    const isObj1EndTimeBeforeObj2StartTime = objA.leaveTime.isBefore(objB.joinTime, 'second');
+                    const isObj2EndTimeBeforeObj1StartTime = objB.leaveTime.isBefore(objA.joinTime, 'second');
+                    return !(isObj1EndTimeBeforeObj2StartTime || isObj2EndTimeBeforeObj1StartTime);
+                }
+
+                function buildOverlapGraph(innerArray) {
+                    const numObjects = innerArray.length;
+                    const adjacencyList = Array.from({ length: numObjects }, () => []);
+
+                    for (let i = 0; i < numObjects; i++) {
+                        for (let j = i + 1; j < numObjects; j++) {
+                            if (areIntervalsOverlapping(innerArray[i], innerArray[j])) {
+                                adjacencyList[i].push(j);
+                                adjacencyList[j].push(i);
+                            }
+                        }
+                    }
+                    return adjacencyList;
+                }
+
+                function depthFirstSearch(nodeIndex, visited, graph, component) {
+                    visited[nodeIndex] = true;
+                    component.push(nodeIndex);
+                    for (const neighborIndex of graph[nodeIndex]) {
+                        if (!visited[neighborIndex]) {
+                            depthFirstSearch(neighborIndex, visited, graph, component);
+                        }
+                    }
+                }
+
+                function findConnectedComponents(graph, numNodes) {
+                    const visited = new Array(numNodes).fill(false);
+                    const components = [];
+
+                    for (let i = 0; i < numNodes; i++) {
+                        if (!visited[i]) {
+                            const component = [];
+                            depthFirstSearch(i, visited, graph, component);
+                            components.push(component);
+                        }
+                    }
+                    return components;
+                }
+
+                function processOuterArrayWithTargetId(outerArray, targetId) {
+                    let i = 0;
+                    while (i < outerArray.length) {
+                        let currentInnerArray = outerArray[i];
+                        let targetIdCount = countTargetIdOccurrences(currentInnerArray, targetId);
+                        if (targetIdCount > 1) {
+                            let graph = buildOverlapGraph(currentInnerArray);
+                            let connectedComponents = findConnectedComponents(graph, currentInnerArray.length);
+                            let newInnerArrays = connectedComponents.map((componentIndices) => {
+                                return componentIndices.map((index) => currentInnerArray[index]);
+                            });
+                            outerArray.splice(i, 1, ...newInnerArrays);
+                            i += newInnerArrays.length;
+                        } else {
+                            i += 1;
+                        }
+                    }
+                    return outerArray.sort((a, b) => a[0].joinTime - b[0].joinTime);
+                }
+
+                return processOuterArrayWithTargetId(activityDetailData, currentUserId);
             },
             handleIntersectionObserver() {
                 this.$refs.activityDetailChartRef.forEach((child, index) => {
@@ -270,8 +371,10 @@
 
                     const instanceData = activityData[param.dataIndex];
 
-                    const formattedLeftDateTime = dayjs(instanceData.leaveTime).format('HH:mm:ss');
-                    const formattedJoinDateTime = dayjs(instanceData.joinTime).format('HH:mm:ss');
+                    const format = this.dtHour12 ? 'hh:mm:ss A' : 'HH:mm:ss';
+
+                    const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
+                    const formattedJoinDateTime = dayjs(instanceData.joinTime).format(format);
 
                     const timeString = utils.timeToText(param.data, true);
                     const color = param.color;
@@ -289,6 +392,8 @@
                         </div>
                     `;
                 };
+
+                const format = this.dtHour12 ? 'hh:mm A' : 'HH:mm';
 
                 const echartsOption = {
                     tooltip: {
@@ -322,8 +427,7 @@
                         interval: 3 * 60 * 60 * 1000,
                         axisLine: { show: true },
                         axisLabel: {
-                            formatter: (value) =>
-                                value === 24 * 60 * 60 * 1000 ? '24:00' : dayjs(value).utc().format('HH:mm')
+                            formatter: (value) => dayjs(value).utc().format(format)
                         },
                         splitLine: { lineStyle: { type: 'dashed' } }
                     },

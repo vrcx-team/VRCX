@@ -2019,3 +2019,41 @@ i.x-user-status {
     background: rgba(var(--md-sys-color-background));
     color: #efefef;
 }
+.el-backtop {
+    background: var(--md-sys-color-surface-1);
+    color: rgb(var(--md-sys-color-primary));
+}
+
+// Date picker
+.el-date-table td.available:hover span {
+    color: #fff;
+}
+.el-date-table td.available:hover {
+    color: #fff
+}
+.el-date-table td.disabled div {
+    background-color: rgb(48, 46, 53)
+}
+.el-date-table td.current:not(.disabled) span
+{
+    background: var(--md-sys-color-surface-2);
+    color: #fff;
+}
+.el-date-table td.today span {
+    color: rgb(var(--md-sys-color-primary-container));
+}
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+    color:  rgb(48, 46, 53);
+}
+.el-month-table td.current:not(.disabled) .cell {
+    color:  rgb(48, 46, 53);
+}
+.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
+    color:  rgb(48, 46, 53);
+}
+.el-picker-panel__icon-btn:hover {
+    color:  rgb(48, 46, 53);
+}
+.el-month-table td .cell:hover {
+    color:  rgb(48, 46, 53);
+}

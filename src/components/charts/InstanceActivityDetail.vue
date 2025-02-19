@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="width: 100%">
         <div style="height: 25px; margin-top: 60px">
             <transition name="el-fade-in-linear">
                 <location
@@ -30,11 +30,11 @@
                 type: Array,
                 required: true
             },
-            activityData: {
-                type: Array,
+            isDarkMode: {
+                type: Boolean,
                 required: true
             },
-            isDarkMode: {
+            dtHour12: {
                 type: Boolean,
                 required: true
             }
@@ -48,14 +48,30 @@
         },
         computed: {
             startTimeStamp() {
-                return this.activityData
-                    .find((item) => item.location === this.activityDetailData[0].location)
+                return this.activityDetailData
+                    .find((item) => item.user_id === this.API.currentUser.id)
                     ?.joinTime.valueOf();
             },
             endTimeStamp() {
-                return this.activityData
-                    .findLast((item) => item.location === this.activityDetailData[0].location)
+                return this.activityDetailData
+                    .find((item) => item.user_id === this.API.currentUser.id)
                     ?.leaveTime.valueOf();
+            }
+        },
+        watch: {
+            isDarkMode() {
+                if (this.echartsInstance) {
+                    this.echartsInstance.dispose();
+                    this.echartsInstance = null;
+                    this.initEcharts();
+                }
+            },
+            dtHour12() {
+                if (this.echartsInstance) {
+                    this.echartsInstance.dispose();
+                    this.echartsInstance = null;
+                    this.initEcharts();
+                }
             }
         },
         created() {
@@ -70,13 +86,16 @@
                 }
             });
         },
+        mounted() {
+            this.initEcharts(true);
+        },
         deactivated() {
             // prevent switch tab play resize animation
             this.resizeObserver.disconnect();
         },
 
         methods: {
-            async initEcharts() {
+            async initEcharts(isFirstLoad = false) {
                 // TODO: unnecessary import, import from individual js file
                 await import('echarts').then((echartsModule) => {
                     echarts = echartsModule;
@@ -85,7 +104,7 @@
                 if (!this.echartsInstance) {
                     this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
                         height: this.activityDetailData.length * 40 + 200,
-                        useDirtyRect: this.activityDetailData.length > 30
+                        useDirtyRect: this.activityDetailData.length > 80
                     });
                     this.resizeObserver.observe(chartDom);
                 }
@@ -97,7 +116,7 @@
                     }
                 });
 
-                this.echartsInstance.setOption(this.getNewOption(), { lazyUpdate: true });
+                this.echartsInstance.setOption(isFirstLoad ? {} : this.getNewOption(), { lazyUpdate: true });
                 this.echartsInstance.on('click', 'yAxis', this.handleClickYAxisLabel);
 
                 setTimeout(() => {
@@ -121,8 +140,9 @@
 
                     const instanceData = activityDetailData[param.dataIndex];
 
-                    const formattedLeftDateTime = dayjs(instanceData.leaveTime).format('HH:mm:ss');
-                    const formattedJoinDateTime = dayjs(instanceData.joinTime).format('HH:mm:ss');
+                    const format = this.dtHour12 ? 'hh:mm:ss A' : 'HH:mm:ss';
+                    const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
+                    const formattedJoinDateTime = dayjs(instanceData.joinTime).format(format);
 
                     const timeString = utils.timeToText(instanceData.time, true);
                     const color = param.color;
@@ -138,6 +158,8 @@
                         </div>
                     `;
                 };
+
+                const format = this.dtHour12 ? 'hh:mm A' : 'HH:mm';
 
                 const echartsOption = {
                     tooltip: {
@@ -168,7 +190,7 @@
                         max: this.endTimeStamp - this.startTimeStamp,
                         axisLine: { show: true },
                         axisLabel: {
-                            formatter: (value) => dayjs(value + this.startTimeStamp).format('HH:mm')
+                            formatter: (value) => dayjs(value + this.startTimeStamp).format(format)
                         },
                         splitLine: { lineStyle: { type: 'dashed' } }
                     },
