@@ -1,7 +1,7 @@
 <template>
     <div id="chart" class="x-container">
         <div class="options-container" style="margin-top: 0">
-            <span class="header">Charts</span>
+            <span class="header">{{ $t('view.charts.header') }}</span>
         </div>
         <instance-activity
             :get-world-name="getWorldName"

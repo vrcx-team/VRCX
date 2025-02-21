@@ -1,20 +1,56 @@
 <template>
     <div>
-        <div class="options-container flex-between" style="margin-top: 0">
-            <span style="margin-top: 10px">Instance Activity</span>
-            <el-date-picker
-                v-model="selectedDate"
-                type="date"
-                :clearable="false"
-                align="right"
-                :picker-options="{
-                    disabledDate: (time) => getDatePickerDisabledDate(time)
-                }"
-                @change="handleSelectDate"
-            ></el-date-picker>
+        <div class="options-container flex flex-between" style="margin-top: 0">
+            <div class="flex">
+                <span style="margin-top: 10px">Instance Activity</span>
+            </div>
+
+            <div class="flex">
+                <el-tooltip :content="$t('view.charts.instance_activity.refresh')" placement="top"
+                    ><el-button icon="el-icon-refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
+                ></el-tooltip>
+                <el-tooltip :content="$t('view.charts.instance_activity.settings')" placement="top">
+                    <el-popover placement="bottom" width="200" trigger="click" style="margin-right: 9px">
+                        <span>{{ $t('view.charts.instance_activity.bar_width') }}</span>
+                        <el-slider
+                            v-model.lazy="barWidth"
+                            content="bar width"
+                            @change="changeBarWidth"
+                            :min="1"
+                            :max="50"
+                        ></el-slider>
+
+                        <el-button slot="reference" icon="el-icon-set-up" circle></el-button>
+                    </el-popover>
+                </el-tooltip>
+                <el-button-group style="margin-right: 10px">
+                    <el-tooltip :content="$t('view.charts.instance_activity.previous_day')" placement="top">
+                        <el-button
+                            icon="el-icon-arrow-left"
+                            :disabled="isPrevDayBtnDisabled"
+                            @click="changeSelectedDateFromBtn(false)"
+                        ></el-button>
+                    </el-tooltip>
+                    <el-tooltip :content="$t('view.charts.instance_activity.next_day')" placement="top">
+                        <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
+                            ><i class="el-icon-arrow-right el-icon--right"></i
+                        ></el-button>
+                    </el-tooltip>
+                </el-button-group>
+                <el-date-picker
+                    v-model="selectedDate"
+                    type="date"
+                    :clearable="false"
+                    align="right"
+                    :picker-options="{
+                        disabledDate: (time) => getDatePickerDisabledDate(time)
+                    }"
+                    @change="reloadData"
+                ></el-date-picker>
+            </div>
         </div>
         <div style="position: relative">
-            <el-statistic title="Total Online Time">
+            <el-statistic :title="$t('view.charts.instance_activity.total_online_time')">
                 <template #formatter>
                     <span :style="isDarkMode ? 'color:rgb(120,120,120)' : ''">{{ totalOnlineTime }}</span>
                 </template>
@@ -36,6 +72,7 @@
             :activity-detail-data="arr"
             :is-dark-mode="isDarkMode"
             :dt-hour12="dtHour12"
+            :bar-width="barWidth"
             @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
         />
     </div>
@@ -45,6 +82,7 @@
     import dayjs from 'dayjs';
     import database from '../../repository/database';
     import utils from '../../classes/utils';
+    import configRepository from '../../repository/config';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
     let echarts = null;
@@ -69,9 +107,9 @@
                 activityData: [],
                 activityDetailData: [],
                 allDateOfActivity: null,
-                firstDateOfActivity: null,
                 worldNameArray: [],
-                isLoading: true
+                isLoading: true,
+                barWidth: 30
             };
         },
         computed: {
@@ -80,6 +118,22 @@
                     this.activityData.reduce((acc, item) => acc + item.time, 0),
                     true
                 );
+            },
+            isNextDayBtnDisabled() {
+                return dayjs(this.selectedDate).isSame(dayjs(), 'day');
+            },
+            isPrevDayBtnDisabled() {
+                return dayjs(this.selectedDate).isSame(
+                    this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1],
+                    'day'
+                );
+            },
+            allDateOfActivityArray() {
+                return this.allDateOfActivity
+                    ? Array.from(this.allDateOfActivity)
+                          .map((item) => dayjs(item))
+                          .sort((a, b) => b.valueOf() - a.valueOf())
+                    : [];
             }
         },
         watch: {
@@ -101,7 +155,7 @@
         activated() {
             // first time also call activated
             if (this.echartsInstance) {
-                this.handleSelectDate();
+                this.reloadData();
             }
         },
         deactivated() {
@@ -118,6 +172,9 @@
                         }
                     });
                 }
+            });
+            configRepository.getInt('VRCX_InstanceActivity', 30).then((value) => {
+                this.barWidth = value;
             });
         },
         async mounted() {
@@ -150,13 +207,13 @@
         },
         methods: {
             // reload data
-            async handleSelectDate() {
+            async reloadData() {
                 this.isLoading = true;
                 await this.getActivityData();
                 this.getWorldNameData();
             },
             initEcharts(isFirstTime = false) {
-                const chartsHeight = this.activityData.length * 40 + 200;
+                const chartsHeight = this.activityData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityChartRef;
                 if (!this.echartsInstance) {
                     this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
@@ -194,7 +251,13 @@
                 }
             },
             getDatePickerDisabledDate(time) {
-                if (time > Date.now() || time < this.firstDateOfActivity || !this.allDateOfActivity) {
+                if (
+                    time > Date.now() ||
+                    this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1]
+                        .add('-1', 'day')
+                        .isAfter(time, 'day') ||
+                    !this.allDateOfActivity
+                ) {
                     return true;
                 }
                 return !this.allDateOfActivity.has(dayjs(time).format('YYYY-MM-DD'));
@@ -202,7 +265,6 @@
             async getAllDateOfActivity() {
                 const utcDateStrings = await database.getDateOfInstanceActivity();
                 const uniqueDates = new Set();
-                this.firstDateOfActivity = dayjs.utc(utcDateStrings[0]).startOf('day');
 
                 for (const utcString of utcDateStrings) {
                     const formattedDate = dayjs.utc(utcString).tz().format('YYYY-MM-DD');
@@ -463,7 +525,7 @@
                             type: 'bar',
                             stack: 'Total',
                             colorBy: 'data',
-                            barWidth: 30,
+                            barWidth: this.barWidth,
                             itemStyle: {
                                 borderRadius: 2,
                                 shadowBlur: 2,
@@ -491,15 +553,42 @@
                     echartsOption.backgroundColor = 'rgba(0, 0, 0, 0)';
                 }
                 return echartsOption;
+            },
+            changeBarWidth(value) {
+                this.barWidth = value;
+                this.initEcharts();
+                this.$refs.activityDetailChartRef.forEach((child) => {
+                    requestAnimationFrame(() => {
+                        child.initEcharts();
+                    });
+                });
+                configRepository.setInt('VRCX_InstanceActivity', value);
+            },
+            changeSelectedDateFromBtn(isNext = false) {
+                const idx = this.allDateOfActivityArray.findIndex((date) => date.isSame(this.selectedDate, 'day'));
+                if (idx !== -1) {
+                    if (isNext) {
+                        if (idx - 1 < this.allDateOfActivityArray.length) {
+                            console.log(this.selectedDate, this.allDateOfActivityArray[idx + 1]);
+                            this.selectedDate = this.allDateOfActivityArray[idx - 1];
+                            this.reloadData();
+                        }
+                    } else if (idx + 1 >= 0) {
+                        this.selectedDate = this.allDateOfActivityArray[idx + 1];
+                        this.reloadData();
+                    }
+                }
             }
         }
     };
 </script>
 
 <style scoped>
-    .flex-between {
+    .flex {
         display: flex;
         align-items: center;
+    }
+    .flex-between {
         justify-content: space-between;
     }
     .nodata {

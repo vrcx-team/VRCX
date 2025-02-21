@@ -218,6 +218,18 @@
             "clear_tooltip": "Clear Results",
             "cancel_tooltip": "Cancel"
         },
+        "charts": {
+            "header": "Charts",
+            "instance_activity": {
+                "header": "Instance Activity",
+                "total_online_time": "Total Online Time",
+                "bar_width": "Bar Width",
+                "previous_day": "Previous Day",
+                "next_day": "Next Day",
+                "refresh": "Click to refresh",
+                "settings": "Settings"
+            }
+        },
         "profile": {
             "profile": {
                 "header": "Profile",

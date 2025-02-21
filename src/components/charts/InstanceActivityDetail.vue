@@ -37,6 +37,11 @@
             dtHour12: {
                 type: Boolean,
                 required: true
+            },
+            barWidth: {
+                type: Number,
+                required: true,
+                default: 10
             }
         },
         data() {
@@ -103,7 +108,7 @@
                 const chartDom = this.$refs.activityDetailChart;
                 if (!this.echartsInstance) {
                     this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
-                        height: this.activityDetailData.length * 40 + 200,
+                        height: this.activityDetailData.length * (this.barWidth + 10) + 200,
                         useDirtyRect: this.activityDetailData.length > 80
                     });
                     this.resizeObserver.observe(chartDom);
@@ -170,7 +175,7 @@
                         formatter: getTooltip
                     },
                     grid: {
-                        top: 60,
+                        top: 50,
                         left: 160,
                         right: 90
                     },
@@ -216,7 +221,7 @@
                             type: 'bar',
                             stack: 'Total',
                             colorBy: 'data',
-                            barWidth: 30,
+                            barWidth: this.barWidth,
                             itemStyle: {
                                 borderRadius: 2,
                                 shadowBlur: 2,
