@@ -166,6 +166,9 @@
 
                 const format = this.dtHour12 ? 'hh:mm A' : 'HH:mm';
 
+                const isFriend = (displayName) =>
+                    this.activityDetailData.find((item) => item.display_name === displayName)?.isFriend;
+
                 const echartsOption = {
                     tooltip: {
                         trigger: 'axis',
@@ -183,7 +186,12 @@
                         type: 'category',
                         axisLabel: {
                             interval: 0,
-                            formatter: (value) => (value.length > 20 ? `${value.slice(0, 20)}...` : value)
+                            formatter: (value) => {
+                                const FRIEND_ICON = '💚';
+                                const MAX_LENGTH = 20;
+                                const len = value.length;
+                                return `${isFriend(value) ? `${FRIEND_ICON} ` : ''}${len > MAX_LENGTH ? `${value.substring(0, MAX_LENGTH)}...` : value}`;
+                            }
                         },
                         inverse: true,
                         data: this.activityDetailData.map((item) => item.display_name),

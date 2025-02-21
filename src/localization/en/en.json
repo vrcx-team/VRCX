@@ -223,11 +223,15 @@
             "instance_activity": {
                 "header": "Instance Activity",
                 "total_online_time": "Total Online Time",
-                "bar_width": "Bar Width",
                 "previous_day": "Previous Day",
                 "next_day": "Next Day",
-                "refresh": "Click to refresh",
-                "settings": "Settings"
+                "refresh": "Refresh",
+                "settings": {
+                    "header": "Settings",
+                    "bar_width": "Bar Width",
+                    "show_solo_instance": "Show Solo Instance",
+                    "show_no_friend_instance": "Show No Friend Instance"
+                }
             }
         },
         "profile": {

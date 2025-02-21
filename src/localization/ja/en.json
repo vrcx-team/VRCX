@@ -11,6 +11,7 @@
         "moderation": "モデレーション",
         "notification": "通知",
         "friend_list": "フレンドリスト",
+        "charts": "チャート",
         "profile": "プロフィール",
         "settings": "設定"
     },
@@ -216,6 +217,22 @@
             "refresh_tooltip": "更新",
             "clear_tooltip": "結果を消去",
             "cancel_tooltip": "キャンセル"
+        },
+        "charts": {
+            "header": "チャート",
+            "instance_activity": {
+                "header": "インスタンスアクティビティ",
+                "total_online_time": "総オンライン時間",
+                "previous_day": "前日",
+                "next_day": "翌日",
+                "refresh": "更新",
+                "settings": {
+                    "header": "設定",
+                    "bar_width": "棒グラフ幅",
+                    "show_solo_instance": "一人インスタンスを表示",
+                    "show_no_friend_instance": "フレンドなしインスタンスを表示"
+                }
+            }
         },
         "profile": {
             "profile": {

@@ -7,6 +7,7 @@
             :get-world-name="getWorldName"
             :is-dark-mode="isDarkMode"
             :dt-hour12="dtHour12"
+            :friends-map="friendsMap"
             @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
         ></instance-activity>
         <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
@@ -23,7 +24,8 @@
         props: {
             getWorldName: Function,
             isDarkMode: Boolean,
-            dtHour12: Boolean
+            dtHour12: Boolean,
+            friendsMap: Map
         }
     };
 </script>

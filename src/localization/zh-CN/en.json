@@ -223,11 +223,15 @@
             "instance_activity": {
                 "header": "Instance Activity",
                 "total_online_time": "在线时长",
-                "bar_width": "柱条宽度",
                 "previous_day": "前一天",
                 "next_day": "后一天",
-                "refresh": "点击刷新",
-                "settings": "设置"
+                "refresh": "刷新",
+                "settings": {
+                    "header": "设置",
+                    "bar_width": "柱条宽度",
+                    "show_solo_instance": "显示独自一人的房间",
+                    "show_no_friend_instance": "显示没有好友的房间"
+                }
             }
         },
         "profile": {
