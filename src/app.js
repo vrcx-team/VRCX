@@ -12415,7 +12415,7 @@ console.log(`isLinux: ${LINUX}`);
                 if (action !== 'confirm') {
                     return;
                 }
-                $app.methods.selectAvatarWithoutConfirmation(id);
+                $app.selectAvatarWithoutConfirmation(id);
             }
         });
     };
@@ -19167,7 +19167,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.data.ipcEnabled = false;
-    $app.methods.ipcEvent = async function (json) {
+    $app.methods.ipcEvent = function (json) {
         if (!this.friendLogInitStatus) {
             return;
         }
@@ -19257,7 +19257,7 @@ console.log(`isLinux: ${LINUX}`);
                 this.externalNotifierVersion = data.version;
                 break;
             case 'LaunchCommand':
-                await this.eventLaunchCommand(data.command);
+                this.eventLaunchCommand(data.command);
                 break;
             case 'VRCXLaunch':
                 console.log('VRCXLaunch:', data);
@@ -19416,11 +19416,11 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('LOGIN', async function () {
         var command = await AppApi.GetLaunchCommand();
         if (command) {
-            await $app.eventLaunchCommand(command);
+            $app.eventLaunchCommand(command);
         }
     });
 
-    $app.methods.eventLaunchCommand = async function (input) {
+    $app.methods.eventLaunchCommand = function (input) {
         if (!API.isLoggedIn) {
             return;
         }
