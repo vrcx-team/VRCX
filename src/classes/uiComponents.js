@@ -89,7 +89,8 @@ export default class extends baseClass {
                 link: {
                     type: Boolean,
                     default: true
-                }
+                },
+                isOpenPreviousInstanceInfoDialog: Boolean
             },
             data() {
                 return {
@@ -177,7 +178,14 @@ export default class extends baseClass {
                             API.$emit('SHOW_WORLD_DIALOG_SHORTNAME', this.hint);
                             return;
                         }
-                        API.$emit('SHOW_WORLD_DIALOG', instanceId);
+                        if (this.isOpenPreviousInstanceInfoDialog) {
+                            this.$emit(
+                                'open-previous-instance-info-dialog',
+                                instanceId
+                            );
+                        } else {
+                            API.$emit('SHOW_WORLD_DIALOG', instanceId);
+                        }
                     }
                 },
                 showGroupDialog() {
@@ -469,8 +477,8 @@ export default class extends baseClass {
             template:
                 '<div @click="confirm" class="avatar-info">' +
                 '<span style="margin-right:5px">{{ avatarName }}</span>' +
-                '<span style="margin-right:5px" :class="color">{{ avatarType }}</span>' +
-                '<span style="color:#909399;font-family:monospace;font-size:12px;">{{ avatarTags }}</span>' +
+                '<span v-if="avatarType" style="margin-right:5px" :class="color">{{ avatarType }}</span>' +
+                '<span v-if="avatarTags" style="color:#909399;font-family:monospace;font-size:12px;">{{ avatarTags }}</span>' +
                 '</div>',
             props: {
                 imageurl: String,

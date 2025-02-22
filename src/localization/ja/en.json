@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198",
+    "translator": "Assault1892, Yuu198, paralleltree",
     "nav_tooltip": {
         "feed": "フィード",
         "game_log": "ゲームログ",
@@ -11,6 +11,7 @@
         "moderation": "モデレーション",
         "notification": "通知",
         "friend_list": "フレンドリスト",
+        "charts": "チャート",
         "profile": "プロフィール",
         "settings": "設定"
     },
@@ -125,7 +126,7 @@
             "edit_mode": "編集モード",
             "copy": "コピー",
             "clear": "消去",
-            "bulk_unfavorite_mode": "一括お気に入り解除モード",
+            "bulk_unfavorite": "一括お気に入り解除モード",
             "refresh_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
             "import": "インポート",
@@ -216,6 +217,30 @@
             "refresh_tooltip": "更新",
             "clear_tooltip": "結果を消去",
             "cancel_tooltip": "キャンセル"
+        },
+        "charts": {
+            "header": "チャート",
+            "instance_activity": {
+                "header": "インスタンスアクティビティ",
+                "online_time": "オンライン時間",
+                "previous_day": "前日",
+                "next_day": "翌日",
+                "refresh": "更新",
+                "tips": {
+                    "header": "ヒント",
+                    "online_time": "オンライン時間とは、VRCXが記録した当日のゲームプレイ時間です。",
+                    "click_Y_axis": "Y軸ラベルをクリックでプレイヤー/ワールドダイアログを表示します。",
+                    "click_instance_name": "インスタンス名をクリックで以前のインスタンス情報ダイアログを表示します。",
+                    "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。"
+                },
+                "settings": {
+                    "header": "設定",
+                    "bar_width": "棒グラフ幅",
+                    "show_solo_instance": "一人インスタンス",
+                    "show_no_friend_instance": "フレンドなしインスタンス",
+                    "show_detail": "インスタンス詳細"
+                }
+            }
         },
         "profile": {
             "profile": {
@@ -386,6 +411,8 @@
                     "width": "幅",
                     "group_by_instance": "インスタンスごとにまとめる",
                     "group_by_instance_tooltip": "同一のインスタンスに複数のフレンドがいる場合に、そのフレンドをインスタンスごとにまとめて表示します。",
+                    "hide_friends_in_same_instance": "同じインスタンスにいるフレンドを表示しない",
+                    "hide_friends_in_same_instance_tooltip": "フレンドが同じインスタンスにいる場合、そのフレンドをフレンドリストに表示しないようにします。",
                     "split_favorite_friends": "お気に入りのフレンドを分割",
                     "split_favorite_friends_tooltip": "お気に入りのフレンドを、グループごとに分けて表示します。"
                 },
@@ -740,6 +767,7 @@
                 "copy_id": "IDをコピー",
                 "copy_url": "URLをコピー",
                 "copy_display_name": "表示名をコピー",
+                "vrcplus_hides_avatar": "VRC+のプロフィール画像が設定されている場合、そのプレイヤーのアバター情報、フィード内のアバター変更は表示されません。",
                 "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
                 "instance_full": "満員",
                 "instance_closed": "閉じられました",

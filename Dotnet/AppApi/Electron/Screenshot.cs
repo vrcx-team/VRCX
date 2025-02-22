@@ -14,9 +14,16 @@ namespace VRCX
     {
         public override string AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
         {
-            var winePrefix = Path.Join(_vrcPrefixPath, "drive_c");
-            var winePath = path.Substring(3).Replace("\\", "/");
-            path = Path.Join(winePrefix, winePath);
+            if (path.Length >= 3 && path[1] == ':' &&
+                (path[2] == '\\' || path[2] == '/'))
+            {
+                var driveLetter = path[0].ToString().ToLower();
+                var winePrefix = Path.Join(_vrcPrefixPath, $"dosdevices/{driveLetter}:");
+                var winePath = path[3..]; // remove C:\
+                path = Path.Join(winePrefix, winePath);
+            }
+
+            path = path.Replace("\\", "/");
             
             var fileName = Path.GetFileNameWithoutExtension(path);
             if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_"))

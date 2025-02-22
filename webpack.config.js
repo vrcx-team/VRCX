@@ -13,7 +13,8 @@ module.exports = {
             'noty',
             'vue',
             'vue-data-tables',
-            'vue-lazyload'
+            'vue-lazyload',
+            'dayjs'
         ],
         app: {
             import: ['./src/app.js', './src/app.scss'],
@@ -115,13 +116,20 @@ module.exports = {
                     to: './images/'
                 }
             ]
-        })
+        }),
+        new webpack.ProgressPlugin({})
     ],
     optimization: {
         minimizer: [
             new TerserPlugin({
-                extractComments: false
+                extractComments: false,
+                terserOptions: {
+                    ecma: 2020
+                }
             })
         ]
+    },
+    watchOptions: {
+        ignored: /node_modules/
     }
 };

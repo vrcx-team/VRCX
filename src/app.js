@@ -16,6 +16,10 @@ import VueLazyload from 'vue-lazyload';
 import VueI18n from 'vue-i18n';
 import { DataTables } from 'vue-data-tables';
 import ElementUI from 'element-ui';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
 
@@ -33,6 +37,7 @@ import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 
 // tabs
 import ModerationTab from './views/tabs/Moderation.vue';
+import ChartsTab from './views/tabs/Charts.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
@@ -109,6 +114,13 @@ console.log(`isLinux: ${LINUX}`);
     });
     // #endregion
 
+    // #region | date utility library
+    // - dayjs plugin init
+    dayjs.extend(duration);
+    dayjs.extend(utc);
+    dayjs.extend(timezone);
+    // #endregion
+
     // everything in this program is global stored in $app, I hate it, it is what it is
     let $app = {};
     const API = new _apiInit($app);
@@ -164,6 +176,7 @@ console.log(`isLinux: ${LINUX}`);
         components: {
             // tabs
             ModerationTab,
+            ChartsTab,
 
             // components
             // - settings
@@ -172,6 +185,12 @@ console.log(`isLinux: ${LINUX}`);
             // components
             // - sidebar(friendsListSidebar)
             GroupsSidebar
+        },
+        provide() {
+            return {
+                API,
+                showUserDialog: this.showUserDialog
+            };
         },
         el: '#x-app',
         async mounted() {
@@ -3882,6 +3901,8 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (index === 'notification') {
             this.unseenNotifications = [];
+        } else if (index === 'friendsList') {
+            this.friendsListSearchChange();
         }
 
         workerTimers.setTimeout(() => {
@@ -4822,7 +4843,9 @@ console.log(`isLinux: ${LINUX}`);
                 });
                 worldName = args.ref.name;
             }
-        } catch (err) {}
+        } catch (e) {
+            throw e;
+        }
         return worldName;
     };
 
@@ -10743,12 +10766,14 @@ console.log(`isLinux: ${LINUX}`);
                 this.currentInstanceWorld.instance = ref;
             } else {
                 var L = $utils.parseLocation(instanceId);
-                API.getInstance({
-                    worldId: L.worldId,
-                    instanceId: L.instanceId
-                }).then((args) => {
-                    this.currentInstanceWorld.instance = args.ref;
-                });
+                if (L.isRealInstance) {
+                    API.getInstance({
+                        worldId: L.worldId,
+                        instanceId: L.instanceId
+                    }).then((args) => {
+                        this.currentInstanceWorld.instance = args.ref;
+                    });
+                }
             }
         }
     };
@@ -17765,7 +17790,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.refreshInstancePlayerCount = function (instance) {
         var L = $utils.parseLocation(instance);
-        if (L.worldId && L.instanceId) {
+        if (L.isRealInstance) {
             API.getInstance({
                 worldId: L.worldId,
                 instanceId: L.instanceId
@@ -18609,7 +18634,9 @@ console.log(`isLinux: ${LINUX}`);
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
 
             if (this.cropInstancePrints) {
-                await AppApi.CropPrintImage(filePath);
+                if (!await AppApi.CropPrintImage(filePath)) {
+                    console.error('Failed to crop print image');
+                }
             }
         }
 
@@ -22316,7 +22343,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (!API.queuedInstances.has(instanceId)) {
             var L = $utils.parseLocation(instanceId);
-            if (L.worldId && L.instanceId) {
+            if (L.isRealInstance) {
                 API.getInstance({
                     worldId: L.worldId,
                     instanceId: L.instanceId
@@ -23360,13 +23387,27 @@ console.log(`isLinux: ${LINUX}`);
 
         const allFriends = [...this.vipFriends, ...this.onlineFriends];
         allFriends.forEach((friend) => {
-            if (!friend.ref?.$location.isRealInstance) return;
+            let locationTag;
 
-            const key = friend.ref.$location.tag;
-            if (!friendsList[key]) {
-                friendsList[key] = [];
+            if (friend.ref?.$location.isRealInstance) {
+                locationTag = friend.ref.$location.tag;
+            } else if (this.lastLocation.friendList.has(friend.id)) {
+                let $location = $utils.parseLocation(this.lastLocation.location);
+                if ($location.isRealInstance) {
+                    if ($location.tag === 'private') {
+                        locationTag = this.lastLocation.name;
+                    } else {
+                        locationTag = $location.tag;
+                    }
+                    
+                }
             }
-            friendsList[key].push(friend);
+            if (!locationTag) return;
+
+            if (!friendsList[locationTag]) {
+                friendsList[locationTag] = [];
+            }
+            friendsList[locationTag].push(friend);
         });
 
         const sortedFriendsList = [];
@@ -23432,6 +23473,9 @@ console.log(`isLinux: ${LINUX}`);
             }
             if ($utils.isRealInstance(friend.ref?.travelingToLocation)) {
                 return friend.ref.travelingToLocation;
+            }
+            if (this.lastLocation.friendList.has(friend.id)) {
+                return this.lastLocation.name;
             }
         }
         return friendsArr[0].ref?.location;

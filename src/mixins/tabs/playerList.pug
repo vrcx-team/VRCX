@@ -80,9 +80,7 @@ mixin playerListTab
                             effect='plain'
                             size='mini'
                             style='margin-right: 5px')
-                            span(v-text='currentInstanceWorld.cacheSize')
-                            |
-                            | {{ $t('dialog.world.tags.cache') }}
+                            span {{ currentInstanceWorld.cacheSize }} {{ $t('dialog.world.tags.cache') }}
                         div(style='margin-top: 5px')
                             location-world(
                                 :locationobject='currentInstanceLocation'

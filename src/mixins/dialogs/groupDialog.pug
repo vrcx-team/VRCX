@@ -466,10 +466,8 @@ mixin groupDialog
                                                         br
                                                         span {{ $t('dialog.group.info.role_permissions') }}
                                                         br
-                                                        template(
-                                                            v-for='(permission, pIndex) in role.permissions'
-                                                            :key='pIndex')
-                                                            span {{ permission }}
+                                                        template(v-for='(permission, pIndex) in role.permissions')
+                                                            span(:key='pIndex') {{ permission }}
                                                             br
                                                     span {{ role.name }}{{ rIndex < groupDialog.memberRoles.length - 1 ? ', ' : '' }}
                 el-tab-pane(:label='$t("dialog.group.posts.header")')

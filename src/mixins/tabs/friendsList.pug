@@ -69,13 +69,6 @@ mixin friendsListTab
                         icon='el-icon-refresh'
                         circle
                         style='flex: none')
-                el-tooltip(placement='top' :content='$t("view.friend_list.clear_tooltip")' :disabled='hideTooltips')
-                    el-button(
-                        type='default'
-                        @click='friendsListTable.data = []'
-                        icon='el-icon-delete'
-                        circle
-                        style='flex: none; margin-left: 5px')
             data-tables(
                 v-bind='friendsListTable'
                 @row-click='selectFriendsListRow'

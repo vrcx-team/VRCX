@@ -11,6 +11,7 @@
         "moderation": "Moderation",
         "notification": "Notification",
         "friend_list": "Friend List",
+        "charts": "Charts",
         "profile": "Profile",
         "settings": "Settings"
     },
@@ -216,6 +217,30 @@
             "refresh_tooltip": "Refresh",
             "clear_tooltip": "Clear Results",
             "cancel_tooltip": "Cancel"
+        },
+        "charts": {
+            "header": "Charts",
+            "instance_activity": {
+                "header": "Instance Activity",
+                "online_time": "Online Time",
+                "previous_day": "Previous Day",
+                "next_day": "Next Day",
+                "refresh": "Refresh",
+                "tips": {
+                    "header": "Tips",
+                    "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
+                    "click_Y_axis": "Click Y-axis label to open user/world dialog.",
+                    "click_instance_name": "Click instance name for previous instance info.",
+                    "accuracy_notice": "Info from local database may not be accurate"
+                },
+                "settings": {
+                    "header": "Settings",
+                    "bar_width": "Bar Width",
+                    "show_solo_instance": "Show Solo Instance",
+                    "show_no_friend_instance": "Show No Friend Instance",
+                    "show_detail": "Show Detail"
+                }
+            }
         },
         "profile": {
             "profile": {
@@ -656,7 +681,7 @@
             "previous_display_names": "Previous Display Names:",
             "pronouns": "Pronouns",
             "tags": {
-                "friend_no": "Friend No.{number}",
+                "friend_no": "Friend {number}",
                 "vrchat_team": "VRChat Team"
             },
             "badges": {
@@ -742,6 +767,7 @@
                 "copy_id": "Copy ID",
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
+                "vrcplus_hides_avatar": "When a VRC+ profile photo is set, avatar info is hidden. This also hides avatar changes in the feed",
                 "accuracy_notice": "Info from local database may not be accurate",
                 "instance_full": "full",
                 "instance_closed": "closed",

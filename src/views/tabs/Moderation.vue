@@ -6,7 +6,7 @@
             :filters="filters"
             :tableProps="tableProps"
             :paginationProps="paginationProps"
-            v-loading="Api.isPlayerModerationsLoading"
+            v-loading="API.isPlayerModerationsLoading"
         >
             <template slot="tool">
                 <div class="tool-slot">
@@ -37,48 +37,30 @@
                     >
                         <el-button
                             type="default"
-                            :loading="Api.isPlayerModerationsLoading"
-                            @click="Api.refreshPlayerModerations()"
+                            :loading="API.isPlayerModerationsLoading"
+                            @click="API.refreshPlayerModerations()"
                             icon="el-icon-refresh"
                             circle
                         />
                     </el-tooltip>
                 </div>
             </template>
-            <el-table-column
-                :label="$t('table.moderation.date')"
-                prop="created"
-                sortable="custom"
-                width="120"
-            >
+            <el-table-column :label="$t('table.moderation.date')" prop="created" sortable="custom" width="120">
                 <template slot-scope="scope">
                     <el-tooltip placement="right">
                         <template slot="content">
-                            <span>{{
-                                scope.row.created | formatDate('long')
-                            }}</span>
+                            <span>{{ scope.row.created | formatDate('long') }}</span>
                         </template>
-                        <span>{{
-                            scope.row.created | formatDate('short')
-                        }}</span>
+                        <span>{{ scope.row.created | formatDate('short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column
-                :label="$t('table.moderation.type')"
-                prop="type"
-                width="100"
-            >
+            <el-table-column :label="$t('table.moderation.type')" prop="type" width="100">
                 <template slot-scope="scope">
-                    <span
-                        v-text="$t('view.moderation.filters.' + scope.row.type)"
-                    ></span>
+                    <span v-text="$t('view.moderation.filters.' + scope.row.type)"></span>
                 </template>
             </el-table-column>
-            <el-table-column
-                :label="$t('table.moderation.source')"
-                prop="sourceDisplayName"
-            >
+            <el-table-column :label="$t('table.moderation.source')" prop="sourceDisplayName">
                 <template slot-scope="scope">
                     <span
                         class="x-link"
@@ -87,10 +69,7 @@
                     ></span>
                 </template>
             </el-table-column>
-            <el-table-column
-                :label="$t('table.moderation.target')"
-                prop="targetDisplayName"
-            >
+            <el-table-column :label="$t('table.moderation.target')" prop="targetDisplayName">
                 <template slot-scope="scope">
                     <span
                         class="x-link"
@@ -99,15 +78,9 @@
                     ></span>
                 </template>
             </el-table-column>
-            <el-table-column
-                :label="$t('table.moderation.action')"
-                width="80"
-                align="right"
-            >
+            <el-table-column :label="$t('table.moderation.action')" width="80" align="right">
                 <template slot-scope="scope">
-                    <template
-                        v-if="scope.row.sourceUserId === Api.currentUser.id"
-                    >
+                    <template v-if="scope.row.sourceUserId === API.currentUser.id">
                         <el-button
                             v-if="shiftHeld"
                             style="color: #f56c6c"
@@ -135,18 +108,15 @@
 
     export default {
         name: 'ModerationTab',
+        inject: ['API', 'showUserDialog'],
         props: {
-            Api: Object,
             tableData: Object,
-            showUserDialog: Function,
-            shiftHeld: Boolean
+            shiftHeld: Boolean,
+            hideTooltips: Boolean
         },
         created: async function () {
             this.filters[0].value = JSON.parse(
-                await configRepository.getString(
-                    'VRCX_playerModerationTableFilters',
-                    '[]'
-                )
+                await configRepository.getString('VRCX_playerModerationTableFilters', '[]')
             );
         },
         data() {
@@ -155,8 +125,7 @@
                     {
                         prop: 'type',
                         value: [],
-                        filterFn: (row, filter) =>
-                            filter.value.some((v) => v === row.type)
+                        filterFn: (row, filter) => filter.value.some((v) => v === row.type)
                     },
                     {
                         prop: ['sourceDisplayName', 'targetDisplayName'],
@@ -191,32 +160,25 @@
         },
         methods: {
             saveTableFilters() {
-                configRepository.setString(
-                    'VRCX_playerModerationTableFilters',
-                    JSON.stringify(this.filters[0].value)
-                );
+                configRepository.setString('VRCX_playerModerationTableFilters', JSON.stringify(this.filters[0].value));
             },
             deletePlayerModeration(row) {
-                this.Api.deletePlayerModeration({
+                this.API.deletePlayerModeration({
                     moderated: row.targetUserId,
                     type: row.type
                 });
             },
             deletePlayerModerationPrompt(row) {
-                this.$confirm(
-                    `Continue? Delete Moderation ${row.type}`,
-                    'Confirm',
-                    {
-                        confirmButtonText: 'Confirm',
-                        cancelButtonText: 'Cancel',
-                        type: 'info',
-                        callback: (action) => {
-                            if (action === 'confirm') {
-                                this.deletePlayerModeration(row);
-                            }
+                this.$confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    type: 'info',
+                    callback: (action) => {
+                        if (action === 'confirm') {
+                            this.deletePlayerModeration(row);
                         }
                     }
-                );
+                });
             }
         }
     };
