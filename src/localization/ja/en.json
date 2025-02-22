@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198",
+    "translator": "Assault1892, Yuu198, paralleltree",
     "nav_tooltip": {
         "feed": "フィード",
         "game_log": "ゲームログ",
@@ -126,7 +126,7 @@
             "edit_mode": "編集モード",
             "copy": "コピー",
             "clear": "消去",
-            "bulk_unfavorite_mode": "一括お気に入り解除モード",
+            "bulk_unfavorite": "一括お気に入り解除モード",
             "refresh_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
             "import": "インポート",
@@ -411,6 +411,8 @@
                     "width": "幅",
                     "group_by_instance": "インスタンスごとにまとめる",
                     "group_by_instance_tooltip": "同一のインスタンスに複数のフレンドがいる場合に、そのフレンドをインスタンスごとにまとめて表示します。",
+                    "hide_friends_in_same_instance": "同じインスタンスにいるフレンドを表示しない",
+                    "hide_friends_in_same_instance_tooltip": "フレンドが同じインスタンスにいる場合、そのフレンドをフレンドリストに表示しないようにします。",
                     "split_favorite_friends": "お気に入りのフレンドを分割",
                     "split_favorite_friends_tooltip": "お気に入りのフレンドを、グループごとに分けて表示します。"
                 },
@@ -765,6 +767,7 @@
                 "copy_id": "IDをコピー",
                 "copy_url": "URLをコピー",
                 "copy_display_name": "表示名をコピー",
+                "vrcplus_hides_avatar": "VRC+のプロフィール画像が設定されている場合、そのプレイヤーのアバター情報、フィード内のアバター変更は表示されません。",
                 "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
                 "instance_full": "満員",
                 "instance_closed": "閉じられました",
