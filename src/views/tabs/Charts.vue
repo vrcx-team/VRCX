@@ -8,6 +8,7 @@
             :is-dark-mode="isDarkMode"
             :dt-hour12="dtHour12"
             :friends-map="friendsMap"
+            :localFavoriteFriends="localFavoriteFriends"
             @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
         ></instance-activity>
         <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
@@ -25,7 +26,8 @@
             getWorldName: Function,
             isDarkMode: Boolean,
             dtHour12: Boolean,
-            friendsMap: Map
+            friendsMap: Map,
+            localFavoriteFriends: Set
         }
     };
 </script>

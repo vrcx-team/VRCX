@@ -2,7 +2,21 @@
     <div>
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
-                <span style="margin-top: 10px">Instance Activity</span>
+                <span>Instance Activity</span>
+                <el-popover placement="bottom-start" trigger="hover" width="300">
+                    <div class="tips-popover">
+                        <div>{{ $t('view.charts.instance_activity.tips.header') }}</div>
+                        <div>{{ $t('view.charts.instance_activity.tips.online_time') }}</div>
+                        <div>{{ $t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
+                        <div>{{ $t('view.charts.instance_activity.tips.click_instance_name') }}</div>
+                        <div>
+                            <i class="el-icon-warning-outline"></i
+                            ><i>{{ $t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
+                        </div>
+                    </div>
+
+                    <i class="el-icon-info" slot="reference" style="margin-left: 5px; font-size: 12px"></i>
+                </el-popover>
             </div>
 
             <div>
@@ -10,7 +24,7 @@
                     ><el-button icon="el-icon-refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
                 ></el-tooltip>
                 <el-tooltip :content="$t('view.charts.instance_activity.settings.header')" placement="top">
-                    <el-popover placement="bottom" width="250" trigger="click" style="margin-right: 9px">
+                    <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
                         <div class="settings">
                             <div>
                                 <span>{{ $t('view.charts.instance_activity.settings.bar_width') }}</span>
@@ -25,11 +39,16 @@
                                 </div>
                             </div>
                             <div>
+                                <span>{{ $t('view.charts.instance_activity.settings.show_detail') }}</span>
+                                <el-switch v-model="isDetailVisible" @change="changeIsDetailInstanceVisible">
+                                </el-switch>
+                            </div>
+                            <div v-if="isDetailVisible">
                                 <span>{{ $t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
                                 <el-switch v-model="isSoloInstanceVisible" @change="changeIsSoloInstanceVisible">
                                 </el-switch>
                             </div>
-                            <div>
+                            <div v-if="isDetailVisible">
                                 <span>{{ $t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
                                 <el-switch
                                     v-model="isNoFriendInstanceVisible"
@@ -69,7 +88,7 @@
             </div>
         </div>
         <div style="position: relative">
-            <el-statistic :title="$t('view.charts.instance_activity.total_online_time')">
+            <el-statistic :title="$t('view.charts.instance_activity.online_time')">
                 <template #formatter>
                     <span :style="isDarkMode ? 'color:rgb(120,120,120)' : ''">{{ totalOnlineTime }}</span>
                 </template>
@@ -82,7 +101,9 @@
         </div>
 
         <transition name="el-fade-in-linear">
-            <div v-show="!isLoading && activityData.length !== 0" class="divider"><el-divider>·</el-divider></div>
+            <div v-show="isDetailVisible && !isLoading" class="divider">
+                <el-divider>·</el-divider>
+            </div>
         </transition>
         <instance-activity-detail
             v-for="arr in filteredActivityDetailData"
@@ -116,7 +137,8 @@
             getWorldName: { type: Function, default: () => [] },
             isDarkMode: Boolean,
             dtHour12: Boolean,
-            friendsMap: Map
+            friendsMap: Map,
+            localFavoriteFriends: Set
         },
         data() {
             return {
@@ -134,6 +156,7 @@
                 isLoading: true,
                 // settings
                 barWidth: 30,
+                isDetailVisible: true,
                 isSoloInstanceVisible: true,
                 isNoFriendInstanceVisible: true
             };
@@ -162,6 +185,9 @@
                     : [];
             },
             filteredActivityDetailData() {
+                if (!this.isDetailVisible) {
+                    return [];
+                }
                 let result = [...this.activityDetailData];
                 if (!this.isSoloInstanceVisible) {
                     result = result.filter((arr) => arr.length > 1);
@@ -188,8 +214,6 @@
             },
             dtHour12() {
                 if (this.echartsInstance) {
-                    this.echartsInstance.dispose();
-                    this.echartsInstance = null;
                     this.initEcharts();
                 }
             }
@@ -217,6 +241,9 @@
             });
             configRepository.getInt('VRCX_InstanceActivityBarWidth', 30).then((value) => {
                 this.barWidth = value;
+            });
+            configRepository.getBool('VRCX_InstanceActivityDetailVisible', true).then((value) => {
+                this.isDetailVisible = value;
             });
             configRepository.getBool('VRCX_InstanceActivitySoloInstanceVisible', true).then((value) => {
                 this.isSoloInstanceVisible = value;
@@ -296,11 +323,9 @@
                     }
                 };
 
-                requestAnimationFrame(() => {
-                    this.echartsInstance.setOption(this.getNewOption(isFirstTime), { lazyUpdate: true });
-                    this.echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
-                    this.isLoading = false;
-                });
+                this.echartsInstance.setOption(this.getNewOption(isFirstTime), { lazyUpdate: true });
+                this.echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
+                this.isLoading = false;
             },
             getNewOption(isFirstTime) {
                 const getTooltip = (params) => {
@@ -406,6 +431,9 @@
                             stack: 'Total',
                             colorBy: 'data',
                             barWidth: this.barWidth,
+                            emphasis: {
+                                focus: 'self'
+                            },
                             itemStyle: {
                                 borderRadius: 2,
                                 shadowBlur: 2,
@@ -426,12 +454,10 @@
                                       return item.time;
                                   })
                         }
-                    ]
+                    ],
+                    backgroundColor: 'transparent'
                 };
 
-                if (this.isDarkMode) {
-                    echartsOption.backgroundColor = 'rgba(0, 0, 0, 0)';
-                }
                 return echartsOption;
             },
             // echarts - end
@@ -441,6 +467,12 @@
                 this.barWidth = value;
                 this.initEcharts();
                 configRepository.setInt('VRCX_InstanceActivityBarWidth', value).finally(() => {
+                    this.handleChangeSettings();
+                });
+            },
+            changeIsDetailInstanceVisible(value) {
+                this.isDetailVisible = value;
+                configRepository.setBool('VRCX_InstanceActivityDetailVisible', value).finally(() => {
                     this.handleChangeSettings();
                 });
             },
@@ -540,7 +572,9 @@
                     joinTime: dayjs(item.created_at).subtract(item.time, 'millisecond'),
                     leaveTime: dayjs(item.created_at),
                     time: item.time < 0 ? 0 : item.time,
-                    isFriend: item.user_id === this.API.currentUser.id ? null : this.friendsMap.has(item.user_id)
+                    isFriend: item.user_id === this.API.currentUser.id ? null : this.friendsMap.has(item.user_id),
+                    isFavorite:
+                        item.user_id === this.API.currentUser.id ? null : this.localFavoriteFriends.has(item.user_id)
                 });
 
                 this.activityData = dbData.currentUserData.map(transformData);
@@ -683,11 +717,28 @@
     .instance-activity {
         @extend %flex;
         @extend %flex-between;
+        & > div:first-child {
+            @extend %flex-between;
+        }
         & > div {
             @extend %flex;
             > span {
                 flex-shrink: 0;
             }
+        }
+    }
+    .tips-popover {
+        :first-child {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        :not(:first-child) {
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        i {
+            margin-right: 3px;
         }
     }
     .settings {

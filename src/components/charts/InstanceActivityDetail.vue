@@ -73,8 +73,6 @@
             },
             dtHour12() {
                 if (this.echartsInstance) {
-                    this.echartsInstance.dispose();
-                    this.echartsInstance = null;
                     this.initEcharts();
                 }
             }
@@ -105,17 +103,18 @@
                 await import('echarts').then((echartsModule) => {
                     echarts = echartsModule;
                 });
+                const chartsHeight = this.activityDetailData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityDetailChart;
                 if (!this.echartsInstance) {
                     this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
-                        height: this.activityDetailData.length * (this.barWidth + 10) + 200,
+                        height: chartsHeight,
                         useDirtyRect: this.activityDetailData.length > 80
                     });
                     this.resizeObserver.observe(chartDom);
                 }
 
                 this.echartsInstance.resize({
-                    height: this.activityDetailData.length * 40 + 200,
+                    height: chartsHeight,
                     animation: {
                         duration: 300
                     }
@@ -126,6 +125,10 @@
 
                 setTimeout(() => {
                     this.isLoading = false;
+                    this.echartsInstance.dispatchAction({
+                        type: 'highlight',
+                        seriesIndex: 3 //  对于 seriesLayoutBy: 'row'，seriesIndex 对应行索引
+                    });
                 }, 200);
             },
             handleClickYAxisLabel(params) {
@@ -135,6 +138,22 @@
                 }
             },
             getNewOption() {
+                const friendOrFavIcon = (display_name) => {
+                    const foundItem = this.activityDetailData.find((item) => item.display_name === display_name);
+
+                    if (!foundItem) {
+                        return '';
+                    }
+
+                    if (foundItem.isFavorite) {
+                        return '⭐';
+                    }
+                    if (foundItem.isFriend) {
+                        return '💚';
+                    }
+                    return '';
+                };
+
                 const getTooltip = (params) => {
                     const activityDetailData = this.activityDetailData;
                     const param = params[1];
@@ -156,7 +175,7 @@
                         <div style="display: flex; align-items: center;">
                             <div style="width: 10px; height: 55px; background-color: ${color}; margin-right: 5px;"></div>
                             <div>
-                                <div>${instanceData.display_name}</div>
+                                <div>${instanceData.display_name} ${friendOrFavIcon(instanceData.display_name)}</div>
                                 <div>${formattedJoinDateTime} - ${formattedLeftDateTime}</div>
                                 <div>${timeString}</div>
                             </div>
@@ -165,9 +184,6 @@
                 };
 
                 const format = this.dtHour12 ? 'hh:mm A' : 'HH:mm';
-
-                const isFriend = (displayName) =>
-                    this.activityDetailData.find((item) => item.display_name === displayName)?.isFriend;
 
                 const echartsOption = {
                     tooltip: {
@@ -187,10 +203,9 @@
                         axisLabel: {
                             interval: 0,
                             formatter: (value) => {
-                                const FRIEND_ICON = '💚';
                                 const MAX_LENGTH = 20;
                                 const len = value.length;
-                                return `${isFriend(value) ? `${FRIEND_ICON} ` : ''}${len > MAX_LENGTH ? `${value.substring(0, MAX_LENGTH)}...` : value}`;
+                                return `${friendOrFavIcon(value)} ${len > MAX_LENGTH ? `${value.substring(0, MAX_LENGTH)}...` : value}`;
                             }
                         },
                         inverse: true,
@@ -230,6 +245,9 @@
                             stack: 'Total',
                             colorBy: 'data',
                             barWidth: this.barWidth,
+                            emphasis: {
+                                focus: 'self'
+                            },
                             itemStyle: {
                                 borderRadius: 2,
                                 shadowBlur: 2,
@@ -238,12 +256,10 @@
                             },
                             data: this.activityDetailData.map((item) => item.time)
                         }
-                    ]
+                    ],
+                    backgroundColor: 'rgba(0, 0, 0, 0)'
                 };
 
-                if (this.isDarkMode) {
-                    echartsOption.backgroundColor = 'rgba(0, 0, 0, 0)';
-                }
                 return echartsOption;
             }
         }

@@ -108,7 +108,9 @@ html
                         :is-dark-mode='isDarkMode'
                         :dt-hour12='dtHour12'
                         @open-previous-instance-info-dialog='showPreviousInstanceInfoDialog'
-                        :friends-map='friends')
+                        :friends-map='friends'
+                        :local-favorite-friends='localFavoriteFriends'
+                        )
 
                 //- settings
                 include ./mixins/tabs/settings.pug
