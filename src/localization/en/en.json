@@ -547,8 +547,7 @@
                     "launch_commands": {
                         "header": "Launch Commands / Deeplinks",
                         "show_confirmation_on_switch_avatar_enable": "Show confirmation diaglog before switching avatars",
-                        "focus_on_switch_avatar_enable": "Focus VRCX when switching avatars",
-                        "focus_on_switch_avatar_tooltip": "This will bring VRCX to the front when switching avatars.\nThis is useful for see if the request was successful."
+                        "show_confirmation_on_switch_avatar_tooltip": "When disabled VRCX will not come to the front when switching avatars and ask for confirmation"
                     },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",

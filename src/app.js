@@ -9394,11 +9394,6 @@ console.log(`isLinux: ${LINUX}`);
         false
     );
 
-    $app.data.focusOnSwitchAvatar = await configRepository.getBool(
-        'VRCX_focusOnSwitchAvatar',
-        true
-    );
-
     $app.methods.updateVRConfigVars = function () {
         var notificationTheme = 'relax';
         if (this.isDarkMode) {
@@ -17387,13 +17382,6 @@ console.log(`isLinux: ${LINUX}`);
                     this.showConfirmationOnSwitchAvatar
                 );
                 break;
-            case 'VRCX_focusOnSwitchAvatar':
-                this.focusOnSwitchAvatar = !this.focusOnSwitchAvatar;
-                await configRepository.setBool(
-                    'VRCX_focusOnSwitchAvatar',
-                    this.focusOnSwitchAvatar
-                );
-                break;
             default:
                 throw new Error(
                     'toggleLaunchCommandSetting: Unknown configKey'
@@ -19461,7 +19449,7 @@ console.log(`isLinux: ${LINUX}`);
                     shouldFocusWindow = true;
                 } else {
                     this.selectAvatarWithoutConfirmation(commandArg);
-                    shouldFocusWindow = this.focusOnSwitchAvatar;
+                    shouldFocusWindow = false;
                 }
                 break;
             case 'import':
