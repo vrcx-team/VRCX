@@ -19257,8 +19257,6 @@ console.log(`isLinux: ${LINUX}`);
                 this.externalNotifierVersion = data.version;
                 break;
             case 'LaunchCommand':
-                // FIXME: make this configureable in settings
-                // AppApi.FocusWindow();
                 await this.eventLaunchCommand(data.command);
                 break;
             case 'VRCXLaunch':
