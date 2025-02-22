@@ -11,6 +11,7 @@
         "moderation": "モデレーション",
         "notification": "通知",
         "friend_list": "フレンドリスト",
+        "charts": "チャート",
         "profile": "プロフィール",
         "settings": "設定"
     },
@@ -216,6 +217,30 @@
             "refresh_tooltip": "更新",
             "clear_tooltip": "結果を消去",
             "cancel_tooltip": "キャンセル"
+        },
+        "charts": {
+            "header": "チャート",
+            "instance_activity": {
+                "header": "インスタンスアクティビティ",
+                "online_time": "オンライン時間",
+                "previous_day": "前日",
+                "next_day": "翌日",
+                "refresh": "更新",
+                "tips": {
+                    "header": "ヒント",
+                    "online_time": "オンライン時間とは、VRCXが記録した当日のゲームプレイ時間です。",
+                    "click_Y_axis": "Y軸ラベルをクリックでプレイヤー/ワールドダイアログを表示します。",
+                    "click_instance_name": "インスタンス名をクリックで以前のインスタンス情報ダイアログを表示します。",
+                    "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。"
+                },
+                "settings": {
+                    "header": "設定",
+                    "bar_width": "棒グラフ幅",
+                    "show_solo_instance": "一人インスタンス",
+                    "show_no_friend_instance": "フレンドなしインスタンス",
+                    "show_detail": "インスタンス詳細"
+                }
+            }
         },
         "profile": {
             "profile": {

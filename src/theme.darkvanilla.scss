@@ -704,3 +704,38 @@ i[class='el-icon-star-off']:not(.el-menu-item div.el-tooltip i) {
     color: #efefef;
     padding-bottom: 2px;
 }
+.el-backtop {
+    background-color: var(--dv_bg-top);
+    color: var(--dv_muted);
+}
+
+// Date picker
+.el-date-picker {
+    background-color: var(--dv_bg-top);
+}
+.el-date-table td.current:not(.disabled) span {
+    background-color: var(--dv_muted);
+}
+.el-date-table td.today span {
+    color: var(--dv_muted);
+}
+.el-date-table td.available:hover span {
+    background-color: var(--dv_muted);
+    color: #fff;
+}
+.el-date-table td.available:hover {
+    color: #fff
+}
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+    color: var(--dv_muted);
+}
+.el-month-table td.current:not(.disabled) .cell {
+    color: var(--dv_muted);
+}
+.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
+    color: var(--dv_muted);
+}
+.el-picker-panel__icon-btn:hover {
+    color: var(--dv_muted);
+}
+// Date picker end

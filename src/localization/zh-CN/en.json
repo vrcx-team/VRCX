@@ -11,6 +11,7 @@
         "moderation": "用户管理（屏蔽 / 静音）",
         "notification": "通知",
         "friend_list": "好友列表",
+        "charts": "图表",
         "profile": "个人信息",
         "settings": "设置"
     },
@@ -216,6 +217,30 @@
             "refresh_tooltip": "刷新",
             "clear_tooltip": "清除结果",
             "cancel_tooltip": "取消"
+        },
+        "charts": {
+            "header": "图表",
+            "instance_activity": {
+                "header": "Instance Activity",
+                "online_time": "在线时长",
+                "previous_day": "前一天",
+                "next_day": "后一天",
+                "refresh": "刷新",
+                "tips": {
+                    "header": "提示",
+                    "online_time": "在线时间是指VRCX记录地当天的游戏时间。",
+                    "click_Y_axis": "点击Y轴标签打开“玩家“、“世界“对话框。",
+                    "click_instance_name": "点击房间名称查看上个“曾加入的房间信息“对话框。",
+                    "accuracy_notice": "本地数据库的数据可能不准确。"
+                },
+                "settings": {
+                    "header": "设置",
+                    "bar_width": "柱条宽度",
+                    "show_solo_instance": "显示独自一人的房间",
+                    "show_no_friend_instance": "显示没有好友的房间",
+                    "show_detail": "显示详细房间"
+                }
+            }
         },
         "profile": {
             "profile": {
