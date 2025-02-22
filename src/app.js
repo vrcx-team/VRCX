@@ -9389,6 +9389,16 @@ console.log(`isLinux: ${LINUX}`);
         true
     );
 
+    $app.data.showConfirmationOnSwitchAvatar = await configRepository.getBool(
+        'VRCX_showConfirmationOnSwitchAvatar',
+        false
+    );
+
+    $app.data.focusOnSwitchAvatar = await configRepository.getBool(
+        'VRCX_focusOnSwitchAvatar',
+        true
+    );
+
     $app.methods.updateVRConfigVars = function () {
         var notificationTheme = 'relax';
         if (this.isDarkMode) {
@@ -12415,6 +12425,18 @@ console.log(`isLinux: ${LINUX}`);
                     return args;
                 });
             }
+        });
+    };
+
+    $app.methods.selectAvatarWithoutConfirmation = function (id) {
+        API.selectAvatar({
+            avatarId: id
+        }).then((args) => {
+            this.$message({
+                message: 'Avatar changed',
+                type: 'success'
+            });
+            return args;
         });
     };
 
@@ -17361,6 +17383,32 @@ console.log(`isLinux: ${LINUX}`);
         D.visible = true;
     };
 
+    // Launch Command Settings handling
+
+    $app.methods.toggleLaunchCommandSetting = async function (configKey = '') {
+        switch (configKey) {
+            case 'VRCX_showConfirmationOnSwitchAvatar':
+                this.showConfirmationOnSwitchAvatar =
+                    !this.showConfirmationOnSwitchAvatar;
+                await configRepository.setBool(
+                    'VRCX_showConfirmationOnSwitchAvatar',
+                    this.showConfirmationOnSwitchAvatar
+                );
+                break;
+            case 'VRCX_focusOnSwitchAvatar':
+                this.focusOnSwitchAvatar = !this.focusOnSwitchAvatar;
+                await configRepository.setBool(
+                    'VRCX_focusOnSwitchAvatar',
+                    this.focusOnSwitchAvatar
+                );
+                break;
+            default:
+                throw new Error(
+                    'toggleLaunchCommandSetting: Unknown configKey'
+                );
+        }
+    };
+
     // Asset Bundle Cacher
 
     $app.methods.updateVRChatWorldCache = function () {
@@ -18634,7 +18682,7 @@ console.log(`isLinux: ${LINUX}`);
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
 
             if (this.cropInstancePrints) {
-                if (!await AppApi.CropPrintImage(filePath)) {
+                if (!(await AppApi.CropPrintImage(filePath))) {
                     console.error('Failed to crop print image');
                 }
             }
@@ -19127,7 +19175,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.data.ipcEnabled = false;
-    $app.methods.ipcEvent = function (json) {
+    $app.methods.ipcEvent = async function (json) {
         if (!this.friendLogInitStatus) {
             return;
         }
@@ -19217,8 +19265,9 @@ console.log(`isLinux: ${LINUX}`);
                 this.externalNotifierVersion = data.version;
                 break;
             case 'LaunchCommand':
-                AppApi.FocusWindow();
-                this.eventLaunchCommand(data.command);
+                // FIXME: make this configureable in settings
+                // AppApi.FocusWindow();
+                await this.eventLaunchCommand(data.command);
                 break;
             case 'VRCXLaunch':
                 console.log('VRCXLaunch:', data);
@@ -19377,11 +19426,11 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('LOGIN', async function () {
         var command = await AppApi.GetLaunchCommand();
         if (command) {
-            $app.eventLaunchCommand(command);
+            await $app.eventLaunchCommand(command);
         }
     });
 
-    $app.methods.eventLaunchCommand = function (input) {
+    $app.methods.eventLaunchCommand = async function (input) {
         if (!API.isLoggedIn) {
             return;
         }
@@ -19389,6 +19438,7 @@ console.log(`isLinux: ${LINUX}`);
         var args = input.split('/');
         var command = args[0];
         var commandArg = args[1];
+        var shouldFocusWindow = true;
         switch (command) {
             case 'world':
                 this.directAccessWorld(input.replace('world/', ''));
@@ -19414,6 +19464,16 @@ console.log(`isLinux: ${LINUX}`);
             case 'addavatardb':
                 this.addAvatarProvider(input.replace('addavatardb/', ''));
                 break;
+            case 'switchavatar':
+                if (this.showConfirmationOnSwitchAvatar) {
+                    this.selectAvatarWithConfirmation(commandArg);
+                    // Makes sure the window is focused
+                    shouldFocusWindow = true;
+                } else {
+                    this.selectAvatarWithoutConfirmation(commandArg);
+                    shouldFocusWindow = this.focusOnSwitchAvatar;
+                }
+                break;
             case 'import':
                 var type = args[1];
                 if (!type) break;
@@ -19429,6 +19489,9 @@ console.log(`isLinux: ${LINUX}`);
                     this.friendImportDialog.input = data;
                 }
                 break;
+        }
+        if (shouldFocusWindow) {
+            AppApi.FocusWindow();
         }
     };
 
@@ -23392,14 +23455,15 @@ console.log(`isLinux: ${LINUX}`);
             if (friend.ref?.$location.isRealInstance) {
                 locationTag = friend.ref.$location.tag;
             } else if (this.lastLocation.friendList.has(friend.id)) {
-                let $location = $utils.parseLocation(this.lastLocation.location);
+                let $location = $utils.parseLocation(
+                    this.lastLocation.location
+                );
                 if ($location.isRealInstance) {
                     if ($location.tag === 'private') {
                         locationTag = this.lastLocation.name;
                     } else {
                         locationTag = $location.tag;
                     }
-                    
                 }
             }
             if (!locationTag) return;
