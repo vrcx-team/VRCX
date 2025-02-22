@@ -12415,15 +12415,7 @@ console.log(`isLinux: ${LINUX}`);
                 if (action !== 'confirm') {
                     return;
                 }
-                API.selectAvatar({
-                    avatarId: id
-                }).then((args) => {
-                    this.$message({
-                        message: 'Avatar changed',
-                        type: 'success'
-                    });
-                    return args;
-                });
+                $app.methods.selectAvatarWithoutConfirmation(id);
             }
         });
     };
