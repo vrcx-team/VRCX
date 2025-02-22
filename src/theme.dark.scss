@@ -439,3 +439,40 @@ button {
     background: #222;
     color: #ffffff;
 }
+.el-backtop {
+    background-color: #333;
+}
+
+// Date picker
+.el-date-picker {
+    background-color: #222;
+    color: #fff;
+}
+.el-date-table td.disabled div {
+    background-color: #333;
+    color: #606266;
+}
+.el-date-table td.next-month,
+.el-date-table td.prev-month {
+    color: #606266;
+}
+.el-picker-panel__icon-btn {
+    color: #fff;
+}
+.el-date-table th {
+    border-bottom: 1px solid #555;
+    color: #fff;
+}
+.el-date-picker__header-label {
+    color: #fff;
+}
+.el-picker-panel {
+    border: 1px solid #333;
+}
+.el-year-table td.disabled .cell {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.el-month-table td.disabled .cell {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+// Date picker end

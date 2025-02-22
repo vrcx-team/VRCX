@@ -325,3 +325,33 @@ path[stroke='#e5e9f2'] {
     background: var(--farback);
     color: #efefef;
 }
+.el-backtop {
+    color: var(--theme-text-muted)
+}
+
+// Date picker
+.el-date-table td.current:not(.disabled) span {
+    background-color: var(--theme-text-muted);
+}
+.el-date-table td.today span {
+    color: var(--theme-text-muted);
+}
+.el-date-table td.available:hover span {
+    background-color: var(--theme-text-muted);
+    color: #fff;
+}
+.el-date-table td.available:hover {
+    color: #fff
+}
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+    color: var(--theme-text-muted);
+}
+.el-month-table td.current:not(.disabled) .cell {
+    color: var(--theme-text-muted);
+}
+.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
+    color: var(--theme-text-muted);
+}
+.el-picker-panel__icon-btn:hover {
+    color: var(--theme-text-muted);
+}

@@ -1,20 +1,94 @@
 <template>
     <div>
-        <div class="options-container flex-between" style="margin-top: 0">
-            <span style="margin-top: 10px">Instance Activity</span>
-            <el-date-picker
-                v-model="selectedDate"
-                type="date"
-                :clearable="false"
-                align="right"
-                :picker-options="{
-                    disabledDate: (time) => getDatePickerDisabledDate(time)
-                }"
-                @change="handleSelectDate"
-            ></el-date-picker>
+        <div class="options-container instance-activity" style="margin-top: 0">
+            <div>
+                <span>Instance Activity</span>
+                <el-popover placement="bottom-start" trigger="hover" width="300">
+                    <div class="tips-popover">
+                        <div>{{ $t('view.charts.instance_activity.tips.header') }}</div>
+                        <div>{{ $t('view.charts.instance_activity.tips.online_time') }}</div>
+                        <div>{{ $t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
+                        <div>{{ $t('view.charts.instance_activity.tips.click_instance_name') }}</div>
+                        <div>
+                            <i class="el-icon-warning-outline"></i
+                            ><i>{{ $t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
+                        </div>
+                    </div>
+
+                    <i class="el-icon-info" slot="reference" style="margin-left: 5px; font-size: 12px"></i>
+                </el-popover>
+            </div>
+
+            <div>
+                <el-tooltip :content="$t('view.charts.instance_activity.refresh')" placement="top"
+                    ><el-button icon="el-icon-refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
+                ></el-tooltip>
+                <el-tooltip :content="$t('view.charts.instance_activity.settings.header')" placement="top">
+                    <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
+                        <div class="settings">
+                            <div>
+                                <span>{{ $t('view.charts.instance_activity.settings.bar_width') }}</span>
+                                <div>
+                                    <el-slider
+                                        v-model.lazy="barWidth"
+                                        content="bar width"
+                                        :max="50"
+                                        :min="1"
+                                        @change="changeBarWidth"
+                                    ></el-slider>
+                                </div>
+                            </div>
+                            <div>
+                                <span>{{ $t('view.charts.instance_activity.settings.show_detail') }}</span>
+                                <el-switch v-model="isDetailVisible" @change="changeIsDetailInstanceVisible">
+                                </el-switch>
+                            </div>
+                            <div v-if="isDetailVisible">
+                                <span>{{ $t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
+                                <el-switch v-model="isSoloInstanceVisible" @change="changeIsSoloInstanceVisible">
+                                </el-switch>
+                            </div>
+                            <div v-if="isDetailVisible">
+                                <span>{{ $t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
+                                <el-switch
+                                    v-model="isNoFriendInstanceVisible"
+                                    @change="changeIsNoFriendInstanceVisible"
+                                >
+                                </el-switch>
+                            </div>
+                        </div>
+
+                        <el-button slot="reference" icon="el-icon-setting" circle></el-button>
+                    </el-popover>
+                </el-tooltip>
+                <el-button-group style="margin-right: 10px">
+                    <el-tooltip :content="$t('view.charts.instance_activity.previous_day')" placement="top">
+                        <el-button
+                            icon="el-icon-arrow-left"
+                            :disabled="isPrevDayBtnDisabled"
+                            @click="changeSelectedDateFromBtn(false)"
+                        ></el-button>
+                    </el-tooltip>
+                    <el-tooltip :content="$t('view.charts.instance_activity.next_day')" placement="top">
+                        <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
+                            ><i class="el-icon-arrow-right el-icon--right"></i
+                        ></el-button>
+                    </el-tooltip>
+                </el-button-group>
+                <el-date-picker
+                    v-model="selectedDate"
+                    type="date"
+                    :clearable="false"
+                    align="right"
+                    :picker-options="{
+                        disabledDate: (time) => getDatePickerDisabledDate(time)
+                    }"
+                    @change="reloadData"
+                ></el-date-picker>
+            </div>
         </div>
         <div style="position: relative">
-            <el-statistic title="Total Online Time">
+            <el-statistic :title="$t('view.charts.instance_activity.online_time')">
                 <template #formatter>
                     <span :style="isDarkMode ? 'color:rgb(120,120,120)' : ''">{{ totalOnlineTime }}</span>
                 </template>
@@ -27,16 +101,18 @@
         </div>
 
         <transition name="el-fade-in-linear">
-            <div v-show="!isLoading && activityData.length !== 0" class="divider"><el-divider>·</el-divider></div>
+            <div v-show="isDetailVisible && !isLoading" class="divider">
+                <el-divider>·</el-divider>
+            </div>
         </transition>
         <instance-activity-detail
-            v-for="arr in activityDetailData"
-            :key="arr[0].location"
+            v-for="arr in filteredActivityDetailData"
+            :key="arr[0].location + arr[0].created_at"
             ref="activityDetailChartRef"
-            :activity-data="activityData"
             :activity-detail-data="arr"
             :is-dark-mode="isDarkMode"
-            style="width: 100%"
+            :dt-hour12="dtHour12"
+            :bar-width="barWidth"
             @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
         />
     </div>
@@ -46,6 +122,7 @@
     import dayjs from 'dayjs';
     import database from '../../repository/database';
     import utils from '../../classes/utils';
+    import configRepository from '../../repository/config';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
     let echarts = null;
@@ -57,22 +134,31 @@
         },
         inject: ['API'],
         props: {
-            getWorldName: Function,
-            isDarkMode: Boolean
+            getWorldName: { type: Function, default: () => [] },
+            isDarkMode: Boolean,
+            dtHour12: Boolean,
+            friendsMap: Map,
+            localFavoriteFriends: Set
         },
         data() {
             return {
+                // echarts and observer
                 echartsInstance: null,
                 resizeObserver: null,
                 intersectionObservers: [],
                 selectedDate: dayjs().add(-1, 'day'),
+                // data
                 activityData: [],
                 activityDetailData: [],
-                // previousDarkMode: this.isDarkMode,
                 allDateOfActivity: null,
-                firstDateOfActivity: null,
                 worldNameArray: [],
-                isLoading: true
+                // options
+                isLoading: true,
+                // settings
+                barWidth: 30,
+                isDetailVisible: true,
+                isSoloInstanceVisible: true,
+                isNoFriendInstanceVisible: true
             };
         },
         computed: {
@@ -81,21 +167,65 @@
                     this.activityData.reduce((acc, item) => acc + item.time, 0),
                     true
                 );
+            },
+            isNextDayBtnDisabled() {
+                return dayjs(this.selectedDate).isSame(dayjs(), 'day');
+            },
+            isPrevDayBtnDisabled() {
+                return dayjs(this.selectedDate).isSame(
+                    this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1],
+                    'day'
+                );
+            },
+            allDateOfActivityArray() {
+                return this.allDateOfActivity
+                    ? Array.from(this.allDateOfActivity)
+                          .map((item) => dayjs(item))
+                          .sort((a, b) => b.valueOf() - a.valueOf())
+                    : [];
+            },
+            filteredActivityDetailData() {
+                if (!this.isDetailVisible) {
+                    return [];
+                }
+                let result = [...this.activityDetailData];
+                if (!this.isSoloInstanceVisible) {
+                    result = result.filter((arr) => arr.length > 1);
+                }
+                if (!this.isNoFriendInstanceVisible) {
+                    result = result.filter((arr) => {
+                        // solo instance
+                        if (arr.length === 1) {
+                            return true;
+                        }
+                        return arr.some((item) => item.isFriend);
+                    });
+                }
+                return result;
+            }
+        },
+        watch: {
+            isDarkMode() {
+                if (this.echartsInstance) {
+                    this.echartsInstance.dispose();
+                    this.echartsInstance = null;
+                    this.initEcharts();
+                }
+            },
+            dtHour12() {
+                if (this.echartsInstance) {
+                    this.initEcharts();
+                }
             }
         },
         activated() {
             // first time also call activated
-            if (!this.echartsInstance) {
-                return;
+            if (this.echartsInstance) {
+                this.reloadData();
             }
-            // if (this.isDarkMode === this.previousDarkMode) {
-            // when tab activated, play animation
-            this.echartsInstance.clear();
-            this.initEcharts();
-            // }
         },
         deactivated() {
-            // prevent switch tab play resize animation
+            // prevent resize animation when switch tab
             this.resizeObserver.disconnect();
         },
         created() {
@@ -108,6 +238,18 @@
                         }
                     });
                 }
+            });
+            configRepository.getInt('VRCX_InstanceActivityBarWidth', 30).then((value) => {
+                this.barWidth = value;
+            });
+            configRepository.getBool('VRCX_InstanceActivityDetailVisible', true).then((value) => {
+                this.isDetailVisible = value;
+            });
+            configRepository.getBool('VRCX_InstanceActivitySoloInstanceVisible', true).then((value) => {
+                this.isSoloInstanceVisible = value;
+            });
+            configRepository.getBool('VRCX_InstanceActivityNoFriendInstaceVisible', true).then((value) => {
+                this.isNoFriendInstanceVisible = value;
             });
         },
         async mounted() {
@@ -128,7 +270,6 @@
                 if (this.activityData.length && echarts) {
                     // activity data is ready, but world name data isn't ready
                     // so init echarts with empty data, reduce the render time of init screen
-                    // TODO: move to created lifecycle, init screen faster
                     this.initEcharts(true);
                     this.getAllDateOfActivity();
                     this.getWorldNameData();
@@ -140,14 +281,15 @@
             }
         },
         methods: {
-            // reload data
-            async handleSelectDate() {
+            async reloadData() {
                 this.isLoading = true;
                 await this.getActivityData();
                 this.getWorldNameData();
             },
+
+            // echarts - start
             initEcharts(isFirstTime = false) {
-                const chartsHeight = this.activityData.length * 40 + 200;
+                const chartsHeight = this.activityData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityChartRef;
                 if (!this.echartsInstance) {
                     this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
@@ -163,101 +305,27 @@
                     }
                 });
 
-                requestAnimationFrame(() => {
-                    this.echartsInstance.setOption(this.getNewOption(isFirstTime), { lazyUpdate: true });
-                    this.echartsInstance.on('click', 'yAxis', this.handleClickYAxisLabel);
-                    this.isLoading = false;
-                });
-            },
-            handleClickYAxisLabel(params) {
-                const detailDataIdx = this.activityDetailData.findIndex(
-                    (arr) => arr[0]?.location === this.activityData[params?.dataIndex]?.location
-                );
-                if (detailDataIdx !== -1) {
-                    this.$refs.activityDetailChartRef[detailDataIdx].$el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
+                const handleClickYAxisLabel = (params) => {
+                    const detailDataIdx = this.filteredActivityDetailData.findIndex((arr) => {
+                        const sameLocation = arr[0]?.location === this.activityData[params?.dataIndex]?.location;
+                        const sameJoinTime = arr
+                            .find((item) => item.user_id === this.API.currentUser.id)
+                            .joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
+                        return sameLocation && sameJoinTime;
                     });
-                }
-            },
-            getDatePickerDisabledDate(time) {
-                if (time > Date.now() || time < this.firstDateOfActivity) {
-                    return true;
-                }
-                return !this.allDateOfActivity.has(dayjs(time).format('YYYY-MM-DD'));
-            },
-            async getAllDateOfActivity() {
-                const utcDateStrings = await database.getDateOfInstanceActivity();
-
-                const uniqueDates = new Set();
-                this.firstDateOfActivity = dayjs.utc(utcDateStrings[0]).startOf('day');
-
-                for (const utcString of utcDateStrings) {
-                    const formattedDate = dayjs.utc(utcString).tz().format('YYYY-MM-DD');
-                    uniqueDates.add(formattedDate);
-                }
-
-                this.allDateOfActivity = uniqueDates;
-            },
-            async getActivityData() {
-                const localStartDate = dayjs.tz(this.selectedDate).startOf('day').toISOString();
-                const localEndDate = dayjs.tz(this.selectedDate).endOf('day').toISOString();
-                const dbData = await database.getInstanceActivity(localStartDate, localEndDate);
-
-                const transformData = (item) => ({
-                    ...item,
-                    joinTime: dayjs(item.created_at).subtract(item.time, 'millisecond'),
-                    leaveTime: dayjs(item.created_at),
-                    time: item.time < 0 ? 0 : item.time
-                });
-
-                this.activityData = dbData.currentUserData.map(transformData);
-
-                // FIXME: some detail data missing current user activity
-                this.activityDetailData = Array.from(dbData.detailData.values()).map((arr) =>
-                    arr.map(transformData).sort((a, b) => {
-                        const timeDiff = Math.abs(a.joinTime.diff(b.joinTime, 'second'));
-                        // recording delay, under 2s is considered the same time entry, beautify the chart
-                        if (timeDiff < 2) {
-                            return a.leaveTime - b.leaveTime;
-                        }
-                        return a.joinTime - b.joinTime;
-                    })
-                );
-                this.$nextTick(() => {
-                    this.handleIntersectionObserver();
-                });
-            },
-            handleIntersectionObserver() {
-                this.$refs.activityDetailChartRef.forEach((child, index) => {
-                    const observer = new IntersectionObserver(this.handleIntersection.bind(this, index));
-                    observer.observe(child.$el);
-                    this.intersectionObservers[index] = observer;
-                });
-            },
-            handleIntersection(index, entries) {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        this.$refs.activityDetailChartRef[index].initEcharts();
-                        this.intersectionObservers[index].unobserve(entry.target);
+                    if (detailDataIdx === -1) {
+                        console.error('handleClickYAxisLabel failed', params);
+                    } else {
+                        this.$refs.activityDetailChartRef[detailDataIdx].$el.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
-                });
-            },
-            async getWorldNameData() {
-                this.worldNameArray = await Promise.all(
-                    this.activityData.map(async (item) => {
-                        try {
-                            return await this.getWorldName(item.location);
-                        } catch {
-                            // TODO: no notification
-                            console.error('getWorldName failed location', item.location);
-                            return 'Unknown world';
-                        }
-                    })
-                );
-                if (this.worldNameArray && this.echartsInstance) {
-                    this.initEcharts();
-                }
+                };
+
+                this.echartsInstance.setOption(this.getNewOption(isFirstTime), { lazyUpdate: true });
+                this.echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
+                this.isLoading = false;
             },
             getNewOption(isFirstTime) {
                 const getTooltip = (params) => {
@@ -270,8 +338,10 @@
 
                     const instanceData = activityData[param.dataIndex];
 
-                    const formattedLeftDateTime = dayjs(instanceData.leaveTime).format('HH:mm:ss');
-                    const formattedJoinDateTime = dayjs(instanceData.joinTime).format('HH:mm:ss');
+                    const format = this.dtHour12 ? 'hh:mm:ss A' : 'HH:mm:ss';
+
+                    const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
+                    const formattedJoinDateTime = dayjs(instanceData.joinTime).format(format);
 
                     const timeString = utils.timeToText(param.data, true);
                     const color = param.color;
@@ -289,6 +359,8 @@
                         </div>
                     `;
                 };
+
+                const format = this.dtHour12 ? 'hh:mm A' : 'HH:mm';
 
                 const echartsOption = {
                     tooltip: {
@@ -322,8 +394,7 @@
                         interval: 3 * 60 * 60 * 1000,
                         axisLine: { show: true },
                         axisLabel: {
-                            formatter: (value) =>
-                                value === 24 * 60 * 60 * 1000 ? '24:00' : dayjs(value).utc().format('HH:mm')
+                            formatter: (value) => dayjs(value).utc().format(format)
                         },
                         splitLine: { lineStyle: { type: 'dashed' } }
                     },
@@ -359,7 +430,10 @@
                             type: 'bar',
                             stack: 'Total',
                             colorBy: 'data',
-                            barWidth: 30,
+                            barWidth: this.barWidth,
+                            emphasis: {
+                                focus: 'self'
+                            },
                             itemStyle: {
                                 borderRadius: 2,
                                 shadowBlur: 2,
@@ -380,24 +454,311 @@
                                       return item.time;
                                   })
                         }
-                    ]
+                    ],
+                    backgroundColor: 'transparent'
                 };
 
-                if (this.isDarkMode) {
-                    echartsOption.backgroundColor = 'rgba(0, 0, 0, 0)';
-                }
                 return echartsOption;
+            },
+            // echarts - end
+
+            // settings - start
+            changeBarWidth(value) {
+                this.barWidth = value;
+                this.initEcharts();
+                configRepository.setInt('VRCX_InstanceActivityBarWidth', value).finally(() => {
+                    this.handleChangeSettings();
+                });
+            },
+            changeIsDetailInstanceVisible(value) {
+                this.isDetailVisible = value;
+                configRepository.setBool('VRCX_InstanceActivityDetailVisible', value).finally(() => {
+                    this.handleChangeSettings();
+                });
+            },
+            changeIsSoloInstanceVisible(value) {
+                this.isSoloInstanceVisible = value;
+                configRepository.setBool('VRCX_InstanceActivitySoloInstanceVisible', value).finally(() => {
+                    this.handleChangeSettings();
+                });
+            },
+            changeIsNoFriendInstanceVisible(value) {
+                this.isNoFriendInstanceVisible = value;
+                configRepository.setBool('VRCX_InstanceActivityNoFriendInstaceVisible', value).finally(() => {
+                    this.handleChangeSettings();
+                });
+            },
+            handleChangeSettings() {
+                this.$nextTick(() => {
+                    if (this.$refs.activityDetailChartRef) {
+                        this.$refs.activityDetailChartRef.forEach((child) => {
+                            requestAnimationFrame(() => {
+                                if (child.echartsInstance) {
+                                    child.initEcharts();
+                                }
+                            });
+                        });
+                    }
+                });
+                //rerender detail chart
+            },
+            // settings - end
+
+            // options - start
+            changeSelectedDateFromBtn(isNext = false) {
+                const idx = this.allDateOfActivityArray.findIndex((date) => date.isSame(this.selectedDate, 'day'));
+                if (idx !== -1) {
+                    if (isNext) {
+                        if (idx - 1 < this.allDateOfActivityArray.length) {
+                            console.log(this.selectedDate, this.allDateOfActivityArray[idx + 1]);
+                            this.selectedDate = this.allDateOfActivityArray[idx - 1];
+                            this.reloadData();
+                        }
+                    } else if (idx + 1 >= 0) {
+                        this.selectedDate = this.allDateOfActivityArray[idx + 1];
+                        this.reloadData();
+                    }
+                }
+            },
+            getDatePickerDisabledDate(time) {
+                if (
+                    time > Date.now() ||
+                    this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1]
+                        .add('-1', 'day')
+                        .isAfter(time, 'day') ||
+                    !this.allDateOfActivity
+                ) {
+                    return true;
+                }
+                return !this.allDateOfActivity.has(dayjs(time).format('YYYY-MM-DD'));
+            },
+            // options - end
+
+            // data - start
+            async getWorldNameData() {
+                this.worldNameArray = await Promise.all(
+                    this.activityData.map(async (item) => {
+                        try {
+                            return await this.getWorldName(item.location);
+                        } catch {
+                            // TODO: no notification
+                            console.error('getWorldName failed location', item.location);
+                            return 'Unknown world';
+                        }
+                    })
+                );
+                if (this.worldNameArray && this.echartsInstance) {
+                    this.initEcharts();
+                }
+            },
+            async getAllDateOfActivity() {
+                const utcDateStrings = await database.getDateOfInstanceActivity();
+                const uniqueDates = new Set();
+
+                for (const utcString of utcDateStrings) {
+                    const formattedDate = dayjs.utc(utcString).tz().format('YYYY-MM-DD');
+                    uniqueDates.add(formattedDate);
+                }
+
+                this.allDateOfActivity = uniqueDates;
+            },
+            async getActivityData() {
+                const localStartDate = dayjs.tz(this.selectedDate).startOf('day').toISOString();
+                const localEndDate = dayjs.tz(this.selectedDate).endOf('day').toISOString();
+                const dbData = await database.getInstanceActivity(localStartDate, localEndDate);
+
+                const transformData = (item) => ({
+                    ...item,
+                    joinTime: dayjs(item.created_at).subtract(item.time, 'millisecond'),
+                    leaveTime: dayjs(item.created_at),
+                    time: item.time < 0 ? 0 : item.time,
+                    isFriend: item.user_id === this.API.currentUser.id ? null : this.friendsMap.has(item.user_id),
+                    isFavorite:
+                        item.user_id === this.API.currentUser.id ? null : this.localFavoriteFriends.has(item.user_id)
+                });
+
+                this.activityData = dbData.currentUserData.map(transformData);
+
+                const transformAndSort = (arr) => {
+                    return arr.map(transformData).sort((a, b) => {
+                        const timeDiff = Math.abs(a.joinTime.diff(b.joinTime, 'second'));
+                        // recording delay, under 3s is considered the same time entry, beautify the chart
+                        return timeDiff < 3 ? a.leaveTime - b.leaveTime : a.joinTime - b.joinTime;
+                    });
+                };
+
+                const filterByLocation = (innerArray, locationSet) => {
+                    return innerArray.every((innerObject) => locationSet.has(innerObject.location));
+                };
+                const locationSet = new Set(this.activityData.map((item) => item.location));
+
+                const preSplitActivityDetailData = Array.from(dbData.detailData.values())
+                    .map(transformAndSort)
+                    .filter((innerArray) => filterByLocation(innerArray, locationSet));
+
+                this.activityDetailData = this.handleSplitActivityDetailData(
+                    preSplitActivityDetailData,
+                    this.API.currentUser.id
+                );
+
+                this.$nextTick(() => {
+                    this.handleIntersectionObserver();
+                });
+            },
+            handleSplitActivityDetailData(activityDetailData, currentUserId) {
+                function countTargetIdOccurrences(innerArray, targetId) {
+                    let count = 0;
+                    for (const obj of innerArray) {
+                        if (obj.user_id === targetId) {
+                            count++;
+                        }
+                    }
+                    return count;
+                }
+
+                function areIntervalsOverlapping(objA, objB) {
+                    const isObj1EndTimeBeforeObj2StartTime = objA.leaveTime.isBefore(objB.joinTime, 'second');
+                    const isObj2EndTimeBeforeObj1StartTime = objB.leaveTime.isBefore(objA.joinTime, 'second');
+                    return !(isObj1EndTimeBeforeObj2StartTime || isObj2EndTimeBeforeObj1StartTime);
+                }
+
+                function buildOverlapGraph(innerArray) {
+                    const numObjects = innerArray.length;
+                    const adjacencyList = Array.from({ length: numObjects }, () => []);
+
+                    for (let i = 0; i < numObjects; i++) {
+                        for (let j = i + 1; j < numObjects; j++) {
+                            if (areIntervalsOverlapping(innerArray[i], innerArray[j])) {
+                                adjacencyList[i].push(j);
+                                adjacencyList[j].push(i);
+                            }
+                        }
+                    }
+                    return adjacencyList;
+                }
+
+                function depthFirstSearch(nodeIndex, visited, graph, component) {
+                    visited[nodeIndex] = true;
+                    component.push(nodeIndex);
+                    for (const neighborIndex of graph[nodeIndex]) {
+                        if (!visited[neighborIndex]) {
+                            depthFirstSearch(neighborIndex, visited, graph, component);
+                        }
+                    }
+                }
+
+                function findConnectedComponents(graph, numNodes) {
+                    const visited = new Array(numNodes).fill(false);
+                    const components = [];
+
+                    for (let i = 0; i < numNodes; i++) {
+                        if (!visited[i]) {
+                            const component = [];
+                            depthFirstSearch(i, visited, graph, component);
+                            components.push(component);
+                        }
+                    }
+                    return components;
+                }
+
+                function processOuterArrayWithTargetId(outerArray, targetId) {
+                    let i = 0;
+                    while (i < outerArray.length) {
+                        let currentInnerArray = outerArray[i];
+                        let targetIdCount = countTargetIdOccurrences(currentInnerArray, targetId);
+                        if (targetIdCount > 1) {
+                            let graph = buildOverlapGraph(currentInnerArray);
+                            let connectedComponents = findConnectedComponents(graph, currentInnerArray.length);
+                            let newInnerArrays = connectedComponents.map((componentIndices) => {
+                                return componentIndices.map((index) => currentInnerArray[index]);
+                            });
+                            outerArray.splice(i, 1, ...newInnerArrays);
+                            i += newInnerArrays.length;
+                        } else {
+                            i += 1;
+                        }
+                    }
+                    return outerArray.sort((a, b) => a[0].joinTime - b[0].joinTime);
+                }
+
+                return processOuterArrayWithTargetId(activityDetailData, currentUserId);
+            },
+            // data - end
+
+            // intersection observer - start
+            handleIntersectionObserver() {
+                this.$refs.activityDetailChartRef.forEach((child, index) => {
+                    const observer = new IntersectionObserver(this.handleIntersection.bind(this, index));
+                    observer.observe(child.$el);
+                    this.intersectionObservers[index] = observer;
+                });
+            },
+            handleIntersection(index, entries) {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        this.$refs.activityDetailChartRef[index].initEcharts();
+                        this.intersectionObservers[index].unobserve(entry.target);
+                    }
+                });
             }
+            // intersection observer - end
         }
     };
 </script>
 
-<style scoped>
-    .flex-between {
+<style lang="scss" scoped>
+    %flex {
         display: flex;
         align-items: center;
+    }
+    %flex-between {
         justify-content: space-between;
     }
+    .instance-activity {
+        @extend %flex;
+        @extend %flex-between;
+        & > div:first-child {
+            @extend %flex-between;
+        }
+        & > div {
+            @extend %flex;
+            > span {
+                flex-shrink: 0;
+            }
+        }
+    }
+    .tips-popover {
+        :first-child {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        :not(:first-child) {
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        i {
+            margin-right: 3px;
+        }
+    }
+    .settings {
+        & > div {
+            @extend %flex;
+            @extend %flex-between;
+            padding: 0 2px;
+            height: 30px;
+            > span {
+                flex-shrink: 0;
+            }
+        }
+        & > div:first-child {
+            > div {
+                width: 160px;
+                padding-left: 15px;
+            }
+        }
+    }
+
     .nodata {
         display: flex;
         align-items: center;
@@ -410,6 +771,7 @@
         transition: top 0.3s ease;
     }
 
+    // override el-ui
     .el-date-editor.el-input,
     .el-date-editor.el-input__inner {
         width: 200px;
