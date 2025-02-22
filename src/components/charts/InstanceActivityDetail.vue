@@ -111,15 +111,95 @@
                 }
             },
             getNewOption() {
+                // grouping player activity entries by user_id and calculate below:
+                // 1. offset: the time from startTimeStamp or the previous entry's tail to the current entry's joinTime
+                // 2. time: the time the user spent in the instance
+                // 3. tail: the time from startTimeStamp to the current entry's leaveTime
+                // 4. entry: the original activity detail entry
+                const userGroupedEntries = new Map();
+                // uniqueUserEntries has each user's first entry and used to keep the order of the users calculated in InstanceActivity.vue
+                const uniqueUserEntries = [];
+                for (const entry of this.activityDetailData) {
+                    if (!userGroupedEntries.has(entry.user_id)) {
+                        userGroupedEntries.set(entry.user_id, []);
+                        uniqueUserEntries.push(entry);
+                    }
+                    const elements = userGroupedEntries.get(entry.user_id);
+                    const offset = Math.max(0, elements.length === 0 ? entry.joinTime.valueOf() - this.startTimeStamp : entry.joinTime.valueOf() - this.startTimeStamp - elements[elements.length - 1].tail);
+                    const tail = elements.length === 0 ? offset + entry.time : elements[elements.length - 1].tail + offset + entry.time;
+                    const element = { offset: offset, time: entry.time, tail: tail, entry: entry };
+                    elements.push(element);
+                }
+
+                const generateSeries = () => {
+                    const maxEntryCount = Math.max(...Array.from(userGroupedEntries.values()).map((entries) => entries.length));
+                    const placeholderSeries = (data) => {
+                        return {
+                            name: 'Placeholder',
+                            type: 'bar',
+                            stack: 'Total',
+                            itemStyle: {
+                                borderColor: 'transparent',
+                                color: 'transparent'
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    borderColor: 'transparent',
+                                    color: 'transparent'
+                                }
+                            },
+                            data: data,
+                        };
+                    };
+                    const timeSeries = (data) => {
+                        return {
+                            name: 'Time',
+                            type: 'bar',
+                            stack: 'Total',
+                            colorBy: 'data',
+                            barWidth: 30,
+                            itemStyle: {
+                                borderRadius: 2,
+                                shadowBlur: 2,
+                                shadowOffsetX: 0.7,
+                                shadowOffsetY: 0.5
+                            },
+                            data: data,
+                        };
+                    };
+
+                    // generate series having placeholder and time series for each user
+                    const series = Array(maxEntryCount).fill(0).flatMap((_, index) => {
+                        return [
+                            placeholderSeries(uniqueUserEntries.map((entry) => {
+                                const element = userGroupedEntries.get(entry.user_id)[index];
+                                return element ? element.offset : 0;
+                            })),
+                            timeSeries(uniqueUserEntries.map((entry) => {
+                                const element = userGroupedEntries.get(entry.user_id)[index];
+                                return element ? element.time : 0;
+                            }))
+                        ];
+                    });
+
+                    return series;
+                };
+
                 const getTooltip = (params) => {
                     const activityDetailData = this.activityDetailData;
-                    const param = params[1];
+                    const param = params;
+                    const isTimeSeries = params.seriesIndex % 2 === 1;
+                    if (!isTimeSeries) {
+                        return '';
+                    }
+                    const targetEntryIndex = Math.floor(params.seriesIndex / 2);
 
                     if (!activityDetailData || !activityDetailData[param.dataIndex]) {
                         return '';
                     }
 
-                    const instanceData = activityDetailData[param.dataIndex];
+                    // first, find the user's entries, then get the focused entry
+                    const instanceData = userGroupedEntries.get(activityDetailData[param.dataIndex].user_id)[targetEntryIndex].entry;
 
                     const formattedLeftDateTime = dayjs(instanceData.leaveTime).format('HH:mm:ss');
                     const formattedJoinDateTime = dayjs(instanceData.joinTime).format('HH:mm:ss');
@@ -141,7 +221,7 @@
 
                 const echartsOption = {
                     tooltip: {
-                        trigger: 'axis',
+                        trigger: 'item',
                         axisPointer: {
                             type: 'shadow'
                         },
@@ -159,7 +239,7 @@
                             formatter: (value) => (value.length > 20 ? `${value.slice(0, 20)}...` : value)
                         },
                         inverse: true,
-                        data: this.activityDetailData.map((item) => item.display_name),
+                        data: uniqueUserEntries.map((item) => item.display_name),
                         triggerEvent: true
                     },
                     xAxis: {
@@ -172,38 +252,7 @@
                         },
                         splitLine: { lineStyle: { type: 'dashed' } }
                     },
-                    series: [
-                        {
-                            name: 'Placeholder',
-                            type: 'bar',
-                            stack: 'Total',
-                            itemStyle: {
-                                borderColor: 'transparent',
-                                color: 'transparent'
-                            },
-                            emphasis: {
-                                itemStyle: {
-                                    borderColor: 'transparent',
-                                    color: 'transparent'
-                                }
-                            },
-                            data: this.activityDetailData.map((item) => item.joinTime.valueOf() - this.startTimeStamp)
-                        },
-                        {
-                            name: 'Time',
-                            type: 'bar',
-                            stack: 'Total',
-                            colorBy: 'data',
-                            barWidth: 30,
-                            itemStyle: {
-                                borderRadius: 2,
-                                shadowBlur: 2,
-                                shadowOffsetX: 0.7,
-                                shadowOffsetY: 0.5
-                            },
-                            data: this.activityDetailData.map((item) => item.time)
-                        }
-                    ]
+                    series: generateSeries(),
                 };
 
                 if (this.isDarkMode) {
