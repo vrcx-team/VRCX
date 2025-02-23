@@ -833,8 +833,9 @@ console.log(`isLinux: ${LINUX}`);
      * n: number,
      * offset: number,
      * search: string,
-     * sort: 'nuisanceFactor' | 'created' | '_created_at' | 'last_login',
+     * sort: 'nuisanceFactor' | 'created' | '_created_at' | 'last_login' | 'relevance',
      * order: 'ascending', 'descending'
+     * customFields: 'bio', 'displayName'
      }} GetUsersParameters */
     /**
      * Fetch multiple users from API.
@@ -1506,8 +1507,9 @@ console.log(`isLinux: ${LINUX}`);
             n: 50,
             offset: 0
         };
-        // API offset limit is 5000
-        mainLoop: for (var i = 100; i > -1; i--) {
+        // API offset limit *was* 5000
+        // it is now 7500
+        mainLoop: for (var i = 150; i > -1; i--) {
             retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
@@ -6671,7 +6673,9 @@ console.log(`isLinux: ${LINUX}`);
         this.searchUserParams = {
             n: 10,
             offset: 0,
-            search: this.searchText
+            search: this.searchText,
+            customFields: this.searchUserByBio ? "bio" : "displayName",
+            sort: this.searchUserSortByLastLoggedIn ? "last_login" : "relevance"
         };
         await this.moreSearchUser();
     };
@@ -6703,6 +6707,9 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.data.searchWorldLabs = false;
+
+    $app.data.searchUserByBio = false;
+    $app.data.searchUserSortByLastLoggedIn = false;
 
     $app.methods.searchWorld = function (ref) {
         this.searchWorldOption = '';
@@ -8276,9 +8283,22 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
         await configRepository.getString(
             'VRCX_avatarRemoteDatabaseProviderList',
-            '[ "https://avtr.just-h.party/vrcx_search.php" ]'
+            '[ "https://api.avtrdb.com/v2/avatar/search/vrcx", "https://avtr.just-h.party/vrcx_search.php" ]'
         )
     );
+    if (
+        $app.data.avatarRemoteDatabaseProviderList.length === 1 &&
+        $app.data.avatarRemoteDatabaseProviderList[0] ===
+            'https://avtr.just-h.party/vrcx_search.php'
+    ) {
+        $app.data.avatarRemoteDatabaseProviderList.unshift(
+            'https://api.avtrdb.com/v2/avatar/search/vrcx'
+        );
+        await configRepository.setString(
+            'VRCX_avatarRemoteDatabaseProviderList',
+            JSON.stringify($app.data.avatarRemoteDatabaseProviderList)
+        );
+    }
     $app.data.pendingOfflineDelay = 180000;
     if (await configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
@@ -9387,6 +9407,11 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.enableAppLauncherAutoClose = await configRepository.getBool(
         'VRCX_enableAppLauncherAutoClose',
         true
+    );
+
+    $app.data.showConfirmationOnSwitchAvatar = await configRepository.getBool(
+        'VRCX_showConfirmationOnSwitchAvatar',
+        false
     );
 
     $app.methods.updateVRConfigVars = function () {
@@ -12405,16 +12430,27 @@ console.log(`isLinux: ${LINUX}`);
                 if (action !== 'confirm') {
                     return;
                 }
-                API.selectAvatar({
-                    avatarId: id
-                }).then((args) => {
-                    this.$message({
-                        message: 'Avatar changed',
-                        type: 'success'
-                    });
-                    return args;
-                });
+                $app.selectAvatarWithoutConfirmation(id);
             }
+        });
+    };
+
+    $app.methods.selectAvatarWithoutConfirmation = function (id) {
+        if (API.currentUser.currentAvatar === id) {
+            this.$message({
+                message: 'Avatar already selected',
+                type: 'info'
+            });
+            return;
+        }
+        API.selectAvatar({
+            avatarId: id
+        }).then((args) => {
+            new Noty({
+                type: 'success',
+                text: 'Avatar changed via launch command'
+            }).show();
+            return args;
         });
     };
 
@@ -17361,6 +17397,25 @@ console.log(`isLinux: ${LINUX}`);
         D.visible = true;
     };
 
+    // Launch Command Settings handling
+
+    $app.methods.toggleLaunchCommandSetting = async function (configKey = '') {
+        switch (configKey) {
+            case 'VRCX_showConfirmationOnSwitchAvatar':
+                this.showConfirmationOnSwitchAvatar =
+                    !this.showConfirmationOnSwitchAvatar;
+                await configRepository.setBool(
+                    'VRCX_showConfirmationOnSwitchAvatar',
+                    this.showConfirmationOnSwitchAvatar
+                );
+                break;
+            default:
+                throw new Error(
+                    'toggleLaunchCommandSetting: Unknown configKey'
+                );
+        }
+    };
+
     // Asset Bundle Cacher
 
     $app.methods.updateVRChatWorldCache = function () {
@@ -18634,7 +18689,7 @@ console.log(`isLinux: ${LINUX}`);
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
 
             if (this.cropInstancePrints) {
-                if (!await AppApi.CropPrintImage(filePath)) {
+                if (!(await AppApi.CropPrintImage(filePath))) {
                     console.error('Failed to crop print image');
                 }
             }
@@ -19217,7 +19272,6 @@ console.log(`isLinux: ${LINUX}`);
                 this.externalNotifierVersion = data.version;
                 break;
             case 'LaunchCommand':
-                AppApi.FocusWindow();
                 this.eventLaunchCommand(data.command);
                 break;
             case 'VRCXLaunch':
@@ -19389,6 +19443,7 @@ console.log(`isLinux: ${LINUX}`);
         var args = input.split('/');
         var command = args[0];
         var commandArg = args[1];
+        var shouldFocusWindow = true;
         switch (command) {
             case 'world':
                 this.directAccessWorld(input.replace('world/', ''));
@@ -19414,6 +19469,16 @@ console.log(`isLinux: ${LINUX}`);
             case 'addavatardb':
                 this.addAvatarProvider(input.replace('addavatardb/', ''));
                 break;
+            case 'switchavatar':
+                if (this.showConfirmationOnSwitchAvatar) {
+                    this.selectAvatarWithConfirmation(commandArg);
+                    // Makes sure the window is focused
+                    shouldFocusWindow = true;
+                } else {
+                    this.selectAvatarWithoutConfirmation(commandArg);
+                    shouldFocusWindow = false;
+                }
+                break;
             case 'import':
                 var type = args[1];
                 if (!type) break;
@@ -19429,6 +19494,9 @@ console.log(`isLinux: ${LINUX}`);
                     this.friendImportDialog.input = data;
                 }
                 break;
+        }
+        if (shouldFocusWindow) {
+            AppApi.FocusWindow();
         }
     };
 
@@ -23392,14 +23460,15 @@ console.log(`isLinux: ${LINUX}`);
             if (friend.ref?.$location.isRealInstance) {
                 locationTag = friend.ref.$location.tag;
             } else if (this.lastLocation.friendList.has(friend.id)) {
-                let $location = $utils.parseLocation(this.lastLocation.location);
+                let $location = $utils.parseLocation(
+                    this.lastLocation.location
+                );
                 if ($location.isRealInstance) {
                     if ($location.tag === 'private') {
                         locationTag = this.lastLocation.name;
                     } else {
                         locationTag = $location.tag;
                     }
-                    
                 }
             }
             if (!locationTag) return;
