@@ -125,10 +125,6 @@
 
                 setTimeout(() => {
                     this.isLoading = false;
-                    this.echartsInstance.dispatchAction({
-                        type: 'highlight',
-                        seriesIndex: 3 //  对于 seriesLayoutBy: 'row'，seriesIndex 对应行索引
-                    });
                 }, 200);
             },
             handleClickYAxisLabel(params) {
