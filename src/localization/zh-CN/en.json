@@ -228,7 +228,7 @@
                 "refresh": "刷新",
                 "tips": {
                     "header": "提示",
-                    "online_time": "在线时间是指 VRCX 记录的，在当天的游戏时间",
+                    "online_time": "在线时长是指 VRCX 记录的，在当天的游戏时长",
                     "click_Y_axis": "点击Y轴标签可以查看其对应内容的详细信息",
                     "click_instance_name": "点击房间名称可以查看对应房间的记录",
                     "accuracy_notice": "这是来自本地数据库的数据，可能不准确"
