@@ -2,21 +2,12 @@
     <div class="simple-switch">
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}
-            <el-tooltip
-                v-if="tooltip"
-                placement="top"
-                class="tooltip"
-                :content="tooltip"
+            <el-tooltip v-if="tooltip" placement="top" class="tooltip" :content="tooltip"
                 ><i class="el-icon-info"
             /></el-tooltip>
         </div>
 
-        <el-switch
-            class="switch"
-            :value="value"
-            @change="change"
-            :disabled="disabled"
-        ></el-switch>
+        <el-switch class="switch" :value="value" @change="change" :disabled="disabled"></el-switch>
     </div>
 </template>
 
