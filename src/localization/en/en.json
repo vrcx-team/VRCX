@@ -229,8 +229,8 @@
                 "tips": {
                     "header": "Tips",
                     "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
-                    "click_Y_axis": "Click Y-axis label to open user/world dialog.",
-                    "click_instance_name": "Click instance name for previous instance info.",
+                    "click_Y_axis": "Click Y-axis label to navigate to the instance details or open User dialog.",
+                    "click_instance_name": "Click instance name to open Previous Instance Info dialog.",
                     "accuracy_notice": "Info from local database may not be accurate"
                 },
                 "settings": {

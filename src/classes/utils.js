@@ -1,3 +1,5 @@
+let echarts = null;
+
 export default {
     removeFromArray(array, item) {
         var { length } = array;
@@ -319,5 +321,15 @@ export default {
             return 0;
         });
         return node;
+    },
+    // lazy load echarts
+    loadEcharts() {
+        if (echarts) {
+            return Promise.resolve(echarts);
+        }
+        return import('echarts').then((module) => {
+            echarts = module;
+            return echarts;
+        });
     }
 };

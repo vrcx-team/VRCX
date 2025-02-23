@@ -2,10 +2,9 @@
     <div>
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
-                <span>Instance Activity</span>
+                <span>{{ $t('view.charts.instance_activity.header') }}</span>
                 <el-popover placement="bottom-start" trigger="hover" width="300">
                     <div class="tips-popover">
-                        <div>{{ $t('view.charts.instance_activity.tips.header') }}</div>
                         <div>{{ $t('view.charts.instance_activity.tips.online_time') }}</div>
                         <div>{{ $t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
                         <div>{{ $t('view.charts.instance_activity.tips.click_instance_name') }}</div>
@@ -15,7 +14,11 @@
                         </div>
                     </div>
 
-                    <i class="el-icon-info" slot="reference" style="margin-left: 5px; font-size: 12px"></i>
+                    <i
+                        class="el-icon-info"
+                        slot="reference"
+                        style="margin-left: 5px; font-size: 12px; opacity: 0.7"
+                    ></i>
                 </el-popover>
             </div>
 
@@ -31,7 +34,6 @@
                                 <div>
                                     <el-slider
                                         v-model.lazy="barWidth"
-                                        content="bar width"
                                         :max="50"
                                         :min="1"
                                         @change="changeBarWidth"
@@ -125,8 +127,6 @@
     import configRepository from '../../repository/config';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
-    let echarts = null;
-
     export default {
         name: 'InstanceActivity',
         components: {
@@ -143,6 +143,7 @@
         data() {
             return {
                 // echarts and observer
+                echarts: null,
                 echartsInstance: null,
                 resizeObserver: null,
                 intersectionObservers: [],
@@ -155,7 +156,7 @@
                 // options
                 isLoading: true,
                 // settings
-                barWidth: 30,
+                barWidth: 25,
                 isDetailVisible: true,
                 isSoloInstanceVisible: true,
                 isNoFriendInstanceVisible: true
@@ -239,7 +240,7 @@
                     });
                 }
             });
-            configRepository.getInt('VRCX_InstanceActivityBarWidth', 30).then((value) => {
+            configRepository.getInt('VRCX_InstanceActivityBarWidth', 25).then((value) => {
                 this.barWidth = value;
             });
             configRepository.getBool('VRCX_InstanceActivityDetailVisible', true).then((value) => {
@@ -248,7 +249,7 @@
             configRepository.getBool('VRCX_InstanceActivitySoloInstanceVisible', true).then((value) => {
                 this.isSoloInstanceVisible = value;
             });
-            configRepository.getBool('VRCX_InstanceActivityNoFriendInstaceVisible', true).then((value) => {
+            configRepository.getBool('VRCX_InstanceActivityNoFriendInstanceVisible', true).then((value) => {
                 this.isNoFriendInstanceVisible = value;
             });
         },
@@ -256,22 +257,20 @@
             try {
                 const [echartsModule] = await Promise.all([
                     // lazy load echarts
-                    // reduce the VRCX initial screen load times
-                    // TODO: export lazy load func to a single file
-                    import('echarts').catch((error) => {
+                    utils.loadEcharts().catch((error) => {
                         console.error('lazy load echarts failed', error);
                         return null;
                     }),
-                    this.getActivityData()
+                    this.getActivityData(),
+                    this.getAllDateOfActivity()
                 ]);
                 if (echartsModule) {
-                    echarts = echartsModule;
+                    this.echarts = echartsModule;
                 }
-                if (this.activityData.length && echarts) {
+                if (this.activityData.length && this.echarts) {
                     // activity data is ready, but world name data isn't ready
                     // so init echarts with empty data, reduce the render time of init screen
                     this.initEcharts(true);
-                    this.getAllDateOfActivity();
                     this.getWorldNameData();
                 } else {
                     this.isLoading = false;
@@ -292,7 +291,7 @@
                 const chartsHeight = this.activityData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityChartRef;
                 if (!this.echartsInstance) {
-                    this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
+                    this.echartsInstance = this.echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
                         height: chartsHeight
                     });
                     this.resizeObserver.observe(chartDom);
@@ -484,7 +483,7 @@
             },
             changeIsNoFriendInstanceVisible(value) {
                 this.isNoFriendInstanceVisible = value;
-                configRepository.setBool('VRCX_InstanceActivityNoFriendInstaceVisible', value).finally(() => {
+                configRepository.setBool('VRCX_InstanceActivityNoFriendInstanceVisible', value).finally(() => {
                     this.handleChangeSettings();
                 });
             },
@@ -510,7 +509,6 @@
                 if (idx !== -1) {
                     if (isNext) {
                         if (idx - 1 < this.allDateOfActivityArray.length) {
-                            console.log(this.selectedDate, this.allDateOfActivityArray[idx + 1]);
                             this.selectedDate = this.allDateOfActivityArray[idx - 1];
                             this.reloadData();
                         }
@@ -728,17 +726,19 @@
         }
     }
     .tips-popover {
-        :first-child {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        :not(:first-child) {
+        & > div {
             margin-bottom: 5px;
             font-size: 12px;
         }
-        i {
-            margin-right: 3px;
+        & > div:last-child {
+            @extend %flex;
+            margin-top: 10px;
+            i {
+                margin-right: 3px;
+            }
+        }
+        & .el-icon-warning-outline {
+            font-size: 12px;
         }
     }
     .settings {
@@ -754,7 +754,7 @@
         & > div:first-child {
             > div {
                 width: 160px;
-                padding-left: 15px;
+                padding-left: 20px;
             }
         }
     }
