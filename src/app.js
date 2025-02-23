@@ -1507,8 +1507,9 @@ console.log(`isLinux: ${LINUX}`);
             n: 50,
             offset: 0
         };
-        // API offset limit is 5000
-        mainLoop: for (var i = 100; i > -1; i--) {
+        // API offset limit *was* 5000
+        // it is now 7500
+        mainLoop: for (var i = 150; i > -1; i--) {
             retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
@@ -8282,9 +8283,22 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
         await configRepository.getString(
             'VRCX_avatarRemoteDatabaseProviderList',
-            '[ "https://avtr.just-h.party/vrcx_search.php" ]'
+            '[ "https://api.avtrdb.com/v2/avatar/search/vrcx", "https://avtr.just-h.party/vrcx_search.php" ]'
         )
     );
+    if (
+        $app.data.avatarRemoteDatabaseProviderList.length === 1 &&
+        $app.data.avatarRemoteDatabaseProviderList[0] ===
+            'https://avtr.just-h.party/vrcx_search.php'
+    ) {
+        $app.data.avatarRemoteDatabaseProviderList.unshift(
+            'https://api.avtrdb.com/v2/avatar/search/vrcx'
+        );
+        await configRepository.setString(
+            'VRCX_avatarRemoteDatabaseProviderList',
+            JSON.stringify($app.data.avatarRemoteDatabaseProviderList)
+        );
+    }
     $app.data.pendingOfflineDelay = 180000;
     if (await configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
@@ -12422,13 +12436,20 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.selectAvatarWithoutConfirmation = function (id) {
+        if (API.currentUser.currentAvatar === id) {
+            this.$message({
+                message: 'Avatar already selected',
+                type: 'info'
+            });
+            return;
+        }
         API.selectAvatar({
             avatarId: id
         }).then((args) => {
-            this.$message({
-                message: 'Avatar changed',
-                type: 'success'
-            });
+            new Noty({
+                type: 'success',
+                text: 'Avatar changed via launch command'
+            }).show();
             return args;
         });
     };

@@ -151,7 +151,7 @@
                 // data
                 activityData: [],
                 activityDetailData: [],
-                allDateOfActivity: null,
+                allDateOfActivity: new Set(),
                 worldNameArray: [],
                 // options
                 isLoading: true,
@@ -522,7 +522,7 @@
                 if (
                     time > Date.now() ||
                     this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1]
-                        .add('-1', 'day')
+                        ?.add('-1', 'day')
                         .isAfter(time, 'day') ||
                     !this.allDateOfActivity
                 ) {
@@ -685,6 +685,10 @@
 
             // intersection observer - start
             handleIntersectionObserver() {
+                if (!this.$refs.activityDetailChartRef) {
+                    console.error('handleIntersectionObserver failed');
+                    return;
+                }
                 this.$refs.activityDetailChartRef.forEach((child, index) => {
                     const observer = new IntersectionObserver(this.handleIntersection.bind(this, index));
                     observer.observe(child.$el);
@@ -692,6 +696,10 @@
                 });
             },
             handleIntersection(index, entries) {
+                if (!entries) {
+                    console.error('handleIntersection failed');
+                    return;
+                }
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         this.$refs.activityDetailChartRef[index].initEcharts();

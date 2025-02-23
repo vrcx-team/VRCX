@@ -352,7 +352,6 @@
                     "auto_invite_request_accept_favs": "All Favorites",
                     "auto_invite_request_accept_selected_favs": "VRCX Favorites"
                 },
-
                 "legal_notice": {
                     "header": "Legal Notice",
                     "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",
@@ -571,9 +570,11 @@
                         "dance_world_only": "Supported world only"
                     },
                     "launch_commands": {
-                        "header": "Launch Commands / Deeplinks",
+                        "header": "Launch Commands (Deep Links)",
+                        "docs": "Launch Command Docs",
                         "show_confirmation_on_switch_avatar_enable": "Show confirmation diaglog before switching avatars",
-                        "show_confirmation_on_switch_avatar_tooltip": "When disabled VRCX will not come to the front when switching avatars and ask for confirmation"
+                        "show_confirmation_on_switch_avatar_tooltip": "When disabled VRCX will not come to the front when switching avatars and ask for confirmation",
+                        "website_userscript": "VRC Website Userscript"
                     },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",
