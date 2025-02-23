@@ -20,8 +20,6 @@
     import dayjs from 'dayjs';
     import utils from '../../classes/utils';
 
-    let echarts = null;
-
     export default {
         name: 'InstanceActivityDetail',
         inject: ['API', 'showUserDialog'],
@@ -46,6 +44,7 @@
         },
         data() {
             return {
+                echarts: null,
                 isLoading: true,
                 echartsInstance: null,
                 usersFirstActivity: null,
@@ -100,14 +99,15 @@
 
         methods: {
             async initEcharts(isFirstLoad = false) {
-                // TODO: unnecessary import, import from individual js file
-                await import('echarts').then((echartsModule) => {
-                    echarts = echartsModule;
-                });
+                if (!this.echarts) {
+                    const module = await utils.loadEcharts();
+                    this.echarts = module;
+                }
+
                 const chartsHeight = this.activityDetailData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityDetailChart;
                 if (!this.echartsInstance) {
-                    this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
+                    this.echartsInstance = this.echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
                         height: chartsHeight,
                         useDirtyRect: this.activityDetailData.length > 80
                     });
@@ -149,15 +149,25 @@
                         uniqueUserEntries.push(entry);
                     }
                     const elements = userGroupedEntries.get(entry.user_id);
-                    const offset = Math.max(0, elements.length === 0 ? entry.joinTime.valueOf() - this.startTimeStamp : entry.joinTime.valueOf() - this.startTimeStamp - elements[elements.length - 1].tail);
-                    const tail = elements.length === 0 ? offset + entry.time : elements[elements.length - 1].tail + offset + entry.time;
-                    const element = { offset: offset, time: entry.time, tail: tail, entry: entry };
+                    const offset = Math.max(
+                        0,
+                        elements.length === 0
+                            ? entry.joinTime.valueOf() - this.startTimeStamp
+                            : entry.joinTime.valueOf() - this.startTimeStamp - elements[elements.length - 1].tail
+                    );
+                    const tail =
+                        elements.length === 0
+                            ? offset + entry.time
+                            : elements[elements.length - 1].tail + offset + entry.time;
+                    const element = { offset, time: entry.time, tail, entry };
                     elements.push(element);
                 }
                 this.usersFirstActivity = uniqueUserEntries;
 
                 const generateSeries = () => {
-                    const maxEntryCount = Math.max(...Array.from(userGroupedEntries.values()).map((entries) => entries.length));
+                    const maxEntryCount = Math.max(
+                        ...Array.from(userGroupedEntries.values()).map((entries) => entries.length)
+                    );
                     const placeholderSeries = (data) => {
                         return {
                             name: 'Placeholder',
@@ -173,7 +183,7 @@
                                     color: 'transparent'
                                 }
                             },
-                            data: data,
+                            data
                         };
                     };
                     const timeSeries = (data) => {
@@ -183,29 +193,38 @@
                             stack: 'Total',
                             colorBy: 'data',
                             barWidth: this.barWidth,
+                            emphasis: {
+                                focus: 'self'
+                            },
                             itemStyle: {
                                 borderRadius: 2,
                                 shadowBlur: 2,
                                 shadowOffsetX: 0.7,
                                 shadowOffsetY: 0.5
                             },
-                            data: data,
+                            data
                         };
                     };
 
                     // generate series having placeholder and time series for each user
-                    const series = Array(maxEntryCount).fill(0).flatMap((_, index) => {
-                        return [
-                            placeholderSeries(uniqueUserEntries.map((entry) => {
-                                const element = userGroupedEntries.get(entry.user_id)[index];
-                                return element ? element.offset : 0;
-                            })),
-                            timeSeries(uniqueUserEntries.map((entry) => {
-                                const element = userGroupedEntries.get(entry.user_id)[index];
-                                return element ? element.time : 0;
-                            }))
-                        ];
-                    });
+                    const series = Array(maxEntryCount)
+                        .fill(0)
+                        .flatMap((_, index) => {
+                            return [
+                                placeholderSeries(
+                                    uniqueUserEntries.map((entry) => {
+                                        const element = userGroupedEntries.get(entry.user_id)[index];
+                                        return element ? element.offset : 0;
+                                    })
+                                ),
+                                timeSeries(
+                                    uniqueUserEntries.map((entry) => {
+                                        const element = userGroupedEntries.get(entry.user_id)[index];
+                                        return element ? element.time : 0;
+                                    })
+                                )
+                            ];
+                        });
 
                     return series;
                 };

@@ -221,16 +221,16 @@
         "charts": {
             "header": "图表",
             "instance_activity": {
-                "header": "Instance Activity",
+                "header": "活动记录",
                 "online_time": "在线时长",
                 "previous_day": "前一天",
                 "next_day": "后一天",
                 "refresh": "刷新",
                 "tips": {
                     "header": "提示",
-                    "online_time": "在线时间是指VRCX记录地当天的游戏时间。",
-                    "click_Y_axis": "点击Y轴标签打开“玩家“、“世界“对话框。",
-                    "click_instance_name": "点击房间名称查看上个“曾加入的房间信息“对话框。",
+                    "online_time": "在线时间是指VRCX记录的当天的游戏时间。",
+                    "click_Y_axis": "点击Y轴标签打开“玩家”、“世界”对话框。",
+                    "click_instance_name": "点击房间名称打开“曾加入的房间信息”对话框。",
                     "accuracy_notice": "本地数据库的数据可能不准确。"
                 },
                 "settings": {
