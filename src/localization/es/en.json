@@ -74,7 +74,9 @@
             "search_placeholder": "Buscar",
             "clear_results_tooltip": "Borrar Resultados de Búsqueda",
             "user": {
-                "header": "Usuario"
+                "header": "Usuario",
+                "search_by_bio": "Buscar por biografía",
+                "sort_by_last_logged_in": "Ordenar por último inicio de sesión"
             },
             "world": {
                 "header": "Mundo",
@@ -229,8 +231,8 @@
                 "tips": {
                     "header": "Consejos",
                     "online_time": "El tiempo en línea se refiere al tiempo de juego registrado por VRCX para el día actual.",
-                    "click_Y_axis": "Haz clic en la etiqueta del eje Y para abrir el diálogo de usuario/mundo.",
-                    "click_instance_name": "Haz clic en el nombre de la instancia para obtener información de instancias anteriores.",
+                    "click_Y_axis": "Haz clic en la etiqueta del eje Y para navegar a los detalles de la instancia o abrir el diálogo de Usuario.",
+                    "click_instance_name": "Haz clic en el nombre de la instancia para abrir el diálogo de Información de Instancia Anterior.",
                     "accuracy_notice": "La información de la base de datos local puede no ser precisa"
                 },
                 "settings": {
@@ -566,6 +568,13 @@
                         "enable": "Habilitar",
                         "enable_tooltip": "Requiere que la superposición de SteamVR esté habilitada",
                         "dance_world_only": "Solo mundo compatible"
+                    },
+                    "launch_commands": {
+                        "header": "Comandos de Lanzamiento (Enlaces Profundos)",
+                        "docs": "Documentación de Comandos de Lanzamiento",
+                        "show_confirmation_on_switch_avatar_enable": "Mostrar diálogo de confirmación antes de cambiar avatares",
+                        "show_confirmation_on_switch_avatar_tooltip": "Cuando está deshabilitado, VRCX no se pondrá al frente al cambiar avatares y no pedirá confirmación",
+                        "website_userscript": "Userscript del Sitio Web de VRC"
                     },
                     "screenshot_helper": {
                         "header": "Asistente de Captura de Pantalla",
