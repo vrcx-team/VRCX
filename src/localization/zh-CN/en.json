@@ -1839,7 +1839,7 @@
         },
         "proxy_settings": {
             "header": "代理服务器设置",
-            "description": "输入代理地址和端口 (HTTP)",
+            "description": "输入代理地址和端口 (Socks)",
             "placeholder": "127.0.0.1:8080",
             "close": "关闭",
             "restart": "保存并重启"
