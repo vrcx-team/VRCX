@@ -48,6 +48,7 @@
             return {
                 isLoading: true,
                 echartsInstance: null,
+                usersFirstActivity: null,
                 resizeObserver: null
             };
         },
@@ -125,19 +126,90 @@
 
                 setTimeout(() => {
                     this.isLoading = false;
-                    this.echartsInstance.dispatchAction({
-                        type: 'highlight',
-                        seriesIndex: 3 //  对于 seriesLayoutBy: 'row'，seriesIndex 对应行索引
-                    });
                 }, 200);
             },
             handleClickYAxisLabel(params) {
-                const userData = this.activityDetailData[params.dataIndex];
+                const userData = this.usersFirstActivity[params.dataIndex];
                 if (userData?.user_id) {
                     this.showUserDialog(userData.user_id);
                 }
             },
             getNewOption() {
+                // grouping player activity entries by user_id and calculate below:
+                // 1. offset: the time from startTimeStamp or the previous entry's tail to the current entry's joinTime
+                // 2. time: the time the user spent in the instance
+                // 3. tail: the time from startTimeStamp to the current entry's leaveTime
+                // 4. entry: the original activity detail entry
+                const userGroupedEntries = new Map();
+                // uniqueUserEntries has each user's first entry and used to keep the order of the users calculated in InstanceActivity.vue
+                const uniqueUserEntries = [];
+                for (const entry of this.activityDetailData) {
+                    if (!userGroupedEntries.has(entry.user_id)) {
+                        userGroupedEntries.set(entry.user_id, []);
+                        uniqueUserEntries.push(entry);
+                    }
+                    const elements = userGroupedEntries.get(entry.user_id);
+                    const offset = Math.max(0, elements.length === 0 ? entry.joinTime.valueOf() - this.startTimeStamp : entry.joinTime.valueOf() - this.startTimeStamp - elements[elements.length - 1].tail);
+                    const tail = elements.length === 0 ? offset + entry.time : elements[elements.length - 1].tail + offset + entry.time;
+                    const element = { offset: offset, time: entry.time, tail: tail, entry: entry };
+                    elements.push(element);
+                }
+                this.usersFirstActivity = uniqueUserEntries;
+
+                const generateSeries = () => {
+                    const maxEntryCount = Math.max(...Array.from(userGroupedEntries.values()).map((entries) => entries.length));
+                    const placeholderSeries = (data) => {
+                        return {
+                            name: 'Placeholder',
+                            type: 'bar',
+                            stack: 'Total',
+                            itemStyle: {
+                                borderColor: 'transparent',
+                                color: 'transparent'
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    borderColor: 'transparent',
+                                    color: 'transparent'
+                                }
+                            },
+                            data: data,
+                        };
+                    };
+                    const timeSeries = (data) => {
+                        return {
+                            name: 'Time',
+                            type: 'bar',
+                            stack: 'Total',
+                            colorBy: 'data',
+                            barWidth: this.barWidth,
+                            itemStyle: {
+                                borderRadius: 2,
+                                shadowBlur: 2,
+                                shadowOffsetX: 0.7,
+                                shadowOffsetY: 0.5
+                            },
+                            data: data,
+                        };
+                    };
+
+                    // generate series having placeholder and time series for each user
+                    const series = Array(maxEntryCount).fill(0).flatMap((_, index) => {
+                        return [
+                            placeholderSeries(uniqueUserEntries.map((entry) => {
+                                const element = userGroupedEntries.get(entry.user_id)[index];
+                                return element ? element.offset : 0;
+                            })),
+                            timeSeries(uniqueUserEntries.map((entry) => {
+                                const element = userGroupedEntries.get(entry.user_id)[index];
+                                return element ? element.time : 0;
+                            }))
+                        ];
+                    });
+
+                    return series;
+                };
+
                 const friendOrFavIcon = (display_name) => {
                     const foundItem = this.activityDetailData.find((item) => item.display_name === display_name);
 
@@ -156,13 +228,20 @@
 
                 const getTooltip = (params) => {
                     const activityDetailData = this.activityDetailData;
-                    const param = params[1];
+                    const param = params;
+                    const userData = uniqueUserEntries[param.dataIndex];
+                    const isTimeSeries = params.seriesIndex % 2 === 1;
+                    if (!isTimeSeries) {
+                        return '';
+                    }
+                    const targetEntryIndex = Math.floor(params.seriesIndex / 2);
 
-                    if (!activityDetailData || !activityDetailData[param.dataIndex]) {
+                    if (!activityDetailData || !userData) {
                         return '';
                     }
 
-                    const instanceData = activityDetailData[param.dataIndex];
+                    // first, find the user's entries, then get the focused entry
+                    const instanceData = userGroupedEntries.get(userData.user_id)[targetEntryIndex].entry;
 
                     const format = this.dtHour12 ? 'hh:mm:ss A' : 'HH:mm:ss';
                     const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
@@ -187,7 +266,7 @@
 
                 const echartsOption = {
                     tooltip: {
-                        trigger: 'axis',
+                        trigger: 'item',
                         axisPointer: {
                             type: 'shadow'
                         },
@@ -209,7 +288,7 @@
                             }
                         },
                         inverse: true,
-                        data: this.activityDetailData.map((item) => item.display_name),
+                        data: uniqueUserEntries.map((item) => item.display_name),
                         triggerEvent: true
                     },
                     xAxis: {
@@ -222,41 +301,7 @@
                         },
                         splitLine: { lineStyle: { type: 'dashed' } }
                     },
-                    series: [
-                        {
-                            name: 'Placeholder',
-                            type: 'bar',
-                            stack: 'Total',
-                            itemStyle: {
-                                borderColor: 'transparent',
-                                color: 'transparent'
-                            },
-                            emphasis: {
-                                itemStyle: {
-                                    borderColor: 'transparent',
-                                    color: 'transparent'
-                                }
-                            },
-                            data: this.activityDetailData.map((item) => item.joinTime.valueOf() - this.startTimeStamp)
-                        },
-                        {
-                            name: 'Time',
-                            type: 'bar',
-                            stack: 'Total',
-                            colorBy: 'data',
-                            barWidth: this.barWidth,
-                            emphasis: {
-                                focus: 'self'
-                            },
-                            itemStyle: {
-                                borderRadius: 2,
-                                shadowBlur: 2,
-                                shadowOffsetX: 0.7,
-                                shadowOffsetY: 0.5
-                            },
-                            data: this.activityDetailData.map((item) => item.time)
-                        }
-                    ],
+                    series: generateSeries(),
                     backgroundColor: 'rgba(0, 0, 0, 0)'
                 };
 
