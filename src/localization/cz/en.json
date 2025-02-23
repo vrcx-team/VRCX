@@ -710,8 +710,8 @@
             "avatars": {
                 "header": "Avatars",
                 "total_count": "Total {count}",
-                "sort_by_name": "Sort by name",
-                "sort_by_update": "Sort by update",
+                "sort_by_name": "Name",
+                "sort_by_update": "Updated",
                 "all": "All",
                 "public": "Public",
                 "private": "Private"

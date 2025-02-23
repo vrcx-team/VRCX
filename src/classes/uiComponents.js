@@ -12,9 +12,10 @@ export default class extends baseClass {
 
         Vue.component('launch', {
             template:
-                '<el-button @click="confirm" size="mini" icon="el-icon-info" circle></el-button>',
+                '<el-tooltip placement="top" :content="$t(`dialog.user.info.launch_invite_tooltip`)" :disabled="hideTooltips"><el-button @click="confirm" size="mini" icon="el-icon-switch-button" circle></el-button></el-tooltip>',
             props: {
-                location: String
+                location: String,
+                hideTooltips: Boolean
             },
             methods: {
                 parse() {
@@ -25,7 +26,7 @@ export default class extends baseClass {
                         : 'none';
                 },
                 confirm() {
-                    API.$emit('SHOW_LAUNCH_DIALOG', this.location);
+                    this.$emit('show-launch-dialog', this.location);
                 }
             },
             watch: {
@@ -279,8 +280,8 @@ export default class extends baseClass {
                     }
                 },
                 showLaunchDialog() {
-                    API.$emit(
-                        'SHOW_LAUNCH_DIALOG',
+                    this.$emit(
+                        'show-launch-dialog',
                         this.location,
                         this.shortName
                     );
@@ -308,12 +309,12 @@ export default class extends baseClass {
 
         Vue.component('last-join', {
             template:
-                '<span>' +
-                '<el-tooltip placement="top" style="margin-left:5px" v-if="lastJoin">' +
+                '<span v-if="lastJoin">' +
+                '<el-tooltip placement="top" style="margin-left:5px" >' +
                 '<div slot="content">' +
                 '<span>{{ $t("dialog.user.info.last_join") }} <timer :epoch="lastJoin"></timer></span>' +
                 '</div>' +
-                '<i v-if="lastJoin" class="el-icon el-icon-location-outline" style="display:inline-block"></i>' +
+                '<i class="el-icon el-icon-location-outline" style="display:inline-block"></i>' +
                 '</el-tooltip>' +
                 '</span>',
             props: {

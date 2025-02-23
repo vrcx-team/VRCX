@@ -470,7 +470,7 @@ mixin groupDialog
                                                             span(:key='pIndex') {{ permission }}
                                                             br
                                                     span {{ role.name }}{{ rIndex < groupDialog.memberRoles.length - 1 ? ', ' : '' }}
-                el-tab-pane(:label='$t("dialog.group.posts.header")')
+                el-tab-pane(:label='$t("dialog.group.posts.header")' lazy)
                     template(v-if='groupDialog.visible')
                         span(style='margin-right: 10px') {{ $t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}
                         el-input(
@@ -544,7 +544,7 @@ mixin groupDialog
                                                     size='mini'
                                                     style='margin-left: 5px'
                                                     @click='confirmDeleteGroupPost(post)')
-                el-tab-pane(:label='$t("dialog.group.members.header")')
+                el-tab-pane(:label='$t("dialog.group.members.header")' lazy)
                     template(v-if='groupDialog.visible')
                         span(
                             v-if='hasGroupPermission(groupDialog.ref, "group-members-viewall")'
@@ -704,7 +704,7 @@ mixin groupDialog
                                 @click='loadMoreGroupMembers')
                                 .detail(v-if='!isGroupMembersLoading')
                                     span.name {{ $t('dialog.group.members.load_more') }}
-                el-tab-pane(:label='$t("dialog.group.gallery.header")')
+                el-tab-pane(:label='$t("dialog.group.gallery.header")' lazy)
                     el-button(
                         type='default'
                         size='mini'
@@ -737,7 +737,7 @@ mixin groupDialog
                                                 v-lazy='image.imageUrl'
                                                 style='height: 700px'
                                                 @click='showFullscreenImageDialog(image.imageUrl)')
-                el-tab-pane(:label='$t("dialog.group.json.header")')
+                el-tab-pane(:label='$t("dialog.group.json.header")' lazy)
                     el-button(
                         type='default'
                         @click='refreshGroupDialogTreeData()'

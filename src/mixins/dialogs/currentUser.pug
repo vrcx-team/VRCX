@@ -52,10 +52,8 @@ mixin currentUser
         :title='$t("dialog.language.header")'
         width='400px')
         div(v-loading='languageDialog.loading')
-            div(style='margin: 5px 0')
+            div(style='margin: 6px 0' v-for='item in API.currentUser.$languages' :key='item.key')
                 el-tag(
-                    v-for='item in API.currentUser.$languages'
-                    :key='item.key'
                     size='small'
                     type='info'
                     effect='plain'
@@ -63,26 +61,20 @@ mixin currentUser
                     @close='removeUserLanguage(item.key)'
                     style='margin-right: 5px')
                     span.flags(:class='languageClass(item.key)' style='display: inline-block; margin-right: 5px')
-                    | {{ item.value }} ({{ item.key }})
-            div(v-if='languageDialog.languageChoice === true')
-                el-select(
-                    v-model='languageDialog.languageValue'
-                    :placeholder='$t("dialog.language.select_language")'
-                    size='mini')
-                    el-option(
-                        v-for='item in languageDialog.languages'
-                        :key='item.key'
-                        :value='item.key'
-                        :label='item.value')
-                        span.flags(:class='languageClass(item.key)' style='display: inline-block; margin-right: 5px')
-                        | {{ item.value }} ({{ item.key }})
-                el-button(
-                    @click='languageDialog.languageChoice = false; addUserLanguage(languageDialog.languageValue)'
-                    size='mini') {{ $t('dialog.language.ok') }}
-                el-button(@click='languageDialog.languageChoice = false' size='mini' style='margin-left: 0') {{ $t('dialog.language.cancel') }}
-            div(v-else)
-                el-button(@click='languageDialog.languageValue = ""; languageDialog.languageChoice = true' size='mini') {{ $t('dialog.language.add_language') }}
-
+                    | {{ item.value }} ({{ item.key.toUpperCase() }})
+            el-select(
+                value=''
+                :disabled='languageDialog.loading || (API.currentUser.$languages && API.currentUser.$languages.length === 3)'
+                :placeholder='$t("dialog.language.select_language")'
+                @change='addUserLanguage'
+                style='margin-top: 14px')
+                el-option(
+                    v-for='item in languageDialog.languages'
+                    :key='item.key'
+                    :value='item.key'
+                    :label='item.value')
+                    span.flags(:class='languageClass(item.key)' style='display: inline-block; margin-right: 5px')
+                    | {{ item.value }} ({{ item.key.toUpperCase() }})
     //- dialog: bio
     el-dialog.x-dialog(
         :before-close='beforeDialogClose'
@@ -311,7 +303,7 @@ mixin currentUser
                     .vrcplus-icon(
                         v-if='image.versions[image.versions.length - 1].file.url'
                         style='overflow: hidden'
-                        @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))') 
+                        @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url, getEmojiFileName(image))')
                         template(v-if='image.frames')
                             .avatar(
                                 :style='generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)')
@@ -365,7 +357,7 @@ mixin currentUser
                     .vrcplus-icon(
                         v-if='image.versions[image.versions.length - 1].file.url'
                         style='overflow: hidden'
-                        @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)') 
+                        @click='showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)')
                         img.avatar(v-lazy='image.versions[image.versions.length - 1].file.url')
                     div(style='float: right; margin-top: 5px')
                         el-button(
@@ -413,7 +405,7 @@ mixin currentUser
                     style='display: inline-block; margin-top: 10px; width: unset; cursor: default')
                     .vrcplus-icon(
                         style='overflow: hidden'
-                        @click='showFullscreenImageDialog(image.files.image, getPrintFileName(image))') 
+                        @click='showFullscreenImageDialog(image.files.image, getPrintFileName(image))')
                         img.avatar(v-lazy='image.files.image')
                     div(style='margin-top: 5px; width: 208px')
                         span.x-ellipsis(v-if='image.note' v-text='image.note' style='display: block')
