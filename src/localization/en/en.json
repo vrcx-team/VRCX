@@ -74,7 +74,9 @@
             "search_placeholder": "Search",
             "clear_results_tooltip": "Clear Search Results",
             "user": {
-                "header": "User"
+                "header": "User",
+                "search_by_bio": "Search by bio",
+                "sort_by_last_logged_in": "Sort by last logged in"
             },
             "world": {
                 "header": "World",

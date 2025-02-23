@@ -15,6 +15,8 @@ mixin searchTab
                     style='flex: none; margin-left: 10px')
         el-tabs(ref='searchTab' type='card' style='margin-top: 15px' @tab-click='searchText = ""')
             el-tab-pane(:label='$t("view.search.user.header")' v-loading='isSearchUserLoading' style='min-height: 60px')
+                el-checkbox(v-model='searchUserByBio' style='margin-left: 10px') {{ $t('view.search.user.search_by_bio') }}
+                el-checkbox(v-model='searchUserSortByLastLoggedIn' style='margin-left: 10px') {{ $t('view.search.user.sort_by_last_logged_in') }}
                 .x-friend-list(style='min-height: 500px')
                     .x-friend-item(v-for='user in searchUserResults' :key='user.id' @click='showUserDialog(user.id)')
                         template
