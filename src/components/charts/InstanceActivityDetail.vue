@@ -48,6 +48,7 @@
             return {
                 isLoading: true,
                 echartsInstance: null,
+                usersFirstActivity: null,
                 resizeObserver: null
             };
         },
@@ -128,7 +129,7 @@
                 }, 200);
             },
             handleClickYAxisLabel(params) {
-                const userData = this.activityDetailData[params.dataIndex];
+                const userData = this.usersFirstActivity[params.dataIndex];
                 if (userData?.user_id) {
                     this.showUserDialog(userData.user_id);
                 }
@@ -153,6 +154,7 @@
                     const element = { offset: offset, time: entry.time, tail: tail, entry: entry };
                     elements.push(element);
                 }
+                this.usersFirstActivity = uniqueUserEntries;
 
                 const generateSeries = () => {
                     const maxEntryCount = Math.max(...Array.from(userGroupedEntries.values()).map((entries) => entries.length));
@@ -227,18 +229,19 @@
                 const getTooltip = (params) => {
                     const activityDetailData = this.activityDetailData;
                     const param = params;
+                    const userData = uniqueUserEntries[param.dataIndex];
                     const isTimeSeries = params.seriesIndex % 2 === 1;
                     if (!isTimeSeries) {
                         return '';
                     }
                     const targetEntryIndex = Math.floor(params.seriesIndex / 2);
 
-                    if (!activityDetailData || !activityDetailData[param.dataIndex]) {
+                    if (!activityDetailData || !userData) {
                         return '';
                     }
 
                     // first, find the user's entries, then get the focused entry
-                    const instanceData = userGroupedEntries.get(activityDetailData[param.dataIndex].user_id)[targetEntryIndex].entry;
+                    const instanceData = userGroupedEntries.get(userData.user_id)[targetEntryIndex].entry;
 
                     const format = this.dtHour12 ? 'hh:mm:ss A' : 'HH:mm:ss';
                     const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
