@@ -782,13 +782,13 @@
                 "instance_closed": "cerrado",
                 "instance_hard_closed": "cerrado completamente",
                 "close_instance": "Cerrar Instancia",
-                "instance_age_gated": "restringido por edad"
+                "instance_age_gated": "restringido por edad",
+                "open_previous_instance": "Abrir Instancia Anterior"
             },
             "groups": {
                 "header": "Grupos",
                 "total_count": "Total {count}",
-                "sort_by": "Ordenar por:",
-                "edit_mode": "Modo de Edición",
+                "sort_by": "Ordenar por:""edit_mode": "Modo de Edición",
                 "exit_edit_mode": "Salir del Modo de Edición",
                 "hold_shift": "Mantén shift para salir sin confirmación",
                 "own_groups": "Grupos Propios",
@@ -824,11 +824,13 @@
             "avatars": {
                 "header": "Avatares",
                 "total_count": "Total {count}",
-                "sort_by_name": "Ordenar por nombre",
-                "sort_by_update": "Ordenar por actualización",
+                "sort_by": "Ordenar por:",
+                "sort_by_name": "Nombre",
+                "sort_by_update": "Actualizado",
                 "all": "Todos",
                 "public": "Público",
-                "private": "Privado"
+                "private": "Privado",
+                "group_by": "Agrupar por:"
             },
             "json": {
                 "header": "JSON"
@@ -942,6 +944,7 @@
                 "favorite_tooltip": "Favoritos",
                 "unfavorite_tooltip": "Eliminar de favoritos",
                 "refresh": "Actualizar",
+                "share": "Compartir",
                 "select": "Seleccionar Avatar",
                 "select_fallback": "Seleccionar Avatar de Respaldo",
                 "block": "Bloquear Avatar",
