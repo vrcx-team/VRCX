@@ -1,6 +1,6 @@
 mixin friendsListTab
     .x-container(v-show='$refs.menu && $refs.menu.activeIndex === "friendsList"')
-        .options-container(style='margin-top: 0')
+        div(style='padding: 0px 10px 0px 10px')
             span.header {{ $t('view.friend_list.header') }}
             div(style='float: right; font-size: 13px')
                 div(v-if='friendsListBulkUnfriendMode' style='display: inline-block; margin-right: 10px')

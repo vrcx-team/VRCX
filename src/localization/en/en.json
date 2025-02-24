@@ -945,6 +945,7 @@
                 "favorite_tooltip": "Favorites",
                 "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Refresh",
+                "share": "Share",
                 "select": "Select Avatar",
                 "select_fallback": "Select Fallback Avatar",
                 "block": "Block Avatar",

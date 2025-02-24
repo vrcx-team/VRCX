@@ -12364,6 +12364,18 @@ console.log(`isLinux: ${LINUX}`);
         });
     };
 
+    $app.methods.selectAvatar = function (id) {
+        API.selectAvatar({
+            avatarId: id
+        }).then((args) => {
+            this.$message({
+                message: 'Avatar changed',
+                type: 'success'
+            });
+            return args;
+        });
+    };
+
     $app.methods.selectAvatarWithConfirmation = function (id) {
         this.$confirm(`Continue? Select Avatar`, 'Confirm', {
             confirmButtonText: 'Confirm',
@@ -12406,6 +12418,9 @@ console.log(`isLinux: ${LINUX}`);
             case 'Refresh':
                 this.showAvatarDialog(D.id);
                 break;
+            case 'Share':
+                this.copyAvatarUrl(D.id);
+                break;
             case 'Rename':
                 this.promptRenameAvatar(D);
                 break;
@@ -12444,17 +12459,6 @@ console.log(`isLinux: ${LINUX}`);
                             case 'Delete Favorite':
                                 API.deleteFavorite({
                                     objectId: D.id
-                                });
-                                break;
-                            case 'Select Avatar':
-                                API.selectAvatar({
-                                    avatarId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Avatar changed',
-                                        type: 'success'
-                                    });
-                                    return args;
                                 });
                                 break;
                             case 'Select Fallback Avatar':
