@@ -821,8 +821,10 @@
             "avatars": {
                 "header": "创建的模型",
                 "total_count": "总共 {count} 个",
-                "sort_by_name": "按名称排序",
-                "sort_by_update": "按更新时间排序",
+                "sort_by": "排序方式：",
+                "sort_by_name": "名称",
+                "sort_by_update": "更新时间",
+                "group_by": "分组方式：",
                 "all": "所有",
                 "public": "公开",
                 "private": "私人"

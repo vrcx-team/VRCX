@@ -48,15 +48,7 @@ module.exports = {
             },
             {
                 test: /\.pug$/,
-                oneOf: [
-                    {
-                        resourceQuery: /^\?vue/,
-                        use: 'pug-plain-loader'
-                    },
-                    {
-                        use: ['raw-loader', 'pug-plain-loader']
-                    }
-                ]
+                use: [{ loader: 'raw-loader' }, { loader: 'pug-plain-loader' }]
             },
             {
                 test: /\.s?css$/,
@@ -72,9 +64,9 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.css', '.js', '.scss'],
+        extensions: ['.js', '.css', '.scss'],
         alias: {
-            vue: 'vue/dist/vue.common.js'
+            vue: 'vue/dist/vue.esm.js'
         }
     },
     performance: {

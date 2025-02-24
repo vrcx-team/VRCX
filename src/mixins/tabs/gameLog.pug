@@ -103,10 +103,13 @@ mixin gameLogTab
                             icon='el-icon-delete'
                             size='mini'
                             @click='deleteGameLogEntryPrompt(scope.row)')
-                    el-tooltip(placement='top' content='Open Instance Info' :disabled='hideTooltips')
+                    el-tooltip(
+                        placement='top'
+                        :content='$t("dialog.previous_instances.info")'
+                        :disabled='hideTooltips')
                         el-button(
                             v-if='scope.row.type === "Location"'
                             type='text'
-                            icon='el-icon-tickets'
+                            icon='el-icon-s-data'
                             size='mini'
                             @click='showPreviousInstanceInfoDialog(scope.row.location)')

@@ -108,7 +108,6 @@ export default class extends baseClass {
             visible: false,
             loading: false,
             languageChoice: false,
-            languageValue: '',
             languages: []
         }
     };

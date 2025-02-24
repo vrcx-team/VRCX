@@ -25,14 +25,11 @@ namespace VRCX
         private const string SubProcessTypeArgument = "--type";
         public static VrcxLaunchArguments LaunchArguments = new();
 
-        public static void ArgsCheck()
+        public static void ArgsCheck(string[] args)
         {
-            var args = Environment.GetCommandLineArgs();
-
             Debug.Assert(Program.LaunchDebug = true);
 
-            var currentProcessArgs = ParseArgs(args);
-            LaunchArguments = currentProcessArgs;
+            LaunchArguments = ParseArgs(args);
 
             if (LaunchArguments.IsDebug)
                 Program.LaunchDebug = true;

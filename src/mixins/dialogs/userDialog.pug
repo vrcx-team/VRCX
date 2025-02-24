@@ -331,11 +331,7 @@ mixin userDialog
                             style='display: flex; flex-direction: column; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #e4e7ed14')
                             div(style='flex: none')
                                 template(v-if='isRealInstance(userDialog.$location.tag)')
-                                    el-tooltip(
-                                        placement='top'
-                                        :content='$t("dialog.user.info.launch_invite_tooltip")'
-                                        :disabled='hideTooltips')
-                                        launch(:location='userDialog.$location.tag')
+                                    launch(:location='userDialog.$location.tag' @show-launch-dialog='showLaunchDialog')
                                     el-tooltip(
                                         placement='top'
                                         :content='$t("dialog.user.info.self_invite_tooltip")'
@@ -509,17 +505,21 @@ mixin userDialog
                                             :content='$t("dialog.user.info.accuracy_notice")')
                                             i.el-icon-warning
                                     span.extra {{ userDialog.lastSeen | formatDate('long') }}
-                            .x-friend-item(@click='showPreviousInstancesUserDialog(userDialog.ref)')
-                                .detail
-                                    span.name {{ $t('dialog.user.info.join_count') }}
-                                        el-tooltip(
-                                            v-if='!hideTooltips'
-                                            placement='top'
-                                            style='margin-left: 5px'
-                                            :content='$t("dialog.user.info.accuracy_notice")')
-                                            i.el-icon-warning
-                                    span.extra(v-if='userDialog.joinCount === 0') -
-                                    span.extra(v-else v-text='userDialog.joinCount')
+                            el-tooltip(
+                                :disabled='hideTooltips'
+                                placement='top'
+                                :content='$t("dialog.user.info.open_previouse_instance")')
+                                .x-friend-item(@click='showPreviousInstancesUserDialog(userDialog.ref)')
+                                    .detail
+                                        span.name {{ $t('dialog.user.info.join_count') }}
+                                            el-tooltip(
+                                                v-if='!hideTooltips'
+                                                placement='top'
+                                                style='margin-left: 5px'
+                                                :content='$t("dialog.user.info.accuracy_notice")')
+                                                i.el-icon-warning
+                                        span.extra(v-if='userDialog.joinCount === 0') -
+                                        span.extra(v-else v-text='userDialog.joinCount')
                             .x-friend-item(style='cursor: default')
                                 .detail
                                     span.name {{ $t('dialog.user.info.time_together') }}
@@ -532,6 +532,10 @@ mixin userDialog
                                     span.extra(v-if='userDialog.timeSpent === 0') -
                                     span.extra(v-else) {{ timeToText(userDialog.timeSpent) }}
                         template(v-else)
+                        el-tooltip(
+                            :disabled='hideTooltips || API.currentUser.id !== userDialog.id'
+                            placement='top'
+                            :content='$t("dialog.user.info.open_previouse_instance")')
                             .x-friend-item(@click='showPreviousInstancesUserDialog(userDialog.ref)')
                                 .detail
                                     span.name {{ $t('dialog.user.info.play_time') }}
@@ -544,7 +548,7 @@ mixin userDialog
                                     span.extra(v-if='userDialog.timeSpent === 0') -
                                     span.extra(v-else) {{ timeToText(userDialog.timeSpent) }}
                         .x-friend-item(style='cursor: default')
-                            el-tooltip(placement='top')
+                            el-tooltip(:placement='API.currentUser.id !== userDialog.id ? "bottom" : "top"')
                                 template(#content)
                                     span {{ userOnlineForTimestamp(userDialog) | formatDate('short') }}
                                 .detail
@@ -564,7 +568,7 @@ mixin userDialog
                                             i.el-icon-warning
                                     span.extra {{ userOnlineFor(userDialog) }}
                         .x-friend-item(style='cursor: default')
-                            el-tooltip(placement='top')
+                            el-tooltip(:placement='API.currentUser.id !== userDialog.id ? "bottom" : "top"')
                                 template(#content)
                                     span {{ $t('dialog.user.info.last_login') }} {{ userDialog.ref.last_login | formatDate('short') }}
                                 .detail
@@ -575,13 +579,11 @@ mixin userDialog
                                 span.name {{ $t('dialog.user.info.date_joined') }}
                                 span.extra(v-text='userDialog.ref.date_joined')
                         .x-friend-item(v-if='API.currentUser.id !== userDialog.id' style='cursor: default')
-                            el-tooltip(placement='top')
+                            el-tooltip(placement='top' :disabled='!userDialog.dateFriendedInfo.length')
                                 template(#content v-if='userDialog.dateFriendedInfo.length')
                                     template(v-for='ref in userDialog.dateFriendedInfo')
                                         span {{ ref.type }}: {{ ref.created_at | formatDate('long') }}
                                         br
-                                template(#content v-else)
-                                    span -
                                 .detail
                                     span.name(v-if='userDialog.unFriended') {{ $t('dialog.user.info.unfriended') }}
                                         el-tooltip(
@@ -912,26 +914,30 @@ mixin userDialog
                                 span.extra(v-if='world.occupants') ({{ world.occupants }})
                 el-tab-pane(:label='$t("dialog.user.favorite_worlds.header")' lazy)
                     el-button(
+                        v-if='userFavoriteWorlds && userFavoriteWorlds.length > 0'
                         type='default'
                         :loading='userDialog.isFavoriteWorldsLoading'
                         @click='getUserFavoriteWorlds(userDialog.id)'
-                        size='mini'
+                        size='small'
                         icon='el-icon-refresh'
-                        circle)
+                        circle
+                        style='position: absolute; right: 15px; bottom: 15px; z-index: 99')
                     el-tabs.zero-margin-tabs(
                         type='card'
+                        stretch
                         ref='favoriteWorlds'
                         v-loading='userDialog.isFavoriteWorldsLoading'
-                        style='margin-top: 10px')
-                        template(v-for='(list, index) in userFavoriteWorlds')
-                            el-tab-pane(:key='index' lazy)
+                        style='margin-top: 10px; height: 50vh')
+                        template(v-if='userFavoriteWorlds && userFavoriteWorlds.length > 0')
+                            el-tab-pane(v-for='(list, index) in userFavoriteWorlds' :key='index' lazy)
                                 span(slot='label')
-                                    span(v-text='list[0]' style='font-weight: bold; font-size: 16px')
                                     i.x-status-icon(
-                                        style='margin-left: 5px'
+                                        style='margin-right: 6px'
                                         :class='userFavoriteWorldsStatus(list[1])')
-                                    span(style='color: #909399; font-size: 12px; margin-left: 5px') {{ list[2].length }}/{{ API.favoriteLimits.maxFavoritesPerGroup.world }}
-                                .x-friend-list(style='margin-top: 10px; margin-bottom: 15px; min-height: 60px')
+                                    span(v-text='list[0]' style='font-weight: bold; font-size: 14px')
+                                    span(style='color: #909399; font-size: 10px; margin-left: 5px') {{ list[2].length }}/{{ API.favoriteLimits.maxFavoritesPerGroup.world }}
+                                .x-friend-list(
+                                    style='margin-top: 10px; margin-bottom: 15px; min-height: 60px; max-height: none')
                                     .x-friend-item.x-friend-item-border(
                                         v-for='world in list[2]'
                                         :key='world.favoriteId'
@@ -941,6 +947,9 @@ mixin userDialog
                                         .detail
                                             span.name(v-text='world.name')
                                             span.extra(v-if='world.occupants') ({{ world.occupants }})
+                        template(v-else-if='!userDialog.isFavoriteWorldsLoading')
+                            div(style='display: flex; justify-content: center; align-items: center; height: 100%')
+                                span(style='font-size: 16px') No favorite worlds found.
                 el-tab-pane(:label='$t("dialog.user.avatars.header")' lazy)
                     div(style='display: flex; align-items: center; justify-content: space-between')
                         div(style='display: flex; align-items: center')
@@ -962,22 +971,43 @@ mixin userDialog
                                 circle)
                             span(style='margin-left: 5px') {{ $t('dialog.user.avatars.total_count', { count: userDialogAvatars.length }) }}
                         div
-                            el-radio-group(
-                                v-if='userDialog.ref.id === API.currentUser.id'
-                                v-model='userDialog.avatarSorting'
-                                size='mini'
-                                @change='changeUserDialogAvatarSorting')
-                                el-radio(label='name') {{ $t('dialog.user.avatars.sort_by_name') }}
-                                el-radio(label='update') {{ $t('dialog.user.avatars.sort_by_update') }}
-                            el-divider(direction='vertical')
-                            el-radio-group(
-                                v-if='userDialog.ref.id === API.currentUser.id'
-                                v-model='userDialog.avatarReleaseStatus'
-                                size='mini')
-                                el-radio(label='all') {{ $t('dialog.user.avatars.all') }}
-                                el-radio(label='public') {{ $t('dialog.user.avatars.public') }}
-                                el-radio(label='private') {{ $t('dialog.user.avatars.private') }}
-                    .x-friend-list(style='margin-top: 10px; min-height: 60px')
+                            template(v-if='userDialog.ref.id === API.currentUser.id')
+                                span(style='margin-right: 5px') {{ $t('dialog.user.avatars.sort_by') }}
+                                el-dropdown(
+                                    @click.native.stop
+                                    trigger='click'
+                                    size='small'
+                                    style='margin-right: 5px'
+                                    :disabled='userDialog.isWorldsLoading')
+                                    el-button(size='mini')
+                                        span {{ $t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`) }} #[i.el-icon-arrow-down.el-icon--right]
+                                    el-dropdown-menu(#default='dropdown')
+                                        el-dropdown-item(
+                                            v-text='$t("dialog.user.avatars.sort_by_name")'
+                                            @click.native='changeUserDialogAvatarSorting("name")')
+                                        el-dropdown-item(
+                                            v-text='$t("dialog.user.avatars.sort_by_update")'
+                                            @click.native='changeUserDialogAvatarSorting("update")')
+                                span(style='margin-right: 5px; margin-left: 10px') {{ $t('dialog.user.avatars.group_by') }}
+                                el-dropdown(
+                                    @click.native.stop
+                                    trigger='click'
+                                    size='small'
+                                    style='margin-right: 5px'
+                                    :disabled='userDialog.isWorldsLoading')
+                                    el-button(size='mini')
+                                        span {{ $t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`) }} #[i.el-icon-arrow-down.el-icon--right]
+                                    el-dropdown-menu(#default='dropdown')
+                                        el-dropdown-item(
+                                            v-text='$t("dialog.user.avatars.all")'
+                                            @click.native='userDialog.avatarReleaseStatus = "all"')
+                                        el-dropdown-item(
+                                            v-text='$t("dialog.user.avatars.public")'
+                                            @click.native='userDialog.avatarReleaseStatus = "public"')
+                                        el-dropdown-item(
+                                            v-text='$t("dialog.user.avatars.private")'
+                                            @click.native='userDialog.avatarReleaseStatus = "private"')
+                    .x-friend-list(style='margin-top: 10px; min-height: 60px; max-height: 50vh')
                         .x-friend-item.x-friend-item-border(
                             v-for='avatar in userDialogAvatars'
                             :key='avatar.id'
@@ -1009,7 +1039,7 @@ mixin userDialog
                         icon='el-icon-download'
                         circle
                         style='margin-left: 5px')
-                    el-tree(:data='userDialog.treeData' style='margin-top: 5px; font-size: 12px')
+                    el-tree(:data='userDialog.treeData' style='margin-top: 5px; font-size: 12px; height: 50vh')
                         template(#default='scope')
                             span
                                 span(v-text='scope.data.key' style='font-weight: bold; margin-right: 5px')
