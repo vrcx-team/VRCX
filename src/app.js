@@ -3815,7 +3815,8 @@ console.log(`isLinux: ${LINUX}`);
         if (!this.appVersion) {
             return;
         }
-        if (this.appVersion.includes('VRCX Nightly')) {
+        var currentVersion = this.appVersion.replace(' (Linux)', '');
+        if (currentVersion.includes('VRCX Nightly')) {
             this.branch = 'Nightly';
         } else {
             this.branch = 'Stable';
@@ -6627,8 +6628,8 @@ console.log(`isLinux: ${LINUX}`);
             n: 10,
             offset: 0,
             search: this.searchText,
-            customFields: this.searchUserByBio ? "bio" : "displayName",
-            sort: this.searchUserSortByLastLoggedIn ? "last_login" : "relevance"
+            customFields: this.searchUserByBio ? 'bio' : 'displayName',
+            sort: this.searchUserSortByLastLoggedIn ? 'last_login' : 'relevance'
         };
         await this.moreSearchUser();
     };

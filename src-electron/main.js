@@ -36,7 +36,7 @@ const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
 
 const version = getVersion();
-interopApi.getDotNetObject('ProgramElectron').PreInit(version);
+interopApi.getDotNetObject('ProgramElectron').PreInit(version, args);
 interopApi.getDotNetObject('VRCXStorage').Load();
 interopApi.getDotNetObject('ProgramElectron').Init();
 interopApi.getDotNetObject('SQLiteLegacy').Init();
@@ -494,13 +494,23 @@ function getHomePath() {
 }
 
 function getVersion() {
-    let version = 'VRCX (Linux) Build';
     try {
-        version = `VRCX (Linux) ${fs.readFileSync(path.join(rootDir, 'Version'), 'utf8').trim()}`;
+        var versionFile = fs
+            .readFileSync(path.join(rootDir, 'Version'), 'utf8')
+            .trim();
+
+        // look for trailing git hash "-22bcd96" to indicate nightly build
+        var version = versionFile.split('-');
+        console.log('Version:', version);
+        if (version.length > 0 && version[version.length - 1].length == 7) {
+            return `VRCX (Linux) Nightly ${versionFile}`;
+        } else {
+            return `VRCX (Linux) ${versionFile}`;
+        }
     } catch (err) {
         console.error('Error reading Version:', err);
+        return 'VRCX (Linux) Nightly Build';
     }
-    return version;
 }
 
 function isDotNetInstalled() {
