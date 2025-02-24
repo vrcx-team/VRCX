@@ -101,7 +101,10 @@ namespace VRCX
 
                         break;
                     case ScreenshotSearchType.WorldName:
-                        if (metadata.World.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) != -1)
+                        if (metadata.World.Name == null)
+                            continue;
+                        
+                        if (metadata.World.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
                             result.Add(metadata);
 
                         break;

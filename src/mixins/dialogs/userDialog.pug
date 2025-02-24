@@ -532,21 +532,21 @@ mixin userDialog
                                     span.extra(v-if='userDialog.timeSpent === 0') -
                                     span.extra(v-else) {{ timeToText(userDialog.timeSpent) }}
                         template(v-else)
-                        el-tooltip(
-                            :disabled='hideTooltips || API.currentUser.id !== userDialog.id'
-                            placement='top'
-                            :content='$t("dialog.user.info.open_previouse_instance")')
-                            .x-friend-item(@click='showPreviousInstancesUserDialog(userDialog.ref)')
-                                .detail
-                                    span.name {{ $t('dialog.user.info.play_time') }}
-                                        el-tooltip(
-                                            v-if='!hideTooltips'
-                                            placement='top'
-                                            style='margin-left: 5px'
-                                            :content='$t("dialog.user.info.accuracy_notice")')
-                                            i.el-icon-warning
-                                    span.extra(v-if='userDialog.timeSpent === 0') -
-                                    span.extra(v-else) {{ timeToText(userDialog.timeSpent) }}
+                            el-tooltip(
+                                :disabled='hideTooltips || API.currentUser.id !== userDialog.id'
+                                placement='top'
+                                :content='$t("dialog.user.info.open_previouse_instance")')
+                                .x-friend-item(@click='showPreviousInstancesUserDialog(userDialog.ref)')
+                                    .detail
+                                        span.name {{ $t('dialog.user.info.play_time') }}
+                                            el-tooltip(
+                                                v-if='!hideTooltips'
+                                                placement='top'
+                                                style='margin-left: 5px'
+                                                :content='$t("dialog.user.info.accuracy_notice")')
+                                                i.el-icon-warning
+                                        span.extra(v-if='userDialog.timeSpent === 0') -
+                                        span.extra(v-else) {{ timeToText(userDialog.timeSpent) }}
                         .x-friend-item(style='cursor: default')
                             el-tooltip(:placement='API.currentUser.id !== userDialog.id ? "bottom" : "top"')
                                 template(#content)

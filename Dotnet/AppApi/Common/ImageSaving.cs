@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -16,6 +18,12 @@ namespace VRCX
 {
     public partial class AppApi
     {
+        public void PopulateImageHosts(string json)
+        {
+            var hosts = JsonSerializer.Deserialize<List<string>>(json);
+            ImageCache.PopulateImageHosts(hosts);
+        }
+        
         public async Task<string> GetImage(string url, string fileId, string version)
         {
             return await ImageCache.GetImage(url, fileId, version);
