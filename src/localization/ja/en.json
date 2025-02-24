@@ -815,6 +815,7 @@
             "avatars": {
                 "header": "アバター",
                 "total_count": "{count} 個のアバター",
+                "sort_by": "並べ替え:",
                 "sort_by_name": "名前順",
                 "sort_by_update": "更新順",
                 "all": "全て",

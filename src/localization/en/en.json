@@ -782,7 +782,8 @@
                 "instance_closed": "closed",
                 "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance",
-                "instance_age_gated": "age gated"
+                "instance_age_gated": "age gated",
+                "open_previouse_instance": "Open Previous Instance"
             },
             "groups": {
                 "header": "Groups",
@@ -824,11 +825,13 @@
             "avatars": {
                 "header": "Avatars",
                 "total_count": "Total {count}",
-                "sort_by_name": "Sort by name",
-                "sort_by_update": "Sort by update",
+                "sort_by": "Sort by:",
+                "sort_by_name": "Name",
+                "sort_by_update": "Updated",
                 "all": "All",
                 "public": "Public",
-                "private": "Private"
+                "private": "Private",
+                "group_by": "Group by:"
             },
             "json": {
                 "header": "JSON"

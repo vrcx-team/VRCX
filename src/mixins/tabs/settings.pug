@@ -1,5 +1,5 @@
 mixin settingsTab
-    .x-container(v-show='$refs.menu && $refs.menu.activeIndex === \'settings\'')
+    .x-container(v-if='$refs.menu && $refs.menu.activeIndex === "settings"')
         .options-container(style='margin-top: 0; padding: 5px')
             span.header {{ $t('view.settings.header') }}
         el-tabs(type='card' style='height: calc(100% - 51px)')
@@ -211,7 +211,7 @@ mixin settingsTab
                         el-button(@click='ossDialog = true' size='small') {{ $t('view.settings.general.legal_notice.open_source_software_notice') }}
 
             //- Appearance Tab
-            el-tab-pane(:label='$t("view.settings.category.appearance")')
+            el-tab-pane(lazy :label='$t("view.settings.category.appearance")')
                 //- Appearance | Appearance
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.appearance.appearance.header') }}
@@ -515,7 +515,7 @@ mixin settingsTab
                             span.color-picker.x-tag-troll(slot='trigger') Nuisance
 
             //- Notifications Tab
-            el-tab-pane(:label='$t("view.settings.category.notifications")')
+            el-tab-pane(lazy :label='$t("view.settings.category.notifications")')
                 //- Notifications | Notifications
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.notifications.notifications.header') }}
@@ -653,7 +653,7 @@ mixin settingsTab
                             style='margin-left: 10px') {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
 
             //- Wrist Overlay Tab
-            el-tab-pane(:label='$t("view.settings.category.wrist_overlay")' v-if='!isLinux()')
+            el-tab-pane(lazy :label='$t("view.settings.category.wrist_overlay")' v-if='!isLinux()')
                 //- Wrist Overlay | SteamVR Wrist Overlay
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}
@@ -735,7 +735,7 @@ mixin settingsTab
                         :disabled='!openVR || !overlayWrist')
 
             //- Discord Presence Tab
-            el-tab-pane(:label='$t("view.settings.category.discord_presence")')
+            el-tab-pane(lazy :label='$t("view.settings.category.discord_presence")')
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.discord_presence.discord_presence.header') }}
                     .options-container-item
@@ -767,7 +767,7 @@ mixin settingsTab
                         :disabled='!discordActive')
 
             //- "Advanced" Tab
-            el-tab-pane(:label='$t("view.settings.category.advanced")')
+            el-tab-pane(lazy :label='$t("view.settings.category.advanced")')
                 //- Advanced | Advanced
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.advanced.advanced.header') }}

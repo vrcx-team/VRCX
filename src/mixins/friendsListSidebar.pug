@@ -1,6 +1,7 @@
 mixin friendsListSidebar
     #aside.x-aside-container(
-        v-show='$refs.menu && !($refs.menu.activeIndex == "friendsList" || $refs.menu.activeIndex == "charts") ')
+        :style='{ width: `${asideWidth}px` }'
+        v-show='$refs.menu && !($refs.menu.activeIndex === "friendsList" || $refs.menu.activeIndex === "charts") ')
         div(style='display: flex; align-items: baseline')
             el-select(
                 v-model='quickSearch'

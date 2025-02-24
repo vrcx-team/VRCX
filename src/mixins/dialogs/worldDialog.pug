@@ -220,7 +220,12 @@ mixin worldDialog
                             location-world(
                                 :locationobject='room.$location'
                                 :currentuserid='API.currentUser.id'
-                                :worlddialogshortname='worldDialog.$location.shortName')
+                                :worlddialogshortname='worldDialog.$location.shortName'
+                                @show-launch-dialog='showLaunchDialog')
+                            launch(
+                                :location='room.tag'
+                                @show-launch-dialog='showLaunchDialog'
+                                style='margin-left: 5px')
                             el-tooltip(
                                 placement='top'
                                 :content='$t("dialog.world.instances.self_invite_tooltip")'
@@ -238,6 +243,18 @@ mixin worldDialog
                                     size='mini'
                                     icon='el-icon-refresh'
                                     style='margin-left: 5px'
+                                    circle)
+                            el-tooltip(
+                                v-if='instanceJoinHistory.get(room.$location.tag)'
+                                placement='top'
+                                :content='$t("dialog.previous_instances.info")'
+                                :disabled='hideTooltips')
+                                el-button(
+                                    @click='showPreviousInstanceInfoDialog(room.location)'
+                                    size='mini'
+                                    icon='el-icon-s-data'
+                                    style='margin-left: 5px'
+                                    plain
                                     circle)
                             last-join(:location='room.$location.tag' :currentlocation='lastLocation.location')
                             instance-info(
@@ -273,7 +290,7 @@ mixin worldDialog
                                         timer(:epoch='user.$travelingToTime')
                                     span.extra(v-else)
                                         timer(:epoch='user.$location_at')
-                el-tab-pane(:label='$t("dialog.world.info.header")')
+                el-tab-pane(:label='$t("dialog.world.info.header")' lazy)
                     .x-friend-list(style='max-height: none')
                         .x-friend-item(style='width: 100%; cursor: default')
                             .detail
@@ -387,16 +404,20 @@ mixin worldDialog
                                         :content='$t("dialog.world.info.accuracy_notice")')
                                         i.el-icon-warning
                                 span.extra {{ worldDialog.lastVisit | formatDate('long') }}
-                        .x-friend-item(@click='showPreviousInstancesWorldDialog(worldDialog.ref)')
-                            .detail
-                                span.name {{ $t('dialog.world.info.visit_count') }}
-                                    el-tooltip(
-                                        v-if='!hideTooltips'
-                                        placement='top'
-                                        style='margin-left: 5px'
-                                        :content='$t("dialog.world.info.accuracy_notice")')
-                                        i.el-icon-warning
-                                span.extra(v-text='worldDialog.visitCount')
+                        el-tooltip(
+                            :disabled='hideTooltips'
+                            placement='top'
+                            :content='$t("dialog.user.info.open_previouse_instance")')
+                            .x-friend-item(@click='showPreviousInstancesWorldDialog(worldDialog.ref)')
+                                .detail
+                                    span.name {{ $t('dialog.world.info.visit_count') }}
+                                        el-tooltip(
+                                            v-if='!hideTooltips'
+                                            placement='top'
+                                            style='margin-left: 5px'
+                                            :content='$t("dialog.world.info.accuracy_notice")')
+                                            i.el-icon-warning
+                                    span.extra(v-text='worldDialog.visitCount')
                         .x-friend-item(style='cursor: default')
                             .detail
                                 span.name {{ $t('dialog.world.info.time_spent') }}
@@ -408,7 +429,7 @@ mixin worldDialog
                                         i.el-icon-warning
                                 span.extra(v-if='worldDialog.timeSpent === 0') -
                                 span.extra(v-else) {{ timeToText(worldDialog.timeSpent) }}
-                el-tab-pane(:label='$t("dialog.world.json.header")')
+                el-tab-pane(:label='$t("dialog.world.json.header")' lazy)
                     el-button(
                         type='default'
                         @click='refreshWorldDialogTreeData()'
