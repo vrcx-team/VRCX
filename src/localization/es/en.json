@@ -782,13 +782,14 @@
                 "instance_closed": "cerrado",
                 "instance_hard_closed": "cerrado completamente",
                 "close_instance": "Cerrar Instancia",
-                "instance_age_gated": "restringido por edad",
+                "instance_age_gated": "Restringido por Edad",
                 "open_previous_instance": "Abrir Instancia Anterior"
             },
             "groups": {
                 "header": "Grupos",
                 "total_count": "Total {count}",
-                "sort_by": "Ordenar por:""edit_mode": "Modo de Edición",
+                "sort_by": "Ordenar por:",
+                "edit_mode": "Modo de Edición",
                 "exit_edit_mode": "Salir del Modo de Edición",
                 "hold_shift": "Mantén shift para salir sin confirmación",
                 "own_groups": "Grupos Propios",
@@ -799,7 +800,7 @@
                     "members": "Miembros",
                     "in_game": "Orden en el Juego"
                 },
-                "leave_group_tooltip": "Salir del Grupo"
+                "leave_group_tooltip": "Dejar Grupo"
             },
             "worlds": {
                 "header": "Mundos",
