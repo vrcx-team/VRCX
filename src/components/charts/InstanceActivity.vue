@@ -311,11 +311,14 @@
                         const sameLocation = arr[0]?.location === this.activityData[params?.dataIndex]?.location;
                         const sameJoinTime = arr
                             .find((item) => item.user_id === this.API.currentUser.id)
-                            .joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
+                            ?.joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
                         return sameLocation && sameJoinTime;
                     });
                     if (detailDataIdx === -1) {
-                        console.error('handleClickYAxisLabel failed', params);
+                        console.error(
+                            "handleClickYAxisLabel failed, likely current user wasn't in this instance",
+                            params
+                        );
                     } else {
                         this.$refs.activityDetailChartRef[detailDataIdx].$el.scrollIntoView({
                             behavior: 'smooth',

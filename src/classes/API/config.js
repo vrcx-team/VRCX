@@ -22,6 +22,15 @@ export default class extends baseClass {
             args.ref = this.applyConfig(args.json);
         });
 
+        API.$on('CONFIG', function (args) {
+            if (typeof args.ref?.whiteListedAssetUrls !== 'object') {
+                console.error('Invalid config whiteListedAssetUrls');
+            }
+            AppApi.PopulateImageHosts(
+                JSON.stringify(args.ref.whiteListedAssetUrls)
+            );
+        });
+
         API.applyConfig = function (json) {
             var ref = {
                 ...json
