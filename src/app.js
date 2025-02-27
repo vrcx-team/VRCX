@@ -22871,9 +22871,12 @@ console.log(`isLinux: ${LINUX}`);
 
     */
     API.getFileAnalysis = function (params) {
-        return this.call(`analysis/${params.fileId}/${params.version}`, {
-            method: 'GET'
-        }).then((json) => {
+        return this.call(
+            `analysis/${params.fileId}/${params.version}/${params.variant}`,
+            {
+                method: 'GET'
+            }
+        ).then((json) => {
             var args = {
                 json,
                 params
@@ -22884,7 +22887,10 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     API.$on('FILE:ANALYSIS', function (args) {
-        if (!$app.avatarDialog.visible) {
+        if (
+            !$app.avatarDialog.visible ||
+            $app.avatarDialog.id !== args.params.avatarId
+        ) {
             return;
         }
         var ref = args.json;
@@ -22906,14 +22912,12 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getAvatarFileAnalysis = function () {
         var D = this.avatarDialog;
+        var avatarId = D.ref.id;
         var assetUrl = '';
+        var variant = 'security';
         for (let i = D.ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = D.ref.unityPackages[i];
-            if (
-                unityPackage.variant &&
-                // unityPackage.variant !== 'standard' &&
-                unityPackage.variant !== 'security'
-            ) {
+            if (unityPackage.variant !== 'security') {
                 continue;
             }
             if (
@@ -22922,6 +22926,22 @@ console.log(`isLinux: ${LINUX}`);
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
+            }
+        }
+        if (!assetUrl) {
+            for (let i = D.ref.unityPackages.length - 1; i > -1; i--) {
+                var unityPackage = D.ref.unityPackages[i];
+                if (unityPackage.variant !== 'standard') {
+                    continue;
+                }
+                if (
+                    unityPackage.platform === 'standalonewindows' &&
+                    this.compareUnityVersion(unityPackage.unitySortNumber)
+                ) {
+                    variant = 'standard';
+                    assetUrl = unityPackage.assetUrl;
+                    break;
+                }
             }
         }
         if (!assetUrl) {
@@ -22936,7 +22956,7 @@ console.log(`isLinux: ${LINUX}`);
             });
             return;
         }
-        API.getFileAnalysis({ fileId, version });
+        API.getFileAnalysis({ fileId, version, variant, avatarId });
     };
 
     $app.methods.openFolderGeneric = function (path) {
