@@ -9,6 +9,7 @@ using NLog.Targets;
 using System;
 using System.Data.SQLite;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -224,6 +225,9 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
+            logger.Info("Args: {0}", JsonSerializer.Serialize(StartupArgs.Args));
+            if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.LaunchCommand))
+                logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
             logger.Debug("Wine detection: {0}", Wine.GetIfWine());
 
             SQLiteLegacy.Instance.Init();
@@ -276,6 +280,9 @@ namespace VRCX
             Update.Check();
 
             logger.Info("{0} Starting...", Version);
+            logger.Info("Args: {0}", JsonSerializer.Serialize(StartupArgs.Args));
+            if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.LaunchCommand))
+                logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
 
             AppApiInstance = new AppApiElectron();
             // ProcessMonitor.Instance.Init();
