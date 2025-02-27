@@ -1542,6 +1542,10 @@ console.log(`isLinux: ${LINUX}`);
         for (var userId of this.currentUser.friends) {
             if (!friends.some((x) => x.id === userId)) {
                 try {
+                    if (!API.isLoggedIn) {
+                        console.error(`User isn't logged in`);
+                        return friends;
+                    }
                     console.log('Fetching remaining friend', userId);
                     var args = await this.getUser({ userId });
                     friends.push(args.json);
@@ -3908,6 +3912,21 @@ console.log(`isLinux: ${LINUX}`);
         $app.twoFactorAuthDialogVisible = false;
     });
 
+    $app.methods.clearCookiesTryLogin = async function () {
+        await webApiService.clearCookies();
+        if (this.loginForm.lastUserLoggedIn) {
+            var user =
+                this.loginForm.savedCredentials[
+                    this.loginForm.lastUserLoggedIn
+                ];
+            if (typeof user !== 'undefined') {
+                delete user.cookies;
+                await this.relogin(user);
+                return;
+            }
+        }
+    };
+
     $app.methods.resendEmail2fa = async function () {
         if (this.loginForm.lastUserLoggedIn) {
             var user =
@@ -3930,7 +3949,6 @@ console.log(`isLinux: ${LINUX}`);
             type: 'error',
             text: 'Cannot send 2FA email without saved credentials. Please login again.'
         }).show();
-        this.promptEmailOTP();
     };
 
     $app.data.exportFriendsListDialog = false;
@@ -18602,19 +18620,21 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.printQueueWorker = undefined;
 
     $app.methods.queueSavePrintToFile = function (printId) {
-        if ($app.printCache.includes(printId)) return;
-        $app.printCache.push(printId);
-        if ($app.printCache.length > 100) {
-            $app.printCache.shift();
+        if (this.printCache.includes(printId)) {
+            return;
+        }
+        this.printCache.push(printId);
+        if (this.printCache.length > 100) {
+            this.printCache.shift();
         }
 
-        $app.printQueue.push(printId);
+        this.printQueue.push(printId);
 
-        if (!$app.printQueueWorker) {
-            $app.printQueueWorker = workerTimers.setInterval(() => {
-                let printId = $app.printQueue.shift();
+        if (!this.printQueueWorker) {
+            this.printQueueWorker = workerTimers.setInterval(() => {
+                let printId = this.printQueue.shift();
                 if (printId) {
-                    $app.trySavePrintToFile(printId);
+                    this.trySavePrintToFile(printId);
                 }
             }, 2_500);
         }
@@ -18627,9 +18647,18 @@ console.log(`isLinux: ${LINUX}`);
             console.error('Print image URL is missing', args);
             return;
         }
-        var createdAt = this.getPrintLocalDate(args.json);
+        var print = args.json;
+        var createdAt = this.getPrintLocalDate(print);
+        try {
+            var owner = await API.getCachedUser({ userId: print.ownerId });
+            console.log(
+                `Print spawned by ${owner.displayName} id:${print.id} note:${print.note} authorName:${print.authorName} at:${new Date().toISOString()}`
+            );
+        } catch (err) {
+            console.error(err);
+        }
         var monthFolder = createdAt.toISOString().slice(0, 7);
-        var fileName = this.getPrintFileName(args.json);
+        var fileName = this.getPrintFileName(print);
         var filePath = await AppApi.SavePrintToFile(
             imageUrl,
             this.ugcFolderPath,
@@ -18638,7 +18667,6 @@ console.log(`isLinux: ${LINUX}`);
         );
         if (filePath) {
             console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
-
             if (this.cropInstancePrints) {
                 if (!(await AppApi.CropPrintImage(filePath))) {
                     console.error('Failed to crop print image');
@@ -18646,9 +18674,9 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
 
-        if ($app.printQueue.length == 0) {
-            workerTimers.clearInterval($app.printQueueWorker);
-            $app.printQueueWorker = undefined;
+        if (this.printQueue.length == 0) {
+            workerTimers.clearInterval(this.printQueueWorker);
+            this.printQueueWorker = undefined;
         }
     };
 
@@ -19133,7 +19161,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.ipcEnabled = false;
     $app.methods.ipcEvent = function (json) {
-        if (!this.friendLogInitStatus) {
+        if (!API.isLoggedIn) {
             return;
         }
         try {
@@ -19392,7 +19420,7 @@ console.log(`isLinux: ${LINUX}`);
         console.log('LaunchCommand:', input);
         var args = input.split('/');
         var command = args[0];
-        var commandArg = args[1];
+        var commandArg = args[1]?.trim();
         var shouldFocusWindow = true;
         switch (command) {
             case 'world':
@@ -19420,12 +19448,22 @@ console.log(`isLinux: ${LINUX}`);
                 this.addAvatarProvider(input.replace('addavatardb/', ''));
                 break;
             case 'switchavatar':
+                var avatarId = commandArg;
+                var regexAvatarId =
+                    /avtr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
+                if (!avatarId.match(regexAvatarId) || avatarId.length !== 41) {
+                    this.$message({
+                        message: 'Invalid Avatar ID',
+                        type: 'error'
+                    });
+                    break;
+                }
                 if (this.showConfirmationOnSwitchAvatar) {
-                    this.selectAvatarWithConfirmation(commandArg);
+                    this.selectAvatarWithConfirmation(avatarId);
                     // Makes sure the window is focused
                     shouldFocusWindow = true;
                 } else {
-                    this.selectAvatarWithoutConfirmation(commandArg);
+                    this.selectAvatarWithoutConfirmation(avatarId);
                     shouldFocusWindow = false;
                 }
                 break;
