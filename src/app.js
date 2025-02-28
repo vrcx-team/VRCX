@@ -18534,7 +18534,7 @@ console.log(`isLinux: ${LINUX}`);
         try {
             var owner = await API.getCachedUser({ userId: print.ownerId });
             console.log(
-                `Print spawned by ${owner.displayName} id:${print.id} note:${print.note} authorName:${print.authorName} at:${new Date().toISOString()}`
+                `Print spawned by ${owner?.json?.displayName} id:${print.id} note:${print.note} authorName:${print.authorName} at:${new Date().toISOString()}`
             );
         } catch (err) {
             console.error(err);
