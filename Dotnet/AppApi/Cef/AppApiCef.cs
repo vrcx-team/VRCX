@@ -147,13 +147,6 @@ namespace VRCX
             Program.VRCXVRInstance.ExecuteVrOverlayFunction(function, json);
         }
 
-        public override string GetLaunchCommand()
-        {
-            var command = StartupArgs.LaunchArguments.LaunchCommand;
-            StartupArgs.LaunchArguments.LaunchCommand = string.Empty;
-            return command;
-        }
-
         public override void FocusWindow()
         {
             MainForm.Instance.Invoke(new Action(() => { MainForm.Instance.Focus_Window(); }));

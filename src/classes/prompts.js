@@ -31,7 +31,7 @@ export default class extends baseClass {
                                 code: instance.inputValue.trim()
                             })
                                 .catch((err) => {
-                                    this.promptTOTP();
+                                    $app.clearCookiesTryLogin();
                                     throw err;
                                 })
                                 .then((args) => {
@@ -71,7 +71,7 @@ export default class extends baseClass {
                                 code: instance.inputValue.trim()
                             })
                                 .catch((err) => {
-                                    this.promptOTP();
+                                    $app.clearCookiesTryLogin();
                                     throw err;
                                 })
                                 .then((args) => {

@@ -64,11 +64,6 @@ namespace VRCX
         {
         }
         
-        public override string GetLaunchCommand()
-        {
-            return string.Empty;
-        }
-        
         public override void FocusWindow()
         {
         }

@@ -60,6 +60,13 @@ namespace VRCX
                 });
             }
         }
+        
+        public string GetLaunchCommand()
+        {
+            var command = StartupArgs.LaunchArguments.LaunchCommand;
+            StartupArgs.LaunchArguments.LaunchCommand = string.Empty;
+            return command;
+        }
 
         public void IPCAnnounceStart()
         {
