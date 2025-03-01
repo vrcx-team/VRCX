@@ -19,6 +19,8 @@ import * as localizedStrings from './localization/localizedStrings.js';
 
 import $utils from './classes/utils.js';
 
+import pugTemplate from './vr.pug';
+
 Vue.component('marquee-text', MarqueeText);
 
 (async function () {
@@ -124,6 +126,7 @@ Vue.component('marquee-text', MarqueeText);
     });
 
     const app = {
+        template: pugTemplate,
         i18n,
         data: {
             // 1 = 대시보드랑 손목에 보이는거
@@ -169,7 +172,7 @@ Vue.component('marquee-text', MarqueeText);
             ...$utils
         },
         watch: {},
-        el: '#x-app',
+        el: '#root',
         async mounted() {
             this.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
             await this.applyWineEmojis();
