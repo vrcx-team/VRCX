@@ -1,3 +1,5 @@
+let echarts = null;
+
 export default {
     removeFromArray(array, item) {
         var { length } = array;
@@ -319,5 +321,35 @@ export default {
             return 0;
         });
         return node;
+    },
+
+    // app.js 4900ln
+    // descending
+    compareByCreatedAt(a, b) {
+        if (
+            typeof a.created_at !== 'string' ||
+            typeof b.created_at !== 'string'
+        ) {
+            return 0;
+        }
+        var A = a.created_at.toUpperCase();
+        var B = b.created_at.toUpperCase();
+        if (A < B) {
+            return 1;
+        }
+        if (A > B) {
+            return -1;
+        }
+        return 0;
+    },
+    // lazy load echarts
+    loadEcharts() {
+        if (echarts) {
+            return Promise.resolve(echarts);
+        }
+        return import('echarts').then((module) => {
+            echarts = module;
+            return echarts;
+        });
     }
 };

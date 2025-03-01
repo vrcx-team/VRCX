@@ -9,6 +9,7 @@ using NLog.Targets;
 using System;
 using System.Data.SQLite;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -69,18 +70,22 @@ namespace VRCX
 
         private static void GetVersion()
         {
-            var buildName = "VRCX";
-            
             try
             {
-                Version = $"{buildName} {File.ReadAllText(Path.Join(BaseDirectory, "Version"))}";
+                var versionFile = File.ReadAllText(Path.Join(BaseDirectory, "Version")).Trim();
+                
+                // look for trailing git hash "-22bcd96" to indicate nightly build
+                var version = versionFile.Split('-');
+                if (version.Length > 0 && version[^1].Length == 7)
+                    Version = $"VRCX Nightly {versionFile}";
+                else
+                    Version = $"VRCX {versionFile}";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Version = $"{buildName} Build";
+                logger.Error(ex, "Failed to read version file");
+                Version = "VRCX Nightly Build";
             }
-
-            Version = Version.Replace("\r", "").Replace("\n", "");
         }
 
         private static void ConfigureLogger()
@@ -207,7 +212,8 @@ namespace VRCX
 
         private static void Run()
         {
-            StartupArgs.ArgsCheck();
+            var args = Environment.GetCommandLineArgs();
+            StartupArgs.ArgsCheck(args);
             SetProgramDirectories();
             VRCXStorage.Instance.Load();
             BrowserSubprocess.Start();
@@ -219,6 +225,9 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
+            logger.Info("Args: {0}", JsonSerializer.Serialize(StartupArgs.Args));
+            if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.LaunchCommand))
+                logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
             logger.Debug("Wine detection: {0}", Wine.GetIfWine());
 
             SQLiteLegacy.Instance.Init();
@@ -258,10 +267,10 @@ namespace VRCX
             ProcessMonitor.Instance.Exit();
         }
 #else
-        public static void PreInit(string version)
+        public static void PreInit(string version, string[] args)
         {
             Version = version;
-            StartupArgs.ArgsCheck();
+            StartupArgs.ArgsCheck(args);
             SetProgramDirectories();
         }
 
@@ -271,6 +280,9 @@ namespace VRCX
             Update.Check();
 
             logger.Info("{0} Starting...", Version);
+            logger.Info("Args: {0}", JsonSerializer.Serialize(StartupArgs.Args));
+            if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.LaunchCommand))
+                logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
 
             AppApiInstance = new AppApiElectron();
             // ProcessMonitor.Instance.Init();
@@ -281,9 +293,9 @@ namespace VRCX
 #if LINUX
     public class ProgramElectron
     {
-        public void PreInit(string version)
+        public void PreInit(string version, string[] args)
         {
-            Program.PreInit(version);
+            Program.PreInit(version, args);
         }
 
         public void Init()

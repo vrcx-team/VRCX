@@ -107,7 +107,7 @@ namespace VRCX
             /// <summary>
             /// The display name of the user.
             /// </summary>
-            public string DisplayName { get; set; }
+            public string? DisplayName { get; set; }
         }
 
         public class WorldDetail
@@ -120,7 +120,7 @@ namespace VRCX
             /// <summary>
             /// The name of the world.
             /// </summary>
-            public string Name { get; set; }
+            public string? Name { get; set; }
 
             /// <summary>
             /// The full ID of the game instance.

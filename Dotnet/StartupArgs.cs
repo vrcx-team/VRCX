@@ -11,6 +11,7 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Management;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 
 #if !LINUX
@@ -24,15 +25,14 @@ namespace VRCX
     {
         private const string SubProcessTypeArgument = "--type";
         public static VrcxLaunchArguments LaunchArguments = new();
+        public static string[] Args;
 
-        public static void ArgsCheck()
+        public static void ArgsCheck(string[] args)
         {
-            var args = Environment.GetCommandLineArgs();
-
+            Args = args;
             Debug.Assert(Program.LaunchDebug = true);
 
-            var currentProcessArgs = ParseArgs(args);
-            LaunchArguments = currentProcessArgs;
+            LaunchArguments = ParseArgs(args);
 
             if (LaunchArguments.IsDebug)
                 Program.LaunchDebug = true;
@@ -80,6 +80,9 @@ namespace VRCX
 
                 if (arg.StartsWith(VrcxLaunchArguments.LaunchCommandPrefix) && arg.Length > VrcxLaunchArguments.LaunchCommandPrefix.Length)
                     arguments.LaunchCommand = arg.Substring(VrcxLaunchArguments.LaunchCommandPrefix.Length);
+                
+                if (arg.StartsWith(VrcxLaunchArguments.LinuxLaunchCommandPrefix) && arg.Length > VrcxLaunchArguments.LinuxLaunchCommandPrefix.Length)
+                    arguments.LaunchCommand = arg.Substring(VrcxLaunchArguments.LinuxLaunchCommandPrefix.Length);
 
                 if (arg.StartsWith(VrcxLaunchArguments.ConfigDirectoryPrefix) && arg.Length > VrcxLaunchArguments.ConfigDirectoryPrefix.Length)
                     arguments.ConfigDirectory = arg.Substring(VrcxLaunchArguments.ConfigDirectoryPrefix.Length + 1);
@@ -99,6 +102,7 @@ namespace VRCX
             public bool IsDebug { get; set; } = false;
 
             public const string LaunchCommandPrefix = "/uri=vrcx://";
+            public const string LinuxLaunchCommandPrefix = "vrcx://";
             public string LaunchCommand { get; set; } = null;
 
             public const string ConfigDirectoryPrefix = "--config";

@@ -158,6 +158,17 @@ mixin avatarDialog
                                 circle
                                 @click='avatarDialogCommand("Add Favorite")'
                                 style='margin-left: 5px')
+                        el-tooltip(
+                            placement='top'
+                            :content='$t("dialog.avatar.actions.select")'
+                            :disabled='hideTooltips')
+                            el-button(
+                                type='default'
+                                icon='el-icon-check'
+                                circle
+                                :disabled='API.currentUser.currentAvatar === avatarDialog.id'
+                                @click='selectAvatar(avatarDialog.id)'
+                                style='margin-left: 5px')
                         el-dropdown(
                             trigger='click'
                             @command='avatarDialogCommand'
@@ -166,20 +177,18 @@ mixin avatarDialog
                             el-button(:type='avatarDialog.isBlocked ? "danger" : "default"' icon='el-icon-more' circle)
                             el-dropdown-menu(#default='dropdown')
                                 el-dropdown-item(icon='el-icon-refresh' command='Refresh') {{ $t('dialog.avatar.actions.refresh') }}
-                                el-dropdown-item(
-                                    icon='el-icon-check'
-                                    :disabled='API.currentUser.currentAvatar === avatarDialog.id'
-                                    command='Select Avatar') {{ $t('dialog.avatar.actions.select') }}
-                                el-dropdown-item(
-                                    v-if='/quest/.test(avatarDialog.ref.tags)'
-                                    icon='el-icon-check'
-                                    command='Select Fallback Avatar') {{ $t('dialog.avatar.actions.select_fallback') }}
+                                el-dropdown-item(icon='el-icon-share' command='Share') {{ $t('dialog.avatar.actions.share') }}
                                 el-dropdown-item(
                                     v-if='avatarDialog.isBlocked'
                                     icon='el-icon-circle-check'
                                     command='Unblock Avatar'
-                                    style='color: #f56c6c') {{ $t('dialog.avatar.actions.unblock') }}
-                                el-dropdown-item(v-else icon='el-icon-circle-close' command='Block Avatar') {{ $t('dialog.avatar.actions.block') }}
+                                    style='color: #f56c6c'
+                                    divided) {{ $t('dialog.avatar.actions.unblock') }}
+                                el-dropdown-item(v-else icon='el-icon-circle-close' command='Block Avatar' divided) {{ $t('dialog.avatar.actions.block') }}
+                                el-dropdown-item(
+                                    v-if='/quest/.test(avatarDialog.ref.tags)'
+                                    icon='el-icon-check'
+                                    command='Select Fallback Avatar') {{ $t('dialog.avatar.actions.select_fallback') }}
                                 el-dropdown-item(
                                     v-if='avatarDialog.ref.authorId !== API.currentUser.id'
                                     icon='el-icon-picture-outline'
@@ -203,18 +212,15 @@ mixin avatarDialog
                                         v-if='avatarDialog.hasImposter'
                                         icon='el-icon-refresh'
                                         command='Regenerate Imposter'
-                                        style='color: #f56c6c') {{ $t('dialog.avatar.actions.regenerate_impostor') }}
+                                        style='color: #f56c6c'
+                                        divided) {{ $t('dialog.avatar.actions.regenerate_impostor') }}
                                     el-dropdown-item(
                                         v-if='avatarDialog.hasImposter'
                                         icon='el-icon-delete'
                                         command='Delete Imposter'
                                         style='color: #f56c6c') {{ $t('dialog.avatar.actions.delete_impostor') }}
-                                    el-dropdown-item(v-else icon='el-icon-user' command='Create Imposter') {{ $t('dialog.avatar.actions.create_impostor') }}
-                                    el-dropdown-item(
-                                        icon='el-icon-delete'
-                                        command='Delete'
-                                        style='color: #f56c6c'
-                                        divided) {{ $t('dialog.avatar.actions.delete') }}
+                                    el-dropdown-item(v-else icon='el-icon-user' command='Create Imposter' divided) {{ $t('dialog.avatar.actions.create_impostor') }}
+                                    el-dropdown-item(icon='el-icon-delete' command='Delete' style='color: #f56c6c') {{ $t('dialog.avatar.actions.delete') }}
             el-tabs
                 el-tab-pane(:label='$t("dialog.avatar.info.header")')
                     .x-friend-list

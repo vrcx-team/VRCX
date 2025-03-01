@@ -21,7 +21,6 @@ namespace VRCX
         public abstract void ExecuteAppFunction(string function, string json);
         public abstract void ExecuteVrFeedFunction(string function, string json);
         public abstract void ExecuteVrOverlayFunction(string function, string json);
-        public abstract string GetLaunchCommand();
         public abstract void FocusWindow();
         public abstract void ChangeTheme(int value);
         public abstract void DoFunny();

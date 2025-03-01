@@ -12,7 +12,7 @@ internal static class ImageCache
 {
     private static readonly string cacheLocation;
     private static readonly HttpClient httpClient;
-    private static readonly List<string> _imageHosts =
+    private static readonly List<string> ImageHosts =
     [
         "api.vrchat.cloud",
         "files.vrchat.cloud",
@@ -29,6 +29,22 @@ internal static class ImageCache
             
         httpClient = new HttpClient(httpClientHandler);
         httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
+    }
+    
+    public static void PopulateImageHosts(List<string> hosts)
+    {
+        foreach (var host in hosts)
+        {
+            if (string.IsNullOrEmpty(host))
+                continue;
+            
+            var uri = new Uri(host);
+            if (string.IsNullOrEmpty(uri.Host))
+                continue;
+            
+            if (!ImageHosts.Contains(uri.Host))
+                ImageHosts.Add(uri.Host);
+        }
     }
 
     public static async Task<string> GetImage(string url, string fileId, string version)
@@ -47,7 +63,7 @@ internal static class ImageCache
         Directory.CreateDirectory(directoryLocation);
 
         var uri = new Uri(url);
-        if (!_imageHosts.Contains(uri.Host))
+        if (!ImageHosts.Contains(uri.Host))
             throw new ArgumentException("Invalid image host", url);
             
         var cookieString = string.Empty;
@@ -91,7 +107,7 @@ internal static class ImageCache
     public static async Task<bool> SaveImageToFile(string url, string path)
     {
         var uri = new Uri(url);
-        if (!_imageHosts.Contains(uri.Host))
+        if (!ImageHosts.Contains(uri.Host))
             throw new ArgumentException("Invalid image host", url);
             
         var cookieString = string.Empty;

@@ -84,7 +84,8 @@ mixin playerListTab
                         div(style='margin-top: 5px')
                             location-world(
                                 :locationobject='currentInstanceLocation'
-                                :currentuserid='API.currentUser.id')
+                                :currentuserid='API.currentUser.id'
+                                @show-launch-dialog='showLaunchDialog')
                             span(v-if='lastLocation.playerList.size > 0' style='margin-left: 5px')
                                 | {{ lastLocation.playerList.size }}
                                 |                                     #[template(v-if='lastLocation.friendList.size > 0') ({{ lastLocation.friendList.size }})]

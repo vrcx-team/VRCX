@@ -74,7 +74,9 @@
             "search_placeholder": "Search",
             "clear_results_tooltip": "Clear Search Results",
             "user": {
-                "header": "User"
+                "header": "User",
+                "search_by_bio": "Search by bio",
+                "sort_by_last_logged_in": "Sort by last logged in"
             },
             "world": {
                 "header": "World",
@@ -229,8 +231,8 @@
                 "tips": {
                     "header": "Tips",
                     "online_time": "Online time refers to the game time recorded by VRCX for the current day.",
-                    "click_Y_axis": "Click Y-axis label to open user/world dialog.",
-                    "click_instance_name": "Click instance name for previous instance info.",
+                    "click_Y_axis": "Click Y-axis label to navigate to the instance details or open User dialog.",
+                    "click_instance_name": "Click instance name to open Previous Instance Info dialog.",
                     "accuracy_notice": "Info from local database may not be accurate"
                 },
                 "settings": {
@@ -567,6 +569,13 @@
                         "enable_tooltip": "Requires SteamVR overlay to be enabled",
                         "dance_world_only": "Supported world only"
                     },
+                    "launch_commands": {
+                        "header": "Launch Commands (Deep Links)",
+                        "docs": "Launch Command Docs",
+                        "show_confirmation_on_switch_avatar_enable": "Show confirmation diaglog before switching avatars",
+                        "show_confirmation_on_switch_avatar_tooltip": "When disabled VRCX will not come to the front when switching avatars and ask for confirmation",
+                        "website_userscript": "VRC Website Userscript"
+                    },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",
                         "description": "Store world ID, world name and players inside the instance inside the file metadata of any pictures you take in-game.",
@@ -773,7 +782,8 @@
                 "instance_closed": "closed",
                 "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance",
-                "instance_age_gated": "age gated"
+                "instance_age_gated": "age gated",
+                "open_previouse_instance": "Open Previous Instance"
             },
             "groups": {
                 "header": "Groups",
@@ -815,11 +825,13 @@
             "avatars": {
                 "header": "Avatars",
                 "total_count": "Total {count}",
-                "sort_by_name": "Sort by name",
-                "sort_by_update": "Sort by update",
+                "sort_by": "Sort by:",
+                "sort_by_name": "Name",
+                "sort_by_update": "Updated",
                 "all": "All",
                 "public": "Public",
-                "private": "Private"
+                "private": "Private",
+                "group_by": "Group by:"
             },
             "json": {
                 "header": "JSON"
@@ -933,6 +945,7 @@
                 "favorite_tooltip": "Favorites",
                 "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Refresh",
+                "share": "Share",
                 "select": "Select Avatar",
                 "select_fallback": "Select Fallback Avatar",
                 "block": "Block Avatar",

@@ -2,10 +2,9 @@
     <div>
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
-                <span>Instance Activity</span>
+                <span>{{ $t('view.charts.instance_activity.header') }}</span>
                 <el-popover placement="bottom-start" trigger="hover" width="300">
                     <div class="tips-popover">
-                        <div>{{ $t('view.charts.instance_activity.tips.header') }}</div>
                         <div>{{ $t('view.charts.instance_activity.tips.online_time') }}</div>
                         <div>{{ $t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
                         <div>{{ $t('view.charts.instance_activity.tips.click_instance_name') }}</div>
@@ -15,7 +14,11 @@
                         </div>
                     </div>
 
-                    <i class="el-icon-info" slot="reference" style="margin-left: 5px; font-size: 12px"></i>
+                    <i
+                        slot="reference"
+                        class="el-icon-info"
+                        style="margin-left: 5px; font-size: 12px; opacity: 0.7"
+                    ></i>
                 </el-popover>
             </div>
 
@@ -31,7 +34,6 @@
                                 <div>
                                     <el-slider
                                         v-model.lazy="barWidth"
-                                        content="bar width"
                                         :max="50"
                                         :min="1"
                                         @change="changeBarWidth"
@@ -101,7 +103,7 @@
         </div>
 
         <transition name="el-fade-in-linear">
-            <div v-show="isDetailVisible && !isLoading" class="divider">
+            <div v-show="isDetailVisible && !isLoading && !activityData.length === 0" class="divider">
                 <el-divider>·</el-divider>
             </div>
         </transition>
@@ -125,8 +127,6 @@
     import configRepository from '../../repository/config';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
-    let echarts = null;
-
     export default {
         name: 'InstanceActivity',
         components: {
@@ -143,6 +143,7 @@
         data() {
             return {
                 // echarts and observer
+                echarts: null,
                 echartsInstance: null,
                 resizeObserver: null,
                 intersectionObservers: [],
@@ -150,12 +151,12 @@
                 // data
                 activityData: [],
                 activityDetailData: [],
-                allDateOfActivity: null,
+                allDateOfActivity: new Set(),
                 worldNameArray: [],
                 // options
                 isLoading: true,
                 // settings
-                barWidth: 30,
+                barWidth: 25,
                 isDetailVisible: true,
                 isSoloInstanceVisible: true,
                 isNoFriendInstanceVisible: true
@@ -239,7 +240,7 @@
                     });
                 }
             });
-            configRepository.getInt('VRCX_InstanceActivityBarWidth', 30).then((value) => {
+            configRepository.getInt('VRCX_InstanceActivityBarWidth', 25).then((value) => {
                 this.barWidth = value;
             });
             configRepository.getBool('VRCX_InstanceActivityDetailVisible', true).then((value) => {
@@ -248,30 +249,28 @@
             configRepository.getBool('VRCX_InstanceActivitySoloInstanceVisible', true).then((value) => {
                 this.isSoloInstanceVisible = value;
             });
-            configRepository.getBool('VRCX_InstanceActivityNoFriendInstaceVisible', true).then((value) => {
+            configRepository.getBool('VRCX_InstanceActivityNoFriendInstanceVisible', true).then((value) => {
                 this.isNoFriendInstanceVisible = value;
             });
         },
         async mounted() {
             try {
+                this.getAllDateOfActivity();
                 const [echartsModule] = await Promise.all([
                     // lazy load echarts
-                    // reduce the VRCX initial screen load times
-                    // TODO: export lazy load func to a single file
-                    import('echarts').catch((error) => {
+                    utils.loadEcharts().catch((error) => {
                         console.error('lazy load echarts failed', error);
                         return null;
                     }),
                     this.getActivityData()
                 ]);
                 if (echartsModule) {
-                    echarts = echartsModule;
+                    this.echarts = echartsModule;
                 }
-                if (this.activityData.length && echarts) {
+                if (echartsModule) {
                     // activity data is ready, but world name data isn't ready
                     // so init echarts with empty data, reduce the render time of init screen
                     this.initEcharts(true);
-                    this.getAllDateOfActivity();
                     this.getWorldNameData();
                 } else {
                     this.isLoading = false;
@@ -285,14 +284,16 @@
                 this.isLoading = true;
                 await this.getActivityData();
                 this.getWorldNameData();
+                // possibility past 24:00
+                this.getAllDateOfActivity();
             },
 
             // echarts - start
-            initEcharts(isFirstTime = false) {
+            initEcharts() {
                 const chartsHeight = this.activityData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityChartRef;
                 if (!this.echartsInstance) {
-                    this.echartsInstance = echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
+                    this.echartsInstance = this.echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
                         height: chartsHeight
                     });
                     this.resizeObserver.observe(chartDom);
@@ -310,11 +311,14 @@
                         const sameLocation = arr[0]?.location === this.activityData[params?.dataIndex]?.location;
                         const sameJoinTime = arr
                             .find((item) => item.user_id === this.API.currentUser.id)
-                            .joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
+                            ?.joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
                         return sameLocation && sameJoinTime;
                     });
                     if (detailDataIdx === -1) {
-                        console.error('handleClickYAxisLabel failed', params);
+                        console.error(
+                            "handleClickYAxisLabel failed, likely current user wasn't in this instance",
+                            params
+                        );
                     } else {
                         this.$refs.activityDetailChartRef[detailDataIdx].$el.scrollIntoView({
                             behavior: 'smooth',
@@ -323,11 +327,13 @@
                     }
                 };
 
-                this.echartsInstance.setOption(this.getNewOption(isFirstTime), { lazyUpdate: true });
+                const options = this.activityData.length ? this.getNewOption() : {};
+
+                this.echartsInstance.setOption(options, { lazyUpdate: true });
                 this.echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
                 this.isLoading = false;
             },
-            getNewOption(isFirstTime) {
+            getNewOption() {
                 const getTooltip = (params) => {
                     const activityData = this.activityData;
                     const param = params[1];
@@ -413,17 +419,15 @@
                                     color: 'transparent'
                                 }
                             },
-                            data: isFirstTime
-                                ? []
-                                : this.activityData.map((item, idx) => {
-                                      if (idx === 0) {
-                                          const midnight = dayjs.tz(this.selectedDate).startOf('day');
-                                          if (midnight.isAfter(item.joinTime)) {
-                                              return 0;
-                                          }
-                                      }
-                                      return item.joinTime - dayjs.tz(this.selectedDate).startOf('day');
-                                  })
+                            data: this.activityData.map((item, idx) => {
+                                if (idx === 0) {
+                                    const midnight = dayjs.tz(this.selectedDate).startOf('day');
+                                    if (midnight.isAfter(item.joinTime)) {
+                                        return 0;
+                                    }
+                                }
+                                return item.joinTime - dayjs.tz(this.selectedDate).startOf('day');
+                            })
                         },
                         {
                             name: 'Time',
@@ -440,19 +444,17 @@
                                 shadowOffsetX: 0.7,
                                 shadowOffsetY: 0.5
                             },
-                            data: isFirstTime
-                                ? []
-                                : this.activityData.map((item, idx) => {
-                                      // If the joinTime of the first data is on the previous day,
-                                      // and the data traverses midnight, the duration starts at midnight
-                                      if (idx === 0) {
-                                          const midnight = dayjs.tz(this.selectedDate).startOf('day');
-                                          if (midnight.isAfter(item.joinTime)) {
-                                              return item.leaveTime - dayjs.tz(midnight);
-                                          }
-                                      }
-                                      return item.time;
-                                  })
+                            data: this.activityData.map((item, idx) => {
+                                // If the joinTime of the first data is on the previous day,
+                                // and the data traverses midnight, the duration starts at midnight
+                                if (idx === 0) {
+                                    const midnight = dayjs.tz(this.selectedDate).startOf('day');
+                                    if (midnight.isAfter(item.joinTime)) {
+                                        return item.leaveTime - dayjs.tz(midnight);
+                                    }
+                                }
+                                return item.time;
+                            })
                         }
                     ],
                     backgroundColor: 'transparent'
@@ -484,7 +486,7 @@
             },
             changeIsNoFriendInstanceVisible(value) {
                 this.isNoFriendInstanceVisible = value;
-                configRepository.setBool('VRCX_InstanceActivityNoFriendInstaceVisible', value).finally(() => {
+                configRepository.setBool('VRCX_InstanceActivityNoFriendInstanceVisible', value).finally(() => {
                     this.handleChangeSettings();
                 });
             },
@@ -510,7 +512,6 @@
                 if (idx !== -1) {
                     if (isNext) {
                         if (idx - 1 < this.allDateOfActivityArray.length) {
-                            console.log(this.selectedDate, this.allDateOfActivityArray[idx + 1]);
                             this.selectedDate = this.allDateOfActivityArray[idx - 1];
                             this.reloadData();
                         }
@@ -524,7 +525,7 @@
                 if (
                     time > Date.now() ||
                     this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1]
-                        .add('-1', 'day')
+                        ?.add('-1', 'day')
                         .isAfter(time, 'day') ||
                     !this.allDateOfActivity
                 ) {
@@ -547,7 +548,8 @@
                         }
                     })
                 );
-                if (this.worldNameArray && this.echartsInstance) {
+
+                if (this.worldNameArray) {
                     this.initEcharts();
                 }
             },
@@ -601,9 +603,11 @@
                     this.API.currentUser.id
                 );
 
-                this.$nextTick(() => {
-                    this.handleIntersectionObserver();
-                });
+                if (this.activityDetailData.length) {
+                    this.$nextTick(() => {
+                        this.handleIntersectionObserver();
+                    });
+                }
             },
             handleSplitActivityDetailData(activityDetailData, currentUserId) {
                 function countTargetIdOccurrences(innerArray, targetId) {
@@ -687,13 +691,17 @@
 
             // intersection observer - start
             handleIntersectionObserver() {
-                this.$refs.activityDetailChartRef.forEach((child, index) => {
+                this.$refs.activityDetailChartRef?.forEach((child, index) => {
                     const observer = new IntersectionObserver(this.handleIntersection.bind(this, index));
                     observer.observe(child.$el);
                     this.intersectionObservers[index] = observer;
                 });
             },
             handleIntersection(index, entries) {
+                if (!entries) {
+                    console.error('handleIntersection failed');
+                    return;
+                }
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         this.$refs.activityDetailChartRef[index].initEcharts();
@@ -728,17 +736,19 @@
         }
     }
     .tips-popover {
-        :first-child {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        :not(:first-child) {
+        & > div {
             margin-bottom: 5px;
             font-size: 12px;
         }
-        i {
-            margin-right: 3px;
+        & > div:last-child {
+            @extend %flex;
+            margin-top: 10px;
+            i {
+                margin-right: 3px;
+            }
+        }
+        & .el-icon-warning-outline {
+            font-size: 12px;
         }
     }
     .settings {
@@ -754,7 +764,7 @@
         & > div:first-child {
             > div {
                 width: 160px;
-                padding-left: 15px;
+                padding-left: 20px;
             }
         }
     }
@@ -763,7 +773,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-top: 200px;
+        margin-top: 100px;
         color: #5c5c5c;
     }
     .divider {

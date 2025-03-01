@@ -359,7 +359,6 @@ namespace VRCX
         public async Task<string> ExecuteJson(string options)
         {
             var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(options);
-            Logger.Info(JsonConvert.SerializeObject(data));
             var result = await Execute(data);
             return System.Text.Json.JsonSerializer.Serialize(new
             {
