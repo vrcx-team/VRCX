@@ -36,24 +36,7 @@ html
                         circle
                         style='font-size: 14px; height: 50px; width: 50px')
 
-                el-menu(ref='menu' collapse @select='selectMenu' default-active='feed')
-                    mixin menuitem(index, name, icon)
-                        el-menu-item(index=index)
-                            i(class=icon)
-                            template(#title)
-                                span= name
-                    +menuitem('feed', "{{ $t('nav_tooltip.feed') }}", 'el-icon-news')
-                    +menuitem('gameLog', "{{ $t('nav_tooltip.game_log') }}", 'el-icon-s-data')
-                    +menuitem('playerList', "{{ $t('nav_tooltip.player_list') }}", 'el-icon-tickets')
-                    +menuitem('search', "{{ $t('nav_tooltip.search') }}", 'el-icon-search')
-                    +menuitem('favorite', "{{ $t('nav_tooltip.favorites') }}", 'el-icon-star-off')
-                    +menuitem('friendLog', "{{ $t('nav_tooltip.friend_log') }}", 'el-icon-notebook-2')
-                    +menuitem('moderation', "{{ $t('nav_tooltip.moderation') }}", 'el-icon-finished')
-                    +menuitem('notification', "{{ $t('nav_tooltip.notification') }}", 'el-icon-bell')
-                    +menuitem('friendsList', "{{ $t('nav_tooltip.friend_list') }}", 'el-icon-s-management')
-                    +menuitem('charts', "{{ $t('nav_tooltip.charts') }}", 'el-icon-data-analysis')
-                    +menuitem('profile', "{{ $t('nav_tooltip.profile') }}", 'el-icon-user')
-                    +menuitem('settings', "{{ $t('nav_tooltip.settings') }}", 'el-icon-s-tools')
+                nav-menu(ref='menu' @select='selectMenu' :menu-active-index='menuActiveIndex')
 
             //- ### Tabs ###
             template(v-if='API.isLoggedIn')
@@ -83,7 +66,7 @@ html
 
                 //- moderation
                 moderation-tab(
-                    v-if='$refs.menu?.activeIndex === "moderation"'
+                    v-if='menuActiveIndex === "moderation"'
                     :table-data='playerModerationTable'
                     :shift-held='shiftHeld'
                     :hide-tooltips='hideTooltips')
@@ -103,20 +86,26 @@ html
                 //- charts
                 keep-alive
                     charts-tab(
-                        v-if='$refs.menu?.activeIndex === "charts"'
+                        v-if='menuActiveIndex === "charts"'
                         :get-world-name='getWorldName'
                         :is-dark-mode='isDarkMode'
                         :dt-hour12='dtHour12'
-                        @open-previous-instance-info-dialog='showPreviousInstanceInfoDialog'
                         :friends-map='friends'
-                        :local-favorite-friends='localFavoriteFriends')
+                        :local-favorite-friends='localFavoriteFriends'
+                        @open-previous-instance-info-dialog='showPreviousInstanceInfoDialog')
 
                 //- settings
                 include ./mixins/tabs/settings.pug
                 +settingsTab
 
-                include ./mixins/friendsListSidebar.pug
-                +friendsListSidebar
+                side-bar(
+                    v-show='isSideBarTabShow'
+                    v-bind='sideBarTabProps'
+                    @show-group-dialog='showGroupDialog'
+                    @quick-search-change='quickSearchChange'
+                    @direct-access-paste='directAccessPaste'
+                    @refresh-friends-list='refreshFriendsList'
+                    @confirm-delete-friend='confirmDeleteFriend')
 
             //- ## Dialogs ## -\\
             include ./mixins/dialogs/userDialog.pug

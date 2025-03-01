@@ -2057,3 +2057,8 @@ i.x-user-status {
 .el-month-table td .cell:hover {
     color:  rgb(48, 46, 53);
 }
+.el-skeleton.is-animated .el-skeleton__item {
+    background: linear-gradient(90deg, #302E34 25%, #423F46 37%, #302E34 63%);
+    background-size: 400% 100%;
+    animation: el-skeleton-loading 1.4s ease infinite;
+}

@@ -1,5 +1,5 @@
 mixin friendsListTab
-    .x-container(v-show='$refs.menu && $refs.menu.activeIndex === "friendsList"')
+    .x-container(v-show='menuActiveIndex === "friendsList"')
         div(style='padding: 0px 10px 0px 10px')
             span.header {{ $t('view.friend_list.header') }}
             div(style='float: right; font-size: 13px')

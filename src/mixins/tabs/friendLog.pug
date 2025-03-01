@@ -1,5 +1,5 @@
 mixin friendLogTab
-    .x-container(v-if='$refs.menu && $refs.menu.activeIndex === "friendLog"')
+    .x-container(v-if='menuActiveIndex === "friendLog"')
         data-tables(v-bind='friendLogTable' ref='friendLogTableRef')
             template(#tool)
                 div(style='margin: 0 0 10px; display: flex; align-items: center')

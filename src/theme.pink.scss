@@ -413,3 +413,9 @@ input[type='checkbox']:checked + .el-switch__core {
 .el-date-table td.disabled div {
     background-color: #3a2b2b
 }
+
+.el-skeleton.is-animated .el-skeleton__item {
+    background: linear-gradient(90deg, #4a3d3d 25%, #665252 37%, #4a3d3d 63%);
+    background-size: 400% 100%;
+    animation: el-skeleton-loading 1.4s ease infinite;
+}
