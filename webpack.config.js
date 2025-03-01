@@ -100,13 +100,13 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: './src/index.pug',
+            template: './src/static/index.html',
             inject: false,
             minify: false
         }),
         new HtmlWebpackPlugin({
             filename: 'vr.html',
-            template: './src/vr.pug',
+            template: './src/static/vr.html',
             inject: false,
             minify: false
         }),

@@ -67,6 +67,8 @@ import _groups from './classes/groups.js';
 import _vrcRegistry from './classes/vrcRegistry.js';
 import _restoreFriendOrder from './classes/restoreFriendOrder.js';
 
+import pugTemplate from './app.pug';
+
 // API classes
 import _config from './classes/API/config.js';
 
@@ -152,6 +154,7 @@ console.log(`isLinux: ${LINUX}`);
     await configRepository.init();
 
     const app = {
+        template: pugTemplate,
         data: {
             API,
             isGameRunning: false,
@@ -198,7 +201,10 @@ console.log(`isLinux: ${LINUX}`);
                 userStatusClass: this.userStatusClass
             };
         },
-        el: '#x-app',
+        el: '#root',
+        beforeMount() {
+            this.changeThemeMode();
+        },
         async mounted() {
             await this.initLanguage();
             try {
@@ -206,7 +212,6 @@ console.log(`isLinux: ${LINUX}`);
             } catch (err) {
                 console.error(err);
             }
-            await this.changeThemeMode();
             await AppApi.SetUserAgent();
             this.appVersion = await AppApi.GetVersion();
             await this.compareAppVersion();
