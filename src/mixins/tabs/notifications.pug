@@ -1,5 +1,5 @@
 mixin notificationsTab
-    .x-container(v-if='$refs.menu && $refs.menu.activeIndex === "notification"' v-loading='API.isNotificationsLoading')
+    .x-container(v-if='menuActiveIndex === "notification"' v-loading='API.isNotificationsLoading')
         data-tables.notification-table(v-bind='notificationTable' ref='notificationTableRef')
             template(#tool)
                 div(style='margin: 0 0 10px; display: flex; align-items: center')

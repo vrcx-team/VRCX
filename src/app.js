@@ -38,11 +38,13 @@ import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 // tabs
 import ModerationTab from './views/tabs/Moderation.vue';
 import ChartsTab from './views/tabs/Charts.vue';
+import SideBar from './views/SideBar.vue';
+import NavMenu from './views/NavMenu.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
-import GroupsSidebar from './components/sidebar/GroupsSidebar.vue';
 import PreviousInstanceInfo from './views/dialogs/PreviousInstanceInfo.vue';
+import Location from './components/common/Location.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -171,14 +173,18 @@ console.log(`isLinux: ${LINUX}`);
             // tabs
             ModerationTab,
             ChartsTab,
+            // - others
+            SideBar,
+            NavMenu,
 
             // components
             // - settings
             SimpleSwitch,
 
             // components
-            // - sidebar(friendsListSidebar)
-            GroupsSidebar,
+            // - common
+            Location,
+
             // - dialogs
             PreviousInstanceInfo
         },
@@ -186,7 +192,10 @@ console.log(`isLinux: ${LINUX}`);
             return {
                 API,
                 showUserDialog: this.showUserDialog,
-                adjustDialogZ: this.adjustDialogZ
+                adjustDialogZ: this.adjustDialogZ,
+                getWorldName: this.getWorldName,
+                userImage: this.userImage,
+                userStatusClass: this.userStatusClass
             };
         },
         el: '#x-app',
@@ -2875,7 +2884,6 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('LOGIN', function () {
         $app.localFavoriteFriends.clear();
         $app.currentUserGroupsInit = false;
-        $app.localFavoriteFriendsDivideByGroup.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         this.cachedFavoriteGroups.clear();
@@ -2953,12 +2961,6 @@ console.log(`isLinux: ${LINUX}`);
         // 애초에 $isDeleted인데 여기로 올 수 가 있나..?
         this.cachedFavoritesByObjectId.delete(args.params.objectId);
         $app.localFavoriteFriends.delete(args.params.objectId);
-        $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
-            $app.removeFromArray(group, args.params.objectId);
-            if (group.length === 0) {
-                $app.localFavoriteFriendsDivideByGroup.delete(key);
-            }
-        });
         $app.updateSidebarFriendsList();
         if (ref.$isDeleted) {
             return;
@@ -3013,12 +3015,6 @@ console.log(`isLinux: ${LINUX}`);
             }
             this.cachedFavoritesByObjectId.delete(ref.favoriteId);
             $app.localFavoriteFriends.delete(ref.favoriteId);
-            $app.localFavoriteFriendsDivideByGroup.forEach((group, key) => {
-                $app.removeFromArray(group, ref.favoriteId);
-                if (group.length === 0) {
-                    $app.localFavoriteFriendsDivideByGroup.delete(key);
-                }
-            });
             $app.updateSidebarFriendsList();
             ref.$isDeleted = true;
             API.$emit('FAVORITE:@DELETE', {
@@ -3093,15 +3089,6 @@ console.log(`isLinux: ${LINUX}`);
             ref.$isExpired = false;
         }
         ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
-        if (!$app.localFavoriteFriendsDivideByGroup.has(ref.$groupKey)) {
-            $app.localFavoriteFriendsDivideByGroup.set(ref.$groupKey, [
-                ref.favoriteId
-            ]);
-        } else {
-            $app.localFavoriteFriendsDivideByGroup
-                .get(ref.$groupKey)
-                .push(ref.favoriteId);
-        }
 
         if (ref.$isDeleted === false && ref.$groupRef === null) {
             var group = this.cachedFavoriteGroupsByTypeName.get(ref.$groupKey);
@@ -3115,7 +3102,6 @@ console.log(`isLinux: ${LINUX}`);
 
     API.expireFavorites = function () {
         $app.localFavoriteFriends.clear();
-        $app.localFavoriteFriendsDivideByGroup.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         $app.favoriteObjects.clear();
@@ -3884,10 +3870,12 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.debugGameLog = false;
     $app.data.debugFriendState = false;
 
+    $app.data.menuActiveIndex = 'feed';
+
     $app.methods.notifyMenu = function (index) {
-        var { menu } = this.$refs;
-        if (menu.activeIndex !== index) {
-            var item = menu.items[index];
+        const navRef = this.$refs.menu.$children[0];
+        if (this.menuActiveIndex !== index) {
+            const item = navRef.items[this.menuActiveIndex];
             if (item) {
                 item.$el.classList.add('notify');
             }
@@ -3895,7 +3883,8 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.selectMenu = function (index) {
-        var item = this.$refs.menu.items[index];
+        this.menuActiveIndex = index;
+        const item = this.$refs.menu.$children[0]?.items[index];
         if (item) {
             item.$el.classList.remove('notify');
         }
@@ -4068,7 +4057,6 @@ console.log(`isLinux: ${LINUX}`);
                 args.ref.displayName
             )}</strong>!`
         }).show();
-        $app.$refs.menu.activeIndex = 'feed';
         $app.updateStoredUser(this.currentUser);
     });
 
@@ -4276,56 +4264,6 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.sortActiveFriends = false;
     $app.data.sortOfflineFriends = false;
 
-    $app.methods.saveFriendsGroupStates = async function () {
-        await configRepository.setBool(
-            'VRCX_isFriendsGroupMe',
-            this.isFriendsGroupMe
-        );
-        await configRepository.setBool(
-            'VRCX_isFriendsGroupFavorites',
-            this.isVIPFriends
-        );
-        await configRepository.setBool(
-            'VRCX_isFriendsGroupOnline',
-            this.isOnlineFriends
-        );
-        await configRepository.setBool(
-            'VRCX_isFriendsGroupActive',
-            this.isActiveFriends
-        );
-        await configRepository.setBool(
-            'VRCX_isFriendsGroupOffline',
-            this.isOfflineFriends
-        );
-    };
-
-    $app.methods.loadFriendsGroupStates = async function () {
-        this.isFriendsGroupMe = await configRepository.getBool(
-            'VRCX_isFriendsGroupMe',
-            true
-        );
-        this.isVIPFriends = await configRepository.getBool(
-            'VRCX_isFriendsGroupFavorites',
-            true
-        );
-        this.isOnlineFriends = await configRepository.getBool(
-            'VRCX_isFriendsGroupOnline',
-            true
-        );
-        this.isActiveFriends = await configRepository.getBool(
-            'VRCX_isFriendsGroupActive',
-            false
-        );
-        this.isOfflineFriends = await configRepository.getBool(
-            'VRCX_isFriendsGroupOffline',
-            false
-        );
-    };
-
-    API.$on('LOGIN', function () {
-        $app.loadFriendsGroupStates();
-    });
-
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
         // FIXME: handle error
@@ -4367,11 +4305,6 @@ console.log(`isLinux: ${LINUX}`);
         $app.friends.clear();
         $app.pendingActiveFriends.clear();
         $app.friendNumber = 0;
-        $app.isFriendsGroupMe = true;
-        $app.isVIPFriends = true;
-        $app.isOnlineFriends = true;
-        $app.isActiveFriends = true;
-        $app.isOfflineFriends = false;
         $app.isGroupInstances = false;
         $app.groupInstances = [];
         $app.vipFriends_ = [];
@@ -5149,47 +5082,6 @@ console.log(`isLinux: ${LINUX}`);
         return this.vipFriends_;
     };
 
-    // VIP friends divide by group
-    $app.computed.vipFriendsDivideByGroup = function () {
-        const array = [];
-        const helloYesThisIsDynamic = this.vipFriends_;
-
-        for (const [key, value] of this.localFavoriteFriendsDivideByGroup) {
-            let friends = [];
-            for (const item of value) {
-                const friend = this.vipFriendsByGroupStatus.find(
-                    (friend) => friend.id === item
-                );
-                if (friend) {
-                    friends.push(friend);
-                }
-            }
-            if (friends.length === 0) {
-                continue;
-            }
-            friends.sort(getFriendsSortFunction(this.sidebarSortMethods));
-
-            let groupName = API.favoriteFriendGroups.find(
-                (item) => item.key === key
-            )?.displayName;
-            if (!groupName) {
-                groupName = key;
-            }
-
-            array.push({
-                key: key,
-                value: friends,
-                displayName: groupName
-            });
-        }
-
-        array.sort((a, b) => {
-            return a.key.localeCompare(b.key);
-        });
-
-        return array;
-    };
-
     // Online friends
     $app.computed.onlineFriends = function () {
         if (!this.sortOnlineFriends) {
@@ -5341,7 +5233,6 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: Quick Search
 
-    $app.data.quickSearch = '';
     $app.data.quickSearchItems = [];
 
     var localeIncludes = function (str, search, comparer) {
@@ -5469,24 +5360,15 @@ console.log(`isLinux: ${LINUX}`);
                 const searchText = value.substr(7);
                 if (this.quickSearchItems.length > 1 && searchText.length) {
                     this.friendsListSearch = searchText;
-                    this.$refs.menu.activeIndex = 'friendsList';
+                    this.menuActiveIndex = 'friendsList';
                 } else {
-                    this.$refs.menu.activeIndex = 'search';
+                    this.menuActiveIndex = 'search';
                     this.searchText = searchText;
                     this.lookupUser({ displayName: searchText });
                 }
             } else {
                 this.showUserDialog(value);
             }
-            this.quickSearchVisibleChange(value);
-        }
-    };
-
-    // NOTE: 그냥 열고 닫고 했을때 changed 이벤트 발생이 안되기 때문에 넣음
-    $app.methods.quickSearchVisibleChange = function (value) {
-        if (value) {
-            this.quickSearch = '';
-            this.quickSearchItems = [];
             this.quickSearchUserHistory();
         }
     };
@@ -5545,7 +5427,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.friendLogInitStatus = false;
         $app.notificationInitStatus = false;
         await database.initUserTables(args.json.id);
-        $app.$refs.menu.activeIndex = 'feed';
+        $app.menuActiveIndex = 'feed';
         await $app.updateDatabaseVersion();
         // eslint-disable-next-line require-atomic-updates
         $app.gameLogTable.data = await database.lookupGameLogDatabase(
@@ -6556,7 +6438,7 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         this.$refs.searchTab.currentName = '0';
-        this.$refs.menu.activeIndex = 'search';
+        this.menuActiveIndex = 'search';
     };
 
     // #endregion
@@ -22160,7 +22042,6 @@ console.log(`isLinux: ${LINUX}`);
     // #region | Local Favorite Friends
 
     $app.data.localFavoriteFriends = new Set();
-    $app.data.localFavoriteFriendsDivideByGroup = new Map();
     $app.data.localFavoriteFriendsGroups = JSON.parse(
         await configRepository.getString(
             'VRCX_localFavoriteFriendsGroups',
@@ -22169,7 +22050,6 @@ console.log(`isLinux: ${LINUX}`);
     );
     $app.methods.updateLocalFavoriteFriends = function () {
         this.localFavoriteFriends.clear();
-        this.localFavoriteFriendsDivideByGroup.clear();
         for (const ref of API.cachedFavorites.values()) {
             if (
                 !ref.$isDeleted &&
@@ -22178,17 +22058,6 @@ console.log(`isLinux: ${LINUX}`);
                     this.localFavoriteFriendsGroups.length === 0)
             ) {
                 this.localFavoriteFriends.add(ref.favoriteId);
-                if (
-                    !this.localFavoriteFriendsDivideByGroup.has(ref.$groupKey)
-                ) {
-                    this.localFavoriteFriendsDivideByGroup.set(ref.$groupKey, [
-                        ref.favoriteId
-                    ]);
-                } else {
-                    this.localFavoriteFriendsDivideByGroup
-                        .get(ref.$groupKey)
-                        .push(ref.favoriteId);
-                }
             }
         }
         this.updateSidebarFriendsList();
@@ -22736,6 +22605,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.appLanguage =
         (await configRepository.getString('VRCX_appLanguage')) ?? 'en';
+    $utils.changeCJKorder($app.data.appLanguage);
     i18n.locale = $app.data.appLanguage;
     $app.methods.initLanguage = async function () {
         if (!(await configRepository.getString('VRCX_appLanguage'))) {
@@ -22760,6 +22630,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.changeAppLanguage = function (language) {
         console.log('Language changed:', language);
         this.appLanguage = language;
+        $utils.changeCJKorder(language);
         i18n.locale = language;
         configRepository.setString('VRCX_appLanguage', language);
         this.applyLanguageStrings();
@@ -23394,123 +23265,6 @@ console.log(`isLinux: ${LINUX}`);
         );
     };
 
-    $app.data.isSidebarGroupByInstanceCollapsed =
-        await configRepository.getBool(
-            'VRCX_sidebarGroupByInstanceCollapsed',
-            false
-        );
-
-    $app.methods.toggleSwitchGroupByInstanceCollapsed = function () {
-        this.isSidebarGroupByInstanceCollapsed =
-            !this.isSidebarGroupByInstanceCollapsed;
-        configRepository.setBool(
-            'VRCX_sidebarGroupByInstanceCollapsed',
-            this.isSidebarGroupByInstanceCollapsed
-        );
-    };
-
-    $app.computed.friendsInSameInstance = function () {
-        const friendsList = {};
-
-        const allFriends = [...this.vipFriends, ...this.onlineFriends];
-        allFriends.forEach((friend) => {
-            let locationTag;
-
-            if (friend.ref?.$location.isRealInstance) {
-                locationTag = friend.ref.$location.tag;
-            } else if (this.lastLocation.friendList.has(friend.id)) {
-                let $location = $utils.parseLocation(
-                    this.lastLocation.location
-                );
-                if ($location.isRealInstance) {
-                    if ($location.tag === 'private') {
-                        locationTag = this.lastLocation.name;
-                    } else {
-                        locationTag = $location.tag;
-                    }
-                }
-            }
-            if (!locationTag) {
-                return;
-            }
-
-            if (!friendsList[locationTag]) {
-                friendsList[locationTag] = [];
-            }
-            friendsList[locationTag].push(friend);
-        });
-
-        const sortedFriendsList = [];
-        for (const group of Object.values(friendsList)) {
-            if (group.length > 1) {
-                sortedFriendsList.push(
-                    group.sort(
-                        (a, b) => a.ref?.$location_at - b.ref?.$location_at
-                    )
-                );
-            }
-        }
-
-        return sortedFriendsList.sort((a, b) => b.length - a.length);
-    };
-
-    $app.computed.onlineFriendsByGroupStatus = function () {
-        if (
-            !this.isSidebarGroupByInstance ||
-            (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
-        ) {
-            return this.onlineFriends;
-        }
-
-        const sameInstanceTag = new Set(
-            this.friendsInSameInstance.flatMap((item) =>
-                item.map((friend) => friend.ref?.$location.tag)
-            )
-        );
-
-        return this.onlineFriends.filter(
-            (item) => !sameInstanceTag.has(item.ref?.$location.tag)
-        );
-    };
-
-    $app.computed.vipFriendsByGroupStatus = function () {
-        if (
-            !this.isSidebarGroupByInstance ||
-            (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
-        ) {
-            return this.vipFriends;
-        }
-
-        const sameInstanceTag = new Set(
-            this.friendsInSameInstance.flatMap((item) =>
-                item.map((friend) => friend.ref?.$location.tag)
-            )
-        );
-
-        return this.vipFriends.filter(
-            (item) => !sameInstanceTag.has(item.ref?.$location.tag)
-        );
-    };
-
-    $app.methods.getFriendsLocations = function (friendsArr) {
-        // prevent the instance title display as "Traveling".
-        if (!friendsArr?.length) {
-            return '';
-        }
-        for (const friend of friendsArr) {
-            if (friend.ref?.location !== 'traveling') {
-                return friend.ref.location;
-            }
-            if ($utils.isRealInstance(friend.ref?.travelingToLocation)) {
-                return friend.ref.travelingToLocation;
-            }
-            if (this.lastLocation.friendList.has(friend.id)) {
-                return this.lastLocation.name;
-            }
-        }
-        return friendsArr[0].ref?.location;
-    };
-
     // favorites Tab
     // - local favorites
     //   - local world & avatar
@@ -23530,6 +23284,43 @@ console.log(`isLinux: ${LINUX}`);
                 });
             }, 300);
         }
+    };
+
+    // #endregion
+
+    // #region | Tab Props
+    $app.computed.sideBarTabProps = function () {
+        return {
+            style: { width: `${this.asideWidth}px` },
+            vipFriends: this.vipFriends,
+            onlineFriends: this.onlineFriends,
+            quickSearchRemoteMethod: this.quickSearchRemoteMethod,
+            quickSearchItems: this.quickSearchItems,
+            hideTooltips: this.hideTooltips,
+            onlineFriendCount: this.onlineFriendCount,
+            friends: this.friends,
+            isGameRunning: this.isGameRunning,
+            isSidebarDivideByFriendGroup: this.isSidebarDivideByFriendGroup,
+            isSidebarGroupByInstance: this.isSidebarGroupByInstance,
+            isHideFriendsInSameInstance: this.isHideFriendsInSameInstance,
+            gameLogDisabled: this.gameLogDisabled,
+            lastLocation: this.lastLocation,
+            lastLocationDestination: this.lastLocationDestination,
+            hideNicknames: this.hideNicknames,
+            activeFriends: this.activeFriends,
+            offlineFriends: this.offlineFriends,
+            groupInstances: this.groupInstances,
+            inGameGroupOrder: this.inGameGroupOrder,
+            groupedByGroupKeyFavoriteFriends:
+                this.groupedByGroupKeyFavoriteFriends
+        };
+    };
+
+    $app.computed.isSideBarTabShow = function () {
+        return !(
+            this.menuActiveIndex === 'friendsList' ||
+            this.menuActiveIndex === 'charts'
+        );
     };
 
     // #endregion

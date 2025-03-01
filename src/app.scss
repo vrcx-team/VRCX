@@ -8,7 +8,6 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@import '~normalize.css/normalize.css';
 @import '~animate.css/animate.min.css';
 @import '~noty/lib/noty.css';
 @import '~element-ui/lib/theme-chalk/index.css';
@@ -135,14 +134,11 @@
     border-radius: 16px;
 }
 
-body,
-input,
-textarea,
-select,
-button {
-    font-family: 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC',
-        'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
-    line-height: normal;
+body {
+    font-family:
+        'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC',
+        'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
 }
 
 a {
@@ -164,10 +160,9 @@ a {
 }
 
 .x-app {
-    position: absolute;
     display: flex;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden auto;
     cursor: default;
 }
@@ -307,6 +302,7 @@ hr.x-vertical-divider {
 .el-popper.x-quick-search {
     width: 225px;
     min-width: 0 !important;
+    border: none;
 }
 
 .el-popper.x-quick-search .el-select-dropdown__item {

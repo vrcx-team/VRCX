@@ -24,7 +24,8 @@
         {
             "files": "*.vue",
             "options": {
-                "printWidth": 120
+                "printWidth": 120,
+                "bracketSameLine": true
             }
         }
     ]

@@ -6,16 +6,14 @@
         width="800px"
         @close="$emit('update:visible', false)"
         :fullscreen="fullscreen"
-        destroy-on-close
-    >
+        destroy-on-close>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <location :location="location.tag" style="font-size: 14px"></location>
             <el-input
                 v-model="dataTable.filters[0].value"
                 :placeholder="$t('dialog.previous_instances.search_placeholder')"
                 style="width: 150px"
-                clearable
-            ></el-input>
+                clearable></el-input>
         </div>
         <data-tables v-loading="loading" v-bind="dataTable" style="margin-top: 10px">
             <el-table-column :label="$t('table.previous_instances.date')" prop="created_at" sortable width="110">
@@ -63,9 +61,13 @@
     import utils from '../../classes/utils';
     import database from '../../repository/database';
     import dayjs from 'dayjs';
+    import Location from '../../components/common/Location.vue';
 
     export default {
         name: 'PreviousInstanceInfo',
+        components: {
+            Location
+        },
         inject: ['adjustDialogZ'],
         props: {
             visible: {

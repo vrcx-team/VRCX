@@ -1,5 +1,5 @@
 mixin favoritesTab
-    .x-container(v-show='$refs.menu && $refs.menu.activeIndex === "favorite"')
+    .x-container(v-show='menuActiveIndex === "favorite"')
         div(style='font-size: 13px; position: absolute; display: flex; right: 0; z-index: 1; margin-right: 15px')
             div(v-if='editFavoritesMode' style='display: inline-block; margin-right: 10px')
                 el-button(size='small' @click='clearBulkFavoriteSelection') {{ $t('view.favorite.clear') }}
