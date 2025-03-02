@@ -2,6 +2,7 @@ import * as workerTimers from 'worker-timers';
 import configRepository from '../repository/config.js';
 import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { instanceRequest, userRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -1021,7 +1022,9 @@ export default class extends baseClass {
         },
 
         async addPhotonPortalSpawn(gameLogDate, userId, shortName, worldName) {
-            var instance = await API.getInstanceFromShortName({ shortName });
+            var instance = await instanceRequest.getInstanceFromShortName({
+                shortName
+            });
             var location = instance.json.location;
             var L = $utils.parseLocation(location);
             var groupName = '';
@@ -1142,7 +1145,7 @@ export default class extends baseClass {
                     typeof ref.id === 'undefined'
                 ) {
                     try {
-                        var args = await API.getUser({
+                        var args = await userRequest.getUser({
                             userId: user.id
                         });
                         ref = args.ref;

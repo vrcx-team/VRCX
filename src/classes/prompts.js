@@ -2,6 +2,7 @@ import * as workerTimers from 'worker-timers';
 import configRepository from '../repository/config.js';
 import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { avatarRequest, worldRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -418,18 +419,20 @@ export default class extends baseClass {
                             action === 'confirm' &&
                             instance.inputValue !== avatar.ref.name
                         ) {
-                            API.saveAvatar({
-                                id: avatar.id,
-                                name: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: $t(
-                                        'prompt.rename_avatar.message.success'
-                                    ),
-                                    type: 'success'
+                            avatarRequest
+                                .saveAvatar({
+                                    id: avatar.id,
+                                    name: instance.inputValue
+                                })
+                                .then((args) => {
+                                    this.$message({
+                                        message: $t(
+                                            'prompt.rename_avatar.message.success'
+                                        ),
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
-                                return args;
-                            });
                         }
                     }
                 }
@@ -457,18 +460,20 @@ export default class extends baseClass {
                             action === 'confirm' &&
                             instance.inputValue !== avatar.ref.description
                         ) {
-                            API.saveAvatar({
-                                id: avatar.id,
-                                description: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: $t(
-                                        'prompt.change_avatar_description.message.success'
-                                    ),
-                                    type: 'success'
+                            avatarRequest
+                                .saveAvatar({
+                                    id: avatar.id,
+                                    description: instance.inputValue
+                                })
+                                .then((args) => {
+                                    this.$message({
+                                        message: $t(
+                                            'prompt.change_avatar_description.message.success'
+                                        ),
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
-                                return args;
-                            });
                         }
                     }
                 }
@@ -490,18 +495,20 @@ export default class extends baseClass {
                             action === 'confirm' &&
                             instance.inputValue !== world.ref.name
                         ) {
-                            API.saveWorld({
-                                id: world.id,
-                                name: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: $t(
-                                        'prompt.rename_world.message.success'
-                                    ),
-                                    type: 'success'
+                            worldRequest
+                                .saveWorld({
+                                    id: world.id,
+                                    name: instance.inputValue
+                                })
+                                .then((args) => {
+                                    this.$message({
+                                        message: $t(
+                                            'prompt.rename_world.message.success'
+                                        ),
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
-                                return args;
-                            });
                         }
                     }
                 }
@@ -527,18 +534,20 @@ export default class extends baseClass {
                             action === 'confirm' &&
                             instance.inputValue !== world.ref.description
                         ) {
-                            API.saveWorld({
-                                id: world.id,
-                                description: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: $t(
-                                        'prompt.change_world_description.message.success'
-                                    ),
-                                    type: 'success'
+                            worldRequest
+                                .saveWorld({
+                                    id: world.id,
+                                    description: instance.inputValue
+                                })
+                                .then((args) => {
+                                    this.$message({
+                                        message: $t(
+                                            'prompt.change_world_description.message.success'
+                                        ),
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
-                                return args;
-                            });
                         }
                     }
                 }
@@ -563,18 +572,20 @@ export default class extends baseClass {
                             action === 'confirm' &&
                             instance.inputValue !== world.ref.capacity
                         ) {
-                            API.saveWorld({
-                                id: world.id,
-                                capacity: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: $t(
-                                        'prompt.change_world_capacity.message.success'
-                                    ),
-                                    type: 'success'
+                            worldRequest
+                                .saveWorld({
+                                    id: world.id,
+                                    capacity: instance.inputValue
+                                })
+                                .then((args) => {
+                                    this.$message({
+                                        message: $t(
+                                            'prompt.change_world_capacity.message.success'
+                                        ),
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
-                                return args;
-                            });
                         }
                     }
                 }
@@ -600,18 +611,20 @@ export default class extends baseClass {
                             instance.inputValue !==
                                 world.ref.recommendedCapacity
                         ) {
-                            API.saveWorld({
-                                id: world.id,
-                                recommendedCapacity: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: $t(
-                                        'prompt.change_world_recommended_capacity.message.success'
-                                    ),
-                                    type: 'success'
+                            worldRequest
+                                .saveWorld({
+                                    id: world.id,
+                                    recommendedCapacity: instance.inputValue
+                                })
+                                .then((args) => {
+                                    this.$message({
+                                        message: $t(
+                                            'prompt.change_world_recommended_capacity.message.success'
+                                        ),
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
-                                return args;
-                            });
                         }
                     }
                 }
@@ -663,18 +676,20 @@ export default class extends baseClass {
                                 instance.inputValue !==
                                 world.ref.previewYoutubeId
                             ) {
-                                API.saveWorld({
-                                    id: world.id,
-                                    previewYoutubeId: instance.inputValue
-                                }).then((args) => {
-                                    this.$message({
-                                        message: $t(
-                                            'prompt.change_world_preview.message.success'
-                                        ),
-                                        type: 'success'
+                                worldRequest
+                                    .saveWorld({
+                                        id: world.id,
+                                        previewYoutubeId: instance.inputValue
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: $t(
+                                                'prompt.change_world_preview.message.success'
+                                            ),
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                             }
                         }
                     }

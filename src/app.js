@@ -34,6 +34,14 @@ import $utils from './classes/utils.js';
 import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';
 import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
+import {
+    userRequest,
+    worldRequest,
+    instanceRequest,
+    friendRequest,
+    avatarRequest,
+    notificationRequest
+} from './classes/request';
 
 // tabs
 import ModerationTab from './views/tabs/Moderation.vue';
@@ -803,128 +811,6 @@ console.log(`isLinux: ${LINUX}`);
         return ref;
     };
 
-    /**
-     * Fetch user from API.
-     * @param {{ userId: string }} params identifier of registered user
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getUser = function (params) {
-        return this.call(`users/${params.userId}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('USER', args);
-            return args;
-        });
-    };
-
-    /**
-     * Fetch user from cache if they're in it. Otherwise, calls API.
-     * @param {{ userId: string }} params identifier of registered user
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getCachedUser = function (params) {
-        return new Promise((resolve, reject) => {
-            var ref = this.cachedUsers.get(params.userId);
-            if (typeof ref === 'undefined') {
-                this.getUser(params).catch(reject).then(resolve);
-            } else {
-                resolve({
-                    cache: true,
-                    json: ref,
-                    params,
-                    ref
-                });
-            }
-        });
-    };
-
-    /** @typedef {{
-     * n: number,
-     * offset: number,
-     * search: string,
-     * sort: 'nuisanceFactor' | 'created' | '_created_at' | 'last_login' | 'relevance',
-     * order: 'ascending', 'descending'
-     * customFields: 'bio', 'displayName'
-     }} GetUsersParameters */
-    /**
-     * Fetch multiple users from API.
-     * @param params {GetUsersParameters} filtering and sorting parameters
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getUsers = function (params) {
-        return this.call('users', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('USER:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param params {string[]}
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.addUserTags = function (params) {
-        return this.call(`users/${this.currentUser.id}/addTags`, {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('USER:CURRENT:SAVE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param params {string[]}
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.removeUserTags = function (params) {
-        return this.call(`users/${this.currentUser.id}/removeTags`, {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('USER:CURRENT:SAVE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param params {{ userId: string }}
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getUserFeedback = function (params) {
-        return this.call(`users/${params.userId}/feedback`, {
-            method: 'GET',
-            params: {
-                n: 100
-            }
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('USER:FEEDBACK', args);
-            return args;
-        });
-    };
-
     // #endregion
     // #region | API: World
 
@@ -999,7 +885,7 @@ console.log(`isLinux: ${LINUX}`);
             return L.worldId;
         }
 
-        const args = await this.getUser({ userId: this.currentUser.id });
+        const args = await userRequest.getUser({ userId: this.currentUser.id });
         const user = args.json;
         let userLocation = user.location;
         if (userLocation === 'traveling') {
@@ -1083,291 +969,10 @@ console.log(`isLinux: ${LINUX}`);
         return ref;
     };
 
-    /**
-     *
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getWorld = function (params) {
-        return this.call(`worlds/${params.worldId}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLD', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getCachedWorld = function (params) {
-        return new Promise((resolve, reject) => {
-            var ref = this.cachedWorlds.get(params.worldId);
-            if (typeof ref === 'undefined') {
-                this.getWorld(params).catch(reject).then(resolve);
-            } else {
-                resolve({
-                    cache: true,
-                    json: ref,
-                    params,
-                    ref
-                });
-            }
-        });
-    };
-
-    /**
-     * @typedef {{
-          n: number,
-          offset: number,
-          search: string,
-          userId: string,
-          user: 'me' | 'friend',
-          sort: 'popularity' | 'heat' | 'trust' | 'shuffle' | 'favorites' | 'reportScore' | 'reportCount' | 'publicationDate' | 'labsPublicationDate' | 'created' | '_created_at' | 'updated' | '_updated_at' | 'order',
-          order: 'ascending' | 'descending',
-          releaseStatus: 'public' | 'private' | 'hidden' | 'all',
-          featured: boolean
-     }} WorldSearchParameter
-     */
-    /**
-     *
-     * @param {WorldSearchParameter} params
-     * @param {string?} option sub-path of calling endpoint
-     * @returns {Promise<{json: any, params, option}>}
-     */
-    API.getWorlds = function (params, option) {
-        var endpoint = 'worlds';
-        if (typeof option !== 'undefined') {
-            endpoint = `worlds/${option}`;
-        }
-        return this.call(endpoint, {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                option
-            };
-            this.$emit('WORLD:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.deleteWorld = function (params) {
-        return this.call(`worlds/${params.worldId}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLD:DELETE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{id: string}} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.saveWorld = function (params) {
-        return this.call(`worlds/${params.id}`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLD:SAVE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.publishWorld = function (params) {
-        return this.call(`worlds/${params.worldId}/publish`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLD:SAVE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.unpublishWorld = function (params) {
-        return this.call(`worlds/${params.worldId}/publish`, {
-            method: 'DELETE',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLD:SAVE', args);
-            return args;
-        });
-    };
-
     // #endregion
     // #region | API: Instance
 
     API.cachedInstances = new Map();
-
-    /**
-     * @param {{worldId: string, instanceId: string}} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getInstance = function (params) {
-        return this.call(`instances/${params.worldId}:${params.instanceId}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('INSTANCE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @typedef {{
-     *     worldId: string,
-     *     type: string,
-     *     region: string,
-     *     ownerId: string,
-     *     roleIds: string[],
-     *     groupAccessType: string,
-     *     queueEnabled: boolean
-     * }} CreateInstanceParameter
-     */
-
-    /**
-     * @param {CreateInstanceParameter} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.createInstance = function (params) {
-        return this.call('instances', {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('INSTANCE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ worldId: string, instanceId: string, shortName: string }} instance
-     * @returns {Promise<{instance, json: T, params: {}}>}
-     */
-    API.getInstanceShortName = function (instance) {
-        var params = {};
-        if (instance.shortName) {
-            params.shortName = instance.shortName;
-        }
-        return this.call(
-            `instances/${instance.worldId}:${instance.instanceId}/shortName`,
-            {
-                method: 'GET',
-                params
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                instance,
-                params
-            };
-            this.$emit('INSTANCE:SHORTNAME', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ shortName: string }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getInstanceFromShortName = function (params) {
-        return this.call(`instances/s/${params.shortName}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('INSTANCE', args);
-            return args;
-        });
-    };
-
-    /**
-     * Send invite to current user.
-     * @param {{ worldId: string, instanceId: string, shortName: string }} instance
-     * @returns {Promise<{instance, json: any, params}>}
-     */
-    API.selfInvite = function (instance) {
-        /**
-         * @type {{ shortName?: string }}
-         */
-        var params = {};
-        if (instance.shortName) {
-            params.shortName = instance.shortName;
-        }
-        return this.call(
-            `invite/myself/to/${instance.worldId}:${instance.instanceId}`,
-            {
-                method: 'POST',
-                params
-            }
-        )
-            .then((json) => {
-                var args = {
-                    json,
-                    instance,
-                    params
-                };
-                return args;
-            })
-            .catch((err) => {
-                if (err?.error?.message) {
-                    $app.$message({
-                        message: err.error.message,
-                        type: 'error'
-                    });
-                    throw err;
-                }
-                $app.$message({
-                    message: $t('message.instance.not_allowed'),
-                    type: 'error'
-                });
-                throw err;
-            });
-    };
 
     API.applyInstance = function (json) {
         var ref = this.cachedInstances.get(json.id);
@@ -1423,12 +1028,14 @@ console.log(`isLinux: ${LINUX}`);
         }
         ref.$location = $utils.parseLocation(ref.location);
         if (json.world?.id) {
-            this.getCachedWorld({
-                worldId: json.world.id
-            }).then((args) => {
-                ref.world = args.ref;
-                return args;
-            });
+            worldRequest
+                .getCachedWorld({
+                    worldId: json.world.id
+                })
+                .then((args) => {
+                    ref.world = args.ref;
+                    return args;
+                });
         }
         if (!json.$fetchedAt) {
             ref.$fetchedAt = new Date().toJSON();
@@ -1526,7 +1133,7 @@ console.log(`isLinux: ${LINUX}`);
             retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
-                    var args = await this.getFriends(params);
+                    var args = await friendRequest.getFriends(params);
                     if (!args.json || args.json.length === 0) {
                         break mainLoop;
                     }
@@ -1561,7 +1168,7 @@ console.log(`isLinux: ${LINUX}`);
                         return friends;
                     }
                     console.log('Fetching remaining friend', userId);
-                    var args = await this.getUser({ userId });
+                    var args = await userRequest.getUser({ userId });
                     friends.push(args.json);
                 } catch (err) {
                     console.error(err);
@@ -1591,7 +1198,7 @@ console.log(`isLinux: ${LINUX}`);
                             friend
                         );
                     }
-                    var args = await this.getUser({
+                    var args = await userRequest.getUser({
                         userId: friend.id
                     });
                     friends[i] = args.json;
@@ -1602,7 +1209,7 @@ console.log(`isLinux: ${LINUX}`);
                             friend.displayName
                         );
                     }
-                    var args = await this.getUser({
+                    var args = await userRequest.getUser({
                         userId: friend.id
                     });
                     friends[i] = args.json;
@@ -1612,108 +1219,6 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         return friends;
-    };
-
-    /**
-     * Fetch friends of current user.
-     * @param {{ n: number, offset: number, offline: boolean }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getFriends = function (params) {
-        return this.call('auth/user/friends', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FRIEND:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.deleteFriend = function (params) {
-        return this.call(`auth/user/friends/${params.userId}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FRIEND:DELETE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{json: T, params}>}
-     */
-    API.sendFriendRequest = function (params) {
-        return this.call(`user/${params.userId}/friendRequest`, {
-            method: 'POST'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FRIEND:REQUEST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.cancelFriendRequest = function (params) {
-        return this.call(`user/${params.userId}/friendRequest`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FRIEND:REQUEST:CANCEL', args);
-            return args;
-        });
-    };
-
-    API.deleteHiddenFriendRequest = function (params, userId) {
-        return this.call(`user/${userId}/friendRequest`, {
-            method: 'DELETE',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                userId
-            };
-            this.$emit('NOTIFICATION:HIDE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getFriendStatus = function (params) {
-        return this.call(`user/${params.userId}/friendStatus`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FRIEND:STATUS', args);
-            return args;
-        });
     };
 
     // #endregion
@@ -1805,160 +1310,6 @@ console.log(`isLinux: ${LINUX}`);
         ref.name = $app.replaceBioSymbols(ref.name);
         ref.description = $app.replaceBioSymbols(ref.description);
         return ref;
-    };
-
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getAvatar = function (params) {
-        return this.call(`avatars/${params.avatarId}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR', args);
-            return args;
-        });
-    };
-
-    /**
-     * @typedef {{
-     *     n: number,
-     *     offset: number,
-     *     search: string,
-     *     userId: string,
-     *     user: 'me' | 'friends'
-     *     sort: 'created' | 'updated' | 'order' | '_created_at' | '_updated_at',
-     *     order: 'ascending' | 'descending',
-     *     releaseStatus: 'public' | 'private' | 'hidden' | 'all',
-     *     featured: boolean
-     * }} GetAvatarsParameter
-     */
-    /**
-     *
-     * @param {GetAvatarsParameter} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getAvatars = function (params) {
-        return this.call('avatars', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ id: string, releaseStatus: 'public' | 'private' }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.saveAvatar = function (params) {
-        return this.call(`avatars/${params.id}`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR:SAVE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{avatarId: string }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.selectAvatar = function (params) {
-        return this.call(`avatars/${params.avatarId}/select`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR:SELECT', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ avatarId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.selectFallbackAvatar = function (params) {
-        return this.call(`avatars/${params.avatarId}/selectfallback`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR:SELECT', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ avatarId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.deleteAvatar = function (params) {
-        return this.call(`avatars/${params.avatarId}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR:DELETE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.createImposter = function (params) {
-        return this.call(`avatars/${params.avatarId}/impostor/enqueue`, {
-            method: 'POST'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR:IMPOSTER:CREATE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{json: T, params}>}
-     */
-    API.deleteImposter = function (params) {
-        return this.call(`avatars/${params.avatarId}/impostor`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR:IMPOSTER:DELETE', args);
-            return args;
-        });
     };
 
     API.$on('AVATAR:IMPOSTER:DELETE', function (args) {
@@ -2159,7 +1510,7 @@ console.log(`isLinux: ${LINUX}`);
             };
             var count = 50; // 5000 max
             for (var i = 0; i < count; i++) {
-                var args = await this.getNotifications(params);
+                var args = await notificationRequest.getNotifications(params);
                 $app.unseenNotifications = [];
                 params.offset += 100;
                 if (args.json.length < 100) {
@@ -2172,7 +1523,7 @@ console.log(`isLinux: ${LINUX}`);
             };
             var count = 50; // 5000 max
             for (var i = 0; i < count; i++) {
-                var args = await this.getNotificationsV2(params);
+                var args = await notificationRequest.getNotificationsV2(params);
                 $app.unseenNotifications = [];
                 params.offset += 100;
                 if (args.json.length < 100) {
@@ -2185,7 +1536,8 @@ console.log(`isLinux: ${LINUX}`);
             };
             var count = 50; // 5000 max
             for (var i = 0; i < count; i++) {
-                var args = await this.getHiddenFriendRequests(params);
+                var args =
+                    await notificationRequest.getHiddenFriendRequests(params);
                 $app.unseenNotifications = [];
                 params.offset += 100;
                 if (args.json.length < 100) {
@@ -2198,79 +1550,6 @@ console.log(`isLinux: ${LINUX}`);
             this.isNotificationsLoading = false;
             $app.notificationInitStatus = true;
         }
-    };
-
-    /** @typedef {{
-     *      n: number,
-     *      offset: number,
-     *      sent: boolean,
-     *      type: string,
-     *      //  (ISO8601 or 'five_minutes_ago')
-     *      after: 'five_minutes_ago' | (string & {})
-     }} NotificationFetchParameter */
-
-    /**
-     *
-     * @param {NotificationFetchParameter} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.getNotifications = function (params) {
-        return this.call('auth/user/notifications', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:LIST', args);
-            return args;
-        });
-    };
-
-    API.getHiddenFriendRequests = function (params) {
-        return this.call('auth/user/notifications', {
-            method: 'GET',
-            params: {
-                type: 'friendRequest',
-                hidden: true,
-                ...params
-            }
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:LIST:HIDDEN', args);
-            return args;
-        });
-    };
-
-    API.clearNotifications = function () {
-        return this.call('auth/user/notifications/clear', {
-            method: 'PUT'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            // FIXME: NOTIFICATION:CLEAR 핸들링
-            this.$emit('NOTIFICATION:CLEAR', args);
-            return args;
-        });
-    };
-
-    API.getNotificationsV2 = function (params) {
-        return this.call('notifications', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:V2:LIST', args);
-            return args;
-        });
     };
 
     API.$on('NOTIFICATION:V2:LIST', function (args) {
@@ -2332,50 +1611,6 @@ console.log(`isLinux: ${LINUX}`);
         }
     });
 
-    API.hideNotificationV2 = function (notificationId) {
-        return this.call(`notifications/${notificationId}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params: {
-                    notificationId
-                }
-            };
-            this.$emit('NOTIFICATION:V2:HIDE', args);
-            return args;
-        });
-    };
-
-    /**
-    * @param {{
-            notificationId: string,
-            responseType: string,
-            responseData: string
-    }} params
-    * @return { Promise<{json: any, params}> }
-    */
-    API.sendNotificationResponse = function (params) {
-        return this.call(`notifications/${params.notificationId}/respond`, {
-            method: 'POST',
-            params
-        })
-            .then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('NOTIFICATION:RESPONSE', args);
-                return args;
-            })
-            .catch((err) => {
-                // something went wrong, lets assume it's already expired
-                this.$emit('NOTIFICATION:HIDE', { params });
-                API.hideNotificationV2(params.notificationId);
-                throw err;
-            });
-    };
-
     API.$on('NOTIFICATION:RESPONSE', function (args) {
         this.$emit('NOTIFICATION:HIDE', args);
         new Noty({
@@ -2384,178 +1619,6 @@ console.log(`isLinux: ${LINUX}`);
         }).show();
         console.log('NOTIFICATION:RESPONSE', args);
     });
-
-    /**
-     * string that represents valid serialized JSON of T's value
-     * @template T=any
-     * @typedef {string} JsonString
-     */
-    /**
-    * @param {{
-            receiverUserId: string,
-            type: string,
-            message: string,
-            seen: boolean,
-            details: JsonString<any>
-     }} params
-    * @return { Promise<{json: any, params}> }
-    */
-    API.sendInvite = function (params, receiverUserId) {
-        return this.call(`invite/${receiverUserId}`, {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                receiverUserId
-            };
-            this.$emit('NOTIFICATION:INVITE:SEND', args);
-            return args;
-        });
-    };
-
-    API.sendInvitePhoto = function (params, receiverUserId) {
-        return this.call(`invite/${receiverUserId}/photo`, {
-            uploadImageLegacy: true,
-            postData: JSON.stringify(params),
-            imageData: $app.uploadImage
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                receiverUserId
-            };
-            this.$emit('NOTIFICATION:INVITE:PHOTO:SEND', args);
-            return args;
-        });
-    };
-
-    API.sendInviteGalleryPhoto = function (params, receiverUserId) {
-        return this.call(`invite/${receiverUserId}/photo`, {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                receiverUserId
-            };
-            this.$emit('NOTIFICATION:INVITE:GALLERYPHOTO:SEND', args);
-            return args;
-        });
-    };
-
-    API.sendRequestInvite = function (params, receiverUserId) {
-        return this.call(`requestInvite/${receiverUserId}`, {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                receiverUserId
-            };
-            this.$emit('NOTIFICATION:REQUESTINVITE:SEND', args);
-            return args;
-        });
-    };
-
-    API.sendRequestInvitePhoto = function (params, receiverUserId) {
-        return this.call(`requestInvite/${receiverUserId}/photo`, {
-            uploadImageLegacy: true,
-            postData: JSON.stringify(params),
-            imageData: $app.uploadImage
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                receiverUserId
-            };
-            this.$emit('NOTIFICATION:REQUESTINVITE:PHOTO:SEND', args);
-            return args;
-        });
-    };
-
-    API.sendInviteResponse = function (params, inviteId) {
-        return this.call(`invite/${inviteId}/response`, {
-            method: 'POST',
-            params,
-            inviteId
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                inviteId
-            };
-            this.$emit('INVITE:RESPONSE:SEND', args);
-            return args;
-        });
-    };
-
-    API.sendInviteResponsePhoto = function (params, inviteId) {
-        return this.call(`invite/${inviteId}/response/photo`, {
-            uploadImageLegacy: true,
-            postData: JSON.stringify(params),
-            imageData: $app.uploadImage,
-            inviteId
-        }).then((json) => {
-            var args = {
-                json,
-                params,
-                inviteId
-            };
-            this.$emit('INVITE:RESPONSE:PHOTO:SEND', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ notificationId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.acceptFriendRequestNotification = function (params) {
-        return this.call(
-            `auth/user/notifications/${params.notificationId}/accept`,
-            {
-                method: 'PUT'
-            }
-        )
-            .then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('NOTIFICATION:ACCEPT', args);
-                return args;
-            })
-            .catch((err) => {
-                // if friend request could not be found, delete it
-                if (err && err.message && err.message.includes('404')) {
-                    this.$emit('NOTIFICATION:HIDE', { params });
-                }
-            });
-    };
-
-    /**
-     * @param {{ notificationId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.hideNotification = function (params) {
-        return this.call(
-            `auth/user/notifications/${params.notificationId}/hide`,
-            {
-                method: 'PUT'
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:HIDE', args);
-            return args;
-        });
-    };
 
     API.getFriendRequest = function (userId) {
         var array = $app.notificationTable.data;
@@ -3880,7 +2943,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.notifyMenu = function (index) {
         const navRef = this.$refs.menu.$children[0];
         if (this.menuActiveIndex !== index) {
-            const item = navRef.items[this.menuActiveIndex];
+            const item = navRef.items[index];
             if (item) {
                 item.$el.classList.add('notify');
             }
@@ -3999,7 +3062,7 @@ console.log(`isLinux: ${LINUX}`);
         };
         var map = new Map();
         API.bulk({
-            fn: 'getAvatars',
+            fn: avatarRequest.getAvatars,
             N: -1,
             params,
             handle: (args) => {
@@ -4272,12 +3335,14 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
         // FIXME: handle error
-        return API.getUser({
-            userId
-        }).then((args) => {
-            this.pendingActiveFriends.delete(userId);
-            return args;
-        });
+        return userRequest
+            .getUser({
+                userId
+            })
+            .then((args) => {
+                this.pendingActiveFriends.delete(userId);
+                return args;
+            });
     };
 
     API.$on('USER:CURRENT', function (args) {
@@ -4518,7 +3583,7 @@ console.log(`isLinux: ${LINUX}`);
                 // 서버에서 오는 순서라고 보면 될 듯.
                 if (ctx.state === 'online') {
                     if (this.friendLogInitStatus) {
-                        API.getUser({
+                        userRequest.getUser({
                             userId: id
                         });
                     }
@@ -4569,7 +3634,7 @@ console.log(`isLinux: ${LINUX}`);
                         `Fetching offline friend in an instance from getCurrentUser ${ctx.name}`
                     );
                 }
-                API.getUser({
+                userRequest.getUser({
                     userId: id
                 });
             }
@@ -4635,7 +3700,7 @@ console.log(`isLinux: ${LINUX}`);
                             `Fetching friend coming online from getCurrentUser ${ctx.name}`
                         );
                     }
-                    API.getUser({
+                    userRequest.getUser({
                         userId: id
                     });
                     return;
@@ -4769,7 +3834,7 @@ console.log(`isLinux: ${LINUX}`);
         try {
             var L = $utils.parseLocation(location);
             if (L.isRealInstance && L.worldId) {
-                var args = await API.getCachedWorld({
+                var args = await worldRequest.getCachedWorld({
                     worldId: L.worldId
                 });
                 worldName = args.ref.name;
@@ -5227,7 +4292,7 @@ console.log(`isLinux: ${LINUX}`);
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    API.deleteFriend({
+                    friendRequest.deleteFriend({
                         userId: id
                     });
                 }
@@ -5546,7 +4611,7 @@ console.log(`isLinux: ${LINUX}`);
                     typeof ref1.userId === 'string' &&
                     !API.cachedUsers.has(ref1.userId)
                 ) {
-                    API.getUser({ userId: ref1.userId });
+                    userRequest.getUser({ userId: ref1.userId });
                 }
             });
 
@@ -6144,6 +5209,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.lastLocationDestination = '';
     $app.data.lastLocationDestinationTime = 0;
 
+    // It's like he's going to be used somewhere, and commenting it out would be an error or something.
     $app.methods.silentSearchUser = function (displayName) {
         console.log('Searching for userId for:', displayName);
         var params = {
@@ -6152,7 +5218,7 @@ console.log(`isLinux: ${LINUX}`);
             fuzzy: false,
             search: displayName
         };
-        API.getUsers(params).then((args) => {
+        userRequest.getUsers(params).then((args) => {
             var map = new Map();
             var nameFound = false;
             for (var json of args.json) {
@@ -6548,7 +5614,8 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         this.isSearchUserLoading = true;
-        await API.getUsers(params)
+        await userRequest
+            .getUsers(params)
             .finally(() => {
                 this.isSearchUserLoading = false;
             })
@@ -6647,7 +5714,8 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         this.isSearchWorldLoading = true;
-        API.getWorlds(params, this.searchWorldOption)
+        worldRequest
+            .getWorlds(params, this.searchWorldOption)
             .finally(() => {
                 this.isSearchWorldLoading = false;
             })
@@ -7329,7 +6397,7 @@ console.log(`isLinux: ${LINUX}`);
         var ref = API.cachedUsers.get(id);
         if (typeof ref === 'undefined') {
             try {
-                API.getUser({
+                userRequest.getUser({
                     userId: id
                 });
             } catch (err) {
@@ -7337,49 +6405,56 @@ console.log(`isLinux: ${LINUX}`);
             }
             return;
         }
-        API.getFriendStatus({
-            userId: id
-        }).then((args) => {
-            if (args.json.isFriend && !this.friendLog.has(id)) {
-                if (this.friendNumber === 0) {
-                    this.friendNumber = this.friends.size;
-                }
-                ref.$friendNumber = ++this.friendNumber;
-                configRepository.setInt(
-                    `VRCX_friendNumber_${API.currentUser.id}`,
-                    this.friendNumber
-                );
-                this.addFriend(id, ref.state);
-                var friendLogHistory = {
-                    created_at: new Date().toJSON(),
-                    type: 'Friend',
-                    userId: id,
-                    displayName: ref.displayName,
-                    friendNumber: ref.$friendNumber
-                };
-                this.friendLogTable.data.push(friendLogHistory);
-                database.addFriendLogHistory(friendLogHistory);
-                this.queueFriendLogNoty(friendLogHistory);
-                var friendLogCurrent = {
-                    userId: id,
-                    displayName: ref.displayName,
-                    trustLevel: ref.$trustLevel,
-                    friendNumber: ref.$friendNumber
-                };
-                this.friendLog.set(id, friendLogCurrent);
-                database.setFriendLogCurrent(friendLogCurrent);
-                this.notifyMenu('friendLog');
-                this.deleteFriendRequest(id);
-                this.updateSharedFeed(true);
-                API.getUser({
-                    userId: id
-                }).then(() => {
-                    if (this.userDialog.visible && id === this.userDialog.id) {
-                        this.applyUserDialogLocation(true);
+        friendRequest
+            .getFriendStatus({
+                userId: id
+            })
+            .then((args) => {
+                if (args.json.isFriend && !this.friendLog.has(id)) {
+                    if (this.friendNumber === 0) {
+                        this.friendNumber = this.friends.size;
                     }
-                });
-            }
-        });
+                    ref.$friendNumber = ++this.friendNumber;
+                    configRepository.setInt(
+                        `VRCX_friendNumber_${API.currentUser.id}`,
+                        this.friendNumber
+                    );
+                    this.addFriend(id, ref.state);
+                    var friendLogHistory = {
+                        created_at: new Date().toJSON(),
+                        type: 'Friend',
+                        userId: id,
+                        displayName: ref.displayName,
+                        friendNumber: ref.$friendNumber
+                    };
+                    this.friendLogTable.data.push(friendLogHistory);
+                    database.addFriendLogHistory(friendLogHistory);
+                    this.queueFriendLogNoty(friendLogHistory);
+                    var friendLogCurrent = {
+                        userId: id,
+                        displayName: ref.displayName,
+                        trustLevel: ref.$trustLevel,
+                        friendNumber: ref.$friendNumber
+                    };
+                    this.friendLog.set(id, friendLogCurrent);
+                    database.setFriendLogCurrent(friendLogCurrent);
+                    this.notifyMenu('friendLog');
+                    this.deleteFriendRequest(id);
+                    this.updateSharedFeed(true);
+                    userRequest
+                        .getUser({
+                            userId: id
+                        })
+                        .then(() => {
+                            if (
+                                this.userDialog.visible &&
+                                id === this.userDialog.id
+                            ) {
+                                this.applyUserDialogLocation(true);
+                            }
+                        });
+                }
+            });
     };
 
     $app.methods.deleteFriendRequest = function (userId) {
@@ -7400,28 +6475,30 @@ console.log(`isLinux: ${LINUX}`);
         if (typeof ctx === 'undefined') {
             return;
         }
-        API.getFriendStatus({
-            userId: id
-        }).then((args) => {
-            if (!args.json.isFriend && this.friendLog.has(id)) {
-                var friendLogHistory = {
-                    created_at: new Date().toJSON(),
-                    type: 'Unfriend',
-                    userId: id,
-                    displayName: ctx.displayName || id
-                };
-                this.friendLogTable.data.push(friendLogHistory);
-                database.addFriendLogHistory(friendLogHistory);
-                this.queueFriendLogNoty(friendLogHistory);
-                this.friendLog.delete(id);
-                database.deleteFriendLogCurrent(id);
-                if (!this.hideUnfriends) {
-                    this.notifyMenu('friendLog');
+        friendRequest
+            .getFriendStatus({
+                userId: id
+            })
+            .then((args) => {
+                if (!args.json.isFriend && this.friendLog.has(id)) {
+                    var friendLogHistory = {
+                        created_at: new Date().toJSON(),
+                        type: 'Unfriend',
+                        userId: id,
+                        displayName: ctx.displayName || id
+                    };
+                    this.friendLogTable.data.push(friendLogHistory);
+                    database.addFriendLogHistory(friendLogHistory);
+                    this.queueFriendLogNoty(friendLogHistory);
+                    this.friendLog.delete(id);
+                    database.deleteFriendLogCurrent(id);
+                    if (!this.hideUnfriends) {
+                        this.notifyMenu('friendLog');
+                    }
+                    this.updateSharedFeed(true);
+                    this.deleteFriend(id);
                 }
-                this.updateSharedFeed(true);
-                this.deleteFriend(id);
-            }
-        });
+            });
     };
 
     $app.methods.updateFriendships = function (ref) {
@@ -7646,37 +6723,40 @@ console.log(`isLinux: ${LINUX}`);
         }
 
         var L = $utils.parseLocation(currentLocation);
-        this.getCachedWorld({
-            worldId: L.worldId
-        }).then((args1) => {
-            this.sendInvite(
-                {
-                    instanceId: L.tag,
-                    worldId: L.tag,
-                    worldName: args1.ref.name,
-                    rsvp: true
-                },
-                ref.senderUserId
-            )
-                .then((_args) => {
-                    var text = `Auto invite sent to ${ref.senderUsername}`;
-                    if (this.errorNoty) {
-                        this.errorNoty.close();
-                    }
-                    this.errorNoty = new Noty({
-                        type: 'info',
-                        text
-                    }).show();
-                    console.log(text);
-                    API.hideNotification({
-                        notificationId: ref.id
+        worldRequest
+            .getCachedWorld({
+                worldId: L.worldId
+            })
+            .then((args1) => {
+                notificationRequest
+                    .sendInvite(
+                        {
+                            instanceId: L.tag,
+                            worldId: L.tag,
+                            worldName: args1.ref.name,
+                            rsvp: true
+                        },
+                        ref.senderUserId
+                    )
+                    .then((_args) => {
+                        var text = `Auto invite sent to ${ref.senderUsername}`;
+                        if (this.errorNoty) {
+                            this.errorNoty.close();
+                        }
+                        this.errorNoty = new Noty({
+                            type: 'info',
+                            text
+                        }).show();
+                        console.log(text);
+                        notificationRequest.hideNotification({
+                            notificationId: ref.id
+                        });
+                        return _args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                     });
-                    return _args;
-                })
-                .catch((err) => {
-                    console.error(err);
-                });
-        });
+            });
     });
 
     $app.data.unseenNotifications = [];
@@ -7730,7 +6810,7 @@ console.log(`isLinux: ${LINUX}`);
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    API.acceptFriendRequestNotification({
+                    notificationRequest.acceptFriendRequestNotification({
                         notificationId: row.id
                     });
                 }
@@ -7740,14 +6820,14 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.hideNotification = function (row) {
         if (row.type === 'ignoredFriendRequest') {
-            API.deleteHiddenFriendRequest(
+            friendRequest.deleteHiddenFriendRequest(
                 {
                     notificationId: row.id
                 },
                 row.senderUserId
             );
         } else {
-            API.hideNotification({
+            notificationRequest.hideNotification({
                 notificationId: row.id
             });
         }
@@ -7801,25 +6881,29 @@ console.log(`isLinux: ${LINUX}`);
                         currentLocation = this.lastLocationDestination;
                     }
                     var L = $utils.parseLocation(currentLocation);
-                    API.getCachedWorld({
-                        worldId: L.worldId
-                    }).then((args) => {
-                        API.sendInvite(
-                            {
-                                instanceId: L.tag,
-                                worldId: L.tag,
-                                worldName: args.ref.name,
-                                rsvp: true
-                            },
-                            row.senderUserId
-                        ).then((_args) => {
-                            this.$message('Invite sent');
-                            API.hideNotification({
-                                notificationId: row.id
-                            });
-                            return _args;
+                    worldRequest
+                        .getCachedWorld({
+                            worldId: L.worldId
+                        })
+                        .then((args) => {
+                            notificationRequest
+                                .sendInvite(
+                                    {
+                                        instanceId: L.tag,
+                                        worldId: L.tag,
+                                        worldName: args.ref.name,
+                                        rsvp: true
+                                    },
+                                    row.senderUserId
+                                )
+                                .then((_args) => {
+                                    this.$message('Invite sent');
+                                    notificationRequest.hideNotification({
+                                        notificationId: row.id
+                                    });
+                                    return _args;
+                                });
                         });
-                    });
                 }
             }
         });
@@ -9532,18 +8616,20 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.verifyShortName = function (location, shortName) {
-        return API.getInstanceFromShortName({ shortName }).then((args) => {
-            var newLocation = args.json.location;
-            var newShortName = args.json.shortName;
-            if (newShortName) {
-                this.showWorldDialog(newLocation, newShortName);
-            } else if (newLocation) {
-                this.showWorldDialog(newLocation);
-            } else {
-                this.showWorldDialog(location);
-            }
-            return args;
-        });
+        return instanceRequest
+            .getInstanceFromShortName({ shortName })
+            .then((args) => {
+                var newLocation = args.json.location;
+                var newShortName = args.json.shortName;
+                if (newShortName) {
+                    this.showWorldDialog(newLocation, newShortName);
+                } else if (newLocation) {
+                    this.showWorldDialog(newLocation);
+                } else {
+                    this.showWorldDialog(location);
+                }
+                return args;
+            });
     };
 
     $app.methods.showGroupDialogShortCode = function (shortCode) {
@@ -10004,9 +9090,10 @@ console.log(`isLinux: ${LINUX}`);
             );
         }
         AppApi.SendIpc('ShowUserDialog', userId);
-        API.getCachedUser({
-            userId
-        })
+        userRequest
+            .getCachedUser({
+                userId
+            })
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
@@ -10114,7 +9201,7 @@ console.log(`isLinux: ${LINUX}`);
                         // init last acitve tab data - end
 
                         if (args.cache) {
-                            API.getUser(args.params);
+                            userRequest.getUser(args.params);
                         }
                         let inCurrentWorld = false;
                         if (this.lastLocation.playerList.has(D.ref.id)) {
@@ -10214,7 +9301,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         var L = $utils.parseLocation(D.ref.$location.tag);
         if (updateInstanceOccupants && L.isRealInstance) {
-            API.getInstance({
+            instanceRequest.getInstance({
                 worldId: L.worldId,
                 instanceId: L.instanceId
             });
@@ -10223,12 +9310,14 @@ console.log(`isLinux: ${LINUX}`);
         if (L.userId) {
             var ref = API.cachedUsers.get(L.userId);
             if (typeof ref === 'undefined') {
-                API.getUser({
-                    userId: L.userId
-                }).then((args) => {
-                    Vue.set(L, 'user', args.ref);
-                    return args;
-                });
+                userRequest
+                    .getUser({
+                        userId: L.userId
+                    })
+                    .then((args) => {
+                        Vue.set(L, 'user', args.ref);
+                        return args;
+                    });
             } else {
                 L.user = ref;
             }
@@ -10582,55 +9671,61 @@ console.log(`isLinux: ${LINUX}`);
             };
             var L = $utils.parseLocation(instanceId);
             this.currentInstanceLocation = L;
-            API.getWorld({
-                worldId: L.worldId
-            }).then((args) => {
-                this.currentInstanceWorld.ref = args.ref;
-                var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
-                    args.ref.unityPackages
-                );
-                this.currentInstanceWorld.isPC = isPC;
-                this.currentInstanceWorld.isQuest = isQuest;
-                this.currentInstanceWorld.isIos = isIos;
-                this.currentInstanceWorld.avatarScalingDisabled =
-                    args.ref?.tags.includes('feature_avatar_scaling_disabled');
-                this.currentInstanceWorld.focusViewDisabled =
-                    args.ref?.tags.includes('feature_focus_view_disabled');
-                this.currentInstanceWorld.stickersDisabled =
-                    args.ref?.tags.includes('feature_stickers_disabled');
-                this.checkVRChatCache(args.ref).then((cacheInfo) => {
-                    if (cacheInfo.Item1 > 0) {
-                        this.currentInstanceWorld.inCache = true;
-                        this.currentInstanceWorld.cacheSize = `${(
-                            cacheInfo.Item1 / 1048576
-                        ).toFixed(2)} MB`;
-                    }
+            worldRequest
+                .getWorld({
+                    worldId: L.worldId
+                })
+                .then((args) => {
+                    this.currentInstanceWorld.ref = args.ref;
+                    var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                        args.ref.unityPackages
+                    );
+                    this.currentInstanceWorld.isPC = isPC;
+                    this.currentInstanceWorld.isQuest = isQuest;
+                    this.currentInstanceWorld.isIos = isIos;
+                    this.currentInstanceWorld.avatarScalingDisabled =
+                        args.ref?.tags.includes(
+                            'feature_avatar_scaling_disabled'
+                        );
+                    this.currentInstanceWorld.focusViewDisabled =
+                        args.ref?.tags.includes('feature_focus_view_disabled');
+                    this.currentInstanceWorld.stickersDisabled =
+                        args.ref?.tags.includes('feature_stickers_disabled');
+                    this.checkVRChatCache(args.ref).then((cacheInfo) => {
+                        if (cacheInfo.Item1 > 0) {
+                            this.currentInstanceWorld.inCache = true;
+                            this.currentInstanceWorld.cacheSize = `${(
+                                cacheInfo.Item1 / 1048576
+                            ).toFixed(2)} MB`;
+                        }
+                    });
+                    this.getBundleDateSize(args.ref).then((bundleSizes) => {
+                        this.currentInstanceWorld.bundleSizes = bundleSizes;
+                    });
+                    return args;
                 });
-                this.getBundleDateSize(args.ref).then((bundleSizes) => {
-                    this.currentInstanceWorld.bundleSizes = bundleSizes;
-                });
-                return args;
-            });
         } else {
-            API.getCachedWorld({
-                worldId: this.currentInstanceLocation.worldId
-            }).then((args) => {
-                this.currentInstanceWorld.ref = args.ref;
-                var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
-                    args.ref.unityPackages
-                );
-                this.currentInstanceWorld.isPC = isPC;
-                this.currentInstanceWorld.isQuest = isQuest;
-                this.currentInstanceWorld.isIos = isIos;
-                this.checkVRChatCache(args.ref).then((cacheInfo) => {
-                    if (cacheInfo.Item1 > 0) {
-                        this.currentInstanceWorld.inCache = true;
-                        this.currentInstanceWorld.cacheSize = `${(
-                            cacheInfo.Item1 / 1048576
-                        ).toFixed(2)} MB`;
-                    }
+            worldRequest
+                .getCachedWorld({
+                    worldId: this.currentInstanceLocation.worldId
+                })
+                .then((args) => {
+                    this.currentInstanceWorld.ref = args.ref;
+                    var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                        args.ref.unityPackages
+                    );
+                    this.currentInstanceWorld.isPC = isPC;
+                    this.currentInstanceWorld.isQuest = isQuest;
+                    this.currentInstanceWorld.isIos = isIos;
+                    this.checkVRChatCache(args.ref).then((cacheInfo) => {
+                        if (cacheInfo.Item1 > 0) {
+                            this.currentInstanceWorld.inCache = true;
+                            this.currentInstanceWorld.cacheSize = `${(
+                                cacheInfo.Item1 / 1048576
+                            ).toFixed(2)} MB`;
+                        }
+                    });
                 });
-            });
         }
         if ($utils.isRealInstance(instanceId)) {
             var ref = API.cachedInstances.get(instanceId);
@@ -10639,12 +9734,14 @@ console.log(`isLinux: ${LINUX}`);
             } else {
                 var L = $utils.parseLocation(instanceId);
                 if (L.isRealInstance) {
-                    API.getInstance({
-                        worldId: L.worldId,
-                        instanceId: L.instanceId
-                    }).then((args) => {
-                        this.currentInstanceWorld.instance = args.ref;
-                    });
+                    instanceRequest
+                        .getInstance({
+                            worldId: L.worldId,
+                            instanceId: L.instanceId
+                        })
+                        .then((args) => {
+                            this.currentInstanceWorld.instance = args.ref;
+                        });
                 }
             }
         }
@@ -10958,7 +10055,7 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         API.bulk({
-            fn: 'getWorlds',
+            fn: worldRequest.getWorlds,
             N: -1,
             params,
             handle: (args) => {
@@ -11004,7 +10101,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         var map = new Map();
         API.bulk({
-            fn: 'getAvatars',
+            fn: avatarRequest.getAvatars,
             N: -1,
             params,
             handle: (args) => {
@@ -11046,11 +10143,11 @@ console.log(`isLinux: ${LINUX}`);
             case 'Accept Friend Request':
                 var key = API.getFriendRequest(userId);
                 if (key === '') {
-                    API.sendFriendRequest({
+                    friendRequest.sendFriendRequest({
                         userId
                     });
                 } else {
-                    API.acceptFriendRequestNotification({
+                    notificationRequest.acceptFriendRequestNotification({
                         notificationId: key
                     });
                 }
@@ -11058,22 +10155,22 @@ console.log(`isLinux: ${LINUX}`);
             case 'Decline Friend Request':
                 var key = API.getFriendRequest(userId);
                 if (key === '') {
-                    API.cancelFriendRequest({
+                    friendRequest.cancelFriendRequest({
                         userId
                     });
                 } else {
-                    API.hideNotification({
+                    notificationRequest.hideNotification({
                         notificationId: key
                     });
                 }
                 break;
             case 'Cancel Friend Request':
-                API.cancelFriendRequest({
+                friendRequest.cancelFriendRequest({
                     userId
                 });
                 break;
             case 'Send Friend Request':
-                API.sendFriendRequest({
+                friendRequest.sendFriendRequest({
                     userId
                 });
                 break;
@@ -11129,7 +10226,7 @@ console.log(`isLinux: ${LINUX}`);
                 $app.reportUserForHacking(userId);
                 break;
             case 'Unfriend':
-                API.deleteFriend({
+                friendRequest.deleteFriend({
                     userId
                 });
                 break;
@@ -11158,29 +10255,33 @@ console.log(`isLinux: ${LINUX}`);
         } else if (command === 'Logout') {
             this.logout();
         } else if (command === 'Request Invite') {
-            API.sendRequestInvite(
-                {
-                    platform: 'standalonewindows'
-                },
-                D.id
-            ).then((args) => {
-                this.$message('Request invite sent');
-                return args;
-            });
-        } else if (command === 'Invite Message') {
-            var L = $utils.parseLocation(this.lastLocation.location);
-            API.getCachedWorld({
-                worldId: L.worldId
-            }).then((args) => {
-                this.showSendInviteDialog(
+            notificationRequest
+                .sendRequestInvite(
                     {
-                        instanceId: this.lastLocation.location,
-                        worldId: this.lastLocation.location,
-                        worldName: args.ref.name
+                        platform: 'standalonewindows'
                     },
                     D.id
-                );
-            });
+                )
+                .then((args) => {
+                    this.$message('Request invite sent');
+                    return args;
+                });
+        } else if (command === 'Invite Message') {
+            var L = $utils.parseLocation(this.lastLocation.location);
+            worldRequest
+                .getCachedWorld({
+                    worldId: L.worldId
+                })
+                .then((args) => {
+                    this.showSendInviteDialog(
+                        {
+                            instanceId: this.lastLocation.location,
+                            worldId: this.lastLocation.location,
+                            worldName: args.ref.name
+                        },
+                        D.id
+                    );
+                });
         } else if (command === 'Request Invite Message') {
             this.showSendInviteRequestDialog(
                 {
@@ -11194,21 +10295,25 @@ console.log(`isLinux: ${LINUX}`);
                 currentLocation = this.lastLocationDestination;
             }
             var L = $utils.parseLocation(currentLocation);
-            API.getCachedWorld({
-                worldId: L.worldId
-            }).then((args) => {
-                API.sendInvite(
-                    {
-                        instanceId: L.tag,
-                        worldId: L.tag,
-                        worldName: args.ref.name
-                    },
-                    D.id
-                ).then((_args) => {
-                    this.$message('Invite sent');
-                    return _args;
+            worldRequest
+                .getCachedWorld({
+                    worldId: L.worldId
+                })
+                .then((args) => {
+                    notificationRequest
+                        .sendInvite(
+                            {
+                                instanceId: L.tag,
+                                worldId: L.tag,
+                                worldName: args.ref.name
+                            },
+                            D.id
+                        )
+                        .then((_args) => {
+                            this.$message('Invite sent');
+                            return _args;
+                        });
                 });
-            });
         } else if (command === 'Show Avatar Author') {
             var { currentAvatarImageUrl } = D.ref;
             this.showAvatarAuthorDialog(
@@ -11358,7 +10463,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.applyWorldDialogInstances();
         for (var room of D.rooms) {
             if ($utils.isRealInstance(room.tag)) {
-                API.getInstance({
+                instanceRequest.getInstance({
                     worldId: D.id,
                     instanceId: room.id
                 });
@@ -11526,9 +10631,10 @@ console.log(`isLinux: ${LINUX}`);
                 D.timeSpent = ref.timeSpent;
             }
         });
-        API.getCachedWorld({
-            worldId: L.worldId
-        })
+        worldRequest
+            .getCachedWorld({
+                worldId: L.worldId
+            })
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
@@ -11566,7 +10672,8 @@ console.log(`isLinux: ${LINUX}`);
                     this.updateVRChatWorldCache();
                     API.hasWorldPersistData({ worldId: D.id });
                     if (args.cache) {
-                        API.getWorld(args.params)
+                        worldRequest
+                            .getWorld(args.params)
                             .catch((err) => {
                                 throw err;
                             })
@@ -11707,12 +10814,14 @@ console.log(`isLinux: ${LINUX}`);
             if (L.userId) {
                 var ref = API.cachedUsers.get(L.userId);
                 if (typeof ref === 'undefined') {
-                    API.getUser({
-                        userId: L.userId
-                    }).then((args) => {
-                        Vue.set(L, 'user', args.ref);
-                        return args;
-                    });
+                    userRequest
+                        .getUser({
+                            userId: L.userId
+                        })
+                        .then((args) => {
+                            Vue.set(L, 'user', args.ref);
+                            return args;
+                        });
                 } else {
                     L.user = ref;
                 }
@@ -11900,7 +11009,7 @@ console.log(`isLinux: ${LINUX}`);
             if (typeof ref !== 'undefined') {
                 room.ref = ref;
             } else if ($utils.isRealInstance(room.tag)) {
-                API.getInstance({
+                instanceRequest.getInstance({
                     worldId: room.$location.worldId,
                     instanceId: room.$location.instanceId
                 });
@@ -12027,26 +11136,31 @@ console.log(`isLinux: ${LINUX}`);
                                 });
                                 break;
                             case 'Publish':
-                                API.publishWorld({
-                                    worldId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'World has been published',
-                                        type: 'success'
+                                worldRequest
+                                    .publishWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: 'World has been published',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Unpublish':
-                                API.unpublishWorld({
-                                    worldId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'World has been unpublished',
-                                        type: 'success'
+                                worldRequest
+                                    .unpublishWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message:
+                                                'World has been unpublished',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Delete Persistent Data':
                                 API.deleteWorldPersistData({
@@ -12061,16 +11175,18 @@ console.log(`isLinux: ${LINUX}`);
                                 });
                                 break;
                             case 'Delete':
-                                API.deleteWorld({
-                                    worldId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'World has been deleted',
-                                        type: 'success'
+                                worldRequest
+                                    .deleteWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: 'World has been deleted',
+                                            type: 'success'
+                                        });
+                                        D.visible = false;
+                                        return args;
                                     });
-                                    D.visible = false;
-                                    return args;
-                                });
                                 break;
                         }
                     }
@@ -12219,7 +11335,8 @@ console.log(`isLinux: ${LINUX}`);
                 }
             }
         });
-        API.getAvatar({ avatarId })
+        avatarRequest
+            .getAvatar({ avatarId })
             .then((args) => {
                 var { ref } = args;
                 D.ref = ref;
@@ -12270,15 +11387,17 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.selectAvatar = function (id) {
-        API.selectAvatar({
-            avatarId: id
-        }).then((args) => {
-            this.$message({
-                message: 'Avatar changed',
-                type: 'success'
+        avatarRequest
+            .selectAvatar({
+                avatarId: id
+            })
+            .then((args) => {
+                this.$message({
+                    message: 'Avatar changed',
+                    type: 'success'
+                });
+                return args;
             });
-            return args;
-        });
     };
 
     $app.methods.selectAvatarWithConfirmation = function (id) {
@@ -12303,15 +11422,17 @@ console.log(`isLinux: ${LINUX}`);
             });
             return;
         }
-        API.selectAvatar({
-            avatarId: id
-        }).then((args) => {
-            new Noty({
-                type: 'success',
-                text: 'Avatar changed via launch command'
-            }).show();
-            return args;
-        });
+        avatarRequest
+            .selectAvatar({
+                avatarId: id
+            })
+            .then((args) => {
+                new Noty({
+                    type: 'success',
+                    text: 'Avatar changed via launch command'
+                }).show();
+                return args;
+            });
     };
 
     $app.methods.avatarDialogCommand = function (command) {
@@ -12367,15 +11488,17 @@ console.log(`isLinux: ${LINUX}`);
                                 });
                                 break;
                             case 'Select Fallback Avatar':
-                                API.selectFallbackAvatar({
-                                    avatarId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Fallback avatar changed',
-                                        type: 'success'
+                                avatarRequest
+                                    .selectFallbackAvatar({
+                                        avatarId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: 'Fallback avatar changed',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Block Avatar':
                                 API.sendAvatarModeration({
@@ -12396,82 +11519,97 @@ console.log(`isLinux: ${LINUX}`);
                                 });
                                 break;
                             case 'Make Public':
-                                API.saveAvatar({
-                                    id: D.id,
-                                    releaseStatus: 'public'
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Avatar updated to public',
-                                        type: 'success'
+                                avatarRequest
+                                    .saveAvatar({
+                                        id: D.id,
+                                        releaseStatus: 'public'
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: 'Avatar updated to public',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Make Private':
-                                API.saveAvatar({
-                                    id: D.id,
-                                    releaseStatus: 'private'
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Avatar updated to private',
-                                        type: 'success'
+                                avatarRequest
+                                    .saveAvatar({
+                                        id: D.id,
+                                        releaseStatus: 'private'
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message:
+                                                'Avatar updated to private',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Delete':
-                                API.deleteAvatar({
-                                    avatarId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Avatar deleted',
-                                        type: 'success'
+                                avatarRequest
+                                    .deleteAvatar({
+                                        avatarId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: 'Avatar deleted',
+                                            type: 'success'
+                                        });
+                                        D.visible = false;
+                                        return args;
                                     });
-                                    D.visible = false;
-                                    return args;
-                                });
                                 break;
                             case 'Delete Imposter':
-                                API.deleteImposter({
-                                    avatarId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Imposter deleted',
-                                        type: 'success'
+                                avatarRequest
+                                    .deleteImposter({
+                                        avatarId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: 'Imposter deleted',
+                                            type: 'success'
+                                        });
+                                        this.showAvatarDialog(D.id);
+                                        return args;
                                     });
-                                    this.showAvatarDialog(D.id);
-                                    return args;
-                                });
                                 break;
                             case 'Create Imposter':
-                                API.createImposter({
-                                    avatarId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Imposter queued for creation',
-                                        type: 'success'
+                                avatarRequest
+                                    .createImposter({
+                                        avatarId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message:
+                                                'Imposter queued for creation',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Regenerate Imposter':
-                                API.deleteImposter({
-                                    avatarId: D.id
-                                })
+                                avatarRequest
+                                    .deleteImposter({
+                                        avatarId: D.id
+                                    })
                                     .then((args) => {
                                         return args;
                                     })
                                     .finally(() => {
-                                        API.createImposter({
-                                            avatarId: D.id
-                                        }).then((args) => {
-                                            this.$message({
-                                                message:
-                                                    'Imposter deleted and queued for creation',
-                                                type: 'success'
+                                        avatarRequest
+                                            .createImposter({
+                                                avatarId: D.id
+                                            })
+                                            .then((args) => {
+                                                this.$message({
+                                                    message:
+                                                        'Imposter deleted and queued for creation',
+                                                    type: 'success'
+                                                });
+                                                return args;
                                             });
-                                            return args;
-                                        });
                                     });
                                 break;
                         }
@@ -12792,19 +11930,23 @@ console.log(`isLinux: ${LINUX}`);
                         if (receiverUserId === API.currentUser.id) {
                             // can't invite self!?
                             var L = $utils.parseLocation(D.worldId);
-                            API.selfInvite({
-                                instanceId: L.instanceId,
-                                worldId: L.worldId
-                            }).finally(inviteLoop);
+                            instanceRequest
+                                .selfInvite({
+                                    instanceId: L.instanceId,
+                                    worldId: L.worldId
+                                })
+                                .finally(inviteLoop);
                         } else {
-                            API.sendInvite(
-                                {
-                                    instanceId: D.worldId,
-                                    worldId: D.worldId,
-                                    worldName: D.worldName
-                                },
-                                receiverUserId
-                            ).finally(inviteLoop);
+                            notificationRequest
+                                .sendInvite(
+                                    {
+                                        instanceId: D.worldId,
+                                        worldId: D.worldId,
+                                        worldName: D.worldName
+                                    },
+                                    receiverUserId
+                                )
+                                .finally(inviteLoop);
                         }
                     } else {
                         D.loading = false;
@@ -12826,24 +11968,26 @@ console.log(`isLinux: ${LINUX}`);
         }
         this.$nextTick(() => $app.adjustDialogZ(this.$refs.inviteDialog.$el));
         var L = $utils.parseLocation(tag);
-        API.getCachedWorld({
-            worldId: L.worldId
-        }).then((args) => {
-            var D = this.inviteDialog;
-            D.userIds = [];
-            D.worldId = L.tag;
-            D.worldName = args.ref.name;
-            D.friendsInInstance = [];
-            var friendsInCurrentInstance = this.lastLocation.friendList;
-            for (var friend of friendsInCurrentInstance.values()) {
-                var ctx = this.friends.get(friend.userId);
-                if (typeof ctx.ref === 'undefined') {
-                    continue;
+        worldRequest
+            .getCachedWorld({
+                worldId: L.worldId
+            })
+            .then((args) => {
+                var D = this.inviteDialog;
+                D.userIds = [];
+                D.worldId = L.tag;
+                D.worldName = args.ref.name;
+                D.friendsInInstance = [];
+                var friendsInCurrentInstance = this.lastLocation.friendList;
+                for (var friend of friendsInCurrentInstance.values()) {
+                    var ctx = this.friends.get(friend.userId);
+                    if (typeof ctx.ref === 'undefined') {
+                        continue;
+                    }
+                    D.friendsInInstance.push(ctx);
                 }
-                D.friendsInInstance.push(ctx);
-            }
-            D.visible = true;
-        });
+                D.visible = true;
+            });
     };
 
     // #endregion
@@ -13217,7 +12361,7 @@ console.log(`isLinux: ${LINUX}`);
             params.ageGate = true;
         }
         try {
-            var args = await API.createInstance(params);
+            var args = await instanceRequest.createInstance(params);
             D.location = args.json.location;
             D.instanceId = args.json.instanceId;
             D.secureOrShortName = args.json.shortName || args.json.secureName;
@@ -13237,17 +12381,19 @@ console.log(`isLinux: ${LINUX}`);
         if (!L.isRealInstance) {
             return;
         }
-        API.selfInvite({
-            instanceId: L.instanceId,
-            worldId: L.worldId,
-            shortName
-        }).then((args) => {
-            this.$message({
-                message: 'Self invite sent',
-                type: 'success'
+        instanceRequest
+            .selfInvite({
+                instanceId: L.instanceId,
+                worldId: L.worldId,
+                shortName
+            })
+            .then((args) => {
+                this.$message({
+                    message: 'Self invite sent',
+                    type: 'success'
+                });
+                return args;
             });
-            return args;
-        });
     };
 
     $app.methods.updateNewInstanceDialog = function (noChanges) {
@@ -13561,23 +12707,25 @@ console.log(`isLinux: ${LINUX}`);
         if (D.stickersDisabled) {
             tags.unshift('feature_stickers_disabled');
         }
-        API.saveWorld({
-            id: this.worldDialog.id,
-            tags
-        }).then((args) => {
-            this.$message({
-                message: 'Tags updated',
-                type: 'success'
+        worldRequest
+            .saveWorld({
+                id: this.worldDialog.id,
+                tags
+            })
+            .then((args) => {
+                this.$message({
+                    message: 'Tags updated',
+                    type: 'success'
+                });
+                D.visible = false;
+                if (
+                    this.worldDialog.visible &&
+                    this.worldDialog.id === args.json.id
+                ) {
+                    this.showWorldDialog(args.json.id);
+                }
+                return args;
             });
-            D.visible = false;
-            if (
-                this.worldDialog.visible &&
-                this.worldDialog.id === args.json.id
-            ) {
-                this.showWorldDialog(args.json.id);
-            }
-            return args;
-        });
     };
 
     // #endregion
@@ -13773,7 +12921,7 @@ console.log(`isLinux: ${LINUX}`);
                         tags.push(tag);
                     }
                 }
-                await API.saveAvatar({
+                await avatarRequest.saveAvatar({
                     id: ref.id,
                     tags
                 });
@@ -13951,7 +13099,7 @@ console.log(`isLinux: ${LINUX}`);
         D.url = this.getLaunchURL(L);
         D.visible = true;
         if (!shortName) {
-            API.getInstanceShortName({
+            instanceRequest.getInstanceShortName({
                 worldId: L.worldId,
                 instanceId: L.instanceId
             });
@@ -13996,7 +13144,7 @@ console.log(`isLinux: ${LINUX}`);
         } else {
             // fetch shortName
             var newShortName = '';
-            var response = await API.getInstanceShortName({
+            var response = await instanceRequest.getInstanceShortName({
                 worldId: L.worldId,
                 instanceId: L.instanceId
             });
@@ -14089,7 +13237,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.copyInstanceUrl = async function (location) {
         var L = $utils.parseLocation(location);
-        var args = await API.getInstanceShortName({
+        var args = await instanceRequest.getInstanceShortName({
             worldId: L.worldId,
             instanceId: L.instanceId
         });
@@ -14634,12 +13782,13 @@ console.log(`isLinux: ${LINUX}`);
             rsvp: true
         };
         if ($app.uploadImage) {
-            API.sendInviteResponsePhoto(params, I.invite.id)
+            notificationRequest
+                .sendInviteResponsePhoto(params, I.invite.id)
                 .catch((err) => {
                     throw err;
                 })
                 .then((args) => {
-                    API.hideNotification({
+                    notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
                     this.$message({
@@ -14651,12 +13800,13 @@ console.log(`isLinux: ${LINUX}`);
                     return args;
                 });
         } else {
-            API.sendInviteResponse(params, I.invite.id)
+            notificationRequest
+                .sendInviteResponse(params, I.invite.id)
                 .catch((err) => {
                     throw err;
                 })
                 .then((args) => {
-                    API.hideNotification({
+                    notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
                     this.$message({
@@ -14732,12 +13882,13 @@ console.log(`isLinux: ${LINUX}`);
             rsvp: true
         };
         if ($app.uploadImage) {
-            API.sendInviteResponsePhoto(params, D.invite.id, D.messageType)
+            notificationRequest
+                .sendInviteResponsePhoto(params, D.invite.id, D.messageType)
                 .catch((err) => {
                     throw err;
                 })
                 .then((args) => {
-                    API.hideNotification({
+                    notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
                     this.$message({
@@ -14747,12 +13898,13 @@ console.log(`isLinux: ${LINUX}`);
                     return args;
                 });
         } else {
-            API.sendInviteResponse(params, D.invite.id, D.messageType)
+            notificationRequest
+                .sendInviteResponse(params, D.invite.id, D.messageType)
                 .catch((err) => {
                     throw err;
                 })
                 .then((args) => {
-                    API.hideNotification({
+                    notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
                     this.$message({
@@ -14857,30 +14009,36 @@ console.log(`isLinux: ${LINUX}`);
                     if (receiverUserId === API.currentUser.id) {
                         // can't invite self!?
                         var L = $utils.parseLocation(J.worldId);
-                        API.selfInvite({
-                            instanceId: L.instanceId,
-                            worldId: L.worldId
-                        }).finally(inviteLoop);
+                        instanceRequest
+                            .selfInvite({
+                                instanceId: L.instanceId,
+                                worldId: L.worldId
+                            })
+                            .finally(inviteLoop);
                     } else if ($app.uploadImage) {
-                        API.sendInvitePhoto(
-                            {
-                                instanceId: J.worldId,
-                                worldId: J.worldId,
-                                worldName: J.worldName,
-                                messageSlot: slot
-                            },
-                            receiverUserId
-                        ).finally(inviteLoop);
+                        notificationRequest
+                            .sendInvitePhoto(
+                                {
+                                    instanceId: J.worldId,
+                                    worldId: J.worldId,
+                                    worldName: J.worldName,
+                                    messageSlot: slot
+                                },
+                                receiverUserId
+                            )
+                            .finally(inviteLoop);
                     } else {
-                        API.sendInvite(
-                            {
-                                instanceId: J.worldId,
-                                worldId: J.worldId,
-                                worldName: J.worldName,
-                                messageSlot: slot
-                            },
-                            receiverUserId
-                        ).finally(inviteLoop);
+                        notificationRequest
+                            .sendInvite(
+                                {
+                                    instanceId: J.worldId,
+                                    worldId: J.worldId,
+                                    worldName: J.worldName,
+                                    messageSlot: slot
+                                },
+                                receiverUserId
+                            )
+                            .finally(inviteLoop);
                     }
                 } else {
                     J.loading = false;
@@ -14895,7 +14053,8 @@ console.log(`isLinux: ${LINUX}`);
         } else if (I.messageType === 'invite') {
             I.params.messageSlot = slot;
             if ($app.uploadImage) {
-                API.sendInvitePhoto(I.params, I.userId)
+                notificationRequest
+                    .sendInvitePhoto(I.params, I.userId)
                     .catch((err) => {
                         throw err;
                     })
@@ -14907,7 +14066,8 @@ console.log(`isLinux: ${LINUX}`);
                         return args;
                     });
             } else {
-                API.sendInvite(I.params, I.userId)
+                notificationRequest
+                    .sendInvite(I.params, I.userId)
                     .catch((err) => {
                         throw err;
                     })
@@ -14922,7 +14082,8 @@ console.log(`isLinux: ${LINUX}`);
         } else if (I.messageType === 'requestInvite') {
             I.params.requestSlot = slot;
             if ($app.uploadImage) {
-                API.sendRequestInvitePhoto(I.params, I.userId)
+                notificationRequest
+                    .sendRequestInvitePhoto(I.params, I.userId)
                     .catch((err) => {
                         this.clearInviteImageUpload();
                         throw err;
@@ -14935,7 +14096,8 @@ console.log(`isLinux: ${LINUX}`);
                         return args;
                     });
             } else {
-                API.sendRequestInvite(I.params, I.userId)
+                notificationRequest
+                    .sendRequestInvite(I.params, I.userId)
                     .catch((err) => {
                         throw err;
                     })
@@ -15018,30 +14180,36 @@ console.log(`isLinux: ${LINUX}`);
                     if (receiverUserId === API.currentUser.id) {
                         // can't invite self!?
                         var L = $utils.parseLocation(J.worldId);
-                        API.selfInvite({
-                            instanceId: L.instanceId,
-                            worldId: L.worldId
-                        }).finally(inviteLoop);
+                        instanceRequest
+                            .selfInvite({
+                                instanceId: L.instanceId,
+                                worldId: L.worldId
+                            })
+                            .finally(inviteLoop);
                     } else if ($app.uploadImage) {
-                        API.sendInvitePhoto(
-                            {
-                                instanceId: J.worldId,
-                                worldId: J.worldId,
-                                worldName: J.worldName,
-                                messageSlot: D.messageSlot
-                            },
-                            receiverUserId
-                        ).finally(inviteLoop);
+                        notificationRequest
+                            .sendInvitePhoto(
+                                {
+                                    instanceId: J.worldId,
+                                    worldId: J.worldId,
+                                    worldName: J.worldName,
+                                    messageSlot: D.messageSlot
+                                },
+                                receiverUserId
+                            )
+                            .finally(inviteLoop);
                     } else {
-                        API.sendInvite(
-                            {
-                                instanceId: J.worldId,
-                                worldId: J.worldId,
-                                worldName: J.worldName,
-                                messageSlot: D.messageSlot
-                            },
-                            receiverUserId
-                        ).finally(inviteLoop);
+                        notificationRequest
+                            .sendInvite(
+                                {
+                                    instanceId: J.worldId,
+                                    worldId: J.worldId,
+                                    worldName: J.worldName,
+                                    messageSlot: D.messageSlot
+                                },
+                                receiverUserId
+                            )
+                            .finally(inviteLoop);
                     }
                 } else {
                     J.loading = false;
@@ -15056,7 +14224,8 @@ console.log(`isLinux: ${LINUX}`);
         } else if (D.messageType === 'invite') {
             D.params.messageSlot = D.messageSlot;
             if ($app.uploadImage) {
-                API.sendInvitePhoto(D.params, D.userId)
+                notificationRequest
+                    .sendInvitePhoto(D.params, D.userId)
                     .catch((err) => {
                         throw err;
                     })
@@ -15068,7 +14237,8 @@ console.log(`isLinux: ${LINUX}`);
                         return args;
                     });
             } else {
-                API.sendInvite(D.params, D.userId)
+                notificationRequest
+                    .sendInvite(D.params, D.userId)
                     .catch((err) => {
                         throw err;
                     })
@@ -15083,7 +14253,8 @@ console.log(`isLinux: ${LINUX}`);
         } else if (D.messageType === 'requestInvite') {
             D.params.requestSlot = D.messageSlot;
             if ($app.uploadImage) {
-                API.sendRequestInvitePhoto(D.params, D.userId)
+                notificationRequest
+                    .sendRequestInvitePhoto(D.params, D.userId)
                     .catch((err) => {
                         this.clearInviteImageUpload();
                         throw err;
@@ -15096,7 +14267,8 @@ console.log(`isLinux: ${LINUX}`);
                         return args;
                     });
             } else {
-                API.sendRequestInvite(D.params, D.userId)
+                notificationRequest
+                    .sendRequestInvite(D.params, D.userId)
                     .catch((err) => {
                         throw err;
                     })
@@ -15213,7 +14385,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.bulkUnfriendSelection = function () {
         for (var ctx of this.friendsListTable.data) {
             if (ctx.$selected) {
-                API.deleteFriend({
+                friendRequest.deleteFriend({
                     userId: ctx.id
                 });
             }
@@ -15423,7 +14595,7 @@ console.log(`isLinux: ${LINUX}`);
             i++;
             this.friendsListLoadingProgress = `${i}/${length}`;
             try {
-                await API.getUser({
+                await userRequest.getUser({
                     userId
                 });
             } catch (err) {
@@ -17702,7 +16874,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.refreshInstancePlayerCount = function (instance) {
         var L = $utils.parseLocation(instance);
         if (L.isRealInstance) {
-            API.getInstance({
+            instanceRequest.getInstance({
                 worldId: L.worldId,
                 instanceId: L.instanceId
             });
@@ -18537,7 +17709,9 @@ console.log(`isLinux: ${LINUX}`);
         var print = args.json;
         var createdAt = this.getPrintLocalDate(print);
         try {
-            var owner = await API.getCachedUser({ userId: print.ownerId });
+            var owner = await userRequest.getCachedUser({
+                userId: print.ownerId
+            });
             console.log(
                 `Print spawned by ${owner?.json?.displayName} id:${print.id} note:${print.note} authorName:${print.authorName} at:${new Date().toISOString()}`
             );
@@ -19325,7 +18499,7 @@ console.log(`isLinux: ${LINUX}`);
             case 'local-favorite-world':
                 console.log('local-favorite-world', commandArg);
                 var [id, group] = commandArg.split(':');
-                API.getCachedWorld({ worldId: id }).then((args1) => {
+                worldRequest.getCachedWorld({ worldId: id }).then((args1) => {
                     this.directAccessWorld(id);
                     this.addLocalWorldFavorite(id, group);
                     return args1;
@@ -19964,7 +19138,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.addAvatarToHistory = function (avatarId) {
-        API.getAvatar({ avatarId }).then((args) => {
+        avatarRequest.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
 
             database.addAvatarToCache(ref);
@@ -20133,7 +19307,7 @@ console.log(`isLinux: ${LINUX}`);
             var worldId = data[i];
             if (!D.worldIdList.has(worldId)) {
                 try {
-                    var args = await API.getWorld({
+                    var args = await worldRequest.getWorld({
                         worldId
                     });
                     this.worldImportTable.data.push(args.ref);
@@ -20405,7 +19579,7 @@ console.log(`isLinux: ${LINUX}`);
             var avatarId = data[i];
             if (!D.avatarIdList.has(avatarId)) {
                 try {
-                    var args = await API.getAvatar({
+                    var args = await avatarRequest.getAvatar({
                         avatarId
                     });
                     this.avatarImportTable.data.push(args.ref);
@@ -20693,7 +19867,7 @@ console.log(`isLinux: ${LINUX}`);
             var userId = data[i];
             if (!D.userIdList.has(userId)) {
                 try {
-                    var args = await API.getUser({
+                    var args = await userRequest.getUser({
                         userId
                     });
                     this.friendImportTable.data.push(args.ref);
@@ -20874,7 +20048,7 @@ console.log(`isLinux: ${LINUX}`);
                 $app.userDialog.note = note;
             } else {
                 // response is cached sadge :<
-                this.getUser({ userId: targetUserId });
+                userRequest.getUser({ userId: targetUserId });
             }
         }
         var ref = API.cachedUsers.get(targetUserId);
@@ -21543,7 +20717,7 @@ console.log(`isLinux: ${LINUX}`);
                 break;
             }
             try {
-                await API.getWorld({
+                await worldRequest.getWorld({
                     worldId
                 });
             } catch (err) {
@@ -21980,7 +21154,7 @@ console.log(`isLinux: ${LINUX}`);
                 break;
             }
             try {
-                await API.getAvatar({
+                await avatarRequest.getAvatar({
                     avatarId
                 });
             } catch (err) {
@@ -22225,18 +21399,20 @@ console.log(`isLinux: ${LINUX}`);
         if (!API.queuedInstances.has(instanceId)) {
             var L = $utils.parseLocation(instanceId);
             if (L.isRealInstance) {
-                API.getInstance({
-                    worldId: L.worldId,
-                    instanceId: L.instanceId
-                }).then((args) => {
-                    if (args.json?.queueSize) {
-                        $app.instanceQueueUpdate(
-                            instanceId,
-                            args.json?.queueSize,
-                            args.json?.queueSize
-                        );
-                    }
-                });
+                instanceRequest
+                    .getInstance({
+                        worldId: L.worldId,
+                        instanceId: L.instanceId
+                    })
+                    .then((args) => {
+                        if (args.json?.queueSize) {
+                            $app.instanceQueueUpdate(
+                                instanceId,
+                                args.json?.queueSize,
+                                args.json?.queueSize
+                            );
+                        }
+                    });
             }
             $app.instanceQueueUpdate(instanceId, 0, 0);
         }
@@ -22351,7 +21527,7 @@ console.log(`isLinux: ${LINUX}`);
                 break;
             }
         }
-        return API.sendNotificationResponse({
+        return notificationRequest.sendNotificationResponse({
             notificationId,
             responseType,
             responseData
@@ -22652,7 +21828,7 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.methods.getCurrentUserFeedback = function () {
-        return API.getUserFeedback({ userId: API.currentUser.id });
+        return userRequest.getUserFeedback({ userId: API.currentUser.id });
     };
 
     $app.data.changeLogDialog = {
@@ -23151,16 +22327,18 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.saveWorldAllowedDomains = function () {
         var D = this.worldAllowedDomainsDialog;
-        API.saveWorld({
-            id: D.worldId,
-            urlList: D.urlList
-        }).then((args) => {
-            this.$message({
-                message: 'Allowed Video Player Domains updated',
-                type: 'success'
+        worldRequest
+            .saveWorld({
+                id: D.worldId,
+                urlList: D.urlList
+            })
+            .then((args) => {
+                this.$message({
+                    message: 'Allowed Video Player Domains updated',
+                    type: 'success'
+                });
+                return args;
             });
-            return args;
-        });
         D.visible = false;
     };
 

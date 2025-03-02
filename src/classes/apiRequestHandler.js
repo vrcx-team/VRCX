@@ -297,14 +297,28 @@ export default class extends baseClass {
         };
 
         API.bulk = function (options) {
-            this[options.fn](options.params)
-                .catch((err) => {
-                    if ('done' in options) {
-                        options.done.call(this, false, options);
-                    }
-                    throw err;
-                })
-                .then((args) => this.$bulk(options, args));
+            // it's stupid, but I won't waste time on the 'this' context
+            // works, that's enough.
+            if (typeof options.fn === 'function') {
+                options
+                    .fn(options.params)
+                    .catch((err) => {
+                        if ('done' in options) {
+                            options.done.call(this, false, options);
+                        }
+                        throw err;
+                    })
+                    .then((args) => this.$bulk(options, args));
+            } else {
+                this[options.fn](options.params)
+                    .catch((err) => {
+                        if ('done' in options) {
+                            options.done.call(this, false, options);
+                        }
+                        throw err;
+                    })
+                    .then((args) => this.$bulk(options, args));
+            }
         };
 
         API.statusCodes = {

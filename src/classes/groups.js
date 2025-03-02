@@ -1,6 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import configRepository from '../repository/config.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { userRequest, worldRequest, instanceRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -1157,14 +1158,16 @@ export default class extends baseClass {
                         fetchedAt: args.json.fetchedAt
                     }
                 });
-                this.getCachedWorld({
-                    worldId: json.world.id
-                }).then((args1) => {
-                    json.world = args1.ref;
-                    return args1;
-                });
+                worldRequest
+                    .getCachedWorld({
+                        worldId: json.world.id
+                    })
+                    .then((args1) => {
+                        json.world = args1.ref;
+                        return args1;
+                    });
                 // get queue size etc
-                this.getInstance({
+                instanceRequest.getInstance({
                     worldId: json.worldId,
                     instanceId: json.instanceId
                 });
@@ -1966,10 +1969,10 @@ export default class extends baseClass {
         },
 
         async groupOwnerChange(ref, oldUserId, newUserId) {
-            var oldUser = await API.getCachedUser({
+            var oldUser = await userRequest.getCachedUser({
                 userId: oldUserId
             });
-            var newUser = await API.getCachedUser({
+            var newUser = await userRequest.getCachedUser({
                 userId: newUserId
             });
             var oldDisplayName = oldUser?.ref?.displayName;
@@ -2180,12 +2183,14 @@ export default class extends baseClass {
                         D.ref = args.ref;
                         D.inGroup = args.ref.membershipStatus === 'member';
                         D.ownerDisplayName = args.ref.ownerId;
-                        API.getCachedUser({
-                            userId: args.ref.ownerId
-                        }).then((args1) => {
-                            D.ownerDisplayName = args1.ref.displayName;
-                            return args1;
-                        });
+                        userRequest
+                            .getCachedUser({
+                                userId: args.ref.ownerId
+                            })
+                            .then((args1) => {
+                                D.ownerDisplayName = args1.ref.displayName;
+                                return args1;
+                            });
                         this.applyGroupDialogInstances();
                         this.getGroupDialogGroup(groupId);
                     }
@@ -2733,7 +2738,7 @@ export default class extends baseClass {
             }
 
             if (userId) {
-                API.getCachedUser({ userId }).then((args) => {
+                userRequest.getCachedUser({ userId }).then((args) => {
                     D.userObject = args.ref;
                 });
                 D.userIds = [userId];
@@ -3604,7 +3609,7 @@ export default class extends baseClass {
                 return;
             }
 
-            var userArgs = await API.getCachedUser({
+            var userArgs = await userRequest.getCachedUser({
                 userId
             });
             member.userId = userArgs.json.id;
