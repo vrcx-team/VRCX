@@ -1,4 +1,5 @@
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { notificationRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -62,7 +63,7 @@ export default class extends baseClass {
                 ) {
                     continue;
                 }
-                API.sendNotificationResponse({
+                notificationRequest.sendNotificationResponse({
                     notificationId: ref.id,
                     responseType: 'delete',
                     responseData: ''
