@@ -14,11 +14,13 @@ const fs = require('fs');
 const https = require('https');
 
 if (!isDotNetInstalled()) {
-    dialog.showErrorBox(
-        'VRCX',
-        'Please install .NET 9.0 Runtime "dotnet-runtime-9.0" to run VRCX.'
-    );
-    app.quit();
+    app.whenReady().then(() => {
+        dialog.showErrorBox(
+            'VRCX',
+            'Please install .NET 9.0 Runtime "dotnet-runtime-9.0" to run VRCX.'
+        );
+        app.quit();
+    });
     return;
 }
 
