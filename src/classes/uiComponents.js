@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueMarkdown from 'vue-markdown';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { userRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -446,7 +447,7 @@ export default class extends baseClass {
                     if (this.hint) {
                         this.username = this.hint;
                     } else if (this.userid) {
-                        var args = await API.getCachedUser({
+                        var args = await userRequest.getCachedUser({
                             userId: this.userid
                         });
                     }

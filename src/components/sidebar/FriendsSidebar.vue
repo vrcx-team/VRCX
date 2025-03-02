@@ -40,7 +40,7 @@
             </div>
         </div>
         <div
-            v-show="vipFriendsByGroupStatus.length"
+            v-show="vipFriendsDisplayNumber"
             class="x-friend-group x-link"
             @click="
                 isVIPFriends = !isVIPFriends;
@@ -48,7 +48,8 @@
             ">
             <i class="el-icon-arrow-right" :class="{ rotate: isVIPFriends }"></i>
             <span style="margin-left: 5px">
-                {{ $t('side_panel.favorite') }} &horbar; {{ vipFriendsByGroupStatus.length }}
+                {{ $t('side_panel.favorite') }} &horbar;
+                {{ vipFriendsDisplayNumber }}
             </span>
         </div>
         <div v-show="isVIPFriends">
@@ -309,6 +310,11 @@
                 }
 
                 return result.sort((a, b) => a[0].key.localeCompare(b[0].key));
+            },
+            vipFriendsDisplayNumber() {
+                return this.isSidebarDivideByFriendGroup
+                    ? this.vipFriendsDivideByGroup.length
+                    : this.vipFriendsByGroupStatus.length;
             }
         },
         created() {

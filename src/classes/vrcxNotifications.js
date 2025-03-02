@@ -1,4 +1,5 @@
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { userRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -326,9 +327,10 @@ export default class extends baseClass {
             } else if (noty.imageUrl) {
                 imageUrl = noty.imageUrl;
             } else if (userId && !userId.startsWith('grp_')) {
-                imageUrl = await API.getCachedUser({
-                    userId
-                })
+                imageUrl = await userRequest
+                    .getCachedUser({
+                        userId
+                    })
                     .catch((err) => {
                         console.error(err);
                         return '';
