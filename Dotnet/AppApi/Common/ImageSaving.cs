@@ -226,9 +226,17 @@ namespace VRCX
             if (File.Exists(filePath))
                 return null;
 
-            var success = await ImageCache.SaveImageToFile(url, filePath);
-
-            return success ? filePath : null;
+            try
+            {
+                await ImageCache.SaveImageToFile(url, filePath);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to save print to file");
+                return null;
+            }
+            
+            return filePath;
         }
 
         public async Task<string> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
@@ -239,9 +247,17 @@ namespace VRCX
             if (File.Exists(filePath))
                 return null;
 
-            var success = await ImageCache.SaveImageToFile(url, filePath);
-
-            return success ? filePath : null;
+            try
+            {
+                await ImageCache.SaveImageToFile(url, filePath);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to save print to file");
+                return null;
+            }
+            
+            return filePath;
         }
     }
 }

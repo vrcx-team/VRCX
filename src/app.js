@@ -15453,8 +15453,7 @@ console.log(`isLinux: ${LINUX}`);
 
     API.getAvatarImages = function (params) {
         return this.call(`file/${params.fileId}`, {
-            method: 'GET',
-            params
+            method: 'GET'
         }).then((json) => {
             var args = {
                 json,

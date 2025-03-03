@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -37,7 +40,7 @@ namespace VRCX
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
-        public WebApi()
+        private WebApi()
         {
 #if LINUX
             if (Instance == null)
@@ -89,7 +92,7 @@ namespace VRCX
             catch (UriFormatException)
             {
                 VRCXStorage.Instance.Set("VRCX_ProxyServer", string.Empty);
-                var message = "The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.";
+                const string message = "The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.";
 #if !LINUX
                 System.Windows.Forms.MessageBox.Show(message, "Invalid Proxy URI", MessageBoxButtons.OK, MessageBoxIcon.Error);
 #endif
@@ -106,6 +109,9 @@ namespace VRCX
 
         public void ClearCookies()
         {
+#if !LINUX
+            Cef.GetGlobalCookieManager().DeleteCookies();
+#endif
             _cookieContainer = new CookieContainer();
             SaveCookies();
         }
@@ -125,38 +131,70 @@ namespace VRCX
                 using var stream = new MemoryStream(Convert.FromBase64String((string)item[0]));
                 _cookieContainer = new CookieContainer();
                 _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
-                // _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream); // from .NET framework
             }
             catch (Exception e)
             {
                 Logger.Error($"Failed to load cookies: {e.Message}");
             }
         }
+        
+        private List<Cookie> GetAllCookies()
+        {
+            var cookieTable = (Hashtable)_cookieContainer.GetType().InvokeMember("m_domainTable",
+                BindingFlags.NonPublic |
+                BindingFlags.GetField |
+                BindingFlags.Instance,
+                null,
+                _cookieContainer,
+                new object[] { });
+            
+            var uniqueCookies = new Dictionary<string, Cookie>();
+            foreach (var item in cookieTable.Keys)
+            {
+                var domain = (string)item;
+                if (string.IsNullOrEmpty(domain))
+                    continue;
+
+                if (domain.StartsWith('.'))
+                    domain = domain[1..];
+
+                var address = $"http://{domain}/";
+                if (!Uri.TryCreate(address, UriKind.Absolute, out var uri))
+                    continue;
+
+                foreach (Cookie cookie in _cookieContainer.GetCookies(uri))
+                {
+                    var key = $"{domain}.{cookie.Name}";
+                    if (!uniqueCookies.TryGetValue(key, out var value) ||
+                        cookie.TimeStamp > value.TimeStamp)
+                    {
+                        cookie.Expires = DateTime.MaxValue;
+                        uniqueCookies[key] = cookie;
+                    }
+                }
+            }
+
+            return uniqueCookies.Values.ToList();
+        }
 
         public void SaveCookies()
         {
-            if (_cookieDirty == false)
-            {
+            if (!_cookieDirty)
                 return;
-            }
-            foreach (Cookie cookie in _cookieContainer.GetAllCookies())
-            {
-                cookie.Expires = DateTime.MaxValue;
-            }
+            
             try
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
-                    //new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
-                    SQLiteLegacy.Instance.ExecuteNonQuery(
-                        "INSERT OR REPLACE INTO `cookies` (`key`, `value`) VALUES (@key, @value)",
-                        new Dictionary<string, object>() {
-                            {"@key", "default"},
-                            {"@value", Convert.ToBase64String(memoryStream.ToArray())}
-                        }
-                    );
-                }
+                var cookies = GetAllCookies();
+                using var memoryStream = new MemoryStream();
+                System.Text.Json.JsonSerializer.Serialize(memoryStream, cookies);
+                SQLiteLegacy.Instance.ExecuteNonQuery(
+                    "INSERT OR REPLACE INTO `cookies` (`key`, `value`) VALUES (@key, @value)",
+                    new Dictionary<string, object>() {
+                        {"@key", "default"},
+                        {"@value", Convert.ToBase64String(memoryStream.ToArray())}
+                    }
+                );
+                
                 _cookieDirty = false;
             }
             catch (Exception e)
@@ -170,7 +208,7 @@ namespace VRCX
             _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
 
             using var memoryStream = new MemoryStream();
-            System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
+            System.Text.Json.JsonSerializer.Serialize(memoryStream, GetAllCookies());
             return Convert.ToBase64String(memoryStream.ToArray());
         }
 
@@ -192,44 +230,44 @@ namespace VRCX
 
             request.AutomaticDecompression = DecompressionMethods.All;
             request.Method = "POST";
-            string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            var boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
-            Stream requestStream = request.GetRequestStream();
-            if (options.TryGetValue("postData", out object postDataObject) == true)
+            var requestStream = request.GetRequestStream();
+            if (options.TryGetValue("postData", out var postDataObject))
             {
-                Dictionary<string, string> postData = new Dictionary<string, string>();
+                var postData = new Dictionary<string, string>();
                 postData.Add("data", (string)postDataObject);
-                string FormDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
-                foreach (string key in postData.Keys)
+                const string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
+                foreach (var key in postData.Keys)
                 {
-                    string item = string.Format(FormDataTemplate, boundary, key, postData[key]);
-                    byte[] itemBytes = Encoding.UTF8.GetBytes(item);
-                    await requestStream.WriteAsync(itemBytes, 0, itemBytes.Length);
+                    var item = string.Format(formDataTemplate, boundary, key, postData[key]);
+                    var itemBytes = Encoding.UTF8.GetBytes(item);
+                    await requestStream.WriteAsync(itemBytes);
                 }
             }
             var imageData = options["imageData"] as string;
-            byte[] fileToUpload = Program.AppApiInstance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false);
-            string fileFormKey = "image";
-            string fileName = "image.png";
-            string fileMimeType = "image/png";
-            string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
-            string header = string.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
-            byte[] headerbytes = Encoding.UTF8.GetBytes(header);
-            await requestStream.WriteAsync(headerbytes, 0, headerbytes.Length);
-            using (MemoryStream fileStream = new MemoryStream(fileToUpload))
+            var fileToUpload = Program.AppApiInstance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false);
+            const string fileFormKey = "image";
+            const string fileName = "image.png";
+            const string fileMimeType = "image/png";
+            const string headerTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
+            var header = string.Format(headerTemplate, boundary, fileFormKey, fileName, fileMimeType);
+            var headerBytes = Encoding.UTF8.GetBytes(header);
+            await requestStream.WriteAsync(headerBytes);
+            using (var fileStream = new MemoryStream(fileToUpload))
             {
-                byte[] buffer = new byte[1024];
-                int bytesRead = 0;
+                var buffer = new byte[1024];
+                var bytesRead = 0;
                 while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
                 {
-                    await requestStream.WriteAsync(buffer, 0, bytesRead);
+                    await requestStream.WriteAsync(buffer.AsMemory(0, bytesRead));
                 }
                 fileStream.Close();
             }
-            byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
-            await requestStream.WriteAsync(newlineBytes, 0, newlineBytes.Length);
-            byte[] endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
-            await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
+            var newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+            await requestStream.WriteAsync(newlineBytes);
+            var endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
+            await requestStream.WriteAsync(endBytes);
             requestStream.Close();
         }
 
@@ -244,11 +282,9 @@ namespace VRCX
             var fileData = options["fileData"] as string;
             var sentData = Convert.FromBase64CharArray(fileData.ToCharArray(), 0, fileData.Length);
             request.ContentLength = sentData.Length;
-            using (var sendStream = request.GetRequestStream())
-            {
-                await sendStream.WriteAsync(sentData, 0, sentData.Length);
-                sendStream.Close();
-            }
+            await using var sendStream = request.GetRequestStream();
+            await sendStream.WriteAsync(sentData);
+            sendStream.Close();
         }
         
         private static async Task ImageUpload(HttpWebRequest request, IDictionary<string, object> options)
@@ -258,48 +294,48 @@ namespace VRCX
 
             request.AutomaticDecompression = DecompressionMethods.All;
             request.Method = "POST";
-            string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            var boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
-            Stream requestStream = request.GetRequestStream();
+            var requestStream = request.GetRequestStream();
             if (options.TryGetValue("postData", out object postDataObject))
             {
                 var jsonPostData = (JObject)JsonConvert.DeserializeObject((string)postDataObject);
-                string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
+                const string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
                 if (jsonPostData != null)
                 {
                     foreach (var data in jsonPostData)
                     {
-                        string item = string.Format(formDataTemplate, boundary, data.Key, data.Value);
-                        byte[] itemBytes = Encoding.UTF8.GetBytes(item);
-                        await requestStream.WriteAsync(itemBytes, 0, itemBytes.Length);
+                        var item = string.Format(formDataTemplate, boundary, data.Key, data.Value);
+                        var itemBytes = Encoding.UTF8.GetBytes(item);
+                        await requestStream.WriteAsync(itemBytes);
                     }
                 }
             }
             var imageData = options["imageData"] as string;
             var matchingDimensions = options["matchingDimensions"] as bool? ?? false;
-            byte[] fileToUpload = Program.AppApiInstance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), matchingDimensions);
+            var fileToUpload = Program.AppApiInstance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), matchingDimensions);
 
-            string fileFormKey = "file";
-            string fileName = "blob";
-            string fileMimeType = "image/png";
-            string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
-            string header = string.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
-            byte[] headerbytes = Encoding.UTF8.GetBytes(header);
-            await requestStream.WriteAsync(headerbytes, 0, headerbytes.Length);
-            using (MemoryStream fileStream = new MemoryStream(fileToUpload))
+            const string fileFormKey = "file";
+            const string fileName = "blob";
+            const string fileMimeType = "image/png";
+            const string headerTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
+            var header = string.Format(headerTemplate, boundary, fileFormKey, fileName, fileMimeType);
+            var headerBytes = Encoding.UTF8.GetBytes(header);
+            await requestStream.WriteAsync(headerBytes);
+            using (var fileStream = new MemoryStream(fileToUpload))
             {
-                byte[] buffer = new byte[1024];
-                int bytesRead = 0;
+                var buffer = new byte[1024];
+                var bytesRead = 0;
                 while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
                 {
-                    await requestStream.WriteAsync(buffer, 0, bytesRead);
+                    await requestStream.WriteAsync(buffer.AsMemory(0, bytesRead));
                 }
                 fileStream.Close();
             }
-            byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
-            await requestStream.WriteAsync(newlineBytes, 0, newlineBytes.Length);
-            byte[] endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
-            await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
+            var newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+            await requestStream.WriteAsync(newlineBytes);
+            var endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
+            await requestStream.WriteAsync(endBytes);
             requestStream.Close();
         }
         

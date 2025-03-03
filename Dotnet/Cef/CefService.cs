@@ -81,11 +81,11 @@ namespace VRCX
                 var vueDevtoolsCrxPath = Path.Join(Program.BaseDirectory, @"..\..\build-tools\Vue-js-devtools.crx");
                 if (File.Exists(vueDevtoolsCrxPath))
                 {
-                    var VueDevtoolsPath = Path.Join(extensionsPath, "Vue-js-devtools");
-                    if (!Directory.Exists(VueDevtoolsPath))
+                    var vueDevtoolsPath = Path.Join(extensionsPath, "Vue-js-devtools");
+                    if (!Directory.Exists(vueDevtoolsPath))
                     {
-                        Directory.CreateDirectory(VueDevtoolsPath);
-                        ZipFile.ExtractToDirectory(vueDevtoolsCrxPath, VueDevtoolsPath);
+                        Directory.CreateDirectory(vueDevtoolsPath);
+                        ZipFile.ExtractToDirectory(vueDevtoolsCrxPath, vueDevtoolsPath);
                     }
                 }
                 

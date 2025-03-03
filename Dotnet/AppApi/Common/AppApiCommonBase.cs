@@ -8,7 +8,6 @@ namespace VRCX
     {
         // AppApi
         public abstract void ShowDevTools();
-        public abstract void DeleteAllCookies();
         public abstract void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand);
         public abstract void RefreshVR();
         public abstract void RestartVR();
