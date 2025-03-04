@@ -294,6 +294,7 @@ export default class extends baseClass {
             );
         },
 
+        // remove when finished fav tab split
         changeFavoriteGroupName(ctx) {
             this.$prompt(
                 $t('prompt.change_favorite_group_name.description'),

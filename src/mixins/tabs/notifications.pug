@@ -105,7 +105,7 @@ mixin notificationsTab
                                 @click='showFullscreenImageDialog(scope.row.imageUrl)')
             el-table-column(:label='$t("table.notification.message")' prop='message')
                 template(#default='scope')
-                    span.x-link(v-if='scope.row.type === "invite"')
+                    span.x-link(v-if='scope.row.type === "invite"' style='display: flex')
                         location(
                             v-if='scope.row.details'
                             :location='scope.row.details.worldId'
