@@ -10,10 +10,6 @@ namespace VRCX
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         
-        public override void DeleteAllCookies()
-        {
-        }
-        
         public override void ShowDevTools()
         {
         }

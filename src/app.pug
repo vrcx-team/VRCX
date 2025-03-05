@@ -1,0 +1,155 @@
+doctype html
+#x-app.x-app(@dragenter.prevent @dragover.prevent @drop.prevent)
+    //- login
+    include ./mixins/loginPage.pug
+    +loginPage
+
+    //- menu
+    .x-menu-container
+        //- download progress, update pending
+        .pending-update(v-if='updateInProgress' @click='showVRCXUpdateDialog')
+            el-progress(
+                type='circle'
+                width='50'
+                stroke-width='3'
+                :percentage='updateProgress'
+                :format='updateProgressText')
+        .pending-update(v-else-if='pendingVRCXUpdate || pendingVRCXInstall')
+            el-button(
+                type='default'
+                @click='showVRCXUpdateDialog'
+                size='mini'
+                icon='el-icon-download'
+                circle
+                style='font-size: 14px; height: 50px; width: 50px')
+
+        nav-menu(ref='menu' @select='selectMenu' :menu-active-index='menuActiveIndex')
+
+    //- ### Tabs ###
+    template(v-if='API.isLoggedIn')
+        //- feed
+        include ./mixins/tabs/feed.pug
+        +feedTab
+
+        //- gameLog
+        include ./mixins/tabs/gameLog.pug
+        +gameLogTab
+
+        //- playerList
+        include ./mixins/tabs/playerList.pug
+        +playerListTab
+
+        //- search
+        include ./mixins/tabs/search.pug
+        +searchTab
+
+        //- favorite
+        include ./mixins/tabs/favorites.pug
+        +favoritesTab
+
+        //- friendLog
+        include ./mixins/tabs/friendLog.pug
+        +friendLogTab
+
+        //- moderation
+        moderation-tab(
+            v-if='menuActiveIndex === "moderation"'
+            :table-data='playerModerationTable'
+            :shift-held='shiftHeld'
+            :hide-tooltips='hideTooltips')
+
+        //- notification
+        include ./mixins/tabs/notifications.pug
+        +notificationsTab
+
+        //- profile
+        include ./mixins/tabs/profile.pug
+        +profileTab
+
+        //- friends list
+        include ./mixins/tabs/friendsList.pug
+        +friendsListTab
+
+        //- charts
+        keep-alive
+            charts-tab(
+                v-if='menuActiveIndex === "charts"'
+                :get-world-name='getWorldName'
+                :is-dark-mode='isDarkMode'
+                :dt-hour12='dtHour12'
+                :friends-map='friends'
+                :local-favorite-friends='localFavoriteFriends'
+                @open-previous-instance-info-dialog='showPreviousInstanceInfoDialog')
+
+        //- settings
+        include ./mixins/tabs/settings.pug
+        +settingsTab
+
+        side-bar(
+            v-show='isSideBarTabShow'
+            v-bind='sideBarTabProps'
+            @show-group-dialog='showGroupDialog'
+            @quick-search-change='quickSearchChange'
+            @direct-access-paste='directAccessPaste'
+            @refresh-friends-list='refreshFriendsList'
+            @confirm-delete-friend='confirmDeleteFriend')
+
+    //- ## Dialogs ## -\\
+    include ./mixins/dialogs/userDialog.pug
+    +userDialog
+
+    include ./mixins/dialogs/worldDialog.pug
+    +worldDialog
+
+    include ./mixins/dialogs/avatarDialog.pug
+    +avatarDialog
+
+    include ./mixins/dialogs/groupDialog.pug
+    +groupDialog
+
+    include ./mixins/dialogs/favoritesDialog.pug
+    +favoritesDialog
+
+    include ./mixins/dialogs/images.pug
+    +images
+
+    include ./mixins/dialogs/newInstance.pug
+    +newInstance
+
+    include ./mixins/dialogs/feedFilters.pug
+    +feedFilters
+
+    include ./mixins/dialogs/openSourceSoftwareNotice.pug
+    +openSourceSoftwareNotice
+
+    include ./mixins/dialogs/groups.pug
+    +groups
+
+    include ./mixins/dialogs/currentUser.pug
+    +currentUser
+
+    include ./mixins/dialogs/invites.pug
+    +invites
+
+    include ./mixins/dialogs/launch.pug
+    +launch
+
+    include ./mixins/dialogs/screenshotMetadata.pug
+    +screenshotMetadata
+
+    include ./mixins/dialogs/vrcx.pug
+    +vrcx
+
+    include ./mixins/dialogs/settings.pug
+    +settings
+
+    include ./mixins/dialogs/previousInstances.pug
+    +previousInstances
+
+    include ./mixins/dialogs/tags.pug
+    +tags
+
+    include ./mixins/dialogs/boops.pug
+    +boops
+
+    //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")

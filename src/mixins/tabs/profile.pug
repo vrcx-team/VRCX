@@ -1,5 +1,5 @@
 mixin profileTab
-    .x-container(v-if='$refs.menu && $refs.menu.activeIndex === "profile"')
+    .x-container(v-if='menuActiveIndex === "profile"')
         .options-container(style='margin-top: 0')
             span.header {{ $t('view.profile.profile.header') }}
             .x-friend-list(style='margin-top: 10px')

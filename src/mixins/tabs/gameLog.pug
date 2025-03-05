@@ -1,5 +1,5 @@
 mixin gameLogTab
-    .x-container(v-show='$refs.menu && $refs.menu.activeIndex === \'gameLog\'')
+    .x-container(v-show='menuActiveIndex === "gameLog"')
         data-tables(v-bind='gameLogTable' v-loading='gameLogTable.loading')
             template(#tool)
                 div(style='margin: 0 0 10px; display: flex; align-items: center')

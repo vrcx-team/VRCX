@@ -36,14 +36,6 @@ namespace VRCX
             MainForm.Instance.Browser.ShowDevTools();
         }
 
-        /// <summary>
-        /// Deletes all cookies from the global cef cookie manager.
-        /// </summary>
-        public override void DeleteAllCookies()
-        {
-            Cef.GetGlobalCookieManager().DeleteCookies();
-        }
-
         public override void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
             Program.VRCXVRInstance.SetActive(active, hmdOverlay, wristOverlay, menuButton, overlayHand);

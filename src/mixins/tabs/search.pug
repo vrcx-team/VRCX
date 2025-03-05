@@ -1,5 +1,5 @@
 mixin searchTab
-    .x-container(v-show='$refs.menu && $refs.menu.activeIndex === \'search\'')
+    .x-container(v-show='menuActiveIndex === "search"')
         div(style='margin: 0 0 10px; display: flex; align-items: center')
             el-input(
                 v-model='searchText'
@@ -14,7 +14,10 @@ mixin searchTab
                     circle
                     style='flex: none; margin-left: 10px')
         el-tabs(ref='searchTab' type='card' style='margin-top: 15px' @tab-click='searchText = ""')
-            el-tab-pane(:label='$t("view.search.user.header")' v-loading='isSearchUserLoading' style='min-height: 60px')
+            el-tab-pane(
+                :label='$t("view.search.user.header")'
+                v-loading='isSearchUserLoading'
+                style='min-height: 60px')
                 el-checkbox(v-model='searchUserByBio' style='margin-left: 10px') {{ $t('view.search.user.search_by_bio') }}
                 el-checkbox(v-model='searchUserSortByLastLoggedIn' style='margin-left: 10px') {{ $t('view.search.user.sort_by_last_logged_in') }}
                 .x-friend-list(style='min-height: 500px')

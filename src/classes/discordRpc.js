@@ -1,5 +1,6 @@
 import configRepository from '../repository/config.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { worldRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -48,14 +49,17 @@ export default class extends baseClass {
                         L.thumbnailImageUrl = ref.thumbnailImageUrl;
                         L.worldCapacity = ref.capacity;
                     } else {
-                        API.getWorld({
-                            worldId: L.worldId
-                        }).then((args) => {
-                            L.worldName = args.ref.name;
-                            L.thumbnailImageUrl = args.ref.thumbnailImageUrl;
-                            L.worldCapacity = args.ref.capacity;
-                            return args;
-                        });
+                        worldRequest
+                            .getWorld({
+                                worldId: L.worldId
+                            })
+                            .then((args) => {
+                                L.worldName = args.ref.name;
+                                L.thumbnailImageUrl =
+                                    args.ref.thumbnailImageUrl;
+                                L.worldCapacity = args.ref.capacity;
+                                return args;
+                            });
                     }
                     if (this.isGameNoVR) {
                         var platform = 'Desktop';

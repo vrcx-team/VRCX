@@ -3,6 +3,7 @@ import gameLogService from '../service/gamelog.js';
 import configRepository from '../repository/config.js';
 import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { userRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -144,7 +145,7 @@ export default class extends baseClass {
                         if (this.debugGameLog || this.debugWebRequests) {
                             console.log('Fetching user from gameLog:', userId);
                         }
-                        API.getUser({ userId });
+                        userRequest.getUser({ userId });
                     }
                     this.updateVRLastLocation();
                     this.getCurrentInstanceUserList();

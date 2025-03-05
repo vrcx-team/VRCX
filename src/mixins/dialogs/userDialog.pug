@@ -1025,7 +1025,7 @@ mixin userDialog
                                     v-else-if='avatar.releaseStatus === "private"'
                                     style='color: #f56c6c')
                                 span.extra(v-text='avatar.releaseStatus' v-else)
-                el-tab-pane(:label='$t("dialog.user.json.header")' lazy)
+                el-tab-pane(:label='$t("dialog.user.json.header")' lazy style='height: 50vh')
                     el-button(
                         type='default'
                         @click='refreshUserDialogTreeData()'
@@ -1039,7 +1039,7 @@ mixin userDialog
                         icon='el-icon-download'
                         circle
                         style='margin-left: 5px')
-                    el-tree(:data='userDialog.treeData' style='margin-top: 5px; font-size: 12px; height: 50vh')
+                    el-tree(:data='userDialog.treeData' style='margin-top: 5px; font-size: 12px')
                         template(#default='scope')
                             span
                                 span(v-text='scope.data.key' style='font-weight: bold; margin-right: 5px')

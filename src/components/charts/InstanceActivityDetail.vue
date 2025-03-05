@@ -7,8 +7,9 @@
                     class="location"
                     :location="activityDetailData[0].location"
                     is-open-previous-instance-info-dialog
-                    @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
-                ></location>
+                    @open-previous-instance-info-dialog="
+                        $emit('open-previous-instance-info-dialog', $event)
+                    "></location>
             </transition>
         </div>
 
@@ -19,9 +20,13 @@
 <script>
     import dayjs from 'dayjs';
     import utils from '../../classes/utils';
+    import Location from '../common/Location.vue';
 
     export default {
         name: 'InstanceActivityDetail',
+        components: {
+            Location
+        },
         inject: ['API', 'showUserDialog'],
         props: {
             activityDetailData: {

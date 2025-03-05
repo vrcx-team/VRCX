@@ -3,8 +3,8 @@ const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const { EsbuildPlugin } = require('esbuild-loader');
 
 module.exports = {
     entry: {
@@ -45,6 +45,16 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
+            },
+            {
+                test: /\.[jt]sx?$/,
+                exclude: /node_modules/,
+                loader: 'esbuild-loader',
+                options: {
+                    loader: 'js',
+                    target: 'esnext',
+                    legalComments: 'inline'
+                }
             },
             {
                 test: /\.pug$/,
@@ -90,13 +100,13 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: './src/index.pug',
+            template: './src/static/index.html',
             inject: false,
             minify: false
         }),
         new HtmlWebpackPlugin({
             filename: 'vr.html',
-            template: './src/vr.pug',
+            template: './src/static/vr.html',
             inject: false,
             minify: false
         }),
@@ -113,11 +123,8 @@ module.exports = {
     ],
     optimization: {
         minimizer: [
-            new TerserPlugin({
-                extractComments: false,
-                terserOptions: {
-                    ecma: 2020
-                }
+            new EsbuildPlugin({
+                target: 'es2020'
             })
         ]
     },

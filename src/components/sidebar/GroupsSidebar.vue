@@ -4,47 +4,50 @@
             <div
                 :key="getGroupId(group)"
                 class="x-friend-group x-link"
-                :style="{ paddingTop: index === 0 ? '0px' : '10px' }"
-            >
+                :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">
                     <i
                         class="el-icon-arrow-right"
                         :style="{
                             transform: groupInstancesCfg[getGroupId(group)].isCollapsed ? '' : 'rotate(90deg)',
                             transition: 'transform 0.3s'
-                        }"
-                    ></i>
+                        }"></i>
                     <span style="margin-left: 5px">{{ group[0].group.name }} – {{ group.length }}</span>
                 </div>
             </div>
 
-            <div
-                v-if="!groupInstancesCfg[getGroupId(group)].isCollapsed"
-                v-for="ref in group"
-                :key="ref.instance.id"
-                class="x-friend-item"
-                @click="showGroupDialog(ref.instance.ownerId)"
-            >
-                <div class="avatar">
-                    <img v-lazy="ref.group.iconUrl" />
+            <template v-if="!groupInstancesCfg[getGroupId(group)].isCollapsed">
+                <div
+                    v-for="ref in group"
+                    :key="ref.instance.id"
+                    class="x-friend-item"
+                    @click="$emit('show-group-dialog', ref.instance.ownerId)">
+                    <div class="avatar">
+                        <img v-lazy="ref.group.iconUrl" />
+                    </div>
+                    <div class="detail">
+                        <span class="name">
+                            <span v-text="ref.group.name"></span>
+                            <span style="font-weight: normal; margin-left: 5px"
+                                >({{ ref.instance.userCount }}/{{ ref.instance.capacity }})</span
+                            >
+                        </span>
+                        <location class="extra" :location="ref.instance.location" :link="false" />
+                    </div>
                 </div>
-                <div class="detail">
-                    <span class="name">
-                        <span v-text="ref.group.name"></span>
-                        <span style="font-weight: normal; margin-left: 5px"
-                            >({{ ref.instance.userCount }}/{{ ref.instance.capacity }})</span
-                        >
-                    </span>
-                    <location class="extra" :location="ref.instance.location" :link="false" />
-                </div>
-            </div>
+            </template>
         </template>
     </div>
 </template>
 
 <script>
+    import Location from '../common/Location.vue';
+
     export default {
         name: 'GroupsSidebar',
+        components: {
+            Location
+        },
         props: {
             groupInstances: {
                 type: Array,

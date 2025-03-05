@@ -476,3 +476,11 @@ button {
     background-color: rgba(0, 0, 0, 0.2);
 }
 // Date picker end
+
+// el-skeleton
+.el-skeleton.is-animated .el-skeleton__item {
+    background: linear-gradient(90deg, #333 25%, #555 37%, #333 63%);
+    background-size: 400% 100%;
+    animation: el-skeleton-loading 1.4s ease infinite;
+}
+// el-sekeleton end
