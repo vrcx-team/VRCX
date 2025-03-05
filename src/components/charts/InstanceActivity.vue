@@ -286,31 +286,8 @@
             initEcharts() {
                 const chartsHeight = this.activityData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityChartRef;
-                if (!this.echartsInstance) {
-                    if (!this.echarts) {
-                        const timeout = 5000;
-                        let time = 0;
-                        let timer = setInterval(() => {
-                            if (this.echarts) {
-                                this.echartsInstance = this.echarts.init(
-                                    chartDom,
-                                    `${this.isDarkMode ? 'dark' : null}`,
-                                    {
-                                        height: chartsHeight
-                                    }
-                                );
-                                this.resizeObserver.observe(chartDom);
-                                clearInterval(timer);
-                                return;
-                            }
-                            time += 100;
-                            if (time >= timeout) {
-                                clearInterval(timer);
-                                console.error('echarts init timeout');
-                            }
-                        }, 100);
-                    }
-                } else {
+
+                const afterInit = () => {
                     this.echartsInstance.resize({
                         height: chartsHeight,
                         animation: {
@@ -327,8 +304,9 @@
                             return sameLocation && sameJoinTime;
                         });
                         if (detailDataIdx === -1) {
+                            // no detail chart down below, it's hidden, so can't find instance data index
                             console.error(
-                                "handleClickYAxisLabel failed, likely current user wasn't in this instance",
+                                "handleClickYAxisLabel failed, likely current user wasn't in this instance.",
                                 params
                             );
                         } else {
@@ -344,6 +322,42 @@
                     this.echartsInstance.setOption(options, { lazyUpdate: true });
                     this.echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
                     this.isLoading = false;
+                };
+
+                const initEchartsInstance = () => {
+                    this.echartsInstance = this.echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
+                        height: chartsHeight
+                    });
+                    this.resizeObserver.observe(chartDom);
+                };
+
+                const loadEchartsWithTimeout = () => {
+                    const timeout = 5000;
+                    let time = 0;
+                    const timer = setInterval(() => {
+                        if (this.echarts) {
+                            initEchartsInstance();
+                            afterInit();
+                            clearInterval(timer);
+                            return;
+                        }
+                        time += 100;
+                        if (time >= timeout) {
+                            clearInterval(timer);
+                            console.error('echarts init timeout');
+                        }
+                    }, 100);
+                };
+
+                if (!this.echartsInstance) {
+                    if (!this.echarts) {
+                        loadEchartsWithTimeout();
+                    } else {
+                        initEchartsInstance();
+                        afterInit();
+                    }
+                } else {
+                    afterInit();
                 }
             },
             getNewOption() {
