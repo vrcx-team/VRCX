@@ -64,7 +64,7 @@
     import Location from '../../components/common/Location.vue';
 
     export default {
-        name: 'PreviousInstanceInfo',
+        name: 'PreviousInstanceInfoDialog',
         components: {
             Location
         },

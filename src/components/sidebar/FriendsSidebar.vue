@@ -318,9 +318,7 @@
             }
         },
         created() {
-            configRepository.getBool('VRCX_sidebarGroupByInstanceCollapsed', false).then((value) => {
-                this.isSidebarGroupByInstanceCollapsed = value;
-            });
+            this.loadFriendsGroupStates();
         },
         methods: {
             saveFriendsGroupStates() {
@@ -336,6 +334,10 @@
                 this.isOnlineFriends = await configRepository.getBool('VRCX_isFriendsGroupOnline', true);
                 this.isActiveFriends = await configRepository.getBool('VRCX_isFriendsGroupActive', false);
                 this.isOfflineFriends = await configRepository.getBool('VRCX_isFriendsGroupOffline', false);
+                this.isSidebarGroupByInstanceCollapsed = await configRepository.getBool(
+                    'VRCX_sidebarGroupByInstanceCollapsed',
+                    false
+                );
             },
             isRealInstance(locationTag) {
                 return utils.isRealInstance(locationTag);

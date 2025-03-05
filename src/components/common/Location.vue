@@ -21,7 +21,13 @@
     export default {
         // eslint-disable-next-line vue/multi-word-component-names
         name: 'Location',
-        inject: ['API'],
+        inject: {
+            // prevent randomly error
+            // not good idea, it's temporary
+            API: { default: window.API },
+            getWorldName: { default: window.$app?.getWorldName },
+            getGroupName: { default: window.$app?.getGroupName }
+        },
         props: {
             location: String,
             traveling: String,
@@ -82,8 +88,7 @@
                 } else if (L.worldId) {
                     var ref = this.API.cachedWorlds.get(L.worldId);
                     if (typeof ref === 'undefined') {
-                        // TODO: USE props
-                        $app.getWorldName(L.worldId).then((worldName) => {
+                        this.getWorldName(L.worldId).then((worldName) => {
                             if (L.tag === instanceId) {
                                 if (L.instanceId) {
                                     this.text = `${worldName} #${L.instanceName} ${L.accessTypeName}`;
@@ -102,8 +107,7 @@
                     this.groupName = this.grouphint;
                 } else if (L.groupId) {
                     this.groupName = L.groupId;
-                    // TODO: USE props
-                    $app.getGroupName(instanceId).then((groupName) => {
+                    this.getGroupName(instanceId).then((groupName) => {
                         if (L.tag === instanceId) {
                             this.groupName = groupName;
                         }
@@ -153,5 +157,3 @@
         }
     };
 </script>
-
-<style scoped></style>

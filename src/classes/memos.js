@@ -84,11 +84,6 @@ export default class extends baseClass {
             });
         },
 
-        onWorldMemoChange() {
-            var D = this.worldDialog;
-            this.saveWorldMemo(D.id, D.memo);
-        },
-
         async getWorldMemo(worldId) {
             try {
                 return await database.getWorldMemo(worldId);
@@ -99,18 +94,6 @@ export default class extends baseClass {
                     editedAt: '',
                     memo: ''
                 };
-            }
-        },
-
-        saveWorldMemo(worldId, memo) {
-            if (memo) {
-                database.setWorldMemo({
-                    worldId,
-                    editedAt: new Date().toJSON(),
-                    memo
-                });
-            } else {
-                database.deleteWorldMemo(worldId);
             }
         },
 
