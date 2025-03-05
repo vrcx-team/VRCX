@@ -17,8 +17,7 @@
                     <i
                         slot="reference"
                         class="el-icon-info"
-                        style="margin-left: 5px; font-size: 12px; opacity: 0.7"
-                    ></i>
+                        style="margin-left: 5px; font-size: 12px; opacity: 0.7"></i>
                 </el-popover>
             </div>
 
@@ -36,8 +35,7 @@
                                         v-model.lazy="barWidth"
                                         :max="50"
                                         :min="1"
-                                        @change="changeBarWidth"
-                                    ></el-slider>
+                                        @change="changeBarWidth"></el-slider>
                                 </div>
                             </div>
                             <div>
@@ -54,8 +52,7 @@
                                 <span>{{ $t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
                                 <el-switch
                                     v-model="isNoFriendInstanceVisible"
-                                    @change="changeIsNoFriendInstanceVisible"
-                                >
+                                    @change="changeIsNoFriendInstanceVisible">
                                 </el-switch>
                             </div>
                         </div>
@@ -68,8 +65,7 @@
                         <el-button
                             icon="el-icon-arrow-left"
                             :disabled="isPrevDayBtnDisabled"
-                            @click="changeSelectedDateFromBtn(false)"
-                        ></el-button>
+                            @click="changeSelectedDateFromBtn(false)"></el-button>
                     </el-tooltip>
                     <el-tooltip :content="$t('view.charts.instance_activity.next_day')" placement="top">
                         <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
@@ -85,8 +81,7 @@
                     :picker-options="{
                         disabledDate: (time) => getDatePickerDisabledDate(time)
                     }"
-                    @change="reloadData"
-                ></el-date-picker>
+                    @change="reloadData"></el-date-picker>
             </div>
         </div>
         <div style="position: relative">
@@ -115,8 +110,7 @@
             :is-dark-mode="isDarkMode"
             :dt-hour12="dtHour12"
             :bar-width="barWidth"
-            @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
-        />
+            @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)" />
     </div>
 </template>
 
@@ -292,46 +286,79 @@
             initEcharts() {
                 const chartsHeight = this.activityData.length * (this.barWidth + 10) + 200;
                 const chartDom = this.$refs.activityChartRef;
-                if (!this.echartsInstance) {
+
+                const afterInit = () => {
+                    this.echartsInstance.resize({
+                        height: chartsHeight,
+                        animation: {
+                            duration: 300
+                        }
+                    });
+
+                    const handleClickYAxisLabel = (params) => {
+                        const detailDataIdx = this.filteredActivityDetailData.findIndex((arr) => {
+                            const sameLocation = arr[0]?.location === this.activityData[params?.dataIndex]?.location;
+                            const sameJoinTime = arr
+                                .find((item) => item.user_id === this.API.currentUser.id)
+                                ?.joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
+                            return sameLocation && sameJoinTime;
+                        });
+                        if (detailDataIdx === -1) {
+                            // no detail chart down below, it's hidden, so can't find instance data index
+                            console.error(
+                                "handleClickYAxisLabel failed, likely current user wasn't in this instance.",
+                                params
+                            );
+                        } else {
+                            this.$refs.activityDetailChartRef[detailDataIdx].$el.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    };
+
+                    const options = this.activityData.length ? this.getNewOption() : {};
+
+                    this.echartsInstance.setOption(options, { lazyUpdate: true });
+                    this.echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
+                    this.isLoading = false;
+                };
+
+                const initEchartsInstance = () => {
                     this.echartsInstance = this.echarts.init(chartDom, `${this.isDarkMode ? 'dark' : null}`, {
                         height: chartsHeight
                     });
                     this.resizeObserver.observe(chartDom);
-                }
-
-                this.echartsInstance.resize({
-                    height: chartsHeight,
-                    animation: {
-                        duration: 300
-                    }
-                });
-
-                const handleClickYAxisLabel = (params) => {
-                    const detailDataIdx = this.filteredActivityDetailData.findIndex((arr) => {
-                        const sameLocation = arr[0]?.location === this.activityData[params?.dataIndex]?.location;
-                        const sameJoinTime = arr
-                            .find((item) => item.user_id === this.API.currentUser.id)
-                            ?.joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
-                        return sameLocation && sameJoinTime;
-                    });
-                    if (detailDataIdx === -1) {
-                        console.error(
-                            "handleClickYAxisLabel failed, likely current user wasn't in this instance",
-                            params
-                        );
-                    } else {
-                        this.$refs.activityDetailChartRef[detailDataIdx].$el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
                 };
 
-                const options = this.activityData.length ? this.getNewOption() : {};
+                const loadEchartsWithTimeout = () => {
+                    const timeout = 5000;
+                    let time = 0;
+                    const timer = setInterval(() => {
+                        if (this.echarts) {
+                            initEchartsInstance();
+                            afterInit();
+                            clearInterval(timer);
+                            return;
+                        }
+                        time += 100;
+                        if (time >= timeout) {
+                            clearInterval(timer);
+                            console.error('echarts init timeout');
+                        }
+                    }, 100);
+                };
 
-                this.echartsInstance.setOption(options, { lazyUpdate: true });
-                this.echartsInstance.on('click', 'yAxis', handleClickYAxisLabel);
-                this.isLoading = false;
+                if (!this.echartsInstance) {
+                    if (!this.echarts) {
+                        loadEchartsWithTimeout();
+                    } else {
+                        initEchartsInstance();
+                        afterInit();
+                    }
+                } else {
+                    afterInit();
+                }
             },
             getNewOption() {
                 const getTooltip = (params) => {
