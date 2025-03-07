@@ -106,10 +106,6 @@
     -webkit-line-clamp: 2;
 }
 
-.el-table__row:hover .el-table__cell .cell {
-    -webkit-line-clamp: unset;
-}
-
 .el-dialog__body {
     padding: 20px;
     word-break: break-word;

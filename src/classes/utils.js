@@ -375,5 +375,32 @@ export default {
                 .join(', ');
             document.body.style.fontFamily = `${CJKFamily}, ${otherFonts}`;
         }
+    },
+    localeIncludes(str, search, comparer) {
+        // These checks are stolen from https://stackoverflow.com/a/69623589/11030436
+        if (search === '') {
+            return true;
+        } else if (!str || !search) {
+            return false;
+        }
+        const strObj = String(str);
+        const searchObj = String(search);
+
+        if (strObj.length === 0) {
+            return false;
+        }
+
+        if (searchObj.length > strObj.length) {
+            return false;
+        }
+
+        // Now simply loop through each substring and compare them
+        for (let i = 0; i < str.length - searchObj.length + 1; i++) {
+            const substr = strObj.substring(i, i + searchObj.length);
+            if (comparer.compare(substr, searchObj) === 0) {
+                return true;
+            }
+        }
+        return false;
     }
 };
