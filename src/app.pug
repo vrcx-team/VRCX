@@ -67,8 +67,18 @@ doctype html
         +profileTab
 
         //- friends list
-        include ./mixins/tabs/friendsList.pug
-        +friendsListTab
+        friends-list-tab(
+            :menu-active-index='menuActiveIndex'
+            :friends='friends'
+            :hide-tooltips='hideTooltips'
+            :random-user-colours='randomUserColours'
+            :sort-status='sortStatus'
+            :language-class='languageClass'
+            :confirm-delete-friend='confirmDeleteFriend'
+            :friends-list-search.sync='friendsListSearch'
+            @get-all-user-stats='getAllUserStats'
+            @lookup-user='lookupUser'
+            :string-comparer='stringComparer')
 
         //- charts
         keep-alive

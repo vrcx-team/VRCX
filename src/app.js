@@ -48,6 +48,7 @@ import ModerationTab from './views/tabs/Moderation.vue';
 import ChartsTab from './views/tabs/Charts.vue';
 import SideBar from './views/SideBar.vue';
 import NavMenu from './views/NavMenu.vue';
+import FriendsListTab from './views/tabs/FriendsList.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
@@ -188,6 +189,7 @@ console.log(`isLinux: ${LINUX}`);
             // tabs
             ModerationTab,
             ChartsTab,
+            FriendsListTab,
             // - others
             SideBar,
             NavMenu,
@@ -212,7 +214,12 @@ console.log(`isLinux: ${LINUX}`);
                 getWorldName: this.getWorldName,
                 userImage: this.userImage,
                 userStatusClass: this.userStatusClass,
-                getGroupName: this.getGroupName
+                getGroupName: this.getGroupName,
+                userImageFull: this.userImageFull,
+                showFullscreenImageDialog: this.showFullscreenImageDialog,
+                statusClass: this.statusClass,
+                getFaviconUrl: this.getFaviconUrl,
+                openExternalLink: this.openExternalLink
             };
         },
         el: '#root',
@@ -2964,8 +2971,6 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (index === 'notification') {
             this.unseenNotifications = [];
-        } else if (index === 'friendsList') {
-            this.friendsListSearchChange();
         }
     };
 
@@ -4311,34 +4316,6 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.quickSearchItems = [];
 
-    var localeIncludes = function (str, search, comparer) {
-        // These checks are stolen from https://stackoverflow.com/a/69623589/11030436
-        if (search === '') {
-            return true;
-        } else if (!str || !search) {
-            return false;
-        }
-        const strObj = String(str);
-        const searchObj = String(search);
-
-        if (strObj.length === 0) {
-            return false;
-        }
-
-        if (searchObj.length > strObj.length) {
-            return false;
-        }
-
-        // Now simply loop through each substring and compare them
-        for (let i = 0; i < str.length - searchObj.length + 1; i++) {
-            const substr = strObj.substring(i, i + searchObj.length);
-            if (comparer.compare(substr, searchObj) === 0) {
-                return true;
-            }
-        }
-        return false;
-    };
-
     // Making a persistent comparer increases perf by like 10x lmao
     $app.data._stringComparer = undefined;
     $app.computed.stringComparer = function () {
@@ -4365,14 +4342,14 @@ console.log(`isLinux: ${LINUX}`);
             }
 
             const cleanName = removeConfusables(ctx.name);
-            let match = localeIncludes(
+            let match = $utils.localeIncludes(
                 cleanName,
                 cleanQuery,
                 this.stringComparer
             );
             if (!match) {
                 // Also check regular name in case search is with special characters
-                match = localeIncludes(
+                match = $utils.localeIncludes(
                     ctx.name,
                     cleanQuery,
                     this.stringComparer
@@ -4381,10 +4358,14 @@ console.log(`isLinux: ${LINUX}`);
             // Use query with whitespace for notes and memos as people are more
             // likely to include spaces in memos and notes
             if (!match && ctx.memo) {
-                match = localeIncludes(ctx.memo, query, this.stringComparer);
+                match = $utils.localeIncludes(
+                    ctx.memo,
+                    query,
+                    this.stringComparer
+                );
             }
             if (!match && ctx.ref.note) {
-                match = localeIncludes(
+                match = $utils.localeIncludes(
                     ctx.ref.note,
                     query,
                     this.stringComparer
@@ -6987,23 +6968,6 @@ console.log(`isLinux: ${LINUX}`);
         },
         layout: 'table',
         visible: false
-    };
-    $app.data.friendsListTable = {
-        data: [],
-        tableProps: {
-            stripe: true,
-            size: 'mini',
-            defaultSort: {
-                prop: '$friendNumber',
-                order: 'descending'
-            }
-        },
-        pageSize: 100,
-        paginationProps: {
-            small: true,
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [50, 100, 250, 500]
-        }
     };
     $app.data.socialStatusHistoryTable = {
         data: [],
@@ -14225,80 +14189,8 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: Friends List
 
-    API.$on('LOGIN', function () {
-        $app.friendsListTable.data = [];
-    });
-
-    $app.methods.selectFriendsListRow = function (val) {
-        if (val === null) {
-            return;
-        }
-        if (!val.id) {
-            this.lookupUser(val);
-            return;
-        }
-        this.showUserDialog(val.id);
-    };
-
     $app.data.friendsListSearch = '';
-    $app.data.friendsListSearchFilterVIP = false;
-    $app.data.friendsListSearchFilters = [];
-    $app.data.friendsListSelectAllCheckbox = false;
-    $app.data.friendsListBulkUnfriendMode = false;
-    $app.data.friendsListBulkUnfriendForceUpdate = 0;
-
-    $app.methods.toggleFriendsListBulkUnfriendMode = function () {
-        if (!this.friendsListBulkUnfriendMode) {
-            this.friendsListTable.data.forEach((ref) => {
-                ref.$selected = false;
-            });
-        }
-    };
-
-    $app.methods.showBulkUnfriendSelectionConfirm = function () {
-        var pendingUnfriendList = this.friendsListTable.data.reduce(
-            (acc, ctx) => {
-                if (ctx.$selected) {
-                    acc.push(ctx.displayName);
-                }
-                return acc;
-            },
-            []
-        );
-        var elementsTicked = pendingUnfriendList.length;
-        if (elementsTicked === 0) {
-            return;
-        }
-        this.$confirm(
-            `Are you sure you want to delete ${elementsTicked} friends?
-            This can negatively affect your trust rank,
-            This action cannot be undone.`,
-            `Delete ${elementsTicked} friends?`,
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info',
-                showInput: true,
-                inputType: 'textarea',
-                inputValue: pendingUnfriendList.join('\r\n'),
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        this.bulkUnfriendSelection();
-                    }
-                }
-            }
-        );
-    };
-
-    $app.methods.bulkUnfriendSelection = function () {
-        for (var ctx of this.friendsListTable.data) {
-            if (ctx.$selected) {
-                friendRequest.deleteFriend({
-                    userId: ctx.id
-                });
-            }
-        }
-    };
+    // $app.data.friendsListSelectAllCheckbox = false;
 
     // $app.methods.showBulkUnfriendAllConfirm = function () {
     //     this.$confirm(
@@ -14326,91 +14218,6 @@ console.log(`isLinux: ${LINUX}`);
     //         });
     //     }
     // };
-
-    $app.methods.friendsListSearchChange = function () {
-        let query;
-        let cleanedQuery;
-        this.friendsListTable.data = [];
-        let filters = [...this.friendsListSearchFilters];
-        if (filters.length === 0) {
-            filters = ['Display Name', 'Rank', 'Status', 'Bio', 'Memo'];
-        }
-        const results = [];
-        if (this.friendsListSearch) {
-            query = this.friendsListSearch;
-            cleanedQuery = removeWhitespace(query);
-        }
-
-        for (const ctx of this.friends.values()) {
-            if (typeof ctx.ref === 'undefined') {
-                continue;
-            }
-            if (typeof ctx.ref.$selected === 'undefined') {
-                ctx.ref.$selected = false;
-            }
-            if (this.friendsListSearchFilterVIP && !ctx.isVIP) {
-                continue;
-            }
-            if (query && filters) {
-                let match = false;
-                if (
-                    !match &&
-                    filters.includes('Display Name') &&
-                    ctx.ref.displayName
-                ) {
-                    match =
-                        localeIncludes(
-                            ctx.ref.displayName,
-                            cleanedQuery,
-                            this.stringComparer
-                        ) ||
-                        localeIncludes(
-                            removeConfusables(ctx.ref.displayName),
-                            cleanedQuery,
-                            this.stringComparer
-                        );
-                }
-                if (!match && filters.includes('Memo') && ctx.memo) {
-                    match = localeIncludes(
-                        ctx.memo,
-                        query,
-                        this.stringComparer
-                    );
-                }
-                if (!match && filters.includes('Bio') && ctx.ref.bio) {
-                    match = localeIncludes(
-                        ctx.ref.bio,
-                        query,
-                        this.stringComparer
-                    );
-                }
-                if (
-                    !match &&
-                    filters.includes('Status') &&
-                    ctx.ref.statusDescription
-                ) {
-                    match = localeIncludes(
-                        ctx.ref.statusDescription,
-                        query,
-                        this.stringComparer
-                    );
-                }
-                if (!match && filters.includes('Rank')) {
-                    match = String(ctx.ref.$trustLevel)
-                        .toUpperCase()
-                        .includes(query.toUpperCase());
-                }
-                if (!match) {
-                    continue;
-                }
-            }
-            results.push(ctx.ref);
-        }
-        this.getAllUserStats();
-        requestAnimationFrame(() => {
-            this.friendsListTable.data = results;
-        });
-    };
 
     $app.methods.getAllUserStats = async function () {
         var userIds = [];
@@ -14479,60 +14286,6 @@ console.log(`isLinux: ${LINUX}`);
         ctx.$lastSeen = ref.lastSeen;
         ctx.$timeSpent = ref.timeSpent;
         /* eslint-enable require-atomic-updates */
-    };
-
-    $app.watch.friendsListSearch = $app.methods.friendsListSearchChange;
-    $app.data.friendsListLoading = false;
-    $app.data.friendsListLoadingProgress = '';
-
-    $app.methods.friendsListLoadUsers = async function () {
-        this.friendsListLoading = true;
-        var i = 0;
-        var toFetch = [];
-        for (var ctx of this.friends.values()) {
-            if (ctx.ref && !ctx.ref.date_joined) {
-                toFetch.push(ctx.id);
-            }
-        }
-        var length = toFetch.length;
-        for (var userId of toFetch) {
-            if (!this.friendsListLoading) {
-                this.friendsListLoadingProgress = '';
-                return;
-            }
-            i++;
-            this.friendsListLoadingProgress = `${i}/${length}`;
-            try {
-                await userRequest.getUser({
-                    userId
-                });
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        this.friendsListLoadingProgress = '';
-        this.friendsListLoading = false;
-    };
-
-    $app.methods.sortAlphabetically = function (a, b, field) {
-        if (!a[field] || !b[field]) {
-            return 0;
-        }
-        return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
-    };
-
-    $app.methods.sortLanguages = function (a, b) {
-        var sortedA = [];
-        var sortedB = [];
-        a.$languages.forEach((item) => {
-            sortedA.push(item.value);
-        });
-        b.$languages.forEach((item) => {
-            sortedB.push(item.value);
-        });
-        sortedA.sort();
-        sortedB.sort();
-        return JSON.stringify(sortedA).localeCompare(JSON.stringify(sortedB));
     };
 
     $app.methods.genMd5 = async function (file) {

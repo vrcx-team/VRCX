@@ -70,14 +70,14 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                PC
+                                PC<span
+                                    v-if="worldDialog.bundleSizes['standalonewindows']"
+                                    class="x-grey"
+                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
+                                </span>
                             </el-tag>
-                            <span
-                                v-if="worldDialog.bundleSizes['standalonewindows']"
-                                class="x-grey"
-                                style="margin-left: 5px; border-left: inherit; padding-left: 5px">
-                                {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
-                            </span>
+
                             <el-tag
                                 v-if="worldDialog.isQuest"
                                 class="x-tag-platform-quest"
@@ -85,14 +85,14 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                Android
+                                Android<span
+                                    v-if="worldDialog.bundleSizes['android']"
+                                    class="x-grey"
+                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    {{ worldDialog.bundleSizes['android'].fileSize }}
+                                </span>
                             </el-tag>
-                            <span
-                                v-if="worldDialog.bundleSizes['android']"
-                                class="x-grey"
-                                style="margin-left: 5px; border-left: inherit; padding-left: 5px">
-                                {{ worldDialog.bundleSizes['android'].fileSize }}
-                            </span>
+
                             <el-tag
                                 v-if="worldDialog.isIos"
                                 class="x-tag-platform-ios"
@@ -100,14 +100,14 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                iOS
+                                iOS<span
+                                    v-if="worldDialog.bundleSizes['ios']"
+                                    class="x-grey"
+                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    {{ worldDialog.bundleSizes['ios'].fileSize }}
+                                </span>
                             </el-tag>
-                            <span
-                                v-if="worldDialog.bundleSizes['ios']"
-                                class="x-grey"
-                                style="margin-left: 5px; border-left: inherit; padding-left: 5px">
-                                {{ worldDialog.bundleSizes['ios'].fileSize }}
-                            </span>
+
                             <el-tag
                                 v-if="worldDialog.avatarScalingDisabled"
                                 type="warning"
