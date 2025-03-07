@@ -129,6 +129,8 @@
 </template>
 
 <script>
+    import { favoriteRequest } from '../../classes/request';
+
     export default {
         name: 'FavoritesWorldItem',
         inject: ['API'],
@@ -170,18 +172,20 @@
                 }
             },
             moveFavorite(ref, group, type) {
-                this.API.deleteFavorite({
-                    objectId: ref.id
-                }).then(() => {
-                    this.API.addFavorite({
-                        type,
-                        favoriteId: ref.id,
-                        tags: group.name
+                favoriteRequest
+                    .deleteFavorite({
+                        objectId: ref.id
+                    })
+                    .then(() => {
+                        favoriteRequest.addFavorite({
+                            type,
+                            favoriteId: ref.id,
+                            tags: group.name
+                        });
                     });
-                });
             },
             deleteFavorite(objectId) {
-                this.API.deleteFavorite({
+                favoriteRequest.deleteFavorite({
                     objectId
                 });
                 // FIXME: 메시지 수정
@@ -200,19 +204,21 @@
             },
             addFavoriteWorld(ref, group, message) {
                 // wait API splitting PR Merged
-                return this.API.addFavorite({
-                    type: 'world',
-                    favoriteId: ref.id,
-                    tags: group.name
-                }).then((args) => {
-                    if (message) {
-                        this.$message({
-                            message: 'World added to favorites',
-                            type: 'success'
-                        });
-                    }
-                    return args;
-                });
+                return favoriteRequest
+                    .addFavorite({
+                        type: 'world',
+                        favoriteId: ref.id,
+                        tags: group.name
+                    })
+                    .then((args) => {
+                        if (message) {
+                            this.$message({
+                                message: 'World added to favorites',
+                                type: 'success'
+                            });
+                        }
+                        return args;
+                    });
             },
             showFavoriteDialog(favoriteId) {
                 this.$emit('show-favorite-dialog', 'world', favoriteId);

@@ -205,7 +205,7 @@ export default class extends baseClass {
                 '<el-tooltip v-if="isValidInstance" placement="bottom">' +
                 '<div slot="content">' +
                 '<template v-if="isClosed"><span>Closed At: {{ closedAt | formatDate(\'long\') }}</span></br></template>' +
-                '<template v-if="canCloseInstance"><el-button :disabled="isClosed" size="mini" type="primary" @click="$app.closeInstance(location)">{{ $t("dialog.user.info.close_instance") }}</el-button></br></br></template>' +
+                '<template v-if="canCloseInstance"><el-button :disabled="isClosed" size="mini" type="primary" @click="$root.closeInstance(location)">{{ $t("dialog.user.info.close_instance") }}</el-button></br></br></template>' +
                 '<span><span style="color:#409eff">PC: </span>{{ platforms.standalonewindows }}</span></br>' +
                 '<span><span style="color:#67c23a">Android: </span>{{ platforms.android }}</span></br>' +
                 '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
