@@ -202,7 +202,6 @@
                                 @click="deleteVRChatCache(worldDialog.ref)" />
                         </el-tooltip>
                         <el-tooltip
-                            v-if="worldDialog.isFavorite"
                             placement="top"
                             :content="$t('dialog.world.actions.favorites_tooltip')"
                             :disabled="hideTooltips">

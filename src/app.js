@@ -40,7 +40,15 @@ import {
     instanceRequest,
     friendRequest,
     avatarRequest,
-    notificationRequest
+    notificationRequest,
+    playerModerationRequest,
+    avatarModerationRequest,
+    favoriteRequest,
+    vrcPlusIconRequest,
+    inviteMessagesRequest,
+    miscRequest,
+    imageRequest,
+    vrcPlusImageRequest
 } from './classes/request';
 
 // tabs
@@ -1761,7 +1769,10 @@ console.log(`isLinux: ${LINUX}`);
         }
         this.isPlayerModerationsLoading = true;
         this.expirePlayerModerations();
-        Promise.all([this.getPlayerModerations(), this.getAvatarModerations()])
+        Promise.all([
+            playerModerationRequest.getPlayerModerations(),
+            avatarModerationRequest.getAvatarModerations()
+        ])
             .finally(() => {
                 this.isPlayerModerationsLoading = false;
             })
@@ -1770,114 +1781,10 @@ console.log(`isLinux: ${LINUX}`);
             });
     };
 
-    API.getPlayerModerations = function () {
-        return this.call('auth/user/playermoderations', {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            this.$emit('PLAYER-MODERATION:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ moderated: string, type: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    // old-way: POST auth/user/blocks {blocked:userId}
-    API.sendPlayerModeration = function (params) {
-        return this.call('auth/user/playermoderations', {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('PLAYER-MODERATION:SEND', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ moderated: string, type: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    // old-way: PUT auth/user/unblocks {blocked:userId}
-    API.deletePlayerModeration = function (params) {
-        return this.call('auth/user/unplayermoderate', {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('PLAYER-MODERATION:DELETE', args);
-            return args;
-        });
-    };
-
     // #endregion
     // #region | API: AvatarModeration
 
     API.cachedAvatarModerations = new Map();
-
-    API.getAvatarModerations = function () {
-        return this.call('auth/user/avatarmoderations', {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            this.$emit('AVATAR-MODERATION:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ avatarModerationType: string, targetAvatarId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.sendAvatarModeration = function (params) {
-        return this.call('auth/user/avatarmoderations', {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR-MODERATION', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ avatarModerationType: string, targetAvatarId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.deleteAvatarModeration = function (params) {
-        return this.call(
-            `auth/user/avatarmoderations?targetAvatarId=${encodeURIComponent(
-                params.targetAvatarId
-            )}&avatarModerationType=${encodeURIComponent(
-                params.avatarModerationType
-            )}`,
-            {
-                method: 'DELETE'
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATAR-MODERATION:DELETE', args);
-            return args;
-        });
-    };
 
     API.$on('AVATAR-MODERATION', function (args) {
         args.ref = this.applyAvatarModeration(args.json);
@@ -2216,13 +2123,14 @@ console.log(`isLinux: ${LINUX}`);
             offset: 0,
             tag
         };
-        this.getFavoriteAvatars(params);
+        favoriteRequest.getFavoriteAvatars(params);
     };
 
     API.refreshFavoriteItems = function () {
+        // TODO: maybe......
         var types = {
-            world: [0, 'getFavoriteWorlds'],
-            avatar: [0, 'getFavoriteAvatars']
+            world: [0, favoriteRequest.getFavoriteWorlds],
+            avatar: [0, favoriteRequest.getFavoriteAvatars]
         };
         var tags = [];
         for (var ref of this.cachedFavorites.values()) {
@@ -2275,14 +2183,14 @@ console.log(`isLinux: ${LINUX}`);
         }
         this.isFavoriteLoading = true;
         try {
-            await this.getFavoriteLimits();
+            await favoriteRequest.getFavoriteLimits();
         } catch (err) {
             console.error(err);
         }
         this.expireFavorites();
         this.cachedFavoriteGroupsByTypeName.clear();
         this.bulk({
-            fn: 'getFavorites',
+            fn: favoriteRequest.getFavorites,
             N: -1,
             params: {
                 n: 50,
@@ -2468,18 +2376,6 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
-    API.getFavoriteLimits = function () {
-        return this.call('auth/user/favoritelimits', {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            this.$emit('FAVORITE:LIMITS', args);
-            return args;
-        });
-    };
-
     API.$on('FAVORITE:LIMITS', function (args) {
         this.favoriteLimits = {
             ...this.favoriteLimits,
@@ -2494,7 +2390,7 @@ console.log(`isLinux: ${LINUX}`);
         this.isFavoriteGroupLoading = true;
         this.expireFavoriteGroups();
         this.bulk({
-            fn: 'getFavoriteGroups',
+            fn: favoriteRequest.getFavoriteGroups,
             N: -1,
             params: {
                 n: 50,
@@ -2510,177 +2406,10 @@ console.log(`isLinux: ${LINUX}`);
         });
     };
 
-    /**
-     * @param {{
-     * n: number,
-     * offset: number,
-     * type: string,
-     * tag: string
-     * }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.getFavorites = function (params) {
-        return this.call('favorites', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{
-     *    type: string,
-     *    favoriteId: string (objectId),
-     *    tags: string
-     * }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.addFavorite = function (params) {
-        return this.call('favorites', {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:ADD', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ objectId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.deleteFavorite = function (params) {
-        return this.call(`favorites/${params.objectId}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:DELETE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{ n: number, offset: number, type: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.getFavoriteGroups = function (params) {
-        return this.call('favorite/groups', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:GROUP:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-     *
-     * @param {{ type: string, group: string, displayName: string, visibility: string }} params group is a name
-     * @return { Promise<{json: any, params}> }
-     */
-    API.saveFavoriteGroup = function (params) {
-        return this.call(
-            `favorite/group/${params.type}/${params.group}/${this.currentUser.id}`,
-            {
-                method: 'PUT',
-                params
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:GROUP:SAVE', args);
-            return args;
-        });
-    };
-
-    /**
-     * @param {{
-     *    type: string,
-     *    group: string (name)
-     * }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    API.clearFavoriteGroup = function (params) {
-        return this.call(
-            `favorite/group/${params.type}/${params.group}/${this.currentUser.id}`,
-            {
-                method: 'DELETE',
-                params
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:GROUP:CLEAR', args);
-            return args;
-        });
-    };
-
-    /**
-    * @param {{
-        n: number,
-        offset: number
-    }} params
-    * @return { Promise<{json: any, params}> }
-    */
-    API.getFavoriteWorlds = function (params) {
-        return this.call('worlds/favorites', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:WORLD:LIST', args);
-            return args;
-        });
-    };
-
-    /**
-    * @param {{
-            n: number,
-            offset: number
-    }} params
-    * @return { Promise<{json: any, params}> }
-    */
-    API.getFavoriteAvatars = function (params) {
-        return this.call('avatars/favorites', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FAVORITE:AVATAR:LIST', args);
-            return args;
-        });
-    };
-
     // #endregion
     // #region | API: Visit
 
+    // no wrapper
     API.getVisits = function () {
         return this.call('visits', {
             method: 'GET'
@@ -6088,9 +5817,10 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         this.favoriteDialog.visible = true;
-        API.deleteFavorite({
-            objectId
-        })
+        favoriteRequest
+            .deleteFavorite({
+                objectId
+            })
             .then(() => {
                 this.favoriteDialog.visible = false;
             })
@@ -6107,7 +5837,7 @@ console.log(`isLinux: ${LINUX}`);
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    API.clearFavoriteGroup({
+                    favoriteRequest.clearFavoriteGroup({
                         type: ctx.type,
                         group: ctx.name
                     });
@@ -10072,7 +9802,7 @@ console.log(`isLinux: ${LINUX}`);
     var performUserDialogCommand = (command, userId) => {
         switch (command) {
             case 'Delete Favorite':
-                API.deleteFavorite({
+                favoriteRequest.deleteFavorite({
                     objectId: userId
                 });
                 break;
@@ -10111,49 +9841,49 @@ console.log(`isLinux: ${LINUX}`);
                 });
                 break;
             case 'Moderation Unblock':
-                API.deletePlayerModeration({
+                playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
                 break;
             case 'Moderation Block':
-                API.sendPlayerModeration({
+                playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
                 break;
             case 'Moderation Unmute':
-                API.deletePlayerModeration({
+                playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
                 break;
             case 'Moderation Mute':
-                API.sendPlayerModeration({
+                playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
                 break;
             case 'Moderation Enable Avatar Interaction':
-                API.deletePlayerModeration({
+                playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
                 break;
             case 'Moderation Disable Avatar Interaction':
-                API.sendPlayerModeration({
+                playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
                 break;
             case 'Moderation Enable Chatbox':
-                API.deletePlayerModeration({
+                playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });
                 break;
             case 'Moderation Disable Chatbox':
-                API.sendPlayerModeration({
+                playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });
@@ -10437,7 +10167,7 @@ console.log(`isLinux: ${LINUX}`);
             if (!fileId) {
                 continue;
             }
-            var args = await API.getBundles(fileId);
+            var args = await miscRequest.getBundles(fileId);
             if (!args?.json?.versions) {
                 continue;
             }
@@ -10605,7 +10335,7 @@ console.log(`isLinux: ${LINUX}`);
                     D.isQuest = isQuest;
                     D.isIos = isIos;
                     this.updateVRChatWorldCache();
-                    API.hasWorldPersistData({ worldId: D.id });
+                    miscRequest.hasWorldPersistData({ worldId: D.id });
                     if (args.cache) {
                         worldRequest
                             .getWorld(args.params)
@@ -11041,7 +10771,7 @@ console.log(`isLinux: ${LINUX}`);
                         }
                         switch (command) {
                             case 'Delete Favorite':
-                                API.deleteFavorite({
+                                favoriteRequest.deleteFavorite({
                                     objectId: D.id
                                 });
                                 break;
@@ -11095,16 +10825,18 @@ console.log(`isLinux: ${LINUX}`);
                                     });
                                 break;
                             case 'Delete Persistent Data':
-                                API.deleteWorldPersistData({
-                                    worldId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message:
-                                            'Persistent data has been deleted',
-                                        type: 'success'
+                                miscRequest
+                                    .deleteWorldPersistData({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message:
+                                                'Persistent data has been deleted',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Delete':
                                 worldRequest
@@ -11391,7 +11123,7 @@ console.log(`isLinux: ${LINUX}`);
                         }
                         switch (command) {
                             case 'Delete Favorite':
-                                API.deleteFavorite({
+                                favoriteRequest.deleteFavorite({
                                     objectId: D.id
                                 });
                                 break;
@@ -11409,19 +11141,21 @@ console.log(`isLinux: ${LINUX}`);
                                     });
                                 break;
                             case 'Block Avatar':
-                                API.sendAvatarModeration({
-                                    avatarModerationType: 'block',
-                                    targetAvatarId: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Avatar blocked',
-                                        type: 'success'
+                                avatarModerationRequest
+                                    .sendAvatarModeration({
+                                        avatarModerationType: 'block',
+                                        targetAvatarId: D.id
+                                    })
+                                    .then((args) => {
+                                        this.$message({
+                                            message: 'Avatar blocked',
+                                            type: 'success'
+                                        });
+                                        return args;
                                     });
-                                    return args;
-                                });
                                 break;
                             case 'Unblock Avatar':
-                                API.deleteAvatarModeration({
+                                avatarModerationRequest.deleteAvatarModeration({
                                     avatarModerationType: 'block',
                                     targetAvatarId: D.id
                                 });
@@ -11648,11 +11382,12 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.addFavorite = function (group) {
         var D = this.favoriteDialog;
         D.loading = true;
-        API.addFavorite({
-            type: D.type,
-            favoriteId: D.objectId,
-            tags: group.name
-        })
+        favoriteRequest
+            .addFavorite({
+                type: D.type,
+                favoriteId: D.objectId,
+                tags: group.name
+            })
             .then(() => {
                 D.visible = false;
                 new Noty({
@@ -11666,51 +11401,57 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.addFavoriteWorld = function (ref, group, message) {
-        return API.addFavorite({
-            type: 'world',
-            favoriteId: ref.id,
-            tags: group.name
-        }).then((args) => {
-            if (message) {
-                this.$message({
-                    message: 'World added to favorites',
-                    type: 'success'
-                });
-            }
-            return args;
-        });
+        return favoriteRequest
+            .addFavorite({
+                type: 'world',
+                favoriteId: ref.id,
+                tags: group.name
+            })
+            .then((args) => {
+                if (message) {
+                    this.$message({
+                        message: 'World added to favorites',
+                        type: 'success'
+                    });
+                }
+                return args;
+            });
     };
 
     $app.methods.addFavoriteAvatar = function (ref, group, message) {
-        return API.addFavorite({
-            type: 'avatar',
-            favoriteId: ref.id,
-            tags: group.name
-        }).then((args) => {
-            if (message) {
-                this.$message({
-                    message: 'Avatar added to favorites',
-                    type: 'success'
-                });
-            }
-            return args;
-        });
+        return favoriteRequest
+            .addFavorite({
+                type: 'avatar',
+                favoriteId: ref.id,
+                tags: group.name
+            })
+            .then((args) => {
+                if (message) {
+                    this.$message({
+                        message: 'Avatar added to favorites',
+                        type: 'success'
+                    });
+                }
+                return args;
+            });
     };
 
     $app.methods.addFavoriteUser = function (ref, group, message) {
-        return API.addFavorite({
-            type: 'friend',
-            favoriteId: ref.id,
-            tags: group.name
-        }).then((args) => {
-            if (message) {
-                this.$message({
-                    message: 'Friend added to favorites',
-                    type: 'success'
-                });
-            }
-            return args;
-        });
+        return favoriteRequest
+            .addFavorite({
+                type: 'friend',
+                favoriteId: ref.id,
+                tags: group.name
+            })
+            .then((args) => {
+                if (message) {
+                    this.$message({
+                        message: 'Friend added to favorites',
+                        type: 'success'
+                    });
+                }
+                return args;
+            });
     };
 
     $app.methods.showFavoriteDialog = function (type, objectId) {
@@ -13237,21 +12978,7 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'icon'
         };
-        API.getFileList(params);
-    };
-
-    API.getFileList = function (params) {
-        return this.call('files', {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FILES:LIST', args);
-            return args;
-        });
+        vrcPlusIconRequest.getFileList(params);
     };
 
     API.$on('FILES:LIST', function (args) {
@@ -13288,7 +13015,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.deleteVRCPlusIcon = function (fileId) {
-        API.deleteFile(fileId).then((args) => {
+        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
             API.$emit('VRCPLUSICON:DELETE', args);
             return args;
         });
@@ -13304,30 +13031,6 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
     });
-
-    API.deleteFile = function (fileId) {
-        return this.call(`file/${fileId}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                fileId
-            };
-            return args;
-        });
-    };
-
-    API.deleteFileVersion = function (params) {
-        return this.call(`file/${params.fileId}/${params.version}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            return args;
-        });
-    };
 
     $app.methods.compareCurrentVRCPlusIcon = function (userIcon) {
         var currentUserIcon = $utils.extractFileId(API.currentUser.userIcon);
@@ -13367,7 +13070,7 @@ console.log(`isLinux: ${LINUX}`);
         var r = new FileReader();
         r.onload = function () {
             var base64Body = btoa(r.result);
-            API.uploadVRCPlusIcon(base64Body).then((args) => {
+            vrcPlusIconRequest.uploadVRCPlusIcon(base64Body).then((args) => {
                 $app.$message({
                     message: $t('message.icon.uploaded'),
                     type: 'success'
@@ -13381,25 +13084,6 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.displayVRCPlusIconUpload = function () {
         document.getElementById('VRCPlusIconUploadButton').click();
-    };
-
-    API.uploadVRCPlusIcon = function (imageData) {
-        var params = {
-            tag: 'icon'
-        };
-        return this.call('file/image', {
-            uploadImage: true,
-            matchingDimensions: true,
-            postData: JSON.stringify(params),
-            imageData
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('VRCPLUSICON:ADD', args);
-            return args;
-        });
     };
 
     API.$on('VRCPLUSICON:ADD', function (args) {
@@ -13482,21 +13166,12 @@ console.log(`isLinux: ${LINUX}`);
         $app.inviteRequestResponseMessageTable.visible = false;
     });
 
-    $app.methods.refreshInviteMessageTable = function (messageType) {
-        API.refreshInviteMessageTableData(messageType);
-    };
+    // temp, invites.pug
+    API.refreshInviteMessageTableData =
+        inviteMessagesRequest.refreshInviteMessageTableData;
 
-    API.refreshInviteMessageTableData = function (messageType) {
-        return this.call(`message/${this.currentUser.id}/${messageType}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                messageType
-            };
-            this.$emit(`INVITE:${messageType.toUpperCase()}`, args);
-            return args;
-        });
+    $app.methods.refreshInviteMessageTable = function (messageType) {
+        inviteMessagesRequest.refreshInviteMessageTableData(messageType);
     };
 
     API.$on('INVITE:MESSAGE', function (args) {
@@ -13514,24 +13189,6 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('INVITE:REQUESTRESPONSE', function (args) {
         $app.inviteRequestResponseMessageTable.data = args.json;
     });
-
-    API.editInviteMessage = function (params, messageType, slot) {
-        return this.call(
-            `message/${this.currentUser.id}/${messageType}/${slot}`,
-            {
-                method: 'PUT',
-                params
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params,
-                messageType,
-                slot
-            };
-            return args;
-        });
-    };
 
     // #endregion
     // #region | App: Edit Invite Message Dialog
@@ -13566,7 +13223,8 @@ console.log(`isLinux: ${LINUX}`);
             var params = {
                 message: D.newMessage
             };
-            API.editInviteMessage(params, messageType, slot)
+            inviteMessagesRequest
+                .editInviteMessage(params, messageType, slot)
                 .catch((err) => {
                     throw err;
                 })
@@ -13627,7 +13285,8 @@ console.log(`isLinux: ${LINUX}`);
             var params = {
                 message: D.newMessage
             };
-            await API.editInviteMessage(params, messageType, slot)
+            await inviteMessagesRequest
+                .editInviteMessage(params, messageType, slot)
                 .catch((err) => {
                     throw err;
                 })
@@ -13717,7 +13376,7 @@ console.log(`isLinux: ${LINUX}`);
         this.sendInviteResponseDialog = {
             invite
         };
-        API.refreshInviteMessageTableData('response');
+        inviteMessagesRequest.refreshInviteMessageTableData('response');
         this.$nextTick(() =>
             $app.adjustDialogZ(this.$refs.sendInviteResponseDialog.$el)
         );
@@ -13809,7 +13468,7 @@ console.log(`isLinux: ${LINUX}`);
         this.sendInviteResponseDialog = {
             invite
         };
-        API.refreshInviteMessageTableData('requestResponse');
+        inviteMessagesRequest.refreshInviteMessageTableData('requestResponse');
         this.$nextTick(() =>
             $app.adjustDialogZ(this.$refs.sendInviteRequestResponseDialog.$el)
         );
@@ -13851,7 +13510,8 @@ console.log(`isLinux: ${LINUX}`);
             var params = {
                 message: D.newMessage
             };
-            await API.editInviteMessage(params, messageType, slot)
+            await inviteMessagesRequest
+                .editInviteMessage(params, messageType, slot)
                 .catch((err) => {
                     throw err;
                 })
@@ -14015,7 +13675,7 @@ console.log(`isLinux: ${LINUX}`);
             userId,
             messageType: 'invite'
         };
-        API.refreshInviteMessageTableData('message');
+        inviteMessagesRequest.refreshInviteMessageTableData('message');
         this.$nextTick(() =>
             $app.adjustDialogZ(this.$refs.sendInviteDialog.$el)
         );
@@ -14178,7 +13838,7 @@ console.log(`isLinux: ${LINUX}`);
             userId,
             messageType: 'requestInvite'
         };
-        API.refreshInviteMessageTableData('request');
+        inviteMessagesRequest.refreshInviteMessageTableData('request');
         this.$nextTick(() =>
             $app.adjustDialogZ(this.$refs.sendInviteRequestDialog.$el)
         );
@@ -14381,47 +14041,10 @@ console.log(`isLinux: ${LINUX}`);
                 signatureMd5,
                 signatureSizeInBytes
             };
-            API.uploadAvatarImage(params, fileId);
+            imageRequest.uploadAvatarImage(params, fileId);
         };
         r.readAsBinaryString(files[0]);
         clearFile();
-    };
-
-    API.uploadAvatarImage = async function (params, fileId) {
-        try {
-            return await this.call(`file/${fileId}`, {
-                method: 'POST',
-                params
-            }).then((json) => {
-                var args = {
-                    json,
-                    params,
-                    fileId
-                };
-                this.$emit('AVATARIMAGE:INIT', args);
-                return args;
-            });
-        } catch (err) {
-            console.error(err);
-            this.uploadAvatarFailCleanup(fileId);
-        }
-        return void 0;
-    };
-
-    API.uploadAvatarFailCleanup = async function (fileId) {
-        var json = await this.call(`file/${fileId}`, {
-            method: 'GET'
-        });
-        var fileId = json.id;
-        var fileVersion = json.versions[json.versions.length - 1].version;
-        this.call(`file/${fileId}/${fileVersion}/signature/finish`, {
-            method: 'PUT'
-        });
-        this.call(`file/${fileId}/${fileVersion}/file/finish`, {
-            method: 'PUT'
-        });
-        $app.avatarDialog.loading = false;
-        $app.changeAvatarImageDialogLoading = false;
     };
 
     API.$on('AVATARIMAGE:INIT', function (args) {
@@ -14432,30 +14055,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageFileStart(params);
+        imageRequest.uploadAvatarImageFileStart(params);
     });
-
-    API.uploadAvatarImageFileStart = async function (params) {
-        try {
-            return await this.call(
-                `file/${params.fileId}/${params.fileVersion}/file/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('AVATARIMAGE:FILESTART', args);
-                return args;
-            });
-        } catch (err) {
-            console.error(err);
-            this.uploadAvatarFailCleanup(params.fileId);
-        }
-        return void 0;
-    };
 
     API.$on('AVATARIMAGE:FILESTART', function (args) {
         var { url } = args.json;
@@ -14500,28 +14101,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageFileFinish(params);
+        imageRequest.uploadAvatarImageFileFinish(params);
     });
-
-    API.uploadAvatarImageFileFinish = function (params) {
-        return this.call(
-            `file/${params.fileId}/${params.fileVersion}/file/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATARIMAGE:FILEFINISH', args);
-            return args;
-        });
-    };
 
     API.$on('AVATARIMAGE:FILEFINISH', function (args) {
         var { fileId, fileVersion } = args.params;
@@ -14529,30 +14110,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageSigStart(params);
+        imageRequest.uploadAvatarImageSigStart(params);
     });
-
-    API.uploadAvatarImageSigStart = async function (params) {
-        try {
-            return await this.call(
-                `file/${params.fileId}/${params.fileVersion}/signature/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('AVATARIMAGE:SIGSTART', args);
-                return args;
-            });
-        } catch (err) {
-            console.error(err);
-            this.uploadAvatarFailCleanup(params.fileId);
-        }
-        return void 0;
-    };
 
     API.$on('AVATARIMAGE:SIGSTART', function (args) {
         var { url } = args.json;
@@ -14597,28 +14156,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageSigFinish(params);
+        imageRequest.uploadAvatarImageSigFinish(params);
     });
-
-    API.uploadAvatarImageSigFinish = function (params) {
-        return this.call(
-            `file/${params.fileId}/${params.fileVersion}/signature/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATARIMAGE:SIGFINISH', args);
-            return args;
-        });
-    };
 
     API.$on('AVATARIMAGE:SIGFINISH', function (args) {
         var { fileId, fileVersion } = args.params;
@@ -14626,23 +14165,8 @@ console.log(`isLinux: ${LINUX}`);
             id: $app.avatarImage.avatarId,
             imageUrl: `${API.endpointDomain}/file/${fileId}/${fileVersion}/file`
         };
-        this.setAvatarImage(parmas);
+        imageRequest.setAvatarImage(parmas);
     });
-
-    API.setAvatarImage = function (params) {
-        return this.call(`avatars/${params.id}`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATARIMAGE:SET', args);
-            this.$emit('AVATAR', args);
-            return args;
-        });
-    };
 
     // Upload world image
 
@@ -14717,47 +14241,10 @@ console.log(`isLinux: ${LINUX}`);
                 signatureMd5,
                 signatureSizeInBytes
             };
-            API.uploadWorldImage(params, fileId);
+            imageRequest.uploadWorldImage(params, fileId);
         };
         r.readAsBinaryString(files[0]);
         clearFile();
-    };
-
-    API.uploadWorldImage = async function (params, fileId) {
-        try {
-            return await this.call(`file/${fileId}`, {
-                method: 'POST',
-                params
-            }).then((json) => {
-                var args = {
-                    json,
-                    params,
-                    fileId
-                };
-                this.$emit('WORLDIMAGE:INIT', args);
-                return args;
-            });
-        } catch (err) {
-            console.error(err);
-            this.uploadWorldFailCleanup(fileId);
-        }
-        return void 0;
-    };
-
-    API.uploadWorldFailCleanup = async function (fileId) {
-        var json = await this.call(`file/${fileId}`, {
-            method: 'GET'
-        });
-        var fileId = json.id;
-        var fileVersion = json.versions[json.versions.length - 1].version;
-        this.call(`file/${fileId}/${fileVersion}/signature/finish`, {
-            method: 'PUT'
-        });
-        this.call(`file/${fileId}/${fileVersion}/file/finish`, {
-            method: 'PUT'
-        });
-        $app.worldDialog.loading = false;
-        $app.changeWorldImageDialogLoading = false;
     };
 
     API.$on('WORLDIMAGE:INIT', function (args) {
@@ -14768,30 +14255,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadWorldImageFileStart(params);
+        imageRequest.uploadWorldImageFileStart(params);
     });
-
-    API.uploadWorldImageFileStart = async function (params) {
-        try {
-            return await this.call(
-                `file/${params.fileId}/${params.fileVersion}/file/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('WORLDIMAGE:FILESTART', args);
-                return args;
-            });
-        } catch (err) {
-            console.error(err);
-            this.uploadWorldFailCleanup(params.fileId);
-        }
-        return void 0;
-    };
 
     API.$on('WORLDIMAGE:FILESTART', function (args) {
         var { url } = args.json;
@@ -14836,28 +14301,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadWorldImageFileFinish(params);
+        imageRequest.uploadWorldImageFileFinish(params);
     });
-
-    API.uploadWorldImageFileFinish = function (params) {
-        return this.call(
-            `file/${params.fileId}/${params.fileVersion}/file/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLDIMAGE:FILEFINISH', args);
-            return args;
-        });
-    };
 
     API.$on('WORLDIMAGE:FILEFINISH', function (args) {
         var { fileId, fileVersion } = args.params;
@@ -14865,30 +14310,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadWorldImageSigStart(params);
+        imageRequest.uploadWorldImageSigStart(params);
     });
-
-    API.uploadWorldImageSigStart = async function (params) {
-        try {
-            return await this.call(
-                `file/${params.fileId}/${params.fileVersion}/signature/start`,
-                {
-                    method: 'PUT'
-                }
-            ).then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('WORLDIMAGE:SIGSTART', args);
-                return args;
-            });
-        } catch (err) {
-            console.error(err);
-            this.uploadWorldFailCleanup(params.fileId);
-        }
-        return void 0;
-    };
 
     API.$on('WORLDIMAGE:SIGSTART', function (args) {
         var { url } = args.json;
@@ -14933,28 +14356,8 @@ console.log(`isLinux: ${LINUX}`);
             fileId,
             fileVersion
         };
-        this.uploadWorldImageSigFinish(params);
+        imageRequest.uploadWorldImageSigFinish(params);
     });
-
-    API.uploadWorldImageSigFinish = function (params) {
-        return this.call(
-            `file/${params.fileId}/${params.fileVersion}/signature/finish`,
-            {
-                method: 'PUT',
-                params: {
-                    maxParts: 0,
-                    nextPartNumber: 0
-                }
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLDIMAGE:SIGFINISH', args);
-            return args;
-        });
-    };
 
     API.$on('WORLDIMAGE:SIGFINISH', function (args) {
         var { fileId, fileVersion } = args.params;
@@ -14962,23 +14365,8 @@ console.log(`isLinux: ${LINUX}`);
             id: $app.worldImage.worldId,
             imageUrl: `${API.endpointDomain}/file/${fileId}/${fileVersion}/file`
         };
-        this.setWorldImage(parmas);
+        imageRequest.setWorldImage(parmas);
     });
-
-    API.setWorldImage = function (params) {
-        return this.call(`worlds/${params.id}`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLDIMAGE:SET', args);
-            this.$emit('WORLD', args);
-            return args;
-        });
-    };
 
     API.$on('AVATARIMAGE:SET', function (args) {
         $app.avatarDialog.loading = false;
@@ -15041,7 +14429,7 @@ console.log(`isLinux: ${LINUX}`);
                     $app.adjustDialogZ(this.$refs.changeAvatarImageDialog.$el)
                 );
             }
-            API.getAvatarImages(params).then((args) => {
+            imageRequest.getAvatarImages(params).then((args) => {
                 this.previousImagesTableFileId = args.json.id;
                 var images = [];
                 args.json.versions.forEach((item) => {
@@ -15058,7 +14446,7 @@ console.log(`isLinux: ${LINUX}`);
                     $app.adjustDialogZ(this.$refs.changeWorldImageDialog.$el)
                 );
             }
-            API.getWorldImages(params).then((args) => {
+            imageRequest.getWorldImages(params).then((args) => {
                 this.previousImagesTableFileId = args.json.id;
                 var images = [];
                 args.json.versions.forEach((item) => {
@@ -15069,7 +14457,7 @@ console.log(`isLinux: ${LINUX}`);
                 this.checkPreviousImageAvailable(images);
             });
         } else if (type === 'User') {
-            API.getAvatarImages(params).then((args) => {
+            imageRequest.getAvatarImages(params).then((args) => {
                 this.previousImagesTableFileId = args.json.id;
                 var images = [];
                 args.json.versions.forEach((item) => {
@@ -15112,33 +14500,6 @@ console.log(`isLinux: ${LINUX}`);
         $app.previousImagesDialogVisible = false;
     });
 
-    API.getAvatarImages = function (params) {
-        return this.call(`file/${params.fileId}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('AVATARIMAGE:GET', args);
-            return args;
-        });
-    };
-
-    API.getWorldImages = function (params) {
-        return this.call(`file/${params.fileId}`, {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLDIMAGE:GET', args);
-            return args;
-        });
-    };
-
     API.$on('AVATARIMAGE:GET', function (args) {
         $app.storeAvatarImage(args);
     });
@@ -15169,7 +14530,7 @@ console.log(`isLinux: ${LINUX}`);
             id: this.avatarDialog.id,
             imageUrl: `${API.endpointDomain}/file/${this.previousImagesTableFileId}/${image.version}/file`
         };
-        API.setAvatarImage(parmas).finally(() => {
+        imageRequest.setAvatarImage(parmas).finally(() => {
             this.changeAvatarImageDialogLoading = false;
             this.changeAvatarImageDialogVisible = false;
         });
@@ -15179,27 +14540,29 @@ console.log(`isLinux: ${LINUX}`);
         document.getElementById('AvatarImageUploadButton').click();
     };
 
-    $app.methods.deleteAvatarImage = function () {
-        this.changeAvatarImageDialogLoading = true;
-        var parmas = {
-            fileId: this.previousImagesTableFileId,
-            version: this.previousImagesTable[0].version
-        };
-        API.deleteFileVersion(parmas)
-            .then((args) => {
-                this.previousImagesTableFileId = args.json.id;
-                var images = [];
-                args.json.versions.forEach((item) => {
-                    if (!item.deleted) {
-                        images.unshift(item);
-                    }
-                });
-                this.checkPreviousImageAvailable(images);
-            })
-            .finally(() => {
-                this.changeAvatarImageDialogLoading = false;
-            });
-    };
+    // images.pug line 63
+    // $app.methods.deleteAvatarImage = function () {
+    //     this.changeAvatarImageDialogLoading = true;
+    //     var parmas = {
+    //         fileId: this.previousImagesTableFileId,
+    //         version: this.previousImagesTable[0].version
+    //     };
+    //     vrcPlusIconRequest
+    //         .deleteFileVersion(parmas)
+    //         .then((args) => {
+    //             this.previousImagesTableFileId = args.json.id;
+    //             var images = [];
+    //             args.json.versions.forEach((item) => {
+    //                 if (!item.deleted) {
+    //                     images.unshift(item);
+    //                 }
+    //             });
+    //             this.checkPreviousImageAvailable(images);
+    //         })
+    //         .finally(() => {
+    //             this.changeAvatarImageDialogLoading = false;
+    //         });
+    // };
 
     $app.methods.setWorldImage = function (image) {
         this.changeWorldImageDialogLoading = true;
@@ -15207,7 +14570,7 @@ console.log(`isLinux: ${LINUX}`);
             id: this.worldDialog.id,
             imageUrl: `${API.endpointDomain}/file/${this.previousImagesTableFileId}/${image.version}/file`
         };
-        API.setWorldImage(parmas).finally(() => {
+        imageRequest.setWorldImage(parmas).finally(() => {
             this.changeWorldImageDialogLoading = false;
             this.changeWorldImageDialogVisible = false;
         });
@@ -15217,27 +14580,29 @@ console.log(`isLinux: ${LINUX}`);
         document.getElementById('WorldImageUploadButton').click();
     };
 
-    $app.methods.deleteWorldImage = function () {
-        this.changeWorldImageDialogLoading = true;
-        var parmas = {
-            fileId: this.previousImagesTableFileId,
-            version: this.previousImagesTable[0].version
-        };
-        API.deleteFileVersion(parmas)
-            .then((args) => {
-                this.previousImagesTableFileId = args.json.id;
-                var images = [];
-                args.json.versions.forEach((item) => {
-                    if (!item.deleted) {
-                        images.unshift(item);
-                    }
-                });
-                this.checkPreviousImageAvailable(images);
-            })
-            .finally(() => {
-                this.changeWorldImageDialogLoading = false;
-            });
-    };
+    // images.pug line 63
+    // $app.methods.deleteWorldImage = function () {
+    //     this.changeWorldImageDialogLoading = true;
+    //     var parmas = {
+    //         fileId: this.previousImagesTableFileId,
+    //         version: this.previousImagesTable[0].version
+    //     };
+    //     vrcPlusIconRequest
+    //         .deleteFileVersion(parmas)
+    //         .then((args) => {
+    //             this.previousImagesTableFileId = args.json.id;
+    //             var images = [];
+    //             args.json.versions.forEach((item) => {
+    //                 if (!item.deleted) {
+    //                     images.unshift(item);
+    //                 }
+    //             });
+    //             this.checkPreviousImageAvailable(images);
+    //         })
+    //         .finally(() => {
+    //             this.changeWorldImageDialogLoading = false;
+    //         });
+    // };
 
     $app.methods.compareCurrentImage = function (image) {
         if (
@@ -15264,7 +14629,7 @@ console.log(`isLinux: ${LINUX}`);
         if (API.cachedAvatarNames.has(fileId)) {
             return API.cachedAvatarNames.get(fileId);
         }
-        var args = await API.getAvatarImages({ fileId });
+        var args = await imageRequest.getAvatarImages({ fileId });
         return this.storeAvatarImage(args);
     };
 
@@ -15953,7 +15318,8 @@ console.log(`isLinux: ${LINUX}`);
         D.isUploading = true;
         AppApi.GetFileBase64(D.metadata.filePath)
             .then((base64Body) => {
-                API.uploadGalleryImage(base64Body)
+                vrcPlusImageRequest
+                    .uploadGalleryImage(base64Body)
                     .then((args) => {
                         $app.$message({
                             message: $t('message.gallery.uploaded'),
@@ -16188,17 +15554,6 @@ console.log(`isLinux: ${LINUX}`);
             variant,
             variantVersion
         );
-    };
-
-    API.getBundles = function (fileId) {
-        return this.call(`file/${fileId}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            return args;
-        });
     };
 
     $app.methods.getDisplayName = function (userId) {
@@ -16482,7 +15837,7 @@ console.log(`isLinux: ${LINUX}`);
                 tag: list.name
             };
             try {
-                var args = await API.getFavoriteWorlds(params);
+                var args = await favoriteRequest.getFavoriteWorlds(params);
                 worldLists.push([list.displayName, list.visibility, args.json]);
             } catch (err) {}
         }
@@ -16771,7 +16126,7 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'gallery'
         };
-        API.getFileList(params);
+        vrcPlusIconRequest.getFileList(params);
     };
 
     API.$on('FILES:LIST', function (args) {
@@ -16808,7 +16163,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.deleteGalleryImage = function (fileId) {
-        API.deleteFile(fileId).then((args) => {
+        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
             API.$emit('GALLERYIMAGE:DELETE', args);
             return args;
         });
@@ -16865,7 +16220,7 @@ console.log(`isLinux: ${LINUX}`);
         var r = new FileReader();
         r.onload = function () {
             var base64Body = btoa(r.result);
-            API.uploadGalleryImage(base64Body).then((args) => {
+            vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
                 $app.$message({
                     message: $t('message.gallery.uploaded'),
                     type: 'success'
@@ -16879,25 +16234,6 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.displayGalleryUpload = function () {
         document.getElementById('GalleryUploadButton').click();
-    };
-
-    API.uploadGalleryImage = function (imageData) {
-        var params = {
-            tag: 'gallery'
-        };
-        return this.call('file/image', {
-            uploadImage: true,
-            matchingDimensions: false,
-            postData: JSON.stringify(params),
-            imageData
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('GALLERYIMAGE:ADD', args);
-            return args;
-        });
     };
 
     API.$on('GALLERYIMAGE:ADD', function (args) {
@@ -16918,7 +16254,7 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'sticker'
         };
-        API.getFileList(params);
+        vrcPlusIconRequest.getFileList(params);
     };
 
     API.$on('FILES:LIST', function (args) {
@@ -16929,7 +16265,7 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.methods.deleteSticker = function (fileId) {
-        API.deleteFile(fileId).then((args) => {
+        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
             API.$emit('STICKER:DELETE', args);
             return args;
         });
@@ -16980,13 +16316,15 @@ console.log(`isLinux: ${LINUX}`);
                 maskTag: 'square'
             };
             var base64Body = btoa(r.result);
-            API.uploadSticker(base64Body, params).then((args) => {
-                $app.$message({
-                    message: $t('message.sticker.uploaded'),
-                    type: 'success'
+            vrcPlusImageRequest
+                .uploadSticker(base64Body, params)
+                .then((args) => {
+                    $app.$message({
+                        message: $t('message.sticker.uploaded'),
+                        type: 'success'
+                    });
+                    return args;
                 });
-                return args;
-            });
         };
         r.readAsBinaryString(files[0]);
         clearFile();
@@ -16994,22 +16332,6 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.displayStickerUpload = function () {
         document.getElementById('StickerUploadButton').click();
-    };
-
-    API.uploadSticker = function (imageData, params) {
-        return this.call('file/image', {
-            uploadImage: true,
-            matchingDimensions: true,
-            postData: JSON.stringify(params),
-            imageData
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('STICKER:ADD', args);
-            return args;
-        });
     };
 
     API.$on('STICKER:ADD', function (args) {
@@ -17100,34 +16422,7 @@ console.log(`isLinux: ${LINUX}`);
         var params = {
             n: 100
         };
-        API.getPrints(params);
-    };
-
-    API.getPrints = function (params) {
-        return this.call(`prints/user/${API.currentUser.id}`, {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('PRINT:LIST', args);
-            return args;
-        });
-    };
-
-    API.deletePrint = function (printId) {
-        return this.call(`prints/${printId}`, {
-            method: 'DELETE'
-        }).then((json) => {
-            var args = {
-                json,
-                printId
-            };
-            this.$emit('PRINT:DELETE', args);
-            return args;
-        });
+        vrcPlusImageRequest.getPrints(params);
     };
 
     API.$on('PRINT:LIST', function (args) {
@@ -17136,7 +16431,7 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.methods.deletePrint = function (printId) {
-        API.deletePrint(printId);
+        vrcPlusImageRequest.deletePrint(printId);
     };
 
     API.$on('PRINT:DELETE', function (args) {
@@ -17191,7 +16486,7 @@ console.log(`isLinux: ${LINUX}`);
                 timestamp
             };
             var base64Body = btoa(r.result);
-            API.uploadPrint(base64Body, params).then((args) => {
+            vrcPlusImageRequest.uploadPrint(base64Body, params).then((args) => {
                 $app.$message({
                     message: $t('message.print.uploaded'),
                     type: 'success'
@@ -17207,53 +16502,11 @@ console.log(`isLinux: ${LINUX}`);
         document.getElementById('PrintUploadButton').click();
     };
 
-    API.uploadPrint = function (imageData, params) {
-        return this.call('prints', {
-            uploadImagePrint: true,
-            postData: JSON.stringify(params),
-            imageData
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('PRINT:ADD', args);
-            return args;
-        });
-    };
-
     API.$on('PRINT:ADD', function (args) {
         if (Object.keys($app.printTable).length !== 0) {
             $app.printTable.unshift(args.json);
         }
     });
-
-    API.getPrint = function (params) {
-        return this.call(`prints/${params.printId}`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('PRINT', args);
-            return args;
-        });
-    };
-
-    API.editPrint = function (params) {
-        return this.call(`prints/${params.printId}`, {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('PRINT:EDIT', args);
-            return args;
-        });
-    };
 
     $app.data.saveInstancePrints = await configRepository.getBool(
         'VRCX_saveInstancePrints',
@@ -17331,7 +16584,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.trySavePrintToFile = async function (printId) {
-        var args = await API.getPrint({ printId });
+        var args = await vrcPlusImageRequest.getPrint({ printId });
         var imageUrl = args.json?.files?.image;
         if (!imageUrl) {
             console.error('Print image URL is missing', args);
@@ -17385,7 +16638,7 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'emoji'
         };
-        API.getFileList(params);
+        vrcPlusIconRequest.getFileList(params);
     };
 
     API.$on('FILES:LIST', function (args) {
@@ -17396,7 +16649,7 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.methods.deleteEmoji = function (fileId) {
-        API.deleteFile(fileId).then((args) => {
+        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
             API.$emit('EMOJI:DELETE', args);
             return args;
         });
@@ -17457,7 +16710,7 @@ console.log(`isLinux: ${LINUX}`);
                 params.loopStyle = 'pingpong';
             }
             var base64Body = btoa(r.result);
-            API.uploadEmoji(base64Body, params).then((args) => {
+            vrcPlusImageRequest.uploadEmoji(base64Body, params).then((args) => {
                 $app.$message({
                     message: $t('message.emoji.uploaded'),
                     type: 'success'
@@ -17471,22 +16724,6 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.displayEmojiUpload = function () {
         document.getElementById('EmojiUploadButton').click();
-    };
-
-    API.uploadEmoji = function (imageData, params) {
-        return this.call('file/image', {
-            uploadImage: true,
-            matchingDimensions: true,
-            postData: JSON.stringify(params),
-            imageData
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('EMOJI:ADD', args);
-            return args;
-        });
     };
 
     API.$on('EMOJI:ADD', function (args) {
@@ -19650,20 +18887,6 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: user dialog notes
 
-    API.saveNote = function (params) {
-        return this.call('userNotes', {
-            method: 'POST',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTE', args);
-            return args;
-        });
-    };
-
     API.$on('NOTE', function (args) {
         var note = '';
         var targetUserId = '';
@@ -19703,7 +18926,7 @@ console.log(`isLinux: ${LINUX}`);
         if (this.userDialog.id === userId) {
             this.userDialog.noteSaving = true;
         }
-        return API.saveNote({
+        return miscRequest.saveNote({
             targetUserId: userId,
             note
         });
@@ -19713,7 +18936,7 @@ console.log(`isLinux: ${LINUX}`);
         if (this.userDialog.id === userId) {
             this.userDialog.noteSaving = true;
         }
-        return API.saveNote({
+        return miscRequest.saveNote({
             targetUserId: userId,
             note: ''
         });
@@ -19787,7 +19010,7 @@ console.log(`isLinux: ${LINUX}`);
             for (var i = data.length - 1; i >= 0; i--) {
                 if (D.visible && D.loading) {
                     var ctx = data[i];
-                    await API.saveNote({
+                    await miscRequest.saveNote({
                         targetUserId: ctx.id,
                         note: ctx.memo.slice(0, 256)
                     });
@@ -19967,7 +19190,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.bulkUnfavoriteSelection = function (elementsTicked) {
         for (var id of elementsTicked) {
-            API.deleteFavorite({
+            favoriteRequest.deleteFavorite({
                 objectId: id
             });
         }
@@ -21442,7 +20665,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.reportUserForHacking = function (userId) {
-        API.reportUser({
+        miscRequest.reportUser({
             userId,
             contentType: 'user',
             reason: 'behavior-hacking',
@@ -21450,59 +20673,8 @@ console.log(`isLinux: ${LINUX}`);
         });
     };
 
-    /**
-    * @param {{
-            userId: string,
-            contentType: string,
-            reason: string,
-            type: string
-    }} params
-    * @return { Promise<{json: any, params}> }
-    */
-    API.reportUser = function (params) {
-        return this.call(`feedback/${params.userId}/user`, {
-            method: 'POST',
-            params: {
-                contentType: params.contentType,
-                reason: params.reason,
-                type: params.type
-            }
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FEEDBACK:REPORT:USER', args);
-            return args;
-        });
-    };
-
     $app.methods.changeLogRemoveLinks = function (text) {
         return text.replace(/([^!])\[[^\]]+\]\([^)]+\)/g, '$1');
-    };
-
-    /**
-    * @param {{
-            fileId: string,
-            version: number
-    }} params
-    * @return { Promise<{json: any, params}> }
-
-    */
-    API.getFileAnalysis = function (params) {
-        return this.call(
-            `analysis/${params.fileId}/${params.version}/${params.variant}`,
-            {
-                method: 'GET'
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('FILE:ANALYSIS', args);
-            return args;
-        });
     };
 
     API.$on('FILE:ANALYSIS', function (args) {
@@ -21575,7 +20747,7 @@ console.log(`isLinux: ${LINUX}`);
             });
             return;
         }
-        API.getFileAnalysis({ fileId, version, variant, avatarId });
+        miscRequest.getFileAnalysis({ fileId, version, variant, avatarId });
     };
 
     $app.methods.openFolderGeneric = function (path) {
@@ -21694,20 +20866,8 @@ console.log(`isLinux: ${LINUX}`);
         this.currentUser.$vrchatcredits = args.json?.balance;
     });
 
-    API.getVRChatCredits = function () {
-        return this.call(`user/${this.currentUser.id}/balance`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            this.$emit('VRCCREDITS', args);
-            return args;
-        });
-    };
-
     $app.methods.getVRChatCredits = function () {
-        API.getVRChatCredits();
+        miscRequest.getVRChatCredits();
     };
 
     // #endregion
@@ -21725,33 +20885,10 @@ console.log(`isLinux: ${LINUX}`);
                     if (action !== 'confirm') {
                         return;
                     }
-                    API.closeInstance({ location, hardClose: false });
+                    miscRequest.closeInstance({ location, hardClose: false });
                 }
             }
         );
-    };
-
-    /**
-    * @param {{
-            location: string,
-            hardClose: boolean
-    }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.closeInstance = function (params) {
-        return this.call(`instances/${params.location}`, {
-            method: 'DELETE',
-            params: {
-                hardClose: params.hardClose ?? false
-            }
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('INSTANCE:CLOSE', args);
-            return args;
-        });
     };
 
     API.$on('INSTANCE:CLOSE', function (args) {
@@ -21812,50 +20949,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // #region persistent data
 
-    /**
-    * @param {{
-            worldId: string
-    }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.deleteWorldPersistData = function (params) {
-        return this.call(
-            `users/${this.currentUser.id}/${params.worldId}/persist`,
-            {
-                method: 'DELETE'
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLD:PERSIST:DELETE', args);
-            return args;
-        });
-    };
-
-    /**
-    * @param {{
-            worldId: string
-    }} params
-     * @returns {Promise<{json: any, params}>}
-     */
-    API.hasWorldPersistData = function (params) {
-        return this.call(
-            `users/${this.currentUser.id}/${params.worldId}/persist/exists`,
-            {
-                method: 'GET'
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLD:PERSIST:HAS', args);
-            return args;
-        });
-    };
-
     API.$on('WORLD:PERSIST:HAS', function (args) {
         if (
             args.params.worldId === $app.worldDialog.id &&
@@ -21913,28 +21006,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // #region | App: Badges
 
-    API.updateBadge = function (params) {
-        return this.call(
-            `users/${API.currentUser.id}/badges/${params.badgeId}`,
-            {
-                method: 'PUT',
-                params: {
-                    userId: API.currentUser.id,
-                    badgeId: params.badgeId,
-                    hidden: params.hidden,
-                    showcased: params.showcased
-                }
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('BADGE:UPDATE', args);
-            return args;
-        });
-    };
-
     API.$on('BADGE:UPDATE', function (args) {
         if (args.json) {
             $app.$message({
@@ -21948,7 +21019,7 @@ console.log(`isLinux: ${LINUX}`);
         if (badge.hidden) {
             badge.showcased = false;
         }
-        API.updateBadge({
+        miscRequest.updateBadge({
             badgeId: badge.badgeId,
             hidden: badge.hidden,
             showcased: badge.showcased
@@ -21959,7 +21030,7 @@ console.log(`isLinux: ${LINUX}`);
         if (badge.showcased) {
             badge.hidden = false;
         }
-        API.updateBadge({
+        miscRequest.updateBadge({
             badgeId: badge.badgeId,
             hidden: badge.hidden,
             showcased: badge.showcased
@@ -22053,6 +21124,26 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
+
+    // favWorldItem have to be defined
+    $app.methods.deleteFavorite = function (objectId) {
+        favoriteRequest.deleteFavorite({
+            objectId
+        });
+        // FIXME: 메시지 수정
+        // this.$confirm('Continue? Delete Favorite', 'Confirm', {
+        //     confirmButtonText: 'Confirm',
+        //     cancelButtonText: 'Cancel',
+        //     type: 'info',
+        //     callback: (action) => {
+        //         if (action === 'confirm') {
+        //             API.deleteFavorite({
+        //                 objectId
+        //             });
+        //         }
+        //     }
+        // });
+    };
 
     // #region | Electron
 

@@ -12,6 +12,14 @@ import instanceRequest from './instance';
 import friendRequest from './friend';
 import avatarRequest from './avatar';
 import notificationRequest from './notification';
+import playerModerationRequest from './playerModeration';
+import avatarModerationRequest from './avatarModeration';
+import favoriteRequest from './favorite';
+import vrcPlusIconRequest from './vrcPlusIcon';
+import vrcPlusImageRequest from './vrcPlusImage';
+import inviteMessagesRequest from './inviteMessages';
+import imageRequest from './image';
+import miscRequest from './misc';
 
 export {
     userRequest,
@@ -19,5 +27,13 @@ export {
     instanceRequest,
     friendRequest,
     avatarRequest,
-    notificationRequest
+    notificationRequest,
+    playerModerationRequest,
+    avatarModerationRequest,
+    favoriteRequest,
+    vrcPlusIconRequest,
+    vrcPlusImageRequest,
+    inviteMessagesRequest,
+    imageRequest,
+    miscRequest
 };

@@ -6,8 +6,7 @@
             :filters="filters"
             :tableProps="tableProps"
             :paginationProps="paginationProps"
-            v-loading="API.isPlayerModerationsLoading"
-        >
+            v-loading="API.isPlayerModerationsLoading">
             <template slot="tool">
                 <div class="tool-slot">
                     <el-select
@@ -16,32 +15,27 @@
                         multiple
                         clearable
                         style="flex: 1"
-                        :placeholder="$t('view.moderation.filter_placeholder')"
-                    >
+                        :placeholder="$t('view.moderation.filter_placeholder')">
                         <el-option
                             v-for="item in moderationTypes"
                             :key="item"
                             :label="$t('view.moderation.filters.' + item)"
-                            :value="item"
-                        />
+                            :value="item" />
                     </el-select>
                     <el-input
                         v-model="filters[1].value"
                         :placeholder="$t('view.moderation.search_placeholder')"
-                        class="filter-input"
-                    />
+                        class="filter-input" />
                     <el-tooltip
                         placement="bottom"
                         :content="$t('view.moderation.refresh_tooltip')"
-                        :disabled="hideTooltips"
-                    >
+                        :disabled="hideTooltips">
                         <el-button
                             type="default"
                             :loading="API.isPlayerModerationsLoading"
                             @click="API.refreshPlayerModerations()"
                             icon="el-icon-refresh"
-                            circle
-                        />
+                            circle />
                     </el-tooltip>
                 </div>
             </template>
@@ -65,8 +59,7 @@
                     <span
                         class="x-link"
                         v-text="scope.row.sourceDisplayName"
-                        @click="showUserDialog(scope.row.sourceUserId)"
-                    ></span>
+                        @click="showUserDialog(scope.row.sourceUserId)"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.moderation.target')" prop="targetDisplayName">
@@ -74,8 +67,7 @@
                     <span
                         class="x-link"
                         v-text="scope.row.targetDisplayName"
-                        @click="showUserDialog(scope.row.targetUserId)"
-                    ></span>
+                        @click="showUserDialog(scope.row.targetUserId)"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.moderation.action')" width="80" align="right">
@@ -87,15 +79,13 @@
                             type="text"
                             icon="el-icon-close"
                             size="mini"
-                            @click="deletePlayerModeration(scope.row)"
-                        ></el-button>
+                            @click="deletePlayerModeration(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
                             icon="el-icon-close"
                             size="mini"
-                            @click="deletePlayerModerationPrompt(scope.row)"
-                        ></el-button>
+                            @click="deletePlayerModerationPrompt(scope.row)"></el-button>
                     </template>
                 </template>
             </el-table-column>
@@ -104,6 +94,7 @@
 </template>
 
 <script>
+    import { playerModerationRequest } from '../../classes/request/index.js';
     import configRepository from '../../repository/config.js';
 
     export default {
@@ -163,7 +154,7 @@
                 configRepository.setString('VRCX_playerModerationTableFilters', JSON.stringify(this.filters[0].value));
             },
             deletePlayerModeration(row) {
-                this.API.deletePlayerModeration({
+                playerModerationRequest.deletePlayerModeration({
                     moderated: row.targetUserId,
                     type: row.type
                 });

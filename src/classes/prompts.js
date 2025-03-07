@@ -2,7 +2,7 @@ import * as workerTimers from 'worker-timers';
 import configRepository from '../repository/config.js';
 import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { avatarRequest, worldRequest } from './request';
+import { avatarRequest, favoriteRequest, worldRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -317,20 +317,22 @@ export default class extends baseClass {
                     ),
                     callback: (action, instance) => {
                         if (action === 'confirm') {
-                            API.saveFavoriteGroup({
-                                type: ctx.type,
-                                group: ctx.name,
-                                displayName: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: $t(
-                                        'prompt.change_favorite_group_name.message.success'
-                                    ),
-                                    type: 'success'
+                            favoriteRequest
+                                .saveFavoriteGroup({
+                                    type: ctx.type,
+                                    group: ctx.name,
+                                    displayName: instance.inputValue
+                                })
+                                .then((args) => {
+                                    this.$message({
+                                        message: $t(
+                                            'prompt.change_favorite_group_name.message.success'
+                                        ),
+                                        type: 'success'
+                                    });
+                                    // load new group name
+                                    API.refreshFavoriteGroups();
                                 });
-                                // load new group name
-                                API.refreshFavoriteGroups();
-                            });
                         }
                     }
                 }
