@@ -69,7 +69,7 @@ internal static class ImageCache
         if (!string.IsNullOrEmpty(cookieString))
             request.Headers.Add("Cookie", cookieString);
 
-        using var response = await httpClient.SendAsync(request);
+        var response = await httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStreamAsync();
     }
@@ -78,8 +78,8 @@ internal static class ImageCache
     {
         var directoryLocation = Path.Join(cacheLocation, fileId);
         var fileLocation = Path.Join(directoryLocation, $"{version}.png");
-
-        if (File.Exists(fileLocation))
+        
+        if (File.Exists(fileLocation) && new FileInfo(fileLocation).Length > 0)
         {
             Directory.SetLastWriteTimeUtc(directoryLocation, DateTime.UtcNow);
             return fileLocation;
@@ -91,7 +91,7 @@ internal static class ImageCache
 
         try
         {
-            var stream = await FetchImage(url);
+            await using var stream = await FetchImage(url);
             await using var fileStream =
                 new FileStream(fileLocation, FileMode.Create, FileAccess.Write, FileShare.None);
             await stream.CopyToAsync(fileStream);
@@ -111,7 +111,7 @@ internal static class ImageCache
 
     public static async Task SaveImageToFile(string url, string path)
     {
-        var stream = await FetchImage(url);
+        await using var stream = await FetchImage(url);
         await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
         await stream.CopyToAsync(fileStream);
     }

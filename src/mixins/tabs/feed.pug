@@ -31,7 +31,10 @@ mixin feedTab
                 template(#default='scope')
                     div(style='position: relative; font-size: 14px')
                         template(v-if='scope.row.type === "GPS"')
-                            location(v-if='scope.row.previousLocation' :location='scope.row.previousLocation')
+                            location(
+                                v-if='scope.row.previousLocation'
+                                :location='scope.row.previousLocation'
+                                style='display: inline-block')
                             el-tag(type='info' effect='plain' size='mini' style='margin-left: 5px') {{ timeToText(scope.row.time) }}
                             br
                             span(style='margin-right: 5px')

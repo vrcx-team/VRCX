@@ -40,7 +40,8 @@ namespace VRCX
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
-        private WebApi()
+        // leave this as public, private makes nodeapi angry
+        public WebApi()
         {
 #if LINUX
             if (Instance == null)
