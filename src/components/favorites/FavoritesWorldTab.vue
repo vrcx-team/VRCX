@@ -2,9 +2,7 @@
     <div>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div>
-                <el-button size="small" @click="$emit('show-world-export-dialog')">{{
-                    $t('view.favorite.export')
-                }}</el-button>
+                <el-button size="small" @click="showExportDialog">{{ $t('view.favorite.export') }}</el-button>
                 <el-button size="small" style="margin-left: 5px" @click="$emit('show-world-import-dialog')">{{
                     $t('view.favorite.import')
                 }}</el-button>
@@ -103,7 +101,7 @@
                                     icon="el-icon-edit"
                                     circle
                                     style="margin-left: 5px"
-                                    @click.stop="$emit('change-favorite-group-name', group)" />
+                                    @click.stop="changeFavoriteGroupName(group)" />
                             </el-tooltip>
                             <el-tooltip
                                 placement="right"
@@ -114,7 +112,7 @@
                                     icon="el-icon-delete"
                                     circle
                                     style="margin-left: 5px"
-                                    @click.stop="$emit('clear-favorite-group', group)" />
+                                    @click.stop="clearFavoriteGroup(group)" />
                             </el-tooltip>
                         </el-dropdown>
                     </div>
@@ -219,41 +217,44 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
+        <world-export-dialog
+            :favorite-worlds="favoriteWorlds"
+            :world-export-dialog-visible.sync="worldExportDialogVisible"
+            :local-world-favorites="localWorldFavorites"
+            :local-world-favorite-groups="localWorldFavoriteGroups"
+            :local-world-favorites-list="localWorldFavoritesList" />
     </div>
 </template>
 
 <script>
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
+    import WorldExportDialog from '../../views/dialogs/WorldExportDialog.vue';
     import { favoriteRequest } from '../../classes/request';
 
     export default {
         name: 'FavoritesWorldTab',
         components: {
-            FavoritesWorldItem
+            FavoritesWorldItem,
+            WorldExportDialog
         },
         inject: ['API'],
         props: {
             sortFavorites: Boolean,
-            worldFavoriteSearchResults: Array,
-
             hideTooltips: Boolean,
-
             favoriteWorlds: Array,
-
             editFavoritesMode: Boolean,
             shiftHeld: Boolean,
-
             refreshingLocalFavorites: Boolean,
-
             localWorldFavoriteGroups: Array,
-            localWorldFavorites: Object
-
-            // removeLocalWorldFavorite: Function
+            localWorldFavorites: Object,
+            localWorldFavoritesList: Array
         },
         data() {
             return {
                 worldGroupVisibilityOptions: ['private', 'friends', 'public'],
-                worldFavoriteSearch: ''
+                worldFavoriteSearch: '',
+                worldExportDialogVisible: false,
+                worldFavoriteSearchResults: []
             };
         },
         computed: {
@@ -281,6 +282,10 @@
             }
         },
         methods: {
+            showExportDialog() {
+                this.worldExportDialogVisible = true;
+            },
+
             userFavoriteWorldsStatusForFavTab(visibility) {
                 let style = '';
                 if (visibility === 'public') {
@@ -318,7 +323,7 @@
                         inputErrorMessage: $t('prompt.new_local_favorite_group.input_error'),
                         callback: (action, instance) => {
                             if (action === 'confirm' && instance.inputValue) {
-                                this.newLocalWorldFavoriteGroup(instance.inputValue);
+                                this.$emit('new-local-world-favorite-group', instance.inputValue);
                             }
                         }
                     }
@@ -337,7 +342,7 @@
                         inputValue: group,
                         callback: (action, instance) => {
                             if (action === 'confirm' && instance.inputValue) {
-                                this.renameLocalWorldFavoriteGroup(instance.inputValue, group);
+                                this.$emit('rename-local-world-favorite-group', instance.inputValue, group);
                             }
                         }
                     }
@@ -355,15 +360,73 @@
                     }
                 });
             },
-            searchWorldFavorites() {
-                this.$emit('search-world-favorites', this.worldFavoriteSearch);
-            },
             getLocalWorldFavoriteGroupLength(group) {
                 const favoriteGroup = this.localWorldFavorites[group];
                 if (!favoriteGroup) {
                     return 0;
                 }
                 return favoriteGroup.length;
+            },
+
+            clearFavoriteGroup(ctx) {
+                // FIXME: 메시지 수정
+                this.$confirm('Continue? Clear Group', 'Confirm', {
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    type: 'info',
+                    callback: (action) => {
+                        if (action === 'confirm') {
+                            favoriteRequest.clearFavoriteGroup({
+                                type: ctx.type,
+                                group: ctx.name
+                            });
+                        }
+                    }
+                });
+            },
+            searchWorldFavorites(worldFavoriteSearch) {
+                let ref = null;
+                const search = worldFavoriteSearch.toLowerCase();
+                if (search.length < 3) {
+                    this.worldFavoriteSearchResults = [];
+                    return;
+                }
+
+                const results = [];
+                for (let i = 0; i < this.localWorldFavoriteGroups.length; ++i) {
+                    const group = this.localWorldFavoriteGroups[i];
+                    if (!this.localWorldFavorites[group]) {
+                        continue;
+                    }
+                    for (let j = 0; j < this.localWorldFavorites[group].length; ++j) {
+                        ref = this.localWorldFavorites[group][j];
+                        if (!ref || !ref.id) {
+                            continue;
+                        }
+                        if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+                            if (!results.some((r) => r.id === ref.id)) {
+                                results.push(ref);
+                            }
+                        }
+                    }
+                }
+
+                for (let i = 0; i < this.favoriteWorlds.length; ++i) {
+                    ref = this.favoriteWorlds[i].ref;
+                    if (!ref) {
+                        continue;
+                    }
+                    if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+                        if (!results.some((r) => r.id === ref.id)) {
+                            results.push(ref);
+                        }
+                    }
+                }
+
+                this.worldFavoriteSearchResults = results;
+            },
+            changeFavoriteGroupName(group) {
+                this.$emit('change-favorite-group-name', group);
             },
             showWorldDialog(event) {
                 this.$emit('show-world-dialog', event);
