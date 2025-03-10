@@ -105,8 +105,7 @@
         methods: {
             async initEcharts(isFirstLoad = false) {
                 if (!this.echarts) {
-                    const module = await utils.loadEcharts();
-                    this.echarts = module;
+                    this.echarts = await utils.loadEcharts();
                 }
 
                 const chartsHeight = this.activityDetailData.length * (this.barWidth + 10) + 200;

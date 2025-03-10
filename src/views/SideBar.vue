@@ -1,5 +1,5 @@
 <template>
-    <div id="aside" class="x-aside-container">
+    <div id="aside" class="x-aside-container" v-show="isSideBarTabShow">
         <div style="display: flex; align-items: baseline">
             <el-select
                 value=""
@@ -124,6 +124,8 @@
             gameLogDisabled: Boolean,
             hideNicknames: Boolean,
             isHideFriendsInSameInstance: Boolean,
+
+            isSideBarTabShow: Boolean,
 
             quickSearchRemoteMethod: Function,
             quickSearchItems: Array,

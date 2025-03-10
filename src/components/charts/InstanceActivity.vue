@@ -164,7 +164,7 @@
                 );
             },
             isNextDayBtnDisabled() {
-                return dayjs(this.selectedDate).isSame(dayjs(), 'day');
+                return dayjs(this.selectedDate).isSame(this.allDateOfActivityArray[0], 'day');
             },
             isPrevDayBtnDisabled() {
                 return dayjs(this.selectedDate).isSame(
@@ -535,18 +535,24 @@
 
             // options - start
             changeSelectedDateFromBtn(isNext = false) {
+                if (!this.allDateOfActivityArray || this.allDateOfActivityArray.length === 0) {
+                    return;
+                }
+
                 const idx = this.allDateOfActivityArray.findIndex((date) => date.isSame(this.selectedDate, 'day'));
                 if (idx !== -1) {
-                    if (isNext) {
-                        if (idx - 1 < this.allDateOfActivityArray.length) {
-                            this.selectedDate = this.allDateOfActivityArray[idx - 1];
-                            this.reloadData();
-                        }
-                    } else if (idx + 1 >= 0) {
-                        this.selectedDate = this.allDateOfActivityArray[idx + 1];
+                    const newIdx = isNext ? idx - 1 : idx + 1;
+
+                    if (newIdx >= 0 && newIdx < this.allDateOfActivityArray.length) {
+                        this.selectedDate = this.allDateOfActivityArray[newIdx];
                         this.reloadData();
+                        return;
                     }
                 }
+                this.selectedDate = isNext
+                    ? this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1]
+                    : this.allDateOfActivityArray[0];
+                this.reloadData();
             },
             getDatePickerDisabledDate(time) {
                 if (
@@ -730,7 +736,7 @@
                     return;
                 }
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
+                    if (entry.isIntersecting && this.$refs.activityDetailChartRef[index]) {
                         this.$refs.activityDetailChartRef[index].initEcharts();
                         this.intersectionObservers[index].unobserve(entry.target);
                     }

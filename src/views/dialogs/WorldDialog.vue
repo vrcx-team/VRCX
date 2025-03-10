@@ -862,7 +862,7 @@
                         memo
                     });
                 } else {
-                    database.deleteWorldMemo(id);
+                    database.deleteWorldMemo(worldId);
                 }
             },
             showPreviousInstancesWorldDialog(world) {

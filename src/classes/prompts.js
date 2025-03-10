@@ -294,51 +294,6 @@ export default class extends baseClass {
             );
         },
 
-        // remove when finished fav tab split
-        changeFavoriteGroupName(ctx) {
-            this.$prompt(
-                $t('prompt.change_favorite_group_name.description'),
-                $t('prompt.change_favorite_group_name.header'),
-                {
-                    distinguishCancelAndClose: true,
-                    cancelButtonText: $t(
-                        'prompt.change_favorite_group_name.cancel'
-                    ),
-                    confirmButtonText: $t(
-                        'prompt.change_favorite_group_name.change'
-                    ),
-                    inputPlaceholder: $t(
-                        'prompt.change_favorite_group_name.input_placeholder'
-                    ),
-                    inputValue: ctx.displayName,
-                    inputPattern: /\S+/,
-                    inputErrorMessage: $t(
-                        'prompt.change_favorite_group_name.input_error'
-                    ),
-                    callback: (action, instance) => {
-                        if (action === 'confirm') {
-                            favoriteRequest
-                                .saveFavoriteGroup({
-                                    type: ctx.type,
-                                    group: ctx.name,
-                                    displayName: instance.inputValue
-                                })
-                                .then((args) => {
-                                    this.$message({
-                                        message: $t(
-                                            'prompt.change_favorite_group_name.message.success'
-                                        ),
-                                        type: 'success'
-                                    });
-                                    // load new group name
-                                    API.refreshFavoriteGroups();
-                                });
-                        }
-                    }
-                }
-            );
-        },
-
         promptNotificationTimeout() {
             this.$prompt(
                 $t('prompt.notification_timeout.description'),

@@ -57,11 +57,11 @@ import ChartsTab from './views/tabs/Charts.vue';
 import SideBar from './views/SideBar.vue';
 import NavMenu from './views/NavMenu.vue';
 import FriendsListTab from './views/tabs/FriendsList.vue';
+import FavoritesTab from './views/tabs/Favorites.vue';
 
 // components
 import SimpleSwitch from './components/settings/SimpleSwitch.vue';
 import Location from './components/common/Location.vue';
-import FavoritesWorldTab from './components/favorites/FavoritesWorldTab.vue';
 
 // dialogs
 import WorldDialog from './views/dialogs/WorldDialog.vue';
@@ -198,6 +198,7 @@ console.log(`isLinux: ${LINUX}`);
             ModerationTab,
             ChartsTab,
             FriendsListTab,
+            FavoritesTab,
             // - others
             SideBar,
             NavMenu,
@@ -205,8 +206,7 @@ console.log(`isLinux: ${LINUX}`);
             // components
             // - common
             Location,
-            // - favorites
-            FavoritesWorldTab,
+
             // - settings
             SimpleSwitch,
 
@@ -5829,23 +5829,6 @@ console.log(`isLinux: ${LINUX}`);
             });
     };
 
-    $app.methods.clearFavoriteGroup = function (ctx) {
-        // FIXME: 메시지 수정
-        this.$confirm('Continue? Clear Group', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    favoriteRequest.clearFavoriteGroup({
-                        type: ctx.type,
-                        group: ctx.name
-                    });
-                }
-            }
-        });
-    };
-
     $app.computed.favoriteFriends = function () {
         if (this.sortFavoriteFriends) {
             this.sortFavoriteFriends = false;
@@ -5892,20 +5875,6 @@ console.log(`isLinux: ${LINUX}`);
             return this.favoriteAvatars_;
         }
         return this.favoriteAvatarsSorted;
-    };
-
-    $app.computed.groupedByGroupKeyFavoriteAvatars = function () {
-        const groupedByGroupKeyFavoriteAvatars = {};
-        this.favoriteAvatars.forEach((avatar) => {
-            if (avatar.groupKey) {
-                if (!groupedByGroupKeyFavoriteAvatars[avatar.groupKey]) {
-                    groupedByGroupKeyFavoriteAvatars[avatar.groupKey] = [];
-                }
-                groupedByGroupKeyFavoriteAvatars[avatar.groupKey].push(avatar);
-            }
-        });
-
-        return groupedByGroupKeyFavoriteAvatars;
     };
 
     // #endregion
@@ -10947,7 +10916,7 @@ console.log(`isLinux: ${LINUX}`);
         D.timeSpent = 0;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
-            (this.isLocalUserVrcplusSupporter() &&
+            (API.currentUser.$isVRCPlus &&
                 this.localAvatarFavoritesList.includes(avatarId));
         D.isBlocked = API.cachedAvatarModerations.has(avatarId);
         D.memo = '';
@@ -11411,24 +11380,6 @@ console.log(`isLinux: ${LINUX}`);
                 if (message) {
                     this.$message({
                         message: 'World added to favorites',
-                        type: 'success'
-                    });
-                }
-                return args;
-            });
-    };
-
-    $app.methods.addFavoriteAvatar = function (ref, group, message) {
-        return favoriteRequest
-            .addFavorite({
-                type: 'avatar',
-                favoriteId: ref.id,
-                tags: group.name
-            })
-            .then((args) => {
-                if (message) {
-                    this.$message({
-                        message: 'Avatar added to favorites',
                         type: 'success'
                     });
                 }
@@ -18274,118 +18225,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.worldImportDialog.visible = false;
         $app.worldImportFavoriteGroup = null;
         $app.worldImportLocalFavoriteGroup = null;
-
-        $app.worldExportDialogVisible = false;
-        $app.worldExportFavoriteGroup = null;
-        $app.worldExportLocalFavoriteGroup = null;
     });
-
-    // #endregion
-    // #region | App: world favorite export
-
-    $app.data.worldExportDialogRef = {};
-    $app.data.worldExportDialogVisible = false;
-    $app.data.worldExportContent = '';
-    $app.data.worldExportFavoriteGroup = null;
-    $app.data.worldExportLocalFavoriteGroup = null;
-
-    $app.methods.showWorldExportDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.worldExportDialogRef.$el)
-        );
-        this.worldExportFavoriteGroup = null;
-        this.worldExportLocalFavoriteGroup = null;
-        this.updateWorldExportDialog();
-        this.worldExportDialogVisible = true;
-    };
-
-    $app.methods.handleCopyWorldExportData = function (event) {
-        event.target.tagName === 'TEXTAREA' && event.target.select();
-        navigator.clipboard
-            .writeText(this.worldExportContent)
-            .then(() => {
-                this.$message({
-                    message: 'Copied successfully!',
-                    type: 'success',
-                    duration: 2000
-                });
-            })
-            .catch((err) => {
-                console.error('Copy failed:', err);
-                this.$message.error('Copy failed!');
-            });
-    };
-
-    $app.methods.updateWorldExportDialog = function () {
-        const formatter = function (str) {
-            if (/[\x00-\x1f,"]/.test(str) === true) {
-                return `"${str.replace(/"/g, '""')}"`;
-            }
-            return str;
-        };
-
-        function resText(ref) {
-            let resArr = [];
-            propsForQuery.forEach((e) => {
-                resArr.push(formatter(ref?.[e]));
-            });
-            return resArr.join(',');
-        }
-
-        const lines = [this.exportSelectedOptions.join(',')];
-        const propsForQuery = this.exportSelectOptions
-            .filter((option) =>
-                this.exportSelectedOptions.includes(option.label)
-            )
-            .map((option) => option.value);
-
-        if (this.worldExportFavoriteGroup) {
-            API.favoriteWorldGroups.forEach((group) => {
-                if (this.worldExportFavoriteGroup === group) {
-                    $app.favoriteWorlds.forEach((ref) => {
-                        if (group.key === ref.groupKey) {
-                            lines.push(resText(ref.ref));
-                        }
-                    });
-                }
-            });
-        } else if (this.worldExportLocalFavoriteGroup) {
-            const favoriteGroup =
-                this.localWorldFavorites[this.worldExportLocalFavoriteGroup];
-            if (!favoriteGroup) {
-                return;
-            }
-            for (let i = 0; i < favoriteGroup.length; ++i) {
-                const ref = favoriteGroup[i];
-                lines.push(resText(ref));
-            }
-        } else {
-            // export all
-            this.favoriteWorlds.forEach((ref) => {
-                lines.push(resText(ref.ref));
-            });
-            for (let i = 0; i < this.localWorldFavoritesList.length; ++i) {
-                const worldId = this.localWorldFavoritesList[i];
-                const ref = API.cachedWorlds.get(worldId);
-                if (typeof ref !== 'undefined') {
-                    lines.push(resText(ref));
-                }
-            }
-        }
-        this.worldExportContent = lines.join('\n');
-    };
-
-    $app.methods.selectWorldExportGroup = function (group) {
-        this.worldExportFavoriteGroup = group;
-        this.worldExportLocalFavoriteGroup = null;
-        this.updateWorldExportDialog();
-    };
-
-    $app.methods.selectWorldExportLocalGroup = function (group) {
-        this.worldExportLocalFavoriteGroup = group;
-        this.worldExportFavoriteGroup = null;
-        this.updateWorldExportDialog();
-    };
 
     // #endregion
     // #region | App: avatar favorite import
@@ -18502,6 +18342,23 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.importAvatarImportTable = async function () {
+        const addFavoriteAvatar = function (ref, group, message) {
+            return favoriteRequest
+                .addFavorite({
+                    type: 'avatar',
+                    favoriteId: ref.id,
+                    tags: group.name
+                })
+                .then((args) => {
+                    if (message) {
+                        this.$message({
+                            message: 'Avatar added to favorites',
+                            type: 'success'
+                        });
+                    }
+                    return args;
+                });
+        };
         var D = this.avatarImportDialog;
         if (!D.avatarImportFavoriteGroup && !D.avatarImportLocalFavoriteGroup) {
             return;
@@ -18516,7 +18373,7 @@ console.log(`isLinux: ${LINUX}`);
                 }
                 var ref = data[i];
                 if (D.avatarImportFavoriteGroup) {
-                    await this.addFavoriteAvatar(
+                    await addFavoriteAvatar(
                         ref,
                         D.avatarImportFavoriteGroup,
                         false
@@ -18546,135 +18403,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.avatarImportDialog.visible = false;
         $app.avatarImportFavoriteGroup = null;
         $app.avatarImportLocalFavoriteGroup = null;
-
-        $app.avatarExportDialogVisible = false;
-        $app.avatarExportFavoriteGroup = null;
-        $app.avatarExportLocalFavoriteGroup = null;
     });
-
-    // #endregion
-    // #region | App: avatar favorite export
-
-    $app.data.avatarExportDialogRef = {};
-    $app.data.avatarExportDialogVisible = false;
-    $app.data.avatarExportContent = '';
-    $app.data.avatarExportFavoriteGroup = null;
-    $app.data.avatarExportLocalFavoriteGroup = null;
-
-    // Storage of selected filtering options for model and world export
-    $app.data.exportSelectedOptions = ['ID', 'Name'];
-    $app.data.exportSelectOptions = [
-        { label: 'ID', value: 'id' },
-        { label: 'Name', value: 'name' },
-        { label: 'Author ID', value: 'authorId' },
-        { label: 'Author Name', value: 'authorName' },
-        { label: 'Thumbnail', value: 'thumbnailImageUrl' }
-    ];
-
-    $app.methods.showAvatarExportDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.avatarExportDialogRef.$el)
-        );
-        this.avatarExportFavoriteGroup = null;
-        this.avatarExportLocalFavoriteGroup = null;
-        this.updateAvatarExportDialog();
-        this.avatarExportDialogVisible = true;
-    };
-
-    $app.methods.handleCopyAvatarExportData = function (event) {
-        event.target.tagName === 'TEXTAREA' && event.target.select();
-        navigator.clipboard
-            .writeText(this.avatarExportContent)
-            .then(() => {
-                this.$message({
-                    message: 'Copied successfully!',
-                    type: 'success',
-                    duration: 2000
-                });
-            })
-            .catch((err) => {
-                console.error('Copy failed:', err);
-                this.$message.error('Copy failed!');
-            });
-    };
-
-    /**
-     * Update the content of the avatar export dialog based on the selected options
-     */
-
-    $app.methods.updateAvatarExportDialog = function () {
-        const formatter = function (str) {
-            if (/[\x00-\x1f,"]/.test(str) === true) {
-                return `"${str.replace(/"/g, '""')}"`;
-            }
-            return str;
-        };
-
-        function resText(ref) {
-            let resArr = [];
-            propsForQuery.forEach((e) => {
-                resArr.push(formatter(ref?.[e]));
-            });
-            return resArr.join(',');
-        }
-
-        const lines = [this.exportSelectedOptions.join(',')];
-        const propsForQuery = this.exportSelectOptions
-            .filter((option) =>
-                this.exportSelectedOptions.includes(option.label)
-            )
-            .map((option) => option.value);
-
-        if (this.avatarExportFavoriteGroup) {
-            API.favoriteAvatarGroups.forEach((group) => {
-                if (
-                    !this.avatarExportFavoriteGroup ||
-                    this.avatarExportFavoriteGroup === group
-                ) {
-                    $app.favoriteAvatars.forEach((ref) => {
-                        if (group.key === ref.groupKey) {
-                            lines.push(resText(ref.ref));
-                        }
-                    });
-                }
-            });
-        } else if (this.avatarExportLocalFavoriteGroup) {
-            const favoriteGroup =
-                this.localAvatarFavorites[this.avatarExportLocalFavoriteGroup];
-            if (!favoriteGroup) {
-                return;
-            }
-            for (let i = 0; i < favoriteGroup.length; ++i) {
-                const ref = favoriteGroup[i];
-                lines.push(resText(ref));
-            }
-        } else {
-            // export all
-            this.favoriteAvatars.forEach((ref) => {
-                lines.push(resText(ref.ref));
-            });
-            for (let i = 0; i < this.localAvatarFavoritesList.length; ++i) {
-                const avatarId = this.localAvatarFavoritesList[i];
-                const ref = API.cachedAvatars.get(avatarId);
-                if (typeof ref !== 'undefined') {
-                    lines.push(resText(ref));
-                }
-            }
-        }
-        this.avatarExportContent = lines.join('\n');
-    };
-
-    $app.methods.selectAvatarExportGroup = function (group) {
-        this.avatarExportFavoriteGroup = group;
-        this.avatarExportLocalFavoriteGroup = null;
-        this.updateAvatarExportDialog();
-    };
-
-    $app.methods.selectAvatarExportLocalGroup = function (group) {
-        this.avatarExportLocalFavoriteGroup = group;
-        this.avatarExportFavoriteGroup = null;
-        this.updateAvatarExportDialog();
-    };
 
     // #endregion
     // #region | App: friend favorite import
@@ -18821,68 +18550,6 @@ console.log(`isLinux: ${LINUX}`);
         $app.friendExportDialogVisible = false;
         $app.friendExportFavoriteGroup = null;
     });
-
-    // #endregion
-    // #region | App: friend favorite export
-
-    $app.data.friendExportDialogRef = {};
-    $app.data.friendExportDialogVisible = false;
-    $app.data.friendExportContent = '';
-    $app.data.friendExportFavoriteGroup = null;
-
-    $app.methods.showFriendExportDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.friendExportDialogRef.$el)
-        );
-        this.friendExportFavoriteGroup = null;
-        this.updateFriendExportDialog();
-        this.friendExportDialogVisible = true;
-    };
-
-    $app.methods.handleCopyFriendExportData = function (event) {
-        event.target.tagName === 'TEXTAREA' && event.target.select();
-        navigator.clipboard
-            .writeText(this.friendExportContent)
-            .then(() => {
-                this.$message({
-                    message: 'Copied successfully!',
-                    type: 'success',
-                    duration: 2000
-                });
-            })
-            .catch((err) => {
-                console.error('Copy failed:', err);
-                this.$message.error('Copy failed!');
-            });
-    };
-
-    $app.methods.updateFriendExportDialog = function () {
-        var _ = function (str) {
-            if (/[\x00-\x1f,"]/.test(str) === true) {
-                return `"${str.replace(/"/g, '""')}"`;
-            }
-            return str;
-        };
-        var lines = ['UserID,Name'];
-        API.favoriteFriendGroups.forEach((group) => {
-            if (
-                !this.friendExportFavoriteGroup ||
-                this.friendExportFavoriteGroup === group
-            ) {
-                $app.favoriteFriends.forEach((ref) => {
-                    if (group.key === ref.groupKey) {
-                        lines.push(`${_(ref.id)},${_(ref.name)}`);
-                    }
-                });
-            }
-        });
-        this.friendExportContent = lines.join('\n');
-    };
-
-    $app.methods.selectFriendExportGroup = function (group) {
-        this.friendExportFavoriteGroup = group;
-        this.updateFriendExportDialog();
-    };
 
     // #endregion
     // #region | App: user dialog notes
@@ -19147,55 +18814,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // #endregion
     // #region | App: bulk unfavorite
-
-    $app.data.editFavoritesMode = false;
-
-    $app.methods.showBulkUnfavoriteSelectionConfirm = function () {
-        var elementsTicked = [];
-        // check favorites type
-        for (var ctx of this.favoriteFriends) {
-            if (ctx.$selected) {
-                elementsTicked.push(ctx.id);
-            }
-        }
-        for (var ctx of this.favoriteWorlds) {
-            if (ctx.$selected) {
-                elementsTicked.push(ctx.id);
-            }
-        }
-        for (var ctx of this.favoriteAvatars) {
-            if (ctx.$selected) {
-                elementsTicked.push(ctx.id);
-            }
-        }
-        if (elementsTicked.length === 0) {
-            return;
-        }
-        this.$confirm(
-            `Are you sure you want to unfavorite ${elementsTicked.length} favorites?
-            This action cannot be undone.`,
-            `Delete ${elementsTicked.length} favorites?`,
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        this.bulkUnfavoriteSelection(elementsTicked);
-                    }
-                }
-            }
-        );
-    };
-
-    $app.methods.bulkUnfavoriteSelection = function (elementsTicked) {
-        for (var id of elementsTicked) {
-            favoriteRequest.deleteFavorite({
-                objectId: id
-            });
-        }
-        this.editFavoritesMode = false;
-    };
 
     $app.methods.bulkCopyFavoriteSelection = function () {
         var idList = '';
@@ -19498,78 +19116,6 @@ console.log(`isLinux: ${LINUX}`);
         $app.getLocalWorldFavorites();
     });
 
-    $app.methods.refreshLocalWorldFavorites = async function () {
-        if (this.refreshingLocalFavorites) {
-            return;
-        }
-        this.refreshingLocalFavorites = true;
-        for (var worldId of this.localWorldFavoritesList) {
-            if (!this.refreshingLocalFavorites) {
-                break;
-            }
-            try {
-                await worldRequest.getWorld({
-                    worldId
-                });
-            } catch (err) {
-                console.error(err);
-            }
-            await new Promise((resolve) => {
-                workerTimers.setTimeout(resolve, 1000);
-            });
-        }
-        this.refreshingLocalFavorites = false;
-    };
-
-    $app.data.worldFavoriteSearchResults = [];
-
-    $app.methods.searchWorldFavorites = function (worldFavoriteSearch) {
-        var search = worldFavoriteSearch.toLowerCase();
-        if (search.length < 3) {
-            this.worldFavoriteSearchResults = [];
-            return;
-        }
-
-        var results = [];
-        for (var i = 0; i < this.localWorldFavoriteGroups.length; ++i) {
-            var group = this.localWorldFavoriteGroups[i];
-            if (!this.localWorldFavorites[group]) {
-                continue;
-            }
-            for (var j = 0; j < this.localWorldFavorites[group].length; ++j) {
-                var ref = this.localWorldFavorites[group][j];
-                if (!ref || !ref.id) {
-                    continue;
-                }
-                if (
-                    ref.name.toLowerCase().includes(search) ||
-                    ref.authorName.toLowerCase().includes(search)
-                ) {
-                    if (!results.some((r) => r.id == ref.id)) {
-                        results.push(ref);
-                    }
-                }
-            }
-        }
-
-        for (var i = 0; i < this.favoriteWorlds.length; ++i) {
-            var ref = this.favoriteWorlds[i].ref;
-            if (!ref) {
-                continue;
-            }
-            if (
-                ref.name.toLowerCase().includes(search) ||
-                ref.authorName.toLowerCase().includes(search)
-            ) {
-                if (!results.some((r) => r.id == ref.id)) {
-                    results.push(ref);
-                }
-            }
-        }
-
-        this.worldFavoriteSearchResults = results;
-    };
-
     // #endregion
     // #region | App: Local Avatar Favorites
 
@@ -19742,14 +19288,6 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
         return false;
-    };
-
-    $app.methods.getLocalAvatarFavoriteGroupLength = function (group) {
-        var favoriteGroup = this.localAvatarFavorites[group];
-        if (!favoriteGroup) {
-            return 0;
-        }
-        return favoriteGroup.length;
     };
 
     $app.methods.promptNewLocalAvatarFavoriteGroup = function () {
@@ -19932,81 +19470,6 @@ console.log(`isLinux: ${LINUX}`);
         });
     };
 
-    $app.data.refreshingLocalFavorites = false;
-
-    $app.methods.refreshLocalAvatarFavorites = async function () {
-        if (this.refreshingLocalFavorites) {
-            return;
-        }
-        this.refreshingLocalFavorites = true;
-        for (var avatarId of this.localAvatarFavoritesList) {
-            if (!this.refreshingLocalFavorites) {
-                break;
-            }
-            try {
-                await avatarRequest.getAvatar({
-                    avatarId
-                });
-            } catch (err) {
-                console.error(err);
-            }
-            await new Promise((resolve) => {
-                workerTimers.setTimeout(resolve, 1000);
-            });
-        }
-        this.refreshingLocalFavorites = false;
-    };
-
-    $app.data.avatarFavoriteSearch = '';
-    $app.data.avatarFavoriteSearchResults = [];
-
-    $app.methods.searchAvatarFavorites = function () {
-        var search = this.avatarFavoriteSearch.toLowerCase();
-        if (search.length < 3) {
-            this.avatarFavoriteSearchResults = [];
-            return;
-        }
-
-        var results = [];
-        for (var i = 0; i < this.localAvatarFavoriteGroups.length; ++i) {
-            var group = this.localAvatarFavoriteGroups[i];
-            if (!this.localAvatarFavorites[group]) {
-                continue;
-            }
-            for (var j = 0; j < this.localAvatarFavorites[group].length; ++j) {
-                var ref = this.localAvatarFavorites[group][j];
-                if (!ref || !ref.id) {
-                    continue;
-                }
-                if (
-                    ref.name.toLowerCase().includes(search) ||
-                    ref.authorName.toLowerCase().includes(search)
-                ) {
-                    if (!results.some((r) => r.id == ref.id)) {
-                        results.push(ref);
-                    }
-                }
-            }
-        }
-
-        for (var i = 0; i < this.favoriteAvatars.length; ++i) {
-            var ref = this.favoriteAvatars[i].ref;
-            if (!ref) {
-                continue;
-            }
-            if (
-                ref.name.toLowerCase().includes(search) ||
-                ref.authorName.toLowerCase().includes(search)
-            ) {
-                if (!results.some((r) => r.id == ref.id)) {
-                    results.push(ref);
-                }
-            }
-        }
-
-        this.avatarFavoriteSearchResults = results;
-    };
-
     // #endregion
     // #region | Local Favorite Friends
 
@@ -20123,6 +19586,14 @@ console.log(`isLinux: ${LINUX}`);
             )
         );
     }
+
+    $app.methods.getLocalAvatarFavoriteGroupLength = function (group) {
+        var favoriteGroup = this.localAvatarFavorites[group];
+        if (!favoriteGroup) {
+            return 0;
+        }
+        return favoriteGroup.length;
+    };
 
     $app.methods.saveChatboxUserBlacklist = async function () {
         await configRepository.setString(
@@ -21089,8 +20560,41 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
 
     // #region | Tab Props
-    $app.computed.sideBarTabProps = function () {
+
+    $app.computed.moderationTabBind = function () {
         return {
+            menuActiveIndex: this.menuActiveIndex,
+            tableData: this.playerModerationTable,
+            shiftHeld: this.shiftHeld,
+            hideTooltips: this.hideTooltips
+        };
+    };
+
+    $app.computed.friendsListTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            friends: this.friends,
+            hideTooltips: this.hideTooltips,
+            randomUserColours: this.randomUserColours,
+            sortStatus: this.sortStatus,
+            languageClass: this.languageClass,
+            confirmDeleteFriend: this.confirmDeleteFriend,
+            friendsListSearch: this.friendsListSearch,
+            stringComparer: this.stringComparer
+        };
+    };
+    $app.computed.friendsListTabEvent = function () {
+        return {
+            'get-all-user-stats': this.getAllUserStats,
+            'lookup-user': this.lookupUser,
+            'update:friends-list-search': (value) =>
+                (this.friendsListSearch = value)
+        };
+    };
+
+    $app.computed.sideBarTabBind = function () {
+        return {
+            isSideBarTabShow: this.isSideBarTabShow,
             style: { width: `${this.asideWidth}px` },
             vipFriends: this.vipFriends,
             onlineFriends: this.onlineFriends,
@@ -21116,6 +20620,16 @@ console.log(`isLinux: ${LINUX}`);
         };
     };
 
+    $app.computed.sideBarTabEvent = function () {
+        return {
+            'show-group-dialog': this.showGroupDialog,
+            'quick-search-change': this.quickSearchChange,
+            'direct-access-paste': this.directAccessPaste,
+            'refresh-friends-list': this.refreshFriendsList,
+            'confirm-delete-friend': this.confirmDeleteFriend
+        };
+    };
+
     $app.computed.isSideBarTabShow = function () {
         return !(
             this.menuActiveIndex === 'friendsList' ||
@@ -21123,27 +20637,76 @@ console.log(`isLinux: ${LINUX}`);
         );
     };
 
-    // #endregion
-
-    // favWorldItem have to be defined
-    $app.methods.deleteFavorite = function (objectId) {
-        favoriteRequest.deleteFavorite({
-            objectId
-        });
-        // FIXME: 메시지 수정
-        // this.$confirm('Continue? Delete Favorite', 'Confirm', {
-        //     confirmButtonText: 'Confirm',
-        //     cancelButtonText: 'Cancel',
-        //     type: 'info',
-        //     callback: (action) => {
-        //         if (action === 'confirm') {
-        //             API.deleteFavorite({
-        //                 objectId
-        //             });
-        //         }
-        //     }
-        // });
+    $app.computed.favoritesTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            hideTooltips: this.hideTooltips,
+            shiftHeld: this.shiftHeld,
+            favoriteFriends: this.favoriteFriends,
+            sortFavorites: this.sortFavorites,
+            groupedByGroupKeyFavoriteFriends:
+                this.groupedByGroupKeyFavoriteFriends,
+            favoriteWorlds: this.favoriteWorlds,
+            localWorldFavoriteGroups: this.localWorldFavoriteGroups,
+            localWorldFavorites: this.localWorldFavorites,
+            avatarHistoryArray: this.avatarHistoryArray,
+            localAvatarFavoriteGroups: this.localAvatarFavoriteGroups,
+            localAvatarFavorites: this.localAvatarFavorites,
+            favoriteAvatars: this.favoriteAvatars,
+            localAvatarFavoritesList: this.localAvatarFavoritesList,
+            localWorldFavoritesList: this.localWorldFavoritesList
+        };
     };
+
+    $app.computed.favoritesTabEvent = function () {
+        return {
+            'update:sort-favorites': (value) => (this.sortFavorites = value),
+            'clear-bulk-favorite-selection': this.clearBulkFavoriteSelection,
+            'bulk-copy-favorite-selection': this.bulkCopyFavoriteSelection,
+            'get-local-world-favorites': this.getLocalWorldFavorites,
+            'show-friend-import-dialog': this.showFriendImportDialog,
+            'save-sort-favorites-option': this.saveSortFavoritesOption,
+            'show-world-import-dialog': this.showWorldImportDialog,
+            'show-world-dialog': this.showWorldDialog,
+            'new-instance-self-invite': this.newInstanceSelfInvite,
+            'show-favorite-dialog': this.showFavoriteDialog,
+            'delete-local-world-favorite-group':
+                this.deleteLocalWorldFavoriteGroup,
+            'remove-local-world-favorite': this.removeLocalWorldFavorite,
+            'show-avatar-import-dialog': this.showAvatarImportDialog,
+            'show-avatar-dialog': this.showAvatarDialog,
+            'remove-local-avatar-favorite': this.removeLocalAvatarFavorite,
+            'select-avatar-with-confirmation':
+                this.selectAvatarWithConfirmation,
+            'prompt-clear-avatar-history': this.promptClearAvatarHistory,
+            'prompt-new-local-avatar-favorite-group':
+                this.promptNewLocalAvatarFavoriteGroup,
+            'prompt-local-avatar-favorite-group-rename':
+                this.promptLocalAvatarFavoriteGroupRename,
+            'prompt-local-avatar-favorite-group-delete':
+                this.promptLocalAvatarFavoriteGroupDelete,
+            'new-local-world-favorite-group': this.newLocalWorldFavoriteGroup,
+            'rename-local-world-favorite-group':
+                this.renameLocalWorldFavoriteGroup
+        };
+    };
+
+    $app.computed.chartsTabBind = function () {
+        return {
+            getWorldName: this.getWorldName,
+            isDarkMode: this.isDarkMode,
+            dtHour12: this.dtHour12,
+            friendsMap: this.friends,
+            localFavoriteFriends: this.localFavoriteFriends
+        };
+    };
+    $app.computed.chartsTabEvent = function () {
+        return {
+            'open-previous-instance-info-dialog':
+                this.showPreviousInstanceInfoDialog
+        };
+    };
+    // #endregion
 
     // #region | Electron
 
