@@ -5,7 +5,7 @@ mixin profileTab
             .x-friend-list(style='margin-top: 10px')
                 .x-friend-item(@click='showUserDialog(API.currentUser.id)')
                     .avatar
-                        img(v-lazy='userImage(API.currentUser)')
+                        img(v-lazy='userImage(API.currentUser, true)')
                     .detail
                         span.name(v-text='API.currentUser.displayName')
                         span.extra(v-text='API.currentUser.username')

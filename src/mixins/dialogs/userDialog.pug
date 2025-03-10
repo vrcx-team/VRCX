@@ -195,7 +195,7 @@ mixin userDialog
                         el-popover(placement='right' width='500px' trigger='click')
                             img.x-link(
                                 slot='reference'
-                                :src='userDialog.ref.userIcon'
+                                :src='userImage(userDialog.ref, true, "256")'
                                 style='flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover')
                             img.x-link(
                                 :src='userDialog.ref.userIcon'
