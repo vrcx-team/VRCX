@@ -224,6 +224,8 @@
 
 <script>
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
+    import { favoriteRequest } from '../../classes/request';
+
     export default {
         name: 'FavoritesWorldTab',
         components: {
@@ -296,7 +298,7 @@
                     group: name,
                     visibility
                 };
-                this.API.saveFavoriteGroup(params).then((args) => {
+                favoriteRequest.saveFavoriteGroup(params).then((args) => {
                     this.$message({
                         message: 'Group visibility changed',
                         type: 'success'

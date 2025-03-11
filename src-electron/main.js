@@ -403,6 +403,7 @@ async function createDesktopFile() {
     );
     const dotDesktop = {
         Name: 'VRCX',
+        Version: version,
         Comment: 'Friendship management tool for VRChat',
         Exec: `${appImagePath} --ozone-platform-hint=auto %U`,
         Icon: 'VRCX',
