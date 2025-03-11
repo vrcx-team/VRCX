@@ -204,6 +204,9 @@
                 },
                 "instance": {
                     "closed": "Instance Closed"
+                },
+                "badge": {
+                    "earned": "Badge Earned"
                 }
             }
         },

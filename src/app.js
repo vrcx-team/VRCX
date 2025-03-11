@@ -16924,7 +16924,15 @@ console.log(`isLinux: ${LINUX}`);
         return false;
     };
 
-    $app.methods.userImage = function (user) {
+    $app.methods.userImage = function (user, isIcon, resolution = '64') {
+        if (isIcon) {
+            return user.userIcon
+                ? `${user.userIcon.replace('/file/', '/image/')}${user.userIcon.endsWith('/') ? '256' : '/' + resolution}`
+                : user.currentAvatarThumbnailImageUrl?.replace(
+                      '256',
+                      resolution
+                  ) || user.profilePicOverrideThumbnail;
+        }
         if (typeof user === 'undefined') {
             return '';
         }
