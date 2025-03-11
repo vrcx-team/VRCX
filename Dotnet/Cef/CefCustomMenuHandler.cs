@@ -11,9 +11,11 @@ namespace VRCX
     {
         public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
         {
-            // remove default right click
-            if (!parameters.TypeFlags.HasFlag(ContextMenuType.Selection) && !parameters.TypeFlags.HasFlag(ContextMenuType.Editable))
-                model.Clear();
+            if (!Program.LaunchDebug)
+                // remove default right click when not in debug mode
+                if (!parameters.TypeFlags.HasFlag(ContextMenuType.Selection) &&
+                    !parameters.TypeFlags.HasFlag(ContextMenuType.Editable))
+                    model.Clear();
         }
 
         public bool OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
