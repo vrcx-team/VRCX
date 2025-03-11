@@ -43,20 +43,14 @@ doctype html
         include ./mixins/tabs/search.pug
         +searchTab
 
-        //- favorite
-        include ./mixins/tabs/favorites.pug
-        +favoritesTab
+        favorites-tab(v-bind='favoritesTabBind' v-on='favoritesTabEvent')
 
         //- friendLog
         include ./mixins/tabs/friendLog.pug
         +friendLogTab
 
         //- moderation
-        moderation-tab(
-            v-if='menuActiveIndex === "moderation"'
-            :table-data='playerModerationTable'
-            :shift-held='shiftHeld'
-            :hide-tooltips='hideTooltips')
+        moderation-tab(v-bind='moderationTabBind')
 
         //- notification
         include ./mixins/tabs/notifications.pug
@@ -67,42 +61,17 @@ doctype html
         +profileTab
 
         //- friends list
-        friends-list-tab(
-            :menu-active-index='menuActiveIndex'
-            :friends='friends'
-            :hide-tooltips='hideTooltips'
-            :random-user-colours='randomUserColours'
-            :sort-status='sortStatus'
-            :language-class='languageClass'
-            :confirm-delete-friend='confirmDeleteFriend'
-            :friends-list-search.sync='friendsListSearch'
-            @get-all-user-stats='getAllUserStats'
-            @lookup-user='lookupUser'
-            :string-comparer='stringComparer')
+        friends-list-tab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
 
         //- charts
         keep-alive
-            charts-tab(
-                v-if='menuActiveIndex === "charts"'
-                :get-world-name='getWorldName'
-                :is-dark-mode='isDarkMode'
-                :dt-hour12='dtHour12'
-                :friends-map='friends'
-                :local-favorite-friends='localFavoriteFriends'
-                @open-previous-instance-info-dialog='showPreviousInstanceInfoDialog')
+            charts-tab(v-if='menuActiveIndex === "charts"' v-bind='chartsTabBind' v-on='chartsTabEvent')
 
         //- settings
         include ./mixins/tabs/settings.pug
         +settingsTab
 
-        side-bar(
-            v-show='isSideBarTabShow'
-            v-bind='sideBarTabProps'
-            @show-group-dialog='showGroupDialog'
-            @quick-search-change='quickSearchChange'
-            @direct-access-paste='directAccessPaste'
-            @refresh-friends-list='refreshFriendsList'
-            @confirm-delete-friend='confirmDeleteFriend')
+        side-bar(v-bind='sideBarTabBind' v-on='sideBarTabEvent')
 
     //- ## Dialogs ## -\\
     include ./mixins/dialogs/userDialog.pug

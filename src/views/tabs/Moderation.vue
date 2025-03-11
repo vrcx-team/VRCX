@@ -1,5 +1,5 @@
 <template>
-    <div class="x-container">
+    <div class="x-container" v-if="menuActiveIndex === 'moderation'">
         <data-tables
             :data="tableData.data"
             :pageSize="tableData.pageSize"
@@ -101,6 +101,7 @@
         name: 'ModerationTab',
         inject: ['API', 'showUserDialog'],
         props: {
+            menuActiveIndex: String,
             tableData: Object,
             shiftHeld: Boolean,
             hideTooltips: Boolean
