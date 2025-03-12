@@ -2,7 +2,7 @@
     <div @click="$emit('click')">
         <div class="x-friend-item">
             <div class="avatar">
-                <img v-lazy="favorite.thumbnailImageUrl" />
+                <img v-lazy="smallThumbnail" />
             </div>
             <div class="detail">
                 <span class="name" v-text="favorite.name"></span>
@@ -53,6 +53,11 @@
                 required: true
             },
             hideTooltips: Boolean
+        },
+        computed: {
+            smallThumbnail() {
+                return this.favorite.thumbnailImageUrl.replace('256', '64') || this.favorite.thumbnailImageUrl;
+            }
         },
         methods: {
             selectAvatarWithConfirmation() {
