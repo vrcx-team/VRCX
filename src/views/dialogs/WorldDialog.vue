@@ -125,14 +125,6 @@
                                 {{ $t('dialog.world.tags.focus_view_disabled') }}
                             </el-tag>
                             <el-tag
-                                v-if="worldDialog.stickersDisabled"
-                                type="warning"
-                                effect="plain"
-                                size="mini"
-                                style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.world.tags.stickers_disabled') }}
-                            </el-tag>
-                            <el-tag
                                 v-if="worldDialog.ref.unityPackageUrl"
                                 type="success"
                                 effect="plain"

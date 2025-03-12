@@ -210,6 +210,7 @@ export default class extends baseClass {
                 '<span><span style="color:#67c23a">Android: </span>{{ platforms.android }}</span></br>' +
                 '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
                 '<span v-if="queueEnabled">{{ $t("dialog.user.info.instance_queuing_enabled") }}</br></span>' +
+                '<span v-if="disabledContentSettings">{{ $t("dialog.user.info.instance_disabled_content_settings") }} {{ disabledContentSettings }}</br></span>' +
                 '<span v-if="userList.length">{{ $t("dialog.user.info.instance_users") }}</br></span>' +
                 '<template v-for="user in userList"><span style="cursor:pointer;margin-right:5px" @click="showUserDialog(user.id)" v-text="user.displayName"></span></template>' +
                 '</div>' +
@@ -262,6 +263,7 @@ export default class extends baseClass {
                     this.gameServerVersion = '';
                     this.canCloseInstance = false;
                     this.isAgeGated = false;
+                    this.disabledContentSettings = '';
                     if (
                         !this.location ||
                         !this.instance ||
@@ -307,6 +309,13 @@ export default class extends baseClass {
                     if (this.location && this.location.includes('~ageGate')) {
                         // dumb workaround for API not returning `ageGate`
                         this.isAgeGated = true;
+                    }
+                    if (
+                        this.instance.$disabledContentSettings &&
+                        this.instance.$disabledContentSettings.length
+                    ) {
+                        this.disabledContentSettings =
+                            this.instance.$disabledContentSettings.join(', ');
                     }
                 },
                 showUserDialog(userId) {

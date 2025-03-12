@@ -946,6 +946,7 @@ console.log(`isLinux: ${LINUX}`);
                 id: '',
                 name: '',
                 description: '',
+                defaultContentSettings: {},
                 authorId: '',
                 authorName: '',
                 capacity: 0,
@@ -1027,6 +1028,7 @@ console.log(`isLinux: ${LINUX}`);
                 world: {},
                 users: [], // only present when you're the owner
                 clientNumber: '',
+                contentSettings: {},
                 photonRegion: '',
                 region: '',
                 canRequestInvite: false,
@@ -1043,6 +1045,7 @@ console.log(`isLinux: ${LINUX}`);
                 ageGate: null,
                 // VRCX
                 $fetchedAt: '',
+                $disabledContentSettings: [],
                 ...json
             };
             this.cachedInstances.set(ref.id, ref);
@@ -1062,6 +1065,16 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (!json.$fetchedAt) {
             ref.$fetchedAt = new Date().toJSON();
+        }
+        if (json.contentSettings && Object.keys(json.contentSettings).length) {
+            for (var setting in $app.instanceContentSettings) {
+                if (json.contentSettings[setting]) {
+                    continue;
+                }
+                ref.$disabledContentSettings.push(
+                    $app.instanceContentSettings[setting]
+                );
+            }
         }
         return ref;
     };
@@ -1202,7 +1215,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     API.refetchBrokenFriends = async function (friends) {
-        // attempt to broken data from bulk friend fetch
+        // attempt to fix broken data from bulk friend fetch
         for (var i = 0; i < friends.length; i++) {
             var friend = friends[i];
             try {
@@ -9264,7 +9277,6 @@ console.log(`isLinux: ${LINUX}`);
         isIos: false,
         avatarScalingDisabled: false,
         focusViewDisabled: false,
-        stickersDisabled: false,
         inCache: false,
         cacheSize: '',
         bundleSizes: [],
@@ -9288,7 +9300,6 @@ console.log(`isLinux: ${LINUX}`);
                 isIos: false,
                 avatarScalingDisabled: false,
                 focusViewDisabled: false,
-                stickersDisabled: false,
                 inCache: false,
                 cacheSize: '',
                 bundleSizes: [],
@@ -9304,7 +9315,6 @@ console.log(`isLinux: ${LINUX}`);
                 isIos: false,
                 avatarScalingDisabled: false,
                 focusViewDisabled: false,
-                stickersDisabled: false,
                 inCache: false,
                 cacheSize: '',
                 bundleSizes: [],
@@ -9330,8 +9340,6 @@ console.log(`isLinux: ${LINUX}`);
                         );
                     this.currentInstanceWorld.focusViewDisabled =
                         args.ref?.tags.includes('feature_focus_view_disabled');
-                    this.currentInstanceWorld.stickersDisabled =
-                        args.ref?.tags.includes('feature_stickers_disabled');
                     this.checkVRChatCache(args.ref).then((cacheInfo) => {
                         if (cacheInfo.Item1 > 0) {
                             this.currentInstanceWorld.inCache = true;
@@ -10067,7 +10075,6 @@ console.log(`isLinux: ${LINUX}`);
         isFavorite: false,
         avatarScalingDisabled: false,
         focusViewDisabled: false,
-        stickersDisabled: false,
         rooms: [],
         treeData: [],
         bundleSizes: [],
@@ -10100,7 +10107,6 @@ console.log(`isLinux: ${LINUX}`);
             'feature_avatar_scaling_disabled'
         );
         D.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
-        D.stickersDisabled = ref.tags?.includes('feature_stickers_disabled');
         $app.applyWorldDialogInstances();
         for (var room of D.rooms) {
             if ($utils.isRealInstance(room.tag)) {
@@ -10240,7 +10246,6 @@ console.log(`isLinux: ${LINUX}`);
         D.isFavorite = false;
         D.avatarScalingDisabled = false;
         D.focusViewDisabled = false;
-        D.stickersDisabled = false;
         D.isPC = false;
         D.isQuest = false;
         D.isIos = false;
@@ -10302,9 +10307,6 @@ console.log(`isLinux: ${LINUX}`);
                     );
                     D.focusViewDisabled = args.ref?.tags.includes(
                         'feature_focus_view_disabled'
-                    );
-                    D.stickersDisabled = args.ref?.tags.includes(
-                        'feature_stickers_disabled'
                     );
                     D.isPC = isPC;
                     D.isQuest = isQuest;
@@ -11740,6 +11742,14 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: New Instance Dialog
 
+    $app.data.instanceContentSettings = [
+        'emoji',
+        'stickers',
+        'pedestals',
+        'prints',
+        'drones'
+    ];
+
     $app.data.newInstanceDialog = {
         visible: false,
         loading: false,
@@ -11776,7 +11786,14 @@ console.log(`isLinux: ${LINUX}`);
         lastSelectedGroupId: '',
         selectedGroupRoles: [],
         roleIds: [],
-        groupRef: {}
+        groupRef: {},
+        contentSettings: $app.data.instanceContentSettings,
+        selectedContentSettings: JSON.parse(
+            await configRepository.getString(
+                'instanceDialogSelectedContentSettings',
+                JSON.stringify($app.data.instanceContentSettings)
+            )
+        )
     };
 
     API.$on('LOGOUT', function () {
@@ -11926,12 +11943,18 @@ console.log(`isLinux: ${LINUX}`);
         } else if (D.region === 'Japan') {
             region = 'jp';
         }
+        var contentSettings = {};
+        for (var setting of D.contentSettings) {
+            contentSettings[setting] =
+                D.selectedContentSettings.includes(setting);
+        }
         var params = {
             type,
             canRequestInvite,
             worldId: D.worldId,
             ownerId: API.currentUser.id,
-            region
+            region,
+            contentSettings
         };
         if (type === 'group') {
             params.groupAccessType = D.groupAccessType;
@@ -12042,6 +12065,10 @@ console.log(`isLinux: ${LINUX}`);
         await configRepository.setBool(
             'instanceDialogAgeGate',
             this.newInstanceDialog.ageGate
+        );
+        await configRepository.setString(
+            'instanceDialogSelectedContentSettings',
+            JSON.stringify(this.newInstanceDialog.selectedContentSettings)
         );
     };
 
@@ -12181,12 +12208,16 @@ console.log(`isLinux: ${LINUX}`);
         debugAllowed: false,
         avatarScalingDisabled: false,
         focusViewDisabled: false,
-        stickersDisabled: false,
         contentHorror: false,
         contentGore: false,
         contentViolence: false,
         contentAdult: false,
-        contentSex: false
+        contentSex: false,
+        emoji: true,
+        stickers: true,
+        pedestals: true,
+        prints: true,
+        drones: true
     };
 
     $app.methods.showSetWorldTagsDialog = function () {
@@ -12198,7 +12229,6 @@ console.log(`isLinux: ${LINUX}`);
         D.debugAllowed = false;
         D.avatarScalingDisabled = false;
         D.focusViewDisabled = false;
-        D.stickersDisabled = false;
         D.contentHorror = false;
         D.contentGore = false;
         D.contentViolence = false;
@@ -12240,8 +12270,20 @@ console.log(`isLinux: ${LINUX}`);
                 case 'feature_focus_view_disabled':
                     D.focusViewDisabled = true;
                     break;
+                case 'feature_emoji_disabled':
+                    D.emoji = false;
+                    break;
                 case 'feature_stickers_disabled':
-                    D.stickersDisabled = true;
+                    D.stickers = false;
+                    break;
+                case 'feature_pedestals_disabled':
+                    D.pedestals = false;
+                    break;
+                case 'feature_prints_disabled':
+                    D.prints = false;
+                    break;
+                case 'feature_drones_disabled':
+                    D.drones = false;
                     break;
             }
         });
@@ -12298,8 +12340,20 @@ console.log(`isLinux: ${LINUX}`);
         if (D.focusViewDisabled) {
             tags.unshift('feature_focus_view_disabled');
         }
-        if (D.stickersDisabled) {
+        if (!D.emoji) {
+            tags.unshift('feature_emoji_disabled');
+        }
+        if (!D.stickers) {
             tags.unshift('feature_stickers_disabled');
+        }
+        if (!D.pedestals) {
+            tags.unshift('feature_pedestals_disabled');
+        }
+        if (!D.prints) {
+            tags.unshift('feature_prints_disabled');
+        }
+        if (!D.drones) {
+            tags.unshift('feature_drones_disabled');
         }
         worldRequest
             .saveWorld({
