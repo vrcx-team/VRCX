@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
 
@@ -405,6 +406,7 @@ console.log(`isLinux: ${LINUX}`);
     dayjs.extend(duration);
     dayjs.extend(utc);
     dayjs.extend(timezone);
+    dayjs.extend(isSameOrAfter);
 
     // #endregion
 
@@ -8425,7 +8427,8 @@ console.log(`isLinux: ${LINUX}`);
             name: '',
             ownerId: '',
             privacy: '',
-            shortCode: ''
+            shortCode: '',
+            $thumbnailUrl: ''
         },
         isRepresentedGroupLoading: false,
         joinCount: 0,
@@ -8704,7 +8707,8 @@ console.log(`isLinux: ${LINUX}`);
             name: '',
             ownerId: '',
             privacy: '',
-            shortCode: ''
+            shortCode: '',
+            $thumbnailUrl: ''
         };
         D.lastSeen = '';
         D.joinCount = 0;
@@ -8917,6 +8921,8 @@ console.log(`isLinux: ${LINUX}`);
                         }
                         API.getRepresentedGroup({ userId }).then((args1) => {
                             D.representedGroup = args1.json;
+                            D.representedGroup.$thumbnailUrl =
+                                this.getSmallThumbnailUrl(args1.json.iconUrl);
                             if (!args1.json || !args1.json.isRepresenting) {
                                 D.isRepresentedGroupLoading = false;
                             }
@@ -16925,21 +16931,26 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.userImage = function (user, isIcon, resolution = '64') {
-        if (isIcon) {
-            return user.userIcon
-                ? `${user.userIcon.replace('/file/', '/image/')}${user.userIcon.endsWith('/') ? '256' : '/' + resolution}`
-                : user.currentAvatarThumbnailImageUrl?.replace(
-                      '256',
-                      resolution
-                  ) || user.profilePicOverrideThumbnail;
-        }
-        if (typeof user === 'undefined') {
+        if (!user) {
             return '';
         }
+        // Only VRC+ icon users have the userIcon field ?
         if (this.displayVRCPlusIconsAsAvatar && user.userIcon) {
+            if (isIcon) {
+                const baseUrl = user.userIcon.replace('/file/', '/image/');
+                return user.userIcon.endsWith('/')
+                    ? `${baseUrl}${resolution}`
+                    : `${baseUrl}/${resolution}`;
+            }
             return user.userIcon;
         }
         if (user.profilePicOverrideThumbnail) {
+            if (isIcon) {
+                return user.profilePicOverrideThumbnail.replace(
+                    '256',
+                    resolution
+                );
+            }
             return user.profilePicOverrideThumbnail;
         }
         if (user.profilePicOverride) {
@@ -16948,7 +16959,13 @@ console.log(`isLinux: ${LINUX}`);
         if (user.thumbnailUrl) {
             return user.thumbnailUrl;
         }
-        return user.currentAvatarThumbnailImageUrl;
+        if (isIcon && user.currentAvatarThumbnailImageUrl) {
+            return user.currentAvatarThumbnailImageUrl.replace(
+                '256',
+                resolution
+            );
+        }
+        return user.currentAvatarThumbnailImageUrl || '';
     };
 
     $app.methods.userImageFull = function (user) {
@@ -20562,6 +20579,14 @@ console.log(`isLinux: ${LINUX}`);
         configRepository.setBool(
             'VRCX_hideFriendsInSameInstance',
             this.isHideFriendsInSameInstance
+        );
+    };
+
+    $app.methods.getSmallThumbnailUrl = function (url, resolution = 64) {
+        return (
+            url
+                ?.replace('/file/', '/image/')
+                .replace('/1/file', `/1/${resolution}`) || url
         );
     };
 

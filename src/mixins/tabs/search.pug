@@ -24,7 +24,7 @@ mixin searchTab
                     .x-friend-item(v-for='user in searchUserResults' :key='user.id' @click='showUserDialog(user.id)')
                         template
                             .avatar
-                                img(v-lazy='userImage(user)')
+                                img(v-lazy='userImage(user, true)')
                             .detail
                                 span.name(v-text='user.displayName')
                                 span.extra(
@@ -184,7 +184,7 @@ mixin searchTab
                         @click='showGroupDialog(group.id)')
                         template
                             .avatar
-                                img(v-lazy='group.iconUrl')
+                                img(v-lazy='getSmallThumbnailUrl(group.iconUrl)')
                             .detail
                                 span.name
                                     span(v-text='group.name')

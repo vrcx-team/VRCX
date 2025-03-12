@@ -17,19 +17,19 @@ mixin userDialog
                     trigger='click')
                     img.x-link(
                         slot='reference'
-                        v-lazy='userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride'
+                        :src='userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride'
                         style='flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover')
                     img.x-link(
-                        :src='userDialog.ref.profilePicOverride'
+                        v-lazy='userDialog.ref.profilePicOverride'
                         style='height: 400px'
                         @click='showFullscreenImageDialog(userDialog.ref.profilePicOverride)')
                 el-popover(v-else placement='right' width='500px' trigger='click')
                     img.x-link(
                         slot='reference'
-                        v-lazy='userDialog.ref.currentAvatarThumbnailImageUrl'
+                        :src='userDialog.ref.currentAvatarThumbnailImageUrl'
                         style='flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover')
                     img.x-link(
-                        :src='userDialog.ref.currentAvatarImageUrl'
+                        v-lazy='userDialog.ref.currentAvatarImageUrl'
                         style='height: 500px'
                         @click='showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)')
                 div(style='flex: 1; display: flex; align-items: center; margin-left: 15px')
@@ -166,7 +166,7 @@ mixin userDialog
                                             style='flex: none; height: 32px; width: 32px; border-radius: 3px; object-fit: cover; margin-top: 5px; margin-right: 5px'
                                             :class='{ "x-user-badge-hidden": badge.hidden }')
                                         img.x-link(
-                                            :src='badge.badgeImageUrl'
+                                            v-lazy='badge.badgeImageUrl'
                                             style='width: 300px'
                                             @click='showFullscreenImageDialog(badge.badgeImageUrl)')
                                         br
@@ -198,7 +198,7 @@ mixin userDialog
                                 :src='userImage(userDialog.ref, true, "256")'
                                 style='flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover')
                             img.x-link(
-                                :src='userDialog.ref.userIcon'
+                                v-lazy='userDialog.ref.userIcon'
                                 style='height: 500px'
                                 @click='showFullscreenImageDialog(userDialog.ref.userIcon)')
                     div(style='flex: none')
@@ -368,7 +368,7 @@ mixin userDialog
                                     @click='showUserDialog(userDialog.$location.userId)')
                                     template(v-if='userDialog.$location.user')
                                         .avatar(:class='userStatusClass(userDialog.$location.user)')
-                                            img(:src='userImage(userDialog.$location.user)')
+                                            img(:src='userImage(userDialog.$location.user, true)')
                                         .detail
                                             span.name(
                                                 v-text='userDialog.$location.user.displayName'
@@ -380,7 +380,7 @@ mixin userDialog
                                     :key='user.id'
                                     @click='showUserDialog(user.id)')
                                     .avatar(:class='userStatusClass(user)')
-                                        img(:src='userImage(user)')
+                                        img(:src='userImage(user, true)')
                                     .detail
                                         span.name(v-text='user.displayName' :style='{ color: user.$userColour }')
                                         span.extra(v-if='user.location === "traveling"')
@@ -454,7 +454,7 @@ mixin userDialog
                                             el-image.x-link(
                                                 slot='reference'
                                                 v-loading='userDialog.isRepresentedGroupLoading'
-                                                :src='userDialog.representedGroup.iconUrl'
+                                                :src='userDialog.representedGroup.$thumbnailUrl'
                                                 style='flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover'
                                                 :style='{ background: userDialog.isRepresentedGroupLoading ? "#f5f7fa" : "" }'
                                                 @load='userDialog.isRepresentedGroupLoading = false')

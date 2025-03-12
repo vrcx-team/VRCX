@@ -164,7 +164,7 @@
                 );
             },
             isNextDayBtnDisabled() {
-                return dayjs(this.selectedDate).isSame(this.allDateOfActivityArray[0], 'day');
+                return dayjs(this.selectedDate).isSameOrAfter(this.allDateOfActivityArray[0], 'day');
             },
             isPrevDayBtnDisabled() {
                 return dayjs(this.selectedDate).isSame(
