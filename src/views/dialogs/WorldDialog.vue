@@ -10,7 +10,7 @@
                 <el-popover placement="right" width="500px" trigger="click">
                     <img
                         slot="reference"
-                        v-lazy="worldDialog.ref.thumbnailImageUrl"
+                        :src="worldDialog.ref.thumbnailImageUrl"
                         class="x-link"
                         style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
                     <img
@@ -392,7 +392,7 @@
                                     @click="showUserDialog(room.$location.userId)">
                                     <template v-if="room.$location.user">
                                         <div class="avatar" :class="userStatusClass(room.$location.user)">
-                                            <img v-lazy="userImage(room.$location.user)" />
+                                            <img v-lazy="userImage(room.$location.user, true)" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -412,7 +412,7 @@
                                     class="x-friend-item x-friend-item-border"
                                     @click="showUserDialog(user.id)">
                                     <div class="avatar" :class="userStatusClass(user)">
-                                        <img v-lazy="userImage(user)" />
+                                        <img v-lazy="userImage(user, true)" />
                                     </div>
                                     <div class="detail">
                                         <span

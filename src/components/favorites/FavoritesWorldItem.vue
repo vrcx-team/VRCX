@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
                 <div class="avatar">
-                    <img v-lazy="localFavFakeRef.thumbnailImageUrl" />
+                    <img v-lazy="smallThumbnail" />
                 </div>
                 <div class="detail">
                     <span class="name">{{ localFavFakeRef.name }}</span>
@@ -154,6 +154,12 @@
             localFavFakeRef() {
                 // local favorite no "ref" property
                 return this.isLocalFavorite ? this.favorite : this.favorite.ref;
+            },
+            smallThumbnail() {
+                return (
+                    this.localFavFakeRef.thumbnailImageUrl.replace('256', '64') ||
+                    this.localFavFakeRef.thumbnailImageUrl
+                );
             }
         },
         methods: {

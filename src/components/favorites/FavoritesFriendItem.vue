@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="favorite.ref">
                 <div class="avatar" :class="userStatusClass(favorite.ref)">
-                    <img v-lazy="userImage(favorite.ref)" />
+                    <img v-lazy="userImage(favorite.ref, true)" />
                 </div>
                 <div class="detail">
                     <span
