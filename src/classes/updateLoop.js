@@ -24,7 +24,8 @@ export default class extends baseClass {
         nextDiscordUpdate: 0,
         nextAutoStateChange: 0,
         nextGetLogCheck: 0,
-        nextGameRunningCheck: 0
+        nextGameRunningCheck: 0,
+        nextDatabaseOptimize: 3600
     };
 
     _methods = {
@@ -104,6 +105,10 @@ export default class extends baseClass {
                             this.nextGameRunningCheck = 3;
                             AppApi.CheckGameRunning();
                         }
+                    }
+                    if (--this.nextDatabaseOptimize <= 0) {
+                        this.nextDatabaseOptimize = 86400; // 1 day
+                        database.optimize();
                     }
                 }
             } catch (err) {

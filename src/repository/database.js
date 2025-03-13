@@ -2754,6 +2754,10 @@ class Database {
         await sqliteService.executeNonQuery('VACUUM');
     }
 
+    async optimize() {
+        await sqliteService.executeNonQuery('PRAGMA optimize');
+    }
+
     async getInstanceJoinHistory() {
         var oneWeekAgo = new Date(Date.now() - 604800000).toJSON();
         var instances = new Map();

@@ -18132,6 +18132,7 @@ console.log(`isLinux: ${LINUX}`);
                 await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
                 await database.upgradeDatabaseVersion(); // update database version
                 await database.vacuum(); // succ
+                await database.optimize();
                 await configRepository.setInt(
                     'VRCX_databaseVersion',
                     databaseVersion
