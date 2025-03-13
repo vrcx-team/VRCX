@@ -1077,6 +1077,7 @@ console.log(`isLinux: ${LINUX}`);
         if (!json.$fetchedAt) {
             ref.$fetchedAt = new Date().toJSON();
         }
+        ref.$disabledContentSettings = [];
         if (json.contentSettings && Object.keys(json.contentSettings).length) {
             for (var setting in $app.instanceContentSettings) {
                 if (json.contentSettings[setting]) {
@@ -16432,6 +16433,7 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.data.printUploadNote = '';
+    $app.data.printCropBorder = true;
 
     $app.methods.onFileChangePrint = function (e) {
         var clearFile = function () {
@@ -16472,13 +16474,16 @@ console.log(`isLinux: ${LINUX}`);
                 timestamp
             };
             var base64Body = btoa(r.result);
-            vrcPlusImageRequest.uploadPrint(base64Body, params).then((args) => {
-                $app.$message({
-                    message: $t('message.print.uploaded'),
-                    type: 'success'
+            var cropWhiteBorder = $app.printCropBorder;
+            vrcPlusImageRequest
+                .uploadPrint(base64Body, cropWhiteBorder, params)
+                .then((args) => {
+                    $app.$message({
+                        message: $t('message.print.uploaded'),
+                        type: 'success'
+                    });
+                    return args;
                 });
-                return args;
-            });
         };
         r.readAsBinaryString(files[0]);
         clearFile();

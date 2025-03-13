@@ -61,9 +61,10 @@ const vrcPlusImageReq = {
         });
     },
 
-    uploadPrint(imageData, params) {
+    uploadPrint(imageData, cropWhiteBorder, params) {
         return window.API.call('prints', {
             uploadImagePrint: true,
+            cropWhiteBorder,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {

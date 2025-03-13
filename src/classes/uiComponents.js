@@ -210,7 +210,7 @@ export default class extends baseClass {
                 '<span><span style="color:#67c23a">Android: </span>{{ platforms.android }}</span></br>' +
                 '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
                 '<span v-if="queueEnabled">{{ $t("dialog.user.info.instance_queuing_enabled") }}</br></span>' +
-                '<span v-if="disabledContentSettings">{{ $t("dialog.user.info.instance_disabled_content_settings") }} {{ disabledContentSettings }}</br></span>' +
+                '<span v-if="disabledContentSettings">{{ $t("dialog.user.info.instance_disabled_content") }} {{ disabledContentSettings }}</br></span>' +
                 '<span v-if="userList.length">{{ $t("dialog.user.info.instance_users") }}</br></span>' +
                 '<template v-for="user in userList"><span style="cursor:pointer;margin-right:5px" @click="showUserDialog(user.id)" v-text="user.displayName"></span></template>' +
                 '</div>' +

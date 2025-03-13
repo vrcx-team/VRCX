@@ -399,6 +399,8 @@ mixin currentUser
                         maxlength='32'
                         style='margin-left: 10px; width: 300px'
                         :placeholder='$t("dialog.gallery_icons.note")')
+                    el-checkbox(v-model='printCropBorder' style='margin-left: 10px; margin-right: 10px')
+                        span {{ $t('dialog.gallery_icons.crop_print_border') }}
                 br
                 .x-friend-item(
                     v-for='image in printTable'
