@@ -49,7 +49,7 @@
             "filter_placeholder": "Фильтр",
             "search_placeholder": "Поиск",
             "filters": {
-                "Location": "Местоимение",
+                "Location": "Местоположение",
                 "OnPlayerJoined": "Игрог подключился",
                 "OnPlayerLeft": "Игрок отключился",
                 "PortalSpawn": "Спавн портала",
