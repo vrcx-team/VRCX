@@ -1,29 +1,24 @@
 <template>
-    <div @click="$emit('click')" :style="{ display: 'inline-block', width: '300px', marginRight: '15px' }">
+    <div @click="$emit('click')">
         <div class="x-friend-item">
             <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
                 <div class="avatar">
                     <img v-lazy="smallThumbnail" />
                 </div>
                 <div class="detail">
-                    <span class="name">{{ localFavFakeRef.name }}</span>
-                    <span v-if="localFavFakeRef.occupants" class="extra"
-                        >{{ localFavFakeRef.authorName }} ({{ localFavFakeRef.occupants }})</span
-                    >
-                    <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
+                    <span class="name" v-text="localFavFakeRef.name"></span>
+                    <span class="extra" v-text="localFavFakeRef.authorName"></span>
                 </div>
                 <template v-if="editFavoritesMode">
                     <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
-                        <el-tooltip
-                            placement="left"
-                            :content="$t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="tooltipContent" :disabled="hideTooltips">
                             <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
-                            <template v-for="groupAPI in API.favoriteWorldGroups">
+                            <template
+                                v-for="groupAPI in API.favoriteAvatarGroups"
+                                v-if="isLocalFavorite || groupAPI.name !== group.name">
                                 <el-dropdown-item
-                                    v-if="isLocalFavorite || groupAPI.name !== group.name"
                                     :key="groupAPI.name"
                                     style="display: block; margin: 10px 0"
                                     :disabled="groupAPI.count >= groupAPI.capacity"
@@ -32,38 +27,38 @@
                                 </el-dropdown-item>
                             </template>
                         </el-dropdown-menu>
-
-                        <el-button v-if="!isLocalFavorite" type="text" size="mini" @click.stop style="margin-left: 5px">
-                            <el-checkbox v-model="isSelected"></el-checkbox>
-                        </el-button>
                     </el-dropdown>
+                    <el-button v-if="!isLocalFavorite" type="text" size="mini" style="margin-left: 5px" @click.stop>
+                        <el-checkbox v-model="isSelected"></el-checkbox>
+                    </el-button>
                 </template>
-                <template v-else>
+                <template v-else-if="!isLocalFavorite">
                     <el-tooltip
-                        v-if="!isLocalFavorite && favorite.deleted"
+                        v-if="favorite.deleted"
                         placement="left"
                         :content="$t('view.favorite.unavailable_tooltip')">
                         <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
                     </el-tooltip>
                     <el-tooltip
-                        v-if="!isLocalFavorite && favorite.ref.releaseStatus === 'private'"
+                        v-if="favorite.ref.releaseStatus === 'private'"
                         placement="left"
                         :content="$t('view.favorite.private')">
                         <i class="el-icon-warning" style="color: #e6a23c; margin-left: 5px"></i>
                     </el-tooltip>
                     <el-tooltip
+                        v-if="favorite.ref.releaseStatus !== 'private' && !favorite.deleted"
                         placement="left"
-                        :content="$t('view.favorite.self_invite_tooltip')"
+                        :content="$t('view.favorite.select_avatar_tooltip')"
                         :disabled="hideTooltips">
                         <el-button
+                            :disabled="API.currentUser.currentAvatar === favorite.id"
                             size="mini"
-                            icon="el-icon-message"
+                            icon="el-icon-check"
+                            circle
                             style="margin-left: 5px"
-                            @click.stop="$emit('new-instance-self-invite', favorite.id)"
-                            circle></el-button>
+                            @click.stop="selectAvatarWithConfirmation"></el-button>
                     </el-tooltip>
                     <el-tooltip
-                        v-if="!isLocalFavorite"
                         placement="right"
                         :content="$t('view.favorite.unfavorite_tooltip')"
                         :disabled="hideTooltips">
@@ -76,12 +71,26 @@
                             @click.stop="deleteFavorite(favorite.id)"></el-button>
                         <el-button
                             v-else
+                            type="default"
                             icon="el-icon-star-on"
                             size="mini"
                             circle
                             style="margin-left: 5px"
-                            type="default"
-                            @click.stop="showFavoriteDialog(favorite.id)"></el-button>
+                            @click.stop="showFavoriteDialog"></el-button>
+                    </el-tooltip>
+                </template>
+                <template v-else>
+                    <el-tooltip
+                        placement="left"
+                        :content="$t('view.favorite.select_avatar_tooltip')"
+                        :disabled="hideTooltips">
+                        <el-button
+                            :disabled="API.currentUser.currentAvatar === favorite.id"
+                            size="mini"
+                            circle
+                            style="margin-left: 5px"
+                            icon="el-icon-check"
+                            @click.stop="selectAvatarWithConfirmation" />
                     </el-tooltip>
                 </template>
                 <el-tooltip
@@ -95,34 +104,28 @@
                         icon="el-icon-close"
                         circle
                         style="color: #f56c6c; margin-left: 5px"
-                        @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"></el-button>
+                        @click.stop="removeLocalAvatarFavorite" />
                     <el-button
                         v-else
+                        type="default"
                         icon="el-icon-star-on"
                         size="mini"
                         circle
                         style="margin-left: 5px"
-                        type="default"
-                        @click.stop="showFavoriteDialog(favorite.id)"></el-button>
-                </el-tooltip>
+                        @click.stop="showFavoriteDialog"
+                /></el-tooltip>
             </template>
             <template v-else>
                 <div class="avatar"></div>
                 <div class="detail">
-                    <span>{{ favorite.name || favorite.id }}</span>
-                    <el-tooltip
-                        v-if="!isLocalFavorite && favorite.deleted"
-                        placement="left"
-                        :content="$t('view.favorite.unavailable_tooltip')">
-                        <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
-                    </el-tooltip>
-                    <el-button
-                        type="text"
-                        icon="el-icon-close"
-                        size="mini"
-                        style="margin-left: 5px"
-                        @click.stop="handleDeleteFavorite"></el-button>
+                    <span class="name" v-text="favorite.name || favorite.id"></span>
                 </div>
+                <el-button
+                    type="text"
+                    icon="el-icon-close"
+                    size="mini"
+                    style="margin-left: 5px"
+                    @click.stop="deleteFavorite(favorite.id)"></el-button>
             </template>
         </div>
     </div>
@@ -132,15 +135,15 @@
     import { favoriteRequest } from '../../classes/request';
 
     export default {
-        name: 'FavoritesWorldItem',
+        name: 'FavoritesAvatarItem',
         inject: ['API'],
         props: {
-            group: [Object, String],
             favorite: Object,
+            group: [Object, String],
             editFavoritesMode: Boolean,
-            hideTooltips: Boolean,
             shiftHeld: Boolean,
-            isLocalFavorite: { type: Boolean, required: false }
+            hideTooltips: Boolean,
+            isLocalFavorite: Boolean
         },
         computed: {
             isSelected: {
@@ -155,6 +158,9 @@
                 // local favorite no "ref" property
                 return this.isLocalFavorite ? this.favorite : this.favorite.ref;
             },
+            tooltipContent() {
+                return $t(this.isLocalFavorite ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip');
+            },
             smallThumbnail() {
                 return (
                     this.localFavFakeRef.thumbnailImageUrl.replace('256', '64') ||
@@ -163,20 +169,6 @@
             }
         },
         methods: {
-            handleDropdownItemClick(groupAPI) {
-                if (this.isLocalFavorite) {
-                    this.addFavoriteWorld(this.localFavFakeRef, groupAPI, true);
-                } else {
-                    this.moveFavorite(this.localFavFakeRef, groupAPI, 'world');
-                }
-            },
-            handleDeleteFavorite() {
-                if (this.isLocalFavorite) {
-                    this.$emit('remove-local-world-favorite', this.favorite.id, this.group);
-                } else {
-                    this.deleteFavorite(this.favorite.id);
-                }
-            },
             moveFavorite(ref, group, type) {
                 favoriteRequest
                     .deleteFavorite({
@@ -189,6 +181,9 @@
                             tags: group.name
                         });
                     });
+            },
+            selectAvatarWithConfirmation() {
+                this.$emit('select-avatar-with-confirmation', this.favorite.id);
             },
             deleteFavorite(objectId) {
                 favoriteRequest.deleteFavorite({
@@ -208,26 +203,34 @@
                 //     }
                 // });
             },
-            addFavoriteWorld(ref, group, message) {
-                // wait API splitting PR Merged
+            addFavoriteAvatar(groupAPI) {
                 return favoriteRequest
                     .addFavorite({
-                        type: 'world',
-                        favoriteId: ref.id,
-                        tags: group.name
+                        type: 'avatar',
+                        favoriteId: this.favorite.id,
+                        tags: groupAPI.name
                     })
                     .then((args) => {
-                        if (message) {
-                            this.$message({
-                                message: 'World added to favorites',
-                                type: 'success'
-                            });
-                        }
+                        this.$message({
+                            message: 'Avatar added to favorites',
+                            type: 'success'
+                        });
+
                         return args;
                     });
             },
-            showFavoriteDialog(favoriteId) {
-                this.$emit('show-favorite-dialog', 'world', favoriteId);
+            handleDropdownItemClick(groupAPI) {
+                if (this.isLocalFavorite) {
+                    this.addFavoriteAvatar(groupAPI);
+                } else {
+                    this.moveFavorite(this.favorite.ref, groupAPI, 'avatar');
+                }
+            },
+            showFavoriteDialog() {
+                this.$emit('show-favorite-dialog', 'avatar', this.favorite.id);
+            },
+            removeLocalAvatarFavorite() {
+                this.$emit('remove-local-avatar-favorite', this.favorite.id, this.group);
             }
         }
     };

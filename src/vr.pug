@@ -219,7 +219,10 @@ doctype html
                                     span.time {{ feed.created_at | formatDate }}
                                     template(v-if='feed.displayName')
                                         | ✨ #[span.name(v-text='feed.displayName' style='margin-right: 5px' :style='{ color: feed.tagColour }')]
-                                        |                                             #[location(:location='feed.instanceId' :hint='feed.worldName' :grouphint='feed.groupName')]
+                                        location(
+                                            :location='feed.instanceId'
+                                            :hint='feed.worldName'
+                                            :grouphint='feed.groupName')
                                     template(v-else)
                                         | ✨ User has spawned a portal
                         .x-friend-item(
@@ -529,7 +532,11 @@ doctype html
                                     span.time {{ feed.created_at | formatDate }}
                                     template(v-if='feed.displayName')
                                         |#[span.name(v-text='feed.displayName' :style='{ color: feed.tagColour }')] has spawned a portal to
-                                        |                                             #[location(:location='feed.instanceId' :hint='feed.worldName' :grouphint='feed.groupName' style='margin-left: 5px')]
+                                        location(
+                                            :location='feed.instanceId'
+                                            :hint='feed.worldName'
+                                            :grouphint='feed.groupName'
+                                            style='margin-left: 5px')
                                     template(v-else)
                                         | User has spawned a portal
                         .x-friend-item(

@@ -87,7 +87,7 @@ mixin notificationsTab
                         el-popover(placement='right' width='500px' trigger='click')
                             img.x-link(
                                 slot='reference'
-                                v-lazy='scope.row.details.imageUrl'
+                                :src='getSmallThumbnailUrl(scope.row.details.imageUrl)'
                                 style='flex: none; height: 50px; border-radius: 4px')
                             img.x-link(
                                 v-lazy='scope.row.details.imageUrl'
@@ -97,7 +97,7 @@ mixin notificationsTab
                         el-popover(placement='right' width='500px' trigger='click')
                             img.x-link(
                                 slot='reference'
-                                v-lazy='scope.row.imageUrl'
+                                :src='getSmallThumbnailUrl(scope.row.imageUrl)'
                                 style='flex: none; height: 50px; border-radius: 4px')
                             img.x-link(
                                 v-lazy='scope.row.imageUrl'

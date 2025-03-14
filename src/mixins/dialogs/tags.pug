@@ -12,8 +12,6 @@ mixin tags
         br
         el-checkbox(v-model='setWorldTagsDialog.focusViewDisabled') {{ $t('dialog.set_world_tags.focus_view_disabled') }}
         br
-        el-checkbox(v-model='setWorldTagsDialog.stickersDisabled') {{ $t('dialog.set_world_tags.stickers_disabled') }}
-        br
         el-checkbox(v-model='setWorldTagsDialog.debugAllowed') {{ $t('dialog.set_world_tags.enable_debugging') }}
         div(style='font-size: 12px; margin-top: 10px')
             | {{ $t('dialog.set_world_tags.author_tags') }} #[br]
@@ -36,6 +34,17 @@ mixin tags
         el-checkbox(v-model='setWorldTagsDialog.contentAdult') {{ $t('dialog.set_world_tags.content_adult') }}
         br
         el-checkbox(v-model='setWorldTagsDialog.contentSex') {{ $t('dialog.set_world_tags.content_sex') }}
+        div(style='font-size: 12px; margin-top: 10px')
+            | {{ $t('dialog.set_world_tags.default_content_settings') }} #[br]
+        el-checkbox(v-model='setWorldTagsDialog.emoji') {{ $t('dialog.new_instance.content_emoji') }}
+        br
+        el-checkbox(v-model='setWorldTagsDialog.stickers') {{ $t('dialog.new_instance.content_stickers') }}
+        br
+        el-checkbox(v-model='setWorldTagsDialog.pedestals') {{ $t('dialog.new_instance.content_pedestals') }}
+        br
+        el-checkbox(v-model='setWorldTagsDialog.prints') {{ $t('dialog.new_instance.content_prints') }}
+        br
+        el-checkbox(v-model='setWorldTagsDialog.drones') {{ $t('dialog.new_instance.content_drones') }}
         //- el-input(type="textarea" v-model="setWorldTagsDialog.contentTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
         template(#footer)
             div(style='display: flex')

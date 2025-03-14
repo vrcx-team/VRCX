@@ -293,7 +293,7 @@
                 const result = [];
 
                 for (const key in vipFriendsByGroup) {
-                    if (Object.prototype.hasOwnProperty.call(vipFriendsByGroup, key)) {
+                    if (Object.hasOwn(vipFriendsByGroup, key)) {
                         const groupFriends = vipFriendsByGroup[key];
                         // sort groupFriends using the order of vipFriends
                         // avoid unnecessary sorting

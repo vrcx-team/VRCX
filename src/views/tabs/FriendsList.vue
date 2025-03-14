@@ -117,7 +117,7 @@
                 <el-table-column :label="$t('table.friendList.avatar')" width="70" prop="photo">
                     <template slot-scope="scope">
                         <el-popover placement="right" height="500px" trigger="hover">
-                            <img slot="reference" v-lazy="userImage(scope.row)" class="friends-list-avatar" />
+                            <img slot="reference" v-lazy="userImage(scope.row, true)" class="friends-list-avatar" />
                             <img
                                 v-lazy="userImageFull(scope.row)"
                                 class="friends-list-avatar"
