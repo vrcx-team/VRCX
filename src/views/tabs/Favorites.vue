@@ -25,8 +25,8 @@
                     circle></el-button>
             </el-tooltip>
         </div>
-        <el-tabs type="card" v-loading="API.isFavoriteLoading" style="height: 100%">
-            <el-tab-pane :label="$t('view.favorite.friends.header')" lazy>
+        <el-tabs v-model="currentTabName" v-loading="API.isFavoriteLoading" type="card" style="height: 100%">
+            <el-tab-pane name="friend" :label="$t('view.favorite.friends.header')" lazy>
                 <favorites-friend-tab
                     :favorite-friends="favoriteFriends"
                     :sort-favorites.sync="isSortByTime"
@@ -37,11 +37,10 @@
                     @save-sort-favorites-option="saveSortFavoritesOption"
                     @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
-            <el-tab-pane :label="$t('view.favorite.worlds.header')" lazy>
+            <el-tab-pane name="world" :label="$t('view.favorite.worlds.header')" lazy>
                 <favorites-world-tab
                     @show-world-import-dialog="showWorldImportDialog"
                     @save-sort-favorites-option="saveSortFavoritesOption"
-                    @show-world-dialog="showWorldDialog"
                     @change-favorite-group-name="changeFavoriteGroupName"
                     @new-instance-self-invite="newInstanceSelfInvite"
                     @show-favorite-dialog="showFavoriteDialog"
@@ -60,7 +59,7 @@
                     :local-world-favorites="localWorldFavorites"
                     :local-world-favorites-list="localWorldFavoritesList" />
             </el-tab-pane>
-            <el-tab-pane :label="$t('view.favorite.avatars.header')" lazy>
+            <el-tab-pane name="avatar" :label="$t('view.favorite.avatars.header')" lazy>
                 <favorites-avatar-tab
                     :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
@@ -74,7 +73,6 @@
                     :local-avatar-favorites-list="localAvatarFavoritesList"
                     @show-avatar-import-dialog="showAvatarImportDialog"
                     @save-sort-favorites-option="saveSortFavoritesOption"
-                    @show-avatar-dialog="showAvatarDialog"
                     @show-favorite-dialog="showFavoriteDialog"
                     @change-favorite-group-name="changeFavoriteGroupName"
                     @remove-local-avatar-favorite="removeLocalAvatarFavorite"
@@ -124,7 +122,8 @@
         data() {
             return {
                 editFavoritesMode: false,
-                refreshingLocalFavorites: false
+                refreshingLocalFavorites: false,
+                currentTabName: 'friend'
             };
         },
         computed: {
@@ -184,7 +183,6 @@
                 }
                 this.editFavoritesMode = false;
             },
-
             changeFavoriteGroupName(ctx) {
                 this.$prompt(
                     $t('prompt.change_favorite_group_name.description'),
@@ -267,7 +265,7 @@
                 this.$emit('clear-bulk-favorite-selection');
             },
             bulkCopyFavoriteSelection() {
-                this.$emit('bulk-copy-favorite-selection');
+                this.$emit('bulk-copy-favorite-selection', this.currentTabName);
             },
             getLocalWorldFavorites() {
                 this.$emit('get-local-world-favorites');
@@ -280,9 +278,6 @@
             },
             showWorldImportDialog() {
                 this.$emit('show-world-import-dialog');
-            },
-            showWorldDialog(tag, shortName) {
-                this.$emit('show-world-dialog', tag, shortName);
             },
             newInstanceSelfInvite(worldId) {
                 this.$emit('new-instance-self-invite', worldId);
@@ -298,9 +293,6 @@
             },
             showAvatarImportDialog() {
                 this.$emit('show-avatar-import-dialog');
-            },
-            showAvatarDialog(avatarId) {
-                this.$emit('show-avatar-dialog', avatarId);
             },
             removeLocalAvatarFavorite(avatarId, group) {
                 this.$emit('remove-local-avatar-favorite', avatarId, group);

@@ -56,7 +56,7 @@
         },
         computed: {
             smallThumbnail() {
-                return this.favorite.thumbnailImageUrl.replace('256', '64') || this.favorite.thumbnailImageUrl;
+                return this.favorite.thumbnailImageUrl.replace('256', '128') || this.favorite.thumbnailImageUrl;
             }
         },
         methods: {

@@ -131,4 +131,10 @@ doctype html
     include ./mixins/dialogs/boops.pug
     +boops
 
+    friend-import-dialog(v-bind='friendImportDialogBind' v-on='friendImportDialogEvent')
+
+    world-import-dialog(v-bind='worldImportDialogBind' v-on='worldImportDialogEvent')
+
+    avatar-import-dialog(v-bind='avatarImportDialogBind' v-on='avatarImportDialogEvent')
+
     //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")
