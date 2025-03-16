@@ -816,6 +816,11 @@
                 if (value) {
                     this.$nextTick(() => this.adjustDialogZ(this.$refs.worldDialog.$el));
                 }
+            },
+            'worldDialog.id'(value) {
+                if (value) {
+                    this.$nextTick(() => this.adjustDialogZ(this.$refs.worldDialog.$el));
+                }
             }
         },
         methods: {
