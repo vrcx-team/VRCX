@@ -812,12 +812,7 @@
             }
         },
         watch: {
-            'worldDialog.visible'(value) {
-                if (value) {
-                    this.$nextTick(() => this.adjustDialogZ(this.$refs.worldDialog.$el));
-                }
-            },
-            'worldDialog.id'(value) {
+            'worldDialog.loading'(value) {
                 if (value) {
                     this.$nextTick(() => this.adjustDialogZ(this.$refs.worldDialog.$el));
                 }
