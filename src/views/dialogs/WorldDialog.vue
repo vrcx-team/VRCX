@@ -812,7 +812,7 @@
             }
         },
         watch: {
-            'worldDialog.visible'(value) {
+            'worldDialog.loading'(value) {
                 if (value) {
                     this.$nextTick(() => this.adjustDialogZ(this.$refs.worldDialog.$el));
                 }

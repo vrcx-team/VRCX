@@ -157,7 +157,7 @@
             },
             smallThumbnail() {
                 return (
-                    this.localFavFakeRef.thumbnailImageUrl.replace('256', '64') ||
+                    this.localFavFakeRef.thumbnailImageUrl.replace('256', '128') ||
                     this.localFavFakeRef.thumbnailImageUrl
                 );
             }

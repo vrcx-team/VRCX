@@ -244,7 +244,7 @@
     export default {
         name: 'FavoritesAvatarTab',
         components: { FavoritesAvatarItem, FavoritesAvatarLocalHistoryItem, AvatarExportDialog },
-        inject: ['API'],
+        inject: ['API', 'showAvatarDialog'],
         props: {
             sortFavorites: Boolean,
             hideTooltips: Boolean,
@@ -363,9 +363,6 @@
             },
             saveSortFavoritesOption() {
                 this.$emit('save-sort-favorites-option');
-            },
-            showAvatarDialog(id) {
-                this.$emit('show-avatar-dialog', id);
             },
             changeFavoriteGroupName(group) {
                 this.$emit('change-favorite-group-name', group);

@@ -7,12 +7,15 @@
     "trailingComma": "none",
     "bracketSpacing": true,
     "arrowParens": "always",
-    "vueIndentScriptAndStyle": true,
     "endOfLine": "auto",
-    "plugins": [
-        "@prettier/plugin-pug"
-    ],
+    "plugins": ["@prettier/plugin-pug"],
     "overrides": [
+        {
+            "files": "*.js",
+            "options": {
+                "parser": "meriyah"
+            }
+        },
         {
             "files": "*.pug",
             "options": {
@@ -25,7 +28,8 @@
             "files": "*.vue",
             "options": {
                 "printWidth": 120,
-                "bracketSameLine": true
+                "bracketSameLine": true,
+                "vueIndentScriptAndStyle": true
             }
         }
     ]

@@ -140,7 +140,7 @@ mixin userDialog
                                 size='mini'
                                 style='margin-right: 5px; margin-top: 5px') {{ userDialog.ref.last_platform }}
                             el-tag.x-tag-age-verification(
-                                v-if='userDialog.ref.ageVerificationStatus || userDialog.ref.ageVerificationStatus !== "hidden"'
+                                v-if='userDialog.ref.ageVerificationStatus && userDialog.ref.ageVerificationStatus !== "hidden"'
                                 type='info'
                                 effect='plain'
                                 size='mini'
@@ -195,7 +195,7 @@ mixin userDialog
                         el-popover(placement='right' width='500px' trigger='click')
                             img.x-link(
                                 slot='reference'
-                                :src='userImage(userDialog.ref, true, "256")'
+                                :src='userImage(userDialog.ref, true, "256", true)'
                                 style='flex: none; width: 120px; height: 120px; border-radius: 12px; object-fit: cover')
                             img.x-link(
                                 v-lazy='userDialog.ref.userIcon'

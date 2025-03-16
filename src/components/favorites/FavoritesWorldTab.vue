@@ -237,7 +237,7 @@
             FavoritesWorldItem,
             WorldExportDialog
         },
-        inject: ['API'],
+        inject: ['API', 'showWorldDialog'],
         props: {
             sortFavorites: Boolean,
             hideTooltips: Boolean,
@@ -427,9 +427,6 @@
             },
             changeFavoriteGroupName(group) {
                 this.$emit('change-favorite-group-name', group);
-            },
-            showWorldDialog(event) {
-                this.$emit('show-world-dialog', event);
             },
             newInstanceSelfInvite(event) {
                 this.$emit('new-instance-self-invite', event);
