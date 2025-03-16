@@ -14724,6 +14724,12 @@ console.log(`isLinux: ${LINUX}`);
         if (config) {
             try {
                 this.VRChatConfigFile = JSON.parse(config);
+                if (
+                    typeof this.VRChatConfigFile
+                        .picture_output_split_by_date === 'undefined'
+                ) {
+                    this.VRChatConfigFile.picture_output_split_by_date = true;
+                }
             } catch {
                 this.$message({
                     message: 'Invalid JSON in config.json',

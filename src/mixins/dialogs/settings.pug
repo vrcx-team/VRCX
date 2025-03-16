@@ -104,10 +104,7 @@ mixin settings
                         :key='row.index'
                         v-text='row.name'
                         :command='row')
-        el-checkbox(
-            v-model='VRChatConfigFile.picture_output_split_by_date'
-            style='margin-top: 5px; display: block'
-            :checked='true') {{ $t('dialog.config_json.picture_sort_by_date') }}
+        el-checkbox(v-model='VRChatConfigFile.picture_output_split_by_date' style='margin-top: 5px; display: block') {{ $t('dialog.config_json.picture_sort_by_date') }}
         el-checkbox(v-model='VRChatConfigFile.disableRichPresence' style='margin-top: 5px; display: block') {{ $t('dialog.config_json.disable_discord_presence') }}
         template(#footer)
             div(style='display: flex; align-items: center; justify-content: space-between')
