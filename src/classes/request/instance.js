@@ -71,7 +71,6 @@ const instanceReq = {
                 instance,
                 params
             };
-            window.API.$emit('INSTANCE:SHORTNAME', args);
             return args;
         });
     },
