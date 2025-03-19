@@ -736,8 +736,8 @@
 </template>
 
 <script>
-    import utils from '../../classes/utils';
-    import database from '../../repository/database.js';
+    import utils from '../../../classes/utils';
+    import database from '../../../repository/database.js';
     export default {
         name: 'WorldDialog',
         inject: ['API', 'showUserDialog', 'userStatusClass', 'userImage', 'adjustDialogZ'],

@@ -238,7 +238,7 @@
 <script>
     import FavoritesAvatarItem from './FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './FavoritesAvatarLocalHistoryItem.vue';
-    import AvatarExportDialog from '../../views/dialogs/AvatarExportDialog.vue';
+    import AvatarExportDialog from '../../views/dialogs/favorites/AvatarExportDialog.vue';
     import { favoriteRequest } from '../../classes/request';
 
     export default {

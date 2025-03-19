@@ -58,10 +58,10 @@
 </template>
 
 <script>
-    import utils from '../../classes/utils';
-    import database from '../../repository/database';
+    import utils from '../../../classes/utils';
+    import database from '../../../repository/database';
     import dayjs from 'dayjs';
-    import Location from '../../components/common/Location.vue';
+    import Location from '../../../components/common/Location.vue';
 
     export default {
         name: 'PreviousInstanceInfoDialog',
