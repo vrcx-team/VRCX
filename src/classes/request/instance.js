@@ -94,7 +94,7 @@ const instanceReq = {
 
     /**
      * Send invite to current user.
-     * @param {{ worldId: string, instanceId: string, shortName: string }} instance
+     * @param {{ worldId: string, instanceId: string, shortName?: string }} instance
      * @returns {Promise<{instance, json: any, params}>}
      */
     selfInvite(instance) {
