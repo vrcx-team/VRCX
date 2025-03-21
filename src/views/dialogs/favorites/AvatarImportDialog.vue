@@ -175,8 +175,8 @@
 </template>
 
 <script>
-    import { avatarRequest, favoriteRequest } from '../../classes/request';
-    import utils from '../../classes/utils';
+    import { avatarRequest, favoriteRequest } from '../../../classes/request';
+    import utils from '../../../classes/utils';
 
     export default {
         name: 'AvatarImportDialog',

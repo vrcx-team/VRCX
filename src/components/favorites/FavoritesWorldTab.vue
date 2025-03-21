@@ -228,7 +228,7 @@
 
 <script>
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
-    import WorldExportDialog from '../../views/dialogs/WorldExportDialog.vue';
+    import WorldExportDialog from '../../views/dialogs/favorites/WorldExportDialog.vue';
     import { favoriteRequest } from '../../classes/request';
 
     export default {

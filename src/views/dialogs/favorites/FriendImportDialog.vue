@@ -126,8 +126,8 @@
 </template>
 
 <script>
-    import utils from '../../classes/utils';
-    import { favoriteRequest, userRequest } from '../../classes/request';
+    import utils from '../../../classes/utils';
+    import { favoriteRequest, userRequest } from '../../../classes/request';
 
     export default {
         name: 'FriendImportDialog',

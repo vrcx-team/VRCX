@@ -180,8 +180,8 @@
 </template>
 
 <script>
-    import { favoriteRequest, worldRequest } from '../../classes/request';
-    import utils from '../../classes/utils';
+    import { favoriteRequest, worldRequest } from '../../../classes/request';
+    import utils from '../../../classes/utils';
 
     export default {
         name: 'WorldImportDialog',

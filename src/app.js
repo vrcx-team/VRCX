@@ -65,11 +65,11 @@ import SimpleSwitch from './components/settings/SimpleSwitch.vue';
 import Location from './components/common/Location.vue';
 
 // dialogs
-import WorldDialog from './views/dialogs/WorldDialog.vue';
-import PreviousInstanceInfoDialog from './views/dialogs/PreviousInstanceInfoDialog.vue';
-import FriendImportDialog from './views/dialogs/FriendImportDialog.vue';
-import WorldImportDialog from './views/dialogs/WorldImportDialog.vue';
-import AvatarImportDialog from './views/dialogs/AvatarImportDialog.vue';
+import WorldDialog from './views/dialogs/world/WorldDialog.vue';
+import PreviousInstanceInfoDialog from './views/dialogs/previousInstances/PreviousInstanceInfoDialog.vue';
+import FriendImportDialog from './views/dialogs/favorites/FriendImportDialog.vue';
+import WorldImportDialog from './views/dialogs/favorites/WorldImportDialog.vue';
+import AvatarImportDialog from './views/dialogs/favorites/AvatarImportDialog.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
