@@ -173,8 +173,7 @@
                 D.shortUrl = '';
                 D.shortName = shortName;
                 const L = utils.parseLocation(tag);
-                // useless code?
-                // L.shortName = shortName;
+                L.shortName = shortName;
                 if (shortName) {
                     D.shortUrl = `https://vrch.at/${shortName}`;
                 }
