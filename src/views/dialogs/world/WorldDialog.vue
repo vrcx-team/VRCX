@@ -740,7 +740,16 @@
     import database from '../../../repository/database.js';
     export default {
         name: 'WorldDialog',
-        inject: ['API', 'showUserDialog', 'userStatusClass', 'userImage', 'adjustDialogZ'],
+        inject: [
+            'API',
+            'showUserDialog',
+            'userStatusClass',
+            'userImage',
+            'adjustDialogZ',
+            'showPreviousInstanceInfoDialog',
+            'showLaunchDialog',
+            'showFullscreenImageDialog'
+        ],
         props: {
             worldDialog: Object,
             hideTooltips: Boolean,
@@ -819,9 +828,6 @@
             }
         },
         methods: {
-            showFullscreenImageDialog(imageUrl) {
-                this.$emit('show-fullscreen-image-dialog', imageUrl);
-            },
             openFolderGeneric(path) {
                 this.$emit('open-folder-generic', path);
             },
@@ -835,14 +841,8 @@
                     this.$emit('world-dialog-command', command);
                 }
             },
-            showLaunchDialog(location, shortName) {
-                this.$emit('show-launch-dialog', location, shortName);
-            },
             refreshInstancePlayerCount(tag) {
                 this.$emit('refresh-instance-player-count', tag);
-            },
-            showPreviousInstanceInfoDialog(location) {
-                this.$emit('show-previous-instance-info-dialog', location);
             },
             onWorldMemoChange() {
                 const worldId = this.worldDialog.id;

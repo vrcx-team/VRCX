@@ -65,11 +65,13 @@ import SimpleSwitch from './components/settings/SimpleSwitch.vue';
 import Location from './components/common/Location.vue';
 
 // dialogs
-import WorldDialog from './views/dialogs/world/WorldDialog.vue';
-import PreviousInstanceInfoDialog from './views/dialogs/previousInstances/PreviousInstanceInfoDialog.vue';
-import FriendImportDialog from './views/dialogs/favorites/FriendImportDialog.vue';
-import WorldImportDialog from './views/dialogs/favorites/WorldImportDialog.vue';
-import AvatarImportDialog from './views/dialogs/favorites/AvatarImportDialog.vue';
+import WorldDialog from './views/dialogs/WorldDialog.vue';
+import PreviousInstanceInfoDialog from './views/dialogs/PreviousInstanceInfoDialog.vue';
+import FriendImportDialog from './views/dialogs/FriendImportDialog.vue';
+import WorldImportDialog from './views/dialogs/WorldImportDialog.vue';
+import AvatarImportDialog from './views/dialogs/AvatarImportDialog.vue';
+import LaunchDialog from './views/dialogs/launch/LaunchDialog.vue';
+import NewInstanceDialog from './views/dialogs/newInstance/NewInstanceDialog.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -215,12 +217,18 @@ console.log(`isLinux: ${LINUX}`);
             SimpleSwitch,
 
             // - dialogs
+            //  - previous instances
             PreviousInstanceInfoDialog,
+            //  - world
             WorldDialog,
-            //  - import dialogs
+            //  - favorites
             FriendImportDialog,
             WorldImportDialog,
-            AvatarImportDialog
+            AvatarImportDialog,
+            //  - launch
+            LaunchDialog,
+            //  - new instance
+            NewInstanceDialog
         },
         provide() {
             return {
@@ -240,7 +248,11 @@ console.log(`isLinux: ${LINUX}`);
                 dialogMouseDown: this.dialogMouseDown,
                 dialogMouseUp: this.dialogMouseUp,
                 showWorldDialog: this.showWorldDialog,
-                showAvatarDialog: this.showAvatarDialog
+                showAvatarDialog: this.showAvatarDialog,
+                showPreviousInstanceInfoDialog:
+                    this.showPreviousInstanceInfoDialog,
+                showInviteDialog: this.showInviteDialog,
+                showLaunchDialog: this.showLaunchDialog
             };
         },
         el: '#root',
@@ -6477,7 +6489,10 @@ console.log(`isLinux: ${LINUX}`);
         var { notificationId } = args.params;
         $app.removeFromArray($app.unseenNotifications, notificationId);
         if ($app.unseenNotifications.length === 0) {
-            $app.selectMenu('notification');
+            const item = this.$refs.menu.$children[0]?.items['notification'];
+            if (item) {
+                item.$el.classList.remove('notify');
+            }
         }
     });
 
@@ -10849,16 +10864,32 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.newInstanceSelfInvite = function (worldId) {
-        this.newInstanceDialog.worldId = worldId;
-        this.createNewInstance().then((args) => {
-            if (!args?.json?.location) {
+        this.createNewInstance(worldId).then((args) => {
+            const location = args?.json?.location;
+            if (!location) {
                 this.$message({
                     message: 'Failed to create instance',
                     type: 'error'
                 });
                 return;
             }
-            this.selfInvite(args.json.location);
+            // self invite
+            var L = $utils.parseLocation(location);
+            if (!L.isRealInstance) {
+                return;
+            }
+            instanceRequest
+                .selfInvite({
+                    instanceId: L.instanceId,
+                    worldId: L.worldId
+                })
+                .then((args) => {
+                    this.$message({
+                        message: 'Self invite sent',
+                        type: 'success'
+                    });
+                    return args;
+                });
         });
     };
 
@@ -11726,171 +11757,49 @@ console.log(`isLinux: ${LINUX}`);
         'drones'
     ];
 
-    $app.data.newInstanceDialog = {
-        visible: false,
-        loading: false,
-        selectedTab: '0',
-        instanceCreated: false,
-        queueEnabled: await configRepository.getBool(
-            'instanceDialogQueueEnabled',
-            true
-        ),
-        worldId: '',
-        instanceId: '',
-        instanceName: await configRepository.getString(
-            'instanceDialogInstanceName',
-            ''
-        ),
-        userId: await configRepository.getString('instanceDialogUserId', ''),
-        accessType: await configRepository.getString(
-            'instanceDialogAccessType',
-            'public'
-        ),
-        region: await configRepository.getString('instanceRegion', 'US West'),
-        groupRegion: '',
-        groupId: await configRepository.getString('instanceDialogGroupId', ''),
-        groupAccessType: await configRepository.getString(
-            'instanceDialogGroupAccessType',
-            'plus'
-        ),
-        ageGate: await configRepository.getBool('instanceDialogAgeGate', false),
-        strict: false,
-        location: '',
-        shortName: '',
-        url: '',
-        secureOrShortName: '',
-        lastSelectedGroupId: '',
-        selectedGroupRoles: [],
-        roleIds: [],
-        groupRef: {},
-        contentSettings: $app.data.instanceContentSettings,
-        selectedContentSettings: JSON.parse(
-            await configRepository.getString(
-                'instanceDialogSelectedContentSettings',
-                JSON.stringify($app.data.instanceContentSettings)
-            )
-        )
-    };
+    $app.methods.createNewInstance = async function (worldId = '', options) {
+        let D = options;
 
-    API.$on('LOGOUT', function () {
-        $app.newInstanceDialog.visible = false;
-    });
+        if (!D) {
+            D = {
+                loading: false,
+                accessType: await configRepository.getString(
+                    'instanceDialogAccessType',
+                    'public'
+                ),
+                region: await configRepository.getString(
+                    'instanceRegion',
+                    'US West'
+                ),
+                worldId: worldId,
+                groupId: await configRepository.getString(
+                    'instanceDialogGroupId',
+                    ''
+                ),
+                groupAccessType: await configRepository.getString(
+                    'instanceDialogGroupAccessType',
+                    'plus'
+                ),
+                ageGate: await configRepository.getBool(
+                    'instanceDialogAgeGate',
+                    false
+                ),
+                queueEnabled: await configRepository.getBool(
+                    'instanceDialogQueueEnabled',
+                    true
+                ),
+                contentSettings: this.instanceContentSettings || [],
+                selectedContentSettings: JSON.parse(
+                    await configRepository.getString(
+                        'instanceDialogSelectedContentSettings',
+                        JSON.stringify(this.instanceContentSettings || [])
+                    )
+                ),
+                roleIds: [],
+                groupRef: {}
+            };
+        }
 
-    $app.methods.buildLegacyInstance = function () {
-        var D = this.newInstanceDialog;
-        D.instanceCreated = false;
-        D.shortName = '';
-        D.secureOrShortName = '';
-        var tags = [];
-        if (D.instanceName) {
-            D.instanceName = D.instanceName.replace(/[^A-Za-z0-9]/g, '');
-            tags.push(D.instanceName);
-        } else {
-            var randValue = (99999 * Math.random() + 1).toFixed(0);
-            tags.push(String(randValue).padStart(5, '0'));
-        }
-        if (!D.userId) {
-            D.userId = API.currentUser.id;
-        }
-        var userId = D.userId;
-        if (D.accessType !== 'public') {
-            if (D.accessType === 'friends+') {
-                tags.push(`~hidden(${userId})`);
-            } else if (D.accessType === 'friends') {
-                tags.push(`~friends(${userId})`);
-            } else if (D.accessType === 'group') {
-                tags.push(`~group(${D.groupId})`);
-                tags.push(`~groupAccessType(${D.groupAccessType})`);
-            } else {
-                tags.push(`~private(${userId})`);
-            }
-            if (D.accessType === 'invite+') {
-                tags.push('~canRequestInvite');
-            }
-        }
-        if (D.accessType === 'group' && D.ageGate) {
-            tags.push('~ageGate');
-        }
-        if (D.region === 'US West') {
-            tags.push(`~region(us)`);
-        } else if (D.region === 'US East') {
-            tags.push(`~region(use)`);
-        } else if (D.region === 'Europe') {
-            tags.push(`~region(eu)`);
-        } else if (D.region === 'Japan') {
-            tags.push(`~region(jp)`);
-        }
-        if (D.accessType !== 'invite' && D.accessType !== 'friends') {
-            D.strict = false;
-        }
-        if (D.strict) {
-            tags.push('~strict');
-        }
-        if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
-            D.roleIds = [];
-            var ref = API.cachedGroups.get(D.groupId);
-            if (typeof ref !== 'undefined') {
-                D.groupRef = ref;
-                D.selectedGroupRoles = ref.roles;
-                API.getGroupRoles({
-                    groupId: D.groupId
-                }).then((args) => {
-                    D.lastSelectedGroupId = D.groupId;
-                    D.selectedGroupRoles = args.json;
-                    ref.roles = args.json;
-                });
-            }
-        }
-        if (!D.groupId) {
-            D.roleIds = [];
-            D.selectedGroupRoles = [];
-            D.groupRef = {};
-            D.lastSelectedGroupId = '';
-        }
-        D.instanceId = tags.join('');
-        this.updateNewInstanceDialog(false);
-        this.saveNewInstanceDialog();
-    };
-
-    $app.methods.buildInstance = function () {
-        var D = this.newInstanceDialog;
-        D.instanceCreated = false;
-        D.instanceId = '';
-        D.shortName = '';
-        D.secureOrShortName = '';
-        if (!D.userId) {
-            D.userId = API.currentUser.id;
-        }
-        if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
-            D.roleIds = [];
-            var ref = API.cachedGroups.get(D.groupId);
-            if (typeof ref !== 'undefined') {
-                D.groupRef = ref;
-                D.selectedGroupRoles = ref.roles;
-                API.getGroupRoles({
-                    groupId: D.groupId
-                }).then((args) => {
-                    D.lastSelectedGroupId = D.groupId;
-                    D.selectedGroupRoles = args.json;
-                    ref.roles = args.json;
-                });
-            }
-        }
-        if (!D.groupId) {
-            D.roleIds = [];
-            D.groupRef = {};
-            D.selectedGroupRoles = [];
-            D.lastSelectedGroupId = '';
-        }
-        this.saveNewInstanceDialog();
-    };
-
-    $app.methods.createNewInstance = async function () {
-        var D = this.newInstanceDialog;
-        if (D.loading) {
-            return;
-        }
-        D.loading = true;
         var type = 'public';
         var canRequestInvite = false;
         switch (D.accessType) {
@@ -11955,135 +11864,19 @@ console.log(`isLinux: ${LINUX}`);
         }
         try {
             var args = await instanceRequest.createInstance(params);
-            D.location = args.json.location;
-            D.instanceId = args.json.instanceId;
-            D.secureOrShortName = args.json.shortName || args.json.secureName;
-            D.instanceCreated = true;
-            this.updateNewInstanceDialog();
-            D.loading = false;
             return args;
         } catch (err) {
-            D.loading = false;
             console.error(err);
             return null;
         }
     };
 
-    $app.methods.selfInvite = function (location, shortName) {
-        var L = $utils.parseLocation(location);
-        if (!L.isRealInstance) {
-            return;
-        }
-        instanceRequest
-            .selfInvite({
-                instanceId: L.instanceId,
-                worldId: L.worldId,
-                shortName
-            })
-            .then((args) => {
-                this.$message({
-                    message: 'Self invite sent',
-                    type: 'success'
-                });
-                return args;
-            });
-    };
-
-    $app.methods.updateNewInstanceDialog = function (noChanges) {
-        var D = this.newInstanceDialog;
-        if (D.instanceId) {
-            D.location = `${D.worldId}:${D.instanceId}`;
-        } else {
-            D.location = D.worldId;
-        }
-        var L = $utils.parseLocation(D.location);
-        if (noChanges) {
-            L.shortName = D.shortName;
-        } else {
-            D.shortName = '';
-        }
-        D.url = this.getLaunchURL(L);
-    };
-
-    $app.methods.saveNewInstanceDialog = async function () {
-        await configRepository.setString(
-            'instanceDialogAccessType',
-            this.newInstanceDialog.accessType
-        );
-        await configRepository.setString(
-            'instanceRegion',
-            this.newInstanceDialog.region
-        );
-        await configRepository.setString(
-            'instanceDialogInstanceName',
-            this.newInstanceDialog.instanceName
-        );
-        if (this.newInstanceDialog.userId === API.currentUser.id) {
-            await configRepository.setString('instanceDialogUserId', '');
-        } else {
-            await configRepository.setString(
-                'instanceDialogUserId',
-                this.newInstanceDialog.userId
-            );
-        }
-        await configRepository.setString(
-            'instanceDialogGroupId',
-            this.newInstanceDialog.groupId
-        );
-        await configRepository.setString(
-            'instanceDialogGroupAccessType',
-            this.newInstanceDialog.groupAccessType
-        );
-        await configRepository.setBool(
-            'instanceDialogQueueEnabled',
-            this.newInstanceDialog.queueEnabled
-        );
-        await configRepository.setBool(
-            'instanceDialogAgeGate',
-            this.newInstanceDialog.ageGate
-        );
-        await configRepository.setString(
-            'instanceDialogSelectedContentSettings',
-            JSON.stringify(this.newInstanceDialog.selectedContentSettings)
-        );
-    };
+    $app.data.newInstanceDialogLocationTag = '';
 
     $app.methods.showNewInstanceDialog = async function (tag) {
-        if (!$utils.isRealInstance(tag)) {
-            return;
-        }
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.newInstanceDialog.$el)
-        );
-        var D = this.newInstanceDialog;
-        var L = $utils.parseLocation(tag);
-        if (D.worldId === L.worldId) {
-            // reopening dialog, keep last open instance
-            D.visible = true;
-            return;
-        }
-        D.worldId = L.worldId;
-        D.instanceCreated = false;
-        D.lastSelectedGroupId = '';
-        D.selectedGroupRoles = [];
-        D.groupRef = {};
-        D.roleIds = [];
-        D.strict = false;
-        D.shortName = '';
-        D.secureOrShortName = '';
-        API.getGroupPermissions({ userId: API.currentUser.id });
-        this.buildInstance();
-        this.buildLegacyInstance();
-        this.updateNewInstanceDialog();
-        D.visible = true;
-    };
-
-    $app.methods.newInstanceTabClick = function (tab) {
-        if (tab === '1') {
-            this.buildInstance();
-        } else {
-            this.buildLegacyInstance();
-        }
+        // trigger watcher
+        this.newInstanceDialogLocationTag = '';
+        this.$nextTick(() => (this.newInstanceDialogLocationTag = tag));
     };
 
     $app.methods.makeHome = function (tag) {
@@ -12642,92 +12435,22 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: Launch Dialog
 
-    $app.data.launchDialog = {
+    $app.data.launchDialogData = {
         visible: false,
         loading: false,
-        desktop: await configRepository.getBool('launchAsDesktop'),
         tag: '',
-        location: '',
-        url: '',
-        shortName: '',
-        shortUrl: '',
-        secureOrShortName: ''
+        shortName: ''
     };
 
-    $app.methods.saveLaunchDialog = async function () {
-        await configRepository.setBool(
-            'launchAsDesktop',
-            this.launchDialog.desktop
-        );
-    };
-
-    API.$on('LOGOUT', function () {
-        $app.launchDialog.visible = false;
-    });
-
-    API.$on('INSTANCE:SHORTNAME', function (args) {
-        if (!args.json) {
-            return;
-        }
-        var shortName = args.json.shortName;
-        var secureOrShortName = args.json.shortName || args.json.secureName;
-        var location = `${args.instance.worldId}:${args.instance.instanceId}`;
-        if (location === $app.launchDialog.tag) {
-            var L = $utils.parseLocation(location);
-            L.shortName = shortName;
-            $app.launchDialog.shortName = shortName;
-            $app.launchDialog.secureOrShortName = secureOrShortName;
-            if (shortName) {
-                $app.launchDialog.shortUrl = `https://vrch.at/${shortName}`;
-            }
-            $app.launchDialog.url = $app.getLaunchURL(L);
-        }
-        if (location === $app.newInstanceDialog.location) {
-            $app.newInstanceDialog.shortName = shortName;
-            $app.newInstanceDialog.secureOrShortName = secureOrShortName;
-            $app.updateNewInstanceDialog(true);
-        }
-    });
-
-    $app.methods.addShortNameToFullUrl = function (input, shortName) {
-        if (input.trim().length === 0 || !shortName) {
-            return input;
-        }
-        var url = new URL(input);
-        var urlParams = new URLSearchParams(url.search);
-        urlParams.set('shortName', shortName);
-        url.search = urlParams.toString();
-        return url.toString();
-    };
-
-    $app.methods.showLaunchDialog = function (tag, shortName) {
-        if (!$utils.isRealInstance(tag)) {
-            return;
-        }
-        this.$nextTick(() => $app.adjustDialogZ(this.$refs.launchDialog.$el));
-        var D = this.launchDialog;
-        D.tag = tag;
-        D.secureOrShortName = shortName;
-        D.shortUrl = '';
-        D.shortName = shortName;
-        var L = $utils.parseLocation(tag);
-        L.shortName = shortName;
-        if (shortName) {
-            D.shortUrl = `https://vrch.at/${shortName}`;
-        }
-        if (L.instanceId) {
-            D.location = `${L.worldId}:${L.instanceId}`;
-        } else {
-            D.location = L.worldId;
-        }
-        D.url = this.getLaunchURL(L);
-        D.visible = true;
-        if (!shortName) {
-            instanceRequest.getInstanceShortName({
-                worldId: L.worldId,
-                instanceId: L.instanceId
-            });
-        }
+    $app.methods.showLaunchDialog = async function (tag, shortName) {
+        this.launchDialogData = {
+            visible: true,
+            // flag, use for trigger adjustDialogZ
+            loading: true,
+            tag,
+            shortName
+        };
+        this.$nextTick(() => (this.launchDialogData.loading = false));
     };
 
     $app.methods.getLaunchURL = function (instance) {
@@ -12754,7 +12477,6 @@ console.log(`isLinux: ${LINUX}`);
         shortName,
         desktopMode
     ) {
-        var D = this.launchDialog;
         var L = $utils.parseLocation(location);
         var args = [];
         if (
@@ -12787,8 +12509,14 @@ console.log(`isLinux: ${LINUX}`);
                 args.push(`vrchat://launch?ref=vrcx.app&id=${location}`);
             }
         }
-        var { launchArguments, vrcLaunchPathOverride } =
-            this.launchOptionsDialog;
+
+        const launchArguments =
+            await configRepository.getString('launchArguments');
+
+        const vrcLaunchPathOverride = await configRepository.getString(
+            'vrcLaunchPathOverride'
+        );
+
         if (launchArguments) {
             args.push(launchArguments);
         }
@@ -12830,7 +12558,6 @@ console.log(`isLinux: ${LINUX}`);
             });
         }
         console.log('Launch Game', args.join(' '), desktopMode);
-        D.visible = false;
     };
 
     // #endregion
@@ -12848,28 +12575,6 @@ console.log(`isLinux: ${LINUX}`);
         textArea.select();
         document.execCommand('copy');
         document.getElementById('copy_to_clipboard').remove();
-    };
-
-    $app.methods.copyInstanceMessage = function (input) {
-        this.copyToClipboard(input);
-        this.$message({
-            message: 'Instance copied to clipboard',
-            type: 'success'
-        });
-        return input;
-    };
-
-    $app.methods.copyInstanceUrl = async function (location) {
-        var L = $utils.parseLocation(location);
-        var args = await instanceRequest.getInstanceShortName({
-            worldId: L.worldId,
-            instanceId: L.instanceId
-        });
-        if (args.json && args.json.shortName) {
-            L.shortName = args.json.shortName;
-        }
-        var newUrl = this.getLaunchURL(L);
-        this.copyInstanceMessage(newUrl);
     };
 
     $app.methods.copyAvatarId = function (avatarId) {
@@ -16988,6 +16693,25 @@ console.log(`isLinux: ${LINUX}`);
         resolution = '128',
         isUserDialogIcon = false
     ) {
+        function convertFileUrlToImageUrl(url) {
+            /**
+             * possible patterns?
+             * /file/file_fileId/version
+             * /file/file_fileId/version/
+             * /file/file_fileId/version/file
+             * /file/file_fileId/version/file/
+             */
+            const pattern = /file\/file_([a-f0-9-]+)\/(\d+)(\/file)?\/?$/;
+            const match = url.match(pattern);
+
+            if (match) {
+                const fileId = match[1];
+                const version = match[2];
+                return `https://api.vrchat.cloud/api/1/image/file_${fileId}/${version}/${resolution}`;
+            }
+            // return /image/file_fileId url?
+            return url;
+        }
         if (!user) {
             return '';
         }
@@ -16996,10 +16720,7 @@ console.log(`isLinux: ${LINUX}`);
             (this.displayVRCPlusIconsAsAvatar && user.userIcon)
         ) {
             if (isIcon) {
-                const baseUrl = user.userIcon.replace('/file/', '/image/');
-                return user.userIcon.endsWith('/')
-                    ? `${baseUrl}${resolution}`
-                    : `${baseUrl}/${resolution}`;
+                return convertFileUrlToImageUrl(user.userIcon);
             }
             return user.userIcon;
         }
@@ -17007,8 +16728,8 @@ console.log(`isLinux: ${LINUX}`);
         if (user.profilePicOverrideThumbnail) {
             if (isIcon) {
                 return user.profilePicOverrideThumbnail.replace(
-                    '256',
-                    resolution
+                    '/256',
+                    `/${resolution}`
                 );
             }
             return user.profilePicOverrideThumbnail;
@@ -17022,21 +16743,15 @@ console.log(`isLinux: ${LINUX}`);
         if (user.currentAvatarThumbnailImageUrl) {
             if (isIcon) {
                 return user.currentAvatarThumbnailImageUrl.replace(
-                    '256',
-                    resolution
+                    '/256',
+                    `/${resolution}`
                 );
             }
             return user.currentAvatarThumbnailImageUrl;
         }
         if (user.currentAvatarImageUrl) {
             if (isIcon) {
-                const baseUrl = user.currentAvatarImageUrl.replace(
-                    '/file/',
-                    '/image/'
-                );
-                const url = baseUrl.split('/');
-                url[url.length - 1] = resolution;
-                return url.join('/');
+                return convertFileUrlToImageUrl(user.currentAvatarImageUrl);
             }
             return user.currentAvatarImageUrl;
         }
@@ -20403,6 +20118,38 @@ console.log(`isLinux: ${LINUX}`);
             'update:avatar-import-dialog-input': (event) =>
                 (this.avatarImportDialogInput = event),
             'add-local-avatar-favorite': this.addLocalAvatarFavorite
+        };
+    };
+
+    $app.computed.launchDialogBind = function () {
+        return {
+            'check-can-invite': this.checkCanInvite,
+            'launch-dialog-data': this.launchDialogData,
+            'hide-tooltips': this.hideTooltips,
+            'get-launch-u-r-l': this.getLaunchURL
+        };
+    };
+
+    $app.computed.launchDialogEvent = function () {
+        return {
+            'update:launch-dialog-data': (event) =>
+                (this.launchDialogData = event),
+            'launch-game': this.launchGame
+        };
+    };
+
+    $app.computed.newInstanceDialogBind = function () {
+        return {
+            'new-instance-dialog-location-tag':
+                this.newInstanceDialogLocationTag,
+            'create-new-instance': this.createNewInstance,
+            'instance-content-settings': this.instanceContentSettings,
+            'offline-friends': this.offlineFriends,
+            'active-friends': this.activeFriends,
+            'online-friends': this.onlineFriends,
+            'vip-friends': this.vipFriends,
+            'get-launch-u-r-l': this.getLaunchURL,
+            'has-group-permission': this.hasGroupPermission
         };
     };
 

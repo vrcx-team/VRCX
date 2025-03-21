@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueMarkdown from 'vue-markdown';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { userRequest } from './request';
+import { instanceRequest, userRequest } from './request';
+import utils from './utils';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -56,7 +57,26 @@ export default class extends baseClass {
                         : 'none';
                 },
                 confirm() {
-                    $app.selfInvite(this.location, this.shortname);
+                    this.selfInvite(this.location, this.shortname);
+                },
+                selfInvite(location, shortName) {
+                    const L = utils.parseLocation(location);
+                    if (!L.isRealInstance) {
+                        return;
+                    }
+                    instanceRequest
+                        .selfInvite({
+                            instanceId: L.instanceId,
+                            worldId: L.worldId,
+                            shortName
+                        })
+                        .then((args) => {
+                            this.$message({
+                                message: 'Self invite sent',
+                                type: 'success'
+                            });
+                            return args;
+                        });
                 }
             },
             watch: {

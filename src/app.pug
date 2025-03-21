@@ -92,9 +92,6 @@ doctype html
     include ./mixins/dialogs/images.pug
     +images
 
-    include ./mixins/dialogs/newInstance.pug
-    +newInstance
-
     include ./mixins/dialogs/feedFilters.pug
     +feedFilters
 
@@ -136,5 +133,9 @@ doctype html
     world-import-dialog(v-bind='worldImportDialogBind' v-on='worldImportDialogEvent')
 
     avatar-import-dialog(v-bind='avatarImportDialogBind' v-on='avatarImportDialogEvent')
+
+    launch-dialog(v-bind='launchDialogBind' v-on='launchDialogEvent')
+
+    new-instance-dialog(v-bind='newInstanceDialogBind')
 
     //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")
