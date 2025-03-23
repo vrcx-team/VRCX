@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Cookie = System.Net.Cookie;
 using NLog;
+using SixLabors.ImageSharp;
 using Timer = System.Threading.Timer;
 
 #if !LINUX
@@ -342,6 +343,19 @@ namespace VRCX
         
         private static async Task PrintImageUpload(HttpWebRequest request, IDictionary<string, object> options)
         {
+            if (options.TryGetValue("cropWhiteBorder", out var cropWhiteBorder) && (bool)cropWhiteBorder)
+            {
+                var oldImageData = options["imageData"] as string;
+                var ms = new MemoryStream(Convert.FromBase64String(oldImageData));
+                var print = await Image.LoadAsync(ms);
+                if (Program.AppApiInstance.CropPrint(ref print))
+                {
+                    var ms2 = new MemoryStream();
+                    await print.SaveAsPngAsync(ms2);
+                    options["imageData"] = Convert.ToBase64String(ms2.ToArray());
+                }
+            }
+            
             if (ProxySet)
                 request.Proxy = Proxy;
 

@@ -288,7 +288,7 @@ mixin groupDialog
                             style='font-size: 12px; font-weight: bold; margin: 5px') {{ $t('dialog.group.info.instances') }}
                         div(v-for='room in groupDialog.instances' :key='room.tag' style='width: 100%')
                             div(style='margin: 5px 0')
-                                location(:location='room.tag')
+                                location(:location='room.tag' style='display: inline-block')
                                 el-tooltip(placement='top' content='Invite yourself' :disabled='hideTooltips')
                                     invite-yourself(:location='room.tag' style='margin-left: 5px')
                                 el-tooltip(placement='top' content='Refresh player count' :disabled='hideTooltips')

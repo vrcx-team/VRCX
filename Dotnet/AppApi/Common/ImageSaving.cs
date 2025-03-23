@@ -204,17 +204,25 @@ namespace VRCX
             var ms = new MemoryStream(bytes);
             var print = await Image.LoadAsync(ms);
             // validation step to ensure image is actually a print
-            if (print.Width != 2048 || print.Height != 1440)
+            if (!CropPrint(ref print))
                 return false;
-         
-            var point = new Point(64, 69);
-            var size = new Size(1920, 1080);
-            var rectangle = new Rectangle(point, size);
-            print.Mutate(x => x.Crop(rectangle));
+            
             await print.SaveAsPngAsync(tempPath);
             if (ScreenshotHelper.HasTXt(path))
                 ScreenshotHelper.CopyTXt(path, tempPath);
             File.Move(tempPath, path, true);
+            return true;
+        }
+        
+        public bool CropPrint(ref Image image)
+        {
+            if (image.Width != 2048 || image.Height != 1440)
+                return false;
+            
+            var point = new Point(64, 69);
+            var size = new Size(1920, 1080);
+            var rectangle = new Rectangle(point, size);
+            image.Mutate(x => x.Crop(rectangle));
             return true;
         }
         

@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueMarkdown from 'vue-markdown';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { userRequest } from './request';
+import { instanceRequest, userRequest } from './request';
+import utils from './utils';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -56,7 +57,26 @@ export default class extends baseClass {
                         : 'none';
                 },
                 confirm() {
-                    $app.selfInvite(this.location, this.shortname);
+                    this.selfInvite(this.location, this.shortname);
+                },
+                selfInvite(location, shortName) {
+                    const L = utils.parseLocation(location);
+                    if (!L.isRealInstance) {
+                        return;
+                    }
+                    instanceRequest
+                        .selfInvite({
+                            instanceId: L.instanceId,
+                            worldId: L.worldId,
+                            shortName
+                        })
+                        .then((args) => {
+                            this.$message({
+                                message: 'Self invite sent',
+                                type: 'success'
+                            });
+                            return args;
+                        });
                 }
             },
             watch: {
@@ -210,7 +230,7 @@ export default class extends baseClass {
                 '<span><span style="color:#67c23a">Android: </span>{{ platforms.android }}</span></br>' +
                 '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
                 '<span v-if="queueEnabled">{{ $t("dialog.user.info.instance_queuing_enabled") }}</br></span>' +
-                '<span v-if="disabledContentSettings">{{ $t("dialog.user.info.instance_disabled_content_settings") }} {{ disabledContentSettings }}</br></span>' +
+                '<span v-if="disabledContentSettings">{{ $t("dialog.user.info.instance_disabled_content") }} {{ disabledContentSettings }}</br></span>' +
                 '<span v-if="userList.length">{{ $t("dialog.user.info.instance_users") }}</br></span>' +
                 '<template v-for="user in userList"><span style="cursor:pointer;margin-right:5px" @click="showUserDialog(user.id)" v-text="user.displayName"></span></template>' +
                 '</div>' +

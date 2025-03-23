@@ -4,7 +4,7 @@
         <span v-show="text">
             <span
                 :class="{ 'x-link': link && location !== 'private' && location !== 'offline' }"
-                @click="showWorldDialog">
+                @click="handleShowWorldDialog">
                 <i v-if="isTraveling" class="el-icon el-icon-loading" style="display: inline-block"></i>
                 <span>{{ text }}</span>
             </span>
@@ -26,7 +26,8 @@
             // not good idea, it's temporary
             API: { default: window.API },
             getWorldName: { default: window.$app?.getWorldName },
-            getGroupName: { default: window.$app?.getGroupName }
+            getGroupName: { default: window.$app?.getGroupName },
+            showWorldDialog: { default: window.$app?.showWorldDialog }
         },
         props: {
             location: String,
@@ -122,7 +123,7 @@
                 }
                 this.strict = L.strict;
             },
-            showWorldDialog() {
+            handleShowWorldDialog() {
                 if (this.link) {
                     let instanceId = this.location;
                     if (this.traveling && this.location === 'traveling') {
@@ -136,7 +137,7 @@
                     if (this.isOpenPreviousInstanceInfoDialog) {
                         this.$emit('open-previous-instance-info-dialog', instanceId);
                     } else {
-                        this.API.$emit('SHOW_WORLD_DIALOG', instanceId);
+                        this.showWorldDialog(instanceId);
                     }
                 }
             },

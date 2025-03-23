@@ -1188,7 +1188,8 @@ export default class extends baseClass {
                     json,
                     params
                 };
-                this.$emit('GROUP:ROLES', args);
+                // useless code?
+                // this.$emit('GROUP:ROLES', args);
                 return args;
             });
         };

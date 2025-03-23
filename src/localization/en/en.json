@@ -749,7 +749,7 @@
                 "instance_game_version": "Game Version:",
                 "last_join": "Last Join:",
                 "instance_queuing_enabled": "Queuing Enabled",
-                "instance_disabled_content_settings": "Disabled Content Settings:",
+                "instance_disabled_content": "Disabled Content:",
                 "instance_creator": "Instance Creator",
                 "note": "Note",
                 "note_placeholder": "Click to add a note",
@@ -1434,7 +1434,8 @@
             "emoji_animation_frame_count": "Frame Count:",
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
-            "note": "Note"
+            "note": "Note",
+            "crop_print_border": "Crop Print Border"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
