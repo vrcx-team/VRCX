@@ -4,6 +4,7 @@ import configRepository from '../repository/config.js';
 import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 import { userRequest } from './request';
+import dayjs from 'dayjs';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -168,7 +169,8 @@ export default class extends baseClass {
                     if (typeof friendRef?.ref !== 'undefined') {
                         friendRef.ref.$joinCount++;
                         friendRef.ref.$lastSeen = new Date().toJSON();
-                        friendRef.ref.$timeSpent += Date.now() - ref.joinTime;
+                        friendRef.ref.$timeSpent +=
+                            dayjs(gameLog.dt) - ref.joinTime;
                         if (
                             this.sidebarSortMethods.includes(
                                 'Sort by Last Seen'
@@ -178,7 +180,7 @@ export default class extends baseClass {
                             this.sortOnlineFriends = true;
                         }
                     }
-                    var time = Date.now() - ref.joinTime;
+                    var time = dayjs(gameLog.dt) - ref.joinTime;
                     this.lastLocation.playerList.delete(userId);
                     this.lastLocation.friendList.delete(userId);
                     this.photonLobbyAvatars.delete(userId);

@@ -2062,3 +2062,9 @@ i.x-user-status {
     background-size: 400% 100%;
     animation: el-skeleton-loading 1.4s ease infinite;
 }
+.el-table .el-table__body-wrapper .el-table__row .cell > span {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

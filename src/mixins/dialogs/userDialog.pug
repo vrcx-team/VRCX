@@ -477,7 +477,7 @@ mixin userDialog
                             .detail
                                 span.name {{ $t('dialog.user.info.bio') }}
                                 pre.extra(
-                                    style='font-family: inherit; font-size: 12px; white-space: pre-wrap; margin: 0 0.5em 0 0') {{ userDialog.ref.bio || '-' }}
+                                    style='font-family: inherit; font-size: 12px; white-space: pre-wrap; margin: 0 0.5em 0 0; max-height: 40vh; overflow-y: auto') {{ userDialog.ref.bio || '-' }}
                                 div(v-if='userDialog.id === API.currentUser.id' style='float: right')
                                     el-button(
                                         type='text'
