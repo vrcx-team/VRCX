@@ -74,7 +74,9 @@
             "search_placeholder": "検索",
             "clear_results_tooltip": "検索結果を消去",
             "user": {
-                "header": "ユーザー"
+                "header": "ユーザー",
+                "search_by_bio": "自己紹介から検索",
+                "sort_by_last_logged_in": "最後にログインした順で並び替え"
             },
             "world": {
                 "header": "ワールド",
@@ -202,6 +204,9 @@
                 },
                 "instance": {
                     "closed": "閉じたインスタンス"
+                },
+                "badge": {
+                    "earned": "獲得したバッジ"
                 }
             }
         },
@@ -567,6 +572,13 @@
                         "enable_tooltip": "使用するにはSteamVRオーバーレイが必要です。",
                         "dance_world_only": "ダンスワールドのみ"
                     },
+                    "launch_commands": {
+                        "header": "VRCXの起動コマンド (Deep Links)",
+                        "docs": "起動コマンドドキュメント",
+                        "show_confirmation_on_switch_avatar_enable": "アバターの切り替え時に確認ダイアログを表示",
+                        "show_confirmation_on_switch_avatar_tooltip": "無効の場合、アバターの切り替え時にVRCXが確認を求める事はありません。",
+                        "website_userscript": "VRC WebサイトUserscript"
+                    },
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
                         "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内にいたプレイヤー」を保存します。",
@@ -674,7 +686,7 @@
                 "active": "アクティブ",
                 "offline": "オフライン",
                 "online": "オンライン",
-                "join_me": "参加歓迎",
+                "join_me": "だれでもおいで",
                 "ask_me": "きいてみてね",
                 "busy": "取り込み中"
             },
@@ -737,6 +749,7 @@
                 "instance_game_version": "ゲームバージョン:",
                 "last_join": "最後のJoin:",
                 "instance_queuing_enabled": "待機列使用可能",
+                "instance_disabled_content": "無効なコンテンツ:",
                 "instance_creator": "インスタンス作成者",
                 "note": "ノート (VRChat)",
                 "note_placeholder": "クリックしてノートを追加",
@@ -773,7 +786,8 @@
                 "instance_closed": "閉じられました",
                 "instance_hard_closed": "hard closed",
                 "close_instance": "インスタンスを閉じる",
-                "instance_age_gated": "年齢制限あり"
+                "instance_age_gated": "年齢制限あり",
+                "open_previouse_instance": "前回のインスタンスを開く"
             },
             "groups": {
                 "header": "グループ",
@@ -820,7 +834,8 @@
                 "sort_by_update": "更新順",
                 "all": "全て",
                 "public": "パブリック",
-                "private": "プライベート"
+                "private": "プライベート",
+                "group_by": "グループ:"
             },
             "json": {
                 "header": "JSON"
@@ -832,7 +847,6 @@
                 "private": "プライベート",
                 "avatar_scaling_disabled": "アバタースケーリング 使用不可",
                 "focus_view_disabled": "フォーカスビュー 使用不可",
-                "stickers_disabled": "ステッカー 使用不可",
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ",
@@ -934,6 +948,7 @@
                 "favorite_tooltip": "お気に入り",
                 "unfavorite_tooltip": "お気に入りから削除",
                 "refresh": "更新",
+                "share": "共有",
                 "select": "アバターを使用",
                 "select_fallback": "フォールバックアバターを使用",
                 "block": "アバターをブロック",
@@ -1044,7 +1059,7 @@
                 "header": "メンバー",
                 "all_members": "全員",
                 "friends_only": "フレンドのみ",
-                "load_more": "もっと見る...",
+                "load_more": "更に表示",
                 "sort_by": "ソート順:",
                 "sorting": {
                     "user_id": "ユーザーID (登順)",
@@ -1127,6 +1142,13 @@
             "region_use": "アメリカ(東)",
             "region_eu": "ヨーロッパ",
             "region_jp": "日本",
+            "content_settings": "コンテンツ設定",
+            "content_placeholder": "有効なコンテンツ",
+            "content_emoji": "絵文字",
+            "content_stickers": "ステッカー",
+            "content_pedestals": "ペデスタル",
+            "content_prints": "プリント",
+            "content_drones": "ドローン",
             "world_id": "ワールドID",
             "instance_id": "インスタンスID",
             "instance_id_placeholder": "ランダム",
@@ -1193,7 +1215,6 @@
             "header": "ワールドのタグを設定",
             "avatar_scaling_disabled": "アバタースケーリングを無効化",
             "focus_view_disabled": "フォーカスビューを無効化",
-            "stickers_disabled": "ステッカーを無効化",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "author_tags": "タグ (コンマ区切り)",
             "content_tags": "コンテンツ タグ (コンマ区切り)",
@@ -1202,6 +1223,7 @@
             "content_violence": "写実的な暴力",
             "content_adult": "成人向けの言葉やテーマ",
             "content_sex": "性的なものを思わせる",
+            "default_content_settings": "デフォルトコンテンツ設定",
             "cancel": "キャンセル",
             "save": "保存"
         },
@@ -1259,7 +1281,7 @@
         "shared_feed_filters": {
             "notification": "通知フィルター",
             "wrist": "手首のフィードオーバーレイ",
-            "on": "On",
+            "on": "オン",
             "off": "オフ",
             "favorite": "お気に入り",
             "friends": "フレンド",
@@ -1412,7 +1434,8 @@
             "emoji_animation_frame_count": "フレーム数:",
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "アニメーション絵文字として使用する1024x1024pxのPNGスプライトシート画像を選択 (最大 64FPS)",
-            "note": "ノート"
+            "note": "ノート",
+            "crop_print_border": "Crop Print Border"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
