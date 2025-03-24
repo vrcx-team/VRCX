@@ -22,18 +22,20 @@
                     :key="ref.instance.id"
                     class="x-friend-item"
                     @click="$emit('show-group-dialog', ref.instance.ownerId)">
-                    <div class="avatar">
-                        <img v-lazy="ref.group.iconUrl" />
-                    </div>
-                    <div class="detail">
-                        <span class="name">
-                            <span v-text="ref.group.name"></span>
-                            <span style="font-weight: normal; margin-left: 5px"
-                                >({{ ref.instance.userCount }}/{{ ref.instance.capacity }})</span
-                            >
-                        </span>
-                        <location class="extra" :location="ref.instance.location" :link="false" />
-                    </div>
+                    <template v-if="isAgeGatedInstancesVisible || !(ref.ageGate || ref.location?.includes('~ageGate'))">
+                        <div class="avatar">
+                            <img v-lazy="getSmallGroupIconUrl(ref.group.iconUrl)" />
+                        </div>
+                        <div class="detail">
+                            <span class="name">
+                                <span v-text="ref.group.name"></span>
+                                <span style="font-weight: normal; margin-left: 5px"
+                                    >({{ ref.instance.userCount }}/{{ ref.instance.capacity }})</span
+                                >
+                            </span>
+                            <location class="extra" :location="ref.instance.location" :link="false" />
+                        </div>
+                    </template>
                 </div>
             </template>
         </template>
@@ -42,6 +44,7 @@
 
 <script>
     import Location from '../common/Location.vue';
+    import utils from '../../classes/utils';
 
     export default {
         name: 'GroupsSidebar',
@@ -56,6 +59,10 @@
             groupOrder: {
                 type: Array,
                 default: () => []
+            },
+            isAgeGatedInstancesVisible: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
@@ -89,6 +96,9 @@
             }
         },
         methods: {
+            getSmallGroupIconUrl(url) {
+                return utils.convertFileUrlToImageUrl(url);
+            },
             toggleGroupSidebarCollapse(groupId) {
                 this.groupInstancesCfg[groupId].isCollapsed = !this.groupInstancesCfg[groupId].isCollapsed;
             },

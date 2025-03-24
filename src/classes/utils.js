@@ -402,5 +402,24 @@ export default {
             }
         }
         return false;
+    },
+    convertFileUrlToImageUrl(url, resolution = 128) {
+        /**
+         * possible patterns?
+         * /file/file_fileId/version
+         * /file/file_fileId/version/
+         * /file/file_fileId/version/file
+         * /file/file_fileId/version/file/
+         */
+        const pattern = /file\/file_([a-f0-9-]+)\/(\d+)(\/file)?\/?$/;
+        const match = url.match(pattern);
+
+        if (match) {
+            const fileId = match[1];
+            const version = match[2];
+            return `https://api.vrchat.cloud/api/1/image/file_${fileId}/${version}/${resolution}`;
+        }
+        // no match return origin url
+        return url;
     }
 };

@@ -273,6 +273,10 @@ mixin settingsTab
                         :label='$t("view.settings.appearance.appearance.tooltips")'
                         :value='!hideTooltips'
                         @change='saveOpenVROption("VRCX_hideTooltips")')
+                    simple-switch(
+                        :label='$t("view.settings.appearance.appearance.age_gated_instances")'
+                        :value='isAgeGatedInstancesVisible'
+                        @change='toggleIsAgeGatedInstancesVisible')
                     .options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.sort_favorite_by') }}
                         el-radio-group(v-model='sortFavorites' @change='saveSortFavoritesOption')

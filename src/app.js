@@ -6908,6 +6908,21 @@ console.log(`isLinux: ${LINUX}`);
         );
     }
     $app.data.pendingOfflineDelay = 180000;
+
+    // It's a mess, but it'll be fine afterward with the state manager
+    $app.data.isAgeGatedInstancesVisible = await configRepository.getBool(
+        'VRCX_isAgeGatedInstancesVisible',
+        true
+    );
+
+    $app.methods.toggleIsAgeGatedInstancesVisible = function () {
+        this.isAgeGatedInstancesVisible = !this.isAgeGatedInstancesVisible;
+        configRepository.setBool(
+            'VRCX_isAgeGatedInstancesVisible',
+            this.isAgeGatedInstancesVisible
+        );
+    };
+
     if (await configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
         var avatarRemoteDatabaseProvider = await configRepository.getString(
@@ -16694,25 +16709,6 @@ console.log(`isLinux: ${LINUX}`);
         resolution = '128',
         isUserDialogIcon = false
     ) {
-        function convertFileUrlToImageUrl(url) {
-            /**
-             * possible patterns?
-             * /file/file_fileId/version
-             * /file/file_fileId/version/
-             * /file/file_fileId/version/file
-             * /file/file_fileId/version/file/
-             */
-            const pattern = /file\/file_([a-f0-9-]+)\/(\d+)(\/file)?\/?$/;
-            const match = url.match(pattern);
-
-            if (match) {
-                const fileId = match[1];
-                const version = match[2];
-                return `https://api.vrchat.cloud/api/1/image/file_${fileId}/${version}/${resolution}`;
-            }
-            // return /image/file_fileId url?
-            return url;
-        }
         if (!user) {
             return '';
         }
@@ -16721,7 +16717,7 @@ console.log(`isLinux: ${LINUX}`);
             (this.displayVRCPlusIconsAsAvatar && user.userIcon)
         ) {
             if (isIcon) {
-                return convertFileUrlToImageUrl(user.userIcon);
+                return $utils.convertFileUrlToImageUrl(user.userIcon);
             }
             return user.userIcon;
         }
@@ -16752,7 +16748,9 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (user.currentAvatarImageUrl) {
             if (isIcon) {
-                return convertFileUrlToImageUrl(user.currentAvatarImageUrl);
+                return $utils.convertFileUrlToImageUrl(
+                    user.currentAvatarImageUrl
+                );
             }
             return user.currentAvatarImageUrl;
         }
@@ -19908,12 +19906,8 @@ console.log(`isLinux: ${LINUX}`);
         );
     };
 
-    $app.methods.getSmallThumbnailUrl = function (url, resolution = 128) {
-        return (
-            url
-                ?.replace('/file/', '/image/')
-                .replace('/1/file', `/1/${resolution}`) || url
-        );
+    $app.methods.getSmallThumbnailUrl = function (url) {
+        return $utils.convertFileUrlToImageUrl(url);
     };
 
     // #endregion
@@ -19975,7 +19969,8 @@ console.log(`isLinux: ${LINUX}`);
             groupInstances: this.groupInstances,
             inGameGroupOrder: this.inGameGroupOrder,
             groupedByGroupKeyFavoriteFriends:
-                this.groupedByGroupKeyFavoriteFriends
+                this.groupedByGroupKeyFavoriteFriends,
+            isAgeGatedInstancesVisible: this.isAgeGatedInstancesVisible
         };
     };
 

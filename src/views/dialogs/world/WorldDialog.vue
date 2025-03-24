@@ -325,103 +325,106 @@
                         }}
                     </div>
                     <div v-for="room in worldDialog.rooms" :key="room.id">
-                        <div style="margin: 5px 0">
-                            <location-world
-                                :locationobject="room.$location"
-                                :currentuserid="API.currentUser.id"
-                                :worlddialogshortname="worldDialog.$location.shortName"
-                                @show-launch-dialog="showLaunchDialog" />
-                            <launch
-                                :location="room.tag"
-                                style="margin-left: 5px"
-                                @show-launch-dialog="showLaunchDialog" />
-                            <el-tooltip
-                                placement="top"
-                                :content="$t('dialog.world.instances.self_invite_tooltip')"
-                                :disabled="hideTooltips">
-                                <invite-yourself
-                                    :location="room.$location.tag"
-                                    :shortname="room.$location.shortName"
-                                    style="margin-left: 5px" />
-                            </el-tooltip>
-                            <el-tooltip
-                                placement="top"
-                                :content="$t('dialog.world.instances.refresh_instance_info')"
-                                :disabled="hideTooltips">
-                                <el-button
-                                    size="mini"
-                                    icon="el-icon-refresh"
+                        <template
+                            v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">
+                            <div style="margin: 5px 0">
+                                <location-world
+                                    :locationobject="room.$location"
+                                    :currentuserid="API.currentUser.id"
+                                    :worlddialogshortname="worldDialog.$location.shortName"
+                                    @show-launch-dialog="showLaunchDialog" />
+                                <launch
+                                    :location="room.tag"
                                     style="margin-left: 5px"
-                                    circle
-                                    @click="refreshInstancePlayerCount(room.tag)" />
-                            </el-tooltip>
-                            <el-tooltip
-                                v-if="instanceJoinHistory.get(room.$location.tag)"
-                                placement="top"
-                                :content="$t('dialog.previous_instances.info')"
-                                :disabled="hideTooltips">
-                                <el-button
-                                    size="mini"
-                                    icon="el-icon-s-data"
-                                    style="margin-left: 5px"
-                                    plain
-                                    circle
-                                    @click="showPreviousInstanceInfoDialog(room.location)" />
-                            </el-tooltip>
-                            <last-join :location="room.$location.tag" :currentlocation="lastLocation.location" />
-                            <instance-info
-                                :location="room.tag"
-                                :instance="room.ref"
-                                :friendcount="room.friendCount"
-                                :updateelement="updateInstanceInfo" />
-                            <div
-                                v-if="room.$location.userId || room.users.length"
-                                class="x-friend-list"
-                                style="margin: 10px 0; max-height: unset">
+                                    @show-launch-dialog="showLaunchDialog" />
+                                <el-tooltip
+                                    placement="top"
+                                    :content="$t('dialog.world.instances.self_invite_tooltip')"
+                                    :disabled="hideTooltips">
+                                    <invite-yourself
+                                        :location="room.$location.tag"
+                                        :shortname="room.$location.shortName"
+                                        style="margin-left: 5px" />
+                                </el-tooltip>
+                                <el-tooltip
+                                    placement="top"
+                                    :content="$t('dialog.world.instances.refresh_instance_info')"
+                                    :disabled="hideTooltips">
+                                    <el-button
+                                        size="mini"
+                                        icon="el-icon-refresh"
+                                        style="margin-left: 5px"
+                                        circle
+                                        @click="refreshInstancePlayerCount(room.tag)" />
+                                </el-tooltip>
+                                <el-tooltip
+                                    v-if="instanceJoinHistory.get(room.$location.tag)"
+                                    placement="top"
+                                    :content="$t('dialog.previous_instances.info')"
+                                    :disabled="hideTooltips">
+                                    <el-button
+                                        size="mini"
+                                        icon="el-icon-s-data"
+                                        style="margin-left: 5px"
+                                        plain
+                                        circle
+                                        @click="showPreviousInstanceInfoDialog(room.location)" />
+                                </el-tooltip>
+                                <last-join :location="room.$location.tag" :currentlocation="lastLocation.location" />
+                                <instance-info
+                                    :location="room.tag"
+                                    :instance="room.ref"
+                                    :friendcount="room.friendCount"
+                                    :updateelement="updateInstanceInfo" />
                                 <div
-                                    v-if="room.$location.userId"
-                                    class="x-friend-item x-friend-item-border"
-                                    @click="showUserDialog(room.$location.userId)">
-                                    <template v-if="room.$location.user">
-                                        <div class="avatar" :class="userStatusClass(room.$location.user)">
-                                            <img v-lazy="userImage(room.$location.user, true)" />
+                                    v-if="room.$location.userId || room.users.length"
+                                    class="x-friend-list"
+                                    style="margin: 10px 0; max-height: unset">
+                                    <div
+                                        v-if="room.$location.userId"
+                                        class="x-friend-item x-friend-item-border"
+                                        @click="showUserDialog(room.$location.userId)">
+                                        <template v-if="room.$location.user">
+                                            <div class="avatar" :class="userStatusClass(room.$location.user)">
+                                                <img v-lazy="userImage(room.$location.user, true)" />
+                                            </div>
+                                            <div class="detail">
+                                                <span
+                                                    class="name"
+                                                    :style="{ color: room.$location.user.$userColour }"
+                                                    v-text="room.$location.user.displayName" />
+                                                <span class="extra">
+                                                    {{ $t('dialog.world.instances.instance_creator') }}
+                                                </span>
+                                            </div>
+                                        </template>
+                                        <span v-else v-text="room.$location.userId" />
+                                    </div>
+                                    <div
+                                        v-for="user in room.users"
+                                        :key="user.id"
+                                        class="x-friend-item x-friend-item-border"
+                                        @click="showUserDialog(user.id)">
+                                        <div class="avatar" :class="userStatusClass(user)">
+                                            <img v-lazy="userImage(user, true)" />
                                         </div>
                                         <div class="detail">
                                             <span
                                                 class="name"
-                                                :style="{ color: room.$location.user.$userColour }"
-                                                v-text="room.$location.user.displayName" />
-                                            <span class="extra">
-                                                {{ $t('dialog.world.instances.instance_creator') }}
+                                                :style="{ color: user.$userColour }"
+                                                v-text="user.displayName" />
+                                            <span v-if="user.location === 'traveling'" class="extra">
+                                                <i class="el-icon-loading" style="margin-right: 5px" />
+                                                <timer :epoch="user.$travelingToTime" />
+                                            </span>
+                                            <span v-else class="extra">
+                                                <timer :epoch="user.$location_at" />
                                             </span>
                                         </div>
-                                    </template>
-                                    <span v-else v-text="room.$location.userId" />
-                                </div>
-                                <div
-                                    v-for="user in room.users"
-                                    :key="user.id"
-                                    class="x-friend-item x-friend-item-border"
-                                    @click="showUserDialog(user.id)">
-                                    <div class="avatar" :class="userStatusClass(user)">
-                                        <img v-lazy="userImage(user, true)" />
-                                    </div>
-                                    <div class="detail">
-                                        <span
-                                            class="name"
-                                            :style="{ color: user.$userColour }"
-                                            v-text="user.displayName" />
-                                        <span v-if="user.location === 'traveling'" class="extra">
-                                            <i class="el-icon-loading" style="margin-right: 5px" />
-                                            <timer :epoch="user.$travelingToTime" />
-                                        </span>
-                                        <span v-else class="extra">
-                                            <timer :epoch="user.$location_at" />
-                                        </span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('dialog.world.info.header')" lazy>
@@ -756,8 +759,9 @@
             isGameRunning: Boolean,
             lastLocation: Object,
             instanceJoinHistory: Map,
+            isAgeGatedInstancesVisible: Boolean,
 
-            // ok
+            // TODO: Remove
             updateInstanceInfo: Number
         },
         data() {
