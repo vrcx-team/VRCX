@@ -404,6 +404,9 @@ export default {
         return false;
     },
     convertFileUrlToImageUrl(url, resolution = 128) {
+        if (!url) {
+            return '';
+        }
         /**
          * possible patterns?
          * /file/file_fileId/version
