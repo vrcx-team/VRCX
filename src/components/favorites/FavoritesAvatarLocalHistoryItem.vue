@@ -46,7 +46,7 @@
 <script>
     export default {
         name: 'FavoritesAvatarLocalHistoryItem',
-        inject: ['API'],
+        inject: ['API', 'showFavoriteDialog'],
         props: {
             favorite: {
                 type: Object,
@@ -62,9 +62,6 @@
         methods: {
             selectAvatarWithConfirmation() {
                 this.$emit('select-avatar-with-confirmation', this.favorite.id);
-            },
-            showFavoriteDialog() {
-                this.$emit('show-favorite-dialog', 'avatar', this.favorite.id);
             }
         }
     };

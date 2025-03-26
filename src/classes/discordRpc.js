@@ -76,7 +76,7 @@ export default class extends baseClass {
                     }
                     switch (L.accessType) {
                         case 'public':
-                            L.joinUrl = this.getLaunchURL(L);
+                            L.joinUrl = $utils.getLaunchURL(L);
                             L.accessName = `Public #${L.instanceName} (${platform})`;
                             break;
                         case 'invite+':

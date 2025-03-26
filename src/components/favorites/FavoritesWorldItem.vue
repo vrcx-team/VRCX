@@ -81,7 +81,7 @@
                             circle
                             style="margin-left: 5px"
                             type="default"
-                            @click.stop="showFavoriteDialog(favorite.id)"></el-button>
+                            @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                     </el-tooltip>
                 </template>
                 <el-tooltip
@@ -103,7 +103,7 @@
                         circle
                         style="margin-left: 5px"
                         type="default"
-                        @click.stop="showFavoriteDialog(favorite.id)"></el-button>
+                        @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                 </el-tooltip>
             </template>
             <template v-else>
@@ -133,7 +133,7 @@
 
     export default {
         name: 'FavoritesWorldItem',
-        inject: ['API'],
+        inject: ['API', 'showFavoriteDialog'],
         props: {
             group: [Object, String],
             favorite: Object,
@@ -225,9 +225,6 @@
                         }
                         return args;
                     });
-            },
-            showFavoriteDialog(favoriteId) {
-                this.$emit('show-favorite-dialog', 'world', favoriteId);
             }
         }
     };

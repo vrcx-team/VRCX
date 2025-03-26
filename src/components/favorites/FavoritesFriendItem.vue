@@ -87,7 +87,7 @@
     import { favoriteRequest } from '../../classes/request';
     export default {
         components: { Location },
-        inject: ['showUserDialog', 'userImage', 'userStatusClass', 'API'],
+        inject: ['showUserDialog', 'userImage', 'userStatusClass', 'API', 'showFavoriteDialog'],
         props: {
             favorite: {
                 type: Object,
@@ -138,9 +138,6 @@
                 //         }
                 //     }
                 // });
-            },
-            showFavoriteDialog(param1, param2) {
-                this.$emit('show-favorite-dialog', param1, param2);
             }
         }
     };

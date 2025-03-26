@@ -67,7 +67,7 @@
             {{ $t('dialog.launch.start_as_desktop') }}
         </el-checkbox>
         <template slot="footer">
-            <el-button size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)">
+            <el-button size="small" @click="showPreviousInstancesInfoDialog(launchDialog.location)">
                 {{ $t('dialog.launch.info') }}
             </el-button>
             <el-button
@@ -98,7 +98,7 @@
             'beforeDialogClose',
             'dialogMouseDown',
             'dialogMouseUp',
-            'showPreviousInstanceInfoDialog',
+            'showPreviousInstancesInfoDialog',
             'showInviteDialog',
             'adjustDialogZ'
         ],
@@ -106,10 +106,6 @@
             hideTooltips: Boolean,
             launchDialogData: { type: Object, required: true },
             checkCanInvite: {
-                type: Function,
-                required: true
-            },
-            getLaunchURL: {
                 type: Function,
                 required: true
             }
@@ -182,7 +178,7 @@
                 } else {
                     D.location = L.worldId;
                 }
-                D.url = this.getLaunchURL(L);
+                D.url = utils.getLaunchURL(L);
                 if (!shortName) {
                     const res = await instanceRequest.getInstanceShortName({
                         worldId: L.worldId,
@@ -197,14 +193,14 @@
                     if (resLocation === this.launchDialog.tag) {
                         const resShortName = res.json.shortName;
                         const secureOrShortName = res.json.shortName || res.json.secureName;
-                        const parsedL = utils.parseLocation(location);
+                        const parsedL = utils.parseLocation(resLocation);
                         parsedL.shortName = resShortName;
                         this.launchDialog.shortName = resShortName;
                         this.launchDialog.secureOrShortName = secureOrShortName;
                         if (resShortName) {
                             this.launchDialog.shortUrl = `https://vrch.at/${resShortName}`;
                         }
-                        this.launchDialog.url = this.getLaunchURL(parsedL);
+                        this.launchDialog.url = utils.getLaunchURL(parsedL);
                     }
                 }
             },

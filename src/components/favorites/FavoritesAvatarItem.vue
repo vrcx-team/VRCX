@@ -76,7 +76,7 @@
                             size="mini"
                             circle
                             style="margin-left: 5px"
-                            @click.stop="showFavoriteDialog"></el-button>
+                            @click.stop="showFavoriteDialog('avatar', favorite.id)"></el-button>
                     </el-tooltip>
                 </template>
                 <template v-else>
@@ -112,7 +112,7 @@
                         size="mini"
                         circle
                         style="margin-left: 5px"
-                        @click.stop="showFavoriteDialog"
+                        @click.stop="showFavoriteDialog('avatar', favorite.id)"
                 /></el-tooltip>
             </template>
             <template v-else>
@@ -136,7 +136,7 @@
 
     export default {
         name: 'FavoritesAvatarItem',
-        inject: ['API'],
+        inject: ['API', 'showFavoriteDialog'],
         props: {
             favorite: Object,
             group: [Object, String],
@@ -225,9 +225,6 @@
                 } else {
                     this.moveFavorite(this.favorite.ref, groupAPI, 'avatar');
                 }
-            },
-            showFavoriteDialog() {
-                this.$emit('show-favorite-dialog', 'avatar', this.favorite.id);
             },
             removeLocalAvatarFavorite() {
                 this.$emit('remove-local-avatar-favorite', this.favorite.id, this.group);

@@ -38,17 +38,10 @@ mixin notificationsTab
                         span {{ scope.row.created_at | formatDate('short') }}
             el-table-column(:label='$t("table.notification.type")' prop='type' width='180')
                 template(#default='scope')
-                    el-tooltip(v-if='scope.row.type === "invite"' placement='top')
-                        template(#content)
-                            location(
-                                v-if='scope.row.details'
-                                :location='scope.row.details.worldId'
-                                :hint='scope.row.details.worldName'
-                                :grouphint='scope.row.details.groupName'
-                                :link='false')
-                        span.x-link(
-                            v-text='$t("view.notification.filters." + scope.row.type)'
-                            @click='showWorldDialog(scope.row.details.worldId)')
+                    span.x-link(
+                        v-if='scope.row.type === "invite"'
+                        v-text='$t("view.notification.filters." + scope.row.type)'
+                        @click='showWorldDialog(scope.row.details.worldId)')
                     el-tooltip(
                         v-else-if='scope.row.type === "group.queueReady" || scope.row.type === "instance.closed"'
                         placement='top')

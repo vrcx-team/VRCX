@@ -5,6 +5,7 @@
         :visible.sync="newInstanceDialog.visible"
         :title="$t('dialog.new_instance.header')"
         width="650px"
+        append-to-body
         @mousedown.native="dialogMouseDown"
         @mouseup.native="dialogMouseUp">
         <el-tabs v-model="newInstanceDialog.selectedTab" type="card" @tab-click="newInstanceTabClick">
@@ -511,10 +512,6 @@
                 type: Function,
                 required: true
             },
-            getLaunchURL: {
-                type: Function,
-                required: true
-            },
             vipFriends: {
                 type: Array,
                 required: true
@@ -695,7 +692,7 @@
                 } else {
                     D.shortName = '';
                 }
-                D.url = this.getLaunchURL(L);
+                D.url = utils.getLaunchURL(L);
             },
             selfInvite(location) {
                 const L = utils.parseLocation(location);
@@ -854,7 +851,7 @@
                         this.updateNewInstanceDialog(true);
                     }
                 }
-                const newUrl = this.getLaunchURL(L);
+                const newUrl = utils.getLaunchURL(L);
                 this.copyToClipboard(newUrl);
             },
             async copyToClipboard(newUrl) {

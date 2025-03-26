@@ -66,12 +66,15 @@ import Location from './components/common/Location.vue';
 
 // dialogs
 import WorldDialog from './views/dialogs/world/WorldDialog.vue';
-import PreviousInstanceInfoDialog from './views/dialogs/previousInstances/PreviousInstanceInfoDialog.vue';
+import PreviousInstancesInfoDialog from './views/dialogs/previousInstances/PreviousInstancesInfoDialog.vue';
 import FriendImportDialog from './views/dialogs/favorites/FriendImportDialog.vue';
 import WorldImportDialog from './views/dialogs/favorites/WorldImportDialog.vue';
 import AvatarImportDialog from './views/dialogs/favorites/AvatarImportDialog.vue';
 import LaunchDialog from './views/dialogs/launch/LaunchDialog.vue';
-import NewInstanceDialog from './views/dialogs/newInstance/NewInstanceDialog.vue';
+import PreviousInstancesUserDialog from './views/dialogs/previousInstances/PreviousInstancesUserDialog.vue';
+import FavoriteDialog from './views/dialogs/favoritesDialog/FavoriteDialog.vue';
+import ExportFriendsListDialog from './views/dialogs/favoritesDialog/ExportFriendsListDialog.vue';
+import ExportAvatarsListDialog from './views/dialogs/favoritesDialog/ExportAvatarsListDialog.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -218,17 +221,20 @@ console.log(`isLinux: ${LINUX}`);
 
             // - dialogs
             //  - previous instances
-            PreviousInstanceInfoDialog,
+            PreviousInstancesInfoDialog,
+            PreviousInstancesUserDialog,
             //  - world
             WorldDialog,
             //  - favorites
             FriendImportDialog,
             WorldImportDialog,
             AvatarImportDialog,
+            //  - favorites dialog
+            FavoriteDialog,
+            ExportFriendsListDialog,
+            ExportAvatarsListDialog,
             //  - launch
-            LaunchDialog,
-            //  - new instance
-            NewInstanceDialog
+            LaunchDialog
         },
         provide() {
             return {
@@ -249,10 +255,12 @@ console.log(`isLinux: ${LINUX}`);
                 dialogMouseUp: this.dialogMouseUp,
                 showWorldDialog: this.showWorldDialog,
                 showAvatarDialog: this.showAvatarDialog,
-                showPreviousInstanceInfoDialog:
-                    this.showPreviousInstanceInfoDialog,
+                showPreviousInstancesInfoDialog:
+                    this.showPreviousInstancesInfoDialog,
                 showInviteDialog: this.showInviteDialog,
-                showLaunchDialog: this.showLaunchDialog
+                showLaunchDialog: this.showLaunchDialog,
+                showFavoriteDialog: this.showFavoriteDialog,
+                displayPreviousImages: this.displayPreviousImages
             };
         },
         el: '#root',
@@ -1133,7 +1141,11 @@ console.log(`isLinux: ${LINUX}`);
         ) {
             $app.applyGroupDialogInstances();
         }
-        // hacky workaround to force update instance info
+
+        // FIXME:
+        // because use $refs to update data, can not trigger vue's reactivity system, so view will not update
+        // will fix this when refactor the core code, maybe
+        // old comment: hacky workaround to force update instance info
         $app.updateInstanceInfo++;
     });
 
@@ -2787,90 +2799,16 @@ console.log(`isLinux: ${LINUX}`);
         }).show();
     };
 
-    $app.data.exportFriendsListDialog = false;
-    $app.data.exportFriendsListCsv = '';
-    $app.data.exportFriendsListJson = '';
+    $app.data.isExportFriendsListDialogVisible = false;
 
     $app.methods.showExportFriendsListDialog = function () {
-        var { friends } = API.currentUser;
-        if (Array.isArray(friends) === false) {
-            return;
-        }
-        var lines = ['UserID,DisplayName,Memo'];
-        var _ = function (str) {
-            if (/[\x00-\x1f,"]/.test(str) === true) {
-                return `"${str.replace(/"/g, '""')}"`;
-            }
-            return str;
-        };
-        var friendsList = [];
-        for (var userId of friends) {
-            var ref = this.friends.get(userId);
-            var name = (typeof ref !== 'undefined' && ref.name) || '';
-            var memo =
-                (typeof ref !== 'undefined' && ref.memo.replace(/\n/g, ' ')) ||
-                '';
-            lines.push(`${_(userId)},${_(name)},${_(memo)}`);
-            friendsList.push(userId);
-        }
-        this.exportFriendsListJson = JSON.stringify(
-            { friends: friendsList },
-            null,
-            4
-        );
-        this.exportFriendsListCsv = lines.join('\n');
-        this.exportFriendsListDialog = true;
+        this.isExportFriendsListDialogVisible = true;
     };
 
-    $app.data.exportAvatarsListDialog = false;
-    $app.data.exportAvatarsListCsv = '';
+    $app.data.isExportAvatarsListDialogVisible = false;
 
     $app.methods.showExportAvatarsListDialog = function () {
-        for (var ref of API.cachedAvatars.values()) {
-            if (ref.authorId === API.currentUser.id) {
-                API.cachedAvatars.delete(ref.id);
-            }
-        }
-        var params = {
-            n: 50,
-            offset: 0,
-            sort: 'updated',
-            order: 'descending',
-            releaseStatus: 'all',
-            user: 'me'
-        };
-        var map = new Map();
-        API.bulk({
-            fn: avatarRequest.getAvatars,
-            N: -1,
-            params,
-            handle: (args) => {
-                for (var json of args.json) {
-                    var $ref = API.cachedAvatars.get(json.id);
-                    if (typeof $ref !== 'undefined') {
-                        map.set($ref.id, $ref);
-                    }
-                }
-            },
-            done: () => {
-                var avatars = Array.from(map.values());
-                if (Array.isArray(avatars) === false) {
-                    return;
-                }
-                var lines = ['AvatarID,AvatarName'];
-                var _ = function (str) {
-                    if (/[\x00-\x1f,"]/.test(str) === true) {
-                        return `"${str.replace(/"/g, '""')}"`;
-                    }
-                    return str;
-                };
-                for (var avatar of avatars) {
-                    lines.push(`${_(avatar.id)},${_(avatar.name)}`);
-                }
-                this.exportAvatarsListCsv = lines.join('\n');
-                this.exportAvatarsListDialog = true;
-            }
-        });
+        this.isExportAvatarsListDialogVisible = true;
     };
 
     API.$on('USER:2FA', function () {
@@ -6489,7 +6427,7 @@ console.log(`isLinux: ${LINUX}`);
         var { notificationId } = args.params;
         $app.removeFromArray($app.unseenNotifications, notificationId);
         if ($app.unseenNotifications.length === 0) {
-            const item = this.$refs.menu.$children[0]?.items['notification'];
+            const item = $app.$refs.menu.$children[0]?.items['notification'];
             if (item) {
                 item.$el.classList.remove('notify');
             }
@@ -9507,13 +9445,6 @@ console.log(`isLinux: ${LINUX}`);
         return { pc, android, ios };
     };
 
-    $app.methods.replaceVrcPackageUrl = function (url) {
-        if (!url) {
-            return '';
-        }
-        return url.replace('https://api.vrchat.cloud/', 'https://vrchat.com/');
-    };
-
     $app.methods.selectCurrentInstanceRow = function (val) {
         if (val === null) {
             return;
@@ -10731,29 +10662,11 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         switch (command) {
-            case 'Refresh':
-                this.showWorldDialog(D.id);
-                break;
-            case 'New Instance':
-                this.showNewInstanceDialog(D.$location.tag);
-                break;
             case 'New Instance and Self Invite':
                 this.newInstanceSelfInvite(D.id);
                 break;
-            case 'Add Favorite':
-                this.showFavoriteDialog('world', D.id);
-                break;
             case 'Rename':
                 this.promptRenameWorld(D);
-                break;
-            case 'Change Image':
-                this.displayPreviousImages('World', 'Change');
-                break;
-            case 'Previous Images':
-                this.displayPreviousImages('World', 'Display');
-                break;
-            case 'Previous Instances':
-                this.showPreviousInstancesWorldDialog(D.ref);
                 break;
             case 'Change Description':
                 this.promptChangeWorldDescription(D);
@@ -10766,115 +10679,6 @@ console.log(`isLinux: ${LINUX}`);
                 break;
             case 'Change YouTube Preview':
                 this.promptChangeWorldYouTubePreview(D);
-                break;
-            case 'Change Tags':
-                this.showSetWorldTagsDialog();
-                break;
-            case 'Change Allowed Domains':
-                this.showWorldAllowedDomainsDialog();
-                break;
-            case 'Download Unity Package':
-                this.openExternalLink(
-                    this.replaceVrcPackageUrl(
-                        this.worldDialog.ref.unityPackageUrl
-                    )
-                );
-                break;
-            default:
-                this.$confirm(`Continue? ${command}`, 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action !== 'confirm') {
-                            return;
-                        }
-                        switch (command) {
-                            case 'Delete Favorite':
-                                favoriteRequest.deleteFavorite({
-                                    objectId: D.id
-                                });
-                                break;
-                            case 'Make Home':
-                                API.saveCurrentUser({
-                                    homeLocation: D.id
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Home world updated',
-                                        type: 'success'
-                                    });
-                                    return args;
-                                });
-                                break;
-                            case 'Reset Home':
-                                API.saveCurrentUser({
-                                    homeLocation: ''
-                                }).then((args) => {
-                                    this.$message({
-                                        message: 'Home world has been reset',
-                                        type: 'success'
-                                    });
-                                    return args;
-                                });
-                                break;
-                            case 'Publish':
-                                worldRequest
-                                    .publishWorld({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: 'World has been published',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Unpublish':
-                                worldRequest
-                                    .unpublishWorld({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message:
-                                                'World has been unpublished',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete Persistent Data':
-                                miscRequest
-                                    .deleteWorldPersistData({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message:
-                                                'Persistent data has been deleted',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete':
-                                worldRequest
-                                    .deleteWorld({
-                                        worldId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: 'World has been deleted',
-                                            type: 'success'
-                                        });
-                                        D.visible = false;
-                                        return args;
-                                    });
-                                break;
-                        }
-                    }
-                });
                 break;
         }
     };
@@ -11139,7 +10943,7 @@ console.log(`isLinux: ${LINUX}`);
                 this.showSetAvatarTagsDialog(D.id);
                 break;
             case 'Download Unity Package':
-                this.openExternalLink(
+                $utils.openExternalLink(
                     this.replaceVrcPackageUrl(
                         this.avatarDialog.ref.unityPackageUrl
                     )
@@ -11407,50 +11211,14 @@ console.log(`isLinux: ${LINUX}`);
         loading: false,
         type: '',
         objectId: '',
-        groups: [],
         currentGroup: {}
     };
 
-    API.$on('LOGOUT', function () {
-        $app.favoriteDialog.visible = false;
-    });
-
-    $app.methods.addFavorite = function (group) {
-        var D = this.favoriteDialog;
-        D.loading = true;
-        favoriteRequest
-            .addFavorite({
-                type: D.type,
-                favoriteId: D.objectId,
-                tags: group.name
-            })
-            .then(() => {
-                D.visible = false;
-                new Noty({
-                    type: 'success',
-                    text: 'Favorite added'
-                }).show();
-            })
-            .finally(() => {
-                D.loading = false;
-            });
-    };
-
     $app.methods.showFavoriteDialog = function (type, objectId) {
-        this.$nextTick(() => $app.adjustDialogZ(this.$refs.favoriteDialog.$el));
-        var D = this.favoriteDialog;
+        const D = this.favoriteDialog;
         D.type = type;
         D.objectId = objectId;
-        if (type === 'friend') {
-            D.groups = API.favoriteFriendGroups;
-            D.visible = true;
-        } else if (type === 'world') {
-            D.groups = API.favoriteWorldGroups;
-            D.visible = true;
-        } else if (type === 'avatar') {
-            D.groups = API.favoriteAvatarGroups;
-            D.visible = true;
-        }
+        D.visible = true;
         this.updateFavoriteDialog(objectId);
     };
 
@@ -11887,14 +11655,6 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
-    $app.data.newInstanceDialogLocationTag = '';
-
-    $app.methods.showNewInstanceDialog = async function (tag) {
-        // trigger watcher
-        this.newInstanceDialogLocationTag = '';
-        this.$nextTick(() => (this.newInstanceDialogLocationTag = tag));
-    };
-
     $app.methods.makeHome = function (tag) {
         this.$confirm('Continue? Make Home', 'Confirm', {
             confirmButtonText: 'Confirm',
@@ -11981,184 +11741,6 @@ console.log(`isLinux: ${LINUX}`);
         );
         var D = this.launchOptionsDialog;
         D.visible = true;
-    };
-
-    // #endregion
-    // #region | App: Set World Tags Dialog
-
-    $app.data.setWorldTagsDialog = {
-        visible: false,
-        authorTags: [],
-        contentTags: [],
-        debugAllowed: false,
-        avatarScalingDisabled: false,
-        focusViewDisabled: false,
-        contentHorror: false,
-        contentGore: false,
-        contentViolence: false,
-        contentAdult: false,
-        contentSex: false,
-        emoji: true,
-        stickers: true,
-        pedestals: true,
-        prints: true,
-        drones: true
-    };
-
-    $app.methods.showSetWorldTagsDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.setWorldTagsDialog.$el)
-        );
-        var D = this.setWorldTagsDialog;
-        D.visible = true;
-        D.debugAllowed = false;
-        D.avatarScalingDisabled = false;
-        D.focusViewDisabled = false;
-        D.contentHorror = false;
-        D.contentGore = false;
-        D.contentViolence = false;
-        D.contentAdult = false;
-        D.contentSex = false;
-        var oldTags = this.worldDialog.ref.tags;
-        var authorTags = [];
-        var contentTags = [];
-        oldTags.forEach((tag) => {
-            if (tag.startsWith('author_tag_')) {
-                authorTags.unshift(tag.substring(11));
-            }
-            if (tag.startsWith('content_')) {
-                contentTags.unshift(tag.substring(8));
-            }
-            switch (tag) {
-                case 'content_horror':
-                    D.contentHorror = true;
-                    break;
-                case 'content_gore':
-                    D.contentGore = true;
-                    break;
-                case 'content_violence':
-                    D.contentViolence = true;
-                    break;
-                case 'content_adult':
-                    D.contentAdult = true;
-                    break;
-                case 'content_sex':
-                    D.contentSex = true;
-                    break;
-
-                case 'debug_allowed':
-                    D.debugAllowed = true;
-                    break;
-                case 'feature_avatar_scaling_disabled':
-                    D.avatarScalingDisabled = true;
-                    break;
-                case 'feature_focus_view_disabled':
-                    D.focusViewDisabled = true;
-                    break;
-                case 'feature_emoji_disabled':
-                    D.emoji = false;
-                    break;
-                case 'feature_stickers_disabled':
-                    D.stickers = false;
-                    break;
-                case 'feature_pedestals_disabled':
-                    D.pedestals = false;
-                    break;
-                case 'feature_prints_disabled':
-                    D.prints = false;
-                    break;
-                case 'feature_drones_disabled':
-                    D.drones = false;
-                    break;
-            }
-        });
-        D.authorTags = authorTags.toString();
-        D.contentTags = contentTags.toString();
-    };
-
-    $app.methods.saveSetWorldTagsDialog = function () {
-        var D = this.setWorldTagsDialog;
-        var authorTags = D.authorTags.trim().split(',');
-        var contentTags = D.contentTags.trim().split(',');
-        var tags = [];
-        authorTags.forEach((tag) => {
-            if (tag) {
-                tags.unshift(`author_tag_${tag}`);
-            }
-        });
-        // add back custom tags
-        contentTags.forEach((tag) => {
-            switch (tag) {
-                case 'horror':
-                case 'gore':
-                case 'violence':
-                case 'adult':
-                case 'sex':
-                case '':
-                    break;
-                default:
-                    tags.unshift(`content_${tag}`);
-                    break;
-            }
-        });
-        if (D.contentHorror) {
-            tags.unshift('content_horror');
-        }
-        if (D.contentGore) {
-            tags.unshift('content_gore');
-        }
-        if (D.contentViolence) {
-            tags.unshift('content_violence');
-        }
-        if (D.contentAdult) {
-            tags.unshift('content_adult');
-        }
-        if (D.contentSex) {
-            tags.unshift('content_sex');
-        }
-        if (D.debugAllowed) {
-            tags.unshift('debug_allowed');
-        }
-        if (D.avatarScalingDisabled) {
-            tags.unshift('feature_avatar_scaling_disabled');
-        }
-        if (D.focusViewDisabled) {
-            tags.unshift('feature_focus_view_disabled');
-        }
-        if (!D.emoji) {
-            tags.unshift('feature_emoji_disabled');
-        }
-        if (!D.stickers) {
-            tags.unshift('feature_stickers_disabled');
-        }
-        if (!D.pedestals) {
-            tags.unshift('feature_pedestals_disabled');
-        }
-        if (!D.prints) {
-            tags.unshift('feature_prints_disabled');
-        }
-        if (!D.drones) {
-            tags.unshift('feature_drones_disabled');
-        }
-        worldRequest
-            .saveWorld({
-                id: this.worldDialog.id,
-                tags
-            })
-            .then((args) => {
-                this.$message({
-                    message: 'Tags updated',
-                    type: 'success'
-                });
-                D.visible = false;
-                if (
-                    this.worldDialog.visible &&
-                    this.worldDialog.id === args.json.id
-                ) {
-                    this.showWorldDialog(args.json.id);
-                }
-                return args;
-            });
     };
 
     // #endregion
@@ -12467,25 +12049,6 @@ console.log(`isLinux: ${LINUX}`);
             shortName
         };
         this.$nextTick(() => (this.launchDialogData.loading = false));
-    };
-
-    $app.methods.getLaunchURL = function (instance) {
-        var L = instance;
-        if (L.instanceId) {
-            if (L.shortName) {
-                return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-                    L.worldId
-                )}&instanceId=${encodeURIComponent(
-                    L.instanceId
-                )}&shortName=${encodeURIComponent(L.shortName)}`;
-            }
-            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-                L.worldId
-            )}&instanceId=${encodeURIComponent(L.instanceId)}`;
-        }
-        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-            L.worldId
-        )}`;
     };
 
     $app.methods.launchGame = async function (
@@ -14248,7 +13811,7 @@ console.log(`isLinux: ${LINUX}`);
         document.getElementById('AvatarImageUploadButton').click();
     };
 
-    // images.pug line 63
+    // images.pug line 63, useless now
     // $app.methods.deleteAvatarImage = function () {
     //     this.changeAvatarImageDialogLoading = true;
     //     var parmas = {
@@ -17201,200 +16764,43 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: Previous Instances User Dialog
 
-    $app.data.previousInstancesUserDialogTable = {
-        data: [],
-        filters: [
-            {
-                prop: 'worldName',
-                value: ''
-            }
-        ],
-        tableProps: {
-            stripe: true,
-            size: 'mini',
-            defaultSort: {
-                prop: 'created_at',
-                order: 'descending'
-            }
-        },
-        pageSize: 10,
-        paginationProps: {
-            small: true,
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
-        }
-    };
-
     $app.data.previousInstancesUserDialog = {
         visible: false,
-        loading: false,
-        forceUpdate: 0,
+        openFlg: false,
         userRef: {}
     };
 
     $app.methods.showPreviousInstancesUserDialog = function (userRef) {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.previousInstancesUserDialog.$el)
-        );
         var D = this.previousInstancesUserDialog;
         D.userRef = userRef;
         D.visible = true;
-        D.loading = true;
-        this.refreshPreviousInstancesUserTable();
+        // trigger watcher
+        D.openFlg = true;
+        this.$nextTick(() => (D.openFlg = false));
     };
 
-    $app.methods.refreshPreviousInstancesUserTable = function () {
-        var D = this.previousInstancesUserDialog;
-        database.getpreviousInstancesByUserId(D.userRef).then((data) => {
-            var array = [];
-            for (var ref of data.values()) {
-                ref.$location = $utils.parseLocation(ref.location);
-                if (ref.time > 0) {
-                    ref.timer = $app.timeToText(ref.time);
-                } else {
-                    ref.timer = '';
-                }
-                array.push(ref);
-            }
-            array.sort($utils.compareByCreatedAt);
-            this.previousInstancesUserDialogTable.data = array;
-            D.loading = false;
-            workerTimers.setTimeout(() => D.forceUpdate++, 150);
-        });
-    };
-
-    $app.methods.getDisplayNameFromUserId = function (userId) {
-        var displayName = userId;
-        var ref = API.cachedUsers.get(userId);
-        if (
-            typeof ref !== 'undefined' &&
-            typeof ref.displayName !== 'undefined'
-        ) {
-            displayName = ref.displayName;
-        }
-        return displayName;
-    };
-
-    $app.methods.deleteGameLogUserInstance = function (row) {
-        database.deleteGameLogInstance({
-            id: this.previousInstancesUserDialog.userRef.id,
-            displayName: this.previousInstancesUserDialog.userRef.displayName,
-            location: row.location
-        });
-        $app.removeFromArray(this.previousInstancesUserDialogTable.data, row);
-    };
-
-    $app.methods.deleteGameLogUserInstancePrompt = function (row) {
-        this.$confirm(
-            'Continue? Delete User From GameLog Instance',
-            'Confirm',
-            {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        this.deleteGameLogUserInstance(row);
-                    }
-                }
-            }
-        );
-    };
+    // no place use this
+    // $app.methods.getDisplayNameFromUserId = function (userId) {
+    //     var displayName = userId;
+    //     var ref = API.cachedUsers.get(userId);
+    //     if (
+    //         typeof ref !== 'undefined' &&
+    //         typeof ref.displayName !== 'undefined'
+    //     ) {
+    //         displayName = ref.displayName;
+    //     }
+    //     return displayName;
+    // };
 
     // #endregion
-    // #region | App: Previous Instances World Dialog
+    // #region | App: Previous Instances Info Dialog
 
-    $app.data.previousInstancesWorldDialogTable = {
-        data: [],
-        filters: [
-            {
-                prop: 'groupName',
-                value: ''
-            }
-        ],
-        tableProps: {
-            stripe: true,
-            size: 'mini',
-            defaultSort: {
-                prop: 'created_at',
-                order: 'descending'
-            }
-        },
-        pageSize: 10,
-        paginationProps: {
-            small: true,
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
-        }
-    };
+    $app.data.previousInstancesInfoDialogVisible = false;
+    $app.data.previousInstancesInfoDialogInstanceId = '';
 
-    $app.data.previousInstancesWorldDialog = {
-        visible: false,
-        loading: false,
-        forceUpdate: 0,
-        worldRef: {}
-    };
-
-    $app.methods.showPreviousInstancesWorldDialog = function (worldRef) {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.previousInstancesWorldDialog.$el)
-        );
-        var D = this.previousInstancesWorldDialog;
-        D.worldRef = worldRef;
-        D.visible = true;
-        D.loading = true;
-        this.refreshPreviousInstancesWorldTable();
-    };
-
-    $app.methods.refreshPreviousInstancesWorldTable = function () {
-        var D = this.previousInstancesWorldDialog;
-        database.getpreviousInstancesByWorldId(D.worldRef).then((data) => {
-            var array = [];
-            for (var ref of data.values()) {
-                ref.$location = $utils.parseLocation(ref.location);
-                if (ref.time > 0) {
-                    ref.timer = $app.timeToText(ref.time);
-                } else {
-                    ref.timer = '';
-                }
-                array.push(ref);
-            }
-            array.sort($utils.compareByCreatedAt);
-            this.previousInstancesWorldDialogTable.data = array;
-            D.loading = false;
-            workerTimers.setTimeout(() => D.forceUpdate++, 150);
-        });
-    };
-
-    $app.methods.deleteGameLogWorldInstance = function (row) {
-        database.deleteGameLogInstanceByInstanceId({
-            location: row.location
-        });
-        $app.removeFromArray(this.previousInstancesWorldDialogTable.data, row);
-    };
-
-    $app.methods.deleteGameLogWorldInstancePrompt = function (row) {
-        this.$confirm('Continue? Delete GameLog Instance', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    this.deleteGameLogWorldInstance(row);
-                }
-            }
-        });
-    };
-
-    // #endregion
-    // #region | App: Previous Instance Info Dialog
-
-    $app.data.previousInstanceInfoDialogVisible = false;
-    $app.data.previousInstanceInfoDialogInstanceId = '';
-
-    $app.methods.showPreviousInstanceInfoDialog = function (instanceId) {
-        this.previousInstanceInfoDialogVisible = true;
-        this.previousInstanceInfoDialogInstanceId = instanceId;
+    $app.methods.showPreviousInstancesInfoDialog = function (instanceId) {
+        this.previousInstancesInfoDialogVisible = true;
+        this.previousInstancesInfoDialogInstanceId = instanceId;
     };
 
     $app.data.dtHour12 = await configRepository.getBool('VRCX_dtHour12', false);
@@ -18467,10 +17873,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // #endregion
     // #region | App: Local Avatar Favorites
-
-    $app.methods.isLocalUserVrcplusSupporter = function () {
-        return API.currentUser.$isVRCPlus;
-    };
 
     $app.data.localAvatarFavoriteGroups = [];
     $app.data.localAvatarFavoritesList = [];
@@ -19789,39 +19191,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // #endregion
 
-    $app.data.worldAllowedDomainsDialog = {
-        visible: false,
-        worldId: '',
-        urlList: []
-    };
-
-    $app.methods.showWorldAllowedDomainsDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.worldAllowedDomainsDialog.$el)
-        );
-        var D = this.worldAllowedDomainsDialog;
-        D.worldId = this.worldDialog.id;
-        D.urlList = this.worldDialog.ref?.urlList ?? [];
-        D.visible = true;
-    };
-
-    $app.methods.saveWorldAllowedDomains = function () {
-        var D = this.worldAllowedDomainsDialog;
-        worldRequest
-            .saveWorld({
-                id: D.worldId,
-                urlList: D.urlList
-            })
-            .then((args) => {
-                this.$message({
-                    message: 'Allowed Video Player Domains updated',
-                    type: 'success'
-                });
-                return args;
-            });
-        D.visible = false;
-    };
-
     $app.data.ossDialog = false;
 
     // #region | App: Badges
@@ -20023,7 +19392,6 @@ console.log(`isLinux: ${LINUX}`);
             'show-world-import-dialog': this.showWorldImportDialog,
             'show-world-dialog': this.showWorldDialog,
             'new-instance-self-invite': this.newInstanceSelfInvite,
-            'show-favorite-dialog': this.showFavoriteDialog,
             'delete-local-world-favorite-group':
                 this.deleteLocalWorldFavoriteGroup,
             'remove-local-world-favorite': this.removeLocalWorldFavorite,
@@ -20057,7 +19425,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.computed.chartsTabEvent = function () {
         return {
             'open-previous-instance-info-dialog':
-                this.showPreviousInstanceInfoDialog
+                this.showPreviousInstancesInfoDialog
         };
     };
 
@@ -20121,8 +19489,7 @@ console.log(`isLinux: ${LINUX}`);
         return {
             'check-can-invite': this.checkCanInvite,
             'launch-dialog-data': this.launchDialogData,
-            'hide-tooltips': this.hideTooltips,
-            'get-launch-u-r-l': this.getLaunchURL
+            'hide-tooltips': this.hideTooltips
         };
     };
 
@@ -20134,18 +19501,128 @@ console.log(`isLinux: ${LINUX}`);
         };
     };
 
-    $app.computed.newInstanceDialogBind = function () {
+    $app.computed.favoriteDialogBind = function () {
         return {
-            'new-instance-dialog-location-tag':
-                this.newInstanceDialogLocationTag,
+            'favorite-dialog': this.favoriteDialog,
+            'local-avatar-favorite-groups': this.localAvatarFavoriteGroups,
+            'local-world-favorite-groups': this.localWorldFavoriteGroups,
+            'has-local-world-favorite': this.hasLocalWorldFavorite,
+            'get-local-world-favorite-group-length':
+                this.getLocalWorldFavoriteGroupLength,
+            'has-local-avatar-favorite': this.hasLocalAvatarFavorite,
+            'get-local-avatar-favorite-group-length':
+                this.getLocalAvatarFavoriteGroupLength
+        };
+    };
+
+    $app.computed.favoriteDialogEvent = function () {
+        return {
+            'update:favorite-dialog': (val) => {
+                this.favoriteDialog = val;
+            },
+            'add-local-world-favorite': this.addLocalWorldFavorite,
+            'remove-local-world-favorite': this.removeLocalWorldFavorite,
+            'add-local-avatar-favorite': this.addLocalAvatarFavorite,
+            'remove-local-avatar-favorite': this.removeLocalAvatarFavorite,
+            'delete-favorite-no-confirm': this.deleteFavoriteNoConfirm
+        };
+    };
+
+    $app.computed.exportFriendsListDialogBind = function () {
+        return {
+            friends: this.friends,
+            'is-export-friends-list-dialog-visible':
+                this.isExportFriendsListDialogVisible
+        };
+    };
+
+    $app.computed.exportFriendsListDialogEvent = function () {
+        return {
+            'update:is-export-friends-list-dialog-visible': (val) => {
+                this.isExportFriendsListDialogVisible = val;
+            }
+        };
+    };
+
+    $app.computed.exportAvatarsListDialogBind = function () {
+        return {
+            'is-export-avatars-list-dialog-visible':
+                this.isExportAvatarsListDialogVisible
+        };
+    };
+
+    $app.computed.exportAvatarsListDialogEvent = function () {
+        return {
+            'update:is-export-avatars-list-dialog-visible': (val) => {
+                this.isExportAvatarsListDialogVisible = val;
+            }
+        };
+    };
+
+    $app.computed.previousInstancesUserDialogBind = function () {
+        return {
+            'previous-instances-user-dialog': this.previousInstancesUserDialog,
+            'shift-held': this.shiftHeld
+        };
+    };
+
+    $app.computed.previousInstancesUserDialogEvent = function () {
+        return {
+            'update:previous-instances-user-dialog': (val) => {
+                this.previousInstancesUserDialog = val;
+            }
+        };
+    };
+
+    $app.computed.previousInstancesInfoDialogBind = function () {
+        return {
+            visible: this.previousInstancesInfoDialogVisible,
+            'instance-id': this.previousInstancesInfoDialogInstanceId,
+            'game-log-is-friend': this.gameLogIsFriend,
+            'game-log-is-favorite': this.gameLogIsFavorite,
+            'lookup-user': this.lookupUser,
+            'is-dark-mode': this.isDarkMode
+        };
+    };
+
+    $app.computed.previousInstancesInfoDialogEvent = function () {
+        return {
+            'update:visible': (val) => {
+                this.previousInstancesInfoDialogVisible = val;
+            }
+        };
+    };
+
+    $app.computed.worldDialogBind = function () {
+        return {
+            'world-dialog': this.worldDialog,
+            'hide-tooltips': this.hideTooltips,
+            'shift-held': this.shiftHeld,
+            'is-game-running': this.isGameRunning,
+            'last-location': this.lastLocation,
+            'instance-join-history': this.instanceJoinHistory,
+            'update-instance-info': this.updateInstanceInfo,
+            'is-age-gated-instances-visible': this.isAgeGatedInstancesVisible,
             'create-new-instance': this.createNewInstance,
             'instance-content-settings': this.instanceContentSettings,
             'offline-friends': this.offlineFriends,
             'active-friends': this.activeFriends,
             'online-friends': this.onlineFriends,
             'vip-friends': this.vipFriends,
-            'get-launch-u-r-l': this.getLaunchURL,
             'has-group-permission': this.hasGroupPermission
+        };
+    };
+
+    $app.computed.worldDialogEvent = function () {
+        return {
+            'update:world-dialog': (val) => {
+                this.worldDialog = val;
+            },
+            'open-folder-generic': this.openFolderGeneric,
+            'delete-vrchat-cache': this.deleteVRChatCache,
+            'world-dialog-command': this.worldDialogCommand,
+            'refresh-instance-player-count': this.refreshInstancePlayerCount,
+            'download-and-save-json': this.downloadAndSaveJson
         };
     };
 
