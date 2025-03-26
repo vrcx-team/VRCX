@@ -21,6 +21,23 @@ import inviteMessagesRequest from './inviteMessages';
 import imageRequest from './image';
 import miscRequest from './misc';
 
+window.request = {
+    userRequest,
+    worldRequest,
+    instanceRequest,
+    friendRequest,
+    avatarRequest,
+    notificationRequest,
+    playerModerationRequest,
+    avatarModerationRequest,
+    favoriteRequest,
+    vrcPlusIconRequest,
+    vrcPlusImageRequest,
+    inviteMessagesRequest,
+    imageRequest,
+    miscRequest
+};
+
 export {
     userRequest,
     worldRequest,
