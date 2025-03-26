@@ -93,7 +93,6 @@
                         :edit-favorites-mode="editFavoritesMode"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         @handle-select="favorite.$selected = $event"
-                        @show-favorite-dialog="showFavoriteDialog"
                         @remove-local-avatar-favorite="removeLocalAvatarFavorite"
                         @select-avatar-with-confirmation="selectAvatarWithConfirmation"
                         @click="showAvatarDialog(favorite.id)" />
@@ -134,7 +133,6 @@
                         :favorite="favorite"
                         :hide-tooltips="hideTooltips"
                         @select-avatar-with-confirmation="selectAvatarWithConfirmation"
-                        @show-favorite-dialog="showFavoriteDialog"
                         @click="showAvatarDialog(favorite.id)"></favorites-avatar-local-history-item>
                 </div>
                 <div
@@ -207,7 +205,6 @@
                         :shift-held="shiftHeld"
                         :edit-favorites-mode="editFavoritesMode"
                         @handle-select="favorite.$selected = $event"
-                        @show-favorite-dialog="showFavoriteDialog"
                         @remove-local-avatar-favorite="removeLocalAvatarFavorite"
                         @select-avatar-with-confirmation="selectAvatarWithConfirmation"
                         @click="showAvatarDialog(favorite.id)"></favorites-avatar-item>
@@ -366,9 +363,6 @@
             },
             changeFavoriteGroupName(group) {
                 this.$emit('change-favorite-group-name', group);
-            },
-            showFavoriteDialog(type, id) {
-                this.$emit('show-favorite-dialog', type, id);
             },
             removeLocalAvatarFavorite(id, group) {
                 this.$emit('remove-local-avatar-favorite', id, group);

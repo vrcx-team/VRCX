@@ -424,5 +424,29 @@ export default {
         }
         // no match return origin url
         return url;
+    },
+    replaceVrcPackageUrl(url) {
+        if (!url) {
+            return '';
+        }
+        return url.replace('https://api.vrchat.cloud/', 'https://vrchat.com/');
+    },
+    getLaunchURL(instance) {
+        var L = instance;
+        if (L.instanceId) {
+            if (L.shortName) {
+                return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+                    L.worldId
+                )}&instanceId=${encodeURIComponent(
+                    L.instanceId
+                )}&shortName=${encodeURIComponent(L.shortName)}`;
+            }
+            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+                L.worldId
+            )}&instanceId=${encodeURIComponent(L.instanceId)}`;
+        }
+        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+            L.worldId
+        )}`;
     }
 };

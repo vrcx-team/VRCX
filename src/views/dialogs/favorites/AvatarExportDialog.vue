@@ -1,5 +1,11 @@
 <template>
-    <el-dialog :visible.sync="isDialogVisible" :title="$t('dialog.avatar_export.header')" width="650px">
+    <el-dialog
+        :before-close="beforeDialogClose"
+        :visible.sync="isDialogVisible"
+        :title="$t('dialog.avatar_export.header')"
+        width="650px"
+        @mousedown.native="dialogMouseDown"
+        @mouseup.native="dialogMouseUp">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
@@ -82,7 +88,7 @@
 <script>
     export default {
         name: 'AvatarExportDialog',
-        inject: ['API'],
+        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
         props: {
             avatarExportDialogVisible: Boolean,
             favoriteAvatars: Array,

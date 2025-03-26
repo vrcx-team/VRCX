@@ -43,7 +43,6 @@
                     @save-sort-favorites-option="saveSortFavoritesOption"
                     @change-favorite-group-name="changeFavoriteGroupName"
                     @new-instance-self-invite="newInstanceSelfInvite"
-                    @show-favorite-dialog="showFavoriteDialog"
                     @refresh-local-world-favorite="refreshLocalWorldFavorites"
                     @delete-local-world-favorite-group="deleteLocalWorldFavoriteGroup"
                     @remove-local-world-favorite="removeLocalWorldFavorite"
@@ -73,7 +72,6 @@
                     :local-avatar-favorites-list="localAvatarFavoritesList"
                     @show-avatar-import-dialog="showAvatarImportDialog"
                     @save-sort-favorites-option="saveSortFavoritesOption"
-                    @show-favorite-dialog="showFavoriteDialog"
                     @change-favorite-group-name="changeFavoriteGroupName"
                     @remove-local-avatar-favorite="removeLocalAvatarFavorite"
                     @select-avatar-with-confirmation="selectAvatarWithConfirmation"
@@ -281,9 +279,6 @@
             },
             newInstanceSelfInvite(worldId) {
                 this.$emit('new-instance-self-invite', worldId);
-            },
-            showFavoriteDialog(type, objectId) {
-                this.$emit('show-favorite-dialog', type, objectId);
             },
             deleteLocalWorldFavoriteGroup(group) {
                 this.$emit('delete-local-world-favorite-group', group);

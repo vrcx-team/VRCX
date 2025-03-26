@@ -38,7 +38,7 @@ mixin gameLogTab
                 template(#default='scope')
                     el-tooltip(placement='right' :open-delay='500' :disabled='hideTooltips')
                         template(#content)
-                            span {{ $t("view.game_log.filters." + scope.row.type) }}
+                            span {{ $t('view.game_log.filters.' + scope.row.type) }}
                         span.x-link(
                             v-if='scope.row.location && scope.row.type !== "Location"'
                             v-text='$t("view.game_log.filters." + scope.row.type)'
@@ -115,4 +115,4 @@ mixin gameLogTab
                             type='text'
                             icon='el-icon-s-data'
                             size='mini'
-                            @click='showPreviousInstanceInfoDialog(scope.row.location)')
+                            @click='showPreviousInstancesInfoDialog(scope.row.location)')

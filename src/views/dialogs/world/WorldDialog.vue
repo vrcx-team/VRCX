@@ -1,10 +1,13 @@
 <template>
     <el-dialog
         ref="worldDialog"
+        :before-close="beforeDialogClose"
         class="x-dialog x-world-dialog"
-        :visible.sync="worldDialog.visible"
+        :visible.sync="isDialogVisible"
         :show-close="false"
-        width="770px">
+        width="770px"
+        @mousedown.native="dialogMouseDown"
+        @mouseup.native="dialogMouseUp">
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
@@ -368,7 +371,7 @@
                                         style="margin-left: 5px"
                                         plain
                                         circle
-                                        @click="showPreviousInstanceInfoDialog(room.location)" />
+                                        @click="showPreviousInstancesInfoDialog(room.location)" />
                                 </el-tooltip>
                                 <last-join :location="room.$location.tag" :currentlocation="lastLocation.location" />
                                 <instance-info
@@ -435,7 +438,7 @@
                                     {{ $t('dialog.world.info.memo') }}
                                 </span>
                                 <el-input
-                                    v-model="worldDialog.memo"
+                                    v-model="memo"
                                     class="extra"
                                     type="textarea"
                                     :rows="2"
@@ -735,41 +738,111 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
+
+        <!--  Nested Hmm-->
+        <world-allowed-domains-dialog :world-allowed-domains-dialog.sync="worldAllowedDomainsDialog" />
+        <set-world-tags-dialog
+            :is-set-world-tags-dialog-visible.sync="isSetWorldTagsDialogVisible"
+            :old-tags="worldDialog.ref?.tags"
+            :world-id="worldDialog.id"
+            :is-world-dialog-visible="worldDialog.visible" />
+        <previous-instances-world-dialog
+            :previous-instances-world-dialog.sync="previousInstancesWorldDialog"
+            :shift-held="shiftHeld" />
+        <new-instance-dialog
+            :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
+            :create-new-instance="createNewInstance"
+            :instance-content-settings="instanceContentSettings"
+            :offline-friends="offlineFriends"
+            :active-friends="activeFriends"
+            :online-friends="onlineFriends"
+            :vip-friends="vipFriends"
+            :has-group-permission="hasGroupPermission" />
     </el-dialog>
 </template>
 
 <script>
     import utils from '../../../classes/utils';
     import database from '../../../repository/database.js';
+    import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
+    import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
+    import PreviousInstancesWorldDialog from '../previousInstances/PreviousInstancesWorldDialog.vue';
+    import NewInstanceDialog from './NewInstanceDialog.vue';
+    import { favoriteRequest, miscRequest, worldRequest } from '../../../classes/request';
+
     export default {
         name: 'WorldDialog',
+        components: { SetWorldTagsDialog, WorldAllowedDomainsDialog, PreviousInstancesWorldDialog, NewInstanceDialog },
         inject: [
             'API',
             'showUserDialog',
             'userStatusClass',
             'userImage',
             'adjustDialogZ',
-            'showPreviousInstanceInfoDialog',
+            'showPreviousInstancesInfoDialog',
             'showLaunchDialog',
-            'showFullscreenImageDialog'
+            'showFullscreenImageDialog',
+            'beforeDialogClose',
+            'dialogMouseDown',
+            'dialogMouseUp',
+            'displayPreviousImages',
+            'showWorldDialog',
+            'showFavoriteDialog'
         ],
         props: {
             worldDialog: Object,
             hideTooltips: Boolean,
+            shiftHeld: Boolean,
             isGameRunning: Boolean,
             lastLocation: Object,
             instanceJoinHistory: Map,
             isAgeGatedInstancesVisible: Boolean,
+
+            createNewInstance: Function,
+            instanceContentSettings: Array,
+            offlineFriends: Array,
+            activeFriends: Array,
+            onlineFriends: Array,
+            vipFriends: Array,
+            hasGroupPermission: Function,
 
             // TODO: Remove
             updateInstanceInfo: Number
         },
         data() {
             return {
-                treeData: []
+                treeData: [],
+                worldAllowedDomainsDialog: {
+                    visible: false,
+                    worldId: '',
+                    urlList: []
+                },
+                isSetWorldTagsDialogVisible: false,
+                previousInstancesWorldDialog: {
+                    visible: false,
+                    openFlg: false,
+                    worldRef: {}
+                },
+                newInstanceDialogLocationTag: ''
             };
         },
         computed: {
+            isDialogVisible: {
+                get() {
+                    return this.worldDialog.visible;
+                },
+                set(value) {
+                    this.$emit('update:world-dialog', { ...this.worldDialog, visible: value });
+                }
+            },
+            memo: {
+                get() {
+                    return this.worldDialog.memo;
+                },
+                set(value) {
+                    this.$emit('update:world-dialog', { ...this.worldDialog, memo: value });
+                }
+            },
             isTimeInLabVisible() {
                 return (
                     this.worldDialog.ref.publicationDate &&
@@ -778,7 +851,6 @@
                     this.worldDialog.ref.labsPublicationDate !== 'none'
                 );
             },
-
             timeInLab() {
                 return utils.timeToText(
                     new Date(this.worldDialog.ref?.publicationDate) -
@@ -832,6 +904,11 @@
             }
         },
         methods: {
+            showNewInstanceDialog(tag) {
+                // trigger watcher
+                this.newInstanceDialogLocationTag = '';
+                this.$nextTick(() => (this.newInstanceDialogLocationTag = tag));
+            },
             openFolderGeneric(path) {
                 this.$emit('open-folder-generic', path);
             },
@@ -839,10 +916,144 @@
                 this.$emit('delete-vrchat-cache', world);
             },
             worldDialogCommand(command) {
-                if (command === 'Share') {
-                    this.copyWorldUrl();
-                } else {
-                    this.$emit('world-dialog-command', command);
+                const D = this.worldDialog;
+                if (D.visible === false) {
+                    return;
+                }
+                switch (command) {
+                    case 'Delete Favorite':
+                    case 'Make Home':
+                    case 'Reset Home':
+                    case 'Publish':
+                    case 'Unpublish':
+                    case 'Delete Persistent Data':
+                    case 'Delete':
+                        this.$confirm(`Continue? ${command}`, 'Confirm', {
+                            confirmButtonText: 'Confirm',
+                            cancelButtonText: 'Cancel',
+                            type: 'info',
+                            callback: (action) => {
+                                if (action !== 'confirm') {
+                                    return;
+                                }
+                                switch (command) {
+                                    case 'Delete Favorite':
+                                        favoriteRequest.deleteFavorite({
+                                            objectId: D.id
+                                        });
+                                        break;
+                                    case 'Make Home':
+                                        this.API.saveCurrentUser({
+                                            homeLocation: D.id
+                                        }).then((args) => {
+                                            this.$message({
+                                                message: 'Home world updated',
+                                                type: 'success'
+                                            });
+                                            return args;
+                                        });
+                                        break;
+                                    case 'Reset Home':
+                                        this.API.saveCurrentUser({
+                                            homeLocation: ''
+                                        }).then((args) => {
+                                            this.$message({
+                                                message: 'Home world has been reset',
+                                                type: 'success'
+                                            });
+                                            return args;
+                                        });
+                                        break;
+                                    case 'Publish':
+                                        worldRequest
+                                            .publishWorld({
+                                                worldId: D.id
+                                            })
+                                            .then((args) => {
+                                                this.$message({
+                                                    message: 'World has been published',
+                                                    type: 'success'
+                                                });
+                                                return args;
+                                            });
+                                        break;
+                                    case 'Unpublish':
+                                        worldRequest
+                                            .unpublishWorld({
+                                                worldId: D.id
+                                            })
+                                            .then((args) => {
+                                                this.$message({
+                                                    message: 'World has been unpublished',
+                                                    type: 'success'
+                                                });
+                                                return args;
+                                            });
+                                        break;
+                                    case 'Delete Persistent Data':
+                                        miscRequest
+                                            .deleteWorldPersistData({
+                                                worldId: D.id
+                                            })
+                                            .then((args) => {
+                                                this.$message({
+                                                    message: 'Persistent data has been deleted',
+                                                    type: 'success'
+                                                });
+                                                return args;
+                                            });
+                                        break;
+                                    case 'Delete':
+                                        worldRequest
+                                            .deleteWorld({
+                                                worldId: D.id
+                                            })
+                                            .then((args) => {
+                                                this.$message({
+                                                    message: 'World has been deleted',
+                                                    type: 'success'
+                                                });
+                                                D.visible = false;
+                                                return args;
+                                            });
+                                        break;
+                                }
+                            }
+                        });
+                        break;
+                    case 'Previous Instances':
+                        this.showPreviousInstancesWorldDialog(D.ref);
+                        break;
+                    case 'Share':
+                        this.copyWorldUrl();
+                        break;
+                    case 'Change Allowed Domains':
+                        this.showWorldAllowedDomainsDialog();
+                        break;
+                    case 'Change Tags':
+                        this.isSetWorldTagsDialogVisible = true;
+                        break;
+                    case 'Download Unity Package':
+                        utils.openExternalLink(this.replaceVrcPackageUrl(this.worldDialog.ref.unityPackageUrl));
+                        break;
+                    case 'Change Image':
+                        this.displayPreviousImages('World', 'Change');
+                        break;
+                    case 'Previous Images':
+                        this.displayPreviousImages('World', 'Display');
+                        break;
+                    case 'Refresh':
+                        this.showWorldDialog(D.id);
+                        break;
+                    case 'New Instance':
+                        this.showNewInstanceDialog(D.$location.tag);
+                        break;
+                    case 'Add Favorite':
+                        this.showFavoriteDialog('world', D.id);
+                        break;
+                    default:
+                        this.$emit('world-dialog-command', command);
+                        break;
                 }
             },
             refreshInstancePlayerCount(tag) {
@@ -861,8 +1072,13 @@
                     database.deleteWorldMemo(worldId);
                 }
             },
-            showPreviousInstancesWorldDialog(world) {
-                this.$emit('show-previous-instances-world-dialog', world);
+            showPreviousInstancesWorldDialog(worldRef) {
+                const D = this.previousInstancesWorldDialog;
+                D.worldRef = worldRef;
+                D.visible = true;
+                // trigger watcher
+                D.openFlg = true;
+                this.$nextTick(() => (D.openFlg = false));
             },
             refreshWorldDialogTreeData() {
                 this.treeData = utils.buildTreeData(this.worldDialog.ref);
@@ -920,6 +1136,12 @@
                             type: 'error'
                         });
                     });
+            },
+            showWorldAllowedDomainsDialog() {
+                const D = this.worldAllowedDomainsDialog;
+                D.worldId = this.worldDialog.id;
+                D.urlList = this.worldDialog.ref?.urlList ?? [];
+                D.visible = true;
             }
         }
     };

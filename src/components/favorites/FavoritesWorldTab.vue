@@ -128,8 +128,7 @@
                         :shift-held="shiftHeld"
                         @click="showWorldDialog(favorite.id)"
                         @handle-select="favorite.$selected = $event"
-                        @new-instance-self-invite="newInstanceSelfInvite"
-                        @show-favorite-dialog="showFavoriteDialog" />
+                        @new-instance-self-invite="newInstanceSelfInvite" />
                 </div>
                 <div
                     v-else
@@ -200,8 +199,7 @@
                         :shift-held="shiftHeld"
                         @click="showWorldDialog(favorite.id)"
                         @new-instance-self-invite="newInstanceSelfInvite"
-                        @remove-local-world-favorite="removeLocalWorldFavorite"
-                        @show-favorite-dialog="showFavoriteDialog" />
+                        @remove-local-world-favorite="removeLocalWorldFavorite" />
                 </div>
                 <div
                     v-else
@@ -431,9 +429,7 @@
             newInstanceSelfInvite(event) {
                 this.$emit('new-instance-self-invite', event);
             },
-            showFavoriteDialog(param1, param2) {
-                this.$emit('show-favorite-dialog', param1, param2);
-            },
+
             removeLocalWorldFavorite(param1, param2) {
                 this.$emit('remove-local-world-favorite', param1, param2);
             }
