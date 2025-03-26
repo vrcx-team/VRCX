@@ -344,7 +344,7 @@
                     "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。(一人/複数人)",
                     "alone_condition": "一人の判定条件",
                     "alone": "自分一人だけ",
-                    "no_friends": "フレンドがほかにいない",
+                    "no_friends": "フレンドがいない",
                     "alone_status": "一人でいるときのステータス",
                     "company_status": "複数人でいるときのステータス",
                     "allowed_instance_types": "自動化するインスタンスの種類",
