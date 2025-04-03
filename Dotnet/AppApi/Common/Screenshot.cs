@@ -35,7 +35,7 @@ public partial class AppApi
                 }
             }
 
-            metadata.Add("fileResolution", PNGHelper.ReadDescription(path));
+            metadata.Add("fileResolution", PNGHelper.ReadResolution(path));
 
             var creationDate = File.GetCreationTime(path);
             metadata.Add("creationDate", creationDate.ToString("yyyy-MM-dd HH:mm:ss"));
