@@ -29,6 +29,13 @@ let appImagePath = process.env.APPIMAGE;
 const args = process.argv.slice(1);
 const noInstall = args.includes('--no-install');
 const x11 = args.includes('--x11');
+
+const iconIndex = args.indexOf('--icon');
+let customIconPath = null;
+if (iconIndex !== -1 && args[iconIndex + 1]) {
+    customIconPath = args[iconIndex + 1];
+}
+
 const homePath = getHomePath();
 tryRelaunchWithArgs(args);
 tryCopyFromWinePrefix();
@@ -383,7 +390,7 @@ async function installVRCX() {
 async function createDesktopFile() {
     // Download the icon and save it to the target directory
     const iconPath = path.join(homePath, '.local/share/icons/VRCX.png');
-    if (!fs.existsSync(iconPath)) {
+    if (!customIconPath && !fs.existsSync(iconPath)) {
         const iconUrl =
             'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
         await downloadIcon(iconUrl, iconPath)
@@ -401,12 +408,19 @@ async function createDesktopFile() {
         homePath,
         '.local/share/applications/VRCX.desktop'
     );
+
+    // Use custom icon name/path if provided
+    let dotDesktopIcon = 'VRCX';
+    if (customIconPath) {
+        dotDesktopIcon = customIconPath;
+    }
+
     const dotDesktop = {
         Name: 'VRCX',
         Version: version,
         Comment: 'Friendship management tool for VRChat',
         Exec: `${appImagePath} --ozone-platform-hint=auto %U`,
-        Icon: 'VRCX',
+        Icon: dotDesktopIcon,
         Type: 'Application',
         Categories: 'Network;InstantMessaging;Game;',
         Terminal: 'false',
