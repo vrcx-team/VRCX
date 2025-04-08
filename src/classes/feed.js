@@ -26,7 +26,7 @@ export default class extends baseClass {
             paginationProps: {
                 small: true,
                 layout: 'sizes,prev,pager,next,total',
-                pageSizes: [10, 15, 25, 50, 100]
+                pageSizes: [10, 15, 20, 25, 50, 100]
             }
         },
 

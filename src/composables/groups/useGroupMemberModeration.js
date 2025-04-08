@@ -9,7 +9,7 @@ function useModerationTable() {
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     });
     const groupJoinRequestsModerationTable = reactive({
@@ -19,7 +19,7 @@ function useModerationTable() {
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     });
     const groupBlockedModerationTable = reactive({
@@ -29,7 +29,7 @@ function useModerationTable() {
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     });
     const groupLogsModerationTable = reactive({
@@ -40,7 +40,7 @@ function useModerationTable() {
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     });
     const groupBansModerationTable = reactive({
@@ -51,7 +51,7 @@ function useModerationTable() {
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     });
     const groupMemberModerationTable = reactive({
@@ -61,7 +61,7 @@ function useModerationTable() {
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     });
 

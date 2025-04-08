@@ -5905,7 +5905,7 @@ console.log(`isLinux: ${LINUX}`);
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     };
 
@@ -6326,7 +6326,7 @@ console.log(`isLinux: ${LINUX}`);
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 15, 25, 50, 100]
+            pageSizes: [10, 15, 20, 25, 50, 100]
         }
     };
 

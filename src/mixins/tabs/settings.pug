@@ -298,7 +298,7 @@ mixin settingsTab
                                 span {{ $t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default='dropdown')
                                 el-dropdown-item(
-                                    v-for='number in [10, 15, 25, 50, 100]'
+                                    v-for='number in [10, 15, 20, 25, 50, 100]'
                                     :key='number'
                                     v-text='number'
                                     @click.native='setTablePageSize(number)')
