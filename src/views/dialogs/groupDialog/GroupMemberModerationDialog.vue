@@ -1684,7 +1684,7 @@
         return utils.getAuditLogTypeName(auditLogType);
     }
 
-    function hasGroupPermission(group) {
-        return utils.hasGroupPermission(group);
+    function hasGroupPermission(ref, permission) {
+        return utils.hasGroupPermission(ref, permission);
     }
 </script>
