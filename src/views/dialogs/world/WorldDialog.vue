@@ -756,8 +756,7 @@
             :offline-friends="offlineFriends"
             :active-friends="activeFriends"
             :online-friends="onlineFriends"
-            :vip-friends="vipFriends"
-            :has-group-permission="hasGroupPermission" />
+            :vip-friends="vipFriends" />
     </el-dialog>
 </template>
 
@@ -787,7 +786,8 @@
             'dialogMouseUp',
             'displayPreviousImages',
             'showWorldDialog',
-            'showFavoriteDialog'
+            'showFavoriteDialog',
+            'openExternalLink'
         ],
         props: {
             worldDialog: Object,
@@ -804,7 +804,6 @@
             activeFriends: Array,
             onlineFriends: Array,
             vipFriends: Array,
-            hasGroupPermission: Function,
 
             // TODO: Remove
             updateInstanceInfo: Number
@@ -1034,7 +1033,7 @@
                         this.isSetWorldTagsDialogVisible = true;
                         break;
                     case 'Download Unity Package':
-                        utils.openExternalLink(this.replaceVrcPackageUrl(this.worldDialog.ref.unityPackageUrl));
+                        this.openExternalLink(this.replaceVrcPackageUrl(this.worldDialog.ref.unityPackageUrl));
                         break;
                     case 'Change Image':
                         this.displayPreviousImages('World', 'Change');

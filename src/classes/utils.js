@@ -448,5 +448,46 @@ export default {
         return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
             L.worldId
         )}`;
+    },
+    getFaviconUrl(resource) {
+        try {
+            const url = new URL(resource);
+            return `https://icons.duckduckgo.com/ip2/${url.host}.ico`;
+        } catch (err) {
+            return '';
+        }
+    },
+    copyToClipboard(text) {
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+                window.$app.$message({
+                    message: 'Copied successfully!',
+                    type: 'success'
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                this.$message.error('Copy failed!');
+            });
+    },
+    hasGroupPermission(ref, permission) {
+        if (
+            ref &&
+            ref.myMember &&
+            ref.myMember.permissions &&
+            (ref.myMember.permissions.includes('*') ||
+                ref.myMember.permissions.includes(permission))
+        ) {
+            return true;
+        }
+        return false;
+    },
+    getAuditLogTypeName(auditLogType) {
+        if (!auditLogType) return '';
+        return auditLogType
+            .replace('group.', '')
+            .replace(/\./g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase());
     }
 };

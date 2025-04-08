@@ -490,7 +490,7 @@
 </template>
 
 <script>
-    import { instanceRequest } from '../../../classes/request';
+    import { groupRequest, instanceRequest } from '../../../classes/request';
     import utils from '../../../classes/utils';
     import configRepository from '../../../repository/config';
 
@@ -508,10 +508,6 @@
             'adjustDialogZ'
         ],
         props: {
-            hasGroupPermission: {
-                type: Function,
-                required: true
-            },
             vipFriends: {
                 type: Array,
                 required: true
@@ -603,7 +599,7 @@
                 D.strict = false;
                 D.shortName = '';
                 D.secureOrShortName = '';
-                this.API.getGroupPermissions({ userId: this.API.currentUser.id });
+                groupRequest.getGroupPermissions({ userId: this.API.currentUser.id });
                 this.buildInstance();
                 this.buildLegacyInstance();
                 this.updateNewInstanceDialog();
@@ -738,13 +734,15 @@
                     if (typeof ref !== 'undefined') {
                         D.groupRef = ref;
                         D.selectedGroupRoles = ref.roles;
-                        this.API.getGroupRoles({
-                            groupId: D.groupId
-                        }).then((args) => {
-                            D.lastSelectedGroupId = D.groupId;
-                            D.selectedGroupRoles = args.json;
-                            ref.roles = args.json;
-                        });
+                        groupRequest
+                            .getGroupRoles({
+                                groupId: D.groupId
+                            })
+                            .then((args) => {
+                                D.lastSelectedGroupId = D.groupId;
+                                D.selectedGroupRoles = args.json;
+                                ref.roles = args.json;
+                            });
                     }
                 }
                 if (!D.groupId) {
@@ -811,13 +809,15 @@
                     if (typeof ref !== 'undefined') {
                         D.groupRef = ref;
                         D.selectedGroupRoles = ref.roles;
-                        this.API.getGroupRoles({
-                            groupId: D.groupId
-                        }).then((args) => {
-                            D.lastSelectedGroupId = D.groupId;
-                            D.selectedGroupRoles = args.json;
-                            ref.roles = args.json;
-                        });
+                        groupRequest
+                            .getGroupRoles({
+                                groupId: D.groupId
+                            })
+                            .then((args) => {
+                                D.lastSelectedGroupId = D.groupId;
+                                D.selectedGroupRoles = args.json;
+                                ref.roles = args.json;
+                            });
                     }
                 }
                 if (!D.groupId) {
@@ -868,6 +868,9 @@
                     });
                     console.error(error.message);
                 }
+            },
+            hasGroupPermission(ref, permission) {
+                return utils.hasGroupPermission(ref, permission);
             }
         }
     };

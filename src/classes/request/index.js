@@ -20,6 +20,7 @@ import vrcPlusImageRequest from './vrcPlusImage';
 import inviteMessagesRequest from './inviteMessages';
 import imageRequest from './image';
 import miscRequest from './misc';
+import groupRequest from './group';
 
 window.request = {
     userRequest,
@@ -35,7 +36,8 @@ window.request = {
     vrcPlusImageRequest,
     inviteMessagesRequest,
     imageRequest,
-    miscRequest
+    miscRequest,
+    groupRequest
 };
 
 export {
@@ -52,5 +54,6 @@ export {
     vrcPlusImageRequest,
     inviteMessagesRequest,
     imageRequest,
-    miscRequest
+    miscRequest,
+    groupRequest
 };

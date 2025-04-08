@@ -106,9 +106,13 @@ mixin notificationsTab
                             :grouphint='scope.row.details.groupName'
                             :link='true')
                         br
-                    span(
+                    el-tooltip(
                         v-if='scope.row.message && scope.row.message !== `This is a generated invite to ${scope.row.details?.worldName}`'
-                        v-text='scope.row.message')
+                        placement='top')
+                        template(#content)
+                            pre.extra(
+                                style='display: inline-block; vertical-align: top; font-family: inherit; font-size: 12px; white-space: pre-wrap; margin: 0') {{ scope.row.message || '-' }}
+                        div(v-text='scope.row.message')
                     span(
                         v-else-if='scope.row.details && scope.row.details.inviteMessage'
                         v-text='scope.row.details.inviteMessage')

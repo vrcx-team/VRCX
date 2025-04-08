@@ -80,9 +80,6 @@ doctype html
     include ./mixins/dialogs/avatarDialog.pug
     +avatarDialog
 
-    include ./mixins/dialogs/groupDialog.pug
-    +groupDialog
-
     include ./mixins/dialogs/images.pug
     +images
 
@@ -91,9 +88,6 @@ doctype html
 
     include ./mixins/dialogs/openSourceSoftwareNotice.pug
     +openSourceSoftwareNotice
-
-    include ./mixins/dialogs/groups.pug
-    +groups
 
     include ./mixins/dialogs/currentUser.pug
     +currentUser
@@ -143,5 +137,10 @@ doctype html
 
     //- world
     world-dialog(v-bind='worldDialogBind' v-on='worldDialogEvent')
+
+    //- group
+    GroupDialog(v-bind='groupDialogBind' v-on='groupDialogEvent')
+
+    InviteGroupDialog(v-bind='inviteGroupDialogBind' v-on='inviteGroupDialogEvent')
 
     //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")
