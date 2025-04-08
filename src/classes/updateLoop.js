@@ -1,5 +1,6 @@
 import * as workerTimers from 'worker-timers';
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { baseClass, $app, API } from './baseClass.js';
+import { groupRequest } from './request/index.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -47,7 +48,7 @@ export default class extends baseClass {
                     if (--this.nextGroupInstanceRefresh <= 0) {
                         if (this.friendLogInitStatus) {
                             this.nextGroupInstanceRefresh = 300; // 5min
-                            API.getUsersGroupInstances();
+                            groupRequest.getUsersGroupInstances();
                         }
                         AppApi.CheckGameRunning();
                     }

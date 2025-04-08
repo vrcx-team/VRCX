@@ -279,11 +279,11 @@
         inject: [
             'userImage',
             'userImageFull',
-            'getFaviconUrl',
             'showFullscreenImageDialog',
             'showUserDialog',
             'statusClass',
-            'openExternalLink'
+            'openExternalLink',
+            'languageClass'
         ],
         props: {
             friends: {
@@ -293,7 +293,6 @@
             hideTooltips: Boolean,
             randomUserColours: Boolean,
             sortStatus: Function,
-            languageClass: Function,
             confirmDeleteFriend: Function,
             friendsListSearch: String,
             menuActiveIndex: String,
@@ -504,6 +503,9 @@
             },
             timeToText(val) {
                 return utils.timeToText(val);
+            },
+            getFaviconUrl(link) {
+                return utils.getFaviconUrl(link);
             }
         }
     };

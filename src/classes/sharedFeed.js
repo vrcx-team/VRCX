@@ -1,7 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import configRepository from '../repository/config.js';
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { worldRequest } from './request';
+import { baseClass, $app, API } from './baseClass.js';
+import { worldRequest, groupRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -121,13 +121,15 @@ export default class extends baseClass {
                                 groupName = groupRef.name;
                             } else {
                                 // no group cache, fetch group and try again
-                                API.getGroup({
-                                    groupId: ref.$location.groupId
-                                })
+                                groupRequest
+                                    .getGroup({
+                                        groupId: ref.$location.groupId
+                                    })
                                     .then((args) => {
                                         workerTimers.setTimeout(() => {
                                             // delay to allow for group cache to update
-                                            $app.sharedFeed.pendingUpdate = true;
+                                            $app.sharedFeed.pendingUpdate =
+                                                true;
                                             $app.updateSharedFeed(false);
                                         }, 100);
                                         return args;

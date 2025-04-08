@@ -1,6 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import Noty from 'noty';
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { baseClass, $app, API, $utils } from './baseClass.js';
+import { groupRequest } from './request';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -450,7 +451,7 @@ export default class extends baseClass {
 
                 case 'group-role-updated':
                     var groupId = content.role.groupId;
-                    API.getGroup({ groupId, includeRoles: true });
+                    groupRequest.getGroup({ groupId, includeRoles: true });
                     console.log('group-role-updated', content);
 
                     // content {

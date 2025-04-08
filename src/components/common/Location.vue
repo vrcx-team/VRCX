@@ -153,7 +153,7 @@
                 if (!L.groupId) {
                     return;
                 }
-                this.API.$emit('SHOW_GROUP_DIALOG', L.groupId);
+                this.showGroupDialog(L.groupId);
             }
         }
     };

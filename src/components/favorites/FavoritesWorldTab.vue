@@ -353,7 +353,7 @@
                     type: 'info',
                     callback: (action) => {
                         if (action === 'confirm') {
-                            this.deleteLocalWorldFavoriteGroup(group);
+                            this.$emit('delete-local-world-favorite-group', group);
                         }
                     }
                 });
