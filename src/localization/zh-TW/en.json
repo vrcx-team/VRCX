@@ -11,6 +11,7 @@
         "moderation": "玩家處置",
         "notification": "通知",
         "friend_list": "好友列表",
+        "charts": "圖表",
         "profile": "個人檔案",
         "settings": "設定"
     },
@@ -73,7 +74,9 @@
             "search_placeholder": "搜尋",
             "clear_results_tooltip": "清除搜尋結果",
             "user": {
-                "header": "玩家"
+                "header": "玩家",
+                "search_by_bio": "依自介搜尋",
+                "sort_by_last_logged_in": "依最近上線時間排序"
             },
             "world": {
                 "header": "世界",
@@ -201,6 +204,9 @@
                 },
                 "instance": {
                     "closed": "房間關閉"
+                },
+                "badge": {
+                    "earned": "徽章獲取"
                 }
             }
         },
@@ -216,6 +222,30 @@
             "refresh_tooltip": "重新整理",
             "clear_tooltip": "清除結果",
             "cancel_tooltip": "取消"
+        },
+        "charts": {
+            "header": "圖表",
+            "instance_activity": {
+                "header": "房間活動",
+                "online_time": "上線時間",
+                "previous_day": "前一天",
+                "next_day": "後一天",
+                "refresh": "重新整理",
+                "tips": {
+                    "header": "提示",
+                    "online_time": "上線時間是指 VRCX 為當天記錄的遊戲時間。",
+                    "click_Y_axis": "點擊 Y 軸標籤可跳轉至房間詳情或開啟使用者對話視窗。",
+                    "click_instance_name": "點擊房間名稱可開啟先前房間資訊視窗。",
+                    "accuracy_notice": "本地資料庫的資訊可能不完全準確"
+                },
+                "settings": {
+                    "header": "設定",
+                    "bar_width": "長條寬度",
+                    "show_solo_instance": "顯示單人房間",
+                    "show_no_friend_instance": "顯示無好友的房間",
+                    "show_detail": "顯示詳細資訊"
+                }
+            }
         },
         "profile": {
             "profile": {
@@ -282,7 +312,7 @@
                 "vrcx_updater": {
                     "header": "VRCX 更新器",
                     "change_build": "變更版本",
-                    "auto_update": "自動更新",
+                    "update_action": "更新動作",
                     "auto_update_off": "關閉",
                     "auto_update_notify": "通知",
                     "auto_update_download": "自動下載",
@@ -351,6 +381,7 @@
                     "zoom": "介面縮放",
                     "vrcplus_profile_icons": "VRChat+ 個人檔案圖示",
                     "tooltips": "工具提示",
+                    "age_gated_instances": "年齡限制房間",
                     "nicknames": "備註暱稱",
                     "sort_favorite_by": "收藏排序依據",
                     "sort_favorite_by_name": "名稱",
@@ -385,7 +416,9 @@
                     },
                     "width": "寬度",
                     "group_by_instance": "依照房間分類",
-                    "group_by_instance_tooltip": "當同一個房間中有超過一位好友時，啟用此功能將按房間將好友分組。",
+                    "group_by_instance_tooltip": "啟用後，若有多位好友在同一房間，將依房間分組顯示。",
+                    "hide_friends_in_same_instance": "隱藏同房間好友",
+                    "hide_friends_in_same_instance_tooltip": "當好友在同一房間時，將其從好友列表中隱藏。",
                     "split_favorite_friends": "分類收藏好友",
                     "split_favorite_friends_tooltip": "將收藏的朋友依照分組別類。"
                 },
@@ -539,6 +572,13 @@
                         "enable": "啟用",
                         "enable_tooltip": "需要啟用 SteamVR 疊層選項",
                         "dance_world_only": "僅限跳舞世界"
+                    },
+                    "launch_commands": {
+                        "header": "啟動指令（Deep Links）",
+                        "docs": "啟動指令文件",
+                        "show_confirmation_on_switch_avatar_enable": "切換虛擬形象前顯示確認對話框",
+                        "show_confirmation_on_switch_avatar_tooltip": "停用時，切換虛擬形象時 VRCX 不會跳出並要求確認。",
+                        "website_userscript": "VRC 網站用戶腳本"
                     },
                     "screenshot_helper": {
                         "header": "螢幕截圖助理",
@@ -710,6 +750,7 @@
                 "instance_game_version": "遊戲版本：",
                 "last_join": "最後加入:",
                 "instance_queuing_enabled": "排隊開啟",
+                "instance_disabled_content": "已停用內容:",
                 "instance_creator": "房間建立者",
                 "note": "備註",
                 "note_placeholder": "點擊新增備註",
@@ -740,12 +781,14 @@
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
                 "copy_display_name": "複製顯示名稱",
+                "vrcplus_hides_avatar": "設定 VRC+ 個人檔案照片時，會隱藏角色資訊。 這也會隱藏 feed 中的角色變更",
                 "accuracy_notice": "本地資料庫的資料可能不精確",
                 "instance_full": "已滿",
                 "instance_closed": "已關閉",
                 "instance_hard_closed": "強制關閉",
                 "close_instance": "關閉房間",
-                "instance_age_gated": "年齡限制"
+                "instance_age_gated": "年齡限制",
+                "open_previouse_instance": "開啟上個房間"
             },
             "groups": {
                 "header": "群組",
@@ -792,7 +835,8 @@
                 "sort_by_update": "更新",
                 "all": "所有",
                 "public": "公開",
-                "private": "私人"
+                "private": "私人",
+                "group_by": "組別:"
             },
             "json": {
                 "header": "原始資料"
@@ -804,7 +848,6 @@
                 "private": "私人",
                 "avatar_scaling_disabled": "角色縮放關閉",
                 "focus_view_disabled": "焦點檢視已停用",
-                "stickers_disabled": "貼紙已停用",
                 "future_proofing": "可未來更新",
                 "labs": "社區實驗室",
                 "cache": "快取",
@@ -906,6 +949,7 @@
                 "favorite_tooltip": "新增到我的收藏",
                 "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
+                "share": "分享",
                 "select": "選擇角色",
                 "select_fallback": "選擇為備用角色",
                 "block": "封鎖角色",
@@ -1099,6 +1143,13 @@
             "region_use": "美國東部",
             "region_eu": "歐洲",
             "region_jp": "日本",
+            "content_settings": "內容設定",
+            "content_placeholder": "已啟用內容",
+            "content_emoji": "表情符號",
+            "content_stickers": "貼紙",
+            "content_pedestals": "分享座",
+            "content_prints": "拍立得",
+            "content_drones": "無人機",
             "world_id": "世界 ID",
             "instance_id": "房間 ID",
             "instance_id_placeholder": "亂數",
@@ -1165,7 +1216,6 @@
             "header": "設定世界標籤",
             "avatar_scaling_disabled": "關閉角色縮放",
             "focus_view_disabled": "焦點檢視已停用",
-            "stickers_disabled": "貼紙已停用",
             "enable_debugging": "為其他人啟用世界偵錯",
             "author_tags": "作者標籤(使用逗號分隔每個標籤)",
             "content_tags": "內容警告標籤",
@@ -1174,6 +1224,7 @@
             "content_violence": "暴力",
             "content_adult": "成人",
             "content_sex": "色情",
+            "default_content_settings": "預設內容設定",
             "cancel": "取消",
             "save": "儲存"
         },
@@ -1384,7 +1435,8 @@
             "emoji_animation_frame_count": "影格數：",
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "選擇一個 1024x1024 PNG spritesheet 來當作動態表情符號，可用的幀格大小： 4、16 或 64 (最大 FPS 64、最大畫格 64)",
-            "note": "備註"
+            "note": "備註",
+            "crop_print_border": "裁剪拍立得邊框"
         },
         "change_content_image": {
             "avatar": "變更角色圖片",
