@@ -120,12 +120,14 @@
             "category": "Utility",
             "executableName": "vrcx",
             "desktop": {
-                "Name": "VRCX",
-                "Comment": "Friendship management tool for VRChat",
-                "Icon": "VRCX",
-                "Terminal": "false",
-                "Type": "Application",
-                "Categories": "Utility;Application;"
+                "entry": {
+                    "Name": "VRCX",
+                    "Comment": "Friendship management tool for VRChat",
+                    "Icon": "VRCX",
+                    "Terminal": "false",
+                    "Type": "Application",
+                    "Categories": "Utility;Application;"
+                }
             },
             "maintainer": "rs189 <35667100+rs189@users.noreply.github.com>",
             "description": "Friendship management tool for VRChat"
