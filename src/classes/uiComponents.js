@@ -169,7 +169,7 @@ export default class extends baseClass {
                     if (!L.groupId) {
                         return;
                     }
-                    this.showGroupDialog(L.groupId);
+                    $app.showGroupDialog(L.groupId);
                 }
             },
             watch: {

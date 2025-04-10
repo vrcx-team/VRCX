@@ -8,7 +8,7 @@
                 <i v-if="isTraveling" class="el-icon el-icon-loading" style="display: inline-block"></i>
                 <span>{{ text }}</span>
             </span>
-            <span v-if="groupName" :class="{ 'x-link': link }" @click="showGroupDialog">({{ groupName }})</span>
+            <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
             <span v-if="region" class="flags" :class="region" style="display: inline-block; margin-left: 5px"></span>
             <i v-if="strict" class="el-icon el-icon-lock" style="display: inline-block; margin-left: 5px"></i>
         </span>
@@ -27,7 +27,8 @@
             API: { default: window.API },
             getWorldName: { default: window.$app?.getWorldName },
             getGroupName: { default: window.$app?.getGroupName },
-            showWorldDialog: { default: window.$app?.showWorldDialog }
+            showWorldDialog: { default: window.$app?.showWorldDialog },
+            showGroupDialog: { default: window.$app?.showGroupDialog }
         },
         props: {
             location: String,
@@ -141,7 +142,7 @@
                     }
                 }
             },
-            showGroupDialog() {
+            handleShowGroupDialog(){
                 let location = this.location;
                 if (this.isTraveling) {
                     location = this.traveling;

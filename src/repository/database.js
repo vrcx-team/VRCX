@@ -220,8 +220,8 @@ class Database {
         return memos;
     }
 
-    setUserMemo(entry) {
-        sqliteService.executeNonQuery(
+    async setUserMemo(entry) {
+        await sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO memos (user_id, edited_at, memo) VALUES (@user_id, @edited_at, @memo)`,
             {
                 '@user_id': entry.userId,
@@ -231,8 +231,8 @@ class Database {
         );
     }
 
-    deleteUserMemo(userId) {
-        sqliteService.executeNonQuery(
+    async deleteUserMemo(userId) {
+        await sqliteService.executeNonQuery(
             `DELETE FROM memos WHERE user_id = @user_id`,
             {
                 '@user_id': userId

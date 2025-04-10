@@ -15,7 +15,6 @@ export default class extends baseClass {
     _methods = {
         async migrateMemos() {
             var json = JSON.parse(await VRCXStorage.GetAll());
-            database.begin();
             for (var line in json) {
                 if (line.substring(0, 8) === 'memo_usr') {
                     var userId = line.substring(5);
@@ -26,7 +25,6 @@ export default class extends baseClass {
                     }
                 }
             }
-            database.commit();
         },
 
         onUserMemoChange() {
@@ -47,15 +45,15 @@ export default class extends baseClass {
             }
         },
 
-        saveUserMemo(id, memo) {
+        async saveUserMemo(id, memo) {
             if (memo) {
-                database.setUserMemo({
+                await database.setUserMemo({
                     userId: id,
                     editedAt: new Date().toJSON(),
                     memo
                 });
             } else {
-                database.deleteUserMemo(id);
+                await database.deleteUserMemo(id);
             }
             var ref = this.friends.get(id);
             if (ref) {
