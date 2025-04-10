@@ -8,7 +8,7 @@ const avatarModerationReq = {
             const args = {
                 json
             };
-            window.API.$emit('AVATAR-MODERATION:LIST', args);
+            // window.API.$emit('AVATAR-MODERATION:LIST', args);
             return args;
         });
     },
@@ -26,7 +26,7 @@ const avatarModerationReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR-MODERATION', args);
+            // window.API.$emit('AVATAR-MODERATION', args);
             return args;
         });
     },

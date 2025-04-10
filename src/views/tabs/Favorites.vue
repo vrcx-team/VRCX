@@ -27,7 +27,7 @@
         </div>
         <el-tabs v-model="currentTabName" v-loading="API.isFavoriteLoading" type="card" style="height: 100%">
             <el-tab-pane name="friend" :label="$t('view.favorite.friends.header')" lazy>
-                <favorites-friend-tab
+                <FavoritesFriendTab
                     :favorite-friends="favoriteFriends"
                     :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
@@ -38,7 +38,7 @@
                     @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
             <el-tab-pane name="world" :label="$t('view.favorite.worlds.header')" lazy>
-                <favorites-world-tab
+                <FavoritesWorldTab
                     @show-world-import-dialog="showWorldImportDialog"
                     @save-sort-favorites-option="saveSortFavoritesOption"
                     @change-favorite-group-name="changeFavoriteGroupName"
@@ -59,7 +59,7 @@
                     :local-world-favorites-list="localWorldFavoritesList" />
             </el-tab-pane>
             <el-tab-pane name="avatar" :label="$t('view.favorite.avatars.header')" lazy>
-                <favorites-avatar-tab
+                <FavoritesAvatarTab
                     :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
                     :shift-held="shiftHeld"

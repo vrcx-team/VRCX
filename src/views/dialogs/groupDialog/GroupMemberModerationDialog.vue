@@ -1681,7 +1681,11 @@
     }
 
     function getAuditLogTypeName(auditLogType) {
-        return utils.getAuditLogTypeName(auditLogType);
+        if (!auditLogType) return '';
+        return auditLogType
+            .replace('group.', '')
+            .replace(/\./g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase());
     }
 
     function hasGroupPermission(ref, permission) {

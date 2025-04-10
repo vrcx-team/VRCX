@@ -136,7 +136,7 @@ export default class extends baseClass {
         },
 
         saveVrcRegistryBackupToFile(row) {
-            this.downloadAndSaveJson(row.name, row.data);
+            $utils.downloadAndSaveJson(row.name, row.data);
         },
 
         async openJsonFileSelectorDialogElectron() {

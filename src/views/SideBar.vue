@@ -1,5 +1,5 @@
 <template>
-    <div id="aside" class="x-aside-container" v-show="isSideBarTabShow">
+    <div v-show="isSideBarTabShow" id="aside" class="x-aside-container">
         <div style="display: flex; align-items: baseline">
             <el-select
                 value=""
@@ -32,7 +32,7 @@
                                     :traveling="item.ref.travelingToLocation"
                                     :link="false"></location>
                             </div>
-                            <img class="avatar" v-lazy="userImage(item.ref)" />
+                            <img v-lazy="userImage(item.ref)" class="avatar" />
                         </template>
                         <span v-else>
                             {{ $t('side_panel.search_result_more') }}
@@ -69,21 +69,21 @@
                     </span>
                 </template>
                 <el-backtop target=".zero-margin-tabs .el-tabs__content" :bottom="20" :right="20"></el-backtop>
-                <friends-sidebar
-                    @confirm-delete-friend="$emit('confirm-delete-friend', $event)"
+                <FriendsSidebar
+                    :hide-nicknames="hideNicknames"
                     :is-game-running="isGameRunning"
                     :is-sidebar-divide-by-friend-group="isSidebarDivideByFriendGroup"
                     :is-sidebar-group-by-instance="isSidebarGroupByInstance"
                     :game-log-disabled="gameLogDisabled"
                     :last-location="lastLocation"
                     :last-location-destination="lastLocationDestination"
-                    :hide-nicknames="hideNicknames"
                     :active-friends="activeFriends"
                     :offline-friends="offlineFriends"
                     :online-friends="onlineFriends"
                     :vip-friends="vipFriends"
                     :is-hide-friends-in-same-instance="isHideFriendsInSameInstance"
-                    :grouped-by-group-key-favorite-friends="groupedByGroupKeyFavoriteFriends"></friends-sidebar>
+                    :grouped-by-group-key-favorite-friends="groupedByGroupKeyFavoriteFriends"
+                    @confirm-delete-friend="$emit('confirm-delete-friend', $event)" />
             </el-tab-pane>
             <el-tab-pane lazy>
                 <template slot="label">
@@ -92,11 +92,11 @@
                         ({{ groupInstances.length }})
                     </span>
                 </template>
-                <groups-sidebar
+                <GroupsSidebar
                     :group-instances="groupInstances"
                     :group-order="inGameGroupOrder"
                     :is-age-gated-instances-visible="isAgeGatedInstancesVisible"
-                    @show-group-dialog="$emit('show-group-dialog', $event)"></groups-sidebar>
+                    @show-group-dialog="$emit('show-group-dialog', $event)" />
             </el-tab-pane>
         </el-tabs>
     </div>

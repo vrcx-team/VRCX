@@ -3,14 +3,13 @@
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ $t('view.charts.header') }}</span>
         </div>
-        <instance-activity
+        <InstanceActivity
             :get-world-name="getWorldName"
             :is-dark-mode="isDarkMode"
             :dt-hour12="dtHour12"
             :friends-map="friendsMap"
-            :localFavoriteFriends="localFavoriteFriends"
-            @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)"
-        ></instance-activity>
+            :local-favorite-friends="localFavoriteFriends"
+            @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)" />
         <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
     </div>
 </template>

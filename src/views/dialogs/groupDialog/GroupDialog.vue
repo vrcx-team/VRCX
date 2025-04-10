@@ -1242,7 +1242,6 @@
         'get-group-dialog-group-members',
         'refresh-instance-player-count',
         'update-group-post-search',
-        'download-and-save-json',
         'set-group-member-sort-order',
         'clear-image-gallery-select'
     ]);
@@ -1780,8 +1779,8 @@
     function updateGroupPostSearch() {
         emit('update-group-post-search');
     }
-    function downloadAndSaveJson(filename, data) {
-        emit('download-and-save-json', filename, data);
+    function downloadAndSaveJson(fileName, data) {
+        utils.downloadAndSaveJson(fileName, data);
     }
     function clearImageGallerySelect() {
         emit('clear-image-gallery-select');

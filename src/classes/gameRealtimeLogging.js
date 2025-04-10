@@ -1240,7 +1240,7 @@ export default class extends baseClass {
                 platform = 'Desktop';
             }
             this.photonUserSusieCheck(photonId, user, gameLogDate);
-            this.checkVRChatCache(avatar).then((cacheInfo) => {
+            $utils.checkVRChatCache(avatar).then((cacheInfo) => {
                 var inCache = false;
                 if (cacheInfo.Item1 > 0) {
                     inCache = true;
@@ -1412,7 +1412,7 @@ export default class extends baseClass {
             ) {
                 avatar.name = this.replaceBioSymbols(avatar.name);
                 avatar.description = this.replaceBioSymbols(avatar.description);
-                this.checkVRChatCache(avatar).then((cacheInfo) => {
+                $utils.checkVRChatCache(avatar).then((cacheInfo) => {
                     var inCache = false;
                     if (cacheInfo.Item1 > 0) {
                         inCache = true;
