@@ -118,7 +118,7 @@
                     </div>
                 </template>
                 <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
-                    <favorites-world-item
+                    <FavoritesWorldItem
                         v-for="favorite in groupedByGroupKeyFavoriteWorlds[group.key]"
                         :key="favorite.id"
                         :group="group"
@@ -188,7 +188,7 @@
                     </el-tooltip>
                 </template>
                 <div v-if="localWorldFavorites[group].length" class="x-friend-list" style="margin-top: 10px">
-                    <favorites-world-item
+                    <FavoritesWorldItem
                         v-for="favorite in localWorldFavorites[group]"
                         :key="favorite.id"
                         is-local-favorite
@@ -215,7 +215,7 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <world-export-dialog
+        <WorldExportDialog
             :favorite-worlds="favoriteWorlds"
             :world-export-dialog-visible.sync="worldExportDialogVisible"
             :local-world-favorites="localWorldFavorites"

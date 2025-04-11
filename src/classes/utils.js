@@ -1,6 +1,9 @@
+import Noty from 'noty';
+
 let echarts = null;
 
-export default {
+// messy here, organize later
+const _utils = {
     removeFromArray(array, item) {
         var { length } = array;
         for (var i = 0; i < length; ++i) {
@@ -483,11 +486,219 @@ export default {
         }
         return false;
     },
-    getAuditLogTypeName(auditLogType) {
-        if (!auditLogType) return '';
-        return auditLogType
-            .replace('group.', '')
-            .replace(/\./g, ' ')
-            .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    compareUnityVersion(unitySortNumber) {
+        if (!window.API.cachedConfig.sdkUnityVersion) {
+            console.error('No cachedConfig.sdkUnityVersion');
+            return false;
+        }
+
+        // 2022.3.6f1  2022 03 06 000
+        // 2019.4.31f1 2019 04 31 000
+        // 5.3.4p1     5    03 04 010
+        // 2019.4.31f1c1 is a thing
+        var array = API.cachedConfig.sdkUnityVersion.split('.');
+        if (array.length < 3) {
+            console.error('Invalid cachedConfig.sdkUnityVersion');
+            return false;
+        }
+        var currentUnityVersion = array[0];
+        currentUnityVersion += array[1].padStart(2, '0');
+        var indexFirstLetter = array[2].search(/[a-zA-Z]/);
+        if (indexFirstLetter > -1) {
+            currentUnityVersion += array[2]
+                .substr(0, indexFirstLetter)
+                .padStart(2, '0');
+            currentUnityVersion += '0';
+            var letter = array[2].substr(indexFirstLetter, 1);
+            if (letter === 'p') {
+                currentUnityVersion += '1';
+            } else {
+                // f
+                currentUnityVersion += '0';
+            }
+            currentUnityVersion += '0';
+        } else {
+            // just in case
+            currentUnityVersion += '000';
+        }
+        // just in case
+        currentUnityVersion = currentUnityVersion.replace(/\D/g, '');
+
+        if (
+            parseInt(unitySortNumber, 10) <= parseInt(currentUnityVersion, 10)
+        ) {
+            return true;
+        }
+        return false;
+    },
+    async checkVRChatCache(ref) {
+        if (!ref.unityPackages) {
+            return { Item1: -1, Item2: false, Item3: '' };
+        }
+        var assetUrl = '';
+        var variant = '';
+        for (var i = ref.unityPackages.length - 1; i > -1; i--) {
+            var unityPackage = ref.unityPackages[i];
+            if (unityPackage.variant && unityPackage.variant !== 'security') {
+                continue;
+            }
+            if (
+                unityPackage.platform === 'standalonewindows' &&
+                _utils.compareUnityVersion(unityPackage.unitySortNumber)
+            ) {
+                assetUrl = unityPackage.assetUrl;
+                if (unityPackage.variant !== 'standard') {
+                    variant = unityPackage.variant;
+                }
+                break;
+            }
+        }
+        if (!assetUrl) {
+            assetUrl = ref.assetUrl;
+        }
+        var id = _utils.extractFileId(assetUrl);
+        var version = parseInt(_utils.extractFileVersion(assetUrl), 10);
+        var variantVersion = parseInt(
+            _utils.extractVariantVersion(assetUrl),
+            10
+        );
+        if (!id || !version) {
+            return { Item1: -1, Item2: false, Item3: '' };
+        }
+
+        return AssetBundleManager.CheckVRChatCache(
+            id,
+            version,
+            variant,
+            variantVersion
+        );
+    },
+    async deleteVRChatCache(ref) {
+        var assetUrl = '';
+        var variant = '';
+        for (var i = ref.unityPackages.length - 1; i > -1; i--) {
+            var unityPackage = ref.unityPackages[i];
+            if (
+                unityPackage.variant &&
+                unityPackage.variant !== 'standard' &&
+                unityPackage.variant !== 'security'
+            ) {
+                continue;
+            }
+            if (
+                unityPackage.platform === 'standalonewindows' &&
+                $utils.compareUnityVersion(unityPackage.unitySortNumber)
+            ) {
+                assetUrl = unityPackage.assetUrl;
+                if (unityPackage.variant !== 'standard') {
+                    variant = unityPackage.variant;
+                }
+                break;
+            }
+        }
+        var id = $utils.extractFileId(assetUrl);
+        var version = parseInt($utils.extractFileVersion(assetUrl), 10);
+        var variantVersion = parseInt(
+            $utils.extractVariantVersion(assetUrl),
+            10
+        );
+        await AssetBundleManager.DeleteCache(
+            id,
+            version,
+            variant,
+            variantVersion
+        );
+    },
+    downloadAndSaveJson(fileName, data) {
+        if (!fileName || !data) {
+            return;
+        }
+        try {
+            var link = document.createElement('a');
+            link.setAttribute(
+                'href',
+                `data:application/json;charset=utf-8,${encodeURIComponent(
+                    JSON.stringify(data, null, 2)
+                )}`
+            );
+            link.setAttribute('download', `${fileName}.json`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch {
+            new Noty({
+                type: 'error',
+                text: $app.escapeTag('Failed to download JSON.')
+            }).show();
+        }
+    },
+    getAvailablePlatforms(unityPackages) {
+        var isPC = false;
+        var isQuest = false;
+        var isIos = false;
+        if (typeof unityPackages === 'object') {
+            for (var unityPackage of unityPackages) {
+                if (
+                    unityPackage.variant &&
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
+                ) {
+                    continue;
+                }
+                if (unityPackage.platform === 'standalonewindows') {
+                    isPC = true;
+                } else if (unityPackage.platform === 'android') {
+                    isQuest = true;
+                } else if (unityPackage.platform === 'ios') {
+                    isIos = true;
+                }
+            }
+        }
+        return { isPC, isQuest, isIos };
+    },
+    getPlatformInfo(unityPackages) {
+        var pc = {};
+        var android = {};
+        var ios = {};
+        if (typeof unityPackages === 'object') {
+            for (var unityPackage of unityPackages) {
+                if (
+                    unityPackage.variant &&
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
+                ) {
+                    continue;
+                }
+                if (unityPackage.platform === 'standalonewindows') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        pc.performanceRating
+                    ) {
+                        continue;
+                    }
+                    pc = unityPackage;
+                } else if (unityPackage.platform === 'android') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        android.performanceRating
+                    ) {
+                        continue;
+                    }
+                    android = unityPackage;
+                } else if (unityPackage.platform === 'ios') {
+                    if (
+                        unityPackage.performanceRating === 'None' &&
+                        ios.performanceRating
+                    ) {
+                        continue;
+                    }
+                    ios = unityPackage;
+                }
+            }
+        }
+        return { pc, android, ios };
     }
 };
+
+export default _utils;

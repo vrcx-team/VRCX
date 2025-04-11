@@ -132,7 +132,7 @@ const avatarReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR:IMPOSTER:CREATE', args);
+            // window.API.$emit('AVATAR:IMPOSTER:CREATE', args);
             return args;
         });
     },
@@ -149,7 +149,7 @@ const avatarReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR:IMPOSTER:DELETE', args);
+            // window.API.$emit('AVATAR:IMPOSTER:DELETE', args);
             return args;
         });
     }

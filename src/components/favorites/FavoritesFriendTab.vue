@@ -47,7 +47,7 @@
                     </el-tooltip>
                 </template>
                 <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
-                    <favorites-friend-item
+                    <FavoritesFriendItem
                         v-for="favorite in groupedByGroupKeyFavoriteFriends[group.key]"
                         :key="favorite.id"
                         style="display: inline-block; width: 300px; margin-right: 15px"
@@ -70,9 +70,9 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <friend-export-dialog
+        <FriendExportDialog
             :friend-export-dialog-visible.sync="friendExportDialogVisible"
-            :favorite-friends="favoriteFriends"></friend-export-dialog>
+            :favorite-friends="favoriteFriends" />
     </div>
 </template>
 

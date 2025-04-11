@@ -69,7 +69,7 @@ const miscReq = {
                 json,
                 params
             };
-            window.API.$emit('FILE:ANALYSIS', args);
+            // window.API.$emit('FILE:ANALYSIS', args);
             return args;
         });
     },

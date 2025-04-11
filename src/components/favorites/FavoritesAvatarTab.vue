@@ -83,7 +83,7 @@
                     </el-tooltip>
                 </template>
                 <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
-                    <favorites-avatar-item
+                    <FavoritesAvatarItem
                         v-for="favorite in groupedByGroupKeyFavoriteAvatars[group.key]"
                         :key="favorite.id"
                         :favorite="favorite"
@@ -126,14 +126,14 @@
                     </el-tooltip>
                 </template>
                 <div v-if="avatarHistoryArray.length" class="x-friend-list" style="margin-top: 10px">
-                    <favorites-avatar-local-history-item
+                    <FavoritesAvatarLocalHistoryItem
                         v-for="favorite in avatarHistoryArray"
                         :key="favorite.id"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         :favorite="favorite"
                         :hide-tooltips="hideTooltips"
                         @select-avatar-with-confirmation="selectAvatarWithConfirmation"
-                        @click="showAvatarDialog(favorite.id)"></favorites-avatar-local-history-item>
+                        @click="showAvatarDialog(favorite.id)" />
                 </div>
                 <div
                     v-else
@@ -194,7 +194,7 @@
                     </el-tooltip>
                 </template>
                 <div v-if="localAvatarFavorites[group].length" class="x-friend-list" :style="{ marginTop: '10px' }">
-                    <favorites-avatar-item
+                    <FavoritesAvatarItem
                         v-for="favorite in localAvatarFavorites[group]"
                         :key="favorite.id"
                         is-local-favorite
@@ -207,7 +207,7 @@
                         @handle-select="favorite.$selected = $event"
                         @remove-local-avatar-favorite="removeLocalAvatarFavorite"
                         @select-avatar-with-confirmation="selectAvatarWithConfirmation"
-                        @click="showAvatarDialog(favorite.id)"></favorites-avatar-item>
+                        @click="showAvatarDialog(favorite.id)" />
                 </div>
                 <div
                     v-else
@@ -223,7 +223,7 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <avatar-export-dialog
+        <AvatarExportDialog
             :avatar-export-dialog-visible.sync="avatarExportDialogVisible"
             :favorite-avatars="favoriteAvatars"
             :local-avatar-favorite-groups="localAvatarFavoriteGroups"

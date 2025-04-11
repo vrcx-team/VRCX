@@ -95,11 +95,6 @@ export default class extends baseClass {
             }
         },
 
-        onAvatarMemoChange() {
-            var D = this.avatarDialog;
-            this.saveAvatarMemo(D.id, D.memo);
-        },
-
         async getAvatarMemo(avatarId) {
             try {
                 return await database.getAvatarMemoDB(avatarId);
@@ -110,18 +105,6 @@ export default class extends baseClass {
                     editedAt: '',
                     memo: ''
                 };
-            }
-        },
-
-        saveAvatarMemo(avatarId, memo) {
-            if (memo) {
-                database.setAvatarMemo({
-                    avatarId,
-                    editedAt: new Date().toJSON(),
-                    memo
-                });
-            } else {
-                database.deleteAvatarMemo(avatarId);
             }
         }
     };

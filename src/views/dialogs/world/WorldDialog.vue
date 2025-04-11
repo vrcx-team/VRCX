@@ -739,17 +739,17 @@
             </el-tabs>
         </div>
 
-        <!--  Nested Hmm-->
-        <world-allowed-domains-dialog :world-allowed-domains-dialog.sync="worldAllowedDomainsDialog" />
-        <set-world-tags-dialog
+        <!-- Nested -->
+        <WorldAllowedDomainsDialog :world-allowed-domains-dialog.sync="worldAllowedDomainsDialog" />
+        <SetWorldTagsDialog
             :is-set-world-tags-dialog-visible.sync="isSetWorldTagsDialogVisible"
             :old-tags="worldDialog.ref?.tags"
             :world-id="worldDialog.id"
             :is-world-dialog-visible="worldDialog.visible" />
-        <previous-instances-world-dialog
+        <PreviousInstancesWorldDialog
             :previous-instances-world-dialog.sync="previousInstancesWorldDialog"
             :shift-held="shiftHeld" />
-        <new-instance-dialog
+        <NewInstanceDialog
             :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
             :create-new-instance="createNewInstance"
             :instance-content-settings="instanceContentSettings"
@@ -1082,8 +1082,8 @@
             refreshWorldDialogTreeData() {
                 this.treeData = utils.buildTreeData(this.worldDialog.ref);
             },
-            downloadAndSaveJson(id, ref) {
-                this.$emit('download-and-save-json', id, ref);
+            downloadAndSaveJson(fileName, data) {
+                utils.downloadAndSaveJson(fileName, data);
             },
             copyWorldId() {
                 navigator.clipboard

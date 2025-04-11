@@ -79,6 +79,7 @@ import ExportFriendsListDialog from './views/dialogs/favoritesDialog/ExportFrien
 import ExportAvatarsListDialog from './views/dialogs/favoritesDialog/ExportAvatarsListDialog.vue';
 import GroupDialog from './views/dialogs/groupDialog/GroupDialog.vue';
 import InviteGroupDialog from './views/dialogs/groupDialog/InviteGroupDialog.vue';
+import AvatarDialog from './views/dialogs/avatarDialog/AvatarDialog.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -240,6 +241,8 @@ console.log(`isLinux: ${LINUX}`);
             //  - group
             GroupDialog,
             InviteGroupDialog,
+            //  - avatar
+            AvatarDialog,
             //  - favorites
             FriendImportDialog,
             WorldImportDialog,
@@ -1395,14 +1398,14 @@ console.log(`isLinux: ${LINUX}`);
         return ref;
     };
 
-    API.$on('AVATAR:IMPOSTER:DELETE', function (args) {
-        if (
-            $app.avatarDialog.visible &&
-            args.params.avatarId === $app.avatarDialog.id
-        ) {
-            $app.showAvatarDialog($app.avatarDialog.id);
-        }
-    });
+    // API.$on('AVATAR:IMPOSTER:DELETE', function (args) {
+    //     if (
+    //         $app.avatarDialog.visible &&
+    //         args.params.avatarId === $app.avatarDialog.id
+    //     ) {
+    //         $app.showAvatarDialog($app.avatarDialog.id);
+    //     }
+    // });
 
     // #endregion
     // #region | API: Notification
@@ -1838,7 +1841,13 @@ console.log(`isLinux: ${LINUX}`);
             .finally(() => {
                 this.isPlayerModerationsLoading = false;
             })
-            .then(() => {
+            .then((res) => {
+                // 'AVATAR-MODERATION:LIST';
+                // TODO: compare with cachedAvatarModerations
+                this.cachedAvatarModerations = new Map();
+                for (var json of res[1]?.json) {
+                    this.applyAvatarModeration(json);
+                }
                 this.deleteExpiredPlayerModerations();
             });
     };
@@ -1847,32 +1856,6 @@ console.log(`isLinux: ${LINUX}`);
     // #region | API: AvatarModeration
 
     API.cachedAvatarModerations = new Map();
-
-    API.$on('AVATAR-MODERATION', function (args) {
-        args.ref = this.applyAvatarModeration(args.json);
-    });
-
-    API.$on('AVATAR-MODERATION:LIST', function (args) {
-        // TODO: compare with cachedAvatarModerations
-        this.cachedAvatarModerations = new Map();
-        for (var json of args.json) {
-            this.applyAvatarModeration(json);
-        }
-    });
-
-    API.$on('AVATAR-MODERATION:DELETE', function (args) {
-        this.cachedAvatarModerations.delete(args.params.targetAvatarId);
-
-        // update avatar dialog
-        var D = $app.avatarDialog;
-        if (
-            D.visible &&
-            args.params.avatarModerationType === 'block' &&
-            D.id === args.params.targetAvatarId
-        ) {
-            D.isBlocked = false;
-        }
-    });
 
     API.applyAvatarModeration = function (json) {
         // fix inconsistent Unix time response
@@ -9329,7 +9312,7 @@ console.log(`isLinux: ${LINUX}`);
                 })
                 .then((args) => {
                     this.currentInstanceWorld.ref = args.ref;
-                    var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                    var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     this.currentInstanceWorld.isPC = isPC;
@@ -9341,7 +9324,7 @@ console.log(`isLinux: ${LINUX}`);
                         );
                     this.currentInstanceWorld.focusViewDisabled =
                         args.ref?.tags.includes('feature_focus_view_disabled');
-                    this.checkVRChatCache(args.ref).then((cacheInfo) => {
+                    $utils.checkVRChatCache(args.ref).then((cacheInfo) => {
                         if (cacheInfo.Item1 > 0) {
                             this.currentInstanceWorld.inCache = true;
                             this.currentInstanceWorld.cacheSize = `${(
@@ -9361,13 +9344,13 @@ console.log(`isLinux: ${LINUX}`);
                 })
                 .then((args) => {
                     this.currentInstanceWorld.ref = args.ref;
-                    var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                    var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     this.currentInstanceWorld.isPC = isPC;
                     this.currentInstanceWorld.isQuest = isQuest;
                     this.currentInstanceWorld.isIos = isIos;
-                    this.checkVRChatCache(args.ref).then((cacheInfo) => {
+                    $utils.checkVRChatCache(args.ref).then((cacheInfo) => {
                         if (cacheInfo.Item1 > 0) {
                             this.currentInstanceWorld.inCache = true;
                             this.currentInstanceWorld.cacheSize = `${(
@@ -9395,74 +9378,6 @@ console.log(`isLinux: ${LINUX}`);
                 }
             }
         }
-    };
-
-    $app.methods.getAvailablePlatforms = function (unityPackages) {
-        var isPC = false;
-        var isQuest = false;
-        var isIos = false;
-        if (typeof unityPackages === 'object') {
-            for (var unityPackage of unityPackages) {
-                if (
-                    unityPackage.variant &&
-                    unityPackage.variant !== 'standard' &&
-                    unityPackage.variant !== 'security'
-                ) {
-                    continue;
-                }
-                if (unityPackage.platform === 'standalonewindows') {
-                    isPC = true;
-                } else if (unityPackage.platform === 'android') {
-                    isQuest = true;
-                } else if (unityPackage.platform === 'ios') {
-                    isIos = true;
-                }
-            }
-        }
-        return { isPC, isQuest, isIos };
-    };
-
-    $app.methods.getPlatformInfo = function (unityPackages) {
-        var pc = {};
-        var android = {};
-        var ios = {};
-        if (typeof unityPackages === 'object') {
-            for (var unityPackage of unityPackages) {
-                if (
-                    unityPackage.variant &&
-                    unityPackage.variant !== 'standard' &&
-                    unityPackage.variant !== 'security'
-                ) {
-                    continue;
-                }
-                if (unityPackage.platform === 'standalonewindows') {
-                    if (
-                        unityPackage.performanceRating === 'None' &&
-                        pc.performanceRating
-                    ) {
-                        continue;
-                    }
-                    pc = unityPackage;
-                } else if (unityPackage.platform === 'android') {
-                    if (
-                        unityPackage.performanceRating === 'None' &&
-                        android.performanceRating
-                    ) {
-                        continue;
-                    }
-                    android = unityPackage;
-                } else if (unityPackage.platform === 'ios') {
-                    if (
-                        unityPackage.performanceRating === 'None' &&
-                        ios.performanceRating
-                    ) {
-                        continue;
-                    }
-                    ios = unityPackage;
-                }
-            }
-        }
-        return { pc, android, ios };
     };
 
     $app.methods.selectCurrentInstanceRow = function (val) {
@@ -10128,7 +10043,7 @@ console.log(`isLinux: ${LINUX}`);
             ) {
                 continue;
             }
-            if (!this.compareUnityVersion(unityPackage.unitySortNumber)) {
+            if (!$utils.compareUnityVersion(unityPackage.unitySortNumber)) {
                 continue;
             }
 
@@ -10293,7 +10208,7 @@ console.log(`isLinux: ${LINUX}`);
                             D.id
                         );
                     }
-                    var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                    var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     D.avatarScalingDisabled = args.ref?.tags.includes(
@@ -10750,21 +10665,14 @@ console.log(`isLinux: ${LINUX}`);
         isPC: false,
         isQuest: false,
         isIos: false,
-        treeData: [],
         bundleSizes: [],
         platformInfo: {},
-        timeSpent: 0,
         lastUpdated: '',
         inCache: false,
         cacheSize: 0,
         cacheLocked: false,
-        cachePath: '',
-        fileAnalysis: {}
+        cachePath: ''
     };
-
-    API.$on('LOGOUT', function () {
-        $app.avatarDialog.visible = false;
-    });
 
     API.$on('FAVORITE', function (args) {
         var { ref } = args;
@@ -10784,13 +10692,10 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.methods.showAvatarDialog = function (avatarId) {
-        this.$nextTick(() => $app.adjustDialogZ(this.$refs.avatarDialog.$el));
         var D = this.avatarDialog;
         D.visible = true;
         D.loading = true;
         D.id = avatarId;
-        D.fileAnalysis = {};
-        D.treeData = [];
         D.inCache = false;
         D.cacheSize = 0;
         D.cacheLocked = false;
@@ -10804,13 +10709,11 @@ console.log(`isLinux: ${LINUX}`);
         D.lastUpdated = '';
         D.bundleSizes = [];
         D.platformInfo = {};
-        D.timeSpent = 0;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (API.currentUser.$isVRCPlus &&
                 this.localAvatarFavoritesList.includes(avatarId));
         D.isBlocked = API.cachedAvatarModerations.has(avatarId);
-        D.memo = '';
         var ref2 = API.cachedAvatars.get(avatarId);
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
@@ -10823,18 +10726,6 @@ console.log(`isLinux: ${LINUX}`);
                 return;
             }
         }
-        database.getAvatarTimeSpent(avatarId).then((aviTime) => {
-            if (D.id === aviTime.avatarId) {
-                D.timeSpent = aviTime.timeSpent;
-                if (
-                    D.id === API.currentUser.currentAvatar &&
-                    API.currentUser.$previousAvatarSwapTime
-                ) {
-                    D.timeSpent +=
-                        Date.now() - API.currentUser.$previousAvatarSwapTime;
-                }
-            }
-        });
         avatarRequest
             .getAvatar({ avatarId })
             .then((args) => {
@@ -10850,13 +10741,13 @@ console.log(`isLinux: ${LINUX}`);
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;
                 }
-                var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
                     args.ref.unityPackages
                 );
                 D.isPC = isPC;
                 D.isQuest = isQuest;
                 D.isIos = isIos;
-                D.platformInfo = this.getPlatformInfo(args.ref.unityPackages);
+                D.platformInfo = $utils.getPlatformInfo(args.ref.unityPackages);
                 for (let i = ref.unityPackages.length - 1; i > -1; i--) {
                     var unityPackage = ref.unityPackages[i];
                     if (unityPackage.variant === 'impostor') {
@@ -10872,31 +10763,11 @@ console.log(`isLinux: ${LINUX}`);
                 }
             })
             .catch((err) => {
-                D.loading = false;
                 D.visible = false;
                 throw err;
             })
             .finally(() => {
-                D.loading = false;
-            });
-        this.getAvatarMemo(avatarId).then((memo) => {
-            if (D.id === memo.avatarId) {
-                D.memo = memo.memo;
-            }
-        });
-    };
-
-    $app.methods.selectAvatar = function (id) {
-        avatarRequest
-            .selectAvatar({
-                avatarId: id
-            })
-            .then((args) => {
-                this.$message({
-                    message: 'Avatar changed',
-                    type: 'success'
-                });
-                return args;
+                this.$nextTick(() => (D.loading = false));
             });
     };
 
@@ -10933,192 +10804,6 @@ console.log(`isLinux: ${LINUX}`);
                 }).show();
                 return args;
             });
-    };
-
-    $app.methods.avatarDialogCommand = function (command) {
-        var D = this.avatarDialog;
-        if (D.visible === false) {
-            return;
-        }
-        switch (command) {
-            case 'Refresh':
-                this.showAvatarDialog(D.id);
-                break;
-            case 'Share':
-                this.copyAvatarUrl(D.id);
-                break;
-            case 'Rename':
-                this.promptRenameAvatar(D);
-                break;
-            case 'Change Image':
-                this.displayPreviousImages('Avatar', 'Change');
-                break;
-            case 'Previous Images':
-                this.displayPreviousImages('Avatar', 'Display');
-                break;
-            case 'Change Description':
-                this.promptChangeAvatarDescription(D);
-                break;
-            case 'Change Content Tags':
-                this.showSetAvatarTagsDialog(D.id);
-                break;
-            case 'Download Unity Package':
-                this.openExternalLink(
-                    this.replaceVrcPackageUrl(
-                        this.avatarDialog.ref.unityPackageUrl
-                    )
-                );
-                break;
-            case 'Add Favorite':
-                this.showFavoriteDialog('avatar', D.id);
-                break;
-            default:
-                this.$confirm(`Continue? ${command}`, 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action !== 'confirm') {
-                            return;
-                        }
-                        switch (command) {
-                            case 'Delete Favorite':
-                                favoriteRequest.deleteFavorite({
-                                    objectId: D.id
-                                });
-                                break;
-                            case 'Select Fallback Avatar':
-                                avatarRequest
-                                    .selectFallbackAvatar({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: 'Fallback avatar changed',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Block Avatar':
-                                avatarModerationRequest
-                                    .sendAvatarModeration({
-                                        avatarModerationType: 'block',
-                                        targetAvatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: 'Avatar blocked',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Unblock Avatar':
-                                avatarModerationRequest.deleteAvatarModeration({
-                                    avatarModerationType: 'block',
-                                    targetAvatarId: D.id
-                                });
-                                break;
-                            case 'Make Public':
-                                avatarRequest
-                                    .saveAvatar({
-                                        id: D.id,
-                                        releaseStatus: 'public'
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: 'Avatar updated to public',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Make Private':
-                                avatarRequest
-                                    .saveAvatar({
-                                        id: D.id,
-                                        releaseStatus: 'private'
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message:
-                                                'Avatar updated to private',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete':
-                                avatarRequest
-                                    .deleteAvatar({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: 'Avatar deleted',
-                                            type: 'success'
-                                        });
-                                        D.visible = false;
-                                        return args;
-                                    });
-                                break;
-                            case 'Delete Imposter':
-                                avatarRequest
-                                    .deleteImposter({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: 'Imposter deleted',
-                                            type: 'success'
-                                        });
-                                        this.showAvatarDialog(D.id);
-                                        return args;
-                                    });
-                                break;
-                            case 'Create Imposter':
-                                avatarRequest
-                                    .createImposter({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message:
-                                                'Imposter queued for creation',
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                                break;
-                            case 'Regenerate Imposter':
-                                avatarRequest
-                                    .deleteImposter({
-                                        avatarId: D.id
-                                    })
-                                    .then((args) => {
-                                        return args;
-                                    })
-                                    .finally(() => {
-                                        avatarRequest
-                                            .createImposter({
-                                                avatarId: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message:
-                                                        'Imposter deleted and queued for creation',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                    });
-                                break;
-                        }
-                    }
-                });
-                break;
-        }
     };
 
     $app.methods.checkAvatarCache = function (fileId) {
@@ -11190,37 +10875,6 @@ console.log(`isLinux: ${LINUX}`);
                 this.showAvatarDialog(avatarId);
             }
         }
-    };
-
-    $app.methods.refreshAvatarDialogTreeData = function () {
-        var D = this.avatarDialog;
-        D.treeData = $utils.buildTreeData(D.ref);
-    };
-
-    $app.computed.avatarDialogPlatform = function () {
-        var { ref } = this.avatarDialog;
-        var platforms = [];
-        if (ref.unityPackages) {
-            for (var unityPackage of ref.unityPackages) {
-                if (
-                    unityPackage.variant &&
-                    unityPackage.variant !== 'standard' &&
-                    unityPackage.variant !== 'security'
-                ) {
-                    continue;
-                }
-                var platform = 'PC';
-                if (unityPackage.platform === 'standalonewindows') {
-                    platform = 'PC';
-                } else if (unityPackage.platform === 'android') {
-                    platform = 'Android';
-                } else if (unityPackage.platform) {
-                    ({ platform } = unityPackage);
-                }
-                platforms.push(`${platform}/${unityPackage.unityVersion}`);
-            }
-        }
-        return platforms.join(', ');
     };
 
     // #endregion
@@ -11764,251 +11418,6 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | App: Set Avatar Tags Dialog
-
-    $app.data.setAvatarTagsDialog = {
-        visible: false,
-        loading: false,
-        ownAvatars: [],
-        selectedCount: 0,
-        forceUpdate: 0,
-        selectedTags: [],
-        selectedTagsCsv: '',
-        contentHorror: false,
-        contentGore: false,
-        contentViolence: false,
-        contentAdult: false,
-        contentSex: false
-    };
-
-    $app.methods.showSetAvatarTagsDialog = function (avatarId) {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.setAvatarTagsDialog.$el)
-        );
-        var D = this.setAvatarTagsDialog;
-        D.visible = true;
-        D.loading = false;
-        D.ownAvatars = [];
-        D.forceUpdate = 0;
-        D.selectedTags = [];
-        D.selectedTagsCsv = '';
-        D.contentHorror = false;
-        D.contentGore = false;
-        D.contentViolence = false;
-        D.contentAdult = false;
-        D.contentSex = false;
-        var oldTags = this.avatarDialog.ref.tags;
-        oldTags.forEach((tag) => {
-            switch (tag) {
-                case 'content_horror':
-                    D.contentHorror = true;
-                    break;
-                case 'content_gore':
-                    D.contentGore = true;
-                    break;
-                case 'content_violence':
-                    D.contentViolence = true;
-                    break;
-                case 'content_adult':
-                    D.contentAdult = true;
-                    break;
-                case 'content_sex':
-                    D.contentSex = true;
-                    break;
-                default:
-                    if (tag.startsWith('content_')) {
-                        D.selectedTags.push(tag.substring(8));
-                    }
-                    break;
-            }
-        });
-        for (var ref of API.cachedAvatars.values()) {
-            if (ref.authorId === API.currentUser.id) {
-                ref.$selected = false;
-                ref.$tagString = '';
-                if (avatarId === ref.id) {
-                    ref.$selected = true;
-                    var conentTags = [];
-                    ref.tags.forEach((tag) => {
-                        if (tag.startsWith('content_')) {
-                            conentTags.push(tag.substring(8));
-                        }
-                    });
-                    for (var i = 0; i < conentTags.length; ++i) {
-                        var tag = conentTags[i];
-                        if (i < conentTags.length - 1) {
-                            ref.$tagString += `${tag}, `;
-                        } else {
-                            ref.$tagString += tag;
-                        }
-                    }
-                }
-                D.ownAvatars.push(ref);
-            }
-        }
-        this.updateAvatarTagsSelection();
-        this.updateSelectedAvatarTags();
-    };
-
-    $app.methods.updateSelectedAvatarTags = function () {
-        var D = this.setAvatarTagsDialog;
-        if (D.contentHorror) {
-            if (!D.selectedTags.includes('content_horror')) {
-                D.selectedTags.push('content_horror');
-            }
-        } else if (D.selectedTags.includes('content_horror')) {
-            D.selectedTags.splice(D.selectedTags.indexOf('content_horror'), 1);
-        }
-        if (D.contentGore) {
-            if (!D.selectedTags.includes('content_gore')) {
-                D.selectedTags.push('content_gore');
-            }
-        } else if (D.selectedTags.includes('content_gore')) {
-            D.selectedTags.splice(D.selectedTags.indexOf('content_gore'), 1);
-        }
-        if (D.contentViolence) {
-            if (!D.selectedTags.includes('content_violence')) {
-                D.selectedTags.push('content_violence');
-            }
-        } else if (D.selectedTags.includes('content_violence')) {
-            D.selectedTags.splice(
-                D.selectedTags.indexOf('content_violence'),
-                1
-            );
-        }
-        if (D.contentAdult) {
-            if (!D.selectedTags.includes('content_adult')) {
-                D.selectedTags.push('content_adult');
-            }
-        } else if (D.selectedTags.includes('content_adult')) {
-            D.selectedTags.splice(D.selectedTags.indexOf('content_adult'), 1);
-        }
-        if (D.contentSex) {
-            if (!D.selectedTags.includes('content_sex')) {
-                D.selectedTags.push('content_sex');
-            }
-        } else if (D.selectedTags.includes('content_sex')) {
-            D.selectedTags.splice(D.selectedTags.indexOf('content_sex'), 1);
-        }
-
-        D.selectedTagsCsv = D.selectedTags.join(',').replace(/content_/g, '');
-    };
-
-    $app.methods.updateInputAvatarTags = function () {
-        var D = this.setAvatarTagsDialog;
-        D.contentHorror = false;
-        D.contentGore = false;
-        D.contentViolence = false;
-        D.contentAdult = false;
-        D.contentSex = false;
-        var tags = D.selectedTagsCsv.split(',');
-        D.selectedTags = [];
-        for (var tag of tags) {
-            switch (tag) {
-                case 'horror':
-                    D.contentHorror = true;
-                    break;
-                case 'gore':
-                    D.contentGore = true;
-                    break;
-                case 'violence':
-                    D.contentViolence = true;
-                    break;
-                case 'adult':
-                    D.contentAdult = true;
-                    break;
-                case 'sex':
-                    D.contentSex = true;
-                    break;
-            }
-            if (!D.selectedTags.includes(`content_${tag}`)) {
-                D.selectedTags.push(`content_${tag}`);
-            }
-        }
-    };
-
-    $app.data.avatarContentTags = [
-        'content_horror',
-        'content_gore',
-        'content_violence',
-        'content_adult',
-        'content_sex'
-    ];
-
-    $app.methods.saveSetAvatarTagsDialog = async function () {
-        var D = this.setAvatarTagsDialog;
-        if (D.loading) {
-            return;
-        }
-        D.loading = true;
-        try {
-            for (var i = D.ownAvatars.length - 1; i >= 0; --i) {
-                var ref = D.ownAvatars[i];
-                if (!D.visible) {
-                    break;
-                }
-                if (!ref.$selected) {
-                    continue;
-                }
-                var tags = [...D.selectedTags];
-                for (var tag of ref.tags) {
-                    if (!tag.startsWith('content_')) {
-                        tags.push(tag);
-                    }
-                }
-                await avatarRequest.saveAvatar({
-                    id: ref.id,
-                    tags
-                });
-                D.selectedCount--;
-            }
-        } catch (err) {
-            this.$message({
-                message: 'Error saving avatar tags',
-                type: 'error'
-            });
-        } finally {
-            D.loading = false;
-            D.visible = false;
-        }
-    };
-
-    $app.methods.updateAvatarTagsSelection = function () {
-        var D = this.setAvatarTagsDialog;
-        D.selectedCount = 0;
-        for (var ref of D.ownAvatars) {
-            if (ref.$selected) {
-                D.selectedCount++;
-            }
-            ref.$tagString = '';
-            var conentTags = [];
-            ref.tags.forEach((tag) => {
-                if (tag.startsWith('content_')) {
-                    conentTags.push(tag.substring(8));
-                }
-            });
-            for (var i = 0; i < conentTags.length; ++i) {
-                var tag = conentTags[i];
-                if (i < conentTags.length - 1) {
-                    ref.$tagString += `${tag}, `;
-                } else {
-                    ref.$tagString += tag;
-                }
-            }
-        }
-        this.setAvatarTagsDialog.forceUpdate++;
-    };
-
-    $app.methods.setAvatarTagsSelectToggle = function () {
-        var D = this.setAvatarTagsDialog;
-        var allSelected = D.ownAvatars.length === D.selectedCount;
-        for (var ref of D.ownAvatars) {
-            ref.$selected = !allSelected;
-        }
-        this.updateAvatarTagsSelection();
-    };
-
-    // #endregion
     // #region | App: Notification position
 
     $app.data.notificationPositionDialog = {
@@ -12174,22 +11583,6 @@ console.log(`isLinux: ${LINUX}`);
         textArea.select();
         document.execCommand('copy');
         document.getElementById('copy_to_clipboard').remove();
-    };
-
-    $app.methods.copyAvatarId = function (avatarId) {
-        this.$message({
-            message: 'Avatar ID copied to clipboard',
-            type: 'success'
-        });
-        this.copyToClipboard(avatarId);
-    };
-
-    $app.methods.copyAvatarUrl = function (avatarId) {
-        this.$message({
-            message: 'Avatar URL copied to clipboard',
-            type: 'success'
-        });
-        this.copyToClipboard(`https://vrchat.com/home/avatar/${avatarId}`);
     };
 
     $app.methods.copyUserId = function (userId) {
@@ -14760,7 +14153,7 @@ console.log(`isLinux: ${LINUX}`);
             D.cacheSize = 0;
             D.cacheLocked = false;
             D.cachePath = '';
-            this.checkVRChatCache(D.ref).then((cacheInfo) => {
+            $utils.checkVRChatCache(D.ref).then((cacheInfo) => {
                 if (cacheInfo.Item1 > 0) {
                     D.inCache = true;
                     D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(
@@ -14780,7 +14173,7 @@ console.log(`isLinux: ${LINUX}`);
             D.cacheSize = 0;
             D.cacheLocked = false;
             D.cachePath = '';
-            this.checkVRChatCache(D.ref).then((cacheInfo) => {
+            $utils.checkVRChatCache(D.ref).then((cacheInfo) => {
                 if (cacheInfo.Item1 > 0) {
                     D.inCache = true;
                     D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(
@@ -14791,50 +14184,6 @@ console.log(`isLinux: ${LINUX}`);
                 D.cacheLocked = cacheInfo.Item2;
             });
         }
-    };
-
-    // eslint-disable-next-line require-await
-    $app.methods.checkVRChatCache = async function (ref) {
-        if (!ref.unityPackages) {
-            return { Item1: -1, Item2: false, Item3: '' };
-        }
-        var assetUrl = '';
-        var variant = '';
-        for (var i = ref.unityPackages.length - 1; i > -1; i--) {
-            var unityPackage = ref.unityPackages[i];
-            if (unityPackage.variant && unityPackage.variant !== 'security') {
-                continue;
-            }
-            if (
-                unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unitySortNumber)
-            ) {
-                assetUrl = unityPackage.assetUrl;
-                if (unityPackage.variant !== 'standard') {
-                    variant = unityPackage.variant;
-                }
-                break;
-            }
-        }
-        if (!assetUrl) {
-            assetUrl = ref.assetUrl;
-        }
-        var id = $utils.extractFileId(assetUrl);
-        var version = parseInt($utils.extractFileVersion(assetUrl), 10);
-        var variantVersion = parseInt(
-            $utils.extractVariantVersion(assetUrl),
-            10
-        );
-        if (!id || !version) {
-            return { Item1: -1, Item2: false, Item3: '' };
-        }
-
-        return AssetBundleManager.CheckVRChatCache(
-            id,
-            version,
-            variant,
-            variantVersion
-        );
     };
 
     $app.methods.getDisplayName = function (userId) {
@@ -14848,40 +14197,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.deleteVRChatCache = async function (ref) {
-        var assetUrl = '';
-        var variant = '';
-        for (var i = ref.unityPackages.length - 1; i > -1; i--) {
-            var unityPackage = ref.unityPackages[i];
-            if (
-                unityPackage.variant &&
-                unityPackage.variant !== 'standard' &&
-                unityPackage.variant !== 'security'
-            ) {
-                continue;
-            }
-            if (
-                unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unitySortNumber)
-            ) {
-                assetUrl = unityPackage.assetUrl;
-                if (unityPackage.variant !== 'standard') {
-                    variant = unityPackage.variant;
-                }
-                break;
-            }
-        }
-        var id = $utils.extractFileId(assetUrl);
-        var version = parseInt($utils.extractFileVersion(assetUrl), 10);
-        var variantVersion = parseInt(
-            $utils.extractVariantVersion(assetUrl),
-            10
-        );
-        await AssetBundleManager.DeleteCache(
-            id,
-            version,
-            variant,
-            variantVersion
-        );
+        await $utils.deleteVRChatCache(ref);
         this.getVRChatCacheSize();
         this.updateVRChatWorldCache();
         this.updateVRChatAvatarCache();
@@ -15000,7 +14316,7 @@ console.log(`isLinux: ${LINUX}`);
                 }
                 if (
                     unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unitySortNumber)
+                    $utils.compareUnityVersion(unityPackage.unitySortNumber)
                 ) {
                     assetUrl = unityPackage.assetUrl;
                     if (unityPackage.variant !== 'standard') {
@@ -15023,7 +14339,7 @@ console.log(`isLinux: ${LINUX}`);
                 var unityPackage = unityPackages[i];
                 if (
                     unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unitySortNumber)
+                    $utils.compareUnityVersion(unityPackage.unitySortNumber)
                 ) {
                     assetUrl = unityPackage.assetUrl;
                     break;
@@ -16211,52 +15527,6 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.setAsideWidth = async function () {
         await configRepository.setInt('VRCX_sidePanelWidth', this.asideWidth);
-    };
-
-    $app.methods.compareUnityVersion = function (unitySortNumber) {
-        if (!API.cachedConfig.sdkUnityVersion) {
-            console.error('No cachedConfig.sdkUnityVersion');
-            return false;
-        }
-
-        // 2022.3.6f1  2022 03 06 000
-        // 2019.4.31f1 2019 04 31 000
-        // 5.3.4p1     5    03 04 010
-        // 2019.4.31f1c1 is a thing
-        var array = API.cachedConfig.sdkUnityVersion.split('.');
-        if (array.length < 3) {
-            console.error('Invalid cachedConfig.sdkUnityVersion');
-            return false;
-        }
-        var currentUnityVersion = array[0];
-        currentUnityVersion += array[1].padStart(2, '0');
-        var indexFirstLetter = array[2].search(/[a-zA-Z]/);
-        if (indexFirstLetter > -1) {
-            currentUnityVersion += array[2]
-                .substr(0, indexFirstLetter)
-                .padStart(2, '0');
-            currentUnityVersion += '0';
-            var letter = array[2].substr(indexFirstLetter, 1);
-            if (letter === 'p') {
-                currentUnityVersion += '1';
-            } else {
-                // f
-                currentUnityVersion += '0';
-            }
-            currentUnityVersion += '0';
-        } else {
-            // just in case
-            currentUnityVersion += '000';
-        }
-        // just in case
-        currentUnityVersion = currentUnityVersion.replace(/\D/g, '');
-
-        if (
-            parseInt(unitySortNumber, 10) <= parseInt(currentUnityVersion, 10)
-        ) {
-            return true;
-        }
-        return false;
     };
 
     /**
@@ -18654,32 +17924,6 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
-    // use in avatar, user, group dialog
-    // TODO: better in utils
-    $app.methods.downloadAndSaveJson = function (fileName, data) {
-        if (!fileName || !data) {
-            return;
-        }
-        try {
-            var link = document.createElement('a');
-            link.setAttribute(
-                'href',
-                `data:application/json;charset=utf-8,${encodeURIComponent(
-                    JSON.stringify(data, null, 2)
-                )}`
-            );
-            link.setAttribute('download', `${fileName}.json`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch {
-            new Noty({
-                type: 'error',
-                text: $app.escapeTag('Failed to download JSON.')
-            }).show();
-        }
-    };
-
     $app.methods.setPlayerModeration = function (userId, type) {
         var D = this.userDialog;
         AppApi.SetVRChatUserModeration(API.currentUser.id, userId, type).then(
@@ -18907,79 +18151,6 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.changeLogRemoveLinks = function (text) {
         return text.replace(/([^!])\[[^\]]+\]\([^)]+\)/g, '$1');
-    };
-
-    API.$on('FILE:ANALYSIS', function (args) {
-        if (
-            !$app.avatarDialog.visible ||
-            $app.avatarDialog.id !== args.params.avatarId
-        ) {
-            return;
-        }
-        var ref = args.json;
-        if (typeof ref.fileSize !== 'undefined') {
-            ref._fileSize = `${(ref.fileSize / 1048576).toFixed(2)} MB`;
-        }
-        if (typeof ref.uncompressedSize !== 'undefined') {
-            ref._uncompressedSize = `${(ref.uncompressedSize / 1048576).toFixed(
-                2
-            )} MB`;
-        }
-        if (typeof ref.avatarStats?.totalTextureUsage !== 'undefined') {
-            ref._totalTextureUsage = `${(
-                ref.avatarStats.totalTextureUsage / 1048576
-            ).toFixed(2)} MB`;
-        }
-        $app.avatarDialog.fileAnalysis = $utils.buildTreeData(args.json);
-    });
-
-    $app.methods.getAvatarFileAnalysis = function () {
-        var D = this.avatarDialog;
-        var avatarId = D.ref.id;
-        var assetUrl = '';
-        var variant = 'security';
-        for (let i = D.ref.unityPackages.length - 1; i > -1; i--) {
-            var unityPackage = D.ref.unityPackages[i];
-            if (unityPackage.variant !== 'security') {
-                continue;
-            }
-            if (
-                unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unitySortNumber)
-            ) {
-                assetUrl = unityPackage.assetUrl;
-                break;
-            }
-        }
-        if (!assetUrl) {
-            for (let i = D.ref.unityPackages.length - 1; i > -1; i--) {
-                var unityPackage = D.ref.unityPackages[i];
-                if (unityPackage.variant !== 'standard') {
-                    continue;
-                }
-                if (
-                    unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unitySortNumber)
-                ) {
-                    variant = 'standard';
-                    assetUrl = unityPackage.assetUrl;
-                    break;
-                }
-            }
-        }
-        if (!assetUrl) {
-            assetUrl = D.ref.assetUrl;
-        }
-        var fileId = $utils.extractFileId(assetUrl);
-        var version = parseInt($utils.extractFileVersion(assetUrl), 10);
-        if (!fileId || !version) {
-            this.$message({
-                message: 'File Analysis unavailable',
-                type: 'error'
-            });
-            return;
-        }
-        miscRequest.getFileAnalysis({ fileId, version, variant, avatarId });
     };
 
     $app.methods.openFolderGeneric = function (path) {
@@ -19630,8 +18801,7 @@ console.log(`isLinux: ${LINUX}`);
             'open-folder-generic': this.openFolderGeneric,
             'delete-vrchat-cache': this.deleteVRChatCache,
             'world-dialog-command': this.worldDialogCommand,
-            'refresh-instance-player-count': this.refreshInstancePlayerCount,
-            'download-and-save-json': this.downloadAndSaveJson
+            'refresh-instance-player-count': this.refreshInstancePlayerCount
         };
     };
 
@@ -19653,7 +18823,6 @@ console.log(`isLinux: ${LINUX}`);
         return {
             'refresh-instance-player-count': this.refreshInstancePlayerCount,
             'update-group-post-search': this.updateGroupPostSearch,
-            'download-and-save-json': this.downloadAndSaveJson,
             'group-dialog-command': this.groupDialogCommand,
             'get-group-dialog-group': this.getGroupDialogGroup,
             'clear-image-gallery-select': this.clearImageGallerySelect,
@@ -19680,6 +18849,21 @@ console.log(`isLinux: ${LINUX}`);
             'update:dialog-data': (val) => {
                 this.inviteGroupDialog = val;
             }
+        };
+    };
+
+    $app.computed.avatarDialogBind = function () {
+        return {
+            avatarDialog: this.avatarDialog,
+            hideTooltips: this.hideTooltips,
+            isGameRunning: this.isGameRunning
+        };
+    };
+
+    $app.computed.avatarDialogEvent = function () {
+        return {
+            openFolderGeneric: this.openFolderGeneric,
+            deleteVRChatCache: this.deleteVRChatCache
         };
     };
 

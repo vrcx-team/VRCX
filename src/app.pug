@@ -43,14 +43,14 @@ doctype html
         include ./mixins/tabs/search.pug
         +searchTab
 
-        favorites-tab(v-bind='favoritesTabBind' v-on='favoritesTabEvent')
+        FavoritesTab(v-bind='favoritesTabBind' v-on='favoritesTabEvent')
 
         //- friendLog
         include ./mixins/tabs/friendLog.pug
         +friendLogTab
 
         //- moderation
-        moderation-tab(v-bind='moderationTabBind')
+        ModerationTab(v-bind='moderationTabBind')
 
         //- notification
         include ./mixins/tabs/notifications.pug
@@ -61,24 +61,21 @@ doctype html
         +profileTab
 
         //- friends list
-        friends-list-tab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
+        FriendsListTab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
 
         //- charts
         keep-alive
-            charts-tab(v-if='menuActiveIndex === "charts"' v-bind='chartsTabBind' v-on='chartsTabEvent')
+            ChartsTab(v-if='menuActiveIndex === "charts"' v-bind='chartsTabBind' v-on='chartsTabEvent')
 
         //- settings
         include ./mixins/tabs/settings.pug
         +settingsTab
 
-        side-bar(v-bind='sideBarTabBind' v-on='sideBarTabEvent')
+        SideBar(v-bind='sideBarTabBind' v-on='sideBarTabEvent')
 
     //- ## Dialogs ## -\\
     include ./mixins/dialogs/userDialog.pug
     +userDialog
-
-    include ./mixins/dialogs/avatarDialog.pug
-    +avatarDialog
 
     include ./mixins/dialogs/images.pug
     +images
@@ -107,40 +104,40 @@ doctype html
     include ./mixins/dialogs/settings.pug
     +settings
 
-    include ./mixins/dialogs/tags.pug
-    +tags
-
     include ./mixins/dialogs/boops.pug
     +boops
 
     //- previous instances
-    previous-instances-info-dialog(v-bind='previousInstancesInfoDialogBind' v-on='previousInstancesInfoDialogEvent')
+    PreviousInstancesInfoDialog(v-bind='previousInstancesInfoDialogBind' v-on='previousInstancesInfoDialogEvent')
 
-    previous-instances-user-dialog(v-bind='previousInstancesUserDialogBind' v-on='previousInstancesUserDialogEvent')
+    PreviousInstancesUserDialog(v-bind='previousInstancesUserDialogBind' v-on='previousInstancesUserDialogEvent')
 
     //- favorites
-    friend-import-dialog(v-bind='friendImportDialogBind' v-on='friendImportDialogEvent')
+    FriendImportDialog(v-bind='friendImportDialogBind' v-on='friendImportDialogEvent')
 
-    world-import-dialog(v-bind='worldImportDialogBind' v-on='worldImportDialogEvent')
+    WorldImportDialog(v-bind='worldImportDialogBind' v-on='worldImportDialogEvent')
 
-    avatar-import-dialog(v-bind='avatarImportDialogBind' v-on='avatarImportDialogEvent')
+    AvatarImportDialog(v-bind='avatarImportDialogBind' v-on='avatarImportDialogEvent')
 
     //- favorites dialog
-    favorite-dialog(v-bind='favoriteDialogBind' v-on='favoriteDialogEvent')
+    FavoriteDialog(v-bind='favoriteDialogBind' v-on='favoriteDialogEvent')
 
-    export-friends-list-dialog(v-bind='exportFriendsListDialogBind' v-on='exportFriendsListDialogEvent')
+    ExportFriendsListDialog(v-bind='exportFriendsListDialogBind' v-on='exportFriendsListDialogEvent')
 
-    export-avatars-list-dialog(v-bind='exportAvatarsListDialogBind' v-on='exportAvatarsListDialogEvent')
+    ExportAvatarsListDialog(v-bind='exportAvatarsListDialogBind' v-on='exportAvatarsListDialogEvent')
 
     //- launch
-    launch-dialog(v-bind='launchDialogBind' v-on='launchDialogEvent')
+    LaunchDialog(v-bind='launchDialogBind' v-on='launchDialogEvent')
 
     //- world
-    world-dialog(v-bind='worldDialogBind' v-on='worldDialogEvent')
+    WorldDialog(v-bind='worldDialogBind' v-on='worldDialogEvent')
 
     //- group
     GroupDialog(v-bind='groupDialogBind' v-on='groupDialogEvent')
 
     InviteGroupDialog(v-bind='inviteGroupDialogBind' v-on='inviteGroupDialogEvent')
+
+    //- avatar
+    AvatarDialog(v-bind='avatarDialogBind' v-on='avatarDialogEvent')
 
     //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")

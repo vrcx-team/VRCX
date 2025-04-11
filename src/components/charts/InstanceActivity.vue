@@ -102,7 +102,7 @@
                 <el-divider>·</el-divider>
             </div>
         </transition>
-        <instance-activity-detail
+        <InstanceActivityDetail
             v-for="arr in filteredActivityDetailData"
             :key="arr[0].location + arr[0].created_at"
             ref="activityDetailChartRef"
