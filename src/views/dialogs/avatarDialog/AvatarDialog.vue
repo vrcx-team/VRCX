@@ -126,6 +126,26 @@
                                 &nbsp;{{ t('dialog.avatar.tags.cache') }}
                             </el-tag>
                             <el-tag
+                                v-if="avatarDialog.ref.styles?.primary || avatarDialog.ref.styles?.secondary"
+                                type="info"
+                                effect="plain"
+                                size="mini"
+                                style="margin-right: 5px; margin-top: 5px"
+                                >Styles
+                                <span
+                                    v-if="avatarDialog.ref.styles.primary"
+                                    class="x-grey"
+                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px"
+                                    >{{ avatarDialog.ref.styles.primary }}</span
+                                >
+                                <span
+                                    v-if="avatarDialog.ref.styles.secondary"
+                                    class="x-grey"
+                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px"
+                                    >{{ avatarDialog.ref.styles.secondary }}</span
+                                >
+                            </el-tag>
+                            <el-tag
                                 v-if="avatarDialog.isQuestFallback"
                                 type="info"
                                 effect="plain"
@@ -296,6 +316,9 @@
                                     }}</el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Content Tags">{{
                                         t('dialog.avatar.actions.change_content_tags')
+                                    }}</el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-edit" command="Change Styles">{{
+                                        t('dialog.avatar.actions.change_styles')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Change Image">{{
                                         t('dialog.avatar.actions.change_image')
@@ -482,6 +505,7 @@
             </el-tabs>
         </div>
         <SetAvatarTagsDialog :set-avatar-tags-dialog="setAvatarTagsDialog" />
+        <SetAvatarStylesDialog :set-avatar-styles-dialog="setAvatarStylesDialog" />
     </el-dialog>
 </template>
 
@@ -494,6 +518,7 @@
     import $utils from '../../../classes/utils';
 
     import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
+    import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
 
     const API = inject('API');
     const beforeDialogClose = inject('beforeDialogClose');
@@ -549,6 +574,17 @@
         contentViolence: false,
         contentAdult: false,
         contentSex: false
+    });
+    const setAvatarStylesDialog = reactive({
+        visible: false,
+        loading: false,
+        avatarId: '',
+        initialPrimaryStyle: '',
+        initialSecondaryStyle: '',
+        primaryStyle: '',
+        secondaryStyle: '',
+        availableAvatarStyles: [],
+        availableAvatarStylesMap: new Map()
     });
 
     const avatarDialogPlatform = computed(() => {
@@ -652,6 +688,9 @@
                 break;
             case 'Change Content Tags':
                 showSetAvatarTagsDialog(D.id);
+                break;
+            case 'Change Styles':
+                showSetAvatarStylesDialog(D.id);
                 break;
             case 'Download Unity Package':
                 openExternalLink(utils.replaceVrcPackageUrl(props.avatarDialog.ref.unityPackageUrl));
@@ -894,7 +933,7 @@
                 memo: memo.value
             });
         } else {
-            database.deleteAvatarMemo(props.avatarDialog.avatarId);
+            database.deleteAvatarMemo(props.avatarDialog.id);
         }
     }
 
@@ -1044,6 +1083,20 @@
                 D.ownAvatars.push(ref);
             }
         }
+        nextTick(() => {
+            D.loading = false;
+        });
+    }
+
+    function showSetAvatarStylesDialog() {
+        const D = setAvatarStylesDialog;
+        D.visible = true;
+        D.loading = true;
+        D.avatarId = props.avatarDialog.id;
+        D.primaryStyle = props.avatarDialog.ref.styles?.primary || '';
+        D.secondaryStyle = props.avatarDialog.ref.styles?.secondary || '';
+        D.initialPrimaryStyle = D.primaryStyle;
+        D.initialSecondaryStyle = D.secondaryStyle;
         nextTick(() => {
             D.loading = false;
         });

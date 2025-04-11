@@ -312,7 +312,7 @@
                     for (let j = 0; j < this.localAvatarFavorites[group].length; ++j) {
                         ref = this.localAvatarFavorites[group][j];
                         if (
-                            typeof ref === 'undefined' ||
+                            !ref ||
                             typeof ref.id === 'undefined' ||
                             typeof ref.name === 'undefined' ||
                             typeof ref.authorName === 'undefined'
@@ -330,7 +330,7 @@
                 for (let i = 0; i < this.favoriteAvatars.length; ++i) {
                     ref = this.favoriteAvatars[i].ref;
                     if (
-                        typeof ref === 'undefined' ||
+                        !ref ||
                         typeof ref.id === 'undefined' ||
                         typeof ref.name === 'undefined' ||
                         typeof ref.authorName === 'undefined'

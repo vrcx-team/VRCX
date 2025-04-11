@@ -152,6 +152,21 @@ const avatarReq = {
             // window.API.$emit('AVATAR:IMPOSTER:DELETE', args);
             return args;
         });
+    },
+
+    /**
+     * @returns {Promise<{json: any, params}>}
+     */
+    getAvailableAvatarStyles() {
+        return window.API.call('avatarStyles', {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json
+            };
+            // window.API.$emit('AVATAR:STYLES', args);
+            return args;
+        });
     }
 };
 // #endregion

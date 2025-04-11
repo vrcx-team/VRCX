@@ -960,6 +960,7 @@
                 "rename": "Rename",
                 "change_description": "Change Description",
                 "change_content_tags": "Change Content Tags",
+                "change_styles": "Change Styles",
                 "change_image": "Change Image",
                 "download_package": "Download Unity Package",
                 "delete": "Delete",
@@ -1239,6 +1240,16 @@
             "custom_tags_placeholder": "Custom tags",
             "select_all": "Select All",
             "select_none": "Select None",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
+        "set_avatar_styles": {
+            "header": "Set Avatar Styles",
+            "primary_style": "Primary Style",
+            "secondary_style": "Secondary Style",
+            "select_style": "Select Style",
+            "save_success": "Avatar styles changed successfully",
+            "save_failed": "Failed to change avatar styles",
             "cancel": "Cancel",
             "save": "Save"
         },

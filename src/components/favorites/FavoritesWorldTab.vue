@@ -399,7 +399,7 @@
                     for (let j = 0; j < this.localWorldFavorites[group].length; ++j) {
                         ref = this.localWorldFavorites[group][j];
                         if (
-                            typeof ref === 'undefined' ||
+                            !ref ||
                             typeof ref.id === 'undefined' ||
                             typeof ref.name === 'undefined' ||
                             typeof ref.authorName === 'undefined'
@@ -417,7 +417,7 @@
                 for (let i = 0; i < this.favoriteWorlds.length; ++i) {
                     ref = this.favoriteWorlds[i].ref;
                     if (
-                        typeof ref === 'undefined' ||
+                        !ref ||
                         typeof ref.id === 'undefined' ||
                         typeof ref.name === 'undefined' ||
                         typeof ref.authorName === 'undefined'

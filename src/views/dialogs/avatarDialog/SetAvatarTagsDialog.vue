@@ -177,15 +177,15 @@
                 D.selectedCount++;
             }
             ref.$tagString = '';
-            const conentTags = [];
+            const contentTags = [];
             ref.tags.forEach((tag) => {
                 if (tag.startsWith('content_')) {
-                    conentTags.push(tag.substring(8));
+                    contentTags.push(tag.substring(8));
                 }
             });
-            for (let i = 0; i < conentTags.length; ++i) {
-                const tag = conentTags[i];
-                if (i < conentTags.length - 1) {
+            for (let i = 0; i < contentTags.length; ++i) {
+                const tag = contentTags[i];
+                if (i < contentTags.length - 1) {
                     ref.$tagString += `${tag}, `;
                 } else {
                     ref.$tagString += tag;

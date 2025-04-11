@@ -83,7 +83,6 @@ mixin currentUser
         ref='bioDialog'
         :visible.sync='bioDialog.visible'
         :title='$t("dialog.bio.header")'
-        :close-on-click-modal='false'
         width='600px')
         div(v-loading='bioDialog.loading')
             el-input(

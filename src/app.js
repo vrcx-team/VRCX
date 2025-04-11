@@ -2672,7 +2672,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.vrcxId = '';
     $app.methods.loadVrcxId = async function () {
-        vrcxId = await configRepository.getString(
+        this.vrcxId = await configRepository.getString(
             'VRCX_id',
             crypto.randomUUID()
         );
