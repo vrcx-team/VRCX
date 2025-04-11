@@ -311,7 +311,12 @@
                     }
                     for (let j = 0; j < this.localAvatarFavorites[group].length; ++j) {
                         ref = this.localAvatarFavorites[group][j];
-                        if (!ref || !ref.id) {
+                        if (
+                            typeof ref === 'undefined' ||
+                            typeof ref.id === 'undefined' ||
+                            typeof ref.name === 'undefined' ||
+                            typeof ref.authorName === 'undefined'
+                        ) {
                             continue;
                         }
                         if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
@@ -324,7 +329,12 @@
 
                 for (let i = 0; i < this.favoriteAvatars.length; ++i) {
                     ref = this.favoriteAvatars[i].ref;
-                    if (!ref) {
+                    if (
+                        typeof ref === 'undefined' ||
+                        typeof ref.id === 'undefined' ||
+                        typeof ref.name === 'undefined' ||
+                        typeof ref.authorName === 'undefined'
+                    ) {
                         continue;
                     }
                     if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {

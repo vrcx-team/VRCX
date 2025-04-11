@@ -398,7 +398,12 @@
                     }
                     for (let j = 0; j < this.localWorldFavorites[group].length; ++j) {
                         ref = this.localWorldFavorites[group][j];
-                        if (!ref || !ref.id) {
+                        if (
+                            typeof ref === 'undefined' ||
+                            typeof ref.id === 'undefined' ||
+                            typeof ref.name === 'undefined' ||
+                            typeof ref.authorName === 'undefined'
+                        ) {
                             continue;
                         }
                         if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
@@ -411,7 +416,12 @@
 
                 for (let i = 0; i < this.favoriteWorlds.length; ++i) {
                     ref = this.favoriteWorlds[i].ref;
-                    if (!ref) {
+                    if (
+                        typeof ref === 'undefined' ||
+                        typeof ref.id === 'undefined' ||
+                        typeof ref.name === 'undefined' ||
+                        typeof ref.authorName === 'undefined'
+                    ) {
                         continue;
                     }
                     if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {

@@ -172,7 +172,10 @@ export default class extends baseClass {
             try {
                 var response = await webApiService.execute({
                     url,
-                    method: 'GET'
+                    method: 'GET',
+                    headers: {
+                        'VRCX-ID': this.vrcxId
+                    }
                 });
             } finally {
                 this.checkingForVRCXUpdate = false;
@@ -243,7 +246,10 @@ export default class extends baseClass {
             try {
                 var response = await webApiService.execute({
                     url,
-                    method: 'GET'
+                    method: 'GET',
+                    headers: {
+                        'VRCX-ID': this.vrcxId
+                    }
                 });
             } finally {
                 this.checkingForVRCXUpdate = false;
