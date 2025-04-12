@@ -275,7 +275,7 @@
     import { friendRequest, userRequest } from '../../api';
 
     export default {
-        name: 'FriendsListTab',
+        name: 'FriendListTab',
         inject: [
             'userImage',
             'userImageFull',
