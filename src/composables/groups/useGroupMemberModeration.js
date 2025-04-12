@@ -1,5 +1,5 @@
 import { reactive, ref } from 'vue';
-import configRepository from '../../repository/config';
+import configRepository from '../../service/config';
 
 function useModerationTable() {
     const groupInvitesModerationTable = reactive({

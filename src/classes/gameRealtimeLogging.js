@@ -1,8 +1,8 @@
 import * as workerTimers from 'worker-timers';
-import configRepository from '../repository/config.js';
-import database from '../repository/database.js';
+import configRepository from '../service/config.js';
+import database from '../service/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { instanceRequest, userRequest } from './request';
+import { instanceRequest, userRequest } from '../api';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {

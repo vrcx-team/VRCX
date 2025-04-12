@@ -1,6 +1,6 @@
-import configRepository from '../repository/config.js';
+import configRepository from '../service/config.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { worldRequest } from './request';
+import { worldRequest } from '../api';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -159,7 +159,7 @@ export default class extends baseClass {
                 buttonText = '';
                 buttonUrl = '';
             } else if (this.isRpcWorld(L.tag)) {
-                // custom world rpc
+                // custom WorldDialog rpc
                 if (
                     L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1' ||
                     L.worldId === 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c' ||

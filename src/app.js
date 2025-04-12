@@ -26,12 +26,12 @@ import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
 
 // util classes
-import configRepository from './repository/config.js';
+import configRepository from './service/config.js';
 import webApiService from './service/webapi.js';
-import security from './security.js';
-import database from './repository/database.js';
+import security from './security/security.js';
+import database from './service/database.js';
 import * as localizedStrings from './localization/localizedStrings.js';
-import removeConfusables, { removeWhitespace } from './confusables.js';
+import removeConfusables, { removeWhitespace } from './security/confusables.js';
 import $utils from './classes/utils.js';
 import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';
@@ -52,34 +52,34 @@ import {
     imageRequest,
     vrcPlusImageRequest,
     groupRequest
-} from './classes/request';
+} from './api';
 
 // tabs
-import ModerationTab from './views/tabs/Moderation.vue';
-import ChartsTab from './views/tabs/Charts.vue';
-import SideBar from './views/SideBar.vue';
-import NavMenu from './views/NavMenu.vue';
-import FriendsListTab from './views/tabs/FriendsList.vue';
-import FavoritesTab from './views/tabs/Favorites.vue';
+import ModerationTab from './views/Moderation/Moderation.vue';
+import ChartsTab from './views/Charts/Charts.vue';
+import SideBar from './views/SideBar/SideBar.vue';
+import NavMenu from './components/NavMenu.vue';
+import FriendListTab from './views/FriendList/FriendList.vue';
+import FavoritesTab from './views/Favorites/Favorites.vue';
 
 // components
-import SimpleSwitch from './components/settings/SimpleSwitch.vue';
-import Location from './components/common/Location.vue';
+import SimpleSwitch from './components/SimpleSwitch.vue';
+import Location from './components/Location.vue';
 
 // dialogs
-import WorldDialog from './views/dialogs/world/WorldDialog.vue';
-import PreviousInstancesInfoDialog from './views/dialogs/previousInstances/PreviousInstancesInfoDialog.vue';
-import FriendImportDialog from './views/dialogs/favorites/FriendImportDialog.vue';
-import WorldImportDialog from './views/dialogs/favorites/WorldImportDialog.vue';
-import AvatarImportDialog from './views/dialogs/favorites/AvatarImportDialog.vue';
-import LaunchDialog from './views/dialogs/launch/LaunchDialog.vue';
-import PreviousInstancesUserDialog from './views/dialogs/previousInstances/PreviousInstancesUserDialog.vue';
-import FavoriteDialog from './views/dialogs/favoritesDialog/FavoriteDialog.vue';
-import ExportFriendsListDialog from './views/dialogs/favoritesDialog/ExportFriendsListDialog.vue';
-import ExportAvatarsListDialog from './views/dialogs/favoritesDialog/ExportAvatarsListDialog.vue';
-import GroupDialog from './views/dialogs/groupDialog/GroupDialog.vue';
-import InviteGroupDialog from './views/dialogs/groupDialog/InviteGroupDialog.vue';
-import AvatarDialog from './views/dialogs/avatarDialog/AvatarDialog.vue';
+import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
+import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
+import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
+import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
+import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
+import LaunchDialog from './components/LaunchDialog.vue';
+import PreviousInstancesUserDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesUserDialog.vue';
+import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
+import ExportFriendsListDialog from './views/Profile/dialogs/ExportFriendsListDialog.vue';
+import ExportAvatarsListDialog from './views/Profile/dialogs/ExportAvatarsListDialog.vue';
+import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
+import InviteGroupDialog from './components/dialogs/GroupDialog/InviteGroupDialog.vue';
+import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -219,7 +219,7 @@ console.log(`isLinux: ${LINUX}`);
             // tabs
             ModerationTab,
             ChartsTab,
-            FriendsListTab,
+            FriendsListTab: FriendListTab,
             FavoritesTab,
             // - others
             SideBar,
@@ -236,7 +236,7 @@ console.log(`isLinux: ${LINUX}`);
             //  - previous instances
             PreviousInstancesInfoDialog,
             PreviousInstancesUserDialog,
-            //  - world
+            //  - WorldDialog
             WorldDialog,
             //  - group
             GroupDialog,
@@ -248,7 +248,7 @@ console.log(`isLinux: ${LINUX}`);
             WorldImportDialog,
             AvatarImportDialog,
             //  - favorites dialog
-            FavoriteDialog,
+            ChooseFavoriteGroupDialog,
             ExportFriendsListDialog,
             ExportAvatarsListDialog,
             //  - launch
@@ -694,7 +694,7 @@ console.log(`isLinux: ${LINUX}`);
                 travelingToWorld: '',
                 userIcon: '',
                 worldId: '',
-                // only in bulk request
+                // only in bulk api
                 fallbackAvatar: '',
                 // VRCX
                 $location: {},
@@ -3751,7 +3751,7 @@ console.log(`isLinux: ${LINUX}`);
         return 0;
     };
 
-    // location at but for the sidebar
+    // location at but for the components
     var compareByLocation = function (a, b) {
         if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
             return 0;
@@ -4127,7 +4127,7 @@ console.log(`isLinux: ${LINUX}`);
                 const searchText = value.substr(7);
                 if (this.quickSearchItems.length > 1 && searchText.length) {
                     this.friendsListSearch = searchText;
-                    this.menuActiveIndex = 'friendsList';
+                    this.menuActiveIndex = 'friendList';
                 } else {
                     this.menuActiveIndex = 'search';
                     this.searchText = searchText;
@@ -5708,7 +5708,7 @@ console.log(`isLinux: ${LINUX}`);
                             this.sortFavoriteWorlds = true;
                         }
                     } else {
-                        // try fetch from local world favorites
+                        // try fetch from local WorldDialog favorites
                         var world = await database.getCachedWorldById(objectId);
                         if (world) {
                             ctx.ref = world;
@@ -5717,7 +5717,7 @@ console.log(`isLinux: ${LINUX}`);
                             this.sortFavoriteWorlds = true;
                         }
                         if (!world) {
-                            // try fetch from local world history
+                            // try fetch from local WorldDialog history
                             var worldName =
                                 await database.getGameLogWorldNameByWorldId(
                                     objectId
@@ -8091,7 +8091,7 @@ console.log(`isLinux: ${LINUX}`);
                         homeLocation: ''
                     }).then((args) => {
                         this.$message({
-                            message: 'Home world has been reset',
+                            message: 'Home WorldDialog has been reset',
                             type: 'success'
                         });
                         return args;
@@ -10096,7 +10096,7 @@ console.log(`isLinux: ${LINUX}`);
                             this.avatarDialog.lastUpdated = version.created_at;
                         }
                     }
-                    // update world dialog
+                    // update WorldDialog dialog
                     if (this.worldDialog.id === ref.id) {
                         this.worldDialog.bundleSizes[platform] =
                             bundleSizes[platform];
@@ -10204,7 +10204,7 @@ console.log(`isLinux: ${LINUX}`);
                 D.loading = false;
                 D.visible = false;
                 this.$message({
-                    message: 'Failed to load world',
+                    message: 'Failed to load WorldDialog',
                     type: 'error'
                 });
                 throw err;
@@ -11353,7 +11353,7 @@ console.log(`isLinux: ${LINUX}`);
                     homeLocation: tag
                 }).then((args) => {
                     this.$message({
-                        message: 'Home world updated',
+                        message: 'Home WorldDialog updated',
                         type: 'success'
                     });
                     return args;
@@ -12847,7 +12847,7 @@ console.log(`isLinux: ${LINUX}`);
         imageRequest.setAvatarImage(parmas);
     });
 
-    // Upload world image
+    // Upload WorldDialog image
 
     $app.methods.onFileChangeWorldImage = function (e) {
         var clearFile = function () {
@@ -12900,7 +12900,7 @@ console.log(`isLinux: ${LINUX}`);
             var fileId = $utils.extractFileId(imageUrl);
             if (!fileId) {
                 $app.$message({
-                    message: $t('message.world.image_invalid'),
+                    message: $t('message.WorldDialog.image_invalid'),
                     type: 'error'
                 });
                 clearFile();
@@ -13066,7 +13066,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.changeWorldImageDialogLoading = false;
         if (args.json.imageUrl === args.params.imageUrl) {
             $app.$message({
-                message: $t('message.world.image_changed'),
+                message: $t('message.WorldDialog.image_changed'),
                 type: 'success'
             });
             $app.displayPreviousImages('World', 'Change');
@@ -13075,7 +13075,7 @@ console.log(`isLinux: ${LINUX}`);
         }
     });
 
-    // Set avatar/world image
+    // Set avatar/WorldDialog image
 
     $app.methods.displayPreviousImages = function (type, command) {
         this.previousImagesTableFileId = '';
@@ -13360,7 +13360,7 @@ console.log(`isLinux: ${LINUX}`);
         this.discordNamesDialogVisible = true;
     };
 
-    // userDialog world/avatar tab click
+    // userDialog WorldDialog/avatar tab click
 
     $app.data.userDialogLastActiveTab = '';
     $app.data.userDialogLastAvatar = '';
@@ -15978,8 +15978,8 @@ console.log(`isLinux: ${LINUX}`);
             case 'group':
                 this.showGroupDialog(commandArg);
                 break;
-            case 'local-favorite-world':
-                console.log('local-favorite-world', commandArg);
+            case 'local-favorite-WorldDialog':
+                console.log('local-favorite-WorldDialog', commandArg);
                 var [id, group] = commandArg.split(':');
                 worldRequest.getCachedWorld({ worldId: id }).then((args1) => {
                     this.directAccessWorld(id);
@@ -16574,7 +16574,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | App: world favorite import
+    // #region | App: WorldDialog favorite import
 
     $app.data.worldImportDialogVisible = false;
     $app.data.worldImportDialogInput = '';
@@ -16915,7 +16915,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | App: local world favorites
+    // #region | App: local WorldDialog favorites
 
     $app.data.localWorldFavoriteGroups = [];
     $app.data.localWorldFavoritesList = [];
@@ -18546,7 +18546,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.computed.isSideBarTabShow = function () {
         return !(
-            this.menuActiveIndex === 'friendsList' ||
+            this.menuActiveIndex === 'friendList' ||
             this.menuActiveIndex === 'charts'
         );
     };

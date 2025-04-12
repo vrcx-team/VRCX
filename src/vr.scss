@@ -334,17 +334,17 @@ i.x-user-status.online {
 
 i.x-user-status.joinme {
     background: #409eff;
-    mask-image: url(masks/joinme.svg);
+    mask-image: url(assets/images/masks/joinme.svg);
 }
 
 i.x-user-status.askme {
     background: #ff9500;
-    mask-image: url(masks/askme.svg);
+    mask-image: url(assets/images/masks/askme.svg);
 }
 
 i.x-user-status.busy {
     background: #ff2c2c;
-    mask-image: url(masks/busy.svg);
+    mask-image: url(assets/images/masks/busy.svg);
 }
 
 .spin {

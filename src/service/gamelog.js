@@ -56,7 +56,7 @@ class GameLogService {
                 gameLog.data = args[0];
                 break;
 
-            case 'api-request':
+            case 'api-api':
                 gameLog.url = args[0];
                 break;
 

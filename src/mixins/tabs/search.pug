@@ -44,7 +44,7 @@ mixin searchTab
                         icon='el-icon-right'
                         size='small') {{ $t('view.search.next_page') }}
             el-tab-pane(
-                :label='$t("view.search.world.header")'
+                :label='$t("view.search.WorldDialog.header")'
                 v-loading='isSearchWorldLoading'
                 style='min-height: 60px')
                 el-dropdown(
@@ -52,26 +52,26 @@ mixin searchTab
                     size='small'
                     trigger='click'
                     style='margin-bottom: 15px')
-                    el-button(size='small') {{ $t('view.search.world.category') }} #[i.el-icon-arrow-down.el-icon--right]
+                    el-button(size='small') {{ $t('view.search.WorldDialog.category') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default='dropdown')
                         el-dropdown-item(
                             v-for='row in API.cachedConfig.dynamicWorldRows'
                             :key='row.index'
                             v-text='row.name'
                             :command='row')
-                el-checkbox(v-model='searchWorldLabs' style='margin-left: 10px') {{ $t('view.search.world.community_lab') }}
+                el-checkbox(v-model='searchWorldLabs' style='margin-left: 10px') {{ $t('view.search.WorldDialog.community_lab') }}
                 .x-friend-list(style='min-height: 500px')
                     .x-friend-item(
-                        v-for='world in searchWorldResults'
-                        :key='world.id'
-                        @click='showWorldDialog(world.id)')
+                        v-for='WorldDialog in searchWorldResults'
+                        :key='WorldDialog.id'
+                        @click='showWorldDialog(WorldDialog.id)')
                         template
                             .avatar
-                                img(v-lazy='world.thumbnailImageUrl')
+                                img(v-lazy='WorldDialog.thumbnailImageUrl')
                             .detail
-                                span.name(v-text='world.name')
-                                span.extra(v-if='world.occupants') {{ world.authorName }} ({{ world.occupants }})
-                                span.extra(v-else v-text='world.authorName')
+                                span.name(v-text='WorldDialog.name')
+                                span.extra(v-if='WorldDialog.occupants') {{ world.authorName }} ({{ world.occupants }})
+                                span.extra(v-else v-text='WorldDialog.authorName')
                 el-button-group(style='margin-top: 15px' v-if='searchWorldResults.length')
                     el-button(
                         :disabled='!searchWorldParams.offset'

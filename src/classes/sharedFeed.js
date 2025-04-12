@@ -1,7 +1,7 @@
 import * as workerTimers from 'worker-timers';
-import configRepository from '../repository/config.js';
+import configRepository from '../service/config.js';
 import { baseClass, $app, API } from './baseClass.js';
-import { worldRequest, groupRequest } from './request';
+import { worldRequest, groupRequest } from '../api';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -156,14 +156,14 @@ export default class extends baseClass {
                             };
                             wristFeed.unshift(feedEntry);
                         } else {
-                            // no world cache, fetch world and try again
+                            // no WorldDialog cache, fetch WorldDialog and try again
                             worldRequest
                                 .getWorld({
                                     worldId: ref.$location.worldId
                                 })
                                 .then((args) => {
                                     workerTimers.setTimeout(() => {
-                                        // delay to allow for world cache to update
+                                        // delay to allow for WorldDialog cache to update
                                         $app.sharedFeed.pendingUpdate = true;
                                         $app.updateSharedFeed(false);
                                     }, 100);

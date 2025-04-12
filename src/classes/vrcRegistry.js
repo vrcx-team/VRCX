@@ -1,4 +1,4 @@
-import configRepository from '../repository/config.js';
+import configRepository from '../service/config.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 
 export default class extends baseClass {

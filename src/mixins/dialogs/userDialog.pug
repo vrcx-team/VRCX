@@ -904,14 +904,14 @@ mixin userDialog
                                         @click.native='setUserDialogWorldOrder(item)')
                     .x-friend-list(v-loading='userDialog.isWorldsLoading' style='margin-top: 10px; min-height: 60px')
                         .x-friend-item.x-friend-item-border(
-                            v-for='world in userDialog.worlds'
-                            :key='world.id'
-                            @click='showWorldDialog(world.id)')
+                            v-for='WorldDialog in userDialog.worlds'
+                            :key='WorldDialog.id'
+                            @click='showWorldDialog(WorldDialog.id)')
                             .avatar
-                                img(v-lazy='world.thumbnailImageUrl')
+                                img(v-lazy='WorldDialog.thumbnailImageUrl')
                             .detail
-                                span.name(v-text='world.name')
-                                span.extra(v-if='world.occupants') ({{ world.occupants }})
+                                span.name(v-text='WorldDialog.name')
+                                span.extra(v-if='WorldDialog.occupants') ({{ world.occupants }})
                 el-tab-pane(:label='$t("dialog.user.favorite_worlds.header")' lazy)
                     el-button(
                         v-if='userFavoriteWorlds && userFavoriteWorlds.length > 0'
@@ -939,14 +939,14 @@ mixin userDialog
                                 .x-friend-list(
                                     style='margin-top: 10px; margin-bottom: 15px; min-height: 60px; max-height: none')
                                     .x-friend-item.x-friend-item-border(
-                                        v-for='world in list[2]'
-                                        :key='world.favoriteId'
-                                        @click='showWorldDialog(world.id)')
+                                        v-for='WorldDialog in list[2]'
+                                        :key='WorldDialog.favoriteId'
+                                        @click='showWorldDialog(WorldDialog.id)')
                                         .avatar
-                                            img(v-lazy='world.thumbnailImageUrl')
+                                            img(v-lazy='WorldDialog.thumbnailImageUrl')
                                         .detail
-                                            span.name(v-text='world.name')
-                                            span.extra(v-if='world.occupants') ({{ world.occupants }})
+                                            span.name(v-text='WorldDialog.name')
+                                            span.extra(v-if='WorldDialog.occupants') ({{ world.occupants }})
                         template(v-else-if='!userDialog.isFavoriteWorldsLoading')
                             div(style='display: flex; justify-content: center; align-items: center; height: 100%')
                                 span(style='font-size: 16px') No favorite worlds found.

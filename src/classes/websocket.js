@@ -1,7 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import Noty from 'noty';
 import { baseClass, $app, API, $utils } from './baseClass.js';
-import { groupRequest } from './request';
+import { groupRequest } from '../api';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -429,7 +429,7 @@ export default class extends baseClass {
                     }
 
                     // content.user: {} // we don't trust this
-                    // content.world: {} // this is long gone
+                    // content.WorldDialog: {} // this is long gone
                     // content.worldId // where did worldId go?
                     // content.instance // without worldId, this is useless
 

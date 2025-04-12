@@ -1,5 +1,5 @@
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { userRequest } from './request';
+import { userRequest } from '../api';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -1416,7 +1416,7 @@ export default class extends baseClass {
                 case 'friendRequest':
                     this.desktopNotification(
                         noty.senderUsername,
-                        'has sent you a friend request',
+                        'has sent you a friend api',
                         image
                     );
                     break;
