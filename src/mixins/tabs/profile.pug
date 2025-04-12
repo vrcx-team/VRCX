@@ -184,7 +184,7 @@ mixin profileTab
                 el-tooltip(placement='top' :content='$t("view.profile.refresh_tooltip")' :disabled='hideTooltips')
                     el-button(
                         type='default'
-                        @click='inviteRequestMessageTable.visible = true; refreshInviteMessageTable("api")'
+                        @click='inviteRequestMessageTable.visible = true; refreshInviteMessageTable("request")'
                         size='mini'
                         icon='el-icon-refresh'
                         circle
@@ -224,7 +224,7 @@ mixin profileTab
                             type='text'
                             icon='el-icon-edit'
                             size='mini'
-                            @click='showEditInviteMessageDialog("api", scope.row)')
+                            @click='showEditInviteMessageDialog("request", scope.row)')
         .options-container
             .header-bar
                 span.header {{ $t('view.profile.invite_request_response_messages') }}

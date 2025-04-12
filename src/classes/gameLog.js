@@ -258,7 +258,7 @@ export default class extends baseClass {
 
                     this.processScreenshot(gameLog.screenshotPath);
                     break;
-                case 'api-api':
+                case 'api-world':
                     // var userId = '';
                     // try {
                     //     var url = new URL(gameLog.url);
@@ -973,7 +973,7 @@ export default class extends baseClass {
             if (
                 this.debugGameLog &&
                 gameLog.type !== 'photon-id' &&
-                gameLog.type !== 'api-api' &&
+                gameLog.type !== 'api-request' &&
                 gameLog.type !== 'udon-exception'
             ) {
                 console.log('gameLog:', gameLog);

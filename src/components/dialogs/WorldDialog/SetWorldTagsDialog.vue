@@ -134,7 +134,7 @@
                     return this.isSetWorldTagsDialogVisible;
                 },
                 set(val) {
-                    this.$emit('update:is-set-WorldDialog-tags-dialog-visible', val);
+                    this.$emit('update:is-set-world-tags-dialog-visible', val);
                 }
             }
         },
@@ -285,7 +285,7 @@
                             message: 'Tags updated',
                             type: 'success'
                         });
-                        this.$emit('update:is-set-WorldDialog-tags-dialog-visible', false);
+                        this.$emit('update:is-set-world-tags-dialog-visible', false);
                         if (this.isWorldDialogVisible) {
                             this.showWorldDialog(args.json.id);
                         }

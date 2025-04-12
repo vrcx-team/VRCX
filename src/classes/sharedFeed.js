@@ -156,14 +156,14 @@ export default class extends baseClass {
                             };
                             wristFeed.unshift(feedEntry);
                         } else {
-                            // no WorldDialog cache, fetch WorldDialog and try again
+                            // no worldorld cache, fetch world and try again
                             worldRequest
                                 .getWorld({
                                     worldId: ref.$location.worldId
                                 })
                                 .then((args) => {
                                     workerTimers.setTimeout(() => {
-                                        // delay to allow for WorldDialog cache to update
+                                        // delay to allow for world cache to update
                                         $app.sharedFeed.pendingUpdate = true;
                                         $app.updateSharedFeed(false);
                                     }, 100);

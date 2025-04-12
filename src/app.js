@@ -219,7 +219,7 @@ console.log(`isLinux: ${LINUX}`);
             // tabs
             ModerationTab,
             ChartsTab,
-            FriendsListTab: FriendListTab,
+            FriendListTab,
             FavoritesTab,
             // - others
             SideBar,
@@ -3751,7 +3751,7 @@ console.log(`isLinux: ${LINUX}`);
         return 0;
     };
 
-    // location at but for the components
+    // location at but for the sidebar
     var compareByLocation = function (a, b) {
         if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
             return 0;
@@ -5708,7 +5708,7 @@ console.log(`isLinux: ${LINUX}`);
                             this.sortFavoriteWorlds = true;
                         }
                     } else {
-                        // try fetch from local WorldDialog favorites
+                        // try fetch from local world favorites
                         var world = await database.getCachedWorldById(objectId);
                         if (world) {
                             ctx.ref = world;
@@ -5717,7 +5717,7 @@ console.log(`isLinux: ${LINUX}`);
                             this.sortFavoriteWorlds = true;
                         }
                         if (!world) {
-                            // try fetch from local WorldDialog history
+                            // try fetch from local world history
                             var worldName =
                                 await database.getGameLogWorldNameByWorldId(
                                     objectId
@@ -8091,7 +8091,7 @@ console.log(`isLinux: ${LINUX}`);
                         homeLocation: ''
                     }).then((args) => {
                         this.$message({
-                            message: 'Home WorldDialog has been reset',
+                            message: 'Home world has been reset',
                             type: 'success'
                         });
                         return args;
@@ -10096,7 +10096,7 @@ console.log(`isLinux: ${LINUX}`);
                             this.avatarDialog.lastUpdated = version.created_at;
                         }
                     }
-                    // update WorldDialog dialog
+                    // update world dialog
                     if (this.worldDialog.id === ref.id) {
                         this.worldDialog.bundleSizes[platform] =
                             bundleSizes[platform];
@@ -10204,7 +10204,7 @@ console.log(`isLinux: ${LINUX}`);
                 D.loading = false;
                 D.visible = false;
                 this.$message({
-                    message: 'Failed to load WorldDialog',
+                    message: 'Failed to load world',
                     type: 'error'
                 });
                 throw err;
@@ -11353,7 +11353,7 @@ console.log(`isLinux: ${LINUX}`);
                     homeLocation: tag
                 }).then((args) => {
                     this.$message({
-                        message: 'Home WorldDialog updated',
+                        message: 'Home world updated',
                         type: 'success'
                     });
                     return args;
@@ -12847,7 +12847,7 @@ console.log(`isLinux: ${LINUX}`);
         imageRequest.setAvatarImage(parmas);
     });
 
-    // Upload WorldDialog image
+    // Upload world image
 
     $app.methods.onFileChangeWorldImage = function (e) {
         var clearFile = function () {
@@ -12900,7 +12900,7 @@ console.log(`isLinux: ${LINUX}`);
             var fileId = $utils.extractFileId(imageUrl);
             if (!fileId) {
                 $app.$message({
-                    message: $t('message.WorldDialog.image_invalid'),
+                    message: $t('message.world.image_invalid'),
                     type: 'error'
                 });
                 clearFile();
@@ -13066,7 +13066,7 @@ console.log(`isLinux: ${LINUX}`);
         $app.changeWorldImageDialogLoading = false;
         if (args.json.imageUrl === args.params.imageUrl) {
             $app.$message({
-                message: $t('message.WorldDialog.image_changed'),
+                message: $t('message.world.image_changed'),
                 type: 'success'
             });
             $app.displayPreviousImages('World', 'Change');
@@ -13075,7 +13075,7 @@ console.log(`isLinux: ${LINUX}`);
         }
     });
 
-    // Set avatar/WorldDialog image
+    // Set avatar/world image
 
     $app.methods.displayPreviousImages = function (type, command) {
         this.previousImagesTableFileId = '';
@@ -13360,7 +13360,7 @@ console.log(`isLinux: ${LINUX}`);
         this.discordNamesDialogVisible = true;
     };
 
-    // userDialog WorldDialog/avatar tab click
+    // userDialog world/avatar tab click
 
     $app.data.userDialogLastActiveTab = '';
     $app.data.userDialogLastAvatar = '';
@@ -15978,8 +15978,8 @@ console.log(`isLinux: ${LINUX}`);
             case 'group':
                 this.showGroupDialog(commandArg);
                 break;
-            case 'local-favorite-WorldDialog':
-                console.log('local-favorite-WorldDialog', commandArg);
+            case 'local-favorite-world':
+                console.log('local-favorite-world', commandArg);
                 var [id, group] = commandArg.split(':');
                 worldRequest.getCachedWorld({ worldId: id }).then((args1) => {
                     this.directAccessWorld(id);
@@ -16574,7 +16574,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | App: WorldDialog favorite import
+    // #region | App: world favorite import
 
     $app.data.worldImportDialogVisible = false;
     $app.data.worldImportDialogInput = '';
@@ -16915,7 +16915,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | App: local WorldDialog favorites
+    // #region | App: local world favorites
 
     $app.data.localWorldFavoriteGroups = [];
     $app.data.localWorldFavoritesList = [];

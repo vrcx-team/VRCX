@@ -74,9 +74,9 @@ mixin screenshotMetadata
                 v-text='screenshotMetadataDialog.metadata.fileSize')
             br
             location(
-                v-if='screenshotMetadataDialog.metadata.WorldDialog'
-                :location='screenshotMetadataDialog.metadata.WorldDialog.instanceId'
-                :hint='screenshotMetadataDialog.metadata.WorldDialog.name')
+                v-if='screenshotMetadataDialog.metadata.world'
+                :location='screenshotMetadataDialog.metadata.world.instanceId'
+                :hint='screenshotMetadataDialog.metadata.world.name')
             br
             display-name(
                 v-if='screenshotMetadataDialog.metadata.author'

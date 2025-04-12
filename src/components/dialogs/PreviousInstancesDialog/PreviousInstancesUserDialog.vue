@@ -20,7 +20,7 @@
                     <span>{{ scope.row.created_at | formatDate('long') }}</span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.WorldDialog')" prop="name" sortable>
+            <el-table-column :label="$t('table.previous_instances.world')" prop="name" sortable>
                 <template slot-scope="scope">
                     <location
                         :location="scope.row.location"

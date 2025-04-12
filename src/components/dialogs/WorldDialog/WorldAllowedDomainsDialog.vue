@@ -57,7 +57,7 @@
                     return this.worldAllowedDomainsDialog.visible;
                 },
                 set(val) {
-                    this.$emit('update:WorldDialog-allowed-domains-dialog', {
+                    this.$emit('update:world-allowed-domains-dialog', {
                         ...this.worldAllowedDomainsDialog,
                         visible: val
                     });

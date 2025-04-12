@@ -48,7 +48,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.WorldDialog.tags.labs') }}
+                                {{ $t('dialog.world.tags.labs') }}
                             </el-tag>
                             <el-tag
                                 v-else-if="worldDialog.ref.releaseStatus === 'public'"
@@ -56,7 +56,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.WorldDialog.tags.public') }}
+                                {{ $t('dialog.world.tags.public') }}
                             </el-tag>
                             <el-tag
                                 v-else
@@ -64,7 +64,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.WorldDialog.tags.private') }}
+                                {{ $t('dialog.world.tags.private') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.isPC"
@@ -117,7 +117,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.WorldDialog.tags.avatar_scaling_disabled') }}
+                                {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.focusViewDisabled"
@@ -125,7 +125,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.WorldDialog.tags.focus_view_disabled') }}
+                                {{ $t('dialog.world.tags.focus_view_disabled') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.ref.unityPackageUrl"
@@ -133,7 +133,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.WorldDialog.tags.future_proofing') }}
+                                {{ $t('dialog.world.tags.future_proofing') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.inCache"
@@ -144,7 +144,7 @@
                                 style="margin-right: 5px; margin-top: 5px"
                                 @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
-                                | {{ $t('dialog.WorldDialog.tags.cache') }}
+                                | {{ $t('dialog.world.tags.cache') }}
                             </el-tag>
                         </div>
                         <div>
@@ -156,19 +156,19 @@
                                     size="mini"
                                     style="margin-right: 5px; margin-top: 5px">
                                     <template v-if="tag === 'content_horror'">
-                                        {{ $t('dialog.WorldDialog.tags.content_horror') }}
+                                        {{ $t('dialog.world.tags.content_horror') }}
                                     </template>
                                     <template v-else-if="tag === 'content_gore'">
-                                        {{ $t('dialog.WorldDialog.tags.content_gore') }}
+                                        {{ $t('dialog.world.tags.content_gore') }}
                                     </template>
                                     <template v-else-if="tag === 'content_violence'">
-                                        {{ $t('dialog.WorldDialog.tags.content_violence') }}
+                                        {{ $t('dialog.world.tags.content_violence') }}
                                     </template>
                                     <template v-else-if="tag === 'content_adult'">
-                                        {{ $t('dialog.WorldDialog.tags.content_adult') }}
+                                        {{ $t('dialog.world.tags.content_adult') }}
                                     </template>
                                     <template v-else-if="tag === 'content_sex'">
-                                        {{ $t('dialog.WorldDialog.tags.content_sex') }}
+                                        {{ $t('dialog.world.tags.content_sex') }}
                                     </template>
                                     <template v-else>
                                         {{ tag.replace('content_', '') }}
@@ -188,7 +188,7 @@
                         <el-tooltip
                             v-if="worldDialog.inCache"
                             placement="top"
-                            :content="$t('dialog.WorldDialog.actions.delete_cache_tooltip')"
+                            :content="$t('dialog.world.actions.delete_cache_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
                                 icon="el-icon-delete"
@@ -198,7 +198,7 @@
                         </el-tooltip>
                         <el-tooltip
                             placement="top"
-                            :content="$t('dialog.WorldDialog.actions.favorites_tooltip')"
+                            :content="$t('dialog.world.actions.favorites_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
                                 type="default"
@@ -215,16 +215,16 @@
                             <el-button type="default" icon="el-icon-more" circle />
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item icon="el-icon-refresh" command="Refresh">
-                                    {{ $t('dialog.WorldDialog.actions.refresh') }}
+                                    {{ $t('dialog.world.actions.refresh') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-share" command="Share">
-                                    {{ $t('dialog.WorldDialog.actions.share') }}
+                                    {{ $t('dialog.world.actions.share') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-s-flag" command="New Instance" divided>
-                                    {{ $t('dialog.WorldDialog.actions.new_instance') }}
+                                    {{ $t('dialog.world.actions.new_instance') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-message" command="New Instance and Self Invite">
-                                    {{ $t('dialog.WorldDialog.actions.new_instance_and_self_invite') }}
+                                    {{ $t('dialog.world.actions.new_instance_and_self_invite') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item
                                     v-if="
@@ -234,55 +234,55 @@
                                     icon="el-icon-magic-stick"
                                     command="Reset Home"
                                     divided>
-                                    {{ $t('dialog.WorldDialog.actions.reset_home') }}
+                                    {{ $t('dialog.world.actions.reset_home') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item v-else icon="el-icon-s-home" command="Make Home" divided>
-                                    {{ $t('dialog.WorldDialog.actions.make_home') }}
+                                    {{ $t('dialog.world.actions.make_home') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-tickets" command="Previous Instances">
-                                    {{ $t('dialog.WorldDialog.actions.show_previous_instances') }}
+                                    {{ $t('dialog.world.actions.show_previous_instances') }}
                                 </el-dropdown-item>
                                 <template v-if="API.currentUser.id !== worldDialog.ref.authorId">
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Previous Images">
-                                        {{ $t('dialog.WorldDialog.actions.show_previous_images') }}
+                                        {{ $t('dialog.world.actions.show_previous_images') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         :disabled="!worldDialog.hasPersistData"
                                         icon="el-icon-upload"
                                         command="Delete Persistent Data">
-                                        {{ $t('dialog.WorldDialog.actions.delete_persistent_data') }}
+                                        {{ $t('dialog.world.actions.delete_persistent_data') }}
                                     </el-dropdown-item>
                                 </template>
                                 <template v-else>
                                     <el-dropdown-item icon="el-icon-edit" command="Rename">
-                                        {{ $t('dialog.WorldDialog.actions.rename') }}
+                                        {{ $t('dialog.world.actions.rename') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Description">
-                                        {{ $t('dialog.WorldDialog.actions.change_description') }}
+                                        {{ $t('dialog.world.actions.change_description') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Capacity">
-                                        {{ $t('dialog.WorldDialog.actions.change_capacity') }}
+                                        {{ $t('dialog.world.actions.change_capacity') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Recommended Capacity">
-                                        {{ $t('dialog.WorldDialog.actions.change_recommended_capacity') }}
+                                        {{ $t('dialog.world.actions.change_recommended_capacity') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change YouTube Preview">
-                                        {{ $t('dialog.WorldDialog.actions.change_preview') }}
+                                        {{ $t('dialog.world.actions.change_preview') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Tags">
-                                        {{ $t('dialog.WorldDialog.actions.change_tags') }}
+                                        {{ $t('dialog.world.actions.change_tags') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Allowed Domains">
-                                        {{ $t('dialog.WorldDialog.actions.change_allowed_video_player_domains') }}
+                                        {{ $t('dialog.world.actions.change_allowed_video_player_domains') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Change Image">
-                                        {{ $t('dialog.WorldDialog.actions.change_image') }}
+                                        {{ $t('dialog.world.actions.change_image') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="worldDialog.ref.unityPackageUrl"
                                         icon="el-icon-download"
                                         command="Download Unity Package">
-                                        {{ $t('dialog.WorldDialog.actions.download_package') }}
+                                        {{ $t('dialog.world.actions.download_package') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="
@@ -292,19 +292,19 @@
                                         icon="el-icon-view"
                                         command="Unpublish"
                                         divided>
-                                        {{ $t('dialog.WorldDialog.actions.unpublish') }}
+                                        {{ $t('dialog.world.actions.unpublish') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item v-else icon="el-icon-view" command="Publish" divided>
-                                        {{ $t('dialog.WorldDialog.actions.publish_to_labs') }}
+                                        {{ $t('dialog.world.actions.publish_to_labs') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         :disabled="!worldDialog.hasPersistData"
                                         icon="el-icon-upload"
                                         command="Delete Persistent Data">
-                                        {{ $t('dialog.WorldDialog.actions.delete_persistent_data') }}
+                                        {{ $t('dialog.world.actions.delete_persistent_data') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-delete" command="Delete" style="color: #f56c6c">
-                                        {{ $t('dialog.WorldDialog.actions.delete') }}
+                                        {{ $t('dialog.world.actions.delete') }}
                                     </el-dropdown-item>
                                 </template>
                             </el-dropdown-menu>
@@ -313,21 +313,19 @@
                 </div>
             </div>
             <el-tabs>
-                <el-tab-pane :label="$t('dialog.WorldDialog.instances.header')">
+                <el-tab-pane :label="$t('dialog.world.instances.header')">
                     <div class="">
                         <i class="el-icon-user" />
-                        {{
-                            $t('dialog.WorldDialog.instances.public_count', { count: worldDialog.ref.publicOccupants })
-                        }}
+                        {{ $t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
                         <i class="el-icon-user-solid" style="margin-left: 10px" />
                         {{
-                            $t('dialog.WorldDialog.instances.private_count', {
+                            $t('dialog.world.instances.private_count', {
                                 count: worldDialog.ref.privateOccupants
                             })
                         }}
                         <i class="el-icon-check" style="margin-left: 10px" />
                         {{
-                            $t('dialog.WorldDialog.instances.capacity_count', {
+                            $t('dialog.world.instances.capacity_count', {
                                 count: worldDialog.ref.recommendedCapacity,
                                 max: worldDialog.ref.capacity
                             })
@@ -348,7 +346,7 @@
                                     @show-launch-dialog="showLaunchDialog" />
                                 <el-tooltip
                                     placement="top"
-                                    :content="$t('dialog.WorldDialog.instances.self_invite_tooltip')"
+                                    :content="$t('dialog.world.instances.self_invite_tooltip')"
                                     :disabled="hideTooltips">
                                     <invite-yourself
                                         :location="room.$location.tag"
@@ -357,7 +355,7 @@
                                 </el-tooltip>
                                 <el-tooltip
                                     placement="top"
-                                    :content="$t('dialog.WorldDialog.instances.refresh_instance_info')"
+                                    :content="$t('dialog.world.instances.refresh_instance_info')"
                                     :disabled="hideTooltips">
                                     <el-button
                                         size="mini"
@@ -403,7 +401,7 @@
                                                     :style="{ color: room.$location.user.$userColour }"
                                                     v-text="room.$location.user.displayName" />
                                                 <span class="extra">
-                                                    {{ $t('dialog.WorldDialog.instances.instance_creator') }}
+                                                    {{ $t('dialog.world.instances.instance_creator') }}
                                                 </span>
                                             </div>
                                         </template>
@@ -436,12 +434,12 @@
                         </template>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="$t('dialog.WorldDialog.info.header')" lazy>
+                <el-tab-pane :label="$t('dialog.world.info.header')" lazy>
                     <div class="x-friend-list" style="max-height: none">
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.memo') }}
+                                    {{ $t('dialog.world.info.memo') }}
                                 </span>
                                 <el-input
                                     v-model="memo"
@@ -449,7 +447,7 @@
                                     type="textarea"
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
-                                    :placeholder="$t('dialog.WorldDialog.info.memo_placeholder')"
+                                    :placeholder="$t('dialog.world.info.memo_placeholder')"
                                     size="mini"
                                     resize="none"
                                     @change="onWorldMemoChange" />
@@ -459,14 +457,14 @@
                             <div class="x-friend-item" style="width: 100%; cursor: default">
                                 <div class="detail">
                                     <span class="name">
-                                        {{ $t('dialog.WorldDialog.info.id') }}
+                                        {{ $t('dialog.world.info.id') }}
                                     </span>
                                     <span class="extra" style="display: inline">
                                         {{ worldDialog.id }}
                                     </span>
                                     <el-tooltip
                                         placement="top"
-                                        :content="$t('dialog.WorldDialog.info.id_tooltip')"
+                                        :content="$t('dialog.world.info.id_tooltip')"
                                         :disabled="hideTooltips">
                                         <el-dropdown
                                             trigger="click"
@@ -476,13 +474,13 @@
                                             <el-button type="default" icon="el-icon-s-order" size="mini" circle />
                                             <el-dropdown-menu slot="dropdown">
                                                 <el-dropdown-item @click.native="copyWorldId(worldDialog.id)">
-                                                    {{ $t('dialog.WorldDialog.info.copy_id') }}
+                                                    {{ $t('dialog.world.info.copy_id') }}
                                                 </el-dropdown-item>
                                                 <el-dropdown-item @click.native="copyWorldUrl(worldDialog.id)">
-                                                    {{ $t('dialog.WorldDialog.info.copy_url') }}
+                                                    {{ $t('dialog.world.info.copy_url') }}
                                                 </el-dropdown-item>
                                                 <el-dropdown-item @click.native="copyWorldName(worldDialog.ref.name)">
-                                                    {{ $t('dialog.WorldDialog.info.copy_name') }}
+                                                    {{ $t('dialog.world.info.copy_name') }}
                                                 </el-dropdown-item>
                                             </el-dropdown-menu>
                                         </el-dropdown>
@@ -499,7 +497,7 @@
                             ">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.youtube_preview') }}
+                                    {{ $t('dialog.world.info.youtube_preview') }}
                                 </span>
                                 <span class="extra">
                                     https://www.youtube.com/watch?v={{ worldDialog.ref.previewYoutubeId }}
@@ -509,7 +507,7 @@
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.author_tags') }}
+                                    {{ $t('dialog.world.info.author_tags') }}
                                 </span>
                                 <span
                                     v-if="
@@ -524,7 +522,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.players') }}
+                                    {{ $t('dialog.world.info.players') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.occupants | commaNumber }}
@@ -534,7 +532,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.favorites') }}
+                                    {{ $t('dialog.world.info.favorites') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.favorites | commaNumber
@@ -549,7 +547,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.visits') }}
+                                    {{ $t('dialog.world.info.visits') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.visits | commaNumber }}
@@ -559,7 +557,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.capacity') }}
+                                    {{ $t('dialog.world.info.capacity') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.recommendedCapacity | commaNumber }} ({{
@@ -571,7 +569,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.created_at') }}
+                                    {{ $t('dialog.world.info.created_at') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.created_at | formatDate('long') }}
@@ -581,7 +579,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.last_updated') }}
+                                    {{ $t('dialog.world.info.last_updated') }}
                                 </span>
                                 <span v-if="worldDialog.lastUpdated" class="extra">
                                     {{ worldDialog.lastUpdated | formatDate('long') }}
@@ -597,7 +595,7 @@
                             style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.labs_publication_date') }}
+                                    {{ $t('dialog.world.info.labs_publication_date') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.labsPublicationDate | formatDate('long') }}
@@ -610,12 +608,12 @@
                             style="cursor: default">
                             <div class="detail">
                                 <span class="name" style="display: inline">
-                                    {{ $t('dialog.WorldDialog.info.publication_date') }}
+                                    {{ $t('dialog.world.info.publication_date') }}
                                 </span>
                                 <el-tooltip v-if="isTimeInLabVisible" placement="top" style="margin-left: 5px">
                                     <template slot="content">
                                         <span>
-                                            {{ $t('dialog.WorldDialog.info.time_in_labs') }}
+                                            {{ $t('dialog.world.info.time_in_labs') }}
                                             {{ timeInLab }}
                                         </span>
                                     </template>
@@ -629,7 +627,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.version') }}
+                                    {{ $t('dialog.world.info.version') }}
                                 </span>
                                 <span class="extra" v-text="worldDialog.ref.version" />
                             </div>
@@ -637,7 +635,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.heat') }}
+                                    {{ $t('dialog.world.info.heat') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
@@ -647,7 +645,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.popularity') }}
+                                    {{ $t('dialog.world.info.popularity') }}
                                 </span>
                                 <span class="extra">
                                     {{ worldDialog.ref.popularity | commaNumber }}
@@ -658,7 +656,7 @@
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.platform') }}
+                                    {{ $t('dialog.world.info.platform') }}
                                 </span>
                                 <span class="extra" style="white-space: normal">{{ worldDialogPlatform }}</span>
                             </div>
@@ -666,12 +664,12 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.WorldDialog.info.last_visited') }}
+                                    {{ $t('dialog.world.info.last_visited') }}
                                     <el-tooltip
                                         v-if="!hideTooltips"
                                         placement="top"
                                         style="margin-left: 5px"
-                                        :content="$t('dialog.WorldDialog.info.accuracy_notice')"
+                                        :content="$t('dialog.world.info.accuracy_notice')"
                                         ><i class="el-icon-warning"></i
                                     ></el-tooltip>
                                 </span>
@@ -685,12 +683,12 @@
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
-                                        {{ $t('dialog.WorldDialog.info.visit_count') }}
+                                        {{ $t('dialog.world.info.visit_count') }}
                                         <el-tooltip
                                             v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
-                                            :content="$t('dialog.WorldDialog.info.accuracy_notice')"
+                                            :content="$t('dialog.world.info.accuracy_notice')"
                                             ><i class="el-icon-warning"></i
                                         ></el-tooltip>
                                     </span>
@@ -703,12 +701,12 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name"
-                                    >{{ $t('dialog.WorldDialog.info.time_spent') }}
+                                    >{{ $t('dialog.world.info.time_spent') }}
                                     <el-tooltip
                                         v-if="!hideTooltips"
                                         placement="top"
                                         style="margin-left: 5px"
-                                        :content="$t('dialog.WorldDialog.info.accuracy_notice')">
+                                        :content="$t('dialog.world.info.accuracy_notice')">
                                         <i class="el-icon-warning"></i>
                                     </el-tooltip>
                                 </span>
@@ -719,7 +717,7 @@
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="$t('dialog.WorldDialog.json.header')" style="max-height: 50vh" lazy>
+                <el-tab-pane :label="$t('dialog.world.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
                         size="mini"

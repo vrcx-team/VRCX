@@ -43,7 +43,7 @@ mixin images
         @mouseup.native='dialogMouseUp'
         ref='changeWorldImageDialog'
         :visible.sync='changeWorldImageDialogVisible'
-        :title='$t("dialog.change_content_image.WorldDialog")'
+        :title='$t("dialog.change_content_image.world")'
         width='850px')
         div(v-if='changeWorldImageDialogVisible' v-loading='changeWorldImageDialogLoading')
             input#WorldImageUploadButton(

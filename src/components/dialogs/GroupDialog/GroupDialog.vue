@@ -101,7 +101,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ t('dialog.group.tags.api') }}
+                                {{ t('dialog.group.tags.request') }}
                             </el-tag>
                             <el-tag
                                 v-else-if="groupDialog.ref.joinState === 'invite'"
@@ -1531,7 +1531,7 @@
                         ...props.groupDialog,
                         inGroup: json.membershipStatus === 'member'
                     });
-                    // props.GroupDialog.inGroup = json.membershipStatus === 'member';
+                    // props.groupDialog.inGroup = json.membershipStatus === 'member';
                     getGroupDialogGroup(groupId);
                 }
                 // });
@@ -1542,7 +1542,7 @@
                     });
                 } else if (args.json.membershipStatus === 'requested') {
                     $message({
-                        message: 'Group join api sent',
+                        message: 'Group join request sent',
                         type: 'success'
                     });
                 }

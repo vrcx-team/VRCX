@@ -153,7 +153,7 @@
             v-if="!refreshingLocalFavorites"
             size="small"
             style="margin-left: 5px"
-            @click="$emit('refresh-local-WorldDialog-favorite')"
+            @click="$emit('refresh-local-world-favorite')"
             >{{ $t('view.favorite.worlds.refresh') }}</el-button
         >
         <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">

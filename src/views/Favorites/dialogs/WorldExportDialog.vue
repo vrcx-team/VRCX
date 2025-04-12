@@ -103,7 +103,7 @@
                 worldExportContent: '',
                 worldExportFavoriteGroup: null,
                 worldExportLocalFavoriteGroup: null,
-                // Storage of selected filtering options for model and WorldDialog export
+                // Storage of selected filtering options for model and world export
                 exportSelectedOptions: ['ID', 'Name'],
                 exportSelectOptions: [
                     { label: 'ID', value: 'id' },
@@ -120,7 +120,7 @@
                     return this.worldExportDialogVisible;
                 },
                 set(value) {
-                    this.$emit('update:WorldDialog-export-dialog-visible', value);
+                    this.$emit('update:world-export-dialog-visible', value);
                 }
             }
         },

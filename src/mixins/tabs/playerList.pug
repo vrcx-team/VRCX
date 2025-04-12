@@ -16,7 +16,7 @@ mixin playerListTab
                         span.x-link(
                             @click='showWorldDialog(currentInstanceWorld.ref.id)'
                             style='font-weight: bold; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1')
-                            |#[i.el-icon-s-home(v-show='API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id' style='margin-right: 5px')] {{ currentInstanceWorld.ref.name }}
+                            | #[i.el-icon-s-home(v-show='API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id' style='margin-right: 5px')] {{ currentInstanceWorld.ref.name }}
                     div
                         span.x-link.x-grey(
                             v-text='currentInstanceWorld.ref.authorName'
@@ -28,19 +28,19 @@ mixin playerListTab
                             type='primary'
                             effect='plain'
                             size='mini'
-                            style='margin-right: 5px') {{ $t('dialog.WorldDialog.tags.labs') }}
+                            style='margin-right: 5px') {{ $t('dialog.world.tags.labs') }}
                         el-tag(
                             v-else-if='currentInstanceWorld.ref.releaseStatus === "public"'
                             type='success'
                             effect='plain'
                             size='mini'
-                            style='margin-right: 5px') {{ $t('dialog.WorldDialog.tags.public') }}
+                            style='margin-right: 5px') {{ $t('dialog.world.tags.public') }}
                         el-tag(
                             v-else-if='currentInstanceWorld.ref.releaseStatus === "private"'
                             type='danger'
                             effect='plain'
                             size='mini'
-                            style='margin-right: 5px') {{ $t('dialog.WorldDialog.tags.private') }}
+                            style='margin-right: 5px') {{ $t('dialog.world.tags.private') }}
                         el-tag.x-tag-platform-pc(
                             v-if='currentInstanceWorld.isPC'
                             type='info'
@@ -73,14 +73,14 @@ mixin playerListTab
                             type='warning'
                             effect='plain'
                             size='mini'
-                            style='margin-right: 5px; margin-top: 5px') {{ $t('dialog.WorldDialog.tags.avatar_scaling_disabled') }}
+                            style='margin-right: 5px; margin-top: 5px') {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                         el-tag(
                             v-if='currentInstanceWorld.inCache'
                             type='info'
                             effect='plain'
                             size='mini'
                             style='margin-right: 5px')
-                            span {{ currentInstanceWorld.cacheSize }} {{ $t('dialog.WorldDialog.tags.cache') }}
+                            span {{ currentInstanceWorld.cacheSize }} {{ $t('dialog.world.tags.cache') }}
                         div(style='margin-top: 5px')
                             location-world(
                                 :locationobject='currentInstanceLocation'
@@ -88,7 +88,7 @@ mixin playerListTab
                                 @show-launch-dialog='showLaunchDialog')
                             span(v-if='lastLocation.playerList.size > 0' style='margin-left: 5px')
                                 | {{ lastLocation.playerList.size }}
-                                |                                     #[template(v-if='lastLocation.friendList.size > 0') ({{ lastLocation.friendList.size }})]
+                                | #[template(v-if='lastLocation.friendList.size > 0') ({{ lastLocation.friendList.size }})]
                             | &nbsp;&horbar; #[timer(v-if='lastLocation.date' :epoch='lastLocation.date')]
                     div(style='margin-top: 5px')
                         span(
@@ -104,15 +104,15 @@ mixin playerListTab
                 div(style='display: flex; flex-direction: column; margin-left: 20px')
                     .x-friend-item(style='cursor: default')
                         .detail
-                            span.name {{ $t('dialog.WorldDialog.info.capacity') }}
+                            span.name {{ $t('dialog.world.info.capacity') }}
                             span.extra {{ currentInstanceWorld.ref.recommendedCapacity | commaNumber }} ({{ currentInstanceWorld.ref.capacity | commaNumber }})
                     .x-friend-item(style='cursor: default')
                         .detail
-                            span.name {{ $t('dialog.WorldDialog.info.last_updated') }}
+                            span.name {{ $t('dialog.world.info.last_updated') }}
                             span.extra {{ currentInstanceWorld.lastUpdated | formatDate('long') }}
                     .x-friend-item(style='cursor: default')
                         .detail
-                            span.name {{ $t('dialog.WorldDialog.info.created_at') }}
+                            span.name {{ $t('dialog.world.info.created_at') }}
                             span.extra {{ currentInstanceWorld.ref.created_at | formatDate('long') }}
             .photon-event-table(v-if='photonLoggingEnabled')
                 div(style='position: absolute; width: 600px; margin-left: 215px; z-index: 1')

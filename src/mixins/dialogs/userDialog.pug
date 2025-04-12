@@ -904,14 +904,14 @@ mixin userDialog
                                         @click.native='setUserDialogWorldOrder(item)')
                     .x-friend-list(v-loading='userDialog.isWorldsLoading' style='margin-top: 10px; min-height: 60px')
                         .x-friend-item.x-friend-item-border(
-                            v-for='WorldDialog in userDialog.worlds'
-                            :key='WorldDialog.id'
-                            @click='showWorldDialog(WorldDialog.id)')
+                            v-for='world in userDialog.worlds'
+                            :key='world.id'
+                            @click='showWorldDialog(world.id)')
                             .avatar
-                                img(v-lazy='WorldDialog.thumbnailImageUrl')
+                                img(v-lazy='world.thumbnailImageUrl')
                             .detail
-                                span.name(v-text='WorldDialog.name')
-                                span.extra(v-if='WorldDialog.occupants') ({{ world.occupants }})
+                                span.name(v-text='world.name')
+                                span.extra(v-if='world.occupants') ({{ world.occupants }})
                 el-tab-pane(:label='$t("dialog.user.favorite_worlds.header")' lazy)
                     el-button(
                         v-if='userFavoriteWorlds && userFavoriteWorlds.length > 0'

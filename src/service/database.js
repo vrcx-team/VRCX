@@ -240,7 +240,7 @@ class Database {
         );
     }
 
-    // WorldDialog memos
+    // world memos
 
     async getWorldMemo(worldId) {
         var row = {};

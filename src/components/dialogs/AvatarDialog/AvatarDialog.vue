@@ -439,7 +439,7 @@
                                         v-if="!hideTooltips"
                                         placement="top"
                                         style="margin-left: 5px"
-                                        :content="t('dialog.WorldDialog.info.accuracy_notice')">
+                                        :content="t('dialog.world.info.accuracy_notice')">
                                         <i class="el-icon-warning"></i> </el-tooltip
                                 ></span>
 

@@ -125,7 +125,7 @@
                     return this.previousInstancesWorldDialog.visible;
                 },
                 set(value) {
-                    this.$emit('update:previous-instances-WorldDialog-dialog', {
+                    this.$emit('update:previous-instances-world-dialog', {
                         ...this.previousInstancesWorldDialog,
                         visible: value
                     });

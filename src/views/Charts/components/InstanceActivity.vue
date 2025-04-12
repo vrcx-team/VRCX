@@ -262,7 +262,7 @@
                     this.echarts = echartsModule;
                 }
                 if (echartsModule) {
-                    // activity data is ready, but WorldDialog name data isn't ready
+                    // activity data is ready, but world name data isn't ready
                     // so init echarts with empty data, reduce the render time of init screen
                     this.initEcharts(true);
                     this.getWorldNameData();
@@ -577,7 +577,7 @@
                         } catch {
                             // TODO: no notification
                             console.error('getWorldName failed location', item.location);
-                            return 'Unknown WorldDialog';
+                            return 'Unknown world';
                         }
                     })
                 );

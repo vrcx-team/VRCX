@@ -429,7 +429,7 @@ export default class extends baseClass {
                     }
 
                     // content.user: {} // we don't trust this
-                    // content.WorldDialog: {} // this is long gone
+                    // content.world: {} // this is long gone
                     // content.worldId // where did worldId go?
                     // content.instance // without worldId, this is useless
 

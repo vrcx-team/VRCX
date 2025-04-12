@@ -193,7 +193,7 @@ const notificationReq = {
                 return args;
             })
             .catch((err) => {
-                // if friend api could not be found, delete it
+                // if friend request could not be found, delete it
                 if (err && err.message && err.message.includes('404')) {
                     window.API.$emit('NOTIFICATION:HIDE', { params });
                 }
