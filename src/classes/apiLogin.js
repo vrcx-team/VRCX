@@ -1,5 +1,5 @@
 import Noty from 'noty';
-import security from '../security/security.js';
+import security from '../service/security.js';
 import configRepository from '../service/config.js';
 import { baseClass, $app, API, $t } from './baseClass.js';
 /* eslint-disable no-unused-vars */

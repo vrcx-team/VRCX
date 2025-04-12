@@ -28,10 +28,10 @@ import 'default-passive-events';
 // util classes
 import configRepository from './service/config.js';
 import webApiService from './service/webapi.js';
-import security from './security/security.js';
+import security from './service/security.js';
 import database from './service/database.js';
 import * as localizedStrings from './localization/localizedStrings.js';
-import removeConfusables, { removeWhitespace } from './security/confusables.js';
+import removeConfusables, { removeWhitespace } from './service/confusables.js';
 import $utils from './classes/utils.js';
 import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';

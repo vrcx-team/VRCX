@@ -270,7 +270,7 @@
 </template>
 
 <script>
-    import removeConfusables, { removeWhitespace } from '../../security/confusables';
+    import removeConfusables, { removeWhitespace } from '../../service/confusables';
     import utils from '../../classes/utils';
     import { friendRequest, userRequest } from '../../api';
 
