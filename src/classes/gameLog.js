@@ -258,7 +258,7 @@ export default class extends baseClass {
 
                     this.processScreenshot(gameLog.screenshotPath);
                     break;
-                case 'api-world':
+                case 'api-request':
                     // var userId = '';
                     // try {
                     //     var url = new URL(gameLog.url);

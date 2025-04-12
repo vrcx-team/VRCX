@@ -324,7 +324,7 @@ mixin invites
                         type='text'
                         icon='el-icon-edit'
                         size='mini'
-                        @click='showEditAndSendInviteDialog("api", scope.row)')
+                        @click='showEditAndSendInviteDialog("request", scope.row)')
         template(#footer)
             el-button(type='small' @click='cancelSendInviteRequest') {{ $t('dialog.invite_request_message.cancel') }}
             el-button(type='small' @click='API.refreshInviteMessageTableData("request")') {{ $t('dialog.invite_request_message.refresh') }}

@@ -1416,7 +1416,7 @@ export default class extends baseClass {
                 case 'friendRequest':
                     this.desktopNotification(
                         noty.senderUsername,
-                        'has sent you a friend api',
+                        'has sent you a friend request',
                         image
                     );
                     break;

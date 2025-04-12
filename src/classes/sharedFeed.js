@@ -156,7 +156,7 @@ export default class extends baseClass {
                             };
                             wristFeed.unshift(feedEntry);
                         } else {
-                            // no worldorld cache, fetch world and try again
+                            // no world cache, fetch world and try again
                             worldRequest
                                 .getWorld({
                                     worldId: ref.$location.worldId

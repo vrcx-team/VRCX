@@ -950,7 +950,7 @@
                                             homeLocation: D.id
                                         }).then((args) => {
                                             this.$message({
-                                                message: 'Home WorldDialog updated',
+                                                message: 'Home world updated',
                                                 type: 'success'
                                             });
                                             return args;
@@ -961,7 +961,7 @@
                                             homeLocation: ''
                                         }).then((args) => {
                                             this.$message({
-                                                message: 'Home WorldDialog has been reset',
+                                                message: 'Home world has been reset',
                                                 type: 'success'
                                             });
                                             return args;

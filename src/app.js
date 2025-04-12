@@ -694,7 +694,7 @@ console.log(`isLinux: ${LINUX}`);
                 travelingToWorld: '',
                 userIcon: '',
                 worldId: '',
-                // only in bulk api
+                // only in bulk request
                 fallbackAvatar: '',
                 // VRCX
                 $location: {},
