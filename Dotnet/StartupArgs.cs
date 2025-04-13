@@ -72,6 +72,9 @@ namespace VRCX
             var arguments = new VrcxLaunchArguments();
             foreach (var arg in args)
             {
+                if (arg == VrcxLaunchArguments.IsStartupPrefix)
+                    arguments.IsStartup = true;
+                
                 if (arg == VrcxLaunchArguments.IsUpgradePrefix)
                     arguments.IsUpgrade = true;
 
@@ -95,6 +98,9 @@ namespace VRCX
 
         internal class VrcxLaunchArguments
         {
+            public const string IsStartupPrefix = "--startup";
+            public bool IsStartup { get; set; } = false;
+            
             public const string IsUpgradePrefix = "/Upgrade";
             public bool IsUpgrade { get; set; } = false;
 

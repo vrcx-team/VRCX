@@ -2672,10 +2672,11 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.vrcxId = '';
     $app.methods.loadVrcxId = async function () {
-        this.vrcxId = await configRepository.getString(
-            'VRCX_id',
-            crypto.randomUUID()
-        );
+        this.vrcxId = await configRepository.getString('VRCX_id', '');
+        if (!this.vrcxId) {
+            this.vrcxId = crypto.randomUUID();
+            await configRepository.setString('VRCX_id', this.vrcxId);
+        }
     };
 
     $app.methods.updateIsGameRunning = async function (
@@ -7308,7 +7309,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.isStartAsMinimizedState =
         (await VRCXStorage.Get('VRCX_StartAsMinimizedState')) === 'true';
     $app.data.isCloseToTray =
-        (await VRCXStorage.Get('VRCX_CloseToTray')) === 'true';
+        (await VRCXStorage.Get('VRCX_CloseToTray')) === 'false';
     if (await configRepository.getBool('VRCX_CloseToTray')) {
         // move back to JSON
         $app.data.isCloseToTray =
