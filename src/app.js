@@ -8501,6 +8501,18 @@ console.log(`isLinux: ${LINUX}`);
         }
     });
 
+    API.$on('USER', function (args) {
+        // refresh user dialog JSON tab
+        if (
+            !$app.userDialog.visible ||
+            $app.userDialog.id !== args.ref.id ||
+            $app.$refs.userDialogTabs?.currentName !== '5'
+        ) {
+            return;
+        }
+        $app.refreshUserDialogTreeData();
+    });
+
     API.$on('WORLD', function (args) {
         var D = $app.userDialog;
         if (D.visible === false || D.$location.worldId !== args.ref.id) {
