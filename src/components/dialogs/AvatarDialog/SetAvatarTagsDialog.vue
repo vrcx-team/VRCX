@@ -124,6 +124,7 @@
             if (newVal) {
                 updateAvatarTagsSelection();
                 updateSelectedAvatarTags();
+                updateInputAvatarTags();
             }
         }
     );
@@ -270,7 +271,7 @@
                     D.contentSex = true;
                     break;
             }
-            if (!D.selectedTags.includes(`content_${tag}`)) {
+            if (tag && !D.selectedTags.includes(`content_${tag}`)) {
                 D.selectedTags.push(`content_${tag}`);
             }
         }
