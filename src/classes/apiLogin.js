@@ -1,6 +1,6 @@
 import Noty from 'noty';
-import security from '../security.js';
-import configRepository from '../repository/config.js';
+import security from '../service/security.js';
+import configRepository from '../service/config.js';
 import { baseClass, $app, API, $t } from './baseClass.js';
 /* eslint-disable no-unused-vars */
 let webApiService = {};

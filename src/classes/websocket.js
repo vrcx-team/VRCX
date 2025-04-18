@@ -1,7 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import Noty from 'noty';
 import { baseClass, $app, API, $utils } from './baseClass.js';
-import { groupRequest } from './request';
+import { groupRequest } from '../api';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {

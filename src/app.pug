@@ -61,7 +61,7 @@ doctype html
         +profileTab
 
         //- friends list
-        FriendsListTab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
+        FriendListTab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
 
         //- charts
         keep-alive
@@ -120,7 +120,7 @@ doctype html
     AvatarImportDialog(v-bind='avatarImportDialogBind' v-on='avatarImportDialogEvent')
 
     //- favorites dialog
-    FavoriteDialog(v-bind='favoriteDialogBind' v-on='favoriteDialogEvent')
+    ChooseFavoriteGroupDialog(v-bind='favoriteDialogBind' v-on='favoriteDialogEvent')
 
     ExportFriendsListDialog(v-bind='exportFriendsListDialogBind' v-on='exportFriendsListDialogEvent')
 

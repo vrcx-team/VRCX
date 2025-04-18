@@ -16,7 +16,7 @@ mixin playerListTab
                         span.x-link(
                             @click='showWorldDialog(currentInstanceWorld.ref.id)'
                             style='font-weight: bold; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1')
-                            |#[i.el-icon-s-home(v-show='API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id' style='margin-right: 5px')] {{ currentInstanceWorld.ref.name }}
+                            | #[i.el-icon-s-home(v-show='API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id' style='margin-right: 5px')] {{ currentInstanceWorld.ref.name }}
                     div
                         span.x-link.x-grey(
                             v-text='currentInstanceWorld.ref.authorName'
@@ -88,7 +88,7 @@ mixin playerListTab
                                 @show-launch-dialog='showLaunchDialog')
                             span(v-if='lastLocation.playerList.size > 0' style='margin-left: 5px')
                                 | {{ lastLocation.playerList.size }}
-                                |                                     #[template(v-if='lastLocation.friendList.size > 0') ({{ lastLocation.friendList.size }})]
+                                | #[template(v-if='lastLocation.friendList.size > 0') ({{ lastLocation.friendList.size }})]
                             | &nbsp;&horbar; #[timer(v-if='lastLocation.date' :epoch='lastLocation.date')]
                     div(style='margin-top: 5px')
                         span(

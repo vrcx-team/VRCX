@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueMarkdown from 'vue-markdown';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { instanceRequest, userRequest } from './request';
+import { instanceRequest, userRequest } from '../api';
 import utils from './utils';
 
 export default class extends baseClass {

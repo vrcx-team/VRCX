@@ -6,6 +6,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const { EsbuildPlugin } = require('esbuild-loader');
 
+const scssBasePath = './src/assets/scss/';
+const themeBasePath = `${scssBasePath}themes/`;
+
 module.exports = {
     entry: {
         vendor: [
@@ -20,14 +23,14 @@ module.exports = {
             import: ['./src/app.js', './src/app.scss'],
             dependOn: 'vendor'
         },
-        'theme.dark': './src/theme.dark.scss',
-        'theme.darkvanillaold': './src/theme.darkvanillaold.scss',
-        'theme.darkvanilla': './src/theme.darkvanilla.scss',
-        'theme.pink': './src/theme.pink.scss',
-        'theme.material3': './src/theme.material3.scss',
-        flags: './src/flags.scss',
-        'animated-emoji': './src/animated-emoji.scss',
-        'emoji.font': './src/emoji.font.scss',
+        'theme.dark': `${themeBasePath}theme.dark.scss`,
+        'theme.darkvanillaold': `${themeBasePath}theme.darkvanillaold.scss`,
+        'theme.darkvanilla': `${themeBasePath}theme.darkvanilla.scss`,
+        'theme.pink': `${themeBasePath}theme.pink.scss`,
+        'theme.material3': `${themeBasePath}theme.material3.scss`,
+        flags: `${scssBasePath}flags.scss`,
+        'animated-emoji': `${scssBasePath}animated-emoji.scss`,
+        'emoji.font': `${scssBasePath}emoji.font.scss`,
         vr: {
             import: ['./src/vr.js', './src/vr.scss'],
             dependOn: 'vendor'

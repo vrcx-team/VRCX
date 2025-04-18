@@ -1,6 +1,6 @@
-import configRepository from '../repository/config.js';
+import configRepository from '../service/config.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import { worldRequest } from './request';
+import { worldRequest } from '../api';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
