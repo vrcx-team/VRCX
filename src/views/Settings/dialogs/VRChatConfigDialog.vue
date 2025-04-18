@@ -157,10 +157,14 @@
 
             <el-checkbox
                 v-model="VRChatConfigFile.picture_output_split_by_date"
+                @change="refreshDialogValues"
                 style="margin-top: 5px; display: block">
                 {{ t('dialog.config_json.picture_sort_by_date') }}
             </el-checkbox>
-            <el-checkbox v-model="VRChatConfigFile.disableRichPresence" style="margin-top: 5px; display: block">
+            <el-checkbox
+                v-model="VRChatConfigFile.disableRichPresence"
+                @change="refreshDialogValues"
+                style="margin-top: 5px; display: block">
                 {{ t('dialog.config_json.disable_discord_presence') }}
             </el-checkbox>
         </div>
@@ -330,19 +334,27 @@
         }
     }
 
+    function refreshDialogValues() {
+        loading.value = true;
+        loading.value = false;
+    }
+
     function setVRChatSpoutResolution(res) {
         VRChatConfigFile.value.camera_spout_res_height = res.height;
         VRChatConfigFile.value.camera_spout_res_width = res.width;
+        refreshDialogValues();
     }
 
     function setVRChatCameraResolution(res) {
         VRChatConfigFile.value.camera_res_height = res.height;
         VRChatConfigFile.value.camera_res_width = res.width;
+        refreshDialogValues();
     }
 
     function setVRChatScreenshotResolution(res) {
         VRChatConfigFile.value.screenshot_res_height = res.height;
         VRChatConfigFile.value.screenshot_res_width = res.width;
+        refreshDialogValues();
     }
 
     function getVRChatCameraResolution() {
@@ -398,9 +410,6 @@
         if (config) {
             try {
                 const parsedConfig = JSON.parse(config);
-                if (parsedConfig.picture_output_split_by_date === undefined) {
-                    parsedConfig.picture_output_split_by_date = true;
-                }
                 VRChatConfigFile.value = { ...VRChatConfigFile.value, ...parsedConfig };
             } catch {
                 $message({
@@ -409,6 +418,9 @@
                 });
                 throw new Error('Invalid JSON in config.json');
             }
+        }
+        if (typeof VRChatConfigFile.value.picture_output_split_by_date === 'undefined') {
+            VRChatConfigFile.value.picture_output_split_by_date = true;
         }
     }
 

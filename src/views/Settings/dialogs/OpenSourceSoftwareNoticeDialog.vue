@@ -10,7 +10,7 @@
         @mouseup.native="dialogMouseUp">
         <div v-once style="height: 350px; overflow: hidden scroll; word-break: break-all">
             <div>
-                <span>{{ t('dialog.open_source.description') }} }}</span>
+                <span>{{ t('dialog.open_source.description') }}</span>
             </div>
 
             <div v-for="lib in openSourceSoftwareLicenses" :key="lib.name" style="margin-top: 15px">

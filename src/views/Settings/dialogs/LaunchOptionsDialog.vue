@@ -10,7 +10,10 @@
         @close="closeDialog">
         <div style="font-size: 12px">
             {{ t('dialog.launch_options.description') }} <br />
-            {{ t('dialog.launch_options.example') }} <el-tag size="mini">--fps=144</el-tag>
+            {{ t('dialog.launch_options.example') }}
+            <el-tag size="mini"
+                >--fps=144 --enable-debug-gui --enable-sdk-log-levels --enable-udon-debug-logging
+            </el-tag>
         </div>
 
         <el-input
@@ -30,7 +33,7 @@
         <el-input
             v-model="launchOptionsDialog.vrcLaunchPathOverride"
             type="textarea"
-            placeholder="C:\\Program Files (x86)\\Steam\\steamapps\\common\\VRChat"
+            placeholder="C:\Program Files (x86)\Steam\steamapps\common\VRChat"
             :rows="1"
             style="display: block; margin-top: 10px">
         </el-input>
@@ -71,6 +74,7 @@
     defineProps({
         isLaunchOptionsDialogVisible: {
             type: Boolean,
+            default: false,
             required: true
         }
     });

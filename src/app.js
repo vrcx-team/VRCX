@@ -13572,7 +13572,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getVRChatCacheSize = async function () {
         this.VRChatCacheSizeLoading = true;
-        var totalCacheSize = 20;
+        var totalCacheSize = 30;
         this.VRChatTotalCacheSize = totalCacheSize;
         var usedCacheSize = await AssetBundleManager.GetCacheSize();
         this.VRChatUsedCacheSize = (usedCacheSize / 1073741824).toFixed(2);

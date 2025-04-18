@@ -1175,7 +1175,7 @@
             "delete_cache": "删除缓存",
             "delete_old_cache": "从缓存中删除无效数据",
             "sweep_cache": "清理缓存",
-            "max_cache_size": "最大缓存大小 [GB]（至少 20GB）",
+            "max_cache_size": "最大缓存大小 [GB]（至少 30GB）",
             "cache_expiry_delay": "缓存保存时长 [天]（至少 30 天）",
             "cache_directory": "缓存文件夹位置",
             "picture_directory": "截图文件夹位置",

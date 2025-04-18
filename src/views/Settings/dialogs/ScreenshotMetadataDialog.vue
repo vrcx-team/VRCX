@@ -98,7 +98,6 @@
                 v-if="screenshotMetadataDialog.metadata.world"
                 :location="screenshotMetadataDialog.metadata.world.instanceId"
                 :hint="screenshotMetadataDialog.metadata.world.name" />
-            <br />
             <display-name
                 v-if="screenshotMetadataDialog.metadata.author"
                 :userid="screenshotMetadataDialog.metadata.author.id"
@@ -159,7 +158,6 @@
                     v-if="user.pos"
                     style="margin-left: 5px; color: #909399; font-family: monospace"
                     v-text="'(' + user.pos.x + ', ' + user.pos.y + ', ' + user.pos.z + ')'"></span>
-                <br />
                 <br />
             </span>
         </div>

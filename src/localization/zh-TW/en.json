@@ -1191,7 +1191,7 @@
             "delete_cache": "刪除快取",
             "delete_old_cache": "從快取中刪除舊版本",
             "sweep_cache": "清理快取",
-            "max_cache_size": "最大快取大小 [GB] （最小 20GB）",
+            "max_cache_size": "最大快取大小 [GB] （最小 30GB）",
             "cache_expiry_delay": "快取保存時長 [日] （最小 30）",
             "cache_directory": "覆蓋快取資料夾位置",
             "picture_directory": "覆蓋圖片資料夾位置",
