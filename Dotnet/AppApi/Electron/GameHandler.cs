@@ -50,7 +50,7 @@ namespace VRCX
             var processes = Process.GetProcesses();
             foreach (var process in processes)
             {
-                if (process.ProcessName == "vrmonitor" || process.ProcessName == "monado-service")
+                if (process.ProcessName == "vrmonitor" || process.ProcessName == "monado-service" || process.ProcessName.EndsWith("wivrn-server"))
                 {
                     isSteamVRRunning = true;
                     break;
