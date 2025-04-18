@@ -80,6 +80,22 @@ import ExportAvatarsListDialog from './views/Profile/dialogs/ExportAvatarsListDi
 import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
 import InviteGroupDialog from './components/dialogs/GroupDialog/InviteGroupDialog.vue';
 import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
+import FeedFiltersDialog from './views/Settings/dialogs/FeedFiltersDialog.vue';
+import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
+import OpenSourceSoftwareNoticeDialog from './views/Settings/dialogs/OpenSourceSoftwareNoticeDialog.vue';
+import ChangelogDialog from './views/Settings/dialogs/ChangelogDialog.vue';
+import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
+import ScreenshotMetadataDialog from './views/Settings/dialogs/ScreenshotMetadataDialog.vue';
+import DiscordNamesDialog from './views/Profile/dialogs/DiscordNamesDialog.vue';
+import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
+import NoteExportDialog from './views/Settings/dialogs/NoteExportDialog.vue';
+import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
+import YouTubeApiDialog from './views/Settings/dialogs/YouTubeApiDialog.vue';
+import NotificationPositionDialog from './views/Settings/dialogs/NotificationPositionDialog.vue';
+import AvatarProviderDialog from './views/Settings/dialogs/AvatarProviderDialog.vue';
+import RegistryBackupDialog from './views/Settings/dialogs/RegistryBackupDialog.vue';
+import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
+import ChatboxBlacklistDialog from './views/PlayerList/dialogs/ChatboxBlacklistDialog.vue';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -236,7 +252,7 @@ console.log(`isLinux: ${LINUX}`);
             //  - previous instances
             PreviousInstancesInfoDialog,
             PreviousInstancesUserDialog,
-            //  - WorldDialog
+            //  - world
             WorldDialog,
             //  - group
             GroupDialog,
@@ -252,7 +268,26 @@ console.log(`isLinux: ${LINUX}`);
             ExportFriendsListDialog,
             ExportAvatarsListDialog,
             //  - launch
-            LaunchDialog
+            LaunchDialog,
+            //  - player list
+            ChatboxBlacklistDialog,
+            //  - profile
+            DiscordNamesDialog,
+            //  - settings
+            FeedFiltersDialog,
+            LaunchOptionsDialog,
+            OpenSourceSoftwareNoticeDialog,
+            ChangelogDialog,
+            VRCXUpdateDialog,
+            ScreenshotMetadataDialog,
+            EditInviteMessageDialog,
+            NoteExportDialog,
+            VRChatConfigDialog,
+            YouTubeApiDialog,
+            NotificationPositionDialog,
+            AvatarProviderDialog,
+            RegistryBackupDialog,
+            PrimaryPasswordDialog
         },
         provide() {
             return {
@@ -399,14 +434,6 @@ console.log(`isLinux: ${LINUX}`);
             }
         } else if (e.altKey && e.key === 'R') {
             $app.refreshCustomCss();
-        }
-
-        let carouselNavigation = { ArrowLeft: 0, ArrowRight: 2 }[e.key];
-        if (
-            typeof carouselNavigation !== 'undefined' &&
-            $app.screenshotMetadataDialog?.visible
-        ) {
-            $app.screenshotMetadataCarouselChange(carouselNavigation);
         }
 
         if (!e.shiftKey) {
@@ -7574,16 +7601,13 @@ console.log(`isLinux: ${LINUX}`);
             this.autoAcceptInviteRequests
         );
     };
-    $app.data.vrcRegistryAutoBackup = await configRepository.getBool(
-        'VRCX_vrcRegistryAutoBackup',
-        true
-    );
-    $app.methods.saveVrcRegistryAutoBackup = async function () {
-        await configRepository.setBool(
-            'VRCX_vrcRegistryAutoBackup',
-            this.vrcRegistryAutoBackup
-        );
+
+    $app.data.isRegistryBackupDialogVisible = false;
+
+    $app.methods.showRegistryBackupDialog = function () {
+        this.isRegistryBackupDialogVisible = true;
     };
+
     $app.data.sidebarSortMethod1 = '';
     $app.data.sidebarSortMethod2 = '';
     $app.data.sidebarSortMethod3 = '';
@@ -7927,7 +7951,8 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_notificationPosition',
         'topCenter'
     );
-    $app.methods.changeNotificationPosition = async function () {
+    $app.methods.changeNotificationPosition = async function (value) {
+        this.notificationPosition = value;
         await configRepository.setString(
             'VRCX_notificationPosition',
             this.notificationPosition
@@ -11372,109 +11397,32 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: Launch Options Dialog
 
-    $app.data.launchOptionsDialog = {
-        visible: false,
-        launchArguments: await configRepository.getString('launchArguments'),
-        vrcLaunchPathOverride: await configRepository.getString(
-            'vrcLaunchPathOverride'
-        )
-    };
-
-    API.$on('LOGIN', async function () {
-        var D = $app.launchOptionsDialog;
-        if (
-            D.vrcLaunchPathOverride === null ||
-            D.vrcLaunchPathOverride === 'null'
-        ) {
-            D.vrcLaunchPathOverride = '';
-            await configRepository.setString(
-                'vrcLaunchPathOverride',
-                D.vrcLaunchPathOverride
-            );
-        }
-    });
-
-    API.$on('LOGOUT', function () {
-        $app.launchOptionsDialog.visible = false;
-    });
-
-    $app.methods.updateLaunchOptions = function () {
-        var D = this.launchOptionsDialog;
-        D.launchArguments = String(D.launchArguments)
-            .replace(/\s+/g, ' ')
-            .trim();
-        configRepository.setString('launchArguments', D.launchArguments);
-        if (
-            D.vrcLaunchPathOverride &&
-            D.vrcLaunchPathOverride.endsWith('.exe') &&
-            !D.vrcLaunchPathOverride.endsWith('launch.exe')
-        ) {
-            this.$message({
-                message:
-                    'Invalid path, you must enter VRChat folder or launch.exe',
-                type: 'error'
-            });
-            return;
-        }
-        configRepository.setString(
-            'vrcLaunchPathOverride',
-            D.vrcLaunchPathOverride
-        );
-        this.$message({
-            message: 'Updated launch options',
-            type: 'success'
-        });
-        D.visible = false;
-    };
+    $app.data.isLaunchOptionsDialogVisible = false;
 
     $app.methods.showLaunchOptions = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.launchOptionsDialog.$el)
-        );
-        var D = this.launchOptionsDialog;
-        D.visible = true;
+        this.isLaunchOptionsDialogVisible = true;
     };
 
     // #endregion
     // #region | App: Notification position
 
-    $app.data.notificationPositionDialog = {
-        visible: false
-    };
+    $app.data.isNotificationPositionDialogVisible = false;
 
     $app.methods.showNotificationPositionDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.notificationPositionDialog.$el)
-        );
-        this.notificationPositionDialog.visible = true;
+        this.isNotificationPositionDialogVisible = true;
     };
 
     // #endregion
     // #region | App: Noty feed filters
-
-    $app.data.notyFeedFiltersDialog = {
-        visible: false
-    };
-
-    $app.methods.showNotyFeedFiltersDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.notyFeedFiltersDialog.$el)
-        );
-        this.notyFeedFiltersDialog.visible = true;
-    };
-
-    // #endregion
     // #region | App: Wrist feed filters
 
-    $app.data.wristFeedFiltersDialog = {
-        visible: false
-    };
+    $app.data.feedFiltersDialogMode = '';
 
+    $app.methods.showNotyFeedFiltersDialog = function () {
+        this.feedFiltersDialogMode = 'noty';
+    };
     $app.methods.showWristFeedFiltersDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.wristFeedFiltersDialog.$el)
-        );
-        this.wristFeedFiltersDialog.visible = true;
+        this.feedFiltersDialogMode = 'wrist';
     };
 
     // #endregion
@@ -11890,51 +11838,11 @@ console.log(`isLinux: ${LINUX}`);
         messageType,
         inviteMessage
     ) {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.editInviteMessageDialog.$el)
-        );
         var D = this.editInviteMessageDialog;
         D.newMessage = inviteMessage.message;
         D.visible = true;
         D.inviteMessage = inviteMessage;
         D.messageType = messageType;
-    };
-
-    $app.methods.saveEditInviteMessage = function () {
-        var D = this.editInviteMessageDialog;
-        D.visible = false;
-        if (D.inviteMessage.message !== D.newMessage) {
-            var slot = D.inviteMessage.slot;
-            var messageType = D.messageType;
-            var params = {
-                message: D.newMessage
-            };
-            inviteMessagesRequest
-                .editInviteMessage(params, messageType, slot)
-                .catch((err) => {
-                    throw err;
-                })
-                .then((args) => {
-                    API.$emit(`INVITE:${messageType.toUpperCase()}`, args);
-                    if (args.json[slot].message === D.inviteMessage.message) {
-                        this.$message({
-                            message:
-                                "VRChat API didn't update message, try again",
-                            type: 'error'
-                        });
-                        throw new Error(
-                            "VRChat API didn't update message, try again"
-                        );
-                    } else {
-                        this.$message('Invite message updated');
-                    }
-                    return args;
-                });
-        }
-    };
-
-    $app.methods.cancelEditInviteMessage = function () {
-        this.editInviteMessageDialog.visible = false;
     };
 
     // #endregion
@@ -13320,50 +13228,8 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.data.discordNamesDialogVisible = false;
-    $app.data.discordNamesContent = '';
 
     $app.methods.showDiscordNamesDialog = function () {
-        var { friends } = API.currentUser;
-        if (Array.isArray(friends) === false) {
-            return;
-        }
-        var lines = ['DisplayName,DiscordName'];
-        var _ = function (str) {
-            if (/[\x00-\x1f,"]/.test(str) === true) {
-                return `"${str.replace(/"/g, '""')}"`;
-            }
-            return str;
-        };
-        for (var userId of friends) {
-            var { ref } = this.friends.get(userId);
-            var discord = '';
-            if (typeof ref === 'undefined') {
-                continue;
-            }
-            var name = ref.displayName;
-            if (ref.statusDescription) {
-                var statusRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(
-                    ref.statusDescription
-                );
-                if (statusRegex) {
-                    discord = statusRegex[1];
-                }
-            }
-            if (!discord && ref.bio) {
-                var bioRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(
-                    ref.bio
-                );
-                if (bioRegex) {
-                    discord = bioRegex[1];
-                }
-            }
-            if (!discord) {
-                continue;
-            }
-            discord = discord.trim();
-            lines.push(`${_(name)},${_(discord)}`);
-        }
-        this.discordNamesContent = lines.join('\n');
         this.discordNamesDialogVisible = true;
     };
 
@@ -13414,221 +13280,13 @@ console.log(`isLinux: ${LINUX}`);
 
     // VRChat Config JSON
 
-    $app.data.VRChatConfigFile = {};
-    $app.data.VRChatConfigList = {};
-
-    $app.methods.readVRChatConfigFile = async function () {
-        this.VRChatConfigFile = {};
-        var config = await AppApi.ReadConfigFile();
-        if (config) {
-            try {
-                this.VRChatConfigFile = JSON.parse(config);
-                if (
-                    typeof this.VRChatConfigFile
-                        .picture_output_split_by_date === 'undefined'
-                ) {
-                    this.VRChatConfigFile.picture_output_split_by_date = true;
-                }
-            } catch {
-                this.$message({
-                    message: 'Invalid JSON in config.json',
-                    type: 'error'
-                });
-                throw new Error('Invalid JSON in config.json');
-            }
-        }
-    };
-
-    $app.methods.WriteVRChatConfigFile = function () {
-        var json = JSON.stringify(this.VRChatConfigFile, null, '\t');
-        AppApi.WriteConfigFile(json);
-    };
-
-    $app.data.VRChatConfigDialog = {
-        visible: false
-    };
-
-    API.$on('LOGIN', function () {
-        $app.VRChatConfigDialog.visible = false;
-    });
+    $app.data.isVRChatConfigDialogVisible = false;
 
     $app.methods.showVRChatConfig = async function () {
-        this.VRChatConfigList = {
-            cache_size: {
-                name: $t('dialog.config_json.max_cache_size'),
-                default: '30',
-                type: 'number',
-                min: 30
-            },
-            cache_expiry_delay: {
-                name: $t('dialog.config_json.cache_expiry_delay'),
-                default: '30',
-                type: 'number',
-                min: 30
-            },
-            cache_directory: {
-                name: $t('dialog.config_json.cache_directory'),
-                default: '%AppData%\\..\\LocalLow\\VRChat\\VRChat',
-                folderBrowser: true
-            },
-            picture_output_folder: {
-                name: $t('dialog.config_json.picture_directory'),
-                // my pictures folder
-                default: `%UserProfile%\\Pictures\\VRChat`,
-                folderBrowser: true
-            },
-            // dynamic_bone_max_affected_transform_count: {
-            //     name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
-            //     default: '32',
-            //     type: 'number',
-            //     min: 0
-            // },
-            // dynamic_bone_max_collider_check_count: {
-            //     name: 'Dynamic Bones Limit Max Collider Collisions (0 disable all colliders)',
-            //     default: '8',
-            //     type: 'number',
-            //     min: 0
-            // },
-            fpv_steadycam_fov: {
-                name: $t('dialog.config_json.fpv_steadycam_fov'),
-                default: '50',
-                type: 'number',
-                min: 30,
-                max: 110
-            }
-        };
-        await this.readVRChatConfigFile();
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.VRChatConfigDialog.$el)
-        );
-        this.VRChatConfigDialog.visible = true;
+        this.isVRChatConfigDialogVisible = true;
         if (!this.VRChatUsedCacheSize) {
             this.getVRChatCacheSize();
         }
-    };
-
-    $app.methods.openConfigFolderBrowser = async function (value) {
-        var oldPath = this.VRChatConfigFile[value];
-        var newPath = await this.folderSelectorDialog(oldPath);
-        if (newPath) {
-            this.VRChatConfigFile[value] = newPath;
-        }
-        this.redrawVRChatConfigDialog();
-    };
-
-    $app.methods.redrawVRChatConfigDialog = function () {
-        this.VRChatConfigDialog.visible = false;
-        this.VRChatConfigDialog.visible = true;
-    };
-
-    $app.methods.saveVRChatConfigFile = function () {
-        for (var item in this.VRChatConfigFile) {
-            if (item === 'picture_output_split_by_date') {
-                // this one is default true, it's special
-                if (this.VRChatConfigFile[item]) {
-                    delete this.VRChatConfigFile[item];
-                }
-            } else if (this.VRChatConfigFile[item] === '') {
-                delete this.VRChatConfigFile[item];
-            } else if (
-                typeof this.VRChatConfigFile[item] === 'boolean' &&
-                this.VRChatConfigFile[item] === false
-            ) {
-                delete this.VRChatConfigFile[item];
-            } else if (
-                typeof this.VRChatConfigFile[item] === 'string' &&
-                !isNaN(this.VRChatConfigFile[item])
-            ) {
-                this.VRChatConfigFile[item] = parseInt(
-                    this.VRChatConfigFile[item],
-                    10
-                );
-            }
-        }
-        this.VRChatConfigDialog.visible = false;
-        this.WriteVRChatConfigFile();
-    };
-
-    $app.data.VRChatScreenshotResolutions = [
-        { name: '1280x720 (720p)', width: 1280, height: 720 },
-        { name: '1920x1080 (1080p Default)', width: '', height: '' },
-        { name: '2560x1440 (1440p)', width: 2560, height: 1440 },
-        { name: '3840x2160 (4K)', width: 3840, height: 2160 }
-    ];
-
-    $app.data.VRChatCameraResolutions = [
-        { name: '1280x720 (720p)', width: 1280, height: 720 },
-        { name: '1920x1080 (1080p Default)', width: '', height: '' },
-        { name: '2560x1440 (1440p)', width: 2560, height: 1440 },
-        { name: '3840x2160 (4K)', width: 3840, height: 2160 },
-        { name: '7680x4320 (8K)', width: 7680, height: 4320 }
-    ];
-
-    $app.methods.getVRChatResolution = function (res) {
-        switch (res) {
-            case '1280x720':
-                return '1280x720 (720p)';
-            case '1920x1080':
-                return '1920x1080 (1080p)';
-            case '2560x1440':
-                return '2560x1440 (2K)';
-            case '3840x2160':
-                return '3840x2160 (4K)';
-            case '7680x4320':
-                return '7680x4320 (8K)';
-        }
-        return `${res} (Custom)`;
-    };
-
-    $app.methods.getVRChatCameraResolution = function () {
-        if (
-            this.VRChatConfigFile.camera_res_height &&
-            this.VRChatConfigFile.camera_res_width
-        ) {
-            var res = `${this.VRChatConfigFile.camera_res_width}x${this.VRChatConfigFile.camera_res_height}`;
-            return this.getVRChatResolution(res);
-        }
-        return '1920x1080 (1080p)';
-    };
-
-    $app.methods.getVRChatScreenshotResolution = function () {
-        if (
-            this.VRChatConfigFile.screenshot_res_height &&
-            this.VRChatConfigFile.screenshot_res_width
-        ) {
-            var res = `${this.VRChatConfigFile.screenshot_res_width}x${this.VRChatConfigFile.screenshot_res_height}`;
-            return this.getVRChatResolution(res);
-        }
-        return '1920x1080 (1080p)';
-    };
-
-    $app.methods.setVRChatCameraResolution = function (res) {
-        this.VRChatConfigFile.camera_res_height = res.height;
-        this.VRChatConfigFile.camera_res_width = res.width;
-        this.redrawVRChatConfigDialog();
-    };
-
-    $app.methods.setVRChatScreenshotResolution = function (res) {
-        this.VRChatConfigFile.screenshot_res_height = res.height;
-        this.VRChatConfigFile.screenshot_res_width = res.width;
-        this.redrawVRChatConfigDialog();
-    };
-
-    $app.methods.getVRChatSpoutResolution = function () {
-        if (
-            this.VRChatConfigFile.camera_spout_res_height &&
-            this.VRChatConfigFile.camera_spout_res_width
-        ) {
-            var res = `${this.VRChatConfigFile.camera_spout_res_width}x${this.VRChatConfigFile.camera_spout_res_height}`;
-            return this.getVRChatResolution(res);
-        }
-        return '1920x1080 (1080p)';
-    };
-
-    $app.methods.setVRChatSpoutResolution = function (res) {
-        this.VRChatConfigFile.camera_spout_res_height = res.height;
-        this.VRChatConfigFile.camera_spout_res_width = res.width;
-        this.redrawVRChatConfigDialog();
     };
 
     // Auto Launch Shortcuts
@@ -13722,130 +13380,6 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
-    $app.methods.getAndDisplayScreenshotFromFile = async function () {
-        var filePath = '';
-        if (LINUX) {
-            filePath = await window.electron.openFileDialog(); // PNG filter is applied in main.js
-        } else {
-            filePath = await AppApi.OpenFileSelectorDialog(
-                await AppApi.GetVRChatPhotosLocation(),
-                '.png',
-                'PNG Files (*.png)|*.png'
-            );
-        }
-
-        if (filePath === '') {
-            return;
-        }
-
-        this.screenshotMetadataResetSearch();
-        this.getAndDisplayScreenshot(filePath);
-    };
-
-    $app.methods.getAndDisplayScreenshot = function (
-        path,
-        needsCarouselFiles = true
-    ) {
-        AppApi.GetScreenshotMetadata(path).then((metadata) =>
-            this.displayScreenshotMetadata(metadata, needsCarouselFiles)
-        );
-    };
-
-    $app.methods.openScreenshotFileDialog = async function () {
-        if (LINUX) {
-            const filePath = await window.electron.openFileDialog();
-            if (filePath) {
-                this.screenshotMetadataResetSearch();
-                this.getAndDisplayScreenshot(filePath);
-            }
-        } else {
-            AppApi.OpenScreenshotFileDialog();
-        }
-    };
-
-    $app.methods.getAndDisplayLastScreenshot = function () {
-        this.screenshotMetadataResetSearch();
-        AppApi.GetLastScreenshot().then((path) => {
-            if (!path) {
-                return;
-            }
-            this.getAndDisplayScreenshot(path);
-        });
-    };
-
-    /**
-     * Function receives an unmodified json string grabbed from the screenshot file
-     * Error checking and and verification of data is done in .NET already; In the case that the data/file is invalid, a JSON object with the token "error" will be returned containing a description of the problem.
-     * Example: {"error":"Invalid file selected. Please select a valid VRChat screenshot."}
-     * See docs/screenshotMetadata.json for schema
-     * @param {string} metadata - JSON string grabbed from PNG file
-     * @param {string} needsCarouselFiles - Whether or not to get the last/next files for the carousel
-     * @returns {void}
-     */
-    $app.methods.displayScreenshotMetadata = async function (
-        json,
-        needsCarouselFiles = true
-    ) {
-        var D = this.screenshotMetadataDialog;
-        var metadata = JSON.parse(json);
-        if (!metadata?.sourceFile) {
-            D.metadata = {};
-            D.metadata.error =
-                'Invalid file selected. Please select a valid VRChat screenshot.';
-            return;
-        }
-
-        // Get extra data for display dialog like resolution, file size, etc
-        D.loading = true;
-        var extraData = await AppApi.GetExtraScreenshotData(
-            metadata.sourceFile,
-            needsCarouselFiles
-        );
-        D.loading = false;
-        var extraDataObj = JSON.parse(extraData);
-        Object.assign(metadata, extraDataObj);
-
-        // console.log("Displaying screenshot metadata", json, "extra data", extraDataObj, "path", json.filePath)
-
-        D.metadata = metadata;
-
-        var regex = metadata.fileName.match(
-            /VRChat_((\d{3,})x(\d{3,})_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{1,})|(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{3})_(\d{3,})x(\d{3,}))/
-        );
-        if (regex) {
-            if (typeof regex[2] !== 'undefined' && regex[4].length === 4) {
-                // old format
-                // VRChat_3840x2160_2022-02-02_03-21-39.771
-                var date = `${regex[4]}-${regex[5]}-${regex[6]}`;
-                var time = `${regex[7]}:${regex[8]}:${regex[9]}`;
-                D.metadata.dateTime = Date.parse(`${date} ${time}`);
-                // D.metadata.resolution = `${regex[2]}x${regex[3]}`;
-            } else if (
-                typeof regex[11] !== 'undefined' &&
-                regex[11].length === 4
-            ) {
-                // new format
-                // VRChat_2023-02-16_10-39-25.274_3840x2160
-                var date = `${regex[11]}-${regex[12]}-${regex[13]}`;
-                var time = `${regex[14]}:${regex[15]}:${regex[16]}`;
-                D.metadata.dateTime = Date.parse(`${date} ${time}`);
-                // D.metadata.resolution = `${regex[18]}x${regex[19]}`;
-            }
-        }
-        if (metadata.timestamp) {
-            D.metadata.dateTime = Date.parse(metadata.timestamp);
-        }
-        if (!D.metadata.dateTime) {
-            D.metadata.dateTime = Date.parse(metadata.creationDate);
-        }
-
-        if (this.fullscreenImageDialog?.visible) {
-            this.showFullscreenImageDialog(D.metadata.filePath);
-        } else {
-            this.openScreenshotMetadataDialog();
-        }
-    };
-
     $app.data.screenshotMetadataDialog = {
         visible: false,
         loading: false,
@@ -13856,183 +13390,11 @@ console.log(`isLinux: ${LINUX}`);
         isUploading: false
     };
 
-    $app.methods.openScreenshotMetadataDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.screenshotMetadataDialog.$el)
-        );
-        var D = this.screenshotMetadataDialog;
-        D.visible = true;
-    };
-
     $app.methods.showScreenshotMetadataDialog = function () {
-        var D = this.screenshotMetadataDialog;
-        if (!D.metadata.filePath) {
-            this.getAndDisplayLastScreenshot();
-        }
-        this.openScreenshotMetadataDialog();
+        this.screenshotMetadataDialog.visible = true;
     };
 
-    $app.methods.screenshotMetadataResetSearch = function () {
-        var D = this.screenshotMetadataDialog;
-
-        D.search = '';
-        D.searchIndex = null;
-        D.searchResults = null;
-    };
-
-    $app.data.screenshotMetadataSearchInputs = 0;
-    $app.methods.screenshotMetadataSearch = function () {
-        var D = this.screenshotMetadataDialog;
-
-        // Don't search if user is still typing
-        this.screenshotMetadataSearchInputs++;
-        let current = this.screenshotMetadataSearchInputs;
-        setTimeout(() => {
-            if (current !== this.screenshotMetadataSearchInputs) {
-                return;
-            }
-            this.screenshotMetadataSearchInputs = 0;
-
-            if (D.search === '') {
-                this.screenshotMetadataResetSearch();
-                if (D.metadata.filePath !== null) {
-                    // Re-retrieve the current screenshot metadata and get previous/next files for regular carousel directory navigation
-                    this.getAndDisplayScreenshot(D.metadata.filePath, true);
-                }
-                return;
-            }
-
-            var searchType = D.searchTypes.indexOf(D.searchType); // Matches the search type enum in .NET
-            D.loading = true;
-            AppApi.FindScreenshotsBySearch(D.search, searchType)
-                .then((json) => {
-                    var results = JSON.parse(json);
-
-                    if (results.length === 0) {
-                        D.metadata = {};
-                        D.metadata.error = 'No results found';
-
-                        D.searchIndex = null;
-                        D.searchResults = null;
-                        return;
-                    }
-
-                    D.searchIndex = 0;
-                    D.searchResults = results;
-
-                    // console.log("Search results", results)
-                    this.getAndDisplayScreenshot(results[0], false);
-                })
-                .finally(() => {
-                    D.loading = false;
-                });
-        }, 500);
-    };
-
-    $app.methods.screenshotMetadataCarouselChangeSearch = function (index) {
-        var D = this.screenshotMetadataDialog;
-        var searchIndex = D.searchIndex;
-        var filesArr = D.searchResults;
-
-        if (searchIndex === null) {
-            return;
-        }
-
-        if (index === 0) {
-            if (searchIndex > 0) {
-                this.getAndDisplayScreenshot(filesArr[searchIndex - 1], false);
-                searchIndex--;
-            } else {
-                this.getAndDisplayScreenshot(
-                    filesArr[filesArr.length - 1],
-                    false
-                );
-                searchIndex = filesArr.length - 1;
-            }
-        } else if (index === 2) {
-            if (searchIndex < filesArr.length - 1) {
-                this.getAndDisplayScreenshot(filesArr[searchIndex + 1], false);
-                searchIndex++;
-            } else {
-                this.getAndDisplayScreenshot(filesArr[0], false);
-                searchIndex = 0;
-            }
-        }
-
-        if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
-            this.$refs.screenshotMetadataCarousel.setActiveItem(1);
-        }
-
-        D.searchIndex = searchIndex;
-    };
-
-    $app.methods.screenshotMetadataCarouselChange = function (index) {
-        var D = this.screenshotMetadataDialog;
-        var searchIndex = D.searchIndex;
-
-        if (searchIndex !== null) {
-            this.screenshotMetadataCarouselChangeSearch(index);
-            return;
-        }
-
-        if (index === 0) {
-            if (D.metadata.previousFilePath) {
-                this.getAndDisplayScreenshot(D.metadata.previousFilePath);
-            } else {
-                this.getAndDisplayScreenshot(D.metadata.filePath);
-            }
-        }
-        if (index === 2) {
-            if (D.metadata.nextFilePath) {
-                this.getAndDisplayScreenshot(D.metadata.nextFilePath);
-            } else {
-                this.getAndDisplayScreenshot(D.metadata.filePath);
-            }
-        }
-        if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
-            this.$refs.screenshotMetadataCarousel.setActiveItem(1);
-        }
-
-        if (this.fullscreenImageDialog.visible) {
-            // TODO
-        }
-    };
-
-    $app.methods.uploadScreenshotToGallery = function () {
-        var D = this.screenshotMetadataDialog;
-        if (D.metadata.fileSizeBytes > 10000000) {
-            $app.$message({
-                message: $t('message.file.too_large'),
-                type: 'error'
-            });
-            return;
-        }
-        D.isUploading = true;
-        AppApi.GetFileBase64(D.metadata.filePath)
-            .then((base64Body) => {
-                vrcPlusImageRequest
-                    .uploadGalleryImage(base64Body)
-                    .then((args) => {
-                        $app.$message({
-                            message: $t('message.gallery.uploaded'),
-                            type: 'success'
-                        });
-                        return args;
-                    })
-                    .finally(() => {
-                        D.isUploading = false;
-                    });
-            })
-            .catch((err) => {
-                $app.$message({
-                    message: $t('message.gallery.failed'),
-                    type: 'error'
-                });
-                console.error(err);
-                D.isUploading = false;
-            });
-    };
-
+    $app.data.currentlyDroppingFile = null;
     /**
      * This function is called by .NET(CefCustomDragHandler#CefCustomDragHandler) when a file is dragged over a drop zone in the app window.
      * @param {string} filePath - The full path to the file being dragged into the window
@@ -14041,80 +13403,9 @@ console.log(`isLinux: ${LINUX}`);
         this.currentlyDroppingFile = filePath;
     };
 
-    $app.methods.handleDrop = function (event) {
-        if (this.currentlyDroppingFile === null) {
-            return;
-        }
-        console.log('Dropped file into viewer: ', this.currentlyDroppingFile);
-
-        this.screenshotMetadataResetSearch();
-        this.getAndDisplayScreenshot(this.currentlyDroppingFile);
-
-        event.preventDefault();
-    };
-
-    $app.methods.copyImageToClipboard = function (path) {
-        if (!path) {
-            return;
-        }
-        AppApi.CopyImageToClipboard(path).then(() => {
-            this.$message({
-                message: 'Image copied to clipboard',
-                type: 'success'
-            });
-        });
-    };
-
-    $app.methods.openImageFolder = function (path) {
-        if (!path) {
-            return;
-        }
-        AppApi.OpenFolderAndSelectItem(path).then(() => {
-            this.$message({
-                message: 'Opened image folder',
-                type: 'success'
-            });
-        });
-    };
-
     // YouTube API
 
-    $app.data.youTubeApiDialog = {
-        visible: false
-    };
-
-    API.$on('LOGOUT', function () {
-        $app.youTubeApiDialog.visible = false;
-    });
-
-    $app.methods.testYouTubeApiKey = async function () {
-        if (!this.youTubeApiKey) {
-            this.$message({
-                message: 'YouTube API key removed',
-                type: 'success'
-            });
-            this.youTubeApiDialog.visible = false;
-            return;
-        }
-        var data = await this.lookupYouTubeVideo('dQw4w9WgXcQ');
-        if (!data) {
-            this.youTubeApiKey = '';
-            this.$message({
-                message: 'Invalid YouTube API key',
-                type: 'error'
-            });
-        } else {
-            await configRepository.setString(
-                'VRCX_youtubeAPIKey',
-                this.youTubeApiKey
-            );
-            this.$message({
-                message: 'YouTube API key valid!',
-                type: 'success'
-            });
-            this.youTubeApiDialog.visible = false;
-        }
-    };
+    $app.data.isYouTubeApiDialogVisible = false;
 
     $app.methods.changeYouTubeApi = async function (configKey = '') {
         if (configKey === 'VRCX_youtubeAPI') {
@@ -14136,11 +13427,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.showYouTubeApiDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.youTubeApiDialog.$el)
-        );
-        var D = this.youTubeApiDialog;
-        D.visible = true;
+        this.isYouTubeApiDialogVisible = true;
     };
 
     // Launch Command Settings handling
@@ -14221,24 +13508,6 @@ console.log(`isLinux: ${LINUX}`);
         this.updateVRChatAvatarCache();
     };
 
-    $app.methods.showDeleteAllVRChatCacheConfirm = function () {
-        this.$confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    this.deleteAllVRChatCache();
-                }
-            }
-        });
-    };
-
-    $app.methods.deleteAllVRChatCache = async function () {
-        await AssetBundleManager.DeleteAllCache();
-        this.getVRChatCacheSize();
-    };
-
     $app.methods.autoVRChatCacheManagement = function () {
         if (this.autoSweepVRChatCache) {
             this.sweepVRChatCache();
@@ -14248,7 +13517,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.sweepVRChatCache = async function () {
         var output = await AssetBundleManager.SweepCache();
         console.log('SweepCache', output);
-        if (this.VRChatConfigDialog.visible) {
+        if (this.isVRChatConfigDialogVisible) {
             this.getVRChatCacheSize();
         }
     };
@@ -14304,9 +13573,6 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.getVRChatCacheSize = async function () {
         this.VRChatCacheSizeLoading = true;
         var totalCacheSize = 20;
-        if (this.VRChatConfigFile.cache_size) {
-            totalCacheSize = this.VRChatConfigFile.cache_size;
-        }
         this.VRChatTotalCacheSize = totalCacheSize;
         var usedCacheSize = await AssetBundleManager.GetCacheSize();
         this.VRChatUsedCacheSize = (usedCacheSize / 1073741824).toFixed(2);
@@ -16667,93 +15933,10 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: note export
 
-    $app.data.noteExportDialog = {
-        visible: false,
-        loading: false,
-        progress: 0,
-        progressTotal: 0,
-        errors: ''
-    };
-    $app.data.noteExportTable = {
-        data: [],
-        tableProps: {
-            stripe: true,
-            size: 'mini'
-        },
-        layout: 'table'
-    };
-
-    API.$on('LOGIN', function () {
-        $app.noteExportTable.data = [];
-        $app.noteExportDialog.visible = false;
-        $app.noteExportDialog.loading = false;
-        $app.noteExportDialog.progress = 0;
-        $app.noteExportDialog.progressTotal = 0;
-        $app.noteExportDialog.errors = '';
-    });
+    $app.data.isNoteExportDialogVisible = false;
 
     $app.methods.showNoteExportDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.noteExportDialog.$el)
-        );
-        var D = this.noteExportDialog;
-        D.progress = 0;
-        D.progressTotal = 0;
-        D.loading = false;
-        D.visible = true;
-    };
-
-    $app.methods.updateNoteExportDialog = function () {
-        var data = [];
-        this.friends.forEach((ctx) => {
-            var newMemo = ctx.memo.replace(/[\r\n]/g, ' ');
-            if (ctx.memo && ctx.ref && ctx.ref.note !== newMemo.slice(0, 256)) {
-                data.push({
-                    id: ctx.id,
-                    name: ctx.name,
-                    memo: newMemo,
-                    ref: ctx.ref
-                });
-            }
-        });
-        this.noteExportTable.data = data;
-    };
-
-    $app.methods.removeFromNoteExportTable = function (ref) {
-        $app.removeFromArray(this.noteExportTable.data, ref);
-    };
-
-    $app.methods.exportNoteExport = async function () {
-        var D = this.noteExportDialog;
-        D.loading = true;
-        var data = [...this.noteExportTable.data].reverse();
-        D.progressTotal = data.length;
-        try {
-            for (var i = data.length - 1; i >= 0; i--) {
-                if (D.visible && D.loading) {
-                    var ctx = data[i];
-                    await miscRequest.saveNote({
-                        targetUserId: ctx.id,
-                        note: ctx.memo.slice(0, 256)
-                    });
-                    $app.removeFromArray(this.noteExportTable.data, ctx);
-                    D.progress++;
-                    await new Promise((resolve) => {
-                        workerTimers.setTimeout(resolve, 5000);
-                    });
-                }
-            }
-        } catch (err) {
-            D.errors = `Name: ${ctx.name}\n${err}\n\n`;
-        } finally {
-            D.progress = 0;
-            D.progressTotal = 0;
-            D.loading = false;
-        }
-    };
-
-    $app.methods.cancelNoteExport = function () {
-        this.noteExportDialog.loading = false;
+        this.isNoteExportDialogVisible = true;
     };
 
     // user generated content
@@ -16805,16 +15988,10 @@ console.log(`isLinux: ${LINUX}`);
 
     // avatar database provider
 
-    $app.data.avatarProviderDialog = {
-        visible: false
-    };
+    $app.data.isAvatarProviderDialogVisible = false;
 
     $app.methods.showAvatarProviderDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.avatarProviderDialog.$el)
-        );
-        var D = this.avatarProviderDialog;
-        D.visible = true;
+        this.isAvatarProviderDialogVisible = true;
     };
 
     $app.methods.addAvatarProvider = function (url) {
@@ -17568,42 +16745,18 @@ console.log(`isLinux: ${LINUX}`);
 
     // #endregion
     // #region | App: ChatBox Blacklist
-    $app.data.chatboxBlacklist = [
-        'NP: ',
-        'Now Playing',
-        'Now playing',
-        "▶️ '",
-        '( ▶️ ',
-        "' - '",
-        "' by '",
-        '[Spotify] '
-    ];
-    if (await configRepository.getString('VRCX_chatboxBlacklist')) {
-        $app.data.chatboxBlacklist = JSON.parse(
-            await configRepository.getString('VRCX_chatboxBlacklist')
-        );
-    }
+
     $app.data.chatboxBlacklistDialog = {
         visible: false,
         loading: false
     };
 
-    API.$on('LOGOUT', function () {
-        $app.chatboxBlacklistDialog.visible = false;
-    });
-
-    $app.methods.saveChatboxBlacklist = async function () {
-        await configRepository.setString(
-            'VRCX_chatboxBlacklist',
-            JSON.stringify(this.chatboxBlacklist)
-        );
-    };
-
     $app.methods.showChatboxBlacklistDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.chatboxBlacklistDialog.$el)
-        );
-        var D = this.chatboxBlacklistDialog;
+        // TODO：adjust z-index
+        // this.$nextTick(() =>
+        //     $app.adjustDialogZ(this.$refs.chatboxBlacklistDialog.$el)
+        // );
+        const D = this.chatboxBlacklistDialog;
         D.visible = true;
     };
 
@@ -18122,9 +17275,6 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.showChangeLogDialog = function () {
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.changeLogDialog.$el)
-        );
         this.changeLogDialog.visible = true;
         this.checkForVRCXUpdate();
     };
@@ -18882,6 +18032,134 @@ console.log(`isLinux: ${LINUX}`);
         return {
             openFolderGeneric: this.openFolderGeneric,
             deleteVRChatCache: this.deleteVRChatCache
+        };
+    };
+
+    $app.computed.feedFiltersDialogBind = function () {
+        return {
+            feedFiltersDialogMode: this.feedFiltersDialogMode,
+            photonLoggingEnabled: this.photonLoggingEnabled,
+            sharedFeedFilters: this.sharedFeedFilters,
+            sharedFeedFiltersDefaults: this.sharedFeedFiltersDefaults
+        };
+    };
+
+    $app.computed.feedFiltersDialogEvent = function () {
+        return {
+            'update:feedFiltersDialogMode': (val) => {
+                console.log;
+                this.feedFiltersDialogMode = val;
+            },
+            updateSharedFeed: this.updateSharedFeed
+        };
+    };
+
+    $app.computed.vrcxUpdateDialogBind = function () {
+        return {
+            VRCXUpdateDialog: this.VRCXUpdateDialog,
+            appVersion: this.appVersion,
+            checkingForVRCXUpdate: this.checkingForVRCXUpdate,
+            updateInProgress: this.updateInProgress,
+            updateProgress: this.updateProgress,
+            updateProgressText: this.updateProgressText,
+            pendingVRCXInstall: this.pendingVRCXInstall,
+            branch: this.branch,
+            branches: this.branches
+        };
+    };
+
+    $app.computed.vrcxUpdateDialogEvent = function () {
+        return {
+            loadBranchVersions: this.loadBranchVersions,
+            cancelUpdate: this.cancelUpdate,
+            installVRCXUpdate: this.installVRCXUpdate,
+            restartVRCX: this.restartVRCX,
+            'update:branch': (val) => (this.branch = val)
+        };
+    };
+
+    $app.computed.screenshotMetadataDialogBind = function () {
+        return {
+            screenshotMetadataDialog: this.screenshotMetadataDialog,
+            currentlyDroppingFile: this.currentlyDroppingFile,
+            fullscreenImageDialog: this.fullscreenImageDialog
+        };
+    };
+
+    $app.computed.screenshotMetadataDialogEvent = function () {
+        return {
+            lookupUser: this.lookupUser
+        };
+    };
+
+    $app.computed.vrchatConfigDialogBind = function () {
+        return {
+            isVRChatConfigDialogVisible: this.isVRChatConfigDialogVisible,
+            VRChatUsedCacheSize: this.VRChatUsedCacheSize,
+            VRChatTotalCacheSize: this.VRChatTotalCacheSize,
+            VRChatCacheSizeLoading: this.VRChatCacheSizeLoading,
+            folderSelectorDialog: this.folderSelectorDialog,
+            hideTooltips: this.hideTooltips
+        };
+    };
+
+    $app.computed.vrchatConfigDialogEvent = function () {
+        return {
+            'update:isVRChatConfigDialogVisible': (val) =>
+                (this.isVRChatConfigDialogVisible = val),
+            getVRChatCacheSize: this.getVRChatCacheSize,
+            sweepVRChatCache: this.sweepVRChatCache
+        };
+    };
+
+    $app.computed.youTubeApiDialogBind = function () {
+        return {
+            isYouTubeApiDialogVisible: this.isYouTubeApiDialogVisible,
+            lookupYouTubeVideo: this.lookupYouTubeVideo,
+            youTubeApiKey: this.youTubeApiKey
+        };
+    };
+
+    $app.computed.youTubeApiDialogEvent = function () {
+        return {
+            'update:isYouTubeApiDialogVisible': (val) =>
+                (this.isYouTubeApiDialogVisible = val),
+            'update:youTubeApiKey': (val) => (this.youTubeApiKey = val)
+        };
+    };
+
+    $app.computed.notificationPositionDialogBind = function () {
+        return {
+            isNotificationPositionDialogVisible:
+                this.isNotificationPositionDialogVisible,
+            notificationPosition: this.notificationPosition
+        };
+    };
+
+    $app.computed.notificationPositionDialogEvent = function () {
+        return {
+            'update:isNotificationPositionDialogVisible': (val) =>
+                (this.isNotificationPositionDialogVisible = val),
+            'update:notificationPosition': (val) =>
+                (this.notificationPosition = val),
+            changeNotificationPosition: this.changeNotificationPosition
+        };
+    };
+
+    $app.computed.avatarProviderDialogBind = function () {
+        return {
+            isAvatarProviderDialogVisible: this.isAvatarProviderDialogVisible,
+            avatarRemoteDatabaseProviderList:
+                this.avatarRemoteDatabaseProviderList
+        };
+    };
+
+    $app.computed.avatarProviderDialogEvent = function () {
+        return {
+            'update:isAvatarProviderDialogVisible': (val) =>
+                (this.isAvatarProviderDialogVisible = val),
+            saveAvatarProviderList: this.saveAvatarProviderList,
+            removeAvatarProvider: this.removeAvatarProvider
         };
     };
 

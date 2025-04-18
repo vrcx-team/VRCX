@@ -64,7 +64,7 @@ doctype html
         FriendListTab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
 
         //- charts
-        keep-alive
+        KeepAlive
             ChartsTab(v-if='menuActiveIndex === "charts"' v-bind='chartsTabBind' v-on='chartsTabEvent')
 
         //- settings
@@ -80,29 +80,11 @@ doctype html
     include ./mixins/dialogs/images.pug
     +images
 
-    include ./mixins/dialogs/feedFilters.pug
-    +feedFilters
-
-    include ./mixins/dialogs/openSourceSoftwareNotice.pug
-    +openSourceSoftwareNotice
-
     include ./mixins/dialogs/currentUser.pug
     +currentUser
 
     include ./mixins/dialogs/invites.pug
     +invites
-
-    include ./mixins/dialogs/launch.pug
-    +launch
-
-    include ./mixins/dialogs/screenshotMetadata.pug
-    +screenshotMetadata
-
-    include ./mixins/dialogs/vrcx.pug
-    +vrcx
-
-    include ./mixins/dialogs/settings.pug
-    +settings
 
     include ./mixins/dialogs/boops.pug
     +boops
@@ -139,5 +121,41 @@ doctype html
 
     //- avatar
     AvatarDialog(v-bind='avatarDialogBind' v-on='avatarDialogEvent')
+
+    //- settings
+    FeedFiltersDialog(v-bind='feedFiltersDialogBind' v-on='feedFiltersDialogEvent')
+
+    LaunchOptionsDialog(:is-launch-options-dialog-visible.sync='isLaunchOptionsDialogVisible')
+
+    OpenSourceSoftwareNoticeDialog(:oss-dialog.sync='ossDialog')
+
+    ChangelogDialog(:change-log-dialog.sync='changeLogDialog')
+
+    VRCXUpdateDialog(v-bind='vrcxUpdateDialogBind' v-on='vrcxUpdateDialogEvent')
+
+    ScreenshotMetadataDialog(v-bind='screenshotMetadataDialogBind' v-on='screenshotMetadataDialogEvent')
+
+    DiscordNamesDialog(:discord-names-dialog-visible.sync='discordNamesDialogVisible' :friends='friends')
+
+    EditInviteMessageDialog(:edit-invite-message-dialog.sync='editInviteMessageDialog')
+
+    NoteExportDialog(:is-note-export-dialog-visible.sync='isNoteExportDialogVisible' :friends='friends')
+
+    VRChatConfigDialog(v-bind='vrchatConfigDialogBind' v-on='vrchatConfigDialogEvent')
+
+    YouTubeApiDialog(v-bind='youTubeApiDialogBind' v-on='youTubeApiDialogEvent')
+
+    NotificationPositionDialog(v-bind='notificationPositionDialogBind' v-on='notificationPositionDialogEvent')
+
+    AvatarProviderDialog(v-bind='avatarProviderDialogBind' v-on='avatarProviderDialogEvent')
+
+    RegistryBackupDialog(
+        :isRegistryBackupDialogVisible.sync='isRegistryBackupDialogVisible'
+        :backupVrcRegistry='backupVrcRegistry')
+
+    PrimaryPasswordDialog(:enablePrimaryPasswordDialog.sync='enablePrimaryPasswordDialog' @setPrimaryPassword="setPrimaryPassword")
+
+    //- player list
+    ChatboxBlacklistDialog(:chatboxBlacklistDialog="chatboxBlacklistDialog" :chatboxUserBlacklist="chatboxUserBlacklist" @deleteChatboxUserBlacklist="deleteChatboxUserBlacklist")
 
     //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")

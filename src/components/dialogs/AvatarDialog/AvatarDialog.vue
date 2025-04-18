@@ -515,7 +515,6 @@
     import database from '../../../service/database';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
     import { useI18n } from 'vue-i18n-bridge';
-    import $utils from '../../../classes/utils';
 
     import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
     import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
@@ -672,7 +671,7 @@
                 showAvatarDialog(D.id);
                 break;
             case 'Share':
-                $utils.copyToClipboard(D.id);
+                utils.copyToClipboard(D.id);
                 break;
             case 'Rename':
                 promptRenameAvatar(D);

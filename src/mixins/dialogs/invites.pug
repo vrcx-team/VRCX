@@ -110,30 +110,6 @@ mixin invites
                 :disabled='inviteDialog.loading || !inviteDialog.userIds.length'
                 @click='sendInvite()') {{ $t('dialog.invite.invite') }}
 
-    //- dialog: Edit Invite Message
-    el-dialog.x-dialog(
-        :before-close='beforeDialogClose'
-        @mousedown.native='dialogMouseDown'
-        @mouseup.native='dialogMouseUp'
-        ref='editInviteMessageDialog'
-        :visible.sync='editInviteMessageDialog.visible'
-        :title='$t("dialog.edit_invite_message.header")'
-        width='400px')
-        div(style='font-size: 12px')
-            span {{ $t('dialog.edit_invite_message.description') }}
-        el-input(
-            type='textarea'
-            v-model='editInviteMessageDialog.newMessage'
-            size='mini'
-            maxlength='64'
-            show-word-limit
-            :autosize='{ minRows: 2, maxRows: 5 }'
-            placeholder=''
-            style='margin-top: 10px')
-        template(#footer)
-            el-button(type='small' @click='cancelEditInviteMessage') {{ $t('dialog.edit_invite_message.cancel') }}
-            el-button(type='primary' size='small' @click='saveEditInviteMessage') {{ $t('dialog.edit_invite_message.save') }}
-
     //- dialog: Edit And Send Invite Response Message
     el-dialog.x-dialog(
         :before-close='beforeDialogClose'
