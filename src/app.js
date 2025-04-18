@@ -10756,12 +10756,6 @@ console.log(`isLinux: ${LINUX}`);
                 var { ref } = args;
                 D.ref = ref;
                 this.updateVRChatAvatarCache();
-                if (
-                    ref.imageUrl === API.currentUser.currentAvatarImageUrl &&
-                    !ref.assetUrl
-                ) {
-                    D.ref.assetUrl = API.currentUser.currentAvatarAssetUrl;
-                }
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;
                 }

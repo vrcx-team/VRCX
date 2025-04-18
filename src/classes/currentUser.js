@@ -208,7 +208,6 @@ export default class extends baseClass {
                     bio: '',
                     bioLinks: [],
                     currentAvatar: '',
-                    currentAvatarAssetUrl: '',
                     currentAvatarImageUrl: '',
                     currentAvatarTags: [],
                     currentAvatarThumbnailImageUrl: '',
