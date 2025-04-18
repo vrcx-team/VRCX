@@ -44,9 +44,6 @@ export default class extends baseClass {
 
     _methods = {
         async showVRCXUpdateDialog() {
-            this.$nextTick(() =>
-                $app.adjustDialogZ(this.$refs.VRCXUpdateDialog.$el)
-            );
             var D = this.VRCXUpdateDialog;
             D.visible = true;
             D.updatePendingIsLatest = false;

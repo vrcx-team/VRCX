@@ -1,19 +1,7 @@
-mixin openSourceSoftwareNotice
-    //- dialog: open source software notice
-    el-dialog.x-dialog(
-        :before-close='beforeDialogClose'
-        @mousedown.native='dialogMouseDown'
-        @mouseup.native='dialogMouseUp'
-        :visible.sync='ossDialog'
-        :title='$t("dialog.open_source.header")'
-        width='650px')
-        div(v-if='ossDialog' style='height: 350px; overflow: hidden scroll; word-break: break-all')
-            div
-                span {{ $t('dialog.open_source.description') }}
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') animate.css
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+const openSourceSoftwareLicenses = [
+    {
+        name: 'animate.css',
+        licenseText: `The MIT License (MIT)
 
                     Copyright (c) 2019 Daniel Eden
 
@@ -33,11 +21,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') CefSharp
-                pre(style='font-size: 12px; white-space: pre-line').
-                    // Copyright © The CefSharp Authors. All rights reserved.
+                    SOFTWARE.`
+    },
+    {
+        name: 'CefSharp',
+        licenseText: `// Copyright © The CefSharp Authors. All rights reserved.
                     //
                     // Redistribution and use in source and binary forms, with or without
                     // modification, are permitted provided that the following conditions are
@@ -66,11 +54,11 @@ mixin openSourceSoftwareNotice
                     // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
                     // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
                     // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-                    // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') DiscordRichPresence
-                pre(style='font-size: 12px; white-space: pre-line').
-                    MIT License
+                    // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`
+    },
+    {
+        name: 'DiscordRichPresence',
+        licenseText: `MIT License
 
                     Copyright (c) 2018 Lachee
 
@@ -90,11 +78,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') element
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+                    SOFTWARE.`
+    },
+    {
+        name: 'element',
+        licenseText: `The MIT License (MIT)
 
                     Copyright (c) 2016-present ElemeFE
 
@@ -114,11 +102,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') librsync.net
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+                    SOFTWARE.`
+    },
+    {
+        name: 'librsync.net',
+        licenseText: `The MIT License (MIT)
 
                     Copyright (c) 2015 Brad Dodson
 
@@ -138,11 +126,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') Newtonsoft.Json
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+                    SOFTWARE.`
+    },
+    {
+        name: 'Newtonsoft.Json',
+        licenseText: `The MIT License (MIT)
 
                     Copyright (c) 2007 James Newton-King
 
@@ -150,11 +138,11 @@ mixin openSourceSoftwareNotice
 
                     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-                    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') normalize
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+                    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
+    },
+    {
+        name: 'normalize',
+        licenseText: `The MIT License (MIT)
 
                     Copyright © Nicolas Gallagher and Jonathan Neal
 
@@ -162,11 +150,11 @@ mixin openSourceSoftwareNotice
 
                     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-                    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') noty
-                pre(style='font-size: 12px; white-space: pre-line').
-                    Copyright (c) 2012 Nedim Arabacı
+                    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
+    },
+    {
+        name: 'noty',
+        licenseText: `Copyright (c) 2012 Nedim Arabacı
 
                     Permission is hereby granted, free of charge, to any person obtaining
                     a copy of this software and associated documentation files (the
@@ -185,11 +173,11 @@ mixin openSourceSoftwareNotice
                     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
                     LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
                     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-                    WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') OpenVR SDK
-                pre(style='font-size: 12px; white-space: pre-line').
-                    Copyright (c) 2015, Valve Corporation
+                    WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
+    },
+    {
+        name: 'OpenVR SDK',
+        licenseText: `Copyright (c) 2015, Valve Corporation
                     All rights reserved.
 
                     Redistribution and use in source and binary forms, with or without modification,
@@ -215,11 +203,11 @@ mixin openSourceSoftwareNotice
                     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
                     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
                     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-                    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') Twemoji
-                pre(style='font-size: 12px; white-space: pre-line').
-                    MIT License
+                    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`
+    },
+    {
+        name: 'Twemoji',
+        licenseText: `MIT License
 
                     Copyright (c) 2021 Twitter
 
@@ -239,11 +227,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') SharpDX
-                pre(style='font-size: 12px; white-space: pre-line').
-                    Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
+                    SOFTWARE.`
+    },
+    {
+        name: 'SharpDX',
+        licenseText: `Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 
                     Permission is hereby granted, free of charge, to any person obtaining a copy
                     of this software and associated documentation files (the "Software"), to deal
@@ -261,11 +249,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-                    THE SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') vue
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+                    THE SOFTWARE.`
+    },
+    {
+        name: 'vue',
+        licenseText: `The MIT License (MIT)
 
                     Copyright (c) 2013-present, Yuxi (Evan) You
 
@@ -285,11 +273,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-                    THE SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') vue-data-tables
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+                    THE SOFTWARE.`
+    },
+    {
+        name: 'vue-data-tables',
+        licenseText: `The MIT License (MIT)
 
                     Copyright (c) 2018 Leon Zhang
 
@@ -309,11 +297,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') vue-lazyload
-                pre(style='font-size: 12px; white-space: pre-line').
-                    The MIT License (MIT)
+                    SOFTWARE.`
+    },
+    {
+        name: 'vue-lazyload',
+        licenseText: `The MIT License (MIT)
 
                     Copyright (c) 2016 Awe
 
@@ -333,12 +321,11 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
-
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') Encode Sans Font (from Dark Vanilla)
-                pre(style='font-size: 12px; white-space: pre-line').
-                    SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+                    SOFTWARE.`
+    },
+    {
+        name: 'Encode Sans Font (from Dark Vanilla)',
+        licenseText: `SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
                     Copyright (c) 2020 June 20, Impallari Type, Andres Torresi, Jacques Le Bailly 
                     (https://fonts.google.com/specimen/Encode+Sans),
                     with Reserved Font Name: Encode Sans.
@@ -397,20 +384,20 @@ mixin openSourceSoftwareNotice
                     DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL,
                     OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
                     ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER
-                    DEALINGS IN THE FONT SOFTWARE.
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') Apache ECharts
-                pre(style='font-size: 12px; white-space: pre-line').
-                    Apache License 2.0
+                    DEALINGS IN THE FONT SOFTWARE.`
+    },
+    {
+        name: 'Apache ECharts',
+        licenseText: `Apache License 2.0
 
                     Copyright 2017-2025 The Apache Software Foundation
 
                     This product includes software developed at
-                    The Apache Software Foundation (https://www.apache.org/).
-            div(style='margin-top: 15px')
-                p(style='font-weight: bold') dayjs
-                pre(style='font-size: 12px; white-space: pre-line').
-                    MIT License
+                    The Apache Software Foundation (https://www.apache.org/).`
+    },
+    {
+        name: 'dayjs',
+        licenseText: `MIT License
 
                     Copyright (c) 2018-present, iamkun
 
@@ -430,4 +417,8 @@ mixin openSourceSoftwareNotice
                     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                    SOFTWARE.
+                    SOFTWARE.`
+    }
+];
+
+export { openSourceSoftwareLicenses };

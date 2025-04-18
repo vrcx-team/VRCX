@@ -1,5 +1,4 @@
 import * as workerTimers from 'worker-timers';
-import configRepository from '../service/config.js';
 import { baseClass, $app, API } from './baseClass.js';
 import { worldRequest, groupRequest } from '../api';
 
@@ -573,28 +572,6 @@ export default class extends baseClass {
             }
             this.sharedFeed.moderationAgainstTable.wrist = wristArr;
             this.sharedFeed.pendingUpdate = true;
-        },
-
-        saveSharedFeedFilters() {
-            configRepository.setString(
-                'sharedFeedFilters',
-                JSON.stringify(this.sharedFeedFilters)
-            );
-            this.updateSharedFeed(true);
-        },
-
-        async resetNotyFeedFilters() {
-            this.sharedFeedFilters.noty = {
-                ...this.sharedFeedFiltersDefaults.noty
-            };
-            this.saveSharedFeedFilters();
-        },
-
-        async resetWristFeedFilters() {
-            this.sharedFeedFilters.wrist = {
-                ...this.sharedFeedFiltersDefaults.wrist
-            };
-            this.saveSharedFeedFilters();
         }
     };
 }

@@ -33,7 +33,9 @@
         "AppApiVr": "readonly",
         "SharedVariable": "readonly",
         "WebApi": "readonly",
-        "AssetBundleManager": "readonly"
+        "AssetBundleManager": "readonly",
+        "WINDOWS": "readonly",
+        "LINUX": "readonly"
     },
     "rules": {
         "no-console": 0,
@@ -49,6 +51,7 @@
         "no-loop-func": 0,
         "vars-on-top": 0,
         "object-curly-spacing": ["error", "always"],
-        "require-atomic-updates": 0
+        "require-atomic-updates": 0,
+        "vue/require-default-prop": 0
     }
 }
