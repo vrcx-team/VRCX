@@ -1249,7 +1249,7 @@
             "header": "设置模型风格",
             "primary_style": "主要风格",
             "secondary_style": "次要风格",
-            "select_style": "使用此风格",
+            "select_style": "选择风格",
             "save_success": "模型风格更改成功",
             "save_failed": "模型风格更改失败",
             "cancel": "取消",
