@@ -7336,7 +7336,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.isStartAsMinimizedState =
         (await VRCXStorage.Get('VRCX_StartAsMinimizedState')) === 'true';
     $app.data.isCloseToTray =
-        (await VRCXStorage.Get('VRCX_CloseToTray')) === 'false';
+        (await VRCXStorage.Get('VRCX_CloseToTray')) === 'true';
     if (await configRepository.getBool('VRCX_CloseToTray')) {
         // move back to JSON
         $app.data.isCloseToTray =

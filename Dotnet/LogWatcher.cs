@@ -621,6 +621,8 @@ namespace VRCX
 
             // 2024.07.31 22:28:47 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
             // 2024.07.31 23:04:15 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
+            const string youtubeBotError = "Sign in to confirm you’re not a bot";
+            const string youtubeBotErrorFixUrl = "\n[VRCX]: We've made a program to help with this error, you can try it out here: https://github.com/EllyVR/VRCVideoCacher";
 
             if (line.Contains("[Video Playback] ERROR: "))
             {
@@ -628,6 +630,9 @@ namespace VRCX
                 if (data == logContext.LastVideoError)
                     return true;
                 logContext.LastVideoError = data;
+                
+                if (data.Contains(youtubeBotError))
+                    data += youtubeBotErrorFixUrl;
 
                 AppendLog(new[]
                 {
@@ -646,6 +651,9 @@ namespace VRCX
                 if (data == logContext.LastVideoError)
                     return true;
                 logContext.LastVideoError = data;
+                
+                if (data.Contains(youtubeBotError))
+                    data += youtubeBotErrorFixUrl;
 
                 AppendLog(new[]
                 {
