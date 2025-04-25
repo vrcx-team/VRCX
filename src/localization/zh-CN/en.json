@@ -747,7 +747,7 @@
                 "refresh_instance_info": "刷新房间信息",
                 "instance_queue": "在排队等待的玩家：",
                 "instance_users": "房间玩家：",
-                "instance_game_version": "游戏版本：",
+                "instance_game_version": "服务器版本：",
                 "last_join": "距离上次加入房间：",
                 "instance_queuing_enabled": "允许排队加入",
                 "instance_disabled_content": "禁用的内容：",
