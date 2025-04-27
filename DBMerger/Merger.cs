@@ -252,9 +252,9 @@ namespace DBMerger
         private void MergeUsers()
         {
             MergeTable(
-                table => userIDRegex.IsMatch(table)
-                    && (table.EndsWith("_avatar_history")
-                        || table.EndsWith("_notifications")
+                table => userIDRegex.IsMatch(table) 
+                    && !table.EndsWith("_avatar_history") 
+                    && (table.EndsWith("_notifications")
                         || table.EndsWith("_moderation")),
                 [0],
                 (old, existing) =>
@@ -273,6 +273,48 @@ namespace DBMerger
                     var newDateTime = DateTime.Parse((string)existing[1]);
 
                     return oldDateTime > newDateTime ? old : existing;
+                }
+            );
+
+            MergeTable(
+                table => userIDRegex.IsMatch(table) && table.EndsWith("_avatar_history"),
+                [0],
+                (old, existing) =>
+                {
+                    if (existing == null)
+                    {
+                        logger.Trace("Inserting new avatar feed entry");
+                        return old;
+                    }
+
+                    logger.Trace("Replacing avatar feed entry");
+
+                    // old and existing have the same pk, so pick the newer
+                    // cache entry
+                    var oldDateTime = DateTime.Parse((string)old[1]);
+                    var newDateTime = DateTime.Parse((string)existing[1]);
+
+                    // Make sure to combine time values if they exist
+                    if (existing.Length < 2)
+                    {
+                        return oldDateTime > newDateTime ? old : existing;
+                    }
+
+                    var oldAvatarTime = old.Length >= 3 ? (int)old[2] : 0;
+                    var newAvatarTime = (int)existing[2];
+
+                    if (oldDateTime <= newDateTime)
+                    {
+                        old.CopyTo(existing, 0);
+                    }
+                    existing[2] = oldAvatarTime + newAvatarTime;
+
+                    logger.Trace(
+                        "Combined avatar time: {} + {} = {}", 
+                        oldAvatarTime, newAvatarTime, oldAvatarTime + newAvatarTime
+                    );
+
+                    return existing;
                 }
             );
 
