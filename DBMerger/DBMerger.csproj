@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net8-windows10.0.19041.0</TargetFrameworks>
+		<TargetFramework>net9-windows10.0.19041.0</TargetFramework>
 		<ApplicationRevision>0</ApplicationRevision>
 		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 		<AssemblyTitle>DBMerger</AssemblyTitle>
@@ -13,7 +13,7 @@
 			 doesn't build to any other platforms anyway. Even adding the 
 			 `PlatformTarget` tag does nothing. Adding the `Platforms` tag will
 			 make VS to refuse to build the project outright -->
-		<OutputPath>..\bin\x64\$(Configuration)\</OutputPath>
+		<OutputPath>..\build\DBMerger\</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<Title>DBMerger</Title>
