@@ -30,9 +30,7 @@
 		<CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
 		<CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
 	</PropertyGroup>
-	
-	<!-- Funny feature, didn't know it exists. Very useful for this specific use
-		 case -->
+
 
 	<ItemGroup>
 		<PackageReference Include="NLog" Version="5.3.3" />
