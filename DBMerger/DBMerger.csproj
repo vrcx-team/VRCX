@@ -31,7 +31,6 @@
 		<CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
 	</PropertyGroup>
 
-
 	<ItemGroup>
 		<PackageReference Include="NLog" Version="5.3.3" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
