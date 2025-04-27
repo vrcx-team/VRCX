@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -11,39 +11,51 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using CefSharp;
+using NLog;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using Valve.VR;
 using Device = SharpDX.Direct3D11.Device;
+using Device1 = SharpDX.Direct3D11.Device1;
+using Device2 = SharpDX.Direct3D11.Device2;
+using Device3 = SharpDX.Direct3D11.Device3;
+using Device4 = SharpDX.Direct3D11.Device4;
 
 namespace VRCX
 {
-    public class VRCXVR
+    public class VRCXVR : VRCXVRInterface
     {
-        public static VRCXVR Instance;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public static VRCXVRInterface Instance;
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly float[] _rotation = { 0f, 0f, 0f };
         private static readonly float[] _translation = { 0f, 0f, 0f };
         private static readonly float[] _translationLeft = { -7f / 100f, -5f / 100f, 6f / 100f };
         private static readonly float[] _translationRight = { 7f / 100f, -5f / 100f, 6f / 100f };
         private static readonly float[] _rotationLeft = { 90f * (float)(Math.PI / 180f), 90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
         private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
-        public static OffScreenBrowser _browser1;
-        public static OffScreenBrowser _browser2;
+        private static OffScreenBrowser _wristOverlay;
+        private static OffScreenBrowser _hmdOverlay;
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
         private bool _active;
         private Device _device;
-        private bool _hmdOverlayActive;
         private bool _menuButton;
         private int _overlayHand;
+        private Factory _factory;
         private Texture2D _texture1;
         private Texture2D _texture2;
         private Thread _thread;
-        private bool _wristOverlayActive;
         private DateTime _nextOverlayUpdate;
-        public bool IsHmdAfk { get; private set; }
+
+        private ulong _hmdOverlayHandle;
+        private bool _hmdOverlayActive;
+        private bool _hmdOverlayWasActive;
+
+        private ulong _wristOverlayHandle;
+        private bool _wristOverlayActive;
+        private bool _wristOverlayWasActive;
+
 
         static VRCXVR()
         {
@@ -62,12 +74,12 @@ namespace VRCX
 
         // NOTE
         // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
-        internal void Init()
+        public override void Init()
         {
             _thread.Start();
         }
 
-        internal void Exit()
+        public override void Exit()
         {
             var thread = _thread;
             _thread = null;
@@ -75,7 +87,7 @@ namespace VRCX
             thread?.Join();
         }
 
-        public void Restart()
+        public override void Restart()
         {
             Exit();
             Instance = new VRCXVR();
@@ -85,9 +97,12 @@ namespace VRCX
 
         private void SetupTextures()
         {
-            Factory f = new Factory1();
-            _device = new Device(f.GetAdapter(OpenVR.System.GetD3D9AdapterIndex()),
-                DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
+            _factory ??= new Factory1();
+
+            _device?.Dispose();
+            _device = new Device(_factory.GetAdapter(OpenVR.System.GetD3D9AdapterIndex()),
+                DeviceCreationFlags.BgraSupport);
+            UpgradeDevice();
 
             _texture1?.Dispose();
             _texture1 = new Texture2D(
@@ -100,12 +115,11 @@ namespace VRCX
                     ArraySize = 1,
                     Format = Format.B8G8R8A8_UNorm,
                     SampleDescription = new SampleDescription(1, 0),
-                    Usage = ResourceUsage.Dynamic,
-                    BindFlags = BindFlags.ShaderResource,
-                    CpuAccessFlags = CpuAccessFlags.Write
+                    BindFlags = BindFlags.ShaderResource
                 }
             );
-            
+            _wristOverlay?.UpdateRender(_device, _texture1);
+
             _texture2?.Dispose();
             _texture2 = new Texture2D(
                 _device,
@@ -117,11 +131,48 @@ namespace VRCX
                     ArraySize = 1,
                     Format = Format.B8G8R8A8_UNorm,
                     SampleDescription = new SampleDescription(1, 0),
-                    Usage = ResourceUsage.Dynamic,
-                    BindFlags = BindFlags.ShaderResource,
-                    CpuAccessFlags = CpuAccessFlags.Write
+                    BindFlags = BindFlags.ShaderResource
                 }
             );
+            _hmdOverlay?.UpdateRender(_device, _texture2);
+        }
+
+        private void UpgradeDevice()
+        {
+            Device5 device5 = _device.QueryInterfaceOrNull<Device5>();
+            if (device5 != null)
+            {
+                _device.Dispose();
+                _device = device5;
+                return;
+            }
+            Device4 device4 = _device.QueryInterfaceOrNull<Device4>();
+            if (device4 != null)
+            {
+                _device.Dispose();
+                _device = device4;
+                return;
+            }
+            Device3 device3 = _device.QueryInterfaceOrNull<Device3>();
+            if (device3 != null)
+            {
+                _device.Dispose();
+                _device = device3;
+                return;
+            }
+            Device2 device2 = _device.QueryInterfaceOrNull<Device2>();
+            if (device2 != null)
+            {
+                _device.Dispose();
+                _device = device2;
+                return;
+            }
+            Device1 device1 = _device.QueryInterfaceOrNull<Device1>();
+            if (device1 != null)
+            {
+                _device.Dispose();
+                _device = device1;
+            }
         }
 
         private void ThreadLoop()
@@ -135,16 +186,14 @@ namespace VRCX
             var overlayVisible1 = false;
             var overlayVisible2 = false;
             var dashboardHandle = 0UL;
-            var overlayHandle1 = 0UL;
-            var overlayHandle2 = 0UL;
-            
-            _browser1 = new OffScreenBrowser(
+
+            _wristOverlay = new OffScreenBrowser(
                 "file://vrcx/vr.html?1",
                 512,
                 512
             );
 
-            _browser2 = new OffScreenBrowser(
+            _hmdOverlay = new OffScreenBrowser(
                 "file://vrcx/vr.html?2",
                 1024,
                 1024
@@ -152,10 +201,6 @@ namespace VRCX
 
             while (_thread != null)
             {
-                if (_wristOverlayActive)
-                    _browser1.RenderToTexture(_texture1);
-                if (_hmdOverlayActive)
-                    _browser2.RenderToTexture(_texture2);
                 try
                 {
                     Thread.Sleep(32);
@@ -196,6 +241,9 @@ namespace VRCX
                             OpenVR.Shutdown();
                             nextInit = DateTime.UtcNow.AddSeconds(10);
                             system = null;
+
+                            _wristOverlayHandle = 0;
+                            _hmdOverlayHandle = 0;
                             break;
                         }
                     }
@@ -227,22 +275,30 @@ namespace VRCX
                                 logger.Error(err);
                             }
 
-                            err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex);
-                            if (err != EVROverlayError.None &&
-                                overlayHandle1 != 0)
+                            if (_wristOverlayActive)
                             {
-                                overlay.DestroyOverlay(overlayHandle1);
-                                overlayHandle1 = 0;
-                                logger.Error(err);
+                                err = ProcessOverlay1(overlay, ref _wristOverlayHandle, ref overlayVisible1,
+                                    dashboardVisible, overlayIndex);
+                                if (err != EVROverlayError.None &&
+                                    _wristOverlayHandle != 0)
+                                {
+                                    overlay.DestroyOverlay(_wristOverlayHandle);
+                                    _wristOverlayHandle = 0;
+                                    logger.Error(err);
+                                }
                             }
 
-                            err = ProcessOverlay2(overlay, ref overlayHandle2, ref overlayVisible2, dashboardVisible);
-                            if (err != EVROverlayError.None &&
-                                overlayHandle2 != 0)
+                            if (_hmdOverlayActive)
                             {
-                                overlay.DestroyOverlay(overlayHandle2);
-                                overlayHandle2 = 0;
-                                logger.Error(err);
+                                err = ProcessOverlay2(overlay, ref _hmdOverlayHandle, ref overlayVisible2,
+                                    dashboardVisible);
+                                if (err != EVROverlayError.None &&
+                                    _hmdOverlayHandle != 0)
+                                {
+                                    overlay.DestroyOverlay(_hmdOverlayHandle);
+                                    _hmdOverlayHandle = 0;
+                                    logger.Error(err);
+                                }
                             }
                         }
                     }
@@ -264,29 +320,45 @@ namespace VRCX
                 }
             }
 
-            _browser2?.Dispose();
-            _browser1?.Dispose();
+            _hmdOverlay?.Dispose();
+            _wristOverlay?.Dispose();
             _texture2?.Dispose();
             _texture1?.Dispose();
             _device?.Dispose();
         }
 
-        public void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
+        public override void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
             _active = active;
             _hmdOverlayActive = hmdOverlay;
             _wristOverlayActive = wristOverlay;
             _menuButton = menuButton;
             _overlayHand = overlayHand;
+
+            if (_hmdOverlayActive != _hmdOverlayWasActive && _hmdOverlayHandle != 0)
+            {
+                OpenVR.Overlay.DestroyOverlay(_hmdOverlayHandle);
+                _hmdOverlayHandle = 0;
+            }
+
+            _hmdOverlayWasActive = _hmdOverlayActive;
+
+            if (_wristOverlayActive != _wristOverlayWasActive && _wristOverlayHandle != 0)
+            {
+                OpenVR.Overlay.DestroyOverlay(_wristOverlayHandle);
+                _wristOverlayHandle = 0;
+            }
+
+            _wristOverlayWasActive = _wristOverlayActive;
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
-            _browser1.Reload();
-            _browser2.Reload();
+            _wristOverlay.Reload();
+            _hmdOverlay.Reload();
         }
 
-        public string[][] GetDevices()
+        public override string[][] GetDevices()
         {
             _deviceListLock.EnterReadLock();
             try
@@ -299,7 +371,7 @@ namespace VRCX
             }
         }
 
-        internal void UpdateDevices(CVRSystem system, ref uint overlayIndex)
+        private void UpdateDevices(CVRSystem system, ref uint overlayIndex)
         {
             _deviceListLock.EnterWriteLock();
             try
@@ -324,13 +396,13 @@ namespace VRCX
                         var success = system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state));
                         if (!success)
                             break; // this fails while SteamVR overlay is open
-                    
+
                         var prox = state.ulButtonPressed & (1UL << ((int)EVRButtonId.k_EButton_ProximitySensor));
                         var isHmdAfk = prox == 0;
                         if (isHmdAfk != IsHmdAfk)
                         {
                             IsHmdAfk = isHmdAfk;
-                            AppApi.Instance.CheckGameRunning();
+                            Program.AppApiInstance.CheckGameRunning();
                         }
 
                         var headsetErr = ETrackedPropertyError.TrackedProp_Success;
@@ -366,82 +438,82 @@ namespace VRCX
                     case ETrackedDeviceClass.Controller:
                     case ETrackedDeviceClass.GenericTracker:
                     case ETrackedDeviceClass.TrackingReference:
-                    {
-                        var err = ETrackedPropertyError.TrackedProp_Success;
-                        var batteryPercentage = system.GetFloatTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceBatteryPercentage_Float, ref err);
-                        if (err != ETrackedPropertyError.TrackedProp_Success)
                         {
-                            batteryPercentage = 1f;
-                        }
-
-                        err = ETrackedPropertyError.TrackedProp_Success;
-                        var isCharging = system.GetBoolTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceIsCharging_Bool, ref err);
-                        if (err != ETrackedPropertyError.TrackedProp_Success)
-                        {
-                            isCharging = false;
-                        }
-
-                        sb.Clear();
-                        system.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_TrackingSystemName_String, sb, (uint)sb.Capacity, ref err);
-                        var isOculus = sb.ToString().IndexOf("oculus", StringComparison.OrdinalIgnoreCase) >= 0;
-                        // Oculus : B/Y, Bit 1, Mask 2
-                        // Oculus : A/X, Bit 7, Mask 128
-                        // Vive : Menu, Bit 1, Mask 2,
-                        // Vive : Grip, Bit 2, Mask 4
-                        var role = system.GetControllerRoleForTrackedDeviceIndex(i);
-                        if (role == ETrackedControllerRole.LeftHand || role == ETrackedControllerRole.RightHand)
-                        {
-                            if (_overlayHand == 0 ||
-                                (_overlayHand == 1 && role == ETrackedControllerRole.LeftHand) ||
-                                (_overlayHand == 2 && role == ETrackedControllerRole.RightHand))
+                            var err = ETrackedPropertyError.TrackedProp_Success;
+                            var batteryPercentage = system.GetFloatTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceBatteryPercentage_Float, ref err);
+                            if (err != ETrackedPropertyError.TrackedProp_Success)
                             {
-                                if (system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state)) &&
-                                    (state.ulButtonPressed & (_menuButton ? 2u : isOculus ? 128u : 4u)) != 0)
-                                {
-                                    _nextOverlayUpdate = DateTime.MinValue;
-                                    if (role == ETrackedControllerRole.LeftHand)
-                                    {
-                                        Array.Copy(_translationLeft, _translation, 3);
-                                        Array.Copy(_rotationLeft, _rotation, 3);
-                                    }
-                                    else
-                                    {
-                                        Array.Copy(_translationRight, _translation, 3);
-                                        Array.Copy(_rotationRight, _rotation, 3);
-                                    }
+                                batteryPercentage = 1f;
+                            }
 
-                                    overlayIndex = i;
+                            err = ETrackedPropertyError.TrackedProp_Success;
+                            var isCharging = system.GetBoolTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceIsCharging_Bool, ref err);
+                            if (err != ETrackedPropertyError.TrackedProp_Success)
+                            {
+                                isCharging = false;
+                            }
+
+                            sb.Clear();
+                            system.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_TrackingSystemName_String, sb, (uint)sb.Capacity, ref err);
+                            var isOculus = sb.ToString().IndexOf("oculus", StringComparison.OrdinalIgnoreCase) >= 0;
+                            // Oculus : B/Y, Bit 1, Mask 2
+                            // Oculus : A/X, Bit 7, Mask 128
+                            // Vive : Menu, Bit 1, Mask 2,
+                            // Vive : Grip, Bit 2, Mask 4
+                            var role = system.GetControllerRoleForTrackedDeviceIndex(i);
+                            if (role == ETrackedControllerRole.LeftHand || role == ETrackedControllerRole.RightHand)
+                            {
+                                if (_overlayHand == 0 ||
+                                    (_overlayHand == 1 && role == ETrackedControllerRole.LeftHand) ||
+                                    (_overlayHand == 2 && role == ETrackedControllerRole.RightHand))
+                                {
+                                    if (system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state)) &&
+                                        (state.ulButtonPressed & (_menuButton ? 2u : isOculus ? 128u : 4u)) != 0)
+                                    {
+                                        _nextOverlayUpdate = DateTime.MinValue;
+                                        if (role == ETrackedControllerRole.LeftHand)
+                                        {
+                                            Array.Copy(_translationLeft, _translation, 3);
+                                            Array.Copy(_rotationLeft, _rotation, 3);
+                                        }
+                                        else
+                                        {
+                                            Array.Copy(_translationRight, _translation, 3);
+                                            Array.Copy(_rotationRight, _rotation, 3);
+                                        }
+
+                                        overlayIndex = i;
+                                    }
                                 }
                             }
-                        }
 
-                        var type = string.Empty;
-                        if (devClass == ETrackedDeviceClass.Controller)
-                        {
-                            if (role == ETrackedControllerRole.LeftHand)
+                            var type = string.Empty;
+                            if (devClass == ETrackedDeviceClass.Controller)
                             {
-                                type = "leftController";
+                                if (role == ETrackedControllerRole.LeftHand)
+                                {
+                                    type = "leftController";
+                                }
+                                else if (role == ETrackedControllerRole.RightHand)
+                                {
+                                    type = "rightController";
+                                }
+                                else
+                                {
+                                    type = "controller";
+                                }
                             }
-                            else if (role == ETrackedControllerRole.RightHand)
+                            else if (devClass == ETrackedDeviceClass.GenericTracker)
                             {
-                                type = "rightController";
+                                type = "tracker";
                             }
-                            else
+                            else if (devClass == ETrackedDeviceClass.TrackingReference)
                             {
-                                type = "controller";
+                                type = "base";
                             }
-                        }
-                        else if (devClass == ETrackedDeviceClass.GenericTracker)
-                        {
-                            type = "tracker";
-                        }
-                        else if (devClass == ETrackedDeviceClass.TrackingReference)
-                        {
-                            type = "base";
-                        }
 
-                        var item = new[]
-                        {
+                            var item = new[]
+                            {
                             type,
                             system.IsTrackedDeviceConnected(i)
                                 ? "connected"
@@ -452,18 +524,18 @@ namespace VRCX
                             (batteryPercentage * 100).ToString(),
                             poses[i].eTrackingResult.ToString()
                         };
-                        _deviceListLock.EnterWriteLock();
-                        try
-                        {
-                            _deviceList.Add(item);
-                        }
-                        finally
-                        {
-                            _deviceListLock.ExitWriteLock();
-                        }
+                            _deviceListLock.EnterWriteLock();
+                            try
+                            {
+                                _deviceList.Add(item);
+                            }
+                            finally
+                            {
+                                _deviceListLock.ExitWriteLock();
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
         }
@@ -489,7 +561,7 @@ namespace VRCX
                         return err;
                     }
 
-                    var iconPath = Path.Combine(Program.BaseDirectory, "VRCX.png");
+                    var iconPath = Path.Join(Program.BaseDirectory, "VRCX.png");
                     err = overlay.SetOverlayFromFile(thumbnailHandle, iconPath);
                     if (err != EVROverlayError.None)
                     {
@@ -518,20 +590,20 @@ namespace VRCX
                 if (type == EVREventType.VREvent_MouseMove)
                 {
                     var m = e.data.mouse;
-                    var s = _browser1.Size;
-                    _browser1.GetBrowserHost().SendMouseMoveEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), false, CefEventFlags.None);
+                    var s = _wristOverlay.Size;
+                    _wristOverlay.GetBrowserHost().SendMouseMoveEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), false, CefEventFlags.None);
                 }
                 else if (type == EVREventType.VREvent_MouseButtonDown)
                 {
                     var m = e.data.mouse;
-                    var s = _browser1.Size;
-                    _browser1.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
+                    var s = _wristOverlay.Size;
+                    _wristOverlay.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
                 }
                 else if (type == EVREventType.VREvent_MouseButtonUp)
                 {
                     var m = e.data.mouse;
-                    var s = _browser1.Size;
-                    _browser1.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, true, 1, CefEventFlags.None);
+                    var s = _wristOverlay.Size;
+                    _wristOverlay.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, true, 1, CefEventFlags.None);
                 }
             }
 
@@ -760,6 +832,22 @@ namespace VRCX
             }
 
             return err;
+        }
+
+        public override void ExecuteVrFeedFunction(string function, string json)
+        {
+            if (_wristOverlay == null) return;
+            // if (_wristOverlay.IsLoading)
+            //     Restart();
+            _wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
+        }
+
+        public override void ExecuteVrOverlayFunction(string function, string json)
+        {
+            if (_hmdOverlay == null) return;
+            // if (_hmdOverlay.IsLoading)
+            //     Restart();
+            _hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -34,9 +34,19 @@ namespace VRCX
             }
         }
 
+        public static string GetIpcName()
+        {
+            var hash = 0;
+            foreach (var c in Environment.UserName)
+            {
+                hash += c;
+            }
+            return $"vrcx-ipc-{hash}";
+        }
+
         public void CreateIPCServer()
         {
-            var ipcServer = new NamedPipeServerStream("vrcx-ipc", PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+            var ipcServer = new NamedPipeServerStream(GetIpcName(), PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
             ipcServer.BeginWaitForConnection(DoAccept, ipcServer);
         }
 

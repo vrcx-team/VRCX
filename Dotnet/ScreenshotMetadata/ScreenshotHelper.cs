@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -12,9 +13,8 @@ namespace VRCX
 {
     internal static class ScreenshotHelper
     {
-        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-        private static readonly byte[] pngSignatureBytes = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-        private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(Path.Combine(Program.AppDataDirectory, "metadataCache.db"));
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(Path.Join(Program.AppDataDirectory, "metadataCache.db"));
         private static readonly Dictionary<string, ScreenshotMetadata> metadataCache = new Dictionary<string, ScreenshotMetadata>();
 
         public enum ScreenshotSearchType
@@ -76,16 +76,17 @@ namespace VRCX
                     if (metadata == null || metadata.Error != null)
                     {
                         addToCache.Add(dbEntry);
-                        metadataCache.Add(file, null);
+                        metadataCache.TryAdd(file, null);
                         continue;
                     }
 
                     dbEntry.Metadata = JsonConvert.SerializeObject(metadata);
                     addToCache.Add(dbEntry);
-                    metadataCache.Add(file, metadata);
+                    metadataCache.TryAdd(file, metadata);
                 }
 
-                if (metadata == null) continue;
+                if (metadata == null)
+                    continue;
 
                 switch (searchType)
                 {
@@ -100,7 +101,10 @@ namespace VRCX
 
                         break;
                     case ScreenshotSearchType.WorldName:
-                        if (metadata.World.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) != -1)
+                        if (metadata.World.Name == null)
+                            continue;
+                        
+                        if (metadata.World.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
                             result.Add(metadata);
 
                         break;
@@ -121,18 +125,13 @@ namespace VRCX
             return result;
         }
 
-        /// <summary>
-        /// Retrieves metadata from a PNG screenshot file and attempts to parse it.
-        /// </summary>
-        /// <param name="path">The path to the PNG screenshot file.</param>
-        /// <returns>A JObject containing the metadata or null if no metadata was found.</returns>
-        public static ScreenshotMetadata GetScreenshotMetadata(string path, bool includeJSON = false)
+        public static ScreenshotMetadata? GetScreenshotMetadata(string path, bool includeJSON = false)
         {
             // Early return if file doesn't exist, or isn't a PNG(Check both extension and file header)
             if (!File.Exists(path) || !path.EndsWith(".png") || !IsPNGFile(path))
                 return null;
 
-            ///if (metadataCache.TryGetValue(path, out var cachedMetadata))
+            // if (metadataCache.TryGetValue(path, out var cachedMetadata))
             //    return cachedMetadata;
 
             string metadataString;
@@ -172,6 +171,26 @@ namespace VRCX
             // If not JSON metadata, return early so we're not throwing/catching pointless exceptions
             if (!metadataString.StartsWith("{"))
             {
+                // parse VRC prints
+                var xmlIndex = metadataString.IndexOf("<x:xmpmeta", StringComparison.Ordinal);
+                if (xmlIndex != -1)
+                {
+                    try
+                    {
+                        var xmlString = metadataString.Substring(xmlIndex);
+                        // everything after index
+                        var result = ParseVRCPrint(xmlString.Substring(xmlIndex - 7));
+                        result.SourceFile = path;
+
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, "Failed to parse VRCPrint XML metadata for file '{0}'", path);
+                        return ScreenshotMetadata.JustError(path, "Failed to parse VRCPrint metadata.");
+                    }
+                }
+                
                 logger.ConditionalDebug("Screenshot file '{0}' has unknown non-JSON metadata:\n{1}\n", path, metadataString);
                 return ScreenshotMetadata.JustError(path, "File has unknown non-JSON metadata.");
             }
@@ -192,6 +211,44 @@ namespace VRCX
                 logger.Error(ex, "Failed to parse screenshot metadata JSON for file '{0}'", path);
                 return ScreenshotMetadata.JustError(path, "Failed to parse screenshot metadata JSON. Check logs.");
             }
+        }
+        
+        public static ScreenshotMetadata ParseVRCPrint(string xmlString)
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xmlString);
+            var root = doc.DocumentElement;
+            var nsManager = new XmlNamespaceManager(doc.NameTable);
+            nsManager.AddNamespace("x", "adobe:ns:meta/");
+            nsManager.AddNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+            nsManager.AddNamespace("xmp", "http://ns.adobe.com/xap/1.0/");
+            nsManager.AddNamespace("tiff", "http://ns.adobe.com/tiff/1.0/");
+            nsManager.AddNamespace("dc", "http://purl.org/dc/elements/1.1/");
+            nsManager.AddNamespace("vrc", "http://ns.vrchat.com/vrc/1.0/");
+            var creatorTool = root.SelectSingleNode("//xmp:CreatorTool", nsManager)?.InnerText;
+            var authorId = root.SelectSingleNode("//xmp:Author", nsManager)?.InnerText;
+            var dateTime = root.SelectSingleNode("//tiff:DateTime", nsManager)?.InnerText;
+            var note = root.SelectSingleNode("//dc:title/rdf:Alt/rdf:li", nsManager)?.InnerText;
+            var worldId = root.SelectSingleNode("//vrc:World", nsManager)?.InnerText;
+
+            return new ScreenshotMetadata
+            {
+                Application = creatorTool,
+                Version = 1,
+                Author = new ScreenshotMetadata.AuthorDetail
+                {
+                    Id = authorId,
+                    DisplayName = null
+                },
+                World = new ScreenshotMetadata.WorldDetail
+                {
+                    Id = worldId,
+                    InstanceId = worldId,
+                    Name = null
+                },
+                Timestamp = DateTime.TryParse(dateTime, out var dt) ? dt : null,
+                Note = note
+            };
         }
 
         /// <summary>
@@ -228,6 +285,34 @@ namespace VRCX
             return true;
         }
 
+        public static bool CopyTXt(string sourceImage, string targetImage)
+        {
+            if (!File.Exists(sourceImage) || !IsPNGFile(sourceImage) ||
+                !File.Exists(targetImage) || !IsPNGFile(targetImage)) 
+                return false;
+
+            var sourceMetadata = ReadTXt(sourceImage);
+
+            if (sourceMetadata == null) 
+                return false;
+
+            var targetImageData = File.ReadAllBytes(targetImage);
+
+            var newChunkIndex = FindEndOfChunk(targetImageData, "IHDR");
+            if (newChunkIndex == -1) return false;
+
+            // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
+            var existingiTXt = FindChunkIndex(targetImageData, "iTXt");
+            if (existingiTXt != -1) return false;
+
+            var newFile = targetImageData.ToList();
+            newFile.InsertRange(newChunkIndex, sourceMetadata.ConstructChunkByteArray());
+
+            File.WriteAllBytes(targetImage, newFile.ToArray());
+
+            return true;
+        }
+
         /// <summary>
         ///     Reads a text description from a PNG file at the specified path.
         ///     Reads any existing iTXt PNG chunk in the target file, using the Description tag.
@@ -246,6 +331,30 @@ namespace VRCX
                 if (existingiTXt == null) return null;
 
                 return existingiTXt.GetText("Description");
+            }
+        }
+
+        public static bool HasTXt(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return false;
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
+            {
+                var existingiTXt = FindChunk(stream, "iTXt", true);
+
+                return existingiTXt != null;
+            }
+        }
+
+        public static PNGChunk ReadTXt(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return null;
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
+            {
+                var existingiTXt = FindChunk(stream, "iTXt", true);
+
+                return existingiTXt;
             }
         }
 
@@ -274,6 +383,8 @@ namespace VRCX
         /// <returns></returns>
         public static bool IsPNGFile(string path)
         {
+            var pngSignatureBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+            
             // Read only the first 8 bytes of the file to check if it's a PNG file instead of reading the entire thing into memory just to see check a couple bytes.
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {

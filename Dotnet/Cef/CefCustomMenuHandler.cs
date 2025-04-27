@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019 pypy. All rights reserved.
+﻿// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -11,8 +11,10 @@ namespace VRCX
     {
         public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
         {
-            // remove default right click
-            if (!parameters.TypeFlags.HasFlag(ContextMenuType.Selection) && !parameters.TypeFlags.HasFlag(ContextMenuType.Editable))
+            // remove default right click when not in debug mode
+            if (!Program.LaunchDebug &&
+                !parameters.TypeFlags.HasFlag(ContextMenuType.Selection) &&
+                !parameters.TypeFlags.HasFlag(ContextMenuType.Editable))
                 model.Clear();
         }
 

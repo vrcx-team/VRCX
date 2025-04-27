@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -44,12 +45,19 @@ namespace VRCX
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Vector3? Pos { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? Timestamp { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? Note { get; set; }
+
 
         /// <summary>
         /// Any error that occurred while parsing the file. This being true implies nothing else is set.
         /// </summary>
         [JsonIgnore]
-        internal string Error;
+        internal string? Error;
 
         [JsonIgnore]
         internal string JSON;
@@ -99,7 +107,7 @@ namespace VRCX
             /// <summary>
             /// The display name of the user.
             /// </summary>
-            public string DisplayName { get; set; }
+            public string? DisplayName { get; set; }
         }
 
         public class WorldDetail
@@ -112,7 +120,7 @@ namespace VRCX
             /// <summary>
             /// The name of the world.
             /// </summary>
-            public string Name { get; set; }
+            public string? Name { get; set; }
 
             /// <summary>
             /// The full ID of the game instance.

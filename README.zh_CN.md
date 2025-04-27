@@ -10,56 +10,58 @@
 
 | [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | **简体中文** | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
 
-VRCX 是一个用于 VRChat 的辅助应用，提供有关 VRChat 的一些信息并帮助你以更方便的方式完成与 VRChat 有关的各种事情，而不是仅仅依靠 VRChat 游戏客户端（PC/VR）或他们的网站。它还包括一些非常有用的功能：
+VRCX 是一款用于 VRChat 的外部辅助小工具，可以比 VRChat 游戏客户端（无论是 PC 模式或 VR 模式）以及它的官网更方便地提供与 VRChat 相关的信息，同时能让你更轻松地完成各种操作。此外，它还提供了一些好用的功能。
 
 # 开始使用
 
 <div align="center">
 
-从[这里](https://github.com/vrcx-team/VRCX/releases/latest)下载最新的安装程序 (`VRCX_Setup.exe`)
+可以从[这里](https://github.com/vrcx-team/VRCX/releases/latest)下载最新的安装程序（安装程序的文件名是`VRCX_Setup.exe`）。
 
-# 特性
+如果需要，每夜（测试版）构建也可从[这里](https://vrcx.app/github/nightly)下载，或通过程序内的 `设置 -> 通用 -> VRCX 更新设置 -> 更改版本` 按钮获取。
+
+# 功能
 
 <div align="left">
 
-- :family: 好友、世界和模型列表管理
-  - 在 VRChat 游戏客户端之外管理你的好友列表、世界/群组和模型。
-  - 监视你好友所在的世界，以及他们的模型变动，同时查看他们的在线状态。
-  - 跟踪你首次添加他们的时间以及你上次见到他们的时间。
-  - 查看你和朋友们在世界中共度了多长时间。
-  - 跟踪好友名字的更改，再也不用担心改名之后忘了是谁了！
-  - 设置好友备注，这样你就可以知道你是怎么认识他们的
-- :electric_plug: 启动 VRChat 时自动启动其他应用
-  - 你可以配置 VRCX，以便在启动 VRChat 时启动其他应用。
-  - 例如，你可以让 VRCX 在 VRChat 打开时启动 OSC 应用或者变声器。
-- :floppy_disk: 世界数据保存
-  - 对于支持该功能的世界，VRCX 可以保存世界设置、状态和其他数据！
-  - **注意**：要使用此功能，你必须在 VRChat 设置中启用“Allow Untrusted URLs”。否则功能不会生效
-  - 对于开发者们：[Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
-- :mag: 搜索模型、用户、世界和组
-- :earth_americas: 使用存储在本地并且无限制的收藏夹！妈妈再也不用担心收藏夹不够用了
-- :camera: 在游戏拍摄的图片中存储世界数据，以便你可以记住你在 6 个月前拍摄的那个酷炫的世界！
-- :bell: 查看/回复通知和游玩邀请
-  - 你可以从 VRCX 发送/接收游玩邀请和好友请求，以及查看你收到的邀请所指示的房间信息。
-- :scroll: 查看当前房间的统计数据/玩家信息
-- :tv: 查看正在播放的视频的真实链接，以及其他各种记录的数据。
-- :bar_chart: 改进的 Discord Rich Presence 集成面板
-  - 您可以选择在 Discord 中显示有关当前房间的更多信息。
-  - 针对像 PyPyDance、LSMedia、Movies&Chill 和 VRDancing 热门世界的功能集成。
-  - 这包括世界缩略图、名称、房间 ID 和玩家统计，具体取决于你的设置以及房间是否为私人。你还可以在 Discord 状态面板上为公共房间添加加入按钮！
-- :crystal_ball: VR 手柄叠加层，可显示所有支持的事件/通知的实时反馈
-- :outbox_tray: 无需 Unity 即可上传模型/世界封面
-- :page_facing_up: 在没有 Unity 的情况下管理上传的模型/世界的信息
-- :skull: VRChat 崩溃时自动重启它并重新加入上一个房间
-- :left_right_arrow: 导出/导入收藏夹
+-   :family: 好友、世界和模型列表管理
+    -   在 VRChat 之外管理你的好友/世界/群组以及模型列表。
+    -   查看好友所在的房间，在线状态，以及他们的模型变动情况。
+    -   记录与某人成为好友以及上次见面的时间。
+    -   查看你和朋友们在世界中一起度过了多长时间（以及见了多少次）。
+    -   监视好友的名字变更情况，再也不用担心某人改名之后忘了是谁了！
+    -   保存备注，方便记住彼此。同时也可以通过这个提醒自己：你是怎么认识 TA 的？
+-   :electric_plug: 当你启动 VRChat 时自动启动其他程序
+    -   你可以配置 VRCX，让其在启动 VRChat 时自动启动你指定的程序。
+    -   例如，你可以在启动时让 VRCX 打开一个 OSC 应用或变声器。
+-   :floppy_disk: 世界数据持久化保存 (World Persistence)
+    -   对于支持此功能的世界，VRCX 将能够保存世界设置、存档、各种清单以及其他可以保存的数据！
+    -   **注意**：要使用此功能，必须在 VRChat 设置中启用 “Allow Untrusted URLs”。
+    -   给世界开发者的指南： [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
+-   :mag: 以更加方便的形式搜索模型、房间、世界以及群组。
+-   :earth_americas: 创建本地的、没有任何限制的世界收藏夹
+-   :camera: 将世界数据存储在你在游戏内拍摄的照片中，这样即使几个月后也能知道当时是在什么世界拍的照片
+-   :bell: 监视通知，让你可以及时回复你的朋友
+    -   你可以通过 VRCX 发送/接收各种邀请和好友请求，也可以通过它查看邀请中指向的房间信息。
+-   :scroll: 查看当前房间的统计信息和用户列表
+-   :tv: 查看你所在世界中正在播放的视频的实际链接，以及各种其他记录
+-   :bar_chart: 改进的 Discord 状态面板
+    -   你可以选择在 Discord 的状态面板上显示更多关于当前房间的信息。
+    -   针对 PyPyDance、LSMedia、Movies&Chill、VRDancing 等热门世界进行了深度集成。
+    -   这包括世界封面图、世界名称、房间 ID、用户数量等，具体取决于你的状态设置以及房间是否为私人，公共房间还可以在状态面板上添加一个“加入”按钮！
+-   :crystal_ball: VR 叠加界面，可以用于实时监控所有受支持的事件以及通知
+-   :outbox_tray: 无需打开 Unity 即可上传模型以及世界的封面图
+-   :page_facing_up: 无需打开 Unity 即可管理已上传的模型以及世界的信息。
+-   :skull: 当 VRChat 崩溃时自动重启并重新加入崩溃之前的房间。
+-   :left_right_arrow: 一键导入/导出收藏列表。
 
 ## 一些其他的东西
 
-- 想让 VRCX 看起来独一无二吗？请查看 [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes)（英语）了解如何制作主题
-- 参见[Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source)（英语）了解如何从源码构建 VRCX。
-- 关于如何在 Linux 上运行 VRCX 的指南，请看[这里](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)（英语）
+-   想让 VRCX 的外观看起来独特一些？请查看 [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes) （英语）了解如何制作界面主题
+-   查看 [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) （英语）以获得从源码构建 VRCX 的相关说明
+-   若想了解如何在 Linux 上运行 VRCX，请点击[这里](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)（英语）查看相关说明
 
-# 一些界面截图
+# 界面截图
 
 <div align="center">
 
@@ -86,11 +88,11 @@ VRCX 是一个用于 VRChat 的辅助应用，提供有关 VRChat 的一些信�
 
 <img src="https://user-images.githubusercontent.com/47104993/246643835-d4b9e008-7a64-4163-a53c-7c01bc78a780.png" alt="me">
 
-<h4>好友</h4>
+<h4>好友信息</h4>
 
 <img src="https://user-images.githubusercontent.com/47104993/246644739-b1d7d2df-40f2-465e-bd50-3127ee7a6fdd.png" alt="friend">
 
-<h3>世界</h3>
+<h3>世界信息</h3>
 
 <table>
   <tr>
@@ -101,39 +103,39 @@ VRCX 是一个用于 VRChat 的辅助应用，提供有关 VRChat 的一些信�
 
 <h3>收藏夹</h3>
 
-<h4>好友收藏夹（星标）</h4>
+<h4>好友收藏（星标）界面</h4>
 
-<img src="https://user-images.githubusercontent.com/47104993/246644035-edf5b224-004c-4aee-b7e7-88169834ea24.png" alt="friend">
+<img src="https://user-images.githubusercontent.com/47104993/246644035-edf5b224-004c-4aee-b7e7-88169834ea24.png" alt="好友收藏夹">
 
-<h4>世界收藏</h4>
+<h4>世界收藏界面</h4>
 
 <img src="https://user-images.githubusercontent.com/47104993/246644127-7d055aec-5df1-44af-82a9-8b107fc2329b.png" alt="world">
 
-<h4>模型收藏</h4>
+<h4>模型收藏界面</h4>
 
-<img src="https://user-images.githubusercontent.com/47104993/246644243-0ccbfc65-194e-4510-a785-16a171849cd8.png" alt="avatar">
+<img src="https://user-images.githubusercontent.com/47104993/246644243-0ccbfc65-194e-4510-a785-16a171849cd8.png" alt="模型收藏夹">
 
 <h3>好友日志</h3>
 
-<img src="https://user-images.githubusercontent.com/47104993/246644384-540953c8-e5aa-49d0-82da-45728483456c.png" alt="friendlog">
+<img src="https://user-images.githubusercontent.com/47104993/246644384-540953c8-e5aa-49d0-82da-45728483456c.png" alt="好友日志">
 
-<h3>Discord Rich Presence集成面板</h3>
+<h3>Discord 状态面板</h3>
 
-<img src="https://user-images.githubusercontent.com/47104993/246644534-5d07589e-0464-46c8-a78a-1cb927fab08e.png" alt="discord">
+<img src="https://user-images.githubusercontent.com/47104993/246644534-5d07589e-0464-46c8-a78a-1cb927fab08e.png" alt="Discord 状态面板">
 
 <!-- The other images will be similar to this -->
 </div>
 
-## VRCX 是否违反了 VRChat 的 TOS？
+## VRCX 有没有违反 VRChat 的服务条款？
 
-**简而言之：没有**
+**简而言之：没有违反**
 
-VRCX 只是一个外部辅助工具，使用 VRChat 的 API 来提供功能。
+VRCX 是一个外部工具，使用 VRChat API 来提供相关功能。
 
-它没有以任何方式修改/破坏游戏数据，只是负责任地使用 VRChat API 来提供功能。它不是一个 MOD 模组，也不是一个作弊工具或任何其他形式的游戏修改工具。
+它并不会以任何方式修改游戏，只是合理使用 API 来提供相应的功能。它不是 mod，也不是作弊工具，更不是对游戏任何形式的修改。
 
-要了解 VRChat 对 API 使用的立场，请查看[VRChat Discord](https://discord.gg/vrchat)的 #faq 频道（英语）
+要了解 VRChat 对 API 使用的相关态度，请查看 [VRChat Discord](https://discord.gg/vrchat) 服务器的 #faq 频道。
 
 ---
 
-VRCX 没有得到 VRChat 的认可，也不反映 VRChat 或任何正式参与制作或管理 VRChat 的人的观点或意见。VRChat 和所有相关属性都是 VRChat 公司的商标或注册商标。VRChat © VRChat Inc.
+VRCX 未获得 VRChat 的认可，也不代表 VRChat 或任何正式参与制作或管理 VRChat 的个人/组织的观点或立场。VRChat 及所有相关内容均为 VRChat Inc. 的商标或注册商标。VRChat © VRChat Inc.

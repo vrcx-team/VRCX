@@ -21,11 +21,13 @@ namespace VRCX
     {
         private readonly Dictionary<string, MonitoredProcess> monitoredProcesses;
         private readonly Timer monitorProcessTimer;
-        private readonly static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         static ProcessMonitor()
         {
             Instance = new ProcessMonitor();
+            Instance.ProcessStarted += Program.AppApiInstance.OnProcessStateChanged;
+            Instance.ProcessExited += Program.AppApiInstance.OnProcessStateChanged;
         }
 
         public ProcessMonitor()
@@ -164,7 +166,7 @@ namespace VRCX
         }
     }
 
-    internal class MonitoredProcess
+    public class MonitoredProcess
     {
         public MonitoredProcess(Process process)
         {

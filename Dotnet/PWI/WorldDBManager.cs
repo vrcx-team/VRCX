@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using CefSharp;
 using Newtonsoft.Json;
+using NLog;
 
 namespace VRCX
 {
@@ -16,7 +17,7 @@ namespace VRCX
         public static readonly WorldDBManager Instance;
         private readonly HttpListener listener;
         private readonly WorldDatabase worldDB;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private const string WorldDBServerUrl = "http://127.0.0.1:22500/";
 
         private string lastError = null;
@@ -33,7 +34,7 @@ namespace VRCX
             listener = new HttpListener();
             listener.Prefixes.Add(WorldDBServerUrl);
 
-            worldDB = new WorldDatabase(Path.Combine(Program.AppDataDirectory, "VRCX-WorldData.db"));
+            worldDB = new WorldDatabase(Path.Join(Program.AppDataDirectory, "VRCX-WorldData.db"));
         }
 
         public void Init()

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 steamapps=$HOME/.local/share/Steam/steamapps/compatdata
-stable=$(curl -s https://api0.vrcx.app/releases/stable/latest | grep -o "https.*releases/download.*zip")
-nightly=$(curl -s https://api0.vrcx.app/releases/nightly/latest | grep -o "https.*releases/download.*zip")
+stable="https://api0.vrcx.app/releases/stable/latest/download"
+nightly="https://api0.vrcx.app/releases/nightly/latest/download"
 download_url=$stable
 XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
 
@@ -14,7 +14,8 @@ set -u
 
 # Ensure Wine version >= 9.0
 wine_version=$(wine --version | grep -Po '(?<=wine-)([0-9.]+)')
-if [ "${1-}" != "force" ] && [[ $wine_version < 9.0 ]]; then
+if [ "${1-}" != "force" ] && awk "BEGIN {exit !($wine_version < 9.0)}"; then
+	echo "Your Wine version: $wine_version"
 	echo "Please upgrade your Wine version to 9.0 or higher."
 	echo "If you want to try anyway, run: install-vrcx.sh force"
 	exit 1
@@ -61,40 +62,44 @@ fi
 winetricks --force -q corefonts # Workaround for https://bugs.winehq.org/show_bug.cgi?id=32342
 
 echo "Download VRCX"
+INSTALL_LOCATION="$WINEPREFIX/drive_c/Program Files/VRCX"
 
-if [[ ! -d $WINEPREFIX/drive_c/vrcx ]]; then
-	mkdir -p $WINEPREFIX/drive_c/vrcx
+if [[ ! -d $INSTALL_LOCATION ]]; then
+	mkdir -p "$INSTALL_LOCATION"
 else
-   rm -r $WINEPREFIX/drive_c/vrcx/*
+   rm -rf "${INSTALL_LOCATION:?}/"*
 fi
 
-cd $WINEPREFIX/drive_c/vrcx
-curl -L $download_url -o vrcx.zip
-unzip -uq vrcx.zip
-rm vrcx.zip
+cd "$INSTALL_LOCATION"
+curl -L $download_url -o vrcx_setup.exe
+WINEPREFIX=$WINEPREFIX wine vrcx_setup.exe /S /SKIP_SHORTCUT=true
+rm vrcx_setup.exe
 
-echo "#!/usr/bin/env bash
-export WINEPREFIX=$WINEPREFIX
-export WINEDLLOVERRIDES="libglesv2=d" # Workaround for https://bugs.winehq.org/show_bug.cgi?id=44985
-wine $WINEPREFIX/drive_c/vrcx/VRCX.exe -no-cef-sandbox" > $WINEPREFIX/drive_c/vrcx/vrcx
-chmod +x $WINEPREFIX/drive_c/vrcx/vrcx
 
-if [[ -d $HOME/.local/bin ]]; then
-	echo "Install VRCX to $HOME/.local/bin"
-	ln -nsf $WINEPREFIX/drive_c/vrcx/vrcx $HOME/.local/bin/vrcx
-fi
+# Install twemoji font as Segoe UI is proprietary and not included in wine
+echo "Download twemoji font."
+curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/Linux/fonts/seguiemj.ttf -o seguiemj.ttf
+echo "Install twemoji font."
+cp seguiemj.ttf "$WINEPREFIX/drive_c/windows/Fonts"
+WINEPREFIX=$WINEPREFIX wine reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\Fonts' /v 'seguiemj' /t REG_SZ /d 'seguiemj.ttf' /f
+rm seguiemj.ttf
+
+curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/Linux/vrcx.sh -o $WINEPREFIX/drive_c/vrcx.sh
+chmod +x $WINEPREFIX/drive_c/vrcx.sh
+
+curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/Linux/winediscordipcbridge.exe -o $WINEPREFIX/drive_c/winediscordipcbridge.exe
 
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o "$XDG_DATA_HOME/icons/VRCX.png"
 
-echo "Install vrcx.desktop to $XDG_DATA_HOME/applications"
+echo "Install vrcx.exe.desktop to $XDG_DATA_HOME/applications"
 echo "[Desktop Entry]
 Type=Application
 Name=VRCX
 Categories=Utility;
-Exec=$HOME/.local/bin/vrcx
+Exec=$WINEPREFIX/drive_c/vrcx.sh
 Icon=VRCX
-" > $XDG_DATA_HOME/applications/vrcx.desktop
+" > $XDG_DATA_HOME/applications/vrcx.exe.desktop
 
 
 echo "Done! Check your menu for VRCX."

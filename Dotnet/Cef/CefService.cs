@@ -1,16 +1,17 @@
 using System;
 using System.IO;
-using System.Net;
+using System.IO.Compression;
 using CefSharp;
 using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
+using NLog;
 
 namespace VRCX
 {
     public class CefService
     {
         public static readonly CefService Instance;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         static CefService()
         {
@@ -19,15 +20,14 @@ namespace VRCX
 
         internal void Init()
         {
-            var userDataDir = Path.Combine(Program.AppDataDirectory, "userdata");
+            var userDataDir = Path.Join(Program.AppDataDirectory, "userdata");
             var cefSettings = new CefSettings
             {
                 RootCachePath = userDataDir,
-                CachePath = Path.Combine(userDataDir, "cache"),
+                CachePath = Path.Join(userDataDir, "cache"),
                 LogSeverity = LogSeverity.Disable,
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,
-                PersistUserPreferences = true,
                 UserAgent = Program.Version,
                 BrowserSubprocessPath = Environment.ProcessPath,
                 BackgroundColor = 0xFF101010
@@ -38,7 +38,7 @@ namespace VRCX
                 SchemeName = "file",
                 DomainName = "vrcx",
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(
-                    Path.Combine(Program.BaseDirectory, "html"),
+                    Path.Join(Program.BaseDirectory, "html"),
                     "file",
                     defaultPage: "index.html"
                 ),
@@ -52,22 +52,51 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-pdf-extension");
             cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
-            cefSettings.SetOffScreenRenderingBestPerformanceArgs(); // causes white screen sometimes?
+            cefSettings.CefCommandLineArgs.Add("disk-cache-size", "2147483647");
+            cefSettings.CefCommandLineArgs.Add("unsafely-disable-devtools-self-xss-warnings");
 
             if (WebApi.ProxySet)
             {
                 cefSettings.CefCommandLineArgs["proxy-server"] = WebApi.ProxyUrl;
             }
+            
+            if (VRCXStorage.Instance.Get("VRCX_DisableGpuAcceleration") == "true")
+            {
+                cefSettings.CefCommandLineArgs.Add("disable-gpu");
+            }
 
             if (Program.LaunchDebug)
             {
-                // it's dead fuck https://github.com/chromiumembedded/cef/issues/3740
+                // chrome://inspect/#devices
+                // Discover network targets, Configure...
+                // Add Remote Target: localhost:8089
                 logger.Info("Debug mode enabled");
                 cefSettings.RemoteDebuggingPort = 8089;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
-            }
 
-            //CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
+                var extensionsPath = Path.Join(Program.AppDataDirectory, "extensions");
+                Directory.CreateDirectory(extensionsPath);
+                
+                // extract Vue Devtools
+                var vueDevtoolsCrxPath = Path.Join(Program.BaseDirectory, @"..\..\build-tools\Vue-js-devtools.crx");
+                if (File.Exists(vueDevtoolsCrxPath))
+                {
+                    var vueDevtoolsPath = Path.Join(extensionsPath, "Vue-js-devtools");
+                    if (!Directory.Exists(vueDevtoolsPath))
+                    {
+                        Directory.CreateDirectory(vueDevtoolsPath);
+                        ZipFile.ExtractToDirectory(vueDevtoolsCrxPath, vueDevtoolsPath);
+                    }
+                }
+                
+                // load extensions
+                var folders = Directory.GetDirectories(extensionsPath);
+                foreach (var folder in folders)
+                {
+                    cefSettings.CefCommandLineArgs.Add("load-extension", folder);
+                }
+            }
+            
             CefSharpSettings.ShutdownOnExit = false;
             CefSharpSettings.ConcurrentTaskExecution = true;
 
