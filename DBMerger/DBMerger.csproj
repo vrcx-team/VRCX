@@ -33,18 +33,10 @@
 	
 	<!-- Funny feature, didn't know it exists. Very useful for this specific use
 		 case -->
-	<ItemGroup>
-	  <Compile Include="..\Dotnet\SQLite.cs" Link="SQLite.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="..\libs\sqlite3.dll" Link="sqlite3.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="NLog" Version="5.3.3" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
 	</ItemGroup>
 </Project>

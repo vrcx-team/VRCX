@@ -510,7 +510,7 @@ namespace DBMerger
 
                 // Loop over every row on table in old database
                 var rowsCommand = dbConn.CreateCommand($"SELECT * FROM {oldDBName}.{table};");
-                foreach (object[] oldRow in rowsCommand.ExecuteQueryScalars())
+                foreach (object[] oldRow in rowsCommand.ExecuteQueryScalars(dbConn))
                 {
                     // Find existing row (if it exists at all) and remove it
                     object[] colsToMatch = colIndicesToMatch.Select(i => oldRow[i]).ToArray();
