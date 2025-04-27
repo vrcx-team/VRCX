@@ -108,6 +108,7 @@ namespace DBMerger
             {
                 unMergedTables.Remove("configs");
             }
+            ResetDatabaseVersion();
 
             foreach (var table in unMergedTables)
             {
@@ -461,6 +462,16 @@ namespace DBMerger
                 $"INSERT OR REPLACE INTO {newDBName}.configs " +
                     $"SELECT * FROM {oldDBName}.configs " +
                         $"WHERE key!=?;", "config:savedcredentials"
+            );
+        }
+
+        private void ResetDatabaseVersion()
+        {
+            // Tell VRCX to add in any missing fields that the merger may have
+            // missed, just as a precaution
+            dbConn.Execute(
+                $"INSERT OR REPLACE INTO {newDBName}.configs VALUES (?, 0)",
+                "config:vrcx_databaseversion"
             );
         }
 
