@@ -121,6 +121,14 @@
                     <span class="name" v-text="favorite.name || favorite.id"></span>
                 </div>
                 <el-button
+                    v-if="isLocalFavorite"
+                    type="text"
+                    icon="el-icon-close"
+                    size="mini"
+                    style="margin-left: 5px"
+                    @click.stop="removeLocalAvatarFavorite"></el-button>
+                <el-button
+                    v-else
                     type="text"
                     icon="el-icon-close"
                     size="mini"

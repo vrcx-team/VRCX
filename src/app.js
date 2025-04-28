@@ -532,6 +532,10 @@ console.log(`isLinux: ${LINUX}`);
 
     API.$on('USER:LIST', function (args) {
         for (var json of args.json) {
+            if (!json.displayName) {
+                console.error('getUsers gave us garbage', json);
+                continue;
+            }
             this.$emit('USER', {
                 json,
                 params: {
