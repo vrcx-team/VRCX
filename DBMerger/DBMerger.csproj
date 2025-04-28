@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputPath>..\build\Cef\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9</TargetFramework>
+		<Platform>x64</Platform>
+		<ApplicationRevision>0</ApplicationRevision>
+		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+		<AssemblyTitle>DBMerger</AssemblyTitle>
+		<Product>DBMerger</Product>
+		<Copyright>vrcx-team, loukylor, pypy, natsumi</Copyright>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<Title>DBMerger</Title>
+		<Description>DBMerger - Merges VRCX sqlite databases</Description>
+		<RepositoryUrl>https://github.com/vrcx-team/VRCX</RepositoryUrl>
+		<ResourceLanguages>en</ResourceLanguages>
+		<SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<!-- Fix fail fast exception -->
+		<CETCompat>false</CETCompat>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<DebugType>pdbonly</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+		<SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
+		<CopySQLiteInteropFiles>true</CopySQLiteInteropFiles>
+		<CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
+		<CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NLog" Version="5.3.3" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+	</ItemGroup>
+</Project>

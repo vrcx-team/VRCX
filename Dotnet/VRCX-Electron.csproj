@@ -7,7 +7,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <Platforms>x64</Platforms>
+    <Platform>x64</Platform>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <AssemblyTitle>VRCX</AssemblyTitle>
@@ -46,8 +46,8 @@
   <PropertyGroup>
     <ApplicationIcon>..\VRCX.ico</ApplicationIcon>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(PlatformTarget)' == 'x64'">
+
+  <PropertyGroup>
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
   </PropertyGroup>
@@ -125,5 +125,7 @@
     <Compile Remove="PWI\**" />
     <Content Remove="Overlay\**" />
     <Compile Remove="Overlay\**" />
+    <Content Remove="DBMerger\**" />
+    <Compile Remove="DBMerger\**" />
   </ItemGroup>
 </Project>
