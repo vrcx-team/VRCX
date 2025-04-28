@@ -1,19 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<OutputPath>..\build\Cef\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net9-windows10.0.19041.0</TargetFramework>
+		<TargetFramework>net9</TargetFramework>
+		<Platform>x64</Platform>
 		<ApplicationRevision>0</ApplicationRevision>
 		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 		<AssemblyTitle>DBMerger</AssemblyTitle>
 		<Product>DBMerger</Product>
-		<!-- Think anyone will notice? -->
 		<Copyright>vrcx-team, loukylor, pypy, natsumi</Copyright>
-		<!-- VS REALLY wants to build to AnyCPU, and refuses to just set the 
-			 build target to x64, so just hardcode it into the path since VRCX
-			 doesn't build to any other platforms anyway. Even adding the 
-			 `PlatformTarget` tag does nothing. Adding the `Platforms` tag will
-			 make VS to refuse to build the project outright -->
-		<OutputPath>..\build\DBMerger\</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<Title>DBMerger</Title>
@@ -22,11 +19,25 @@
 		<ResourceLanguages>en</ResourceLanguages>
 		<SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<!-- Fix fail fast exception -->
+		<CETCompat>false</CETCompat>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<DebugType>pdbonly</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+		<SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
-		<CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
+		<CopySQLiteInteropFiles>true</CopySQLiteInteropFiles>
 		<CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
 		<CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
 	</PropertyGroup>
