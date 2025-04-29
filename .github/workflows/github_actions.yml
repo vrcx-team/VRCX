@@ -38,6 +38,8 @@ jobs:
                   cat Version
             - name: Build Cef .NET Application
               run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+            - name: Build DB Merger
+              run: dotnet build DBMerger\DBMerger.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
             - name: Upload Cef dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
