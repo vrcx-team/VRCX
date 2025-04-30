@@ -17,7 +17,7 @@ function storeAvatarImage(args) {
         fileCreatedAt
     };
     window.API.cachedAvatarNames.set(fileId, avatarInfo);
-    // return avatarInfo;
+    return avatarInfo;
 }
 
 export { storeAvatarImage };
