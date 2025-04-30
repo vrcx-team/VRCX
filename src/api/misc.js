@@ -46,7 +46,7 @@ const miscReq = {
                 json,
                 params
             };
-            window.API.$emit('FEEDBACK:REPORT:USER', args);
+            // window.API.$emit('FEEDBACK:REPORT:USER', args);
             return args;
         });
     },
@@ -170,10 +170,31 @@ const miscReq = {
                 json,
                 params
             };
-            window.API.$emit('BADGE:UPDATE', args);
+            // window.API.$emit('BADGE:UPDATE', args);
             return args;
         });
     }
+
+    // /**
+    //  * @params {{
+    //  userId: string,
+    //  emojiId: string
+    //  }} params
+    //  * @returns {Promise<{json: any, params}>}
+    //  */
+    // sendBoop(params) {
+    //     return window.API.call(`users/${params.userId}/boop`, {
+    //         method: 'POST',
+    //         params
+    //     }).then((json) => {
+    //         const args = {
+    //             json,
+    //             params
+    //         };
+    //         this.$emit('BOOP:SEND', args);
+    //         return args;
+    //     });
+    // }
 };
 
 export default miscReq;

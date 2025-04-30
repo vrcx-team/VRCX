@@ -460,18 +460,18 @@ const _utils = {
             return '';
         }
     },
-    copyToClipboard(text) {
+    copyToClipboard(text, message = 'Copied successfully!') {
         navigator.clipboard
             .writeText(text)
             .then(() => {
                 window.$app.$message({
-                    message: 'Copied successfully!',
+                    message: message,
                     type: 'success'
                 });
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                this.$message.error('Copy failed!');
+                window.$app.$message.error('Copy failed!');
             });
     },
     hasGroupPermission(ref, permission) {
@@ -698,6 +698,52 @@ const _utils = {
             }
         }
         return { pc, android, ios };
+    },
+    compareByName(a, b) {
+        if (typeof a.name !== 'string' || typeof b.name !== 'string') {
+            return 0;
+        }
+        return a.name.localeCompare(b.name);
+    },
+    replaceBioSymbols(text) {
+        if (!text) {
+            return '';
+        }
+        var symbolList = {
+            '@': '＠',
+            '#': '＃',
+            $: '＄',
+            '%': '％',
+            '&': '＆',
+            '=': '＝',
+            '+': '＋',
+            '/': '⁄',
+            '\\': '＼',
+            ';': ';',
+            ':': '˸',
+            ',': '‚',
+            '?': '？',
+            '!': 'ǃ',
+            '"': '＂',
+            '<': '≺',
+            '>': '≻',
+            '.': '․',
+            '^': '＾',
+            '{': '｛',
+            '}': '｝',
+            '[': '［',
+            ']': '］',
+            '(': '（',
+            ')': '）',
+            '|': '｜',
+            '*': '∗'
+        };
+        var newText = text;
+        for (var key in symbolList) {
+            var regex = new RegExp(symbolList[key], 'g');
+            newText = newText.replace(regex, key);
+        }
+        return newText.replace(/ {1,}/g, ' ').trimRight();
     }
 };
 

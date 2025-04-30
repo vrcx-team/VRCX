@@ -3,6 +3,10 @@ import configRepository from '../service/config.js';
 import database from '../service/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 import { instanceRequest, userRequest } from '../api';
+import {
+    photonEmojis,
+    photonEventType
+} from '../composables/shared/constants/photon.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -79,111 +83,6 @@ export default class extends baseClass {
                 pageSizes: [5, 10, 15, 25, 50]
             }
         },
-
-        photonEventType: [
-            'MeshVisibility',
-            'AnimationFloat',
-            'AnimationBool',
-            'AnimationTrigger',
-            'AudioTrigger',
-            'PlayAnimation',
-            'SendMessage',
-            'SetParticlePlaying',
-            'TeleportPlayer',
-            'RunConsoleCommand',
-            'SetGameObjectActive',
-            'SetWebPanelURI',
-            'SetWebPanelVolume',
-            'SpawnObject',
-            'SendRPC',
-            'ActivateCustomTrigger',
-            'DestroyObject',
-            'SetLayer',
-            'SetMaterial',
-            'AddHealth',
-            'AddDamage',
-            'SetComponentActive',
-            'AnimationInt',
-            'AnimationIntAdd',
-            'AnimationIntSubtract',
-            'AnimationIntMultiply',
-            'AnimationIntDivide',
-            'AddVelocity',
-            'SetVelocity',
-            'AddAngularVelocity',
-            'SetAngularVelocity',
-            'AddForce',
-            'SetUIText',
-            'CallUdonMethod'
-        ],
-
-        photonEmojis: [
-            'Angry',
-            'Blushing',
-            'Crying',
-            'Frown',
-            'Hand Wave',
-            'Hang Ten',
-            'In Love',
-            'Jack O Lantern',
-            'Kiss',
-            'Laugh',
-            'Skull',
-            'Smile',
-            'Spooky Ghost',
-            'Stoic',
-            'Sunglasses',
-            'Thinking',
-            'Thumbs Down',
-            'Thumbs Up',
-            'Tongue Out',
-            'Wow',
-            'Arrow Point',
-            "Can't see",
-            'Hourglass',
-            'Keyboard',
-            'No Headphones',
-            'No Mic',
-            'Portal',
-            'Shush',
-            'Bats',
-            'Cloud',
-            'Fire',
-            'Snow Fall',
-            'Snowball',
-            'Splash',
-            'Web',
-            'Beer',
-            'Candy',
-            'Candy Cane',
-            'Candy Corn',
-            'Champagne',
-            'Drink',
-            'Gingerbread',
-            'Ice Cream',
-            'Pineapple',
-            'Pizza',
-            'Tomato',
-            'Beachball',
-            'Coal',
-            'Confetti',
-            'Gift',
-            'Gifts',
-            'Life Ring',
-            'Mistletoe',
-            'Money',
-            'Neon Shades',
-            'Sun Lotion',
-            'Boo',
-            'Broken Heart',
-            'Exclamation',
-            'Go',
-            'Heart',
-            'Music Note',
-            'Question',
-            'Stop',
-            'Zzz'
-        ],
 
         photonEventTableFilter: '',
         photonEventTableTypeFilter: [],
@@ -894,7 +793,7 @@ export default class extends baseClass {
                     var imageUrl = '';
                     if (type === 0) {
                         var emojiId = data.Parameters[245][2];
-                        emojiName = this.photonEmojis[emojiId];
+                        emojiName = photonEmojis[emojiId];
                     } else if (type === 1) {
                         emojiName = 'Custom';
                         var fileId = data.Parameters[245][1];
@@ -982,7 +881,7 @@ export default class extends baseClass {
                 if (this.debugPhotonLogging) {
                     var displayName = this.getDisplayNameFromPhotonId(senderId);
                     var feed = `RPC ${displayName} ${
-                        this.photonEventType[eventData.EventType]
+                        photonEventType[eventData.EventType]
                     }${eventName}`;
                     console.log('VrcRpc:', feed);
                 }
@@ -1210,10 +1109,10 @@ export default class extends baseClass {
                     type: 'ChangeStatus',
                     status: photonUser.status,
                     previousStatus: ref.status,
-                    statusDescription: this.replaceBioSymbols(
+                    statusDescription: $utils.replaceBioSymbols(
                         photonUser.statusDescription
                     ),
-                    previousStatusDescription: this.replaceBioSymbols(
+                    previousStatusDescription: $utils.replaceBioSymbols(
                         ref.statusDescription
                     ),
                     created_at: Date.parse(gameLogDate)
@@ -1227,8 +1126,8 @@ export default class extends baseClass {
                 return;
             }
             var avatar = user.avatarDict;
-            avatar.name = this.replaceBioSymbols(avatar.name);
-            avatar.description = this.replaceBioSymbols(avatar.description);
+            avatar.name = $utils.replaceBioSymbols(avatar.name);
+            avatar.description = $utils.replaceBioSymbols(avatar.description);
             var platform = '';
             if (user.last_platform === 'android') {
                 platform = 'Android';
@@ -1410,8 +1309,10 @@ export default class extends baseClass {
                 oldAvatarId !== avatar.id &&
                 photonId !== this.photonLobbyCurrentUser
             ) {
-                avatar.name = this.replaceBioSymbols(avatar.name);
-                avatar.description = this.replaceBioSymbols(avatar.description);
+                avatar.name = $utils.replaceBioSymbols(avatar.name);
+                avatar.description = $utils.replaceBioSymbols(
+                    avatar.description
+                );
                 $utils.checkVRChatCache(avatar).then((cacheInfo) => {
                     var inCache = false;
                     if (cacheInfo.Item1 > 0) {

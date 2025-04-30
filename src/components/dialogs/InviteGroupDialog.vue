@@ -1,12 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="inviteGroupDialog"
         :visible.sync="inviteGroupDialog.visible"
-        :before-close="beforeDialogClose"
         :title="$t('dialog.invite_to_group.header')"
         width="450px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <div v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading">
             <span>{{ $t('dialog.invite_to_group.description') }}</span>
             <br />
@@ -165,24 +163,16 @@
                 Invite
             </el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
-    import { groupRequest, userRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { groupRequest, userRequest } from '../../api';
+    import utils from '../../classes/utils';
 
     export default {
         name: 'InviteGroupDialog',
-        inject: [
-            'API',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'beforeDialogClose',
-            'userStatusClass',
-            'userImage',
-            'adjustDialogZ'
-        ],
+        inject: ['API', 'userStatusClass', 'userImage', 'adjustDialogZ'],
         props: {
             dialogData: {
                 type: Object,

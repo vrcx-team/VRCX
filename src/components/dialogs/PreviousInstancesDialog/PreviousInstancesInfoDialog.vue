@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="dialog"
-        :before-close="beforeDialogClose"
         :visible="visible"
         :title="$t('dialog.previous_instances.info')"
         width="800px"
         :fullscreen="fullscreen"
         destroy-on-close
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp"
         @close="$emit('update:visible', false)">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <location :location="location.tag" style="font-size: 14px"></location>
@@ -57,7 +54,7 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -71,7 +68,7 @@
         components: {
             Location
         },
-        inject: ['adjustDialogZ', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
+        inject: ['adjustDialogZ'],
         props: {
             visible: {
                 type: Boolean,

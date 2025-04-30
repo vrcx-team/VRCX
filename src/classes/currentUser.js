@@ -316,32 +316,6 @@ export default class extends baseClass {
             }
             return ref;
         };
-
-        /**
-         * @typedef {{
-         *     status: 'active' | 'offline' | 'busy' | 'ask me' | 'join me',
-         *     statusDescription: string
-         * }} SaveCurrentUserParameters
-         */
-
-        /**
-         * Updates current user's status.
-         * @param params {SaveCurrentUserParameters} new status to be set
-         * @returns {Promise<{json: any, params}>}
-         */
-        API.saveCurrentUser = function (params) {
-            return this.call(`users/${this.currentUser.id}`, {
-                method: 'PUT',
-                params
-            }).then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('USER:CURRENT:SAVE', args);
-                return args;
-            });
-        };
     }
 
     _data = {};

@@ -80,7 +80,7 @@ export default class extends baseClass {
                         this.lastLocation.location,
                         gameLog.dt
                     );
-                    var worldName = this.replaceBioSymbols(gameLog.worldName);
+                    var worldName = $utils.replaceBioSymbols(gameLog.worldName);
                     if (this.isGameRunning) {
                         this.lastLocationReset(gameLog.dt);
                         this.clearNowPlaying();
@@ -789,7 +789,7 @@ export default class extends baseClass {
             var videoPos = Number(data[1]);
             var videoLength = Number(data[2]);
             var displayName = data[3];
-            var videoName = this.replaceBioSymbols(data[4]);
+            var videoName = $utils.replaceBioSymbols(data[4]);
             var videoUrl = videoName;
             var videoId = 'LSMedia';
             if (videoUrl === this.nowPlaying.url) {

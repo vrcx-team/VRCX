@@ -188,13 +188,13 @@ mixin notificationsTab
                                         size='mini'
                                         style='margin-left: 5px'
                                         @click='sendNotificationResponse(scope.row.id, scope.row.responses, response.type)')
-                                    el-button(
-                                        v-else-if='response.icon === "reply" && scope.row.type === "boop"'
-                                        type='text'
-                                        icon='el-icon-chat-line-square'
-                                        size='mini'
-                                        style='margin-left: 5px'
-                                        @click='showSendBoopDialog(scope.row.senderUserId)')
+                                    //el-button(
+                                    //    v-else-if='response.icon === "reply" && scope.row.type === "boop"'
+                                    //    type='text'
+                                    //    icon='el-icon-chat-line-square'
+                                    //    size='mini'
+                                    //    style='margin-left: 5px'
+                                    //    @click='showSendBoopDialog(scope.row.senderUserId)')
                                     el-button(
                                         v-else-if='response.icon === "reply"'
                                         type='text'

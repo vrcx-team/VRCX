@@ -27,7 +27,7 @@ const playerModerationReq = {
                 json,
                 params
             };
-            window.API.$emit('PLAYER-MODERATION:SEND', args);
+            // window.API.$emit('PLAYER-MODERATION:SEND', args);
             return args;
         });
     },

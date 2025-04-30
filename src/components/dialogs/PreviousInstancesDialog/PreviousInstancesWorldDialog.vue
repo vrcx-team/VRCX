@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="previousInstancesWorldDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="isVisible"
         :title="$t('dialog.previous_instances.header')"
         width="1000px"
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <span style="font-size: 14px" v-text="previousInstancesWorldDialog.worldRef.name"></span>
             <el-input
@@ -66,7 +63,7 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -75,15 +72,7 @@
 
     export default {
         name: 'PreviousInstancesWorldDialog',
-        inject: [
-            'API',
-            'showLaunchDialog',
-            'showPreviousInstancesInfoDialog',
-            'adjustDialogZ',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp'
-        ],
+        inject: ['API', 'showLaunchDialog', 'showPreviousInstancesInfoDialog', 'adjustDialogZ'],
         props: {
             previousInstancesWorldDialog: {
                 type: Object,

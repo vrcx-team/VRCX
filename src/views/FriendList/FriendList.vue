@@ -270,9 +270,10 @@
 </template>
 
 <script>
-    import removeConfusables, { removeWhitespace } from '../../service/confusables';
-    import utils from '../../classes/utils';
     import { friendRequest, userRequest } from '../../api';
+    import utils from '../../classes/utils';
+    import { languageClass as _languageClass } from '../../composables/user/utils';
+    import removeConfusables, { removeWhitespace } from '../../service/confusables';
 
     export default {
         name: 'FriendListTab',
@@ -282,8 +283,7 @@
             'showFullscreenImageDialog',
             'showUserDialog',
             'statusClass',
-            'openExternalLink',
-            'languageClass'
+            'openExternalLink'
         ],
         props: {
             friends: {
@@ -336,6 +336,9 @@
             }
         },
         methods: {
+            languageClass(key) {
+                return _languageClass(key);
+            },
             friendsListSearchChange() {
                 this.friendsListLoading = true;
                 let query = '';
