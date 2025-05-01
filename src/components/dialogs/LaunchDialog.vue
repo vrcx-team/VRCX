@@ -205,7 +205,7 @@
                     });
             },
             launchGame(location, shortName, desktop) {
-                this.$emit('launch-game', location, shortName, desktop);
+                this.$emit('launchGame', location, shortName, desktop);
                 this.isVisible = false;
             },
             getConfig() {
