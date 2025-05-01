@@ -26,7 +26,6 @@
                                 'Location',
                                 'OnPlayerJoined',
                                 'OnPlayerLeft',
-                                'PortalSpawn',
                                 'VideoPlay',
                                 'Event',
                                 'External',
