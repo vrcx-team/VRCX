@@ -234,7 +234,8 @@
                     if (!friend.ref.$location.isRealInstance && this.lastLocation.friendList.has(friend.id)) {
                         locationTag = this.lastLocation.location;
                     }
-                    if (!locationTag) {
+                    let isRealInstance = utils.isRealInstance(locationTag);
+                    if (!isRealInstance) {
                         return;
                     }
 
