@@ -1,6 +1,6 @@
 <template>
     <div v-if="menuActiveIndex === 'friendLog'" class="x-container">
-        <data-tables v-bind="friendLogTable" ref="friendLogTableRef">
+        <data-tables v-bind="friendLogTable">
             <template #tool>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <el-select
