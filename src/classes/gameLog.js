@@ -981,29 +981,6 @@ export default class extends baseClass {
             this.addGameLogEntry(gameLog, this.lastLocation.location);
         },
 
-        deleteGameLogEntryPrompt(row) {
-            this.$confirm('Continue? Delete Log', 'Confirm', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        this.deleteGameLogEntry(row);
-                    }
-                }
-            });
-        },
-
-        deleteGameLogEntry(row) {
-            $app.removeFromArray(this.gameLogTable.data, row);
-            database.deleteGameLogEntry(row);
-            console.log(row);
-            database.getGamelogDatabase().then((data) => {
-                this.gameLogSessionTable = data;
-                this.updateSharedFeed(true);
-            });
-        },
-
         gameLogSearch(row) {
             var value = this.gameLogTable.search.toUpperCase();
             if (!value) {

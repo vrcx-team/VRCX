@@ -31,9 +31,7 @@ doctype html
         include ./mixins/tabs/feed.pug
         +feedTab
 
-        //- gameLog
-        include ./mixins/tabs/gameLog.pug
-        +gameLogTab
+        GameLogTab(v-bind='gameLogTabBind' v-on='gameLogTabEvent')
 
         //- playerList
         include ./mixins/tabs/playerList.pug

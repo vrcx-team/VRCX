@@ -69,6 +69,7 @@ import NavMenu from './components/NavMenu.vue';
 import FriendListTab from './views/FriendList/FriendList.vue';
 import FavoritesTab from './views/Favorites/Favorites.vue';
 import FriendLogTab from './views/FriendLog/FriendLog.vue';
+import GameLogTab from './views/GameLog/GameLog.vue';
 
 // components
 import SimpleSwitch from './components/SimpleSwitch.vue';
@@ -252,6 +253,7 @@ console.log(`isLinux: ${LINUX}`);
             SideBar,
             NavMenu,
             FriendLogTab,
+            GameLogTab,
 
             // components
             // - common
@@ -14591,6 +14593,29 @@ console.log(`isLinux: ${LINUX}`);
             shiftHeld: this.shiftHeld
         };
     };
+
+    $app.computed.gameLogTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            gameLogTable: this.gameLogTable,
+            shiftHeld: this.shiftHeld,
+            hideTooltips: this.hideTooltips
+        };
+    };
+
+    $app.computed.gameLogTabEvent = function () {
+        return {
+            gameLogTableLookup: this.gameLogTableLookup,
+            gameLogIsFriend: this.gameLogIsFriend,
+            gameLogIsFavorite: this.gameLogIsFavorite,
+            lookupUser: this.lookupUser,
+            updateGameLogSessionTable: (val) =>
+                (this.gameLogSessionTable = val),
+            updateSharedFeed: this.updateSharedFeed
+        };
+    };
+
+    //
 
     $app.methods.languageClass = function (key) {
         return languageClass(key);
