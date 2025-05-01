@@ -68,6 +68,7 @@ import SideBar from './views/SideBar/SideBar.vue';
 import NavMenu from './components/NavMenu.vue';
 import FriendListTab from './views/FriendList/FriendList.vue';
 import FavoritesTab from './views/Favorites/Favorites.vue';
+import FriendLogTab from './views/FriendLog/FriendLog.vue';
 
 // components
 import SimpleSwitch from './components/SimpleSwitch.vue';
@@ -250,6 +251,7 @@ console.log(`isLinux: ${LINUX}`);
             // - others
             SideBar,
             NavMenu,
+            FriendLogTab,
 
             // components
             // - common
@@ -6249,24 +6251,6 @@ console.log(`isLinux: ${LINUX}`);
         ctx.trustLevel = ref.$trustLevel;
     };
 
-    $app.methods.deleteFriendLog = function (row) {
-        $app.removeFromArray(this.friendLogTable.data, row);
-        database.deleteFriendLogHistory(row.rowId);
-    };
-
-    $app.methods.deleteFriendLogPrompt = function (row) {
-        this.$confirm('Continue? Delete Log', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    this.deleteFriendLog(row);
-                }
-            }
-        });
-    };
-
     // #endregion
     // #region | App: Moderation
 
@@ -6565,10 +6549,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // Save Table Filters
     $app.methods.saveTableFilters = async function () {
-        await configRepository.setString(
-            'VRCX_friendLogTableFilters',
-            JSON.stringify(this.friendLogTable.filters[0].value)
-        );
         await configRepository.setString(
             'VRCX_notificationTableFilters',
             JSON.stringify(this.notificationTable.filters[0].value)
@@ -14601,6 +14581,14 @@ console.log(`isLinux: ${LINUX}`);
         return {
             'open-previous-instance-info-dialog':
                 this.showPreviousInstancesInfoDialog
+        };
+    };
+
+    $app.computed.friendLogTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            friendLogTable: this.friendLogTable,
+            shiftHeld: this.shiftHeld
         };
     };
 

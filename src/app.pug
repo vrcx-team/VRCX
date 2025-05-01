@@ -45,9 +45,7 @@ doctype html
 
         FavoritesTab(v-bind='favoritesTabBind' v-on='favoritesTabEvent')
 
-        //- friendLog
-        include ./mixins/tabs/friendLog.pug
-        +friendLogTab
+        FriendLogTab(v-bind='friendLogTabBind')
 
         //- moderation
         ModerationTab(v-bind='moderationTabBind')
