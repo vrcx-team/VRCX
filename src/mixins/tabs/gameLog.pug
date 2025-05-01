@@ -17,7 +17,7 @@ mixin gameLogTab
                         style='flex: 1'
                         :placeholder='$t("view.game_log.filter_placeholder")')
                         el-option(
-                            v-for='type in ["Location", "OnPlayerJoined", "OnPlayerLeft", "PortalSpawn", "VideoPlay", "Event", "External", "StringLoad", "ImageLoad"]'
+                            v-for='type in ["Location", "OnPlayerJoined", "OnPlayerLeft", "VideoPlay", "Event", "External", "StringLoad", "ImageLoad"]'
                             :key='type'
                             :label='$t("view.game_log.filters." + type)'
                             :value='type')
