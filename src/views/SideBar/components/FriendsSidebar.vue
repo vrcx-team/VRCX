@@ -226,19 +226,13 @@
 
                 const allFriends = [...this.vipFriends, ...this.onlineFriends];
                 allFriends.forEach((friend) => {
-                    let locationTag;
+                    if (!friend.ref?.$location) {
+                        return;
+                    }
 
-                    if (friend.ref?.$location.isRealInstance) {
-                        locationTag = friend.ref.$location.tag;
-                    } else if (this.lastLocation.friendList.has(friend.id)) {
-                        let $location = utils.parseLocation(this.lastLocation.location);
-                        if ($location.isRealInstance) {
-                            if ($location.tag === 'private') {
-                                locationTag = this.lastLocation.name;
-                            } else {
-                                locationTag = $location.tag;
-                            }
-                        }
+                    let locationTag = friend.ref.$location.tag;
+                    if (!friend.ref.$location.isRealInstance && this.lastLocation.friendList.has(friend.id)) {
+                        locationTag = this.lastLocation.location;
                     }
                     if (!locationTag) {
                         return;
@@ -260,30 +254,30 @@
                 return sortedFriendsList.sort((a, b) => b.length - a.length);
             },
             onlineFriendsByGroupStatus() {
-                if (
-                    !this.isSidebarGroupByInstance ||
-                    (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
-                ) {
+                if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
                     return this.onlineFriends;
                 }
 
-                const sameInstanceTag = new Set(
-                    this.friendsInSameInstance.flatMap((item) => item.map((friend) => friend.ref?.$location.tag))
-                );
+                const sameInstanceTag = new Set();
+                for (const item of this.friendsInSameInstance) {
+                    for (const friend of item) {
+                        sameInstanceTag.add(friend.ref?.$location.tag);
+                    }
+                }
 
                 return this.onlineFriends.filter((item) => !sameInstanceTag.has(item.ref?.$location.tag));
             },
             vipFriendsByGroupStatus() {
-                if (
-                    !this.isSidebarGroupByInstance ||
-                    (this.isSidebarGroupByInstance && !this.isHideFriendsInSameInstance)
-                ) {
+                if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
                     return this.vipFriends;
                 }
 
-                const sameInstanceTag = new Set(
-                    this.friendsInSameInstance.flatMap((item) => item.map((friend) => friend.ref?.$location.tag))
-                );
+                const sameInstanceTag = new Set();
+                for (const item of this.friendsInSameInstance) {
+                    for (const friend of item) {
+                        sameInstanceTag.add(friend.ref?.$location.tag);
+                    }
+                }
 
                 return this.vipFriends.filter((item) => !sameInstanceTag.has(item.ref?.$location.tag));
             },
@@ -358,11 +352,15 @@
                     if (friend.ref?.location !== 'traveling') {
                         return friend.ref.location;
                     }
+                }
+                for (const friend of friendsArr) {
                     if (utils.isRealInstance(friend.ref?.travelingToLocation)) {
                         return friend.ref.travelingToLocation;
                     }
+                }
+                for (const friend of friendsArr) {
                     if (this.lastLocation.friendList.has(friend.id)) {
-                        return this.lastLocation.name;
+                        return this.lastLocation.location;
                     }
                 }
                 return friendsArr[0].ref?.location;
