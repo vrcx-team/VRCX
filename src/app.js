@@ -72,6 +72,7 @@ import FriendLogTab from './views/FriendLog/FriendLog.vue';
 import GameLogTab from './views/GameLog/GameLog.vue';
 import NotificationTab from './views/Notifications/Notification.vue';
 import FeedTab from './views/Feed/Feed.vue';
+import SearchTab from './views/Search/Search.vue';
 
 // components
 import SimpleSwitch from './components/SimpleSwitch.vue';
@@ -250,6 +251,7 @@ console.log(`isLinux: ${LINUX}`);
             FriendListTab,
             FavoritesTab,
             NotificationTab,
+            SearchTab,
             // - others
             SideBar,
             NavMenu,
@@ -3648,25 +3650,6 @@ console.log(`isLinux: ${LINUX}`);
         return a.displayName.localeCompare(b.displayName);
     };
 
-    // descending
-    var compareByUpdatedAt = function (a, b) {
-        if (
-            typeof a.updated_at !== 'string' ||
-            typeof b.updated_at !== 'string'
-        ) {
-            return 0;
-        }
-        var A = a.updated_at.toUpperCase();
-        var B = b.updated_at.toUpperCase();
-        if (A < B) {
-            return 1;
-        }
-        if (A > B) {
-            return -1;
-        }
-        return 0;
-    };
-
     var compareByMemberCount = function (a, b) {
         if (
             typeof a.memberCount !== 'number' ||
@@ -5071,8 +5054,8 @@ console.log(`isLinux: ${LINUX}`);
                 return;
             }
         }
-        this.$refs.searchTab.currentName = '0';
-        this.menuActiveIndex = 'search';
+        // this.$refs.searchTab.currentName = '0';
+        // this.menuActiveIndex = 'search';
     };
 
     // #endregion
@@ -5080,96 +5063,29 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.searchText = '';
     $app.data.searchUserResults = [];
-    $app.data.searchUserParams = {};
-    $app.data.searchWorldResults = [];
-    $app.data.searchWorldOption = '';
-    $app.data.searchWorldParams = {};
-    $app.data.searchAvatarResults = [];
-    $app.data.searchAvatarPage = [];
-    $app.data.searchAvatarPageNum = 0;
-    $app.data.searchAvatarFilter = '';
-    $app.data.searchAvatarSort = '';
-    $app.data.searchAvatarFilterRemote = '';
-    $app.data.searchGroupResults = [];
-    $app.data.searchGroupParams = {};
-    $app.data.isSearchUserLoading = false;
-    $app.data.isSearchWorldLoading = false;
-    $app.data.isSearchAvatarLoading = false;
-    $app.data.isSearchGroupLoading = false;
 
     API.$on('LOGIN', function () {
         $app.searchText = '';
         $app.searchUserResults = [];
-        $app.searchUserParams = {};
-        $app.searchWorldResults = [];
-        $app.searchWorldOption = '';
-        $app.searchWorldParams = {};
-        $app.searchAvatarResults = [];
-        $app.searchAvatarPage = [];
-        $app.searchAvatarPageNum = 0;
-        $app.searchAvatarFilter = '';
-        $app.searchAvatarSort = '';
-        $app.searchAvatarFilterRemote = '';
-        $app.searchGroupResults = [];
-        $app.searchGroupParams = {};
-        $app.isSearchUserLoading = false;
-        $app.isSearchWorldLoading = false;
-        $app.isSearchAvatarLoading = false;
     });
 
     $app.methods.clearSearch = function () {
         this.searchText = '';
-        this.searchUserParams = {};
-        this.searchWorldParams = {};
         this.searchUserResults = [];
-        this.searchWorldResults = [];
-        this.searchAvatarResults = [];
-        this.searchAvatarPage = [];
-        this.searchAvatarPageNum = 0;
-        this.searchGroupParams = {};
-        this.searchGroupResults = [];
-    };
-
-    $app.methods.search = function () {
-        switch (this.$refs.searchTab.currentName) {
-            case '0':
-                this.searchUser();
-                break;
-            case '1':
-                this.searchWorld({});
-                break;
-            case '2':
-                this.searchAvatar();
-                break;
-            case '3':
-                this.searchGroup();
-                break;
-        }
     };
 
     $app.methods.searchUserByDisplayName = async function (displayName) {
-        this.searchUserParams = {
+        const params = {
             n: 10,
             offset: 0,
             fuzzy: false,
             search: displayName
         };
-        await this.moreSearchUser();
+        await this.moreSearchUser(null, params);
     };
 
-    $app.methods.searchUser = async function () {
-        this.searchUserParams = {
-            n: 10,
-            offset: 0,
-            search: this.searchText,
-            customFields: this.searchUserByBio ? 'bio' : 'displayName',
-            sort: this.searchUserSortByLastLoggedIn ? 'last_login' : 'relevance'
-        };
-        await this.moreSearchUser();
-    };
-
-    $app.methods.moreSearchUser = async function (go) {
-        var params = this.searchUserParams;
+    $app.methods.moreSearchUser = async function (go, params) {
+        // var params = this.searchUserParams;
         if (go) {
             params.offset += params.n * go;
             if (params.offset < 0) {
@@ -5191,268 +5107,6 @@ console.log(`isLinux: ${LINUX}`);
                     }
                 }
                 this.searchUserResults = Array.from(map.values());
-                return args;
-            });
-    };
-
-    $app.data.searchWorldLabs = false;
-
-    $app.data.searchUserByBio = false;
-    $app.data.searchUserSortByLastLoggedIn = false;
-
-    $app.methods.searchWorld = function (ref) {
-        this.searchWorldOption = '';
-        var params = {
-            n: 10,
-            offset: 0
-        };
-        switch (ref.sortHeading) {
-            case 'featured':
-                params.sort = 'order';
-                params.featured = 'true';
-                break;
-            case 'trending':
-                params.sort = 'popularity';
-                params.featured = 'false';
-                break;
-            case 'updated':
-                params.sort = 'updated';
-                break;
-            case 'created':
-                params.sort = 'created';
-                break;
-            case 'publication':
-                params.sort = 'publicationDate';
-                break;
-            case 'shuffle':
-                params.sort = 'shuffle';
-                break;
-            case 'active':
-                this.searchWorldOption = 'active';
-                break;
-            case 'recent':
-                this.searchWorldOption = 'recent';
-                break;
-            case 'favorite':
-                this.searchWorldOption = 'favorites';
-                break;
-            case 'labs':
-                params.sort = 'labsPublicationDate';
-                break;
-            case 'heat':
-                params.sort = 'heat';
-                params.featured = 'false';
-                break;
-            default:
-                params.sort = 'relevance';
-                params.search = $utils.replaceBioSymbols(this.searchText);
-                break;
-        }
-        params.order = ref.sortOrder || 'descending';
-        if (ref.sortOwnership === 'mine') {
-            params.user = 'me';
-            params.releaseStatus = 'all';
-        }
-        if (ref.tag) {
-            params.tag = ref.tag;
-        }
-        if (!this.searchWorldLabs) {
-            if (params.tag) {
-                params.tag += ',system_approved';
-            } else {
-                params.tag = 'system_approved';
-            }
-        }
-        // TODO: option.platform
-        this.searchWorldParams = params;
-        this.moreSearchWorld();
-    };
-
-    $app.methods.moreSearchWorld = function (go) {
-        var params = this.searchWorldParams;
-        if (go) {
-            params.offset += params.n * go;
-            if (params.offset < 0) {
-                params.offset = 0;
-            }
-        }
-        this.isSearchWorldLoading = true;
-        worldRequest
-            .getWorlds(params, this.searchWorldOption)
-            .finally(() => {
-                this.isSearchWorldLoading = false;
-            })
-            .then((args) => {
-                var map = new Map();
-                for (var json of args.json) {
-                    var ref = API.cachedWorlds.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        map.set(ref.id, ref);
-                    }
-                }
-                this.searchWorldResults = Array.from(map.values());
-                return args;
-            });
-    };
-
-    $app.methods.searchAvatar = async function () {
-        this.isSearchAvatarLoading = true;
-        if (!this.searchAvatarFilter) {
-            this.searchAvatarFilter = 'all';
-        }
-        if (!this.searchAvatarSort) {
-            this.searchAvatarSort = 'name';
-        }
-        if (!this.searchAvatarFilterRemote) {
-            this.searchAvatarFilterRemote = 'all';
-        }
-        if (this.searchAvatarFilterRemote !== 'local') {
-            this.searchAvatarSort = 'name';
-        }
-        var avatars = new Map();
-        var query = this.searchText.toUpperCase();
-        if (!query) {
-            for (var ref of API.cachedAvatars.values()) {
-                switch (this.searchAvatarFilter) {
-                    case 'all':
-                        avatars.set(ref.id, ref);
-                        break;
-                    case 'public':
-                        if (ref.releaseStatus === 'public') {
-                            avatars.set(ref.id, ref);
-                        }
-                        break;
-                    case 'private':
-                        if (ref.releaseStatus === 'private') {
-                            avatars.set(ref.id, ref);
-                        }
-                        break;
-                }
-            }
-            this.isSearchAvatarLoading = false;
-        } else {
-            if (
-                this.searchAvatarFilterRemote === 'all' ||
-                this.searchAvatarFilterRemote === 'local'
-            ) {
-                for (var ref of API.cachedAvatars.values()) {
-                    var match = ref.name.toUpperCase().includes(query);
-                    if (!match && ref.description) {
-                        match = ref.description.toUpperCase().includes(query);
-                    }
-                    if (!match && ref.authorName) {
-                        match = ref.authorName.toUpperCase().includes(query);
-                    }
-                    if (match) {
-                        switch (this.searchAvatarFilter) {
-                            case 'all':
-                                avatars.set(ref.id, ref);
-                                break;
-                            case 'public':
-                                if (ref.releaseStatus === 'public') {
-                                    avatars.set(ref.id, ref);
-                                }
-                                break;
-                            case 'private':
-                                if (ref.releaseStatus === 'private') {
-                                    avatars.set(ref.id, ref);
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-            if (
-                (this.searchAvatarFilterRemote === 'all' ||
-                    this.searchAvatarFilterRemote === 'remote') &&
-                this.avatarRemoteDatabase &&
-                query.length >= 3
-            ) {
-                var data = await this.lookupAvatars('search', query);
-                if (data && typeof data === 'object') {
-                    data.forEach((avatar) => {
-                        avatars.set(avatar.id, avatar);
-                    });
-                }
-            }
-            this.isSearchAvatarLoading = false;
-        }
-        var avatarsArray = Array.from(avatars.values());
-        if (this.searchAvatarFilterRemote === 'local') {
-            switch (this.searchAvatarSort) {
-                case 'updated':
-                    avatarsArray.sort(compareByUpdatedAt);
-                    break;
-                case 'created':
-                    avatarsArray.sort($utils.compareByCreatedAt);
-                    break;
-                case 'name':
-                    avatarsArray.sort($utils.compareByName);
-                    break;
-            }
-        }
-        this.searchAvatarPageNum = 0;
-        this.searchAvatarResults = avatarsArray;
-        this.searchAvatarPage = avatarsArray.slice(0, 10);
-    };
-
-    $app.methods.moreSearchAvatar = function (n) {
-        if (n === -1) {
-            this.searchAvatarPageNum--;
-            var offset = this.searchAvatarPageNum * 10;
-        }
-        if (n === 1) {
-            this.searchAvatarPageNum++;
-            var offset = this.searchAvatarPageNum * 10;
-        }
-        this.searchAvatarPage = this.searchAvatarResults.slice(
-            offset,
-            offset + 10
-        );
-    };
-
-    $app.methods.searchGroup = async function () {
-        this.searchGroupParams = {
-            n: 10,
-            offset: 0,
-            query: $utils.replaceBioSymbols(this.searchText)
-        };
-        await this.moreSearchGroup();
-    };
-
-    $app.methods.moreSearchGroup = async function (go) {
-        var params = this.searchGroupParams;
-        if (go) {
-            params.offset += params.n * go;
-            if (params.offset < 0) {
-                params.offset = 0;
-            }
-        }
-        this.isSearchGroupLoading = true;
-        await groupRequest
-            .groupSearch(params)
-            .finally(() => {
-                this.isSearchGroupLoading = false;
-            })
-            .then((args) => {
-                // API.$on('GROUP:SEARCH', function (args) {
-                for (const json of args.json) {
-                    API.$emit('GROUP', {
-                        json,
-                        params: {
-                            groupId: json.id
-                        }
-                    });
-                }
-                // });
-                var map = new Map();
-                for (var json of args.json) {
-                    var ref = API.cachedGroups.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        map.set(ref.id, ref);
-                    }
-                }
-                this.searchGroupResults = Array.from(map.values());
                 return args;
             });
     };
@@ -9126,7 +8780,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.sortUserDialogAvatars = function (array) {
         var D = this.userDialog;
         if (D.avatarSorting === 'update') {
-            array.sort(compareByUpdatedAt);
+            array.sort($utils.compareByUpdatedAt);
         } else {
             array.sort($utils.compareByName);
         }
@@ -14263,6 +13917,33 @@ console.log(`isLinux: ${LINUX}`);
     $app.computed.feedTabEvent = function () {
         return {
             feedTableLookup: this.feedTableLookup
+        };
+    };
+
+    $app.computed.searchTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            searchText: this.searchText,
+            searchUserResults: this.searchUserResults,
+            randomUserColours: this.randomUserColours,
+            avatarRemoteDatabaseProviderList:
+                this.avatarRemoteDatabaseProviderList,
+            avatarRemoteDatabaseProvider: this.avatarRemoteDatabaseProvider,
+            hideTooltips: this.hideTooltips,
+            userDialog: this.userDialog,
+            getSmallThumbnailUrl: this.getSmallThumbnailUrl,
+            lookupAvatars: this.lookupAvatars,
+            avatarRemoteDatabase: this.avatarRemoteDatabase
+        };
+    };
+
+    $app.computed.searchTabEvent = function () {
+        return {
+            clearSearch: this.clearSearch,
+            setAvatarProvider: this.setAvatarProvider,
+            refreshUserDialogAvatars: this.refreshUserDialogAvatars,
+            moreSearchUser: this.moreSearchUser,
+            'update:searchText': (value) => (this.searchText = value)
         };
     };
 

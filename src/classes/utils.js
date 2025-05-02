@@ -744,6 +744,24 @@ const _utils = {
             newText = newText.replace(regex, key);
         }
         return newText.replace(/ {1,}/g, ' ').trimRight();
+    },
+    // descending
+    compareByUpdatedAt(a, b) {
+        if (
+            typeof a.updated_at !== 'string' ||
+            typeof b.updated_at !== 'string'
+        ) {
+            return 0;
+        }
+        var A = a.updated_at.toUpperCase();
+        var B = b.updated_at.toUpperCase();
+        if (A < B) {
+            return 1;
+        }
+        if (A > B) {
+            return -1;
+        }
+        return 0;
     }
 };
 

@@ -36,9 +36,7 @@ doctype html
         include ./mixins/tabs/playerList.pug
         +playerListTab
 
-        //- search
-        include ./mixins/tabs/search.pug
-        +searchTab
+        SearchTab(v-bind='searchTabBind' v-on='searchTabEvent')
 
         FavoritesTab(v-bind='favoritesTabBind' v-on='favoritesTabEvent')
 
