@@ -27,9 +27,8 @@ doctype html
 
     //- ### Tabs ###
     template(v-if='API.isLoggedIn')
-        //- feed
-        include ./mixins/tabs/feed.pug
-        +feedTab
+
+        FeedTab(v-bind='feedTabBind' v-on='feedTabEvent')
 
         GameLogTab(v-bind='gameLogTabBind' v-on='gameLogTabEvent')
 
