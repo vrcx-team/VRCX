@@ -322,7 +322,7 @@
                 friendsListLoading: false,
                 friendsListLoadingProgress: '',
                 friendsListSearchFilterVIP: false,
-                // emm
+                // TODO
                 friendsListBulkUnfriendForceUpdate: 0
             };
         },

@@ -70,6 +70,7 @@ import FriendListTab from './views/FriendList/FriendList.vue';
 import FavoritesTab from './views/Favorites/Favorites.vue';
 import FriendLogTab from './views/FriendLog/FriendLog.vue';
 import GameLogTab from './views/GameLog/GameLog.vue';
+import NotificationTab from './views/Notifications/Notification.vue';
 
 // components
 import SimpleSwitch from './components/SimpleSwitch.vue';
@@ -105,8 +106,6 @@ import AvatarProviderDialog from './views/Settings/dialogs/AvatarProviderDialog.
 import RegistryBackupDialog from './views/Settings/dialogs/RegistryBackupDialog.vue';
 import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
 import ChatboxBlacklistDialog from './views/PlayerList/dialogs/ChatboxBlacklistDialog.vue';
-import SendInviteResponseDialog from './views/Notifications/dialogs/SendInviteResponseDialog.vue';
-import SendInviteRequestResponseDialog from './views/Notifications/dialogs/SendInviteRequestResponseDialog.vue';
 import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
 
 import SafeDialog from './components/dialogs/SafeDialog.vue';
@@ -249,6 +248,7 @@ console.log(`isLinux: ${LINUX}`);
             ChartsTab,
             FriendListTab,
             FavoritesTab,
+            NotificationTab,
             // - others
             SideBar,
             NavMenu,
@@ -302,10 +302,6 @@ console.log(`isLinux: ${LINUX}`);
             AvatarProviderDialog,
             RegistryBackupDialog,
             PrimaryPasswordDialog,
-            //  - invite
-            SendInviteResponseDialog,
-            SendInviteRequestResponseDialog,
-
             FullscreenImageDialog
         },
         provide() {
@@ -6417,121 +6413,6 @@ console.log(`isLinux: ${LINUX}`);
         }
     });
 
-    $app.methods.acceptFriendRequestNotification = function (row) {
-        // FIXME: 메시지 수정
-        this.$confirm('Continue? Accept Friend Request', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    notificationRequest.acceptFriendRequestNotification({
-                        notificationId: row.id
-                    });
-                }
-            }
-        });
-    };
-
-    $app.methods.hideNotification = function (row) {
-        if (row.type === 'ignoredFriendRequest') {
-            friendRequest.deleteHiddenFriendRequest(
-                {
-                    notificationId: row.id
-                },
-                row.senderUserId
-            );
-        } else {
-            notificationRequest.hideNotification({
-                notificationId: row.id
-            });
-        }
-    };
-
-    $app.methods.hideNotificationPrompt = function (row) {
-        this.$confirm(`Continue? Decline ${row.type}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    this.hideNotification(row);
-                }
-            }
-        });
-    };
-
-    $app.methods.deleteNotificationLog = function (row) {
-        $app.removeFromArray(this.notificationTable.data, row);
-        if (
-            row.type !== 'friendRequest' &&
-            row.type !== 'ignoredFriendRequest'
-        ) {
-            database.deleteNotification(row.id);
-        }
-    };
-
-    $app.methods.deleteNotificationLogPrompt = function (row) {
-        this.$confirm(`Continue? Delete ${row.type}`, 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    this.deleteNotificationLog(row);
-                }
-            }
-        });
-    };
-
-    $app.methods.acceptRequestInvite = function (row) {
-        this.$confirm('Continue? Send Invite', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    var currentLocation = this.lastLocation.location;
-                    if (this.lastLocation.location === 'traveling') {
-                        currentLocation = this.lastLocationDestination;
-                    }
-                    var L = $utils.parseLocation(currentLocation);
-                    worldRequest
-                        .getCachedWorld({
-                            worldId: L.worldId
-                        })
-                        .then((args) => {
-                            notificationRequest
-                                .sendInvite(
-                                    {
-                                        instanceId: L.tag,
-                                        worldId: L.tag,
-                                        worldName: args.ref.name,
-                                        rsvp: true
-                                    },
-                                    row.senderUserId
-                                )
-                                .then((_args) => {
-                                    this.$message('Invite sent');
-                                    notificationRequest.hideNotification({
-                                        notificationId: row.id
-                                    });
-                                    return _args;
-                                });
-                        });
-                }
-            }
-        });
-    };
-
-    // Save Table Filters
-    $app.methods.saveTableFilters = async function () {
-        await configRepository.setString(
-            'VRCX_notificationTableFilters',
-            JSON.stringify(this.notificationTable.filters[0].value)
-        );
-    };
-
     $app.data.feedTable.filter = JSON.parse(
         await configRepository.getString('VRCX_feedTableFilters', '[]')
     );
@@ -10876,63 +10757,6 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | App: Edit and Send Invite Response Message Dialog
-
-    $app.data.sendInviteResponseDialog = {
-        message: '',
-        messageSlot: 0,
-        invite: {}
-    };
-
-    $app.data.sendInviteResponseDialogVisible = false;
-
-    $app.data.sendInviteResponseConfirmDialog = {
-        visible: false
-    };
-
-    $app.methods.showSendInviteResponseDialog = function (invite) {
-        this.sendInviteResponseDialog = {
-            invite
-        };
-        inviteMessagesRequest.refreshInviteMessageTableData('response');
-        this.clearInviteImageUpload();
-        this.sendInviteResponseDialogVisible = true;
-    };
-
-    // #endregion
-    // #region | App: Invite Request Response Message Dialog
-
-    $app.data.sendInviteRequestResponseDialogVisible = false;
-
-    $app.methods.showSendInviteRequestResponseDialog = function (invite) {
-        this.sendInviteResponseDialog = {
-            invite
-        };
-        inviteMessagesRequest.refreshInviteMessageTableData('requestResponse');
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.sendInviteRequestResponseDialog.$el)
-        );
-        this.clearInviteImageUpload();
-        this.sendInviteRequestResponseDialogVisible = true;
-    };
-
-    // #endregion
-    // #region | App: Invite Request Message Dialog
-
-    $app.data.sendInviteRequestDialogVisible = false;
-
-    $app.methods.showSendInviteRequestDialog = function (params, userId) {
-        this.sendInviteDialog = {
-            params,
-            userId,
-            messageType: 'requestInvite'
-        };
-        inviteMessagesRequest.refreshInviteMessageTableData('request');
-        this.clearInviteImageUpload();
-        this.sendInviteRequestDialogVisible = true;
-    };
-
-    // #endregion
     // #region | App: Friends List
 
     $app.data.friendsListSearch = '';
@@ -13908,46 +13732,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // #endregion
 
-    $app.methods.sendNotificationResponse = function (
-        notificationId,
-        responses,
-        responseType
-    ) {
-        if (!Array.isArray(responses) || responses.length === 0) {
-            return null;
-        }
-        var responseData = '';
-        for (var i = 0; i < responses.length; i++) {
-            if (responses[i].type === responseType) {
-                responseData = responses[i].data;
-                break;
-            }
-        }
-        return notificationRequest.sendNotificationResponse({
-            notificationId,
-            responseType,
-            responseData
-        });
-    };
-
-    $app.methods.openNotificationLink = function (link) {
-        if (!link) {
-            return;
-        }
-        var data = link.split(':');
-        if (!data.length) {
-            return;
-        }
-        switch (data[0]) {
-            case 'group':
-                this.showGroupDialog(data[1]);
-                break;
-            case 'user':
-                this.showUserDialog(data[1]);
-                break;
-        }
-    };
-
     $app.methods.checkVRChatDebugLogging = async function () {
         if (this.gameLogDisabled) {
             return;
@@ -14587,6 +14371,30 @@ console.log(`isLinux: ${LINUX}`);
             updateGameLogSessionTable: (val) =>
                 (this.gameLogSessionTable = val),
             updateSharedFeed: this.updateSharedFeed
+        };
+    };
+
+    $app.computed.notificationTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            notificationTable: this.notificationTable,
+            shiftHeld: this.shiftHeld,
+            hideTooltips: this.hideTooltips,
+            lastLocation: this.lastLocation,
+            lastLocationDestination: this.lastLocationDestination,
+            isGameRunning: this.isGameRunning,
+            inviteResponseMessageTable: this.inviteResponseMessageTable,
+            updateImage: this.updateImage,
+            checkCanInvite: this.checkCanInvite,
+            inviteRequestResponseMessageTable:
+                this.inviteRequestResponseMessageTable
+        };
+    };
+
+    $app.computed.notificationTabEvent = function () {
+        return {
+            inviteImageUpload: this.inviteImageUpload,
+            clearInviteImageUpload: this.clearInviteImageUpload
         };
     };
 

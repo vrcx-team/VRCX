@@ -249,17 +249,4 @@ mixin dialogs
         :chatboxUserBlacklist='chatboxUserBlacklist'
         @deleteChatboxUserBlacklist='deleteChatboxUserBlacklist')
 
-    //- invite
-    SendInviteResponseDialog(
-        :sendInviteResponseDialogVisible.sync='sendInviteResponseDialogVisible'
-        :inviteResponseMessageTable='inviteResponseMessageTable'
-        :uploadImage='uploadImage'
-        @inviteImageUpload='inviteImageUpload')
-
-    SendInviteRequestResponseDialog(
-        :sendInviteRequestResponseDialogVisible.sync='sendInviteRequestResponseDialogVisible'
-        :inviteRequestResponseMessageTable='inviteRequestResponseMessageTable'
-        :uploadImage='uploadImage'
-        @inviteImageUpload='inviteImageUpload')
-
     FullscreenImageDialog(:fullscreenImageDialog='fullscreenImageDialog')

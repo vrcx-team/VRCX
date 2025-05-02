@@ -4,13 +4,13 @@
         :visible="sendInviteResponseDialogVisible"
         :title="t('dialog.invite_response_message.header')"
         width="800px"
+        append-to-body
         @close="cancelSendInviteResponse">
         <template v-if="API.currentUser.$isVRCPlus">
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
         <data-tables
-            v-if="sendInviteResponseDialogVisible"
             v-bind="inviteResponseMessageTable"
             style="margin-top: 10px; cursor: pointer"
             @row-click="showSendInviteResponseConfirmDialog">

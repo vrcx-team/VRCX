@@ -1,17 +1,16 @@
 <template>
     <safe-dialog
-        ref="sendInviteRequestResponseDialog"
         class="x-dialog"
         :visible="sendInviteRequestResponseDialogVisible"
         :title="t('dialog.invite_request_response_message.header')"
         width="800px"
+        append-to-body
         @close="cancelSendInviteRequestResponse">
         <template v-if="API.currentUser.$isVRCPlus">
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
         <data-tables
-            v-if="sendInviteRequestResponseDialogVisible"
             v-bind="inviteRequestResponseMessageTable"
             style="margin-top: 10px; cursor: pointer"
             @row-click="showSendInviteResponseConfirmDialog">

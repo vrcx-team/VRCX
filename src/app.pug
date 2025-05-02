@@ -48,9 +48,7 @@ doctype html
         //- moderation
         ModerationTab(v-bind='moderationTabBind')
 
-        //- notification
-        include ./mixins/tabs/notifications.pug
-        +notificationsTab
+        NotificationTab(v-bind='notificationTabBind' v-on='notificationTabEvent')
 
         //- profile
         include ./mixins/tabs/profile.pug
