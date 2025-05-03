@@ -74,6 +74,7 @@ import NotificationTab from './views/Notifications/Notification.vue';
 import FeedTab from './views/Feed/Feed.vue';
 import SearchTab from './views/Search/Search.vue';
 import ProfileTab from './views/Profile/Profile.vue';
+import PlayerListTab from './views/PlayerList/PlayerList.vue';
 
 // components
 import SimpleSwitch from './components/SimpleSwitch.vue';
@@ -260,6 +261,7 @@ console.log(`isLinux: ${LINUX}`);
             GameLogTab,
             FeedTab,
             ProfileTab,
+            PlayerListTab,
 
             // components
             // - common
@@ -8586,18 +8588,6 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
-    $app.methods.selectCurrentInstanceRow = function (val) {
-        if (val === null) {
-            return;
-        }
-        var ref = val.ref;
-        if (ref.id) {
-            this.showUserDialog(ref.id);
-        } else {
-            this.lookupUser(ref);
-        }
-    };
-
     $app.methods.updateTimers = function () {
         for (var $timer of $timers) {
             $timer.update();
@@ -12947,20 +12937,6 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: ChatBox Blacklist
 
-    $app.data.chatboxBlacklistDialog = {
-        visible: false,
-        loading: false
-    };
-
-    $app.methods.showChatboxBlacklistDialog = function () {
-        // TODO：adjust z-index
-        // this.$nextTick(() =>
-        //     $app.adjustDialogZ(this.$refs.chatboxBlacklistDialog.$el)
-        // );
-        const D = this.chatboxBlacklistDialog;
-        D.visible = true;
-    };
-
     $app.methods.checkChatboxBlacklist = function (msg) {
         for (var i = 0; i < this.chatboxBlacklist.length; ++i) {
             if (msg.includes(this.chatboxBlacklist[i])) {
@@ -12997,21 +12973,6 @@ console.log(`isLinux: ${LINUX}`);
         await configRepository.setString(
             'VRCX_chatboxUserBlacklist',
             JSON.stringify(Object.fromEntries(this.chatboxUserBlacklist))
-        );
-    };
-
-    $app.methods.addChatboxUserBlacklist = async function (user) {
-        this.chatboxUserBlacklist.set(user.id, user.displayName);
-        await this.saveChatboxUserBlacklist();
-        this.getCurrentInstanceUserList();
-    };
-
-    $app.methods.deleteChatboxUserBlacklist = async function (userId) {
-        this.chatboxUserBlacklist.delete(userId);
-        await this.saveChatboxUserBlacklist();
-        this.getCurrentInstanceUserList();
-        this.$nextTick(() =>
-            $app.adjustDialogZ(this.$refs.chatboxBlacklistDialog.$el)
         );
     };
 
@@ -13878,6 +13839,38 @@ console.log(`isLinux: ${LINUX}`);
             logout: this.logout,
             lookupUser: this.lookupUser,
             showEditInviteMessageDialog: this.showEditInviteMessageDialog
+        };
+    };
+
+    $app.computed.playerListTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            currentInstanceWorld: this.currentInstanceWorld,
+            currentInstanceLocation: this.currentInstanceLocation,
+            currentInstanceWorldDescriptionExpanded:
+                this.currentInstanceWorldDescriptionExpanded,
+            photonLoggingEnabled: this.photonLoggingEnabled,
+            photonEventTableTypeFilter: this.photonEventTableTypeFilter,
+            photonEventTableTypeFilterList: this.photonEventTableTypeFilterList,
+            photonEventTableFilter: this.photonEventTableFilter,
+            hideTooltips: this.hideTooltips,
+            ipcEnabled: this.ipcEnabled,
+            photonEventIcon: this.photonEventIcon,
+            photonEventTable: this.photonEventTable,
+            photonEventTablePrevious: this.photonEventTablePrevious,
+            currentInstanceUserList: this.currentInstanceUserList,
+            chatboxUserBlacklist: this.chatboxUserBlacklist,
+            randomUserColours: this.randomUserColours,
+            lastLocation: this.lastLocation
+        };
+    };
+
+    $app.computed.playerListTabEvent = function () {
+        return {
+            photonEventTableFilterChange: this.photonEventTableFilterChange,
+            getCurrentInstanceUserList: this.getCurrentInstanceUserList,
+            showUserFromPhotonId: this.showUserFromPhotonId,
+            lookupUser: this.lookupUser
         };
     };
 

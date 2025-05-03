@@ -32,9 +32,7 @@ doctype html
 
         GameLogTab(v-bind='gameLogTabBind' v-on='gameLogTabEvent')
 
-        //- playerList
-        include ./mixins/tabs/playerList.pug
-        +playerListTab
+        PlayerListTab(v-bind='playerListTabBind' v-on='playerListTabEvent')
 
         SearchTab(v-bind='searchTabBind' v-on='searchTabEvent')
 
