@@ -295,7 +295,6 @@ export default class extends baseClass {
                     $languages: [],
                     $locationTag: '',
                     $travelingToLocation: '',
-                    $vrchatcredits: null,
                     ...json
                 };
                 if ($app.isGameRunning) {

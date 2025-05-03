@@ -20,7 +20,7 @@
         <template #footer>
             <el-button type="small" @click="closeDialog">{{ $t('dialog.edit_invite_message.cancel') }}</el-button>
             <el-button type="primary" size="small" @click="saveEditInviteMessage">{{
-                $t('dialog.edit_invite_message.save')
+                t('dialog.edit_invite_message.save')
             }}</el-button>
         </template>
     </safe-dialog>

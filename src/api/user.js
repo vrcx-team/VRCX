@@ -121,7 +121,7 @@ const userReq = {
                 json,
                 params
             };
-            window.API.$emit('USER:FEEDBACK', args);
+            // window.API.$emit('USER:FEEDBACK', args);
             return args;
         });
     },

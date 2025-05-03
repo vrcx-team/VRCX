@@ -73,6 +73,7 @@ import GameLogTab from './views/GameLog/GameLog.vue';
 import NotificationTab from './views/Notifications/Notification.vue';
 import FeedTab from './views/Feed/Feed.vue';
 import SearchTab from './views/Search/Search.vue';
+import ProfileTab from './views/Profile/Profile.vue';
 
 // components
 import SimpleSwitch from './components/SimpleSwitch.vue';
@@ -258,6 +259,7 @@ console.log(`isLinux: ${LINUX}`);
             FriendLogTab,
             GameLogTab,
             FeedTab,
+            ProfileTab,
 
             // components
             // - common
@@ -2482,25 +2484,6 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
-    // #region | API: Visit
-
-    // no wrapper
-    API.getVisits = function () {
-        return this.call('visits', {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            this.$emit('VISITS', args);
-            return args;
-        });
-    };
-
-    // #endregion
-    // API
-
-    // #endregion
     // #region | Misc
 
     var $timers = [];
@@ -2830,18 +2813,6 @@ console.log(`isLinux: ${LINUX}`);
             type: 'error',
             text: 'Cannot send 2FA email without saved credentials. Please login again.'
         }).show();
-    };
-
-    $app.data.isExportFriendsListDialogVisible = false;
-
-    $app.methods.showExportFriendsListDialog = function () {
-        this.isExportFriendsListDialogVisible = true;
-    };
-
-    $app.data.isExportAvatarsListDialogVisible = false;
-
-    $app.methods.showExportAvatarsListDialog = function () {
-        this.isExportAvatarsListDialogVisible = true;
     };
 
     API.$on('USER:2FA', function () {
@@ -5960,9 +5931,6 @@ console.log(`isLinux: ${LINUX}`);
     // #endregion
     // #region | App: Profile + Settings
 
-    $app.data.configTreeData = [];
-    $app.data.currentUserTreeData = [];
-    $app.data.currentUserFeedbackData = [];
     $app.data.pastDisplayNameTable = {
         data: [],
         tableProps: {
@@ -7417,7 +7385,6 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     API.$on('LOGIN', function () {
-        $app.currentUserTreeData = [];
         $app.pastDisplayNameTable.data = [];
     });
 
@@ -7425,10 +7392,6 @@ console.log(`isLinux: ${LINUX}`);
         if (args.ref.pastDisplayNames) {
             $app.pastDisplayNameTable.data = args.ref.pastDisplayNames;
         }
-    });
-
-    API.$on('VISITS', function (args) {
-        $app.visits = args.json;
     });
 
     $app.methods.updateOpenVR = function () {
@@ -7512,16 +7475,6 @@ console.log(`isLinux: ${LINUX}`);
         tts.voice = voices[index];
         tts.text = text;
         speechSynthesis.speak(tts);
-    };
-
-    $app.methods.refreshConfigTreeData = async function () {
-        await API.getConfig();
-        this.configTreeData = $utils.buildTreeData(API.cachedConfig);
-    };
-
-    $app.methods.refreshCurrentUserTreeData = async function () {
-        await API.getCurrentUser();
-        this.currentUserTreeData = $utils.buildTreeData(API.currentUser);
     };
 
     $app.methods.directAccessPaste = function () {
@@ -10223,10 +10176,6 @@ console.log(`isLinux: ${LINUX}`);
     API.refreshInviteMessageTableData =
         inviteMessagesRequest.refreshInviteMessageTableData;
 
-    $app.methods.refreshInviteMessageTable = function (messageType) {
-        inviteMessagesRequest.refreshInviteMessageTableData(messageType);
-    };
-
     API.$on('INVITE:MESSAGE', function (args) {
         $app.inviteMessageTable.data = args.json;
     });
@@ -10410,12 +10359,6 @@ console.log(`isLinux: ${LINUX}`);
         }
         var args = await imageRequest.getAvatarImages({ fileId });
         return storeAvatarImage(args);
-    };
-
-    $app.data.discordNamesDialogVisible = false;
-
-    $app.methods.showDiscordNamesDialog = function () {
-        this.discordNamesDialogVisible = true;
     };
 
     // VRChat Config JSON
@@ -10811,18 +10754,6 @@ console.log(`isLinux: ${LINUX}`);
         if (urlPath.substring(5, 11) === '/user/') {
             var userId = urlPath.substring(11);
             return userId;
-        }
-        return void 0;
-    };
-
-    // Parse Avatar URL
-
-    $app.methods.parseAvatarUrl = function (avatar) {
-        var url = new URL(avatar);
-        var urlPath = url.pathname;
-        if (urlPath.substring(5, 13) === '/avatar/') {
-            var avatarId = urlPath.substring(13);
-            return avatarId;
         }
         return void 0;
     };
@@ -13408,15 +13339,6 @@ console.log(`isLinux: ${LINUX}`);
 
     // #endregion
     // #region | App: Random unsorted app methods, data structs, API functions, and an API feedback/file analysis event
-    API.$on('USER:FEEDBACK', function (args) {
-        if (args.params.userId === this.currentUser.id) {
-            $app.currentUserFeedbackData = $utils.buildTreeData(args.json);
-        }
-    });
-
-    $app.methods.getCurrentUserFeedback = function () {
-        return userRequest.getUserFeedback({ userId: API.currentUser.id });
-    };
 
     $app.data.changeLogDialog = {
         visible: false,
@@ -13537,17 +13459,6 @@ console.log(`isLinux: ${LINUX}`);
                 });
             }
         });
-    };
-
-    // #endregion
-    // #region | VRChat Credits
-
-    API.$on('VRCCREDITS', function (args) {
-        this.currentUser.$vrchatcredits = args.json?.balance;
-    });
-
-    $app.methods.getVRChatCredits = function () {
-        miscRequest.getVRChatCredits();
     };
 
     // #endregion
@@ -13944,6 +13855,29 @@ console.log(`isLinux: ${LINUX}`);
             refreshUserDialogAvatars: this.refreshUserDialogAvatars,
             moreSearchUser: this.moreSearchUser,
             'update:searchText': (value) => (this.searchText = value)
+        };
+    };
+
+    $app.computed.profileTabBind = function () {
+        return {
+            menuActiveIndex: this.menuActiveIndex,
+            hideTooltips: this.hideTooltips,
+            inviteMessageTable: this.inviteMessageTable,
+            inviteResponseMessageTable: this.inviteResponseMessageTable,
+            inviteRequestMessageTable: this.inviteRequestMessageTable,
+            inviteRequestResponseMessageTable:
+                this.inviteRequestResponseMessageTable,
+            pastDisplayNameTable: this.pastDisplayNameTable,
+            friends: this.friends,
+            directAccessWorld: this.directAccessWorld
+        };
+    };
+
+    $app.computed.profileTabEvent = function () {
+        return {
+            logout: this.logout,
+            lookupUser: this.lookupUser,
+            showEditInviteMessageDialog: this.showEditInviteMessageDialog
         };
     };
 

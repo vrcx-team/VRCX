@@ -42,12 +42,6 @@ mixin dialogs
         @removeLocalAvatarFavorite='removeLocalAvatarFavorite'
         @deleteFavoriteNoConfirm='deleteFavoriteNoConfirm')
 
-    ExportFriendsListDialog(
-        :friends='friends'
-        :isExportFriendsListDialogVisible.sync='isExportFriendsListDialogVisible')
-
-    ExportAvatarsListDialog(:isExportAvatarsListDialogVisible.sync='isExportAvatarsListDialogVisible')
-
     //- launch
     LaunchDialog(
         :checkCanInvite='checkCanInvite'
@@ -202,8 +196,6 @@ mixin dialogs
         :currentlyDroppingFile='currentlyDroppingFile'
         :fullscreenImageDialog='fullscreenImageDialog'
         @lookupUser='lookupUser')
-
-    DiscordNamesDialog(:discordNamesDialogVisible.sync='discordNamesDialogVisible' :friends='friends')
 
     EditInviteMessageDialog(:editInviteMessageDialog.sync='editInviteMessageDialog')
 

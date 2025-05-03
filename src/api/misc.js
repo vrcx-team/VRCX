@@ -81,7 +81,7 @@ const miscReq = {
             const args = {
                 json
             };
-            window.API.$emit('VRCCREDITS', args);
+            // window.API.$emit('VRCCREDITS', args);
             return args;
         });
     },
@@ -171,6 +171,18 @@ const miscReq = {
                 params
             };
             // window.API.$emit('BADGE:UPDATE', args);
+            return args;
+        });
+    },
+
+    getVisits() {
+        return window.API.call('visits', {
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json
+            };
+            // window.API.$emit('VISITS', args);
             return args;
         });
     }

@@ -47,9 +47,7 @@ doctype html
 
         NotificationTab(v-bind='notificationTabBind' v-on='notificationTabEvent')
 
-        //- profile
-        include ./mixins/tabs/profile.pug
-        +profileTab
+        ProfileTab(v-bind='profileTabBind' v-on='profileTabEvent')
 
         //- friends list
         FriendListTab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')

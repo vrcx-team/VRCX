@@ -20,4 +20,14 @@ function storeAvatarImage(args) {
     return avatarInfo;
 }
 
-export { storeAvatarImage };
+function parseAvatarUrl(avatar) {
+    const url = new URL(avatar);
+    const urlPath = url.pathname;
+    if (urlPath.substring(5, 13) === '/avatar/') {
+        const avatarId = urlPath.substring(13);
+        return avatarId;
+    }
+    // return void 0;
+}
+
+export { storeAvatarImage, parseAvatarUrl };
