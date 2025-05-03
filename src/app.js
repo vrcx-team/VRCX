@@ -61,6 +61,8 @@ import {
 } from './composables/user/utils';
 import { storeAvatarImage } from './composables/avatar/utils';
 
+import LoginPage from './views/Login/Login.vue';
+
 // tabs
 import ModerationTab from './views/Moderation/Moderation.vue';
 import ChartsTab from './views/Charts/Charts.vue';
@@ -247,6 +249,7 @@ console.log(`isLinux: ${LINUX}`);
         },
         watch: {},
         components: {
+            LoginPage,
             // tabs
             ModerationTab,
             ChartsTab,
@@ -13871,6 +13874,25 @@ console.log(`isLinux: ${LINUX}`);
             getCurrentInstanceUserList: this.getCurrentInstanceUserList,
             showUserFromPhotonId: this.showUserFromPhotonId,
             lookupUser: this.lookupUser
+        };
+    };
+
+    $app.computed.loginPageBind = function () {
+        return {
+            hideTooltips: this.hideTooltips,
+            loginForm: this.loginForm,
+            enableCustomEndpoint: this.enableCustomEndpoint
+        };
+    };
+
+    $app.computed.loginPageEvent = function () {
+        return {
+            showVRCXUpdateDialog: this.showVRCXUpdateDialog,
+            promptProxySettings: this.promptProxySettings,
+            toggleCustomEndpoint: this.toggleCustomEndpoint,
+            deleteSavedLogin: this.deleteSavedLogin,
+            login: this.login,
+            relogin: this.relogin
         };
     };
 

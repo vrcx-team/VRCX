@@ -1,8 +1,6 @@
 doctype html
 #x-app.x-app(@dragenter.prevent @dragover.prevent @drop.prevent)
-    //- login
-    include ./mixins/loginPage.pug
-    +loginPage
+    LoginPage(v-if="!API.isLoggedIn" v-bind="loginPageBind" v-on="loginPageEvent")
 
     //- menu
     .x-menu-container
@@ -23,11 +21,10 @@ doctype html
                 circle
                 style='font-size: 14px; height: 50px; width: 50px')
 
-        nav-menu(ref='menu' @select='selectMenu' :menu-active-index='menuActiveIndex')
+        NavMenu(ref='menu' @select='selectMenu' :menu-active-index='menuActiveIndex')
 
     //- ### Tabs ###
     template(v-if='API.isLoggedIn')
-
         FeedTab(v-bind='feedTabBind' v-on='feedTabEvent')
 
         GameLogTab(v-bind='gameLogTabBind' v-on='gameLogTabEvent')

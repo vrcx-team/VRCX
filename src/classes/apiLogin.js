@@ -325,100 +325,90 @@ export default class extends baseClass {
 
         async login() {
             await webApiService.clearCookies();
-            this.$refs.loginForm.validate((valid) => {
-                if (valid && !this.loginForm.loading) {
-                    this.loginForm.loading = true;
-                    if (this.loginForm.endpoint) {
-                        API.endpointDomain = this.loginForm.endpoint;
-                        API.websocketDomain = this.loginForm.websocket;
-                    } else {
-                        API.endpointDomain = API.endpointDomainVrchat;
-                        API.websocketDomain = API.websocketDomainVrchat;
-                    }
-                    API.getConfig()
-                        .catch((err) => {
-                            this.loginForm.loading = false;
-                            throw err;
-                        })
-                        .then((args) => {
-                            if (
-                                this.loginForm.saveCredentials &&
-                                this.enablePrimaryPassword
-                            ) {
-                                $app.$prompt(
-                                    $t('prompt.primary_password.description'),
-                                    $t('prompt.primary_password.header'),
-                                    {
-                                        inputType: 'password',
-                                        inputPattern: /[\s\S]{1,32}/
-                                    }
-                                )
-                                    .then(({ value }) => {
-                                        let saveCredential =
-                                            this.loginForm.savedCredentials[
-                                                Object.keys(
-                                                    this.loginForm
-                                                        .savedCredentials
-                                                )[0]
-                                            ];
-                                        security
-                                            .decrypt(
-                                                saveCredential.loginParmas
-                                                    .password,
-                                                value
-                                            )
-                                            .then(() => {
-                                                security
-                                                    .encrypt(
-                                                        this.loginForm.password,
-                                                        value
-                                                    )
-                                                    .then((pwd) => {
-                                                        API.login({
-                                                            username:
-                                                                this.loginForm
-                                                                    .username,
-                                                            password:
-                                                                this.loginForm
-                                                                    .password,
-                                                            endpoint:
-                                                                this.loginForm
-                                                                    .endpoint,
-                                                            websocket:
-                                                                this.loginForm
-                                                                    .websocket,
-                                                            saveCredentials:
-                                                                this.loginForm
-                                                                    .saveCredentials,
-                                                            cipher: pwd
-                                                        }).then(() => {
-                                                            this.$refs.loginForm.resetFields();
-                                                        });
+            if (!this.loginForm.loading) {
+                this.loginForm.loading = true;
+                if (this.loginForm.endpoint) {
+                    API.endpointDomain = this.loginForm.endpoint;
+                    API.websocketDomain = this.loginForm.websocket;
+                } else {
+                    API.endpointDomain = API.endpointDomainVrchat;
+                    API.websocketDomain = API.websocketDomainVrchat;
+                }
+                API.getConfig()
+                    .catch((err) => {
+                        this.loginForm.loading = false;
+                        throw err;
+                    })
+                    .then((args) => {
+                        if (
+                            this.loginForm.saveCredentials &&
+                            this.enablePrimaryPassword
+                        ) {
+                            $app.$prompt(
+                                $t('prompt.primary_password.description'),
+                                $t('prompt.primary_password.header'),
+                                {
+                                    inputType: 'password',
+                                    inputPattern: /[\s\S]{1,32}/
+                                }
+                            )
+                                .then(({ value }) => {
+                                    let saveCredential =
+                                        this.loginForm.savedCredentials[
+                                            Object.keys(
+                                                this.loginForm.savedCredentials
+                                            )[0]
+                                        ];
+                                    security
+                                        .decrypt(
+                                            saveCredential.loginParmas.password,
+                                            value
+                                        )
+                                        .then(() => {
+                                            security
+                                                .encrypt(
+                                                    this.loginForm.password,
+                                                    value
+                                                )
+                                                .then((pwd) => {
+                                                    API.login({
+                                                        username:
+                                                            this.loginForm
+                                                                .username,
+                                                        password:
+                                                            this.loginForm
+                                                                .password,
+                                                        endpoint:
+                                                            this.loginForm
+                                                                .endpoint,
+                                                        websocket:
+                                                            this.loginForm
+                                                                .websocket,
+                                                        saveCredentials:
+                                                            this.loginForm
+                                                                .saveCredentials,
+                                                        cipher: pwd
                                                     });
-                                            });
-                                    })
-                                    .finally(() => {
-                                        this.loginForm.loading = false;
-                                    });
-                                return args;
-                            }
-                            API.login({
-                                username: this.loginForm.username,
-                                password: this.loginForm.password,
-                                endpoint: this.loginForm.endpoint,
-                                websocket: this.loginForm.websocket,
-                                saveCredentials: this.loginForm.saveCredentials
-                            })
-                                .then(() => {
-                                    this.$refs.loginForm.resetFields();
+                                                });
+                                        });
                                 })
                                 .finally(() => {
                                     this.loginForm.loading = false;
                                 });
                             return args;
+                        }
+                        API.login({
+                            username: this.loginForm.username,
+                            password: this.loginForm.password,
+                            endpoint: this.loginForm.endpoint,
+                            websocket: this.loginForm.websocket,
+                            saveCredentials: this.loginForm.saveCredentials
+                        }).finally(() => {
+                            this.loginForm.loading = false;
                         });
-                }
-            });
+                        return args;
+                    });
+            }
         },
 
         logout() {
