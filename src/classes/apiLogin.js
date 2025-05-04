@@ -239,13 +239,12 @@ export default class extends baseClass {
                 API.websocketDomain = API.websocketDomainVrchat;
             }
             return new Promise((resolve, reject) => {
+                this.loginForm.loading = true;
                 if (this.enablePrimaryPassword) {
                     this.checkPrimaryPassword(loginParmas)
                         .then((pwd) => {
-                            this.loginForm.loading = true;
                             return API.getConfig()
                                 .catch((err) => {
-                                    this.loginForm.loading = false;
                                     reject(err);
                                 })
                                 .then(() => {
@@ -257,12 +256,10 @@ export default class extends baseClass {
                                         websocket: loginParmas.websocket
                                     })
                                         .catch((err2) => {
-                                            this.loginForm.loading = false;
                                             // API.logout();
                                             reject(err2);
                                         })
                                         .then(() => {
-                                            this.loginForm.loading = false;
                                             resolve();
                                         });
                                 });
@@ -277,7 +274,6 @@ export default class extends baseClass {
                 } else {
                     API.getConfig()
                         .catch((err) => {
-                            this.loginForm.loading = false;
                             reject(err);
                         })
                         .then(() => {
@@ -288,17 +284,15 @@ export default class extends baseClass {
                                 websocket: loginParmas.websocket
                             })
                                 .catch((err2) => {
-                                    this.loginForm.loading = false;
                                     API.logout();
                                     reject(err2);
                                 })
                                 .then(() => {
-                                    this.loginForm.loading = false;
                                     resolve();
                                 });
                         });
                 }
-            });
+            }).finally(() => (this.loginForm.loading = false));
         },
 
         async deleteSavedLogin(userId) {

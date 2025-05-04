@@ -2,6 +2,8 @@ doctype html
 #x-app.x-app(@dragenter.prevent @dragover.prevent @drop.prevent)
     LoginPage(v-if="!API.isLoggedIn" v-bind="loginPageBind" v-on="loginPageEvent")
 
+    VRCXUpdateDialog(v-bind="vrcxUpdateDialogBind" v-on="vrcxUpdateDialogEvent")
+
     //- menu
     .x-menu-container
         //- download progress, update pending
@@ -37,17 +39,14 @@ doctype html
 
         FriendLogTab(v-bind='friendLogTabBind')
 
-        //- moderation
         ModerationTab(v-bind='moderationTabBind')
 
         NotificationTab(v-bind='notificationTabBind' v-on='notificationTabEvent')
 
         ProfileTab(v-bind='profileTabBind' v-on='profileTabEvent')
 
-        //- friends list
         FriendListTab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
 
-        //- charts
         KeepAlive
             ChartsTab(v-if='menuActiveIndex === "charts"' v-bind='chartsTabBind' v-on='chartsTabEvent')
 
@@ -57,8 +56,8 @@ doctype html
 
         SideBar(v-bind='sideBarTabBind' v-on='sideBarTabEvent')
 
-    //- ## Dialogs ## -\\
-    include ./mixins/dialogs/dialogs.pug
-    +dialogs
+        //- ## Dialogs ## -\\
+        include ./mixins/dialogs/dialogs.pug
+        +dialogs
 
     //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")

@@ -147,19 +147,14 @@ mixin dialogs
         @groupDialogCommand='groupDialogCommand'
         @getGroupDialogGroup='getGroupDialogGroup')
 
-    InviteGroupDialog(
-        :dialogData.sync='inviteGroupDialog'
-        :vipFriends='vipFriends'
-        :onlineFriends='onlineFriends'
-        :offlineFriends='offlineFriends'
-        :activeFriends='activeFriends')
-
     AvatarDialog(
         :avatarDialog='avatarDialog'
         :hideTooltips='hideTooltips'
         :isGameRunning='isGameRunning'
         @openFolderGeneric='openFolderGeneric'
         @deleteVRChatCache='deleteVRChatCache')
+
+    FullscreenImageDialog(:fullscreenImageDialog='fullscreenImageDialog')
 
     //- settings
     FeedFiltersDialog(
@@ -174,21 +169,6 @@ mixin dialogs
     OpenSourceSoftwareNoticeDialog(:ossDialog.sync='ossDialog')
 
     ChangelogDialog(:changeLogDialog.sync='changeLogDialog')
-
-    VRCXUpdateDialog(
-        :VRCXUpdateDialog='VRCXUpdateDialog'
-        :appVersion='appVersion'
-        :checkingForVRCXUpdate='checkingForVRCXUpdate'
-        :updateInProgress='updateInProgress'
-        :updateProgress='updateProgress'
-        :updateProgressText='updateProgressText'
-        :pendingVRCXInstall='pendingVRCXInstall'
-        :branch.sync='branch'
-        :branches='branches'
-        @loadBranchVersions='loadBranchVersions'
-        @cancelUpdate='cancelUpdate'
-        @installVRCXUpdate='installVRCXUpdate'
-        @restartVRCX='restartVRCX')
 
     ScreenshotMetadataDialog(
         :screenshotMetadataDialog='screenshotMetadataDialog'
@@ -233,5 +213,3 @@ mixin dialogs
     PrimaryPasswordDialog(
         :enablePrimaryPasswordDialog.sync='enablePrimaryPasswordDialog'
         @setPrimaryPassword='setPrimaryPassword')
-
-    FullscreenImageDialog(:fullscreenImageDialog='fullscreenImageDialog')

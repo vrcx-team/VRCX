@@ -13814,6 +13814,30 @@ console.log(`isLinux: ${LINUX}`);
         };
     };
 
+    $app.computed.vrcxUpdateDialogBind = function () {
+        return {
+            VRCXUpdateDialog: this.VRCXUpdateDialog,
+            appVersion: this.appVersion,
+            checkingForVRCXUpdate: this.checkingForVRCXUpdate,
+            updateInProgress: this.updateInProgress,
+            updateProgress: this.updateProgress,
+            updateProgressText: this.updateProgressText,
+            pendingVRCXInstall: this.pendingVRCXInstall,
+            branch: this.branch,
+            branches: this.branches
+        };
+    };
+
+    $app.computed.vrcxUpdateDialogEvent = function () {
+        return {
+            'update:branch': (value) => (this.branch = value),
+            loadBranchVersions: this.loadBranchVersions,
+            cancelUpdate: this.cancelUpdate,
+            installVRCXUpdate: this.installVRCXUpdate,
+            restartVRCX: this.restartVRCX
+        };
+    };
+
     //
 
     $app.methods.languageClass = function (key) {

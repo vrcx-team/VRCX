@@ -369,7 +369,7 @@ export default class extends baseClass {
 
                 case 'friend-location':
                     var $location = parseLocation(content.location);
-                    var $travelingToLocation = $utils.parseLocation(
+                    var $travelingToLocation = parseLocation(
                         content.travelingToLocation
                     );
                     if (!content?.user?.id) {
