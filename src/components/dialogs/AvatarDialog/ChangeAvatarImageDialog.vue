@@ -42,11 +42,12 @@
 </template>
 
 <script setup>
-    import { inject, ref, getCurrentInstance } from 'vue';
+    import { getCurrentInstance, inject, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { imageRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { extractFileId } from '../../../composables/shared/utils';
     import webApiService from '../../../service/webapi';
+
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
@@ -158,7 +159,7 @@
                 const avatarId = props.avatarDialog.id;
                 const { imageUrl } = props.avatarDialog.ref;
 
-                const fileId = utils.extractFileId(imageUrl);
+                const fileId = extractFileId(imageUrl);
                 if (!fileId) {
                     $message({
                         message: t('message.avatar.image_invalid'),

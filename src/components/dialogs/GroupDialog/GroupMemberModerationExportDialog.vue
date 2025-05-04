@@ -32,7 +32,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
+    import { copyToClipboard } from '../../../composables/shared/utils';
 
     const { t } = useI18n();
 
@@ -95,7 +95,7 @@
     }
 
     function handleCopyGroupLogsExportContent() {
-        utils.copyToClipboard(groupLogsExportContent.value);
+        copyToClipboard(groupLogsExportContent.value);
     }
 
     function setIsGroupLogsExportDialogVisible() {

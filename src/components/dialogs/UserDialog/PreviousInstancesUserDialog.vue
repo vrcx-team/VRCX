@@ -71,6 +71,7 @@
 
 <script>
     import utils from '../../../classes/utils';
+    import { parseLocation } from '../../../composables/instance/utils';
     import database from '../../../service/database';
     import Location from '../../Location.vue';
 
@@ -167,7 +168,7 @@
                 database.getpreviousInstancesByUserId(this.previousInstancesUserDialog.userRef).then((data) => {
                     const array = [];
                     for (const ref of data.values()) {
-                        ref.$location = utils.parseLocation(ref.location);
+                        ref.$location = parseLocation(ref.location);
                         if (ref.time > 0) {
                             ref.timer = utils.timeToText(ref.time);
                         } else {

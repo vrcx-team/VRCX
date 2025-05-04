@@ -52,7 +52,7 @@
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { userRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { getFaviconUrl } from '../../../composables/shared/utils';
 
     const { t } = useI18n();
     const { $message } = getCurrentInstance().proxy;
@@ -63,10 +63,6 @@
             required: true
         }
     });
-
-    function getFaviconUrl(link) {
-        return utils.getFaviconUrl(link);
-    }
 
     function saveBio() {
         const D = props.bioDialog;

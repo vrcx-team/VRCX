@@ -73,8 +73,10 @@
 <script setup>
     import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import configRepository from '../../../service/config';
     import utils from '../../../classes/utils';
+    import { downloadAndSaveJson } from '../../../composables/shared/utils';
+    import configRepository from '../../../service/config';
+
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
@@ -165,7 +167,7 @@
     }
 
     function saveVrcRegistryBackupToFile(row) {
-        utils.downloadAndSaveJson(row.name, row.data);
+        downloadAndSaveJson(row.name, row.data);
     }
 
     async function deleteVrcRegistryBackup(row) {

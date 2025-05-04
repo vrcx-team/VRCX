@@ -1,7 +1,9 @@
 import * as workerTimers from 'worker-timers';
+import { displayLocation, parseLocation } from '../composables/instance/utils';
+import { checkVRChatCache } from '../composables/shared/utils';
 import configRepository from '../service/config.js';
 import database from '../service/database.js';
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { baseClass, $app, API, $utils } from './baseClass.js';
 import { instanceRequest, userRequest } from '../api';
 import {
     photonEmojis,
@@ -925,7 +927,7 @@ export default class extends baseClass {
                 shortName
             });
             var location = instance.json.location;
-            var L = $utils.parseLocation(location);
+            var L = parseLocation(location);
             var groupName = '';
             if (L.groupId) {
                 groupName = await this.getGroupName(L.groupId);
@@ -939,14 +941,14 @@ export default class extends baseClass {
             // if (shortName === newShortName) {
             //     portalType = 'Unlocked';
             // }
-            var displayLocation = this.displayLocation(
+            var _displayLocation = displayLocation(
                 location,
                 worldName,
                 groupName
             );
             this.addEntryPhotonEvent({
                 photonId: this.getPhotonIdFromUserId(userId),
-                text: `PortalSpawn to ${displayLocation}`,
+                text: `PortalSpawn to ${_displayLocation}`,
                 type: 'PortalSpawn',
                 shortName,
                 location,
@@ -1139,7 +1141,7 @@ export default class extends baseClass {
                 platform = 'Desktop';
             }
             this.photonUserSusieCheck(photonId, user, gameLogDate);
-            $utils.checkVRChatCache(avatar).then((cacheInfo) => {
+            checkVRChatCache(avatar).then((cacheInfo) => {
                 var inCache = false;
                 if (cacheInfo.Item1 > 0) {
                     inCache = true;
@@ -1313,7 +1315,7 @@ export default class extends baseClass {
                 avatar.description = $utils.replaceBioSymbols(
                     avatar.description
                 );
-                $utils.checkVRChatCache(avatar).then((cacheInfo) => {
+                checkVRChatCache(avatar).then((cacheInfo) => {
                     var inCache = false;
                     if (cacheInfo.Item1 > 0) {
                         inCache = true;

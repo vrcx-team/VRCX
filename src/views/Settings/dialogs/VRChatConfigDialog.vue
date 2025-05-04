@@ -186,13 +186,14 @@
 </template>
 
 <script setup>
-    import { ref, watch, inject, getCurrentInstance, computed } from 'vue';
+    import { computed, getCurrentInstance, inject, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import {
-        getVRChatResolution,
-        VRChatScreenshotResolutions,
-        VRChatCameraResolutions
-    } from '../../../composables/settings/constants/vrchatResolutions';
+        VRChatCameraResolutions,
+        VRChatScreenshotResolutions
+    } from '../../../composables/setting/constants/vrchatResolutions';
+    import { getVRChatResolution } from '../../../composables/setting/utils';
+
     const { t } = useI18n();
 
     const instance = getCurrentInstance();

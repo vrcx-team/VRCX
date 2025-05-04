@@ -809,10 +809,10 @@
 <script setup>
     import { getCurrentInstance, inject, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
     import { groupRequest, userRequest } from '../../../api';
+    import { useModerationTable, useSelectedUsers } from '../../../composables/group/useGroupMemberModeration';
+    import { hasGroupPermission } from '../../../composables/group/utils';
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
-    import { useModerationTable, useSelectedUsers } from '../../../composables/groups/useGroupMemberModeration';
 
     const API = inject('API');
     const showUserDialog = inject('showUserDialog');
@@ -1680,9 +1680,5 @@
             .replace('group.', '')
             .replace(/\./g, ' ')
             .replace(/\b\w/g, (l) => l.toUpperCase());
-    }
-
-    function hasGroupPermission(ref, permission) {
-        return utils.hasGroupPermission(ref, permission);
     }
 </script>

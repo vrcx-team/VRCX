@@ -497,6 +497,9 @@
 <script>
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import utils from '../../classes/utils';
+    import { hasGroupPermission as _hasGroupPermission } from '../../composables/group/utils';
+    import { isRealInstance, parseLocation } from '../../composables/instance/utils';
+    import { getLaunchURL } from '../../composables/shared/utils';
     import configRepository from '../../service/config';
     import InviteDialog from './InviteDialog/InviteDialog.vue';
 
@@ -599,10 +602,10 @@
                 this.inviteDialog.visible = false;
             },
             showInviteDialog(tag) {
-                if (!utils.isRealInstance(tag)) {
+                if (!isRealInstance(tag)) {
                     return;
                 }
-                const L = utils.parseLocation(tag);
+                const L = parseLocation(tag);
                 worldRequest
                     .getCachedWorld({
                         worldId: L.worldId
@@ -625,12 +628,12 @@
                     });
             },
             initNewInstanceDialog(tag) {
-                if (!utils.isRealInstance(tag)) {
+                if (!isRealInstance(tag)) {
                     return;
                 }
                 this.$nextTick(() => this.adjustDialogZ(this.$refs.newInstanceDialog.$el));
                 const D = this.newInstanceDialog;
-                const L = utils.parseLocation(tag);
+                const L = parseLocation(tag);
                 if (D.worldId === L.worldId) {
                     // reopening dialog, keep last open instance
                     D.visible = true;
@@ -728,16 +731,16 @@
                 } else {
                     D.location = D.worldId;
                 }
-                const L = utils.parseLocation(D.location);
+                const L = parseLocation(D.location);
                 if (noChanges) {
                     L.shortName = D.shortName;
                 } else {
                     D.shortName = '';
                 }
-                D.url = utils.getLaunchURL(L);
+                D.url = getLaunchURL(L);
             },
             selfInvite(location) {
-                const L = utils.parseLocation(location);
+                const L = parseLocation(location);
                 if (!L.isRealInstance) {
                     return;
                 }
@@ -877,7 +880,7 @@
                 this.saveNewInstanceDialog();
             },
             async copyInstanceUrl(location) {
-                const L = utils.parseLocation(location);
+                const L = parseLocation(location);
                 const args = await instanceRequest.getInstanceShortName({
                     worldId: L.worldId,
                     instanceId: L.instanceId
@@ -916,7 +919,7 @@
                 }
             },
             hasGroupPermission(ref, permission) {
-                return utils.hasGroupPermission(ref, permission);
+                return _hasGroupPermission(ref, permission);
             }
         }
     };

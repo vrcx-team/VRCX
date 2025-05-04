@@ -168,7 +168,7 @@
     import { getCurrentInstance, inject, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { instanceRequest, inviteMessagesRequest, notificationRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { parseLocation } from '../../../composables/instance/utils';
     import Location from '../../Location.vue';
     import SendInviteDialog from './SendInviteDialog.vue';
 
@@ -274,7 +274,7 @@
                         const receiverUserId = D.userIds.shift();
                         if (receiverUserId === API.currentUser.id) {
                             // can't invite self!?
-                            const L = utils.parseLocation(D.worldId);
+                            const L = parseLocation(D.worldId);
                             instanceRequest
                                 .selfInvite({
                                     instanceId: L.instanceId,

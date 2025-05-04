@@ -777,6 +777,11 @@
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import utils from '../../../classes/utils';
     import { refreshInstancePlayerCount as _refreshInstancePlayerCount } from '../../../composables/instance/utils';
+    import {
+        downloadAndSaveJson as _downloadAndSaveJson,
+        extractFileId,
+        replaceVrcPackageUrl as _replaceVrcPackageUrl
+    } from '../../../composables/shared/utils';
     import database from '../../../service/database.js';
     import NewInstanceDialog from '../NewInstanceDialog.vue';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
@@ -933,7 +938,7 @@
                 this.previousImagesTable = [];
                 const { imageUrl } = this.worldDialog.ref;
 
-                const fileId = utils.extractFileId(imageUrl);
+                const fileId = extractFileId(imageUrl);
                 if (!fileId) {
                     return;
                 }
@@ -1129,6 +1134,9 @@
                         break;
                 }
             },
+            replaceVrcPackageUrl(url) {
+                _replaceVrcPackageUrl(url);
+            },
             refreshInstancePlayerCount(tag) {
                 _refreshInstancePlayerCount(tag);
             },
@@ -1157,7 +1165,7 @@
                 this.treeData = utils.buildTreeData(this.worldDialog.ref);
             },
             downloadAndSaveJson(fileName, data) {
-                utils.downloadAndSaveJson(fileName, data);
+                _downloadAndSaveJson(fileName, data);
             },
             copyWorldId() {
                 navigator.clipboard

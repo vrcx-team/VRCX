@@ -1,6 +1,8 @@
-import configRepository from '../service/config.js';
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 import { worldRequest } from '../api';
+import { parseLocation } from '../composables/instance/utils';
+import { getLaunchURL } from '../composables/shared/utils';
+import configRepository from '../service/config.js';
+import { API, baseClass } from './baseClass.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -36,7 +38,7 @@ export default class extends baseClass {
             var L = this.lastLocation$;
             if (currentLocation !== this.lastLocation$.tag) {
                 Discord.SetTimestamps(timeStamp, 0);
-                L = $app.parseLocation(currentLocation);
+                L = parseLocation(currentLocation);
                 L.worldName = '';
                 L.thumbnailImageUrl = '';
                 L.worldCapacity = 0;
@@ -76,7 +78,7 @@ export default class extends baseClass {
                     }
                     switch (L.accessType) {
                         case 'public':
-                            L.joinUrl = $utils.getLaunchURL(L);
+                            L.joinUrl = getLaunchURL(L);
                             L.accessName = `Public #${L.instanceName} (${platform})`;
                             break;
                         case 'invite+':

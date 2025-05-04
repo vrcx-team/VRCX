@@ -90,7 +90,8 @@
 
 <script>
     import { instanceRequest, worldRequest } from '../../api';
-    import utils from '../../classes/utils';
+    import { isRealInstance, parseLocation } from '../../composables/instance/utils';
+    import { getLaunchURL } from '../../composables/shared/utils';
     import configRepository from '../../service/config';
     import InviteDialog from './InviteDialog/InviteDialog.vue';
 
@@ -179,10 +180,10 @@
                 this.inviteDialog.visible = false;
             },
             showInviteDialog(tag) {
-                if (!utils.isRealInstance(tag)) {
+                if (!isRealInstance(tag)) {
                     return;
                 }
-                const L = utils.parseLocation(tag);
+                const L = parseLocation(tag);
                 worldRequest
                     .getCachedWorld({
                         worldId: L.worldId
@@ -216,7 +217,7 @@
             },
             async initLaunchDialog() {
                 const { tag, shortName } = this.launchDialogData;
-                if (!utils.isRealInstance(tag)) {
+                if (!isRealInstance(tag)) {
                     return;
                 }
                 this.$nextTick(() => this.adjustDialogZ(this.$refs.launchDialog.$el));
@@ -225,7 +226,7 @@
                 D.secureOrShortName = shortName;
                 D.shortUrl = '';
                 D.shortName = shortName;
-                const L = utils.parseLocation(tag);
+                const L = parseLocation(tag);
                 L.shortName = shortName;
                 if (shortName) {
                     D.shortUrl = `https://vrch.at/${shortName}`;
@@ -235,7 +236,7 @@
                 } else {
                     D.location = L.worldId;
                 }
-                D.url = utils.getLaunchURL(L);
+                D.url = getLaunchURL(L);
                 if (!shortName) {
                     const res = await instanceRequest.getInstanceShortName({
                         worldId: L.worldId,
@@ -250,14 +251,14 @@
                     if (resLocation === this.launchDialog.tag) {
                         const resShortName = res.json.shortName;
                         const secureOrShortName = res.json.shortName || res.json.secureName;
-                        const parsedL = utils.parseLocation(resLocation);
+                        const parsedL = parseLocation(resLocation);
                         parsedL.shortName = resShortName;
                         this.launchDialog.shortName = resShortName;
                         this.launchDialog.secureOrShortName = secureOrShortName;
                         if (resShortName) {
                             this.launchDialog.shortUrl = `https://vrch.at/${resShortName}`;
                         }
-                        this.launchDialog.url = utils.getLaunchURL(parsedL);
+                        this.launchDialog.url = getLaunchURL(parsedL);
                     }
                 }
             },

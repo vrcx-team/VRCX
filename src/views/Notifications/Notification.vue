@@ -422,6 +422,8 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { friendRequest, inviteMessagesRequest, notificationRequest, worldRequest } from '../../api';
     import utils from '../../classes/utils';
+    import { parseLocation } from '../../composables/instance/utils';
+    import { convertFileUrlToImageUrl } from '../../composables/shared/utils';
     import configRepository from '../../service/config';
     import database from '../../service/database';
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
@@ -518,7 +520,7 @@
     }
 
     function getSmallThumbnailUrl(url) {
-        return utils.convertFileUrlToImageUrl(url);
+        return convertFileUrlToImageUrl(url);
     }
 
     function acceptFriendRequestNotification(row) {
@@ -562,7 +564,7 @@
                     if (props.lastLocation.location === 'traveling') {
                         currentLocation = props.lastLocationDestination;
                     }
-                    const L = utils.parseLocation(currentLocation);
+                    const L = parseLocation(currentLocation);
                     worldRequest
                         .getCachedWorld({
                             worldId: L.worldId

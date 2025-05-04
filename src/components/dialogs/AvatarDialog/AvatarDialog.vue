@@ -520,7 +520,14 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, imageRequest, miscRequest } from '../../../api';
     import utils from '../../../classes/utils';
-    import { storeAvatarImage } from '../../../composables/avatar/utils';
+    import { compareUnityVersion, storeAvatarImage } from '../../../composables/avatar/utils';
+    import {
+        copyToClipboard,
+        downloadAndSaveJson,
+        extractFileId,
+        extractFileVersion,
+        replaceVrcPackageUrl
+    } from '../../../composables/shared/utils';
     import database from '../../../service/database';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
     import ChangeAvatarImageDialog from './ChangeAvatarImageDialog.vue';
@@ -677,7 +684,7 @@
                 showAvatarDialog(D.id);
                 break;
             case 'Share':
-                utils.copyToClipboard(D.id);
+                copyToClipboard(D.id);
                 break;
             case 'Rename':
                 promptRenameAvatar(D);
@@ -698,7 +705,7 @@
                 showSetAvatarStylesDialog(D.id);
                 break;
             case 'Download Unity Package':
-                openExternalLink(utils.replaceVrcPackageUrl(props.avatarDialog.ref.unityPackageUrl));
+                openExternalLink(replaceVrcPackageUrl(props.avatarDialog.ref.unityPackageUrl));
                 break;
             case 'Add Favorite':
                 showFavoriteDialog('avatar', D.id);
@@ -868,7 +875,7 @@
         previousImagesTable.value = [];
         previousImagesFileId.value = '';
         const { imageUrl } = props.avatarDialog.ref;
-        const fileId = utils.extractFileId(imageUrl);
+        const fileId = extractFileId(imageUrl);
         if (!fileId) {
             return;
         }
@@ -991,11 +998,11 @@
     }
 
     function copyAvatarId(id) {
-        utils.copyToClipboard(id);
+        copyToClipboard(id);
     }
 
     function copyAvatarUrl(id) {
-        utils.copyToClipboard(`https://vrchat.com/home/avatar/${id}`);
+        copyToClipboard(`https://vrchat.com/home/avatar/${id}`);
     }
 
     function timeToText(time) {
@@ -1017,10 +1024,7 @@
             if (unityPackage.variant !== 'security') {
                 continue;
             }
-            if (
-                unityPackage.platform === 'standalonewindows' &&
-                utils.compareUnityVersion(unityPackage.unitySortNumber)
-            ) {
+            if (unityPackage.platform === 'standalonewindows' && compareUnityVersion(unityPackage.unitySortNumber)) {
                 assetUrl = unityPackage.assetUrl;
                 break;
             }
@@ -1033,7 +1037,7 @@
                 }
                 if (
                     unityPackage.platform === 'standalonewindows' &&
-                    utils.compareUnityVersion(unityPackage.unitySortNumber)
+                    compareUnityVersion(unityPackage.unitySortNumber)
                 ) {
                     variant = 'standard';
                     assetUrl = unityPackage.assetUrl;
@@ -1044,8 +1048,8 @@
         if (!assetUrl) {
             assetUrl = D.ref.assetUrl;
         }
-        const fileId = utils.extractFileId(assetUrl);
-        const version = parseInt(utils.extractFileVersion(assetUrl), 10);
+        const fileId = extractFileId(assetUrl);
+        const version = parseInt(extractFileVersion(assetUrl), 10);
         if (!fileId || !version) {
             $message({
                 message: 'File Analysis unavailable',
@@ -1153,9 +1157,5 @@
         nextTick(() => {
             D.loading = false;
         });
-    }
-
-    function downloadAndSaveJson(fileName, data) {
-        utils.downloadAndSaveJson(fileName, data);
     }
 </script>

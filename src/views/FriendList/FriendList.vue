@@ -274,6 +274,7 @@
     import utils from '../../classes/utils';
     import { languageClass as _languageClass } from '../../composables/user/utils';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
+    import { getFaviconUrl as _getFaviconUrl } from '../../composables/shared/utils';
 
     export default {
         name: 'FriendListTab',
@@ -508,7 +509,7 @@
                 return utils.timeToText(val);
             },
             getFaviconUrl(link) {
-                return utils.getFaviconUrl(link);
+                return _getFaviconUrl(link);
             }
         }
     };

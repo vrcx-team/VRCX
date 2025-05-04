@@ -1,8 +1,9 @@
 import * as workerTimers from 'worker-timers';
+import { parseLocation } from '../composables/instance/utils';
 import gameLogService from '../service/gamelog.js';
 import configRepository from '../service/config.js';
 import database from '../service/database.js';
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { baseClass, $app, API, $utils } from './baseClass.js';
 import { userRequest } from '../api';
 import dayjs from 'dayjs';
 
@@ -100,7 +101,7 @@ export default class extends baseClass {
                         this.applyGroupDialogInstances();
                     }
                     this.addInstanceJoinHistory(gameLog.location, gameLog.dt);
-                    var L = $utils.parseLocation(gameLog.location);
+                    var L = parseLocation(gameLog.location);
                     var entry = {
                         created_at: gameLog.dt,
                         type: 'Location',

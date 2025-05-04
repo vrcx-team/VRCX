@@ -168,7 +168,7 @@
 
 <script>
     import { groupRequest, userRequest } from '../../api';
-    import utils from '../../classes/utils';
+    import { hasGroupPermission } from '../../composables/group/utils';
 
     export default {
         name: 'InviteGroupDialog',
@@ -246,7 +246,7 @@
                 groupRequest
                     .getGroup({ groupId })
                     .then((args) => {
-                        if (utils.hasGroupPermission(args.ref, 'group-invites-manage')) {
+                        if (hasGroupPermission(args.ref, 'group-invites-manage')) {
                             return args;
                         }
                         // not allowed to invite

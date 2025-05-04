@@ -31,6 +31,7 @@
 <script setup>
     import { getCurrentInstance } from 'vue';
     import utils from '../../classes/utils';
+    import { copyToClipboard, extractFileId } from '../../composables/shared/utils';
     import webApiService from '../../service/webapi';
     import Noty from 'noty';
 
@@ -45,7 +46,7 @@
     });
 
     function copyImageUrl(imageUrl) {
-        utils.copyToClipboard(imageUrl, 'ImageUrl copied to clipboard');
+        copyToClipboard(imageUrl, 'ImageUrl copied to clipboard');
     }
 
     async function downloadAndSaveImage(url, fileName) {
@@ -66,7 +67,7 @@
             }
             const link = document.createElement('a');
             link.href = response.data;
-            const fileId = utils.extractFileId(url);
+            const fileId = extractFileId(url);
             if (!fileName && fileId) {
                 fileName = `${fileId}.png`;
             }

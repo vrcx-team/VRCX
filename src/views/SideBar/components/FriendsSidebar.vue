@@ -179,8 +179,8 @@
 <script>
     import FriendItem from '../../../components/FriendItem.vue';
     import Location from '../../../components/Location.vue';
+    import { isRealInstance as _isRealInstance, parseLocation } from '../../../composables/instance/utils';
     import configRepository from '../../../service/config';
-    import utils from '../../../classes/utils';
 
     export default {
         name: 'FriendsSidebar',
@@ -231,7 +231,7 @@
                     if (friend.ref?.$location.isRealInstance) {
                         locationTag = friend.ref.$location.tag;
                     } else if (this.lastLocation.friendList.has(friend.id)) {
-                        let $location = utils.parseLocation(this.lastLocation.location);
+                        let $location = parseLocation(this.lastLocation.location);
                         if ($location.isRealInstance) {
                             if ($location.tag === 'private') {
                                 locationTag = this.lastLocation.name;
@@ -340,7 +340,7 @@
                 );
             },
             isRealInstance(locationTag) {
-                return utils.isRealInstance(locationTag);
+                return _isRealInstance(locationTag);
             },
             toggleSwitchGroupByInstanceCollapsed() {
                 this.isSidebarGroupByInstanceCollapsed = !this.isSidebarGroupByInstanceCollapsed;
@@ -358,7 +358,7 @@
                     if (friend.ref?.location !== 'traveling') {
                         return friend.ref.location;
                     }
-                    if (utils.isRealInstance(friend.ref?.travelingToLocation)) {
+                    if (this.isRealInstance(friend.ref?.travelingToLocation)) {
                         return friend.ref.travelingToLocation;
                     }
                     if (this.lastLocation.friendList.has(friend.id)) {

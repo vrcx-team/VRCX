@@ -1176,7 +1176,9 @@
     import * as workerTimers from 'worker-timers';
     import { groupRequest } from '../../../api';
     import utils from '../../../classes/utils';
+    import { hasGroupPermission } from '../../../composables/group/utils';
     import { refreshInstancePlayerCount } from '../../../composables/instance/utils';
+    import { copyToClipboard, downloadAndSaveJson, getFaviconUrl } from '../../../composables/shared/utils';
     import { languageClass } from '../../../composables/user/utils';
     import Location from '../../Location.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
@@ -1322,10 +1324,6 @@
         D.visible = true;
     }
 
-    function getFaviconUrl(link) {
-        return utils.getFaviconUrl(link);
-    }
-
     function setGroupRepresentation(groupId) {
         handleGroupRepresentationChange(groupId, true);
     }
@@ -1468,9 +1466,7 @@
             }
         });
     }
-    function copyToClipboard(text) {
-        utils.copyToClipboard(text);
-    }
+
     function groupGalleryStatus(gallery) {
         const style = {};
         if (!gallery.membersOnly) {
@@ -1517,7 +1513,7 @@
         D.auditLogTypes = [];
         API.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
-            if (utils.hasGroupPermission(D.groupRef, 'group-audit-view')) {
+            if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
                 groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
                     // API.$on('GROUP:AUDITLOGTYPES', function (args) {
                     if (groupMemberModeration.id !== args.params.groupId) {
@@ -1802,9 +1798,6 @@
         await getGroupDialogGroupMembers();
     }
 
-    function hasGroupPermission(ref, permission) {
-        return utils.hasGroupPermission(ref, permission);
-    }
     function updateGroupDialogData(obj) {
         // Be careful with the deep merge
         emit('update:group-dialog', obj);
@@ -1814,8 +1807,5 @@
     }
     function updateGroupPostSearch() {
         emit('updateGroupPostSearch');
-    }
-    function downloadAndSaveJson(fileName, data) {
-        utils.downloadAndSaveJson(fileName, data);
     }
 </script>

@@ -1,4 +1,4 @@
-import { languageMappings } from './constants';
+import { languageMappings } from './constants/language';
 
 function userOnlineForTimestamp(ctx) {
     if (ctx.ref.state === 'online' && ctx.ref.$online_for) {

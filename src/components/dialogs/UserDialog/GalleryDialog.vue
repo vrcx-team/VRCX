@@ -448,8 +448,8 @@
     import { getCurrentInstance, inject, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
-    import utils from '../../../classes/utils';
-    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../composables/user/constants';
+    import { extractFileId } from '../../../composables/shared/utils';
+    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../composables/user/constants/emoji';
     import { getPrintFileName } from '../../../composables/user/utils';
     import Location from '../../Location.vue';
 
@@ -615,7 +615,7 @@
     }
 
     function compareCurrentProfilePic(fileId) {
-        const currentProfilePicOverride = utils.extractFileId(API.currentUser.profilePicOverride);
+        const currentProfilePicOverride = extractFileId(API.currentUser.profilePicOverride);
         if (fileId === currentProfilePicOverride) {
             return true;
         }
@@ -718,7 +718,7 @@
     }
 
     function compareCurrentVRCPlusIcon(userIcon) {
-        const currentUserIcon = utils.extractFileId(API.currentUser.userIcon);
+        const currentUserIcon = extractFileId(API.currentUser.userIcon);
         if (userIcon === currentUserIcon) {
             return true;
         }

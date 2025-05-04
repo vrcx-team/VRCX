@@ -324,6 +324,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { groupRequest, worldRequest } from '../../api';
     import utils from '../../classes/utils';
+    import { convertFileUrlToImageUrl } from '../../composables/shared/utils';
 
     const { t } = useI18n();
 
@@ -366,10 +367,6 @@
         userDialog: {
             type: Object,
             default: () => ({})
-        },
-        getSmallThumbnailUrl: {
-            type: Function,
-            default: () => (url) => url
         },
         lookupAvatars: {
             type: Function,
@@ -414,6 +411,10 @@
 
     const searchGroupParams = ref({});
     const searchGroupResults = ref([]);
+
+    function getSmallThumbnailUrl(url) {
+        convertFileUrlToImageUrl(url);
+    }
 
     function clearSearch() {
         searchUserParams.value = {};

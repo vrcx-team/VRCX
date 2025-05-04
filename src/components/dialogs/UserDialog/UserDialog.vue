@@ -1757,7 +1757,7 @@
 </template>
 
 <script setup>
-    import { computed, getCurrentInstance, inject, ref, watch, nextTick } from 'vue';
+    import { computed, getCurrentInstance, inject, nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import {
         favoriteRequest,
@@ -1772,10 +1772,17 @@
         worldRequest
     } from '../../../api';
     import utils from '../../../classes/utils';
-    import { refreshInstancePlayerCount } from '../../../composables/instance/utils';
-    import { userDialogGroupSortingOptions } from '../../../composables/user/constants';
-    import { languageClass, userOnlineForTimestamp, isFriendOnline } from '../../../composables/user/utils';
+    import { isRealInstance, parseLocation, refreshInstancePlayerCount } from '../../../composables/instance/utils';
+    import {
+        copyToClipboard,
+        downloadAndSaveJson,
+        extractFileId,
+        getFaviconUrl
+    } from '../../../composables/shared/utils';
+    import { userDialogGroupSortingOptions } from '../../../composables/user/constants/userDialogGroupSortingOptions';
+    import { isFriendOnline, languageClass, userOnlineForTimestamp } from '../../../composables/user/utils';
     import database from '../../../service/database';
+    import Location from '../../Location.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
@@ -1786,7 +1793,6 @@
     import PronounsDialog from './PronounsDialog.vue';
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
     import SocialStatusDialog from './SocialStatusDialog.vue';
-    import Location from '../../Location.vue';
 
     const { t } = useI18n();
 
@@ -2291,7 +2297,7 @@
         previousImagesTable.value = [];
         const imageUrl = props.userDialog.ref.currentAvatarImageUrl;
 
-        const fileId = utils.extractFileId(imageUrl);
+        const fileId = extractFileId(imageUrl);
         if (!fileId) {
             return;
         }
@@ -2357,7 +2363,7 @@
                     return args;
                 });
         } else if (command === 'Invite Message') {
-            L = utils.parseLocation(props.lastLocation.location);
+            L = parseLocation(props.lastLocation.location);
             worldRequest
                 .getCachedWorld({
                     worldId: L.worldId
@@ -2384,7 +2390,7 @@
             if (props.lastLocation.location === 'traveling') {
                 currentLocation = props.lastLocationDestination;
             }
-            L = utils.parseLocation(currentLocation);
+            L = parseLocation(currentLocation);
             worldRequest
                 .getCachedWorld({
                     worldId: L.worldId
@@ -2896,10 +2902,6 @@
         userDialogLastActiveTab.value = obj.label;
     }
 
-    function isRealInstance(args) {
-        return utils.isRealInstance(args);
-    }
-
     function checkNote(ref, note) {
         if (ref.note !== note) {
             addNote(ref.id, note);
@@ -2961,10 +2963,6 @@
         D.visible = true;
     }
 
-    function getFaviconUrl(args) {
-        return utils.getFaviconUrl(args);
-    }
-
     function showPreviousInstancesUserDialog(userRef) {
         const D = previousInstancesUserDialog.value;
         D.userRef = userRef;
@@ -3011,15 +3009,15 @@
     }
 
     function copyUserId(userId) {
-        utils.copyToClipboard(userId, 'User ID copied to clipboard');
+        copyToClipboard(userId, 'User ID copied to clipboard');
     }
 
     function copyUserURL(userId) {
-        utils.copyToClipboard(`https://vrchat.com/home/user/${userId}`, 'User URL copied to clipboard');
+        copyToClipboard(`https://vrchat.com/home/user/${userId}`, 'User URL copied to clipboard');
     }
 
     function copyUserDisplayName(displayName) {
-        utils.copyToClipboard(displayName, 'User DisplayName copied to clipboard');
+        copyToClipboard(displayName, 'User DisplayName copied to clipboard');
     }
 
     async function setUserDialogGroupSorting(sortOrder) {
@@ -3121,9 +3119,6 @@
         sortUserDialogAvatars(D.avatars);
     }
 
-    function downloadAndSaveJson(id, ref) {
-        utils.downloadAndSaveJson(id, ref);
-    }
     function refreshUserDialogTreeData() {
         emit('refreshUserDialogTreeData');
     }

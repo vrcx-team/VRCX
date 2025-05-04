@@ -44,7 +44,7 @@
 
 <script>
     import Location from '../../../components/Location.vue';
-    import utils from '../../../classes/utils';
+    import { convertFileUrlToImageUrl } from '../../../composables/shared/utils';
 
     export default {
         name: 'GroupsSidebar',
@@ -97,7 +97,7 @@
         },
         methods: {
             getSmallGroupIconUrl(url) {
-                return utils.convertFileUrlToImageUrl(url);
+                return convertFileUrlToImageUrl(url);
             },
             toggleGroupSidebarCollapse(groupId) {
                 this.groupInstancesCfg[groupId].isCollapsed = !this.groupInstancesCfg[groupId].isCollapsed;

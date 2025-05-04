@@ -58,9 +58,10 @@
 </template>
 
 <script>
-    import utils from '../../../classes/utils';
-    import database from '../../../service/database';
     import dayjs from 'dayjs';
+    import utils from '../../../classes/utils';
+    import { parseLocation } from '../../../composables/instance/utils';
+    import database from '../../../service/database';
     import Location from '../../Location.vue';
 
     export default {
@@ -141,7 +142,7 @@
             init() {
                 this.adjustDialogZ(this.$refs.dialog.$el);
                 this.loading = true;
-                this.location = utils.parseLocation(this.instanceId);
+                this.location = parseLocation(this.instanceId);
             },
             refreshPreviousInstancesInfoTable() {
                 database.getPlayersFromInstance(this.location.tag).then((data) => {

@@ -53,13 +53,19 @@ import {
     vrcPlusImageRequest,
     groupRequest
 } from './api';
-import { userDialogGroupSortingOptions } from './composables/user/constants';
+import { userDialogGroupSortingOptions } from './composables/user/constants/userDialogGroupSortingOptions';
 import {
     getPrintFileName,
     getPrintLocalDate,
     languageClass
 } from './composables/user/utils';
-import { storeAvatarImage } from './composables/avatar/utils';
+import {
+    compareUnityVersion,
+    getPlatformInfo,
+    storeAvatarImage
+} from './composables/avatar/utils';
+
+import { displayLocation } from './composables/instance/utils';
 
 import LoginPage from './views/Login/Login.vue';
 
@@ -115,6 +121,17 @@ import ChatboxBlacklistDialog from './views/PlayerList/dialogs/ChatboxBlacklistD
 import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
 
 import SafeDialog from './components/dialogs/SafeDialog.vue';
+
+import { hasGroupPermission } from './composables/group/utils';
+import { isRealInstance, parseLocation } from './composables/instance/utils';
+import {
+    checkVRChatCache,
+    convertFileUrlToImageUrl,
+    deleteVRChatCache,
+    extractFileId,
+    extractFileVersion,
+    getAvailablePlatforms
+} from './composables/shared/utils';
 
 // main app classes
 import _sharedFeed from './classes/sharedFeed.js';
@@ -649,12 +666,12 @@ console.log(`isLinux: ${LINUX}`);
 
     API.applyPresenceLocation = function (ref) {
         var presence = ref.presence;
-        if ($utils.isRealInstance(presence.world)) {
+        if (isRealInstance(presence.world)) {
             ref.$locationTag = `${presence.world}:${presence.instance}`;
         } else {
             ref.$locationTag = presence.world;
         }
-        if ($utils.isRealInstance(presence.travelingToWorld)) {
+        if (isRealInstance(presence.travelingToWorld)) {
             ref.$travelingToLocation = `${presence.travelingToWorld}:${presence.travelingToInstance}`;
         } else {
             ref.$travelingToLocation = presence.travelingToWorld;
@@ -782,7 +799,7 @@ console.log(`isLinux: ${LINUX}`);
                 ref.$online_for = player.joinTime;
             }
             if (ref.location === 'traveling') {
-                ref.$location = $utils.parseLocation(ref.travelingToLocation);
+                ref.$location = parseLocation(ref.travelingToLocation);
                 if (
                     !this.currentTravelers.has(ref.id) &&
                     ref.travelingToLocation
@@ -797,7 +814,7 @@ console.log(`isLinux: ${LINUX}`);
                     $app.onPlayerTraveling(travelRef);
                 }
             } else {
-                ref.$location = $utils.parseLocation(ref.location);
+                ref.$location = parseLocation(ref.location);
                 if (this.currentTravelers.has(ref.id)) {
                     this.currentTravelers.delete(ref.id);
                     $app.sharedFeed.pendingUpdate = true;
@@ -839,7 +856,7 @@ console.log(`isLinux: ${LINUX}`);
             this.applyUserLanguage(ref);
             // traveling
             if (ref.location === 'traveling') {
-                ref.$location = $utils.parseLocation(ref.travelingToLocation);
+                ref.$location = parseLocation(ref.travelingToLocation);
                 if (!this.currentTravelers.has(ref.id)) {
                     var travelRef = {
                         created_at: new Date().toJSON(),
@@ -851,7 +868,7 @@ console.log(`isLinux: ${LINUX}`);
                     $app.onPlayerTraveling(travelRef);
                 }
             } else {
-                ref.$location = $utils.parseLocation(ref.location);
+                ref.$location = parseLocation(ref.location);
                 if (this.currentTravelers.has(ref.id)) {
                     this.currentTravelers.delete(ref.id);
                     $app.sharedFeed.pendingUpdate = true;
@@ -1002,7 +1019,7 @@ console.log(`isLinux: ${LINUX}`);
         // If the user happens to be offline or the api is just being dumb, we assume that the user logged into VRCX is different than the one in-game and return the gameLog location.
         // This is really dumb.
         if (presenceLocation === gameLogLocation) {
-            const L = $utils.parseLocation(presenceLocation);
+            const L = parseLocation(presenceLocation);
             return L.worldId;
         }
 
@@ -1017,15 +1034,15 @@ console.log(`isLinux: ${LINUX}`);
             userLocation
         );
 
-        if ($utils.isRealInstance(userLocation)) {
+        if (isRealInstance(userLocation)) {
             console.warn('PWI: returning user location', userLocation);
-            const L = $utils.parseLocation(userLocation);
+            const L = parseLocation(userLocation);
             return L.worldId;
         }
 
-        if ($utils.isRealInstance(gameLogLocation)) {
+        if (isRealInstance(gameLogLocation)) {
             console.warn(`PWI: returning gamelog location: `, gameLogLocation);
-            const L = $utils.parseLocation(gameLogLocation);
+            const L = parseLocation(gameLogLocation);
             return L.worldId;
         }
 
@@ -1150,7 +1167,7 @@ console.log(`isLinux: ${LINUX}`);
         } else {
             Object.assign(ref, json);
         }
-        ref.$location = $utils.parseLocation(ref.location);
+        ref.$location = parseLocation(ref.location);
         if (json.world?.id) {
             worldRequest
                 .getCachedWorld({
@@ -3353,7 +3370,7 @@ console.log(`isLinux: ${LINUX}`);
                 fromGetCurrentUser &&
                 ctx.state !== 'online' &&
                 typeof ref !== 'undefined' &&
-                $utils.isRealInstance(ref.location)
+                isRealInstance(ref.location)
             ) {
                 if (this.debugFriendState) {
                     console.log(
@@ -3558,7 +3575,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.getWorldName = async function (location) {
         var worldName = '';
         try {
-            var L = $utils.parseLocation(location);
+            var L = parseLocation(location);
             if (L.isRealInstance && L.worldId) {
                 var args = await worldRequest.getCachedWorld({
                     worldId: L.worldId
@@ -3578,7 +3595,7 @@ console.log(`isLinux: ${LINUX}`);
         var groupName = '';
         var groupId = data;
         if (!data.startsWith('grp_')) {
-            var L = $utils.parseLocation(data);
+            var L = parseLocation(data);
             groupId = L.groupId;
             if (!L.groupId) {
                 return '';
@@ -4957,7 +4974,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
 
-        var $location = $utils.parseLocation(this.lastLocation.location);
+        var $location = parseLocation(this.lastLocation.location);
         var instanceType = $location.accessType;
         if (instanceType === 'group') {
             if ($location.groupAccessType === 'members') {
@@ -5814,7 +5831,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
 
-        var L = $utils.parseLocation(currentLocation);
+        var L = parseLocation(currentLocation);
         worldRequest
             .getCachedWorld({
                 worldId: L.worldId
@@ -7345,7 +7362,7 @@ console.log(`isLinux: ${LINUX}`);
             'wrld_74970324-58e8-4239-a17b-2c59dfdf00db',
             'wrld_266523e8-9161-40da-acd0-6bd82e075833'
         ];
-        var L = $utils.parseLocation(location);
+        var L = parseLocation(location);
         if (rpcWorlds.includes(L.worldId)) {
             return true;
         }
@@ -8127,7 +8144,7 @@ console.log(`isLinux: ${LINUX}`);
                             .then((args1) => {
                                 D.representedGroup = args1.json;
                                 D.representedGroup.$thumbnailUrl =
-                                    this.getSmallThumbnailUrl(
+                                    convertFileUrlToImageUrl(
                                         args1.json.iconUrl
                                     );
                                 if (!args1.json || !args1.json.isRepresenting) {
@@ -8148,7 +8165,7 @@ console.log(`isLinux: ${LINUX}`);
         if (!D.visible) {
             return;
         }
-        var L = $utils.parseLocation(D.ref.$location.tag);
+        var L = parseLocation(D.ref.$location.tag);
         if (updateInstanceOccupants && L.isRealInstance) {
             instanceRequest.getInstance({
                 worldId: L.worldId,
@@ -8515,7 +8532,7 @@ console.log(`isLinux: ${LINUX}`);
                 bundleSizes: [],
                 lastUpdated: ''
             };
-            var L = $utils.parseLocation(instanceId);
+            var L = parseLocation(instanceId);
             this.currentInstanceLocation = L;
             worldRequest
                 .getWorld({
@@ -8523,7 +8540,7 @@ console.log(`isLinux: ${LINUX}`);
                 })
                 .then((args) => {
                     this.currentInstanceWorld.ref = args.ref;
-                    var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
+                    var { isPC, isQuest, isIos } = getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     this.currentInstanceWorld.isPC = isPC;
@@ -8535,7 +8552,7 @@ console.log(`isLinux: ${LINUX}`);
                         );
                     this.currentInstanceWorld.focusViewDisabled =
                         args.ref?.tags.includes('feature_focus_view_disabled');
-                    $utils.checkVRChatCache(args.ref).then((cacheInfo) => {
+                    checkVRChatCache(args.ref).then((cacheInfo) => {
                         if (cacheInfo.Item1 > 0) {
                             this.currentInstanceWorld.inCache = true;
                             this.currentInstanceWorld.cacheSize = `${(
@@ -8555,13 +8572,13 @@ console.log(`isLinux: ${LINUX}`);
                 })
                 .then((args) => {
                     this.currentInstanceWorld.ref = args.ref;
-                    var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
+                    var { isPC, isQuest, isIos } = getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     this.currentInstanceWorld.isPC = isPC;
                     this.currentInstanceWorld.isQuest = isQuest;
                     this.currentInstanceWorld.isIos = isIos;
-                    $utils.checkVRChatCache(args.ref).then((cacheInfo) => {
+                    checkVRChatCache(args.ref).then((cacheInfo) => {
                         if (cacheInfo.Item1 > 0) {
                             this.currentInstanceWorld.inCache = true;
                             this.currentInstanceWorld.cacheSize = `${(
@@ -8571,12 +8588,12 @@ console.log(`isLinux: ${LINUX}`);
                     });
                 });
         }
-        if ($utils.isRealInstance(instanceId)) {
+        if (isRealInstance(instanceId)) {
             var ref = API.cachedInstances.get(instanceId);
             if (typeof ref !== 'undefined') {
                 this.currentInstanceWorld.instance = ref;
             } else {
-                var L = $utils.parseLocation(instanceId);
+                var L = parseLocation(instanceId);
                 if (L.isRealInstance) {
                     instanceRequest
                         .getInstance({
@@ -8666,7 +8683,7 @@ console.log(`isLinux: ${LINUX}`);
             var url = this.avatarRemoteDatabaseProviderList[i];
             var avatarArray = await this.lookupAvatarsByAuthor(url, authorId);
             for (var avatar of avatarArray) {
-                if ($utils.extractFileId(avatar.imageUrl) === fileId) {
+                if (extractFileId(avatar.imageUrl) === fileId) {
                     return avatar.id;
                 }
             }
@@ -8777,7 +8794,7 @@ console.log(`isLinux: ${LINUX}`);
                 if (fileId) {
                     D.loading = false;
                     for (let ref of array) {
-                        if ($utils.extractFileId(ref.imageUrl) === fileId) {
+                        if (extractFileId(ref.imageUrl) === fileId) {
                             this.showAvatarDialog(ref.id);
                             return;
                         }
@@ -8851,7 +8868,7 @@ console.log(`isLinux: ${LINUX}`);
         D.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
         $app.applyWorldDialogInstances();
         for (var room of D.rooms) {
-            if ($utils.isRealInstance(room.tag)) {
+            if (isRealInstance(room.tag)) {
                 instanceRequest.getInstance({
                     worldId: D.id,
                     instanceId: room.id
@@ -8876,7 +8893,7 @@ console.log(`isLinux: ${LINUX}`);
             ) {
                 continue;
             }
-            if (!$utils.compareUnityVersion(unityPackage.unitySortNumber)) {
+            if (!compareUnityVersion(unityPackage.unitySortNumber)) {
                 continue;
             }
 
@@ -8885,8 +8902,8 @@ console.log(`isLinux: ${LINUX}`);
                 continue;
             }
             var assetUrl = unityPackage.assetUrl;
-            var fileId = $utils.extractFileId(assetUrl);
-            var fileVersion = parseInt($utils.extractFileVersion(assetUrl), 10);
+            var fileId = extractFileId(assetUrl);
+            var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
             if (!fileId) {
                 continue;
             }
@@ -8966,7 +8983,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.showWorldDialog = function (tag, shortName) {
         const D = this.worldDialog;
-        const L = $utils.parseLocation(tag);
+        const L = parseLocation(tag);
         if (L.worldId === '') {
             return;
         }
@@ -8993,7 +9010,7 @@ console.log(`isLinux: ${LINUX}`);
         D.isIos = false;
         D.hasPersistData = false;
         D.memo = '';
-        var LL = $utils.parseLocation(this.lastLocation.location);
+        var LL = parseLocation(this.lastLocation.location);
         var currentWorldMatch = false;
         if (LL.worldId === D.id) {
             currentWorldMatch = true;
@@ -9041,7 +9058,7 @@ console.log(`isLinux: ${LINUX}`);
                             D.id
                         );
                     }
-                    var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
+                    var { isPC, isQuest, isIos } = getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     D.avatarScalingDisabled = args.ref?.tags.includes(
@@ -9189,7 +9206,7 @@ console.log(`isLinux: ${LINUX}`);
         for (var instance of Object.values(instances)) {
             // due to references on callback of API.getUser()
             // this should be block scope variable
-            const L = $utils.parseLocation(`${D.id}:${instance.id}`);
+            const L = parseLocation(`${D.id}:${instance.id}`);
             instance.location = L.tag;
             if (!L.shortName) {
                 L.shortName = instance.shortName;
@@ -9374,7 +9391,7 @@ console.log(`isLinux: ${LINUX}`);
         for (var instance of Object.values(instances)) {
             // due to references on callback of API.getUser()
             // this should be block scope variable
-            const L = $utils.parseLocation(instance.tag);
+            const L = parseLocation(instance.tag);
             instance.location = instance.tag;
             instance.$location = L;
             if (instance.friendCount === 0) {
@@ -9392,7 +9409,7 @@ console.log(`isLinux: ${LINUX}`);
             var ref = API.cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 room.ref = ref;
-            } else if ($utils.isRealInstance(room.tag)) {
+            } else if (isRealInstance(room.tag)) {
                 instanceRequest.getInstance({
                     worldId: room.$location.worldId,
                     instanceId: room.$location.instanceId
@@ -9462,7 +9479,7 @@ console.log(`isLinux: ${LINUX}`);
                 return;
             }
             // self invite
-            var L = $utils.parseLocation(location);
+            var L = parseLocation(location);
             if (!L.isRealInstance) {
                 return;
             }
@@ -9568,13 +9585,13 @@ console.log(`isLinux: ${LINUX}`);
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;
                 }
-                var { isPC, isQuest, isIos } = $utils.getAvailablePlatforms(
+                var { isPC, isQuest, isIos } = getAvailablePlatforms(
                     args.ref.unityPackages
                 );
                 D.isPC = isPC;
                 D.isQuest = isQuest;
                 D.isIos = isIos;
-                D.platformInfo = $utils.getPlatformInfo(args.ref.unityPackages);
+                D.platformInfo = getPlatformInfo(args.ref.unityPackages);
                 for (let i = ref.unityPackages.length - 1; i > -1; i--) {
                     var unityPackage = ref.unityPackages[i];
                     if (unityPackage.variant === 'impostor') {
@@ -9636,7 +9653,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.checkAvatarCache = function (fileId) {
         var avatarId = '';
         for (var ref of API.cachedAvatars.values()) {
-            if ($utils.extractFileId(ref.imageUrl) === fileId) {
+            if (extractFileId(ref.imageUrl) === fileId) {
                 avatarId = ref.id;
             }
         }
@@ -9659,7 +9676,7 @@ console.log(`isLinux: ${LINUX}`);
         ownerUserId,
         currentAvatarImageUrl
     ) {
-        var fileId = $utils.extractFileId(currentAvatarImageUrl);
+        var fileId = extractFileId(currentAvatarImageUrl);
         if (!fileId) {
             this.$message({
                 message: 'Sorry, the author is unknown',
@@ -9869,10 +9886,7 @@ console.log(`isLinux: ${LINUX}`);
         if (
             D.ageGate &&
             type === 'group' &&
-            $utils.hasGroupPermission(
-                D.groupRef,
-                'group-instance-age-gated-create'
-            )
+            hasGroupPermission(D.groupRef, 'group-instance-age-gated-create')
         ) {
             params.ageGate = true;
         }
@@ -9966,7 +9980,7 @@ console.log(`isLinux: ${LINUX}`);
         shortName,
         desktopMode
     ) {
-        var L = $utils.parseLocation(location);
+        var L = parseLocation(location);
         var args = [];
         if (
             shortName &&
@@ -10340,7 +10354,7 @@ console.log(`isLinux: ${LINUX}`);
     API.cachedAvatarNames = new Map();
 
     $app.methods.getAvatarName = async function (imageUrl) {
-        var fileId = $utils.extractFileId(imageUrl);
+        var fileId = extractFileId(imageUrl);
         if (!fileId) {
             return {
                 ownerId: '',
@@ -10421,7 +10435,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.processScreenshot = async function (path) {
         var newPath = path;
         if (this.screenshotHelper) {
-            var location = $utils.parseLocation(this.lastLocation.location);
+            var location = parseLocation(this.lastLocation.location);
             var metadata = {
                 application: 'VRCX',
                 version: 1,
@@ -10534,7 +10548,7 @@ console.log(`isLinux: ${LINUX}`);
             D.cacheSize = 0;
             D.cacheLocked = false;
             D.cachePath = '';
-            $utils.checkVRChatCache(D.ref).then((cacheInfo) => {
+            checkVRChatCache(D.ref).then((cacheInfo) => {
                 if (cacheInfo.Item1 > 0) {
                     D.inCache = true;
                     D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(
@@ -10554,7 +10568,7 @@ console.log(`isLinux: ${LINUX}`);
             D.cacheSize = 0;
             D.cacheLocked = false;
             D.cachePath = '';
-            $utils.checkVRChatCache(D.ref).then((cacheInfo) => {
+            checkVRChatCache(D.ref).then((cacheInfo) => {
                 if (cacheInfo.Item1 > 0) {
                     D.inCache = true;
                     D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(
@@ -10578,7 +10592,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.deleteVRChatCache = async function (ref) {
-        await $utils.deleteVRChatCache(ref);
+        await deleteVRChatCache(ref);
         this.getVRChatCacheSize();
         this.updateVRChatWorldCache();
         this.updateVRChatAvatarCache();
@@ -10604,7 +10618,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         var { location } = this.lastLocation;
         AppApi.VrcClosedGracefully().then((result) => {
-            if (result || !$utils.isRealInstance(location)) {
+            if (result || !isRealInstance(location)) {
                 return;
             }
             // wait a bit for SteamVR to potentially close before deciding to relaunch
@@ -10653,90 +10667,6 @@ console.log(`isLinux: ${LINUX}`);
         var usedCacheSize = await AssetBundleManager.GetCacheSize();
         this.VRChatUsedCacheSize = (usedCacheSize / 1073741824).toFixed(2);
         this.VRChatCacheSizeLoading = false;
-    };
-
-    $app.methods.getBundleLocation = async function (input) {
-        var assetUrl = input;
-        var variant = '';
-        if (assetUrl) {
-            // continue
-        } else if (
-            this.avatarDialog.visible &&
-            this.avatarDialog.ref.unityPackages.length > 0
-        ) {
-            var unityPackages = this.avatarDialog.ref.unityPackages;
-            for (let i = unityPackages.length - 1; i > -1; i--) {
-                var unityPackage = unityPackages[i];
-                if (
-                    unityPackage.variant &&
-                    unityPackage.variant !== 'standard' &&
-                    unityPackage.variant !== 'security'
-                ) {
-                    continue;
-                }
-                if (
-                    unityPackage.platform === 'standalonewindows' &&
-                    $utils.compareUnityVersion(unityPackage.unitySortNumber)
-                ) {
-                    assetUrl = unityPackage.assetUrl;
-                    if (unityPackage.variant !== 'standard') {
-                        variant = unityPackage.variant;
-                    }
-                    break;
-                }
-            }
-        } else if (
-            this.avatarDialog.visible &&
-            this.avatarDialog.ref.assetUrl
-        ) {
-            assetUrl = this.avatarDialog.ref.assetUrl;
-        } else if (
-            this.worldDialog.visible &&
-            this.worldDialog.ref.unityPackages.length > 0
-        ) {
-            var unityPackages = this.worldDialog.ref.unityPackages;
-            for (let i = unityPackages.length - 1; i > -1; i--) {
-                var unityPackage = unityPackages[i];
-                if (
-                    unityPackage.platform === 'standalonewindows' &&
-                    $utils.compareUnityVersion(unityPackage.unitySortNumber)
-                ) {
-                    assetUrl = unityPackage.assetUrl;
-                    break;
-                }
-            }
-        } else if (this.worldDialog.visible && this.worldDialog.ref.assetUrl) {
-            assetUrl = this.worldDialog.ref.assetUrl;
-        }
-        if (!assetUrl) {
-            return null;
-        }
-        var fileId = $utils.extractFileId(assetUrl);
-        var fileVersion = parseInt($utils.extractFileVersion(assetUrl), 10);
-        var variantVersion = parseInt(
-            $utils.extractVariantVersion(assetUrl),
-            10
-        );
-        var assetLocation = await AssetBundleManager.GetVRChatCacheFullLocation(
-            fileId,
-            fileVersion,
-            variant,
-            variantVersion
-        );
-        var cacheInfo = await AssetBundleManager.CheckVRChatCache(
-            fileId,
-            fileVersion,
-            variant,
-            variantVersion
-        );
-        var inCache = false;
-        if (cacheInfo.Item1 > 0) {
-            inCache = true;
-        }
-        console.log(`InCache: ${inCache}`);
-        var fullAssetLocation = `${assetLocation}\\__data`;
-        console.log(fullAssetLocation);
-        return fullAssetLocation;
     };
 
     // Parse User URL
@@ -11101,7 +11031,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.checkCanInvite = function (location) {
-        var L = $utils.parseLocation(location);
+        var L = parseLocation(location);
         var instance = API.cachedInstances.get(location);
         if (instance?.closedAt) {
             return false;
@@ -11123,7 +11053,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.checkCanInviteSelf = function (location) {
-        var L = $utils.parseLocation(location);
+        var L = parseLocation(location);
         var instance = API.cachedInstances.get(location);
         if (instance?.closedAt) {
             return false;
@@ -11167,7 +11097,7 @@ console.log(`isLinux: ${LINUX}`);
             (this.displayVRCPlusIconsAsAvatar && user.userIcon)
         ) {
             if (isIcon) {
-                return $utils.convertFileUrlToImageUrl(user.userIcon);
+                return convertFileUrlToImageUrl(user.userIcon);
             }
             return user.userIcon;
         }
@@ -11198,9 +11128,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (user.currentAvatarImageUrl) {
             if (isIcon) {
-                return $utils.convertFileUrlToImageUrl(
-                    user.currentAvatarImageUrl
-                );
+                return convertFileUrlToImageUrl(user.currentAvatarImageUrl);
             }
             return user.currentAvatarImageUrl;
         }
@@ -11874,7 +11802,7 @@ console.log(`isLinux: ${LINUX}`);
 
         // update cached user with both gameLog and API locations
         var currentLocation = API.currentUser.$locationTag;
-        var L = $utils.parseLocation(currentLocation);
+        var L = parseLocation(currentLocation);
         if (L.isTraveling) {
             currentLocation = API.currentUser.$travelingToLocation;
         }
@@ -11897,7 +11825,7 @@ console.log(`isLinux: ${LINUX}`);
 
         ref.$online_for = API.currentUser.$online_for;
         ref.$offline_for = API.currentUser.$offline_for;
-        ref.$location = $utils.parseLocation(currentLocation);
+        ref.$location = parseLocation(currentLocation);
         if (!this.isGameRunning || this.gameLogDisabled) {
             ref.$location_at = API.currentUser.$location_at;
             ref.$travelingToTime = API.currentUser.$travelingToTime;
@@ -11940,9 +11868,9 @@ console.log(`isLinux: ${LINUX}`);
         this.lastLocationDestination = '';
         this.lastLocationDestinationTime = 0;
 
-        if ($utils.isRealInstance(location)) {
+        if (isRealInstance(location)) {
             var dt = new Date().toJSON();
-            var L = $utils.parseLocation(location);
+            var L = parseLocation(location);
 
             this.lastLocation.location = location;
             this.lastLocation.date = dt;
@@ -13020,7 +12948,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         if (!API.queuedInstances.has(instanceId)) {
-            var L = $utils.parseLocation(instanceId);
+            var L = parseLocation(instanceId);
             if (L.isRealInstance) {
                 instanceRequest
                     .getInstance({
@@ -13047,24 +12975,20 @@ console.log(`isLinux: ${LINUX}`);
             ref.$msgBox.close();
             API.queuedInstances.delete(instanceId);
         }
-        var L = $utils.parseLocation(instanceId);
+        var L = parseLocation(instanceId);
         var group = API.cachedGroups.get(L.groupId);
         var groupName = group?.name ?? '';
         var worldName = ref?.$worldName ?? '';
-        var displayLocation = $app.displayLocation(
-            instanceId,
-            worldName,
-            groupName
-        );
+        const location = displayLocation(instanceId, worldName, groupName);
         this.$message({
-            message: `Instance ready to join ${displayLocation}`,
+            message: `Instance ready to join ${location}`,
             type: 'success'
         });
         var noty = {
             created_at: new Date().toJSON(),
             type: 'group.queueReady',
             imageUrl: group?.iconUrl,
-            message: `Instance ready to join ${displayLocation}`,
+            message: `Instance ready to join ${location}`,
             location: instanceId,
             groupName,
             worldName
@@ -13115,12 +13039,12 @@ console.log(`isLinux: ${LINUX}`);
         if (!ref.$worldName) {
             ref.$worldName = await this.getWorldName(instanceId);
         }
-        var displayLocation = this.displayLocation(
+        const location = displayLocation(
             instanceId,
             ref.$worldName,
             ref.$groupName
         );
-        ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${displayLocation} `;
+        ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${location} `;
         API.queuedInstances.set(instanceId, ref);
         // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     };
@@ -13575,12 +13499,7 @@ console.log(`isLinux: ${LINUX}`);
         );
     };
 
-    $app.methods.getSmallThumbnailUrl = function (url) {
-        return $utils.convertFileUrlToImageUrl(url);
-    };
-
     // #endregion
-
     // #region | Tab Props
 
     $app.computed.moderationTabBind = function () {
@@ -13806,7 +13725,6 @@ console.log(`isLinux: ${LINUX}`);
             avatarRemoteDatabaseProvider: this.avatarRemoteDatabaseProvider,
             hideTooltips: this.hideTooltips,
             userDialog: this.userDialog,
-            getSmallThumbnailUrl: this.getSmallThumbnailUrl,
             lookupAvatars: this.lookupAvatars,
             avatarRemoteDatabase: this.avatarRemoteDatabase
         };

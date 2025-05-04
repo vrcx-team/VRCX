@@ -22,10 +22,11 @@
 </template>
 
 <script setup>
-    import { inject, getCurrentInstance } from 'vue';
+    import { getCurrentInstance, inject } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { instanceRequest, notificationRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { parseLocation } from '../../../composables/instance/utils';
+
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
@@ -67,7 +68,7 @@
                     const receiverUserId = J.userIds.shift();
                     if (receiverUserId === API.currentUser.id) {
                         // can't invite self!?
-                        const L = utils.parseLocation(J.worldId);
+                        const L = parseLocation(J.worldId);
                         instanceRequest
                             .selfInvite({
                                 instanceId: L.instanceId,

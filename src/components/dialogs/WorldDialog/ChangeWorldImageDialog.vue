@@ -43,11 +43,12 @@
 </template>
 
 <script setup>
-    import { ref, inject, getCurrentInstance } from 'vue';
+    import { getCurrentInstance, inject, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { imageRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { extractFileId } from '../../../composables/shared/utils';
     import webApiService from '../../../service/webapi';
+
     const { t } = useI18n();
 
     const API = inject('API');
@@ -159,7 +160,7 @@
                 const signatureSizeInBytes = parseInt(await genLength(base64SignatureFile), 10);
                 const worldId = props.worldDialog.id;
                 const { imageUrl } = props.worldDialog.ref;
-                const fileId = utils.extractFileId(imageUrl);
+                const fileId = extractFileId(imageUrl);
                 if (!fileId) {
                     $message({
                         message: t('message.world.image_invalid'),

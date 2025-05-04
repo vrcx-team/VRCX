@@ -833,10 +833,10 @@
 <script setup>
     import { inject, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../classes/utils';
     import { languageClass } from '../../composables/user/utils';
     import configRepository from '../../service/config';
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
+    import { getFaviconUrl } from '../../composables/shared/utils';
 
     const { t } = useI18n();
 
@@ -980,9 +980,5 @@
         props.chatboxUserBlacklist.set(user.id, user.displayName);
         await saveChatboxUserBlacklist();
         emit('getCurrentInstanceUserList');
-    }
-
-    function getFaviconUrl(link) {
-        return utils.getFaviconUrl(link);
     }
 </script>
