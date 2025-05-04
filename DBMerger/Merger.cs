@@ -67,6 +67,12 @@ namespace DBMerger
                     continue;
                 }
                 unMergedTables.RemoveAt(i);
+                if (table.StartsWith("sqlite_"))
+                {
+                    // Skip sqlite reserved tables
+                    logger.Debug($"Skipping sqlite reserved table: {table}");
+                    continue;
+                }
                 i--;
 
                 // Then just tack them on
@@ -252,8 +258,8 @@ namespace DBMerger
         private void MergeUsers()
         {
             MergeTable(
-                table => userIDRegex.IsMatch(table) 
-                    && !table.EndsWith("_avatar_history") 
+                table => userIDRegex.IsMatch(table)
+                    && !table.EndsWith("_avatar_history")
                     && (table.EndsWith("_notifications")
                         || table.EndsWith("_moderation")),
                 [0],
@@ -301,7 +307,7 @@ namespace DBMerger
                     }
 
                     var oldAvatarTime = old.Length >= 3 ? (int)old[2] : 0;
-                    var newAvatarTime = (int)existing[2];
+                    var newAvatarTime = existing[2] != null ? (int)existing[2] : 0;
 
                     if (oldDateTime <= newDateTime)
                     {
@@ -310,7 +316,7 @@ namespace DBMerger
                     existing[2] = oldAvatarTime + newAvatarTime;
 
                     logger.Trace(
-                        "Combined avatar time: {} + {} = {}", 
+                        "Combined avatar time: {} + {} = {}",
                         oldAvatarTime, newAvatarTime, oldAvatarTime + newAvatarTime
                     );
 
@@ -538,7 +544,8 @@ namespace DBMerger
             int[] colIndicesToMatch,
             Func<object[], object[], object[]> rowTransformer,
             Action<string> finalizer = null
-        ) {
+        )
+        {
             for (int i = 0; i < unMergedTables.Count; i++)
             {
                 // Find table that we want to merge
