@@ -306,7 +306,7 @@ namespace DBMerger
                         return oldDateTime > newDateTime ? old : existing;
                     }
 
-                    var oldAvatarTime = old.Length >= 3 ? (int)old[2] : 0;
+                    var oldAvatarTime = old.Length >= 3 && old[2] != null ? (int)old[2] : 0;
                     var newAvatarTime = existing[2] != null ? (int)existing[2] : 0;
 
                     if (oldDateTime <= newDateTime)
