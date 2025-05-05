@@ -258,7 +258,7 @@
                 const sameInstanceTag = new Set();
                 for (const item of this.friendsInSameInstance) {
                     for (const friend of item) {
-                        if (utils.isRealInstance(friend.ref?.$location.tag)) {
+                        if (this.isRealInstance(friend.ref?.$location.tag)) {
                             sameInstanceTag.add(friend.ref?.$location.tag);
                         }
                     }
