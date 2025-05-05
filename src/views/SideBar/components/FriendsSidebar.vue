@@ -254,33 +254,30 @@
 
                 return sortedFriendsList.sort((a, b) => b.length - a.length);
             },
+            sameInstanceTag() {
+                const sameInstanceTag = new Set();
+                for (const item of this.friendsInSameInstance) {
+                    for (const friend of item) {
+                        if (utils.isRealInstance(friend.ref?.$location.tag)) {
+                            sameInstanceTag.add(friend.ref?.$location.tag);
+                        }
+                    }
+                }
+                return sameInstanceTag;
+            },
             onlineFriendsByGroupStatus() {
                 if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
                     return this.onlineFriends;
                 }
 
-                const sameInstanceTag = new Set();
-                for (const item of this.friendsInSameInstance) {
-                    for (const friend of item) {
-                        sameInstanceTag.add(friend.ref?.$location.tag);
-                    }
-                }
-
-                return this.onlineFriends.filter((item) => !sameInstanceTag.has(item.ref?.$location.tag));
+                return this.onlineFriends.filter((item) => !this.sameInstanceTag.has(item.ref?.$location.tag));
             },
             vipFriendsByGroupStatus() {
                 if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
                     return this.vipFriends;
                 }
 
-                const sameInstanceTag = new Set();
-                for (const item of this.friendsInSameInstance) {
-                    for (const friend of item) {
-                        sameInstanceTag.add(friend.ref?.$location.tag);
-                    }
-                }
-
-                return this.vipFriends.filter((item) => !sameInstanceTag.has(item.ref?.$location.tag));
+                return this.vipFriends.filter((item) => !this.sameInstanceTag.has(item.ref?.$location.tag));
             },
             // VIP friends divide by group
             vipFriendsDivideByGroup() {
