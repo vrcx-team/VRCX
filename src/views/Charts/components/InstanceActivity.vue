@@ -142,7 +142,7 @@
                 echartsInstance: null,
                 resizeObserver: null,
                 intersectionObservers: [],
-                selectedDate: dayjs().add(-1, 'day'),
+                selectedDate: dayjs(),
                 // data
                 activityData: [],
                 activityDetailData: [],
@@ -551,8 +551,8 @@
                     }
                 }
                 this.selectedDate = isNext
-                    ? this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1]
-                    : this.allDateOfActivityArray[0];
+                    ? this.allDateOfActivityArray[0]
+                    : this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1];
                 this.reloadData();
             },
             getDatePickerDisabledDate(time) {

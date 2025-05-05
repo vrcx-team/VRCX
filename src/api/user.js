@@ -10,6 +10,11 @@ const userReq = {
         return window.API.call(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
+            if (!json) {
+                throw new Error(
+                    `getUser missing user data for: ${params.userId}`
+                );
+            }
             const args = {
                 json,
                 params
