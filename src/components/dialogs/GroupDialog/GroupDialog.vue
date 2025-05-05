@@ -985,16 +985,16 @@
                                                 </template>
                                                 <i class="el-icon-edit-outline" style="margin-right: 5px" />
                                             </el-tooltip>
-                                            <template v-for="roleId in user.roleIds">
-                                                <span
-                                                    v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                    v-if="role.id === roleId"
-                                                    :key="rIndex"
-                                                    v-text="role.name" />
-                                                <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                    >,&nbsp;</span
-                                                >
-                                            </template>
+                                        </template>
+                                        <template v-for="roleId in user.roleIds">
+                                            <span
+                                                v-for="(role, rIndex) in groupDialog.ref.roles"
+                                                v-if="role.id === roleId"
+                                                :key="rIndex"
+                                                v-text="role.name" />
+                                            <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
+                                                >,&nbsp;</span
+                                            >
                                         </template>
                                     </span>
                                 </div>
@@ -1049,16 +1049,16 @@
                                                 </template>
                                                 <i class="el-icon-edit-outline" style="margin-right: 5px" />
                                             </el-tooltip>
-                                            <template v-for="roleId in user.roleIds">
-                                                <span
-                                                    v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                    v-if="role.id === roleId"
-                                                    :key="rIndex"
-                                                    v-text="role.name" />
-                                                <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                    >,&nbsp;</span
-                                                >
-                                            </template>
+                                        </template>
+                                        <template v-for="roleId in user.roleIds">
+                                            <span
+                                                v-for="(role, rIndex) in groupDialog.ref.roles"
+                                                v-if="role.id === roleId"
+                                                :key="rIndex"
+                                                v-text="role.name" />
+                                            <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
+                                                >,&nbsp;</span
+                                            >
                                         </template>
                                     </span>
                                 </div>
