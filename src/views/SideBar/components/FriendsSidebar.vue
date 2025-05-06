@@ -289,8 +289,13 @@
                         const groupFriends = vipFriendsByGroup[key];
                         // sort groupFriends using the order of vipFriends
                         // avoid unnecessary sorting
-                        let filteredFriends = this.vipFriends.filter((friend) =>
-                            groupFriends.some((item) => item.id === friend.id)
+                        const filteredFriends = this.vipFriends.filter((friend) =>
+                            groupFriends.some((item) => {
+                                if (this.isSidebarGroupByInstance && this.isHideFriendsInSameInstance) {
+                                    return item.id === friend.id && !this.sameInstanceTag.has(item.ref?.$location.tag);
+                                }
+                                return item.id === friend.id;
+                            })
                         );
 
                         if (filteredFriends.length > 0) {
