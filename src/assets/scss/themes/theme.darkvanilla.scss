@@ -185,8 +185,10 @@ li[class='el-menu-item is-active'] {
     color: #eee;
 }
 
-.el-table .descending .sort-caret.descending,
 .el-table .ascending .sort-caret.ascending {
+    border-bottom-color: var(--dv_bright);
+}
+.el-table .descending .sort-caret.descending {
     border-top-color: var(--dv_bright);
 }
 
