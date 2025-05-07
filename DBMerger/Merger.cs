@@ -67,6 +67,12 @@ namespace DBMerger
                     continue;
                 }
                 unMergedTables.RemoveAt(i);
+                if (table.StartsWith("sqlite_"))
+                {
+                    // Skip sqlite reserved tables
+                    logger.Debug($"Skipping sqlite reserved table: {table}");
+                    continue;
+                }
                 i--;
 
                 // Then just tack them on
@@ -300,8 +306,8 @@ namespace DBMerger
                         return oldDateTime > newDateTime ? old : existing;
                     }
 
-                    var oldAvatarTime = old.Length >= 3 ? (int)old[2] : 0;
-                    var newAvatarTime = (int)existing[2];
+                    var oldAvatarTime = old.Length >= 3 && old[2] != null ? (int)old[2] : 0;
+                    var newAvatarTime = existing[2] != null ? (int)existing[2] : 0;
 
                     if (oldDateTime <= newDateTime)
                     {
