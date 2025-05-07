@@ -52,6 +52,9 @@
         "vars-on-top": 0,
         "object-curly-spacing": ["error", "always"],
         "require-atomic-updates": 0,
-        "vue/require-default-prop": 0
+        "no-unused-vars": 1,
+        "vue/require-default-prop": 0,
+        "vue/no-mutating-props": 1,
+        "vue/no-v-text-v-html-on-component": 1
     }
 }

@@ -253,7 +253,7 @@ mixin settingsTab
                                 el-dropdown-item(
                                     v-text='$t("view.settings.appearance.appearance.theme_mode_material3")'
                                     @click.native='saveThemeMode("material3")')
-                    .options-container-item(vif='!isLinux()')
+                    .options-container-item(v-if='!isLinux()')
                         span.name {{ $t('view.settings.appearance.appearance.zoom') }}
                         el-input-number(
                             size='small'
