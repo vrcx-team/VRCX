@@ -176,29 +176,29 @@
                             :grouphint="scope.row.details.groupName"
                             :link="true" />
                         <br v-if="scope.row.details" />
-                        <el-tooltip
-                            v-if="
-                                scope.row.message &&
-                                scope.row.message !== `This is a generated invite to ${scope.row.details?.worldName}`
-                            "
-                            placement="top">
-                            <template #content>
-                                <pre
-                                    class="extra"
-                                    style="
-                                        display: inline-block;
-                                        vertical-align: top;
-                                        font-family: inherit;
-                                        font-size: 12px;
-                                        white-space: pre-wrap;
-                                        margin: 0;
-                                    "
-                                    >{{ scope.row.message || '-' }}</pre
-                                >
-                            </template>
-                            <div v-text="scope.row.message"></div>
-                        </el-tooltip>
                     </span>
+                    <el-tooltip
+                        v-if="
+                            scope.row.message &&
+                            scope.row.message !== `This is a generated invite to ${scope.row.details?.worldName}`
+                        "
+                        placement="top">
+                        <template #content>
+                            <pre
+                                class="extra"
+                                style="
+                                    display: inline-block;
+                                    vertical-align: top;
+                                    font-family: inherit;
+                                    font-size: 12px;
+                                    white-space: pre-wrap;
+                                    margin: 0;
+                                "
+                                >{{ scope.row.message || '-' }}</pre
+                            >
+                        </template>
+                        <div v-text="scope.row.message"></div>
+                    </el-tooltip>
                     <span
                         v-else-if="scope.row.details && scope.row.details.inviteMessage"
                         v-text="scope.row.details.inviteMessage"></span>
