@@ -179,7 +179,7 @@
                 this.$emit('remove-local-avatar-favorite', ...args);
             },
             deleteFavoriteNoConfirm(...args) {
-                this.$emit('delete-favorite-no-confirm', ...args);
+                this.$emit('deleteFavoriteNoConfirm', ...args);
             }
         }
     };
