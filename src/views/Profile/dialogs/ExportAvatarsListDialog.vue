@@ -1,11 +1,5 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
-        :visible.sync="isVisible"
-        :title="$t('dialog.export_own_avatars.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog :visible.sync="isVisible" :title="$t('dialog.export_own_avatars.header')" width="650px">
         <el-input
             v-model="exportAvatarsListCsv"
             v-loading="loading"
@@ -16,7 +10,7 @@
             readonly
             style="margin-top: 15px"
             @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -24,7 +18,7 @@
 
     export default {
         name: 'ExportAvatarsListDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
+        inject: ['API'],
         props: {
             isExportAvatarsListDialogVisible: Boolean
         },

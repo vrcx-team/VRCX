@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="worldImportDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="isVisible"
         :title="$t('dialog.world_import.header')"
         width="650px"
         top="10vh"
-        class="x-dialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        class="x-dialog">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ $t('dialog.world_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -176,7 +173,7 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -185,16 +182,7 @@
 
     export default {
         name: 'WorldImportDialog',
-        inject: [
-            'API',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'showFullscreenImageDialog',
-            'showUserDialog',
-            'adjustDialogZ',
-            'showWorldDialog'
-        ],
+        inject: ['API', 'showFullscreenImageDialog', 'showUserDialog', 'adjustDialogZ', 'showWorldDialog'],
         props: {
             worldImportDialogVisible: Boolean,
             worldImportDialogInput: String,

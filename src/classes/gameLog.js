@@ -1,8 +1,9 @@
 import * as workerTimers from 'worker-timers';
+import { parseLocation } from '../composables/instance/utils';
 import gameLogService from '../service/gamelog.js';
 import configRepository from '../service/config.js';
 import database from '../service/database.js';
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { baseClass, $app, API, $utils } from './baseClass.js';
 import { userRequest } from '../api';
 import dayjs from 'dayjs';
 
@@ -80,7 +81,7 @@ export default class extends baseClass {
                         this.lastLocation.location,
                         gameLog.dt
                     );
-                    var worldName = this.replaceBioSymbols(gameLog.worldName);
+                    var worldName = $utils.replaceBioSymbols(gameLog.worldName);
                     if (this.isGameRunning) {
                         this.lastLocationReset(gameLog.dt);
                         this.clearNowPlaying();
@@ -100,7 +101,7 @@ export default class extends baseClass {
                         this.applyGroupDialogInstances();
                     }
                     this.addInstanceJoinHistory(gameLog.location, gameLog.dt);
-                    var L = $utils.parseLocation(gameLog.location);
+                    var L = parseLocation(gameLog.location);
                     var entry = {
                         created_at: gameLog.dt,
                         type: 'Location',
@@ -789,7 +790,7 @@ export default class extends baseClass {
             var videoPos = Number(data[1]);
             var videoLength = Number(data[2]);
             var displayName = data[3];
-            var videoName = this.replaceBioSymbols(data[4]);
+            var videoName = $utils.replaceBioSymbols(data[4]);
             var videoUrl = videoName;
             var videoId = 'LSMedia';
             if (videoUrl === this.nowPlaying.url) {
@@ -979,29 +980,6 @@ export default class extends baseClass {
                 console.log('gameLog:', gameLog);
             }
             this.addGameLogEntry(gameLog, this.lastLocation.location);
-        },
-
-        deleteGameLogEntryPrompt(row) {
-            this.$confirm('Continue? Delete Log', 'Confirm', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        this.deleteGameLogEntry(row);
-                    }
-                }
-            });
-        },
-
-        deleteGameLogEntry(row) {
-            $app.removeFromArray(this.gameLogTable.data, row);
-            database.deleteGameLogEntry(row);
-            console.log(row);
-            database.getGamelogDatabase().then((data) => {
-                this.gameLogSessionTable = data;
-                this.updateSharedFeed(true);
-            });
         },
 
         gameLogSearch(row) {

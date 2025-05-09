@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
         :visible="isAvatarProviderDialogVisible"
         :title="t('dialog.avatar_database_provider.header')"
         width="600px"
-        :before-close="beforeDialogClose"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div>
             <el-input
                 v-for="(provider, index) in avatarRemoteDatabaseProviderList"
@@ -24,17 +21,12 @@
                 {{ t('dialog.avatar_database_provider.add_provider') }}
             </el-button>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     const { t } = useI18n();
-
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
 
     defineProps({
         avatarRemoteDatabaseProviderList: {

@@ -15,6 +15,7 @@ import VueI18n from 'vue-i18n';
 import ElementUI from 'element-ui';
 import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
+import { displayLocation, parseLocation } from './composables/instance/utils';
 import * as localizedStrings from './localization/localizedStrings.js';
 
 import $utils from './classes/utils.js';
@@ -79,7 +80,7 @@ Vue.component('marquee-text', MarqueeText);
         methods: {
             parse() {
                 this.text = this.location;
-                var L = $utils.parseLocation(this.location);
+                var L = parseLocation(this.location);
                 if (L.isOffline) {
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
@@ -396,7 +397,7 @@ Vue.component('marquee-text', MarqueeText);
             case 'GPS':
                 text = `<strong>${
                     noty.displayName
-                }</strong> is in ${this.displayLocation(
+                }</strong> is in ${displayLocation(
                     noty.location,
                     noty.worldName,
                     noty.groupName
@@ -405,7 +406,7 @@ Vue.component('marquee-text', MarqueeText);
             case 'Online':
                 var locationName = '';
                 if (noty.worldName) {
-                    locationName = ` to ${this.displayLocation(
+                    locationName = ` to ${displayLocation(
                         noty.location,
                         noty.worldName,
                         noty.groupName
@@ -422,7 +423,7 @@ Vue.component('marquee-text', MarqueeText);
             case 'invite':
                 text = `<strong>${
                     noty.senderUsername
-                }</strong> has invited you to ${this.displayLocation(
+                }</strong> has invited you to ${displayLocation(
                     noty.details.worldId,
                     noty.details.worldName
                 )}${message}`;
@@ -482,7 +483,7 @@ Vue.component('marquee-text', MarqueeText);
                 if (noty.displayName) {
                     text = `<strong>${
                         noty.displayName
-                    }</strong> has spawned a portal to ${this.displayLocation(
+                    }</strong> has spawned a portal to ${displayLocation(
                         noty.instanceId,
                         noty.worldName,
                         noty.groupName

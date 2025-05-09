@@ -56,7 +56,7 @@ const vrcPlusImageReq = {
                 json,
                 printId
             };
-            window.API.$emit('PRINT:DELETE', args);
+            // window.API.$emit('PRINT:DELETE', args);
             return args;
         });
     },

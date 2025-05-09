@@ -1,12 +1,9 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible.sync="chatboxBlacklistDialog.visible"
         :title="t('dialog.chatbox_blacklist.header')"
-        width="600px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        width="600px">
         <div v-if="chatboxBlacklistDialog.visible" v-loading="chatboxBlacklistDialog.loading">
             <h2>{{ t('dialog.chatbox_blacklist.keyword_blacklist') }}</h2>
             <el-input
@@ -42,19 +39,14 @@
                 <span>{{ user[1] }}</span>
             </el-tag>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    // TODO: untested
-    import { inject, ref } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../../service/config';
     const { t } = useI18n();
-
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
 
     defineProps({
         chatboxBlacklistDialog: {

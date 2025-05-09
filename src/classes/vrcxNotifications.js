@@ -1,5 +1,7 @@
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 import { userRequest } from '../api';
+import { displayLocation } from '../composables/instance/utils';
+import { extractFileId, extractFileVersion } from '../composables/shared/utils';
+import { $app, API, baseClass } from './baseClass.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -356,8 +358,8 @@ export default class extends baseClass {
 
         async notySaveImage(noty) {
             var imageUrl = await this.notyGetImage(noty);
-            var fileId = this.extractFileId(imageUrl);
-            var fileVersion = this.extractFileVersion(imageUrl);
+            var fileId = extractFileId(imageUrl);
+            var fileVersion = extractFileVersion(imageUrl);
             var imageLocation = '';
             try {
                 if (fileId && fileVersion) {
@@ -414,7 +416,7 @@ export default class extends baseClass {
                     break;
                 case 'GPS':
                     this.speak(
-                        `${displayName} is in ${this.displayLocation(
+                        `${displayName} is in ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -424,7 +426,7 @@ export default class extends baseClass {
                 case 'Online':
                     var locationName = '';
                     if (noty.worldName) {
-                        locationName = ` to ${this.displayLocation(
+                        locationName = ` to ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -442,7 +444,7 @@ export default class extends baseClass {
                     break;
                 case 'invite':
                     this.speak(
-                        `${displayName} has invited you to ${this.displayLocation(
+                        `${displayName} has invited you to ${displayLocation(
                             noty.details.worldId,
                             noty.details.worldName,
                             noty.groupName
@@ -513,7 +515,7 @@ export default class extends baseClass {
                 case 'PortalSpawn':
                     if (displayName) {
                         this.speak(
-                            `${displayName} has spawned a portal to ${this.displayLocation(
+                            `${displayName} has spawned a portal to ${displayLocation(
                                 noty.instanceId,
                                 noty.worldName,
                                 noty.groupName
@@ -599,7 +601,7 @@ export default class extends baseClass {
                 case 'GPS':
                     AppApi.XSNotification(
                         'VRCX',
-                        `${noty.displayName} is in ${this.displayLocation(
+                        `${noty.displayName} is in ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -611,7 +613,7 @@ export default class extends baseClass {
                 case 'Online':
                     var locationName = '';
                     if (noty.worldName) {
-                        locationName = ` to ${this.displayLocation(
+                        locationName = ` to ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -645,7 +647,7 @@ export default class extends baseClass {
                         'VRCX',
                         `${
                             noty.senderUsername
-                        } has invited you to ${this.displayLocation(
+                        } has invited you to ${displayLocation(
                             noty.details.worldId,
                             noty.details.worldName
                         )}${message}`,
@@ -755,7 +757,7 @@ export default class extends baseClass {
                             'VRCX',
                             `${
                                 noty.displayName
-                            } has spawned a portal to ${this.displayLocation(
+                            } has spawned a portal to ${displayLocation(
                                 noty.instanceId,
                                 noty.worldName,
                                 noty.groupName
@@ -915,7 +917,7 @@ export default class extends baseClass {
                         playOvrtHudNotifications,
                         playOvrtWristNotifications,
                         'VRCX',
-                        `${noty.displayName} is in ${this.displayLocation(
+                        `${noty.displayName} is in ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -927,7 +929,7 @@ export default class extends baseClass {
                 case 'Online':
                     var locationName = '';
                     if (noty.worldName) {
-                        locationName = ` to ${this.displayLocation(
+                        locationName = ` to ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -969,7 +971,7 @@ export default class extends baseClass {
                         'VRCX',
                         `${
                             noty.senderUsername
-                        } has invited you to ${this.displayLocation(
+                        } has invited you to ${displayLocation(
                             noty.details.worldId,
                             noty.details.worldName
                         )}${message}`,
@@ -1155,7 +1157,7 @@ export default class extends baseClass {
                             'VRCX',
                             `${
                                 noty.displayName
-                            } has spawned a portal to ${this.displayLocation(
+                            } has spawned a portal to ${displayLocation(
                                 noty.instanceId,
                                 noty.worldName,
                                 noty.groupName
@@ -1345,7 +1347,7 @@ export default class extends baseClass {
                 case 'GPS':
                     this.desktopNotification(
                         noty.displayName,
-                        `is in ${this.displayLocation(
+                        `is in ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -1356,7 +1358,7 @@ export default class extends baseClass {
                 case 'Online':
                     var locationName = '';
                     if (noty.worldName) {
-                        locationName = ` to ${this.displayLocation(
+                        locationName = ` to ${displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -1385,7 +1387,7 @@ export default class extends baseClass {
                 case 'invite':
                     this.desktopNotification(
                         noty.senderUsername,
-                        `has invited you to ${this.displayLocation(
+                        `has invited you to ${displayLocation(
                             noty.details.worldId,
                             noty.details.worldName
                         )}${message}`,
@@ -1515,7 +1517,7 @@ export default class extends baseClass {
                     if (noty.displayName) {
                         this.desktopNotification(
                             noty.displayName,
-                            `has spawned a portal to ${this.displayLocation(
+                            `has spawned a portal to ${displayLocation(
                                 noty.instanceId,
                                 noty.worldName,
                                 noty.groupName

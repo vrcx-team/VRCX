@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
+    <safe-dialog
         :visible.sync="isDialogVisible"
         class="x-dialog"
         :title="$t('dialog.friend_export.header')"
         width="650px"
-        destroy-on-close
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        destroy-on-close>
         <el-dropdown trigger="click" size="small" @click.native.stop>
             <el-button size="mini">
                 <span v-if="friendExportFavoriteGroup">
@@ -42,13 +39,13 @@
             readonly
             style="margin-top: 15px"
             @click.native="handleCopyFriendExportData"></el-input>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
     export default {
         name: 'FriendExportDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
+        inject: ['API'],
         props: {
             friendExportDialogVisible: Boolean,
             favoriteFriends: Array

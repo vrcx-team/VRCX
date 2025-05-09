@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="newInstanceDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="newInstanceDialog.visible"
         :title="$t('dialog.new_instance.header')"
         width="650px"
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <el-tabs v-model="newInstanceDialog.selectedTab" type="card" @tab-click="newInstanceTabClick">
             <el-tab-pane :label="$t('dialog.new_instance.normal')">
                 <el-form :model="newInstanceDialog" label-width="150px">
@@ -486,27 +483,30 @@
                 >{{ $t('dialog.new_instance.launch') }}</el-button
             >
         </template>
-    </el-dialog>
+        <InviteDialog
+            :invite-dialog="inviteDialog"
+            :vip-friends="vipFriends"
+            :online-friends="onlineFriends"
+            :active-friends="activeFriends"
+            :invite-message-table="inviteMessageTable"
+            :upload-image="uploadImage"
+            @close-invite-dialog="closeInviteDialog" />
+    </safe-dialog>
 </template>
 
 <script>
-    import { groupRequest, instanceRequest } from '../../api';
+    import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import utils from '../../classes/utils';
+    import { hasGroupPermission as _hasGroupPermission } from '../../composables/group/utils';
+    import { isRealInstance, parseLocation } from '../../composables/instance/utils';
+    import { getLaunchURL } from '../../composables/shared/utils';
     import configRepository from '../../service/config';
+    import InviteDialog from './InviteDialog/InviteDialog.vue';
 
     export default {
         name: 'NewInstanceDialog',
-        inject: [
-            'API',
-            'userImage',
-            'userStatusClass',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'showInviteDialog',
-            'showLaunchDialog',
-            'adjustDialogZ'
-        ],
+        components: { InviteDialog },
+        inject: ['API', 'userImage', 'userStatusClass', 'showLaunchDialog', 'adjustDialogZ'],
         props: {
             vipFriends: {
                 type: Array,
@@ -535,6 +535,18 @@
             newInstanceDialogLocationTag: {
                 type: String,
                 required: true
+            },
+            inviteMessageTable: {
+                type: Object,
+                default: () => ({})
+            },
+            uploadImage: {
+                type: String,
+                default: ''
+            },
+            lastLocation: {
+                type: Object,
+                default: () => ({})
             }
         },
         data() {
@@ -566,6 +578,14 @@
                     groupRef: {},
                     contentSettings: this.instanceContentSettings,
                     selectedContentSettings: []
+                },
+                inviteDialog: {
+                    visible: false,
+                    loading: false,
+                    worldId: '',
+                    worldName: '',
+                    userIds: [],
+                    friendsInInstance: []
                 }
             };
         },
@@ -578,13 +598,42 @@
             this.initializeNewInstanceDialog();
         },
         methods: {
+            closeInviteDialog() {
+                this.inviteDialog.visible = false;
+            },
+            showInviteDialog(tag) {
+                if (!isRealInstance(tag)) {
+                    return;
+                }
+                const L = parseLocation(tag);
+                worldRequest
+                    .getCachedWorld({
+                        worldId: L.worldId
+                    })
+                    .then((args) => {
+                        const D = this.inviteDialog;
+                        D.userIds = [];
+                        D.worldId = L.tag;
+                        D.worldName = args.ref.name;
+                        D.friendsInInstance = [];
+                        const friendsInCurrentInstance = this.lastLocation.friendList;
+                        for (const friend of friendsInCurrentInstance.values()) {
+                            const ctx = this.friends.get(friend.userId);
+                            if (typeof ctx.ref === 'undefined') {
+                                continue;
+                            }
+                            D.friendsInInstance.push(ctx);
+                        }
+                        D.visible = true;
+                    });
+            },
             initNewInstanceDialog(tag) {
-                if (!utils.isRealInstance(tag)) {
+                if (!isRealInstance(tag)) {
                     return;
                 }
                 this.$nextTick(() => this.adjustDialogZ(this.$refs.newInstanceDialog.$el));
                 const D = this.newInstanceDialog;
-                const L = utils.parseLocation(tag);
+                const L = parseLocation(tag);
                 if (D.worldId === L.worldId) {
                     // reopening dialog, keep last open instance
                     D.visible = true;
@@ -682,16 +731,16 @@
                 } else {
                     D.location = D.worldId;
                 }
-                const L = utils.parseLocation(D.location);
+                const L = parseLocation(D.location);
                 if (noChanges) {
                     L.shortName = D.shortName;
                 } else {
                     D.shortName = '';
                 }
-                D.url = utils.getLaunchURL(L);
+                D.url = getLaunchURL(L);
             },
             selfInvite(location) {
-                const L = utils.parseLocation(location);
+                const L = parseLocation(location);
                 if (!L.isRealInstance) {
                     return;
                 }
@@ -831,7 +880,7 @@
                 this.saveNewInstanceDialog();
             },
             async copyInstanceUrl(location) {
-                const L = utils.parseLocation(location);
+                const L = parseLocation(location);
                 const args = await instanceRequest.getInstanceShortName({
                     worldId: L.worldId,
                     instanceId: L.instanceId
@@ -870,7 +919,7 @@
                 }
             },
             hasGroupPermission(ref, permission) {
-                return utils.hasGroupPermission(ref, permission);
+                return _hasGroupPermission(ref, permission);
             }
         }
     };

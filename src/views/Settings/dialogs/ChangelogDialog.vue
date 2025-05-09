@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="changeLogDialog.visible"
         :title="t('dialog.change_log.header')"
         width="800px"
         top="5vh"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp"
         @close="closeDialog">
         <div v-if="changeLogDialog.visible" class="changelog-dialog">
             <h2 v-text="changeLogDialog.buildName"></h2>
@@ -32,7 +29,7 @@
                 {{ t('dialog.change_log.close') }}
             </el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
@@ -41,9 +38,6 @@
 
     const { t } = useI18n();
     const openExternalLink = inject('openExternalLink');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
 
     const props = defineProps({
         changeLogDialog: {

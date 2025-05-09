@@ -1,12 +1,9 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isLaunchOptionsDialogVisible"
         :title="t('dialog.launch_options.header')"
         width="600px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp"
         @close="closeDialog">
         <div style="font-size: 12px">
             {{ t('dialog.launch_options.description') }} <br />
@@ -53,7 +50,7 @@
                 </el-button>
             </div>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
@@ -61,9 +58,6 @@
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../../service/config';
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const openExternalLink = inject('openExternalLink');
 
     const { t } = useI18n();

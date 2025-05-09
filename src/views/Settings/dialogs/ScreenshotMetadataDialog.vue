@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible.sync="screenshotMetadataDialog.visible"
         :title="t('dialog.screenshot_metadata.header')"
         width="1050px"
-        top="10vh"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        top="10vh">
         <div
             v-if="screenshotMetadataDialog.visible"
             v-loading="screenshotMetadataDialog.loading"
@@ -161,19 +158,16 @@
                 <br />
             </span>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { ref, inject, computed, getCurrentInstance, watch } from 'vue';
+    import { ref, inject, getCurrentInstance, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { vrcPlusImageRequest } from '../../../api';
     import Location from '../../../components/Location.vue';
 
     const API = inject('API');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const showFullscreenImageDialog = inject('showFullscreenImageDialog');
 
     const { t } = useI18n();
@@ -302,6 +296,9 @@
                 vrcPlusImageRequest
                     .uploadGalleryImage(base64Body)
                     .then((args) => {
+                        // about uploadGalleryImage -> emit 'GALLERYIMAGE:ADD'
+                        // no need to add to the gallery logic here
+                        // because it refreshes when you open the gallery
                         $message({
                             message: t('message.gallery.uploaded'),
                             type: 'success'

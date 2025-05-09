@@ -265,7 +265,8 @@ const notificationReq = {
                     notificationId
                 }
             };
-            window.API.$emit('NOTIFICATION:V2:HIDE', args);
+            // useless
+            // window.API.$emit('NOTIFICATION:V2:HIDE', args);
             return args;
         });
     }

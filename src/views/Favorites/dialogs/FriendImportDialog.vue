@@ -1,12 +1,9 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="friendImportDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="isVisible"
         :title="$t('dialog.friend_import.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ $t('dialog.friend_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -122,7 +119,7 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -131,17 +128,7 @@
 
     export default {
         name: 'FriendImportDialog',
-        inject: [
-            'API',
-            'userImage',
-            'userImageFull',
-            'showFullscreenImageDialog',
-            'showUserDialog',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'adjustDialogZ'
-        ],
+        inject: ['API', 'userImage', 'userImageFull', 'showFullscreenImageDialog', 'showUserDialog', 'adjustDialogZ'],
         props: {
             friendImportDialogVisible: {
                 type: Boolean,

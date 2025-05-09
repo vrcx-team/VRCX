@@ -1,11 +1,5 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
-        :title="$t('dialog.export_friends_list.header')"
-        :visible.sync="isVisible"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog :title="$t('dialog.export_friends_list.header')" :visible.sync="isVisible" width="650px">
         <el-tabs type="card">
             <el-tab-pane :label="$t('dialog.export_friends_list.csv')">
                 <el-input
@@ -30,13 +24,13 @@
                     @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
         </el-tabs>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
     export default {
         name: 'ExportFriendsListDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
+        inject: ['API'],
         props: {
             friends: Map,
             isExportFriendsListDialogVisible: Boolean

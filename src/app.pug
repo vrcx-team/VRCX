@@ -1,8 +1,8 @@
 doctype html
 #x-app.x-app(@dragenter.prevent @dragover.prevent @drop.prevent)
-    //- login
-    include ./mixins/loginPage.pug
-    +loginPage
+    LoginPage(v-if="!API.isLoggedIn" v-bind="loginPageBind" v-on="loginPageEvent")
+
+    VRCXUpdateDialog(v-bind="vrcxUpdateDialogBind" v-on="vrcxUpdateDialogEvent")
 
     //- menu
     .x-menu-container
@@ -23,47 +23,30 @@ doctype html
                 circle
                 style='font-size: 14px; height: 50px; width: 50px')
 
-        nav-menu(ref='menu' @select='selectMenu' :menu-active-index='menuActiveIndex')
+        NavMenu(ref='menu' @select='selectMenu' :menu-active-index='menuActiveIndex')
 
     //- ### Tabs ###
     template(v-if='API.isLoggedIn')
-        //- feed
-        include ./mixins/tabs/feed.pug
-        +feedTab
+        FeedTab(v-bind='feedTabBind' v-on='feedTabEvent')
 
-        //- gameLog
-        include ./mixins/tabs/gameLog.pug
-        +gameLogTab
+        GameLogTab(v-bind='gameLogTabBind' v-on='gameLogTabEvent')
 
-        //- playerList
-        include ./mixins/tabs/playerList.pug
-        +playerListTab
+        PlayerListTab(v-bind='playerListTabBind' v-on='playerListTabEvent')
 
-        //- search
-        include ./mixins/tabs/search.pug
-        +searchTab
+        SearchTab(v-bind='searchTabBind' v-on='searchTabEvent')
 
         FavoritesTab(v-bind='favoritesTabBind' v-on='favoritesTabEvent')
 
-        //- friendLog
-        include ./mixins/tabs/friendLog.pug
-        +friendLogTab
+        FriendLogTab(v-bind='friendLogTabBind')
 
-        //- moderation
         ModerationTab(v-bind='moderationTabBind')
 
-        //- notification
-        include ./mixins/tabs/notifications.pug
-        +notificationsTab
+        NotificationTab(v-bind='notificationTabBind' v-on='notificationTabEvent')
 
-        //- profile
-        include ./mixins/tabs/profile.pug
-        +profileTab
+        ProfileTab(v-bind='profileTabBind' v-on='profileTabEvent')
 
-        //- friends list
         FriendListTab(v-bind='friendsListTabBind' v-on='friendsListTabEvent')
 
-        //- charts
         KeepAlive
             ChartsTab(v-if='menuActiveIndex === "charts"' v-bind='chartsTabBind' v-on='chartsTabEvent')
 
@@ -73,89 +56,8 @@ doctype html
 
         SideBar(v-bind='sideBarTabBind' v-on='sideBarTabEvent')
 
-    //- ## Dialogs ## -\\
-    include ./mixins/dialogs/userDialog.pug
-    +userDialog
-
-    include ./mixins/dialogs/images.pug
-    +images
-
-    include ./mixins/dialogs/currentUser.pug
-    +currentUser
-
-    include ./mixins/dialogs/invites.pug
-    +invites
-
-    include ./mixins/dialogs/boops.pug
-    +boops
-
-    //- previous instances
-    PreviousInstancesInfoDialog(v-bind='previousInstancesInfoDialogBind' v-on='previousInstancesInfoDialogEvent')
-
-    PreviousInstancesUserDialog(v-bind='previousInstancesUserDialogBind' v-on='previousInstancesUserDialogEvent')
-
-    //- favorites
-    FriendImportDialog(v-bind='friendImportDialogBind' v-on='friendImportDialogEvent')
-
-    WorldImportDialog(v-bind='worldImportDialogBind' v-on='worldImportDialogEvent')
-
-    AvatarImportDialog(v-bind='avatarImportDialogBind' v-on='avatarImportDialogEvent')
-
-    //- favorites dialog
-    ChooseFavoriteGroupDialog(v-bind='favoriteDialogBind' v-on='favoriteDialogEvent')
-
-    ExportFriendsListDialog(v-bind='exportFriendsListDialogBind' v-on='exportFriendsListDialogEvent')
-
-    ExportAvatarsListDialog(v-bind='exportAvatarsListDialogBind' v-on='exportAvatarsListDialogEvent')
-
-    //- launch
-    LaunchDialog(v-bind='launchDialogBind' v-on='launchDialogEvent')
-
-    //- world
-    WorldDialog(v-bind='worldDialogBind' v-on='worldDialogEvent')
-
-    //- group
-    GroupDialog(v-bind='groupDialogBind' v-on='groupDialogEvent')
-
-    InviteGroupDialog(v-bind='inviteGroupDialogBind' v-on='inviteGroupDialogEvent')
-
-    //- avatar
-    AvatarDialog(v-bind='avatarDialogBind' v-on='avatarDialogEvent')
-
-    //- settings
-    FeedFiltersDialog(v-bind='feedFiltersDialogBind' v-on='feedFiltersDialogEvent')
-
-    LaunchOptionsDialog(:is-launch-options-dialog-visible.sync='isLaunchOptionsDialogVisible')
-
-    OpenSourceSoftwareNoticeDialog(:oss-dialog.sync='ossDialog')
-
-    ChangelogDialog(:change-log-dialog.sync='changeLogDialog')
-
-    VRCXUpdateDialog(v-bind='vrcxUpdateDialogBind' v-on='vrcxUpdateDialogEvent')
-
-    ScreenshotMetadataDialog(v-bind='screenshotMetadataDialogBind' v-on='screenshotMetadataDialogEvent')
-
-    DiscordNamesDialog(:discord-names-dialog-visible.sync='discordNamesDialogVisible' :friends='friends')
-
-    EditInviteMessageDialog(:edit-invite-message-dialog.sync='editInviteMessageDialog')
-
-    NoteExportDialog(:is-note-export-dialog-visible.sync='isNoteExportDialogVisible' :friends='friends')
-
-    VRChatConfigDialog(v-bind='vrchatConfigDialogBind' v-on='vrchatConfigDialogEvent')
-
-    YouTubeApiDialog(v-bind='youTubeApiDialogBind' v-on='youTubeApiDialogEvent')
-
-    NotificationPositionDialog(v-bind='notificationPositionDialogBind' v-on='notificationPositionDialogEvent')
-
-    AvatarProviderDialog(v-bind='avatarProviderDialogBind' v-on='avatarProviderDialogEvent')
-
-    RegistryBackupDialog(
-        :isRegistryBackupDialogVisible.sync='isRegistryBackupDialogVisible'
-        :backupVrcRegistry='backupVrcRegistry')
-
-    PrimaryPasswordDialog(:enablePrimaryPasswordDialog.sync='enablePrimaryPasswordDialog' @setPrimaryPassword="setPrimaryPassword")
-
-    //- player list
-    ChatboxBlacklistDialog(:chatboxBlacklistDialog="chatboxBlacklistDialog" :chatboxUserBlacklist="chatboxUserBlacklist" @deleteChatboxUserBlacklist="deleteChatboxUserBlacklist")
+        //- ## Dialogs ## -\\
+        include ./mixins/dialogs/dialogs.pug
+        +dialogs
 
     //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")

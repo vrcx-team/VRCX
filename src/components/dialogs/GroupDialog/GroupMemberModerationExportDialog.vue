@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isGroupLogsExportDialogVisible"
         :title="t('dialog.group_member_moderation.export_logs')"
         width="650px"
         append-to-body
-        @close="setIsGroupLogsExportDialogVisible"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="setIsGroupLogsExportDialogVisible">
         <el-checkbox-group
             v-model="checkedGroupLogsExportLogsOptions"
             style="margin-bottom: 10px"
@@ -29,17 +26,14 @@
             readonly
             style="margin-top: 15px"
             @click.native="handleCopyGroupLogsExportContent" />
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject, ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
+    import { copyToClipboard } from '../../../composables/shared/utils';
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const { t } = useI18n();
 
     const props = defineProps({
@@ -101,7 +95,7 @@
     }
 
     function handleCopyGroupLogsExportContent() {
-        utils.copyToClipboard(groupLogsExportContent.value);
+        copyToClipboard(groupLogsExportContent.value);
     }
 
     function setIsGroupLogsExportDialogVisible() {

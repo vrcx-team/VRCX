@@ -49,7 +49,7 @@ const friendReq = {
                 json,
                 params
             };
-            window.API.$emit('FRIEND:REQUEST:CANCEL', args);
+            // window.API.$emit('FRIEND:REQUEST:CANCEL', args);
             return args;
         });
     },

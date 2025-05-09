@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
+    <safe-dialog
         :visible.sync="isVisible"
         :title="$t('dialog.set_world_tags.header')"
         width="400px"
         destroy-on-close
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <el-checkbox v-model="setWorldTagsDialog.avatarScalingDisabled">
             {{ $t('dialog.set_world_tags.avatar_scaling_disabled') }}
         </el-checkbox>
@@ -80,7 +77,7 @@
                 </el-button>
             </div>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -88,7 +85,7 @@
 
     export default {
         name: 'SetWorldTagsDialog',
-        inject: ['beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp', 'showWorldDialog'],
+        inject: ['showWorldDialog'],
         props: {
             oldTags: {
                 type: Array,

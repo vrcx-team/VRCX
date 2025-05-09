@@ -1,11 +1,5 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
-        :visible.sync="isDialogVisible"
-        :title="$t('dialog.world_export.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog :visible.sync="isDialogVisible" :title="$t('dialog.world_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
@@ -84,13 +78,13 @@
             readonly
             style="margin-top: 15px"
             @click.native="handleCopyWorldExportData"></el-input>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
     export default {
         name: 'WorldExportDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
+        inject: ['API'],
         props: {
             favoriteWorlds: Array,
             worldExportDialogVisible: Boolean,

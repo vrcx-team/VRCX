@@ -1,12 +1,9 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="avatarImportDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="isVisible"
         :title="$t('dialog.avatar_import.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ $t('dialog.avatar_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -171,7 +168,7 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -180,16 +177,7 @@
 
     export default {
         name: 'AvatarImportDialog',
-        inject: [
-            'API',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'adjustDialogZ',
-            'showFullscreenImageDialog',
-            'showUserDialog',
-            'showAvatarDialog'
-        ],
+        inject: ['API', 'adjustDialogZ', 'showFullscreenImageDialog', 'showUserDialog', 'showAvatarDialog'],
         props: {
             getLocalAvatarFavoriteGroupLength: Function,
             localAvatarFavoriteGroups: Array,

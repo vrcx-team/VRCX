@@ -126,7 +126,33 @@ const userReq = {
                 json,
                 params
             };
-            window.API.$emit('USER:FEEDBACK', args);
+            // window.API.$emit('USER:FEEDBACK', args);
+            return args;
+        });
+    },
+
+    /**
+     * @typedef {{
+     *     status: 'active' | 'offline' | 'busy' | 'ask me' | 'join me',
+     *     statusDescription: string
+     * }} SaveCurrentUserParameters
+     */
+
+    /**
+     * Updates current user's status.
+     * @param params {SaveCurrentUserParameters} new status to be set
+     * @returns {Promise<{json: any, params}>}
+     */
+    saveCurrentUser(params) {
+        return window.API.call(`users/${window.API.currentUser.id}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            window.API.$emit('USER:CURRENT:SAVE', args);
             return args;
         });
     }

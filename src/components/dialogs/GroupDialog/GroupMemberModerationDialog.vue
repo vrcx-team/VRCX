@@ -1,15 +1,12 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="groupMemberModeration.visible"
         :title="t('dialog.group_member_moderation.header')"
         append-to-body
         top="5vh"
         width="90vw"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div>
             <h3>{{ groupMemberModeration.groupRef.name }}</h3>
             <el-tabs type="card" style="height: 100%">
@@ -806,21 +803,18 @@
         <group-member-moderation-export-dialog
             :is-group-logs-export-dialog-visible.sync="isGroupLogsExportDialogVisible"
             :group-logs-moderation-table="groupLogsModerationTable" />
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
     import { getCurrentInstance, inject, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
     import { groupRequest, userRequest } from '../../../api';
+    import { useModerationTable, useSelectedUsers } from '../../../composables/group/useGroupMemberModeration';
+    import { hasGroupPermission } from '../../../composables/group/utils';
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
-    import { useModerationTable, useSelectedUsers } from '../../../composables/groups/useGroupMemberModeration';
 
     const API = inject('API');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const showUserDialog = inject('showUserDialog');
     const userImage = inject('userImage');
     const userImageFull = inject('userImageFull');
@@ -1686,9 +1680,5 @@
             .replace('group.', '')
             .replace(/\./g, ' ')
             .replace(/\b\w/g, (l) => l.toUpperCase());
-    }
-
-    function hasGroupPermission(ref, permission) {
-        return utils.hasGroupPermission(ref, permission);
     }
 </script>

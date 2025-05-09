@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="VRCXUpdateDialogRef"
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible.sync="VRCXUpdateDialog.visible"
         :title="t('dialog.vrcx_updater.header')"
-        width="400px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        width="400px">
         <div v-loading="checkingForVRCXUpdate" style="margin-top: 15px">
             <template v-if="updateInProgress">
                 <el-progress :percentage="updateProgress" :format="updateProgressText"></el-progress>
@@ -62,7 +59,7 @@
                 {{ t('dialog.vrcx_updater.install') }}
             </el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
@@ -71,9 +68,6 @@
     import { useI18n } from 'vue-i18n-bridge';
 
     const { t } = useI18n();
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const adjustDialogZ = inject('adjustDialogZ');
 
     const props = defineProps({

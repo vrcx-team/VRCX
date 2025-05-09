@@ -1,12 +1,5 @@
 <template>
-    <el-dialog
-        ref="favoriteDialog"
-        :before-close="beforeDialogClose"
-        :visible.sync="isVisible"
-        :title="$t('dialog.favorite.header')"
-        width="300px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog ref="favoriteDialog" :visible.sync="isVisible" :title="$t('dialog.favorite.header')" width="300px">
         <div v-loading="loading">
             <span style="display: block; text-align: center">{{ $t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
@@ -69,7 +62,7 @@
                 </el-button>
             </template>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -78,7 +71,7 @@
 
     export default {
         name: 'ChooseFavoriteGroupDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp', 'adjustDialogZ'],
+        inject: ['API', 'adjustDialogZ'],
         props: {
             favoriteDialog: {
                 type: Object,
@@ -186,7 +179,7 @@
                 this.$emit('remove-local-avatar-favorite', ...args);
             },
             deleteFavoriteNoConfirm(...args) {
-                this.$emit('delete-favorite-no-confirm', ...args);
+                this.$emit('deleteFavoriteNoConfirm', ...args);
             }
         }
     };

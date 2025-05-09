@@ -14,7 +14,7 @@ const imageReq = {
             method: 'PUT'
         });
         window.$app.avatarDialog.loading = false;
-        window.$app.changeAvatarImageDialogLoading = false;
+        // window.$app.changeAvatarImageDialogLoading = false;
     },
 
     async uploadAvatarImage(params, fileId) {
@@ -28,14 +28,15 @@ const imageReq = {
                     params,
                     fileId
                 };
-                window.API.$emit('AVATARIMAGE:INIT', args);
+                // window.API.$emit('AVATARIMAGE:INIT', args);
                 return args;
             });
         } catch (err) {
             console.error(err);
-            window.API.uploadAvatarFailCleanup(fileId);
+            imageReq.uploadAvatarFailCleanup(fileId);
+            throw err;
         }
-        return void 0;
+        // return void 0;
     },
 
     async uploadAvatarImageFileStart(params) {
@@ -50,12 +51,12 @@ const imageReq = {
                     json,
                     params
                 };
-                window.API.$emit('AVATARIMAGE:FILESTART', args);
+                // window.API.$emit('AVATARIMAGE:FILESTART', args);
                 return args;
             });
         } catch (err) {
             console.error(err);
-            window.API.uploadAvatarFailCleanup(params.fileId);
+            imageReq.uploadAvatarFailCleanup(params.fileId);
         }
         return void 0;
     },
@@ -75,7 +76,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATARIMAGE:FILEFINISH', args);
+            // window.API.$emit('AVATARIMAGE:FILEFINISH', args);
             return args;
         });
     },
@@ -92,12 +93,12 @@ const imageReq = {
                     json,
                     params
                 };
-                window.API.$emit('AVATARIMAGE:SIGSTART', args);
+                // window.API.$emit('AVATARIMAGE:SIGSTART', args);
                 return args;
             });
         } catch (err) {
             console.error(err);
-            window.API.uploadAvatarFailCleanup(params.fileId);
+            imageReq.uploadAvatarFailCleanup(params.fileId);
         }
         return void 0;
     },
@@ -117,7 +118,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATARIMAGE:SIGFINISH', args);
+            // window.API.$emit('AVATARIMAGE:SIGFINISH', args);
             return args;
         });
     },
@@ -131,7 +132,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATARIMAGE:SET', args);
+            // window.API.$emit('AVATARIMAGE:SET', args);
             window.API.$emit('AVATAR', args);
             return args;
         });
@@ -152,7 +153,7 @@ const imageReq = {
             method: 'PUT'
         });
         window.$app.worldDialog.loading = false;
-        window.$app.changeWorldImageDialogLoading = false;
+        // window.$app.changeWorldImageDialogLoading = false;
     },
 
     async uploadWorldImage(params, fileId) {
@@ -166,12 +167,12 @@ const imageReq = {
                     params,
                     fileId
                 };
-                window.API.$emit('WORLDIMAGE:INIT', args);
+                // window.API.$emit('WORLDIMAGE:INIT', args);
                 return args;
             });
         } catch (err) {
             console.error(err);
-            window.API.uploadWorldFailCleanup(fileId);
+            imageReq.uploadWorldFailCleanup(fileId);
         }
         return void 0;
     },
@@ -188,12 +189,12 @@ const imageReq = {
                     json,
                     params
                 };
-                window.API.$emit('WORLDIMAGE:FILESTART', args);
+                // window.API.$emit('WORLDIMAGE:FILESTART', args);
                 return args;
             });
         } catch (err) {
             console.error(err);
-            window.API.uploadWorldFailCleanup(params.fileId);
+            imageReq.uploadWorldFailCleanup(params.fileId);
         }
         return void 0;
     },
@@ -213,7 +214,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLDIMAGE:FILEFINISH', args);
+            // window.API.$emit('WORLDIMAGE:FILEFINISH', args);
             return args;
         });
     },
@@ -230,12 +231,12 @@ const imageReq = {
                     json,
                     params
                 };
-                window.API.$emit('WORLDIMAGE:SIGSTART', args);
+                // window.API.$emit('WORLDIMAGE:SIGSTART', args);
                 return args;
             });
         } catch (err) {
             console.error(err);
-            window.API.uploadWorldFailCleanup(params.fileId);
+            imageReq.uploadWorldFailCleanup(params.fileId);
         }
         return void 0;
     },
@@ -255,7 +256,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLDIMAGE:SIGFINISH', args);
+            // window.API.$emit('WORLDIMAGE:SIGFINISH', args);
             return args;
         });
     },
@@ -269,7 +270,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLDIMAGE:SET', args);
+            // window.API.$emit('WORLDIMAGE:SET', args);
             window.API.$emit('WORLD', args);
             return args;
         });
@@ -283,7 +284,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATARIMAGE:GET', args);
+            // window.API.$emit('AVATARIMAGE:GET', args);
             return args;
         });
     },
@@ -297,7 +298,7 @@ const imageReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLDIMAGE:GET', args);
+            // window.API.$emit('WORLDIMAGE:GET', args);
             return args;
         });
     }

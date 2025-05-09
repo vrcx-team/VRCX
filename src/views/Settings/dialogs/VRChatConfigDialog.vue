@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isVRChatConfigDialogVisible"
         :title="t('dialog.config_json.header')"
         width="420px"
         top="10vh"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div v-loading="loading">
             <div style="font-size: 12px; word-break: keep-all">
                 {{ t('dialog.config_json.description1') }} <br />
@@ -185,26 +182,24 @@
                 </div>
             </div>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { ref, watch, inject, getCurrentInstance, computed } from 'vue';
+    import { computed, getCurrentInstance, inject, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import {
-        getVRChatResolution,
-        VRChatScreenshotResolutions,
-        VRChatCameraResolutions
-    } from '../../../composables/settings/constants/vrchatResolutions';
+        VRChatCameraResolutions,
+        VRChatScreenshotResolutions
+    } from '../../../composables/setting/constants/vrchatResolutions';
+    import { getVRChatResolution } from '../../../composables/setting/utils';
+
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const $confirm = instance.proxy.$confirm;
     const $message = instance.proxy.$message;
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const openExternalLink = inject('openExternalLink');
 
     const props = defineProps({

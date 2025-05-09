@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isRegistryBackupDialogVisible"
         :title="t('dialog.registry_backup.header')"
         width="600px"
         @close="closeDialog"
-        @closed="clearVrcRegistryDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @closed="clearVrcRegistryDialog">
         <div style="margin-top: 10px">
             <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px">
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.auto_backup') }}</span>
@@ -70,19 +67,17 @@
                 </div>
             </div>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { getCurrentInstance, inject, ref, watch } from 'vue';
+    import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import configRepository from '../../../service/config';
     import utils from '../../../classes/utils';
-    const { t } = useI18n();
+    import { downloadAndSaveJson } from '../../../composables/shared/utils';
+    import configRepository from '../../../service/config';
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
+    const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const { $confirm, $message, $prompt } = instance.proxy;
@@ -172,7 +167,7 @@
     }
 
     function saveVrcRegistryBackupToFile(row) {
-        utils.downloadAndSaveJson(row.name, row.data);
+        downloadAndSaveJson(row.name, row.data);
     }
 
     async function deleteVrcRegistryBackup(row) {
