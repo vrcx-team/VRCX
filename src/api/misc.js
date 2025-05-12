@@ -19,7 +19,7 @@ const miscReq = {
                 json,
                 params
             };
-            window.API.$emit('NOTE', args);
+            // window.API.$emit('NOTE', args);
             return args;
         });
     },
