@@ -590,6 +590,10 @@ input[type='number'],
 .el-table table tr td:first-child {
     border-left: none;
 }
+.feed .el-table .el-table_1_column_5.el-table__cell > div {
+    display: flex;
+    align-items: center;
+}
 .el-table .el-table__body-wrapper table tr:last-child th,
 .el-table table tr:last-child td,
 .el-table tr,

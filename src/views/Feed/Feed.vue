@@ -1,5 +1,5 @@
 <template>
-    <div v-show="menuActiveIndex === 'feed'" class="x-container">
+    <div v-show="menuActiveIndex === 'feed'" class="x-container feed">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                 <el-tooltip
