@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="ossDialog"
         :title="t('dialog.open_source.header')"
         width="650px"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div v-once style="height: 350px; overflow: hidden scroll; word-break: break-all">
             <div>
                 <span>{{ t('dialog.open_source.description') }}</span>
@@ -18,17 +15,12 @@
                 <pre style="font-size: 12px; white-space: pre-line">{{ lib.licenseText }}</pre>
             </div>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import { openSourceSoftwareLicenses } from '../../../composables/settings/constants/openSourceSoftwareLicenses';
-
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
+    import { openSourceSoftwareLicenses } from '../../../composables/setting/constants/openSourceSoftwareLicenses';
 
     const { t } = useI18n();
 

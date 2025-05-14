@@ -270,9 +270,11 @@
 </template>
 
 <script>
-    import removeConfusables, { removeWhitespace } from '../../service/confusables';
-    import utils from '../../classes/utils';
     import { friendRequest, userRequest } from '../../api';
+    import utils from '../../classes/utils';
+    import { languageClass as _languageClass } from '../../composables/user/utils';
+    import removeConfusables, { removeWhitespace } from '../../service/confusables';
+    import { getFaviconUrl as _getFaviconUrl } from '../../composables/shared/utils';
 
     export default {
         name: 'FriendListTab',
@@ -282,8 +284,7 @@
             'showFullscreenImageDialog',
             'showUserDialog',
             'statusClass',
-            'openExternalLink',
-            'languageClass'
+            'openExternalLink'
         ],
         props: {
             friends: {
@@ -322,7 +323,7 @@
                 friendsListLoading: false,
                 friendsListLoadingProgress: '',
                 friendsListSearchFilterVIP: false,
-                // emm
+                // TODO
                 friendsListBulkUnfriendForceUpdate: 0
             };
         },
@@ -336,6 +337,9 @@
             }
         },
         methods: {
+            languageClass(key) {
+                return _languageClass(key);
+            },
             friendsListSearchChange() {
                 this.friendsListLoading = true;
                 let query = '';
@@ -505,7 +509,7 @@
                 return utils.timeToText(val);
             },
             getFaviconUrl(link) {
-                return utils.getFaviconUrl(link);
+                return _getFaviconUrl(link);
             }
         }
     };

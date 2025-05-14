@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
         :visible="isNotificationPositionDialogVisible"
         :title="t('dialog.notification_position.header')"
         width="400px"
-        :before-close="beforeDialogClose"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div style="font-size: 12px">
             {{ t('dialog.notification_position.description') }}
         </div>
@@ -45,17 +42,12 @@
                 </el-button>
             </div>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     const { t } = useI18n();
-
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
 
     defineProps({
         isNotificationPositionDialogVisible: {

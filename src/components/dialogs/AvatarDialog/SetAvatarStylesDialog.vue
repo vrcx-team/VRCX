@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="setAvatarStylesDialog"
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible.sync="setAvatarStylesDialog.visible"
         :title="t('dialog.set_avatar_styles.header')"
         width="400px"
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <template v-if="setAvatarStylesDialog.visible">
             <div>
                 <span>{{ t('dialog.set_avatar_styles.primary_style') }}</span>
@@ -50,18 +47,14 @@
                 t('dialog.set_avatar_styles.save')
             }}</el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject, watch, getCurrentInstance } from 'vue';
+    import { watch, getCurrentInstance } from 'vue';
 
     import { useI18n } from 'vue-i18n-bridge';
     import { avatarRequest } from '../../../api';
-
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
 
     const { t } = useI18n();
     const instance = getCurrentInstance();

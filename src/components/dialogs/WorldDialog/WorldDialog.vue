@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="worldDialog"
-        :before-close="beforeDialogClose"
         class="x-dialog x-world-dialog"
         :visible.sync="isDialogVisible"
         :show-close="false"
-        width="770px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        width="770px">
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
@@ -760,22 +757,49 @@
             :offline-friends="offlineFriends"
             :active-friends="activeFriends"
             :online-friends="onlineFriends"
-            :vip-friends="vipFriends" />
-    </el-dialog>
+            :vip-friends="vipFriends"
+            :invite-message-table="inviteMessageTable"
+            :upload-image="uploadImage"
+            :last-location="lastLocation" />
+        <ChangeWorldImageDialog
+            :change-world-image-dialog-visible.sync="changeWorldImageDialogVisible"
+            :previous-images-table="previousImagesTable"
+            :previous-images-file-id="previousImagesFileId"
+            :world-dialog="worldDialog"
+            @refresh="displayPreviousImages" />
+        <PreviousImagesDialog
+            :previous-images-dialog-visible.sync="previousImagesDialogVisible"
+            :previous-images-table="previousImagesTable" />
+    </safe-dialog>
 </template>
 
 <script>
+    import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import utils from '../../../classes/utils';
+    import { refreshInstancePlayerCount as _refreshInstancePlayerCount } from '../../../composables/instance/utils';
+    import {
+        downloadAndSaveJson as _downloadAndSaveJson,
+        extractFileId,
+        replaceVrcPackageUrl as _replaceVrcPackageUrl
+    } from '../../../composables/shared/utils';
     import database from '../../../service/database.js';
-    import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
-    import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
-    import PreviousInstancesWorldDialog from '../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
     import NewInstanceDialog from '../NewInstanceDialog.vue';
-    import { favoriteRequest, miscRequest, worldRequest } from '../../../api';
+    import PreviousImagesDialog from '../PreviousImagesDialog.vue';
+    import PreviousInstancesWorldDialog from '../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
+    import ChangeWorldImageDialog from './ChangeWorldImageDialog.vue';
+    import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
+    import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
 
     export default {
         name: 'WorldDialog',
-        components: { SetWorldTagsDialog, WorldAllowedDomainsDialog, PreviousInstancesWorldDialog, NewInstanceDialog },
+        components: {
+            PreviousImagesDialog,
+            SetWorldTagsDialog,
+            WorldAllowedDomainsDialog,
+            PreviousInstancesWorldDialog,
+            NewInstanceDialog,
+            ChangeWorldImageDialog
+        },
         inject: [
             'API',
             'showUserDialog',
@@ -785,10 +809,6 @@
             'showPreviousInstancesInfoDialog',
             'showLaunchDialog',
             'showFullscreenImageDialog',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'displayPreviousImages',
             'showWorldDialog',
             'showFavoriteDialog',
             'openExternalLink'
@@ -808,6 +828,8 @@
             activeFriends: Array,
             onlineFriends: Array,
             vipFriends: Array,
+            inviteMessageTable: Object,
+            uploadImage: String,
 
             // TODO: Remove
             updateInstanceInfo: Number
@@ -826,7 +848,11 @@
                     openFlg: false,
                     worldRef: {}
                 },
-                newInstanceDialogLocationTag: ''
+                newInstanceDialogLocationTag: '',
+                changeWorldImageDialogVisible: false,
+                previousImagesFileId: '',
+                previousImagesDialogVisible: false,
+                previousImagesTable: []
             };
         },
         computed: {
@@ -907,6 +933,51 @@
             }
         },
         methods: {
+            displayPreviousImages(command) {
+                this.previousImagesFileId = '';
+                this.previousImagesTable = [];
+                const { imageUrl } = this.worldDialog.ref;
+
+                const fileId = extractFileId(imageUrl);
+                if (!fileId) {
+                    return;
+                }
+                const params = {
+                    fileId
+                };
+                if (command === 'Display') {
+                    this.previousImagesDialogVisible = true;
+                }
+                if (command === 'Change') {
+                    this.changeWorldImageDialogVisible = true;
+                }
+                imageRequest.getWorldImages(params).then((args) => {
+                    this.previousImagesFileId = args.json.id;
+                    const images = [];
+                    args.json.versions.forEach((item) => {
+                        if (!item.deleted) {
+                            images.unshift(item);
+                        }
+                    });
+                    this.checkPreviousImageAvailable(images);
+                });
+            },
+            async checkPreviousImageAvailable(images) {
+                this.previousImagesTable = [];
+                for (const image of images) {
+                    if (image.file && image.file.url) {
+                        const response = await fetch(image.file.url, {
+                            method: 'HEAD',
+                            redirect: 'follow'
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+                        if (response.status === 200) {
+                            this.previousImagesTable.push(image);
+                        }
+                    }
+                }
+            },
             showNewInstanceDialog(tag) {
                 // trigger watcher
                 this.newInstanceDialogLocationTag = '';
@@ -946,26 +1017,30 @@
                                         });
                                         break;
                                     case 'Make Home':
-                                        this.API.saveCurrentUser({
-                                            homeLocation: D.id
-                                        }).then((args) => {
-                                            this.$message({
-                                                message: 'Home world updated',
-                                                type: 'success'
+                                        userRequest
+                                            .saveCurrentUser({
+                                                homeLocation: D.id
+                                            })
+                                            .then((args) => {
+                                                this.$message({
+                                                    message: 'Home world updated',
+                                                    type: 'success'
+                                                });
+                                                return args;
                                             });
-                                            return args;
-                                        });
                                         break;
                                     case 'Reset Home':
-                                        this.API.saveCurrentUser({
-                                            homeLocation: ''
-                                        }).then((args) => {
-                                            this.$message({
-                                                message: 'Home world has been reset',
-                                                type: 'success'
+                                        userRequest
+                                            .saveCurrentUser({
+                                                homeLocation: ''
+                                            })
+                                            .then((args) => {
+                                                this.$message({
+                                                    message: 'Home world has been reset',
+                                                    type: 'success'
+                                                });
+                                                return args;
                                             });
-                                            return args;
-                                        });
                                         break;
                                     case 'Publish':
                                         worldRequest
@@ -1040,10 +1115,10 @@
                         this.openExternalLink(this.replaceVrcPackageUrl(this.worldDialog.ref.unityPackageUrl));
                         break;
                     case 'Change Image':
-                        this.displayPreviousImages('World', 'Change');
+                        this.displayPreviousImages('Change');
                         break;
                     case 'Previous Images':
-                        this.displayPreviousImages('World', 'Display');
+                        this.displayPreviousImages('Display');
                         break;
                     case 'Refresh':
                         this.showWorldDialog(D.id);
@@ -1055,12 +1130,15 @@
                         this.showFavoriteDialog('world', D.id);
                         break;
                     default:
-                        this.$emit('world-dialog-command', command);
+                        this.$emit('worldDialogCommand', command);
                         break;
                 }
             },
+            replaceVrcPackageUrl(url) {
+                _replaceVrcPackageUrl(url);
+            },
             refreshInstancePlayerCount(tag) {
-                this.$emit('refresh-instance-player-count', tag);
+                _refreshInstancePlayerCount(tag);
             },
             onWorldMemoChange() {
                 const worldId = this.worldDialog.id;
@@ -1087,7 +1165,7 @@
                 this.treeData = utils.buildTreeData(this.worldDialog.ref);
             },
             downloadAndSaveJson(fileName, data) {
-                utils.downloadAndSaveJson(fileName, data);
+                _downloadAndSaveJson(fileName, data);
             },
             copyWorldId() {
                 navigator.clipboard

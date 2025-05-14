@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="dialog"
-        :before-close="beforeDialogClose"
         :visible="visible"
         :title="$t('dialog.previous_instances.info')"
         width="800px"
         :fullscreen="fullscreen"
         destroy-on-close
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp"
         @close="$emit('update:visible', false)">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <location :location="location.tag" style="font-size: 14px"></location>
@@ -57,13 +54,14 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
-    import utils from '../../../classes/utils';
-    import database from '../../../service/database';
     import dayjs from 'dayjs';
+    import utils from '../../../classes/utils';
+    import { parseLocation } from '../../../composables/instance/utils';
+    import database from '../../../service/database';
     import Location from '../../Location.vue';
 
     export default {
@@ -71,7 +69,7 @@
         components: {
             Location
         },
-        inject: ['adjustDialogZ', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
+        inject: ['adjustDialogZ'],
         props: {
             visible: {
                 type: Boolean,
@@ -144,7 +142,7 @@
             init() {
                 this.adjustDialogZ(this.$refs.dialog.$el);
                 this.loading = true;
-                this.location = utils.parseLocation(this.instanceId);
+                this.location = parseLocation(this.instanceId);
             },
             refreshPreviousInstancesInfoTable() {
                 database.getPlayersFromInstance(this.location.tag).then((data) => {

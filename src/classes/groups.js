@@ -7,6 +7,7 @@ import {
     instanceRequest,
     groupRequest
 } from '../api';
+import $utils from './utils';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -171,8 +172,8 @@ export default class extends baseClass {
             var D = $app.groupDialog;
             if (D.id === args.params.groupId) {
                 for (var post of args.posts) {
-                    post.title = $app.replaceBioSymbols(post.title);
-                    post.text = $app.replaceBioSymbols(post.text);
+                    post.title = $utils.replaceBioSymbols(post.title);
+                    post.text = $utils.replaceBioSymbols(post.text);
                 }
                 if (args.posts.length > 0) {
                     D.announcement = args.posts[0];
@@ -189,8 +190,8 @@ export default class extends baseClass {
             }
 
             var newPost = args.json;
-            newPost.title = $app.replaceBioSymbols(newPost.title);
-            newPost.text = $app.replaceBioSymbols(newPost.text);
+            newPost.title = $utils.replaceBioSymbols(newPost.title);
+            newPost.text = $utils.replaceBioSymbols(newPost.text);
             var hasPost = false;
             // update existing post
             for (var post of D.posts) {
@@ -275,9 +276,9 @@ export default class extends baseClass {
 
         API.applyGroup = function (json) {
             var ref = this.cachedGroups.get(json.id);
-            json.rules = $app.replaceBioSymbols(json.rules);
-            json.name = $app.replaceBioSymbols(json.name);
-            json.description = $app.replaceBioSymbols(json.description);
+            json.rules = $utils.replaceBioSymbols(json.rules);
+            json.name = $utils.replaceBioSymbols(json.name);
+            json.description = $utils.replaceBioSymbols(json.description);
             if (typeof ref === 'undefined') {
                 ref = {
                     id: '',
@@ -912,9 +913,6 @@ export default class extends baseClass {
                 case 'Unsubscribe To Announcements':
                     this.setGroupSubscription(D.id, false);
                     break;
-                case 'Invite To Group':
-                    this.showInviteGroupDialog(D.id, '');
-                    break;
             }
         },
 
@@ -1050,17 +1048,6 @@ export default class extends baseClass {
                     this.userDialog.representedGroup = args.json;
                     return args;
                 });
-        },
-
-        showInviteGroupDialog(groupId, userId) {
-            const D = this.inviteGroupDialog;
-            D.userIds = '';
-            D.groups = [];
-            D.groupId = groupId;
-            D.groupName = groupId;
-            D.userId = userId;
-            D.userObject = {};
-            D.visible = true;
         }
     };
 }

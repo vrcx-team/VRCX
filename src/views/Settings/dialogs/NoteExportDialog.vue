@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isNoteExportDialogVisible"
         :title="t('dialog.note_export.header')"
         width="1000px"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div style="font-size: 12px">
             {{ t('dialog.note_export.description1') }} <br />
             {{ t('dialog.note_export.description2') }} <br />
@@ -87,7 +84,7 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
@@ -99,9 +96,6 @@
 
     const { t } = useI18n();
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const userImage = inject('userImage');
     const userImageFull = inject('userImageFull');
     const showUserDialog = inject('showUserDialog');

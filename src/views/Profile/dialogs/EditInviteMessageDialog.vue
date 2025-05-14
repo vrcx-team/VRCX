@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="editInviteMessageDialog.visible"
         :title="t('dialog.edit_invite_message.header')"
         width="400px"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div style="font-size: 12px">
             <span>{{ t('dialog.edit_invite_message.description') }}</span>
             <el-input
@@ -23,10 +20,10 @@
         <template #footer>
             <el-button type="small" @click="closeDialog">{{ $t('dialog.edit_invite_message.cancel') }}</el-button>
             <el-button type="primary" size="small" @click="saveEditInviteMessage">{{
-                $t('dialog.edit_invite_message.save')
+                t('dialog.edit_invite_message.save')
             }}</el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
@@ -38,9 +35,6 @@
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
     const API = inject('API');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
 
     const props = defineProps({
         editInviteMessageDialog: {

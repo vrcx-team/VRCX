@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
+    <safe-dialog
         :visible="!!feedFiltersDialogMode"
         :title="dialogTitle"
         width="550px"
         top="5vh"
         destroy-on-close
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp"
         @close="handleDialogClose">
         <div class="toggle-list" style="height: 75vh; overflow-y: auto">
             <div v-for="setting in currentOptions" :key="setting.key" class="toggle-item">
@@ -58,18 +55,14 @@
                 t('dialog.shared_feed_filters.close')
             }}</el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { computed, inject } from 'vue';
+    import { computed } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../../service/config';
-    import { feedFiltersOptions } from '../../../composables/settings/constants/feedFiltersOptions';
-
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
+    import { feedFiltersOptions } from '../../../composables/setting/constants/feedFiltersOptions';
 
     const { t } = useI18n();
 

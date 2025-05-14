@@ -1,5 +1,5 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
         :visible.sync="enablePrimaryPasswordDialog.visible"
         :before-close="enablePrimaryPasswordDialog.beforeClose"
@@ -36,7 +36,7 @@
                 {{ t('dialog.primary_password.ok') }}
             </el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>

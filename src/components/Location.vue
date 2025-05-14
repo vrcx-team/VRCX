@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import utils from '../classes/utils';
+    import { parseLocation } from '../composables/instance/utils';
 
     export default {
         // eslint-disable-next-line vue/multi-word-component-names
@@ -74,7 +74,7 @@
                     instanceId = this.traveling;
                     this.isTraveling = true;
                 }
-                const L = utils.parseLocation(instanceId);
+                const L = parseLocation(instanceId);
                 if (L.isOffline) {
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
@@ -150,7 +150,7 @@
                 if (!location || !this.link) {
                     return;
                 }
-                const L = utils.parseLocation(location);
+                const L = parseLocation(location);
                 if (!L.groupId) {
                     return;
                 }

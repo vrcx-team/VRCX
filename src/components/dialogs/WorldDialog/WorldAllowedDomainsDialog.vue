@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
+    <safe-dialog
         :visible.sync="isVisible"
         :title="$t('dialog.allowed_video_player_domains.header')"
         width="600px"
         destroy-on-close
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <div>
             <el-input
                 v-for="(domain, index) in urlList"
@@ -31,7 +28,7 @@
                 {{ $t('dialog.allowed_video_player_domains.save') }}
             </el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
@@ -39,7 +36,6 @@
 
     export default {
         name: 'WorldAllowedDomainsDialog',
-        inject: ['beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
         props: {
             worldAllowedDomainsDialog: {
                 type: Object,

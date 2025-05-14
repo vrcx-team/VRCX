@@ -179,8 +179,8 @@
 <script>
     import FriendItem from '../../../components/FriendItem.vue';
     import Location from '../../../components/Location.vue';
+    import { isRealInstance as _isRealInstance, parseLocation } from '../../../composables/instance/utils';
     import configRepository from '../../../service/config';
-    import utils from '../../../classes/utils';
 
     export default {
         name: 'FriendsSidebar',
@@ -234,7 +234,7 @@
                     if (!friend.ref.$location.isRealInstance && this.lastLocation.friendList.has(friend.id)) {
                         locationTag = this.lastLocation.location;
                     }
-                    let isRealInstance = this.isRealInstance(locationTag);
+                    const isRealInstance = this.isRealInstance(locationTag);
                     if (!isRealInstance) {
                         return;
                     }
@@ -254,30 +254,30 @@
 
                 return sortedFriendsList.sort((a, b) => b.length - a.length);
             },
-            sameInstanceTag() {
-                const sameInstanceTag = new Set();
+            sameInstanceFriendId() {
+                const sameInstanceFriendId = new Set();
                 for (const item of this.friendsInSameInstance) {
                     for (const friend of item) {
-                        if (utils.isRealInstance(friend.ref?.$location.tag)) {
-                            sameInstanceTag.add(friend.ref?.$location.tag);
+                        if (this.isRealInstance(friend.ref?.$location.tag)) {
+                            sameInstanceFriendId.add(friend.id);
                         }
                     }
                 }
-                return sameInstanceTag;
+                return sameInstanceFriendId;
             },
             onlineFriendsByGroupStatus() {
                 if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
                     return this.onlineFriends;
                 }
 
-                return this.onlineFriends.filter((item) => !this.sameInstanceTag.has(item.ref?.$location.tag));
+                return this.onlineFriends.filter((item) => !this.sameInstanceFriendId.has(item.id));
             },
             vipFriendsByGroupStatus() {
                 if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
                     return this.vipFriends;
                 }
 
-                return this.vipFriends.filter((item) => !this.sameInstanceTag.has(item.ref?.$location.tag));
+                return this.vipFriends.filter((item) => !this.sameInstanceFriendId.has(item.id));
             },
             // VIP friends divide by group
             vipFriendsDivideByGroup() {
@@ -292,7 +292,7 @@
                         const filteredFriends = this.vipFriends.filter((friend) =>
                             groupFriends.some((item) => {
                                 if (this.isSidebarGroupByInstance && this.isHideFriendsInSameInstance) {
-                                    return item.id === friend.id && !this.sameInstanceTag.has(item.ref?.$location.tag);
+                                    return item.id === friend.id && !this.sameInstanceFriendId.has(item.id);
                                 }
                                 return item.id === friend.id;
                             })
@@ -337,7 +337,7 @@
                 );
             },
             isRealInstance(locationTag) {
-                return utils.isRealInstance(locationTag);
+                return _isRealInstance(locationTag);
             },
             toggleSwitchGroupByInstanceCollapsed() {
                 this.isSidebarGroupByInstanceCollapsed = !this.isSidebarGroupByInstanceCollapsed;
@@ -357,7 +357,7 @@
                     }
                 }
                 for (const friend of friendsArr) {
-                    if (utils.isRealInstance(friend.ref?.travelingToLocation)) {
+                    if (this.isRealInstance(friend.ref?.travelingToLocation)) {
                         return friend.ref.travelingToLocation;
                     }
                 }

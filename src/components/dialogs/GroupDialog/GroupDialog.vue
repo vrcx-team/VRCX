@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="groupDialogRef"
-        :before-close="beforeDialogClose"
         :visible.sync="groupDialog.visible"
         :show-close="false"
         width="770px"
         top="10vh"
-        class="x-dialog x-group-dialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        class="x-dialog x-group-dialog">
         <div class="group-banner-image">
             <el-popover placement="right" width="500px" trigger="click">
                 <img
@@ -1151,10 +1148,7 @@
             </el-tabs>
         </div>
         <!--Nested-->
-        <GroupPostEditDialog
-            :gallery-select-dialog="gallerySelectDialog"
-            :dialog-data.sync="groupPostEditDialog"
-            @clear-image-gallery-select="clearImageGallerySelect" />
+        <GroupPostEditDialog :dialog-data.sync="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
         <GroupMemberModerationDialog
             :group-dialog="groupDialog"
             :is-group-members-loading.sync="isGroupMembersLoading"
@@ -1167,25 +1161,32 @@
             @load-all-group-members="loadAllGroupMembers"
             @set-group-member-filter="setGroupMemberFilter"
             @set-group-member-sort-order="setGroupMemberSortOrder" />
-    </el-dialog>
+        <InviteGroupDialog
+            :dialog-data.sync="inviteGroupDialog"
+            :vip-friends="vipFriends"
+            :online-friends="onlineFriends"
+            :offline-friends="offlineFriends"
+            :active-friends="activeFriends" />
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { getCurrentInstance, nextTick, reactive, ref, watch, inject } from 'vue';
+    import { getCurrentInstance, inject, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
-    import { groupRequest } from '../../../api';
-    import Location from '../../Location.vue';
-    import GroupPostEditDialog from './GroupPostEditDialog.vue';
-    import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
     import * as workerTimers from 'worker-timers';
+    import { groupRequest } from '../../../api';
+    import utils from '../../../classes/utils';
+    import { hasGroupPermission } from '../../../composables/group/utils';
+    import { refreshInstancePlayerCount } from '../../../composables/instance/utils';
+    import { copyToClipboard, downloadAndSaveJson, getFaviconUrl } from '../../../composables/shared/utils';
+    import { languageClass } from '../../../composables/user/utils';
+    import Location from '../../Location.vue';
+    import InviteGroupDialog from '../InviteGroupDialog.vue';
+    import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
+    import GroupPostEditDialog from './GroupPostEditDialog.vue';
 
     const API = inject('API');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const showFullscreenImageDialog = inject('showFullscreenImageDialog');
-    const languageClass = inject('languageClass');
     const showUserDialog = inject('showUserDialog');
     const userStatusClass = inject('userStatusClass');
     const userImage = inject('userImage');
@@ -1222,28 +1223,33 @@
             type: Object,
             required: true
         },
-        gallerySelectDialog: {
-            type: Object,
-            default: () => ({})
-        },
         randomUserColours: {
             type: Boolean,
             default: true
+        },
+        vipFriends: {
+            type: Array,
+            default: () => []
+        },
+        onlineFriends: {
+            type: Array,
+            default: () => []
+        },
+        offlineFriends: {
+            type: Array,
+            default: () => []
+        },
+        activeFriends: {
+            type: Array,
+            default: () => []
         }
     });
 
     const emit = defineEmits([
         'update:group-dialog',
-        'update:gallery-select-dialog',
-        'update:group-member-moderation',
-        'group-dialog-command',
-        'update:group-dialog',
+        'groupDialogCommand',
         'get-group-dialog-group',
-        'get-group-dialog-group-members',
-        'refresh-instance-player-count',
-        'update-group-post-search',
-        'set-group-member-sort-order',
-        'clear-image-gallery-select'
+        'updateGroupPostSearch'
     ]);
 
     const groupDialogRef = ref(null);
@@ -1254,6 +1260,10 @@
     const groupDialogGalleryCurrentName = ref('0');
     const groupDialogTabCurrentName = ref('0');
     const isGroupGalleryLoading = ref(false);
+    const selectedGalleryFile = ref({
+        selectedFileId: '',
+        selectedImageUrl: ''
+    });
     const groupPostEditDialog = reactive({
         visible: false,
         groupRef: {},
@@ -1271,6 +1281,16 @@
         id: '',
         groupRef: {},
         auditLogTypes: []
+    });
+
+    const inviteGroupDialog = ref({
+        visible: false,
+        loading: false,
+        groupId: '',
+        groupName: '',
+        userId: '',
+        userIds: [],
+        userObject: {}
     });
 
     let loadMoreGroupMembersParams = {};
@@ -1293,8 +1313,15 @@
         }
     );
 
-    function getFaviconUrl(link) {
-        return utils.getFaviconUrl(link);
+    function showInviteGroupDialog(groupId, userId) {
+        const D = inviteGroupDialog.value;
+        D.userIds = '';
+        D.groups = [];
+        D.groupId = groupId;
+        D.groupName = groupId;
+        D.userId = userId;
+        D.userObject = {};
+        D.visible = true;
     }
 
     function setGroupRepresentation(groupId) {
@@ -1439,9 +1466,7 @@
             }
         });
     }
-    function copyToClipboard(text) {
-        utils.copyToClipboard(text);
-    }
+
     function groupGalleryStatus(gallery) {
         const style = {};
         if (!gallery.membersOnly) {
@@ -1455,6 +1480,10 @@
     }
 
     function groupDialogCommand(command) {
+        const D = props.groupDialog;
+        if (D.visible === false) {
+            return;
+        }
         switch (command) {
             case 'Share':
                 copyToClipboard(props.groupDialog.ref.$url);
@@ -1465,8 +1494,11 @@
             case 'Moderation Tools':
                 showGroupMemberModerationDialog(props.groupDialog.id);
                 break;
+            case 'Invite To Group':
+                showInviteGroupDialog(D.id, '');
+                break;
             default:
-                emit('group-dialog-command', command);
+                emit('groupDialogCommand', command);
         }
     }
 
@@ -1481,7 +1513,7 @@
         D.auditLogTypes = [];
         API.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
-            if (utils.hasGroupPermission(D.groupRef, 'group-audit-view')) {
+            if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
                 groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
                     // API.$on('GROUP:AUDITLOGTYPES', function (args) {
                     if (groupMemberModeration.id !== args.params.groupId) {
@@ -1569,18 +1601,21 @@
         D.roleIds = [];
         D.postId = '';
         D.groupId = groupId;
-        emit('update:gallery-select-dialog', { ...D, selectedFileId: '', selectedImageUrl: '' });
+        selectedGalleryFile.value = {
+            selectedFileId: '',
+            selectedImageUrl: ''
+        };
+
         if (post) {
             D.title = post.title;
             D.text = post.text;
             D.visibility = post.visibility;
             D.roleIds = post.roleIds;
             D.postId = post.id;
-            emit('update:gallery-select-dialog', {
-                ...D,
+            selectedGalleryFile.value = {
                 selectedFileId: post.imageId,
                 selectedImageUrl: post.imageUrl
-            });
+            };
         }
         API.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
@@ -1763,9 +1798,6 @@
         await getGroupDialogGroupMembers();
     }
 
-    function hasGroupPermission(ref, permission) {
-        return utils.hasGroupPermission(ref, permission);
-    }
     function updateGroupDialogData(obj) {
         // Be careful with the deep merge
         emit('update:group-dialog', obj);
@@ -1773,16 +1805,7 @@
     function getGroupDialogGroup(groupId) {
         emit('get-group-dialog-group', groupId);
     }
-    function refreshInstancePlayerCount(tag) {
-        emit('refresh-instance-player-count', tag);
-    }
     function updateGroupPostSearch() {
-        emit('update-group-post-search');
-    }
-    function downloadAndSaveJson(fileName, data) {
-        utils.downloadAndSaveJson(fileName, data);
-    }
-    function clearImageGallerySelect() {
-        emit('clear-image-gallery-select');
+        emit('updateGroupPostSearch');
     }
 </script>

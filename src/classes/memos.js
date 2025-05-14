@@ -27,11 +27,6 @@ export default class extends baseClass {
             }
         },
 
-        onUserMemoChange() {
-            var D = this.userDialog;
-            this.saveUserMemo(D.id, D.memo);
-        },
-
         async getUserMemo(userId) {
             try {
                 return await database.getUserMemo(userId);

@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="setAvatarTagsDialog"
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible.sync="setAvatarTagsDialog.visible"
         :title="t('dialog.set_avatar_tags.header')"
         width="770px"
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <template v-if="setAvatarTagsDialog.visible">
             <el-checkbox v-model="setAvatarTagsDialog.contentHorror" @change="updateSelectedAvatarTags">{{
                 t('dialog.set_avatar_tags.content_horror')
@@ -93,7 +90,7 @@
                 t('dialog.set_avatar_tags.save')
             }}</el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
@@ -102,9 +99,6 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { avatarRequest } from '../../../api';
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
     const showAvatarDialog = inject('showAvatarDialog');
 
     const { t } = useI18n();

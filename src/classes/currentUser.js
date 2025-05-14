@@ -1,4 +1,5 @@
-import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import { isRealInstance, parseLocation } from '../composables/instance/utils';
+import { $app, API, baseClass } from './baseClass.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -83,8 +84,8 @@ export default class extends baseClass {
             args.ref = this.applyCurrentUser(json);
 
             // when isGameRunning use gameLog instead of API
-            var $location = $app.parseLocation($app.lastLocation.location);
-            var $travelingLocation = $app.parseLocation(
+            var $location = parseLocation($app.lastLocation.location);
+            var $travelingLocation = parseLocation(
                 $app.lastLocationDestination
             );
             var location = $app.lastLocation.location;
@@ -94,12 +95,12 @@ export default class extends baseClass {
             var travelingToWorld = $travelingLocation.worldId;
             var travelingToInstance = $travelingLocation.instanceId;
             if (!$app.isGameRunning && json.presence) {
-                if ($utils.isRealInstance(json.presence.world)) {
+                if (isRealInstance(json.presence.world)) {
                     location = `${json.presence.world}:${json.presence.instance}`;
                 } else {
                     location = json.presence.world;
                 }
-                if ($utils.isRealInstance(json.presence.travelingToWorld)) {
+                if (isRealInstance(json.presence.travelingToWorld)) {
                     travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
                 } else {
                     travelingToLocation = json.presence.travelingToWorld;
@@ -175,7 +176,7 @@ export default class extends baseClass {
                 }
                 Object.assign(ref, json);
                 if (ref.homeLocation !== ref.$homeLocation.tag) {
-                    ref.$homeLocation = $app.parseLocation(ref.homeLocation);
+                    ref.$homeLocation = parseLocation(ref.homeLocation);
                     // apply home location name to user dialog
                     if (
                         $app.userDialog.visible &&
@@ -295,13 +296,12 @@ export default class extends baseClass {
                     $languages: [],
                     $locationTag: '',
                     $travelingToLocation: '',
-                    $vrchatcredits: null,
                     ...json
                 };
                 if ($app.isGameRunning) {
                     ref.$previousAvatarSwapTime = Date.now();
                 }
-                ref.$homeLocation = $app.parseLocation(ref.homeLocation);
+                ref.$homeLocation = parseLocation(ref.homeLocation);
                 ref.$isVRCPlus = ref.tags.includes('system_supporter');
                 this.applyUserTrustLevel(ref);
                 this.applyUserLanguage(ref);
@@ -315,32 +315,6 @@ export default class extends baseClass {
                 });
             }
             return ref;
-        };
-
-        /**
-         * @typedef {{
-         *     status: 'active' | 'offline' | 'busy' | 'ask me' | 'join me',
-         *     statusDescription: string
-         * }} SaveCurrentUserParameters
-         */
-
-        /**
-         * Updates current user's status.
-         * @param params {SaveCurrentUserParameters} new status to be set
-         * @returns {Promise<{json: any, params}>}
-         */
-        API.saveCurrentUser = function (params) {
-            return this.call(`users/${this.currentUser.id}`, {
-                method: 'PUT',
-                params
-            }).then((json) => {
-                var args = {
-                    json,
-                    params
-                };
-                this.$emit('USER:CURRENT:SAVE', args);
-                return args;
-            });
         };
     }
 

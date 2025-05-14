@@ -116,6 +116,7 @@
 
 <script>
     import dayjs from 'dayjs';
+    import { parseLocation } from '../../../composables/instance/utils';
     import database from '../../../service/database';
     import utils from '../../../classes/utils';
     import configRepository from '../../../service/config';
@@ -379,7 +380,7 @@
                     const timeString = utils.timeToText(param.data, true);
                     const color = param.color;
                     const name = param.name;
-                    const location = utils.parseLocation(instanceData.location);
+                    const location = parseLocation(instanceData.location);
 
                     return `
                         <div style="display: flex; align-items: center;">
