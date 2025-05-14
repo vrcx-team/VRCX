@@ -136,6 +136,9 @@ function copyToClipboard(text, message = 'Copied successfully!') {
 }
 
 function getFaviconUrl(resource) {
+    if (!resource) {
+        return '';
+    }
     try {
         const url = new URL(resource);
         return `https://icons.duckduckgo.com/ip2/${url.host}.ico`;
