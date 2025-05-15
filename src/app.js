@@ -13664,15 +13664,15 @@ console.log(`isLinux: ${LINUX}`);
             menuActiveIndex: this.menuActiveIndex,
             gameLogTable: this.gameLogTable,
             shiftHeld: this.shiftHeld,
-            hideTooltips: this.hideTooltips
+            hideTooltips: this.hideTooltips,
+            gameLogIsFriend: this.gameLogIsFriend,
+            gameLogIsFavorite: this.gameLogIsFavorite
         };
     };
 
     $app.computed.gameLogTabEvent = function () {
         return {
             gameLogTableLookup: this.gameLogTableLookup,
-            gameLogIsFriend: this.gameLogIsFriend,
-            gameLogIsFavorite: this.gameLogIsFavorite,
             lookupUser: this.lookupUser,
             updateGameLogSessionTable: (val) =>
                 (this.gameLogSessionTable = val),

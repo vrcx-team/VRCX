@@ -167,16 +167,16 @@
                     });
             },
             addLocalWorldFavorite(...args) {
-                this.$emit('add-local-world-favorite', ...args);
+                this.$emit('addLocalWorldFavorite', ...args);
             },
             removeLocalWorldFavorite(...args) {
-                this.$emit('remove-local-world-favorite', ...args);
+                this.$emit('removeLocalWorldFavorite', ...args);
             },
             addLocalAvatarFavorite(...args) {
-                this.$emit('add-local-avatar-favorite', ...args);
+                this.$emit('addLocalAvatarFavorite', ...args);
             },
             removeLocalAvatarFavorite(...args) {
-                this.$emit('remove-local-avatar-favorite', ...args);
+                this.$emit('removeLocalAvatarFavorite', ...args);
             },
             deleteFavoriteNoConfirm(...args) {
                 this.$emit('deleteFavoriteNoConfirm', ...args);

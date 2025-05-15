@@ -1,5 +1,5 @@
 <template>
-    <div v-if="menuActiveIndex === 'search'" class="x-container">
+    <div v-show="menuActiveIndex === 'search'" class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-input
                 :value="searchText"

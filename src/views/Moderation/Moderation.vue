@@ -1,5 +1,5 @@
 <template>
-    <div class="x-container" v-if="menuActiveIndex === 'moderation'">
+    <div v-show="menuActiveIndex === 'moderation'" class="x-container">
         <data-tables
             :data="tableData.data"
             :pageSize="tableData.pageSize"

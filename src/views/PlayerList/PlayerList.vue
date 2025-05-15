@@ -1,5 +1,5 @@
 <template>
-    <div v-if="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
+    <div v-show="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
         <div style="display: flex; flex-direction: column; height: 100%">
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click" style="height: 120px">
@@ -776,8 +776,8 @@
                         <template #default="scope">
                             <span
                                 class="name"
-                                :class="scope.row.ref.trustClass"
-                                v-text="scope.row.ref.trustLevel"></span>
+                                :class="scope.row.ref.$trustClass"
+                                v-text="scope.row.ref.$trustLevel"></span>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.language')" width="100" prop="ref.$languages">
@@ -875,7 +875,7 @@
         },
         photonEventTableTypeFilter: {
             type: Array,
-            default: []
+            default: () => []
         },
         photonEventTableTypeFilterList: {
             type: Array,
