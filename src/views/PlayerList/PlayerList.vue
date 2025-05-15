@@ -1,5 +1,5 @@
 <template>
-    <div v-if="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
+    <div v-show="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
         <div style="display: flex; flex-direction: column; height: 100%">
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click" style="height: 120px">

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="menuActiveIndex === 'notification'" v-loading="API.isNotificationsLoading" class="x-container">
+    <div v-show="menuActiveIndex === 'notification'" v-loading="API.isNotificationsLoading" class="x-container">
         <data-tables v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
             <template #tool>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
