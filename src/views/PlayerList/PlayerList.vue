@@ -776,8 +776,8 @@
                         <template #default="scope">
                             <span
                                 class="name"
-                                :class="scope.row.ref.trustClass"
-                                v-text="scope.row.ref.trustLevel"></span>
+                                :class="scope.row.ref.$trustClass"
+                                v-text="scope.row.ref.$trustLevel"></span>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.language')" width="100" prop="ref.$languages">
@@ -875,7 +875,7 @@
         },
         photonEventTableTypeFilter: {
             type: Array,
-            default: []
+            default: () => []
         },
         photonEventTableTypeFilterList: {
             type: Array,
