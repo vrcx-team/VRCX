@@ -130,7 +130,8 @@ import {
     deleteVRChatCache,
     extractFileId,
     extractFileVersion,
-    getAvailablePlatforms
+    getAvailablePlatforms,
+    _utils
 } from './composables/shared/utils';
 
 // main app classes
@@ -449,6 +450,7 @@ console.log(`isLinux: ${LINUX}`);
         app.methods = { ...app.methods, ...value._methods };
         app.data = { ...app.data, ...value._data };
     }
+    app.methods = { ...app.methods, ..._utils };
     Object.assign($app, app);
 
     // #endregion
@@ -9882,9 +9884,6 @@ console.log(`isLinux: ${LINUX}`);
             params.queueEnabled = D.queueEnabled;
             if (D.groupAccessType === 'members') {
                 params.roleIds = D.roleIds;
-                params.canRequestInvite = true;
-            } else if (D.groupAccessType === 'plus') {
-                params.canRequestInvite = true;
             }
         }
         if (
