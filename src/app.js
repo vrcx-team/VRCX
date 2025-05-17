@@ -130,7 +130,8 @@ import {
     deleteVRChatCache,
     extractFileId,
     extractFileVersion,
-    getAvailablePlatforms
+    getAvailablePlatforms,
+    _utils
 } from './composables/shared/utils';
 
 // main app classes
@@ -449,6 +450,7 @@ console.log(`isLinux: ${LINUX}`);
         app.methods = { ...app.methods, ...value._methods };
         app.data = { ...app.data, ...value._data };
     }
+    app.methods = { ...app.methods, ..._utils };
     Object.assign($app, app);
 
     // #endregion

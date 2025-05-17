@@ -1,6 +1,16 @@
 import Noty from 'noty';
 import utils from '../../classes/utils';
 import { compareUnityVersion } from '../avatar/utils';
+import {
+    displayLocation,
+    isRealInstance,
+    parseLocation
+} from '../instance/utils';
+import {
+    getPrintFileName,
+    getPrintLocalDate,
+    isFriendOnline
+} from '../user/utils';
 
 function getAvailablePlatforms(unityPackages) {
     var isPC = false;
@@ -223,25 +233,9 @@ function extractVariantVersion(url) {
     }
 }
 
-export {
-    getAvailablePlatforms,
-    downloadAndSaveJson,
-    deleteVRChatCache,
-    checkVRChatCache,
-    copyToClipboard,
-    getFaviconUrl,
-    convertFileUrlToImageUrl,
-    replaceVrcPackageUrl,
-    getLaunchURL,
-    extractFileId,
-    extractFileVersion,
-    extractVariantVersion
-};
+// ---------------------- devtool method --------------------------
 
-// ---------------------- devtools method --------------------------
-
-// not window.$app
-window.getBundleLocation = async function (input) {
+async function getBundleLocation(input) {
     const $app = window.$app;
     var assetUrl = input;
     var variant = '';
@@ -318,4 +312,37 @@ window.getBundleLocation = async function (input) {
     var fullAssetLocation = `${assetLocation}\\__data`;
     console.log(fullAssetLocation);
     return fullAssetLocation;
+}
+
+const _utils = {
+    getAvailablePlatforms,
+    deleteVRChatCache,
+    checkVRChatCache,
+    getLaunchURL,
+    extractFileId,
+    extractFileVersion,
+    extractVariantVersion,
+    isRealInstance,
+    displayLocation,
+    parseLocation,
+    getPrintFileName,
+    getPrintLocalDate,
+    isFriendOnline
+};
+
+export {
+    getAvailablePlatforms,
+    downloadAndSaveJson,
+    deleteVRChatCache,
+    checkVRChatCache,
+    copyToClipboard,
+    getFaviconUrl,
+    convertFileUrlToImageUrl,
+    replaceVrcPackageUrl,
+    getLaunchURL,
+    extractFileId,
+    extractFileVersion,
+    extractVariantVersion,
+    getBundleLocation,
+    _utils
 };
