@@ -274,7 +274,8 @@ namespace VRCX
                             ParseApplicationQuit(fileInfo, logContext, line, offset) ||
                             ParseOpenVRInit(fileInfo, logContext, line, offset) ||
                             ParseDesktopMode(fileInfo, logContext, line, offset) ||
-                            ParseOscFailedToStart(fileInfo, logContext, line, offset))
+                            ParseOscFailedToStart(fileInfo, logContext, line, offset) ||
+                            ParseUntrustedUrl(fileInfo, logContext, line, offset))
                         {
                         }
                     }
@@ -360,7 +361,7 @@ namespace VRCX
                 if (lineOffset < 0)
                     return true;
                 lineOffset += 17;
-                if (lineOffset >= line.Length)
+                if (lineOffset > line.Length)
                     return true;
 
                 var worldName = line.Substring(lineOffset);
@@ -391,7 +392,8 @@ namespace VRCX
                 // logContext.onJoinPhotonDisplayName = string.Empty;
                 // logContext.onJoinPhotonDisplayNameDate = string.Empty;
                 logContext.LastAudioDevice = string.Empty;
-                logContext.LastVideoError = string.Empty;
+                logContext.LastVideoPlaybackError = string.Empty;
+                logContext.LastAVProError = string.Empty;
                 logContext.locationDestination = string.Empty;
                 VrcClosedGracefully = false;
 
@@ -629,9 +631,9 @@ namespace VRCX
             if (line.Contains("[Video Playback] ERROR: "))
             {
                 var data = line.Substring(offset + 24);
-                if (data == logContext.LastVideoError)
+                if (data == logContext.LastVideoPlaybackError)
                     return true;
-                logContext.LastVideoError = data;
+                logContext.LastVideoPlaybackError = data;
                 
                 if (data.Contains(youtubeBotError))
                     data += youtubeBotErrorFixUrl;
@@ -650,9 +652,9 @@ namespace VRCX
             if (line.Contains("[AVProVideo] Error: "))
             {
                 var data = line.Substring(offset + 20);
-                if (data == logContext.LastVideoError)
+                if (data == logContext.LastAVProError)
                     return true;
-                logContext.LastVideoError = data;
+                logContext.LastAVProError = data;
                 
                 if (data.Contains(youtubeBotError))
                     data += youtubeBotErrorFixUrl;
@@ -668,13 +670,20 @@ namespace VRCX
                 return true;
             }
 
+            return false;
+        }
+        
+        private bool ParseUntrustedUrl(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2025.05.04 22:38:12 Error      -  Attempted to play an untrusted URL (Domain: localhost) that is not allowlisted for public instances. If this URL is needed for the world to work, the domain needs to be added to the world's Video Player Allowed Domains list on the website.
+
             if (line.Contains("Attempted to play an untrusted URL"))
             {
                 var data = line.Substring(offset);
-                if (data == logContext.LastVideoError)
+                if (data == logContext.LastVideoPlaybackError)
                     return true;
                 
-                logContext.LastVideoError = data;
+                logContext.LastVideoPlaybackError = data;
                 AppendLog(new[]
                 {
                     fileInfo.Name,
@@ -1412,7 +1421,8 @@ namespace VRCX
         {
             public bool AudioDeviceChanged;
             public string LastAudioDevice;
-            public string LastVideoError;
+            public string LastVideoPlaybackError;
+            public string LastAVProError;
             public long Length;
             public string locationDestination;
             public long Position;
