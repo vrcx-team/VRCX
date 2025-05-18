@@ -52,9 +52,9 @@
             :upload-image="uploadImage"
             :send-invite-response-dialog="sendInviteResponseDialog" />
         <SendInviteResponseConfirmDialog
-            :send-invite-response-dialog.sync="sendInviteResponseConfirmDialog"
+            :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
             :upload-image="uploadImage"
-            :send-invite-response-confirm-dialog="sendInviteResponseDialog" />
+            :send-invite-response-dialog.sync="sendInviteResponseDialog" />
     </safe-dialog>
 </template>
 
