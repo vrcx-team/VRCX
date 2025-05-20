@@ -381,6 +381,10 @@ export default class extends baseClass {
                         // keep roleIds
                         json.myMember.roleIds = ref.myMember.roleIds;
                     }
+                    if (typeof json.myMember.isRepresenting !== 'undefined') {
+                        json.myMember.isRepresenting =
+                            ref.myMember.isRepresenting;
+                    }
                     Object.assign(ref.myMember, json.myMember);
                 }
                 Object.assign(ref, json);
