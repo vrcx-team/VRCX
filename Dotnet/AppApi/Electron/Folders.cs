@@ -43,6 +43,7 @@ namespace VRCX
             
             var libraryFoldersVdfPath = Path.Join(_steamPath, "config/libraryfolders.vdf");
             var vrcLibraryPath = GetLibraryWithAppId(libraryFoldersVdfPath, vrchatAppid);
+
             if (string.IsNullOrEmpty(vrcLibraryPath))
             {
                 logger.Warn("Falling back to default VRChat path as libraryfolders.vdf was not found OR libraryfolders.vdf does not contain VRChat's appid (438100)");
@@ -71,7 +72,7 @@ namespace VRCX
                     libraryPath = parts[4].Replace("\"", "");
                 }
 
-                if (line.Contains($"\"{appId}\""))
+                if (line.Contains($"\"{appId}\"") && Directory.Exists(libraryPath))
                     return libraryPath;
             }
 
