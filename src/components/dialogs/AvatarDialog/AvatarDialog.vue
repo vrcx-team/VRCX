@@ -696,7 +696,7 @@
                 showAvatarDialog(D.id);
                 break;
             case 'Share':
-                copyToClipboard(D.id);
+                copyAvatarUrl(D.id);
                 break;
             case 'Rename':
                 promptRenameAvatar(D);
@@ -1056,9 +1056,6 @@
                     break;
                 }
             }
-        }
-        if (!assetUrl) {
-            assetUrl = D.ref.assetUrl;
         }
         const fileId = extractFileId(assetUrl);
         const version = parseInt(extractFileVersion(assetUrl), 10);

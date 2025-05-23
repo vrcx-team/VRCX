@@ -1436,25 +1436,30 @@ console.log(`isLinux: ${LINUX}`);
         var ref = this.cachedAvatars.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
-                id: '',
-                name: '',
-                description: '',
+                acknowledgements: '',
                 authorId: '',
                 authorName: '',
-                tags: [],
-                assetUrl: '',
-                assetUrlObject: {},
+                created_at: '',
+                description: '',
+                featured: false,
+                highestPrice: null,
+                id: '',
                 imageUrl: '',
-                thumbnailImageUrl: '',
+                lock: false,
+                lowestPrice: null,
+                name: '',
+                productId: null,
+                publishedListings: [],
                 releaseStatus: '',
+                searchable: false,
                 styles: [],
-                version: 0,
-                unityPackages: [],
+                tags: [],
+                thumbnailImageUrl: '',
                 unityPackageUrl: '',
                 unityPackageUrlObject: {},
-                created_at: '',
+                unityPackages: [],
                 updated_at: '',
-                featured: false,
+                version: 0,
                 ...json
             };
             this.cachedAvatars.set(ref.id, ref);
@@ -13841,14 +13846,11 @@ console.log(`isLinux: ${LINUX}`);
         };
     };
 
-    //
-
     $app.methods.languageClass = function (key) {
         return languageClass(key);
     };
 
     // #endregion
-
     // #region | Electron
 
     if (LINUX) {
