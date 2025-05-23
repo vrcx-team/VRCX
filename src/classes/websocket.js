@@ -555,8 +555,13 @@ export default class extends baseClass {
                         // hmm
                     } else if (contentType === 'created') {
                         // on avatar upload
+                    } else if (contentType === 'avatargallery') {
+                        // on avatar gallery image upload
                     } else {
-                        console.log('Unknown content-refresh', content);
+                        console.log(
+                            'Unknown content-refresh type',
+                            content.contentType
+                        );
                     }
                     break;
 

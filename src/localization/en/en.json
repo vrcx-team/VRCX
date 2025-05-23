@@ -981,7 +981,9 @@
                 "platform": "Platform",
                 "time_spent": "Time Spent",
                 "memo": "Memo",
-                "memo_placeholder": "Click to add a memo"
+                "memo_placeholder": "Click to add a memo",
+                "listings": "Listings",
+                "gallery": "Gallery"
             },
             "json": {
                 "header": "JSON",
@@ -1634,6 +1636,11 @@
         "gallery": {
             "uploaded": "Gallery image uploaded",
             "failed": "Failed to upload gallery image"
+        },
+        "avatar_gallery": {
+            "uploaded": "Avatar gallery image uploaded",
+            "failed": "Failed to upload avatar gallery image",
+            "deleted": "Avatar gallery image deleted"
         },
         "world": {
             "image_changed": "World image changed",

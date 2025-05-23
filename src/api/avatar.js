@@ -167,6 +167,54 @@ const avatarReq = {
             // window.API.$emit('AVATAR:STYLES', args);
             return args;
         });
+    },
+
+    /**
+     * @param {{ avatarId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    getAvatarGallery(avatarId) {
+        const params = {
+            tag: 'avatargallery',
+            galleryId: avatarId,
+            n: 100,
+            offset: 0
+        };
+        return window.API.call(`files`, {
+            params,
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            // window.API.$emit('AVATAR:GALLERY', args);
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ imageData: string, avatarId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    uploadAvatarGalleryImage(imageData, avatarId) {
+        const params = {
+            tag: 'avatargallery',
+            galleryId: avatarId
+        };
+        return window.API.call('file/image', {
+            uploadImage: true,
+            matchingDimensions: false,
+            postData: JSON.stringify(params),
+            imageData
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            // window.API.$emit('AVATARGALLERYIMAGE:ADD', args);
+            return args;
+        });
     }
 };
 // #endregion
