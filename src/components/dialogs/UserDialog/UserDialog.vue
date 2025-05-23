@@ -931,12 +931,19 @@
                                 <template #content>
                                     <span
                                         >{{ t('dialog.user.info.last_login') }}
-                                        {{ userDialog.ref.last_login | formatDate('short') }}</span
+                                        {{ userDialog.ref.last_login | formatDate('long') }}</span
+                                    >
+                                    <br />
+                                    <span
+                                        >{{ t('dialog.user.info.last_activity') }}
+                                        {{ userDialog.ref.last_activity | formatDate('long') }}</span
                                     >
                                 </template>
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.user.info.last_activity') }}</span>
-                                    <span class="extra">{{ userDialog.ref.last_activity | formatDate('long') }}</span>
+                                    <span class="extra">{{
+                                        timeToText(Date.now() - Date.parse(userDialog.ref.last_activity))
+                                    }}</span>
                                 </div>
                             </el-tooltip>
                         </div>
@@ -2918,8 +2925,6 @@
         });
         handleNoteChange(args);
     }
-
-
 
     function handleNoteChange(args) {
         // API.$on('NOTE')
