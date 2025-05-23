@@ -197,6 +197,16 @@
                                         }}</template>
                                         <template v-else>{{ tag.replace('content_', '') }}</template>
                                     </el-tag>
+                                    <el-tag
+                                        v-if="tag.startsWith('author_tag_')"
+                                        :key="tag"
+                                        effect="plain"
+                                        size="mini"
+                                        style="margin-right: 5px; margin-top: 5px">
+                                        <template>
+                                            {{ tag.replace('author_tag_', '') }}
+                                        </template>
+                                    </el-tag>
                                 </template>
                             </div>
                         </div>
@@ -314,8 +324,8 @@
                                     <el-dropdown-item icon="el-icon-edit" command="Change Content Tags">{{
                                         t('dialog.avatar.actions.change_content_tags')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change Styles">{{
-                                        t('dialog.avatar.actions.change_styles')
+                                    <el-dropdown-item icon="el-icon-edit" command="Change Styles and Author Tags">{{
+                                        t('dialog.avatar.actions.change_styles_author_tags')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Change Image">{{
                                         t('dialog.avatar.actions.change_image')
@@ -596,7 +606,9 @@
         primaryStyle: '',
         secondaryStyle: '',
         availableAvatarStyles: [],
-        availableAvatarStylesMap: new Map()
+        availableAvatarStylesMap: new Map(),
+        initialTags: [],
+        authorTags: ''
     });
 
     const avatarDialogPlatform = computed(() => {
@@ -701,7 +713,7 @@
             case 'Change Content Tags':
                 showSetAvatarTagsDialog(D.id);
                 break;
-            case 'Change Styles':
+            case 'Change Styles and Author Tags':
                 showSetAvatarStylesDialog(D.id);
                 break;
             case 'Download Unity Package':
@@ -1154,6 +1166,16 @@
         D.secondaryStyle = props.avatarDialog.ref.styles?.secondary || '';
         D.initialPrimaryStyle = D.primaryStyle;
         D.initialSecondaryStyle = D.secondaryStyle;
+        D.initialTags = props.avatarDialog.ref.tags;
+        D.authorTags = '';
+        for (const tag of D.initialTags) {
+            if (tag.startsWith('author_tag_')) {
+                if (D.authorTags) {
+                    D.authorTags += ',';
+                }
+                D.authorTags += tag.substring(11);
+            }
+        }
         nextTick(() => {
             D.loading = false;
         });

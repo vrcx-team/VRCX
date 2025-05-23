@@ -961,7 +961,7 @@
                 "rename": "Rename",
                 "change_description": "Change Description",
                 "change_content_tags": "Change Content Tags",
-                "change_styles": "Change Styles",
+                "change_styles_author_tags": "Change Styles and Author Tags",
                 "change_image": "Change Image",
                 "download_package": "Download Unity Package",
                 "delete": "Delete",
