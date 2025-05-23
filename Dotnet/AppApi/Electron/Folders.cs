@@ -71,7 +71,7 @@ namespace VRCX
                     libraryPath = parts[4].Replace("\"", "");
                 }
 
-                if (line.Contains($"\"{appId}\""))
+                if (line.Contains($"\"{appId}\"") && Directory.Exists(libraryPath))
                     return libraryPath;
             }
 
