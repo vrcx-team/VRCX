@@ -3085,6 +3085,8 @@
     async function exitEditModeCurrentUserGroups() {
         userDialogGroupEditMode.value = false;
         userDialogGroupEditGroups.value = [];
+        userDialogGroupEditSelectedGroupIds.value = [];
+        userDialogGroupAllSelected.value = false;
         await sortCurrentUserGroups();
     }
 
