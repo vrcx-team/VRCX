@@ -233,67 +233,65 @@
                                 style="margin-right: 5px; margin-top: 5px"
                                 v-text="userDialog.ref.$customTag"></el-tag>
                             <br />
-                            <template v-for="badge in userDialog.ref.badges">
-                                <el-tooltip :key="badge.badgeId" placement="top">
-                                    <template #content>
+                            <el-tooltip v-for="badge in userDialog.ref.badges" :key="badge.badgeId" placement="top">
+                                <template #content>
+                                    <span>{{ badge.badgeName }}</span>
+                                    <span v-if="badge.hidden">&nbsp;(Hidden)</span>
+                                </template>
+                                <el-popover placement="right" width="300px" trigger="click">
+                                    <img
+                                        slot="reference"
+                                        class="x-link x-user-badge"
+                                        :src="badge.badgeImageUrl"
+                                        style="
+                                            flex: none;
+                                            height: 32px;
+                                            width: 32px;
+                                            border-radius: 3px;
+                                            object-fit: cover;
+                                            margin-top: 5px;
+                                            margin-right: 5px;
+                                        "
+                                        :class="{ 'x-user-badge-hidden': badge.hidden }" />
+                                    <img
+                                        v-lazy="badge.badgeImageUrl"
+                                        class="x-link"
+                                        style="width: 300px"
+                                        @click="showFullscreenImageDialog(badge.badgeImageUrl)" />
+                                    <br />
+                                    <div style="display: block; width: 300px; word-break: normal">
                                         <span>{{ badge.badgeName }}</span>
-                                        <span v-if="badge.hidden">&nbsp;(Hidden)</span>
-                                    </template>
-                                    <el-popover placement="right" width="300px" trigger="click">
-                                        <img
-                                            slot="reference"
-                                            class="x-link x-user-badge"
-                                            :src="badge.badgeImageUrl"
-                                            style="
-                                                flex: none;
-                                                height: 32px;
-                                                width: 32px;
-                                                border-radius: 3px;
-                                                object-fit: cover;
-                                                margin-top: 5px;
-                                                margin-right: 5px;
-                                            "
-                                            :class="{ 'x-user-badge-hidden': badge.hidden }" />
-                                        <img
-                                            v-lazy="badge.badgeImageUrl"
-                                            class="x-link"
-                                            style="width: 300px"
-                                            @click="showFullscreenImageDialog(badge.badgeImageUrl)" />
                                         <br />
-                                        <div style="display: block; width: 300px; word-break: normal">
-                                            <span>{{ badge.badgeName }}</span>
+                                        <span class="x-grey" style="font-size: 12px">{{
+                                            badge.badgeDescription
+                                        }}</span>
+                                        <br />
+                                        <span
+                                            v-if="badge.assignedAt"
+                                            class="x-grey"
+                                            style="font-family: monospace; font-size: 12px">
+                                            {{ t('dialog.user.badges.assigned') }}:
+                                            {{ badge.assignedAt | formatDate('long') }}
+                                        </span>
+                                        <template v-if="userDialog.id === API.currentUser.id">
                                             <br />
-                                            <span class="x-grey" style="font-size: 12px">{{
-                                                badge.badgeDescription
-                                            }}</span>
+                                            <el-checkbox
+                                                v-model="badge.hidden"
+                                                style="margin-top: 5px"
+                                                @change="toggleBadgeVisibility(badge)">
+                                                {{ t('dialog.user.badges.hidden') }}
+                                            </el-checkbox>
                                             <br />
-                                            <span
-                                                v-if="badge.assignedAt"
-                                                class="x-grey"
-                                                style="font-family: monospace; font-size: 12px">
-                                                {{ t('dialog.user.badges.assigned') }}:
-                                                {{ badge.assignedAt | formatDate('long') }}
-                                            </span>
-                                            <template v-if="userDialog.id === API.currentUser.id">
-                                                <br />
-                                                <el-checkbox
-                                                    v-model="badge.hidden"
-                                                    style="margin-top: 5px"
-                                                    @change="toggleBadgeVisibility(badge)">
-                                                    {{ t('dialog.user.badges.hidden') }}
-                                                </el-checkbox>
-                                                <br />
-                                                <el-checkbox
-                                                    v-model="badge.showcased"
-                                                    style="margin-top: 5px"
-                                                    @change="toggleBadgeShowcased(badge)">
-                                                    {{ t('dialog.user.badges.showcased') }}
-                                                </el-checkbox>
-                                            </template>
-                                        </div>
-                                    </el-popover>
-                                </el-tooltip>
-                            </template>
+                                            <el-checkbox
+                                                v-model="badge.showcased"
+                                                style="margin-top: 5px"
+                                                @change="toggleBadgeShowcased(badge)">
+                                                {{ t('dialog.user.badges.showcased') }}
+                                            </el-checkbox>
+                                        </template>
+                                    </div>
+                                </el-popover>
+                            </el-tooltip>
                         </div>
                         <div style="margin-top: 5px">
                             <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>
@@ -1151,12 +1149,53 @@
                     <div v-loading="userDialog.isGroupsLoading" style="margin-top: 10px">
                         <template v-if="userDialogGroupEditMode">
                             <div class="x-friend-list" style="margin-top: 10px; margin-bottom: 15px; max-height: unset">
+
+                                <!-- Bulk actions dropdown (shown only in edit mode) -->
+                                <el-dropdown trigger="click">
+                                    <el-button size="small" icon="el-icon-setting"
+                                        style="margin-right: 5px; height: 29px; padding: 7px 15px">
+                                        {{ t('dialog.group.actions.manage_selected') }}
+                                        <i class="el-icon-arrow-down el-icon--right"></i>
+                                    </el-button>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item @click.native="bulkSetVisibility('visible')">
+                                            {{ t('dialog.group.actions.visibility_everyone') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item @click.native="bulkSetVisibility('friends')">
+                                            {{ t('dialog.group.actions.visibility_friends') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item @click.native="bulkSetVisibility('hidden')">
+                                            {{ t('dialog.group.actions.visibility_hidden') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item divided @click.native="bulkLeaveGroups">
+                                            <i class="el-icon-delete"></i>
+                                            {{ t('dialog.user.groups.leave_group_tooltip') }}
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+
+                                <!-- Select All button -->
+                                <el-button size="small"
+                                    :icon="userDialogGroupAllSelected ? 'el-icon-close' : 'el-icon-check'"
+                                    style="height: 29px; padding: 7px 15px" @click="selectAllGroups">
+                                    {{ userDialogGroupAllSelected ? t('dialog.group.actions.deselect_all') :
+                                        t('dialog.group.actions.select_all') }}
+                                </el-button>
+
                                 <div
                                     v-for="group in userDialogGroupEditGroups"
                                     :key="group.id"
                                     class="x-friend-item x-friend-item-border"
                                     style="width: 100%"
                                     @click="showGroupDialog(group.id)">
+
+                                    <!-- Manual checkbox -->
+                                    <div style="margin-left: 5px; margin-right: 5px; transform: scale(0.8); transform-origin: left center;"
+                                        @click.stop>
+                                        <el-checkbox :checked="userDialogGroupEditSelectedGroupIds.includes(group.id)"
+                                            @change="() => toggleGroupSelection(group.id)" />
+                                    </div>
+                                    
                                     <div style="margin-right: 3px; margin-left: 5px" @click.stop>
                                         <el-button
                                             size="mini"
@@ -2014,8 +2053,11 @@
     const userDialogTabsRef = ref(null);
     const userDialogRef = ref(null);
 
-    const userDialogGroupEditMode = ref(false);
-    const userDialogGroupEditGroups = ref([]);
+    const userDialogGroupEditMode = ref(false);                // whether edit mode is active
+    const userDialogGroupEditGroups = ref([]);                 // editable group list
+    const userDialogGroupAllSelected = ref(false);
+    const userDialogGroupEditSelectedGroupIds = ref([]);       // selected groups in edit mode
+    
     const userDialogLastActiveTab = ref('');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
@@ -3043,6 +3085,8 @@
     async function exitEditModeCurrentUserGroups() {
         userDialogGroupEditMode.value = false;
         userDialogGroupEditGroups.value = [];
+        userDialogGroupEditSelectedGroupIds.value = [];
+        userDialogGroupAllSelected.value = false;
         await sortCurrentUserGroups();
     }
 
@@ -3067,6 +3111,45 @@
                 message: 'Failed to save in-game group order',
                 type: 'error'
             });
+        }
+    }
+
+    // Select all groups currently in the editable list by collecting their IDs
+    function selectAllGroups() {
+        const allSelected = userDialogGroupEditSelectedGroupIds.value.length === userDialogGroupEditGroups.value.length;
+
+        // First update selection state
+        userDialogGroupEditSelectedGroupIds.value = allSelected ? [] : userDialogGroupEditGroups.value.map(g => g.id);
+        userDialogGroupAllSelected.value = !allSelected;
+
+        // Toggle editMode off and back on to force checkbox UI update
+        userDialogGroupEditMode.value = false;
+        nextTick(() => {
+            userDialogGroupEditMode.value = true;
+        });
+    }
+
+    // Apply the given visibility to all selected groups
+    async function bulkSetVisibility(newVisibility) {
+        for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
+            setGroupVisibility(groupId, newVisibility);
+        }
+    }
+
+    // Leave (remove user from) all selected groups
+    function bulkLeaveGroups() {
+        for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
+            leaveGroupPrompt(groupId)
+        }
+    }
+
+    // Toggle individual group selection for bulk actions
+    function toggleGroupSelection(groupId) {
+        const index = userDialogGroupEditSelectedGroupIds.value.indexOf(groupId)
+        if (index === -1) {
+            userDialogGroupEditSelectedGroupIds.value.push(groupId)
+        } else {
+            userDialogGroupEditSelectedGroupIds.value.splice(index, 1)
         }
     }
 
