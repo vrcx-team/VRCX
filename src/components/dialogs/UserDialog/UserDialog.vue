@@ -262,9 +262,7 @@
                                     <div style="display: block; width: 300px; word-break: normal">
                                         <span>{{ badge.badgeName }}</span>
                                         <br />
-                                        <span class="x-grey" style="font-size: 12px">{{
-                                            badge.badgeDescription
-                                        }}</span>
+                                        <span class="x-grey" style="font-size: 12px">{{ badge.badgeDescription }}</span>
                                         <br />
                                         <span
                                             v-if="badge.assignedAt"
@@ -1150,11 +1148,12 @@
                     <div v-loading="userDialog.isGroupsLoading" style="margin-top: 10px">
                         <template v-if="userDialogGroupEditMode">
                             <div class="x-friend-list" style="margin-top: 10px; margin-bottom: 15px; max-height: unset">
-
                                 <!-- Bulk actions dropdown (shown only in edit mode) -->
                                 <el-dropdown trigger="click">
-                                    <el-button size="small" icon="el-icon-setting"
-                                        style="margin-right: 5px; height: 29px; padding: 7px 15px">
+                                    <el-button
+                                        size="small"
+                                        icon="el-icon-setting"
+                                        style="margin-right: 5px; height: 29px; padding: 7px 15px; margin-bottom: 5px">
                                         {{ t('dialog.group.actions.manage_selected') }}
                                         <i class="el-icon-arrow-down el-icon--right"></i>
                                     </el-button>
@@ -1176,11 +1175,16 @@
                                 </el-dropdown>
 
                                 <!-- Select All button -->
-                                <el-button size="small"
+                                <el-button
+                                    size="small"
                                     :icon="userDialogGroupAllSelected ? 'el-icon-close' : 'el-icon-check'"
-                                    style="height: 29px; padding: 7px 15px" @click="selectAllGroups">
-                                    {{ userDialogGroupAllSelected ? t('dialog.group.actions.deselect_all') :
-                                        t('dialog.group.actions.select_all') }}
+                                    style="height: 29px; padding: 7px 15px; margin-bottom: 5px"
+                                    @click="selectAllGroups">
+                                    {{
+                                        userDialogGroupAllSelected
+                                            ? t('dialog.group.actions.deselect_all')
+                                            : t('dialog.group.actions.select_all')
+                                    }}
                                 </el-button>
 
                                 <div
@@ -1189,14 +1193,20 @@
                                     class="x-friend-item x-friend-item-border"
                                     style="width: 100%"
                                     @click="showGroupDialog(group.id)">
-
                                     <!-- Manual checkbox -->
-                                    <div style="margin-left: 5px; margin-right: 5px; transform: scale(0.8); transform-origin: left center;"
+                                    <div
+                                        style="
+                                            margin-left: 5px;
+                                            margin-right: 5px;
+                                            transform: scale(0.8);
+                                            transform-origin: left center;
+                                        "
                                         @click.stop>
-                                        <el-checkbox :checked="userDialogGroupEditSelectedGroupIds.includes(group.id)"
+                                        <el-checkbox
+                                            :checked="userDialogGroupEditSelectedGroupIds.includes(group.id)"
                                             @change="() => toggleGroupSelection(group.id)" />
                                     </div>
-                                    
+
                                     <div style="margin-right: 3px; margin-left: 5px" @click.stop>
                                         <el-button
                                             size="mini"
@@ -2055,11 +2065,11 @@
     const userDialogTabsRef = ref(null);
     const userDialogRef = ref(null);
 
-    const userDialogGroupEditMode = ref(false);                // whether edit mode is active
-    const userDialogGroupEditGroups = ref([]);                 // editable group list
+    const userDialogGroupEditMode = ref(false); // whether edit mode is active
+    const userDialogGroupEditGroups = ref([]); // editable group list
     const userDialogGroupAllSelected = ref(false);
-    const userDialogGroupEditSelectedGroupIds = ref([]);       // selected groups in edit mode
-    
+    const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
+
     const userDialogLastActiveTab = ref('');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
@@ -3125,7 +3135,7 @@
         const allSelected = userDialogGroupEditSelectedGroupIds.value.length === userDialogGroupEditGroups.value.length;
 
         // First update selection state
-        userDialogGroupEditSelectedGroupIds.value = allSelected ? [] : userDialogGroupEditGroups.value.map(g => g.id);
+        userDialogGroupEditSelectedGroupIds.value = allSelected ? [] : userDialogGroupEditGroups.value.map((g) => g.id);
         userDialogGroupAllSelected.value = !allSelected;
 
         // Toggle editMode off and back on to force checkbox UI update
@@ -3145,17 +3155,17 @@
     // Leave (remove user from) all selected groups
     function bulkLeaveGroups() {
         for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
-            leaveGroupPrompt(groupId)
+            leaveGroupPrompt(groupId);
         }
     }
 
     // Toggle individual group selection for bulk actions
     function toggleGroupSelection(groupId) {
-        const index = userDialogGroupEditSelectedGroupIds.value.indexOf(groupId)
+        const index = userDialogGroupEditSelectedGroupIds.value.indexOf(groupId);
         if (index === -1) {
-            userDialogGroupEditSelectedGroupIds.value.push(groupId)
+            userDialogGroupEditSelectedGroupIds.value.push(groupId);
         } else {
-            userDialogGroupEditSelectedGroupIds.value.splice(index, 1)
+            userDialogGroupEditSelectedGroupIds.value.splice(index, 1);
         }
     }
 
