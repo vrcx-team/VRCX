@@ -10077,7 +10077,7 @@ console.log(`isLinux: ${LINUX}`);
         if (desktopMode) {
             args.push('--no-vr');
         }
-        if (vrcLaunchPathOverride) {
+        if (vrcLaunchPathOverride && !LINUX) {
             AppApi.StartGameFromPath(
                 vrcLaunchPathOverride,
                 args.join(' ')

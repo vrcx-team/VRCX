@@ -30,6 +30,7 @@ const args = process.argv.slice(1);
 const noInstall = args.includes('--no-install');
 const x11 = args.includes('--x11');
 const noDesktop = args.includes('--no-desktop');
+const startup = args.includes('--startup');
 
 const homePath = getHomePath();
 tryRelaunchWithArgs(args);
@@ -567,7 +568,7 @@ function tryCopyFromWinePrefix() {
 }
 
 function applyWindowState() {
-    if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true') {
+    if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true' && startup) {
         if (isCloseToTray) {
             mainWindow.hide();
             return;

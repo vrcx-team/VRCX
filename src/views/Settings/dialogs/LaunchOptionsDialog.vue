@@ -28,6 +28,7 @@
         </div>
 
         <el-input
+            v-if="!isLinux()"
             v-model="launchOptionsDialog.vrcLaunchPathOverride"
             type="textarea"
             placeholder="C:\Program Files (x86)\Steam\steamapps\common\VRChat"
@@ -59,6 +60,7 @@
     import configRepository from '../../../service/config';
 
     const openExternalLink = inject('openExternalLink');
+    const isLinux = inject('isLinux');
 
     const { t } = useI18n();
 
