@@ -336,6 +336,7 @@ console.log(`isLinux: ${LINUX}`);
         provide() {
             return {
                 API,
+                friends: this.friends,
                 showUserDialog: this.showUserDialog,
                 adjustDialogZ: this.adjustDialogZ,
                 getWorldName: this.getWorldName,
@@ -13737,7 +13738,7 @@ console.log(`isLinux: ${LINUX}`);
             lastLocationDestination: this.lastLocationDestination,
             isGameRunning: this.isGameRunning,
             inviteResponseMessageTable: this.inviteResponseMessageTable,
-            updateImage: this.updateImage,
+            uploadImage: this.uploadImage,
             checkCanInvite: this.checkCanInvite,
             inviteRequestResponseMessageTable:
                 this.inviteRequestResponseMessageTable

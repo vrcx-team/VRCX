@@ -939,9 +939,10 @@
                                 </template>
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.user.info.last_activity') }}</span>
-                                    <span class="extra">{{
+                                    <span v-if="userDialog.ref.last_activity" class="extra">{{
                                         timeToText(Date.now() - Date.parse(userDialog.ref.last_activity))
                                     }}</span>
+                                    <span v-else class="extra">-</span>
                                 </div>
                             </el-tooltip>
                         </div>

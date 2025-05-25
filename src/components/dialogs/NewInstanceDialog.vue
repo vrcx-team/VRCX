@@ -506,7 +506,7 @@
     export default {
         name: 'NewInstanceDialog',
         components: { InviteDialog },
-        inject: ['API', 'userImage', 'userStatusClass', 'showLaunchDialog', 'adjustDialogZ'],
+        inject: ['API', 'friends', 'userImage', 'userStatusClass', 'showLaunchDialog', 'adjustDialogZ'],
         props: {
             vipFriends: {
                 type: Array,
