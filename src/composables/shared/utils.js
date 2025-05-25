@@ -112,9 +112,6 @@ async function checkVRChatCache(ref) {
             break;
         }
     }
-    if (!assetUrl) {
-        assetUrl = ref.assetUrl;
-    }
     var id = extractFileId(assetUrl);
     var version = parseInt(extractFileVersion(assetUrl), 10);
     var variantVersion = parseInt(extractVariantVersion(assetUrl), 10);
@@ -266,8 +263,6 @@ async function getBundleLocation(input) {
                 break;
             }
         }
-    } else if ($app.avatarDialog.visible && $app.avatarDialog.ref.assetUrl) {
-        assetUrl = $app.avatarDialog.ref.assetUrl;
     } else if (
         $app.worldDialog.visible &&
         $app.worldDialog.ref.unityPackages.length > 0
@@ -283,8 +278,6 @@ async function getBundleLocation(input) {
                 break;
             }
         }
-    } else if ($app.worldDialog.visible && $app.worldDialog.ref.assetUrl) {
-        assetUrl = $app.worldDialog.ref.assetUrl;
     }
     if (!assetUrl) {
         return null;

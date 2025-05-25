@@ -399,15 +399,15 @@
             </el-table-column>
         </data-tables>
         <SendInviteResponseDialog
+            :send-invite-response-dialog="sendInviteResponseDialog"
             :send-invite-response-dialog-visible.sync="sendInviteResponseDialogVisible"
             :invite-response-message-table="inviteResponseMessageTable"
-            :upload-image="uploadImage"
-            @invite-image-upload="inviteImageUpload" />
+            :upload-image="uploadImage" />
         <SendInviteRequestResponseDialog
+            :send-invite-response-dialog="sendInviteResponseDialog"
             :send-invite-request-response-dialog-visible.sync="sendInviteRequestResponseDialogVisible"
             :invite-request-response-message-table="inviteRequestResponseMessageTable"
-            :upload-image="uploadImage"
-            @invite-image-upload="inviteImageUpload" />
+            :upload-image="uploadImage" />
     </div>
 </template>
 
@@ -439,6 +439,7 @@
     const showGroupDialog = inject('showGroupDialog');
     const showUserDialog = inject('showUserDialog');
     const showFullscreenImageDialog = inject('showFullscreenImageDialog');
+    const clearInviteImageUpload = inject('clearInviteImageUpload');
 
     const props = defineProps({
         menuActiveIndex: {
@@ -478,21 +479,14 @@
         }
     });
 
-    const emit = defineEmits(['inviteImageUpload', 'clearInviteImageUpload']);
-
     const sendInviteResponseDialog = ref({
-        message: '',
-        messageSlot: 0,
+        messageSlot: {},
         invite: {}
     });
 
     const sendInviteResponseDialogVisible = ref(false);
 
     const sendInviteRequestResponseDialogVisible = ref(false);
-
-    function inviteImageUpload(event) {
-        emit('inviteImageUpload', event);
-    }
 
     function saveTableFilters() {
         configRepository.setString(
@@ -540,16 +534,11 @@
     }
 
     function showSendInviteResponseDialog(invite) {
-        sendInviteResponseDialog.value = {
-            invite
-        };
+        sendInviteResponseDialog.value.invite = invite;
+        sendInviteResponseDialog.value.messageSlot = {};
         inviteMessagesRequest.refreshInviteMessageTableData('response');
         clearInviteImageUpload();
         sendInviteResponseDialogVisible.value = true;
-    }
-
-    function clearInviteImageUpload() {
-        emit('clearInviteImageUpload');
     }
 
     function acceptRequestInvite(row) {
@@ -594,9 +583,8 @@
     }
 
     function showSendInviteRequestResponseDialog(invite) {
-        sendInviteResponseDialog.value = {
-            invite
-        };
+        sendInviteResponseDialog.value.invite = invite;
+        sendInviteResponseDialog.value.messageSlot = {};
         inviteMessagesRequest.refreshInviteMessageTableData('requestResponse');
         clearInviteImageUpload();
         sendInviteRequestResponseDialogVisible.value = true;

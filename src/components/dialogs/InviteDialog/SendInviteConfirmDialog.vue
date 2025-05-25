@@ -33,6 +33,7 @@
     const $message = instance.proxy.$message;
 
     const API = inject('API');
+    const clearInviteImageUpload = inject('clearInviteImageUpload');
 
     const props = defineProps({
         visible: {
@@ -62,6 +63,8 @@
     function sendInviteConfirm() {
         const D = props.sendInviteDialog;
         const J = props.inviteDialog;
+        const messageType = D.messageSlot.messageType;
+        const slot = D.messageSlot.slot;
         if (J?.visible) {
             const inviteLoop = () => {
                 if (J.userIds.length > 0) {
@@ -82,7 +85,7 @@
                                     instanceId: J.worldId,
                                     worldId: J.worldId,
                                     worldName: J.worldName,
-                                    messageSlot: D.messageSlot
+                                    messageSlot: slot
                                 },
                                 receiverUserId
                             )
@@ -94,7 +97,7 @@
                                     instanceId: J.worldId,
                                     worldId: J.worldId,
                                     worldName: J.worldName,
-                                    messageSlot: D.messageSlot
+                                    messageSlot: slot
                                 },
                                 receiverUserId
                             )
@@ -110,8 +113,8 @@
                 }
             };
             inviteLoop();
-        } else if (D.messageType === 'invite') {
-            D.params.messageSlot = D.messageSlot;
+        } else if (messageType === 'invite') {
+            D.params.messageSlot = slot;
             if (props.uploadImage) {
                 notificationRequest
                     .sendInvitePhoto(D.params, D.userId)
@@ -139,13 +142,13 @@
                         return args;
                     });
             }
-        } else if (D.messageType === 'requestInvite') {
-            D.params.requestSlot = D.messageSlot;
+        } else if (messageType === 'request') {
+            D.params.requestSlot = slot;
             if (props.uploadImage) {
                 notificationRequest
                     .sendRequestInvitePhoto(D.params, D.userId)
                     .catch((err) => {
-                        this.clearInviteImageUpload();
+                        clearInviteImageUpload();
                         throw err;
                     })
                     .then((args) => {

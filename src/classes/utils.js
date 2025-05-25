@@ -23,6 +23,20 @@ const _utils = {
             )
         );
     },
+    moveArrayItem(array, fromIndex, toIndex) {
+        if (!Array.isArray(array) || fromIndex === toIndex) {
+            return;
+        }
+        if (fromIndex < 0 || fromIndex >= array.length) {
+            return;
+        }
+        if (toIndex < 0 || toIndex >= array.length) {
+            return;
+        }
+        const item = array[fromIndex];
+        array.splice(fromIndex, 1);
+        array.splice(toIndex, 0, item);
+    },
     escapeTag(tag) {
         var s = String(tag);
         return s.replace(/["&'<>]/g, (c) => `&#${c.charCodeAt(0)};`);

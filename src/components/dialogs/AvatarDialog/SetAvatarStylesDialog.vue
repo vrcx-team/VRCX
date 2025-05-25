@@ -38,6 +38,16 @@
                         :value="style"></el-option>
                 </el-select>
             </div>
+            <br />
+            <div style="font-size: 12px; margin-top: 10px">{{ $t('dialog.set_world_tags.author_tags') }}<br /></div>
+            <el-input
+                v-model="setAvatarStylesDialog.authorTags"
+                type="textarea"
+                size="mini"
+                show-word-limit
+                :autosize="{ minRows: 2, maxRows: 5 }"
+                placeholder=""
+                style="margin-top: 10px"></el-input>
         </template>
         <template #footer>
             <el-button size="small" @click="setAvatarStylesDialog.visible = false">{{
@@ -54,6 +64,7 @@
     import { watch, getCurrentInstance } from 'vue';
 
     import { useI18n } from 'vue-i18n-bridge';
+    import utils from '../../../classes/utils';
     import { avatarRequest } from '../../../api';
 
     const { t } = useI18n();
@@ -89,23 +100,42 @@
     }
 
     function saveSetAvatarStylesDialog() {
-        if (
-            props.setAvatarStylesDialog.initialPrimaryStyle === props.setAvatarStylesDialog.primaryStyle &&
-            props.setAvatarStylesDialog.initialSecondaryStyle === props.setAvatarStylesDialog.secondaryStyle
-        ) {
-            props.setAvatarStylesDialog.visible = false;
-            return;
-        }
-
         const primaryStyleId =
             props.setAvatarStylesDialog.availableAvatarStylesMap.get(props.setAvatarStylesDialog.primaryStyle) || '';
         const secondaryStyleId =
             props.setAvatarStylesDialog.availableAvatarStylesMap.get(props.setAvatarStylesDialog.secondaryStyle) || '';
 
+        let tags = [];
+        for (const tag of props.setAvatarStylesDialog.initialTags) {
+            if (!tag.startsWith('author_tag_')) {
+                tags.push(tag);
+            }
+        }
+        const authorTagsArray = props.setAvatarStylesDialog.authorTags.split(',');
+        for (const tag of authorTagsArray) {
+            if (!tag.trim()) {
+                continue;
+            }
+            let tagName = `author_tag_${tag}`;
+            if (!tags.includes(tagName)) {
+                tags.push(tagName);
+            }
+        }
+
+        if (
+            props.setAvatarStylesDialog.initialPrimaryStyle === props.setAvatarStylesDialog.primaryStyle &&
+            props.setAvatarStylesDialog.initialSecondaryStyle === props.setAvatarStylesDialog.secondaryStyle &&
+            utils.arraysMatch(props.setAvatarStylesDialog.initialTags, tags)
+        ) {
+            props.setAvatarStylesDialog.visible = false;
+            return;
+        }
+
         const params = {
             id: props.setAvatarStylesDialog.avatarId,
             primaryStyle: primaryStyleId,
-            secondaryStyle: secondaryStyleId
+            secondaryStyle: secondaryStyleId,
+            tags
         };
         avatarRequest
             .saveAvatar(params)

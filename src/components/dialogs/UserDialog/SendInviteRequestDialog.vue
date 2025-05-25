@@ -36,7 +36,7 @@
                         type="text"
                         icon="el-icon-edit"
                         size="mini"
-                        @click.stop="showEditAndSendInviteDialog('request', scope.row)"></el-button>
+                        @click.stop="showEditAndSendInviteDialog(scope.row)"></el-button>
                 </template>
             </el-table-column>
         </data-tables>
@@ -73,6 +73,7 @@
     const { t } = useI18n();
 
     const API = inject('API');
+    const inviteImageUpload = inject('inviteImageUpload');
 
     const props = defineProps({
         sendInviteRequestDialogVisible: {
@@ -98,33 +99,25 @@
         }
     });
 
-    const emit = defineEmits(['inviteImageUpload', 'update:sendInviteRequestDialogVisible', 'closeInviteDialog']);
+    const emit = defineEmits(['update:sendInviteRequestDialogVisible', 'closeInviteDialog']);
 
     const isSendInviteConfirmDialogVisible = ref(false);
 
     const editAndSendInviteDialog = ref({
         visible: false,
-        messageType: '',
-        newMessage: '',
-        inviteMessage: {}
+        newMessage: ''
     });
 
-    function inviteImageUpload(event) {
-        emit('inviteImageUpload', event);
-    }
-
-    function showSendInviteConfirmDialog(val) {
+    function showSendInviteConfirmDialog(row) {
+        props.sendInviteDialog.messageSlot = row;
         isSendInviteConfirmDialogVisible.value = true;
-        //
-        props.sendInviteDialog.messageSlot = val.slot;
     }
 
-    function showEditAndSendInviteDialog(messageType, inviteMessage) {
+    function showEditAndSendInviteDialog(row) {
+        props.sendInviteDialog.messageSlot = row;
         editAndSendInviteDialog.value = {
-            newMessage: inviteMessage.message,
-            visible: true,
-            messageType,
-            inviteMessage
+            newMessage: row.message,
+            visible: true
         };
     }
 

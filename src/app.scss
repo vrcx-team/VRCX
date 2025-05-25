@@ -940,6 +940,11 @@ i.x-status-icon.red {
     border-radius: 4px;
 }
 
+.el-carousel__mask {
+    // looks bad
+    display: none;
+}
+
 // FIXME
 // Something changed the CSS of element-ui
 // The other parts are the same

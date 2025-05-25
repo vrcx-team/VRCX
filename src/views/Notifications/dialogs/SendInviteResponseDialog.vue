@@ -36,7 +36,7 @@
                         type="text"
                         icon="el-icon-edit"
                         size="mini"
-                        @click.stop="showEditAndSendInviteResponseDialog('response', scope.row)" />
+                        @click.stop="showEditAndSendInviteResponseDialog(scope.row)" />
                 </template>
             </el-table-column>
         </data-tables>
@@ -52,11 +52,13 @@
         <EditAndSendInviteResponseDialog
             :edit-and-send-invite-response-dialog.sync="editAndSendInviteResponseDialog"
             :upload-image="uploadImage"
-            :send-invite-response-confirm-dialog="sendInviteResponseDialog" />
+            :send-invite-response-dialog.sync="sendInviteResponseDialog"
+            @closeInviteDialog="closeInviteDialog" />
         <SendInviteResponseConfirmDialog
-            :send-invite-response-dialog.sync="sendInviteResponseConfirmDialog"
+            :send-invite-response-dialog.sync="sendInviteResponseDialog"
             :upload-image="uploadImage"
-            :send-invite-response-confirm-dialog="sendInviteResponseDialog" />
+            :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
+            @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
 </template>
 
@@ -69,7 +71,12 @@
     const { t } = useI18n();
 
     const API = inject('API');
-    defineProps({
+    const inviteImageUpload = inject('inviteImageUpload');
+    const props = defineProps({
+        sendInviteResponseDialog: {
+            type: Object,
+            default: () => ({})
+        },
         sendInviteResponseDialogVisible: {
             type: Boolean,
             default: false
@@ -85,42 +92,33 @@
 
     const editAndSendInviteResponseDialog = ref({
         visible: false,
-        inviteMessage: {},
-        messageType: '',
         newMessage: ''
     });
 
-    const emit = defineEmits(['update:sendInviteResponseDialogVisible', 'inviteImageUpload']);
+    const emit = defineEmits(['update:sendInviteResponseDialogVisible']);
 
     const sendInviteResponseConfirmDialog = ref({
         visible: false
     });
 
-    const sendInviteResponseDialog = ref({
-        message: '',
-        messageSlot: 0,
-        invite: {}
-    });
+    function closeInviteDialog() {
+        cancelSendInviteResponse();
+    }
 
     function cancelSendInviteResponse() {
         emit('update:sendInviteResponseDialogVisible', false);
     }
 
-    function showEditAndSendInviteResponseDialog(messageType, inviteMessage) {
+    function showEditAndSendInviteResponseDialog(row) {
+        props.sendInviteResponseDialog.messageSlot = row;
         editAndSendInviteResponseDialog.value = {
-            newMessage: inviteMessage.message,
-            visible: true,
-            messageType,
-            inviteMessage
+            newMessage: messageSlot.message,
+            visible: true
         };
     }
 
-    function inviteImageUpload(event) {
-        emit('inviteImageUpload', event);
-    }
-
     function showSendInviteResponseConfirmDialog(row) {
+        props.sendInviteResponseDialog.messageSlot = row;
         sendInviteResponseConfirmDialog.value.visible = true;
-        sendInviteResponseDialog.value.messageSlot = row.slot;
     }
 </script>

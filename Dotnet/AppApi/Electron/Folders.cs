@@ -104,6 +104,20 @@ namespace VRCX
 
         public override string GetVRChatPhotosLocation()
         {
+            var json = ReadConfigFile();
+            if (!string.IsNullOrEmpty(json))
+            {
+                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                if (obj["picture_output_folder"] != null)
+                {
+                    var photosDir = (string)obj["picture_output_folder"];
+                    if (!string.IsNullOrEmpty(photosDir) && Directory.Exists(photosDir))
+                    {
+                        return photosDir;
+                    }
+                }
+            }
+            
             return Path.Join(_vrcPrefixPath, "drive_c/users/steamuser/Pictures/VRChat");
         }
         

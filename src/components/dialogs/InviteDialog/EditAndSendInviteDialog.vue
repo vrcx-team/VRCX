@@ -42,6 +42,7 @@
     const $message = instance.proxy.$message;
 
     const API = inject('API');
+    const clearInviteImageUpload = inject('clearInviteImageUpload');
 
     const props = defineProps({
         editAndSendInviteDialog: {
@@ -181,7 +182,7 @@
                 notificationRequest
                     .sendRequestInvitePhoto(I.params, I.userId)
                     .catch((err) => {
-                        this.clearInviteImageUpload();
+                        clearInviteImageUpload();
                         throw err;
                     })
                     .then((args) => {

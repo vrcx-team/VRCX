@@ -336,6 +336,7 @@ console.log(`isLinux: ${LINUX}`);
         provide() {
             return {
                 API,
+                friends: this.friends,
                 showUserDialog: this.showUserDialog,
                 adjustDialogZ: this.adjustDialogZ,
                 getWorldName: this.getWorldName,
@@ -356,7 +357,12 @@ console.log(`isLinux: ${LINUX}`);
                 languageClass: this.languageClass,
                 showGroupDialog: this.showGroupDialog,
                 showGallerySelectDialog: this.showGallerySelectDialog,
-                showGalleryDialog: this.showGalleryDialog
+                showGalleryDialog: this.showGalleryDialog,
+                getImageUrlFromImageId: this.getImageUrlFromImageId,
+                getAvatarGallery: this.getAvatarGallery,
+                inviteImageUpload: this.inviteImageUpload,
+                clearInviteImageUpload: this.clearInviteImageUpload,
+                isLinux: this.isLinux
             };
         },
         el: '#root',
@@ -1436,25 +1442,30 @@ console.log(`isLinux: ${LINUX}`);
         var ref = this.cachedAvatars.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
-                id: '',
-                name: '',
-                description: '',
+                acknowledgements: '',
                 authorId: '',
                 authorName: '',
-                tags: [],
-                assetUrl: '',
-                assetUrlObject: {},
+                created_at: '',
+                description: '',
+                featured: false,
+                highestPrice: null,
+                id: '',
                 imageUrl: '',
-                thumbnailImageUrl: '',
+                lock: false,
+                lowestPrice: null,
+                name: '',
+                productId: null,
+                publishedListings: [],
                 releaseStatus: '',
+                searchable: false,
                 styles: [],
-                version: 0,
-                unityPackages: [],
+                tags: [],
+                thumbnailImageUrl: '',
                 unityPackageUrl: '',
                 unityPackageUrlObject: {},
-                created_at: '',
+                unityPackages: [],
                 updated_at: '',
-                featured: false,
+                version: 0,
                 ...json
             };
             this.cachedAvatars.set(ref.id, ref);
@@ -1468,6 +1479,10 @@ console.log(`isLinux: ${LINUX}`);
             ) {
                 ref.unityPackages = unityPackages;
             }
+        }
+        for (const listing of ref?.publishedListings) {
+            listing.displayName = $utils.replaceBioSymbols(listing.displayName);
+            listing.description = $utils.replaceBioSymbols(listing.description);
         }
         ref.name = $utils.replaceBioSymbols(ref.name);
         ref.description = $utils.replaceBioSymbols(ref.description);
@@ -9523,6 +9538,8 @@ console.log(`isLinux: ${LINUX}`);
         isIos: false,
         bundleSizes: [],
         platformInfo: {},
+        galleryImages: [],
+        galleryLoading: false,
         lastUpdated: '',
         inCache: false,
         cacheSize: 0,
@@ -9565,6 +9582,8 @@ console.log(`isLinux: ${LINUX}`);
         D.lastUpdated = '';
         D.bundleSizes = [];
         D.platformInfo = {};
+        D.galleryImages = [];
+        D.galleryLoading = true;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (API.currentUser.$isVRCPlus &&
@@ -9587,6 +9606,7 @@ console.log(`isLinux: ${LINUX}`);
             .then((args) => {
                 var { ref } = args;
                 D.ref = ref;
+                this.getAvatarGallery(avatarId);
                 this.updateVRChatAvatarCache();
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;
@@ -9619,6 +9639,34 @@ console.log(`isLinux: ${LINUX}`);
             .finally(() => {
                 this.$nextTick(() => (D.loading = false));
             });
+    };
+
+    $app.methods.getAvatarGallery = async function (avatarId) {
+        var D = this.avatarDialog;
+        const args = await avatarRequest
+            .getAvatarGallery(avatarId)
+            .finally(() => {
+                D.galleryLoading = false;
+            });
+        if (args.params.galleryId !== D.id) {
+            return;
+        }
+        D.galleryImages = [];
+        // wtf is this? why is order sorting only needed if it's your own avatar?
+        const sortedGallery = args.json.sort((a, b) => {
+            if (!a.order && !b.order) {
+                return 0;
+            }
+            return a.order - b.order;
+        });
+        for (const file of sortedGallery) {
+            const url = file.versions[file.versions.length - 1].file.url;
+            D.galleryImages.push(url);
+        }
+
+        // for JSON tab treeData
+        D.ref.gallery = args.json;
+        return D.galleryImages;
     };
 
     $app.methods.selectAvatarWithConfirmation = function (id) {
@@ -10029,7 +10077,7 @@ console.log(`isLinux: ${LINUX}`);
         if (desktopMode) {
             args.push('--no-vr');
         }
-        if (vrcLaunchPathOverride) {
+        if (vrcLaunchPathOverride && !LINUX) {
             AppApi.StartGameFromPath(
                 vrcLaunchPathOverride,
                 args.join(' ')
@@ -11146,6 +11194,10 @@ console.log(`isLinux: ${LINUX}`);
             return user.profilePicOverride;
         }
         return user.currentAvatarImageUrl;
+    };
+
+    $app.methods.getImageUrlFromImageId = function (imageId) {
+        return `https://api.vrchat.cloud/api/1/file/${imageId}/1/`;
     };
 
     $app.methods.showConsole = function () {
@@ -13689,7 +13741,7 @@ console.log(`isLinux: ${LINUX}`);
             lastLocationDestination: this.lastLocationDestination,
             isGameRunning: this.isGameRunning,
             inviteResponseMessageTable: this.inviteResponseMessageTable,
-            updateImage: this.updateImage,
+            uploadImage: this.uploadImage,
             checkCanInvite: this.checkCanInvite,
             inviteRequestResponseMessageTable:
                 this.inviteRequestResponseMessageTable
@@ -13841,14 +13893,11 @@ console.log(`isLinux: ${LINUX}`);
         };
     };
 
-    //
-
     $app.methods.languageClass = function (key) {
         return languageClass(key);
     };
 
     // #endregion
-
     // #region | Electron
 
     if (LINUX) {

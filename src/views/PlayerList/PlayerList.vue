@@ -771,7 +771,7 @@
                     <el-table-column
                         :label="t('table.playerList.rank')"
                         width="110"
-                        prop="trustSortNum"
+                        prop="$trustSortNum"
                         sortable="custom">
                         <template #default="scope">
                             <span

@@ -31,16 +31,16 @@
     const $message = instance.proxy.$message;
 
     const props = defineProps({
-        sendInviteResponseConfirmDialog: {
+        sendInviteResponseDialog: {
             type: Object,
-            required: true
+            default: () => ({})
         },
         uploadImage: {
             type: String
         },
-        sendInviteResponseDialog: {
+        sendInviteResponseConfirmDialog: {
             type: Object,
-            default: () => ({})
+            required: true
         }
     });
 
@@ -48,17 +48,19 @@
 
     function cancelInviteResponseConfirm() {
         emit('update:sendInviteResponseConfirmDialog', { visible: false });
+        // TODO: temp fix to close dialog
+        props.sendInviteResponseConfirmDialog.visible = false;
     }
 
     function sendInviteResponseConfirm() {
         const D = props.sendInviteResponseDialog;
         const params = {
-            responseSlot: D.messageSlot,
+            responseSlot: D.messageSlot.slot,
             rsvp: true
         };
         if (props.uploadImage) {
             notificationRequest
-                .sendInviteResponsePhoto(params, D.invite.id, D.messageType)
+                .sendInviteResponsePhoto(params, D.invite.id, D.messageSlot.messageType)
                 .catch((err) => {
                     throw err;
                 })
@@ -71,10 +73,13 @@
                         type: 'success'
                     });
                     return args;
+                })
+                .finally(() => {
+                    emit('closeInviteDialog');
                 });
         } else {
             notificationRequest
-                .sendInviteResponse(params, D.invite.id, D.messageType)
+                .sendInviteResponse(params, D.invite.id, D.messageSlot.messageType)
                 .catch((err) => {
                     throw err;
                 })
@@ -87,9 +92,11 @@
                         type: 'success'
                     });
                     return args;
+                })
+                .finally(() => {
+                    emit('closeInviteDialog');
                 });
         }
         cancelInviteResponseConfirm();
-        emit('closeInviteDialog');
     }
 </script>
