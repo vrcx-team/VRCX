@@ -1643,7 +1643,11 @@
         "avatar_gallery": {
             "uploaded": "Avatar gallery image uploaded",
             "failed": "Failed to upload avatar gallery image",
-            "deleted": "Avatar gallery image deleted"
+            "deleted": "Avatar gallery image deleted",
+            "not_found": "Avatar gallery fileId not found",
+            "already_first": "Already first image",
+            "already_last": "Already last image",
+            "reordered": "Successfully reordered avatar gallery images"
         },
         "world": {
             "image_changed": "World image changed",

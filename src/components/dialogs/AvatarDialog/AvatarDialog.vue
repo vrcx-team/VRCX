@@ -4,7 +4,7 @@
         class="x-dialog x-avatar-dialog"
         :visible.sync="avatarDialog.visible"
         :show-close="false"
-        width="600px">
+        width="700px">
         <div v-loading="avatarDialog.loading">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
@@ -378,6 +378,7 @@
                                 @change="onFileChangeAvatarGallery" />
                             <el-button
                                 v-if="avatarDialog.ref.authorId === API.currentUser.id"
+                                v-loading="avatarDialog.galleryLoading"
                                 size="small"
                                 icon="el-icon-upload2"
                                 style="margin-left: 5px"
@@ -394,14 +395,31 @@
                                         :src="imageUrl"
                                         style="width: 100%; height: 100%; object-fit: contain"
                                         @click="showFullscreenImageDialog(imageUrl)" />
-                                    <el-button
+                                    <div
                                         v-if="avatarDialog.ref.authorId === API.currentUser.id"
-                                        size="mini"
-                                        icon="el-icon-delete"
-                                        circle
-                                        class="x-link"
-                                        style="position: absolute; bottom: 5px; right: 5px"
-                                        @click.stop="deleteAvatarGalleryImage(imageUrl)"></el-button>
+                                        style="position: absolute; bottom: 5px; left: 33.3%">
+                                        <el-button
+                                            size="mini"
+                                            icon="el-icon-back"
+                                            circle
+                                            class="x-link"
+                                            style="margin-left: 0px"
+                                            @click.stop="reorderAvatarGalleryImage(imageUrl, -1)"></el-button>
+                                        <el-button
+                                            size="mini"
+                                            icon="el-icon-right"
+                                            circle
+                                            class="x-link"
+                                            style="margin-left: 0px"
+                                            @click.stop="reorderAvatarGalleryImage(imageUrl, 1)"></el-button>
+                                        <el-button
+                                            size="mini"
+                                            icon="el-icon-delete"
+                                            circle
+                                            class="x-link"
+                                            style="margin-left: 0px"
+                                            @click.stop="deleteAvatarGalleryImage(imageUrl)"></el-button>
+                                    </div>
                                 </el-carousel-item>
                             </el-carousel>
                         </div>
@@ -1280,16 +1298,22 @@
         }
         const r = new FileReader();
         r.onload = function () {
+            props.avatarDialog.galleryLoading = true;
             const base64Body = btoa(r.result);
-            avatarRequest.uploadAvatarGalleryImage(base64Body, props.avatarDialog.id).then((args) => {
-                $message({
-                    message: t('message.avatar_gallery.uploaded'),
-                    type: 'success'
+            avatarRequest
+                .uploadAvatarGalleryImage(base64Body, props.avatarDialog.id)
+                .then((args) => {
+                    $message({
+                        message: t('message.avatar_gallery.uploaded'),
+                        type: 'success'
+                    });
+                    console.log(args);
+                    props.avatarDialog.galleryImages = getAvatarGallery(props.avatarDialog.id);
+                    return args;
+                })
+                .finally(() => {
+                    props.avatarDialog.galleryLoading = false;
                 });
-                console.log(args);
-                getAvatarGallery(props.avatarDialog.id);
-                return args;
-            });
         };
         r.readAsBinaryString(files[0]);
         clearFile();
@@ -1302,7 +1326,50 @@
                 message: t('message.avatar_gallery.deleted'),
                 type: 'success'
             });
-            getAvatarGallery(props.avatarDialog.id);
+            props.avatarDialog.galleryImages = getAvatarGallery(props.avatarDialog.id);
+            return args;
+        });
+    }
+
+    function reorderAvatarGalleryImage(imageUrl, direction) {
+        const fileId = extractFileId(imageUrl);
+        let fileIds = [];
+        props.avatarDialog.ref.gallery.forEach((item) => {
+            fileIds.push(extractFileId(item.id));
+        });
+        const index = fileIds.indexOf(fileId);
+        if (index === -1) {
+            $message({
+                message: t('message.avatar_gallery.not_found'),
+                type: 'error'
+            });
+            return;
+        }
+        if (direction === -1 && index === 0) {
+            $message({
+                message: t('message.avatar_gallery.already_first'),
+                type: 'warning'
+            });
+            return;
+        }
+        if (direction === 1 && index === fileIds.length - 1) {
+            $message({
+                message: t('message.avatar_gallery.already_last'),
+                type: 'warning'
+            });
+            return;
+        }
+        if (direction === -1) {
+            utils.moveArrayItem(fileIds, index, index - 1);
+        } else {
+            utils.moveArrayItem(fileIds, index, index + 1);
+        }
+        avatarRequest.setAvatarGalleryOrder(fileIds).then((args) => {
+            $message({
+                message: t('message.avatar_gallery.reordered'),
+                type: 'success'
+            });
+            props.avatarDialog.galleryImages = getAvatarGallery(props.avatarDialog.id);
             return args;
         });
     }

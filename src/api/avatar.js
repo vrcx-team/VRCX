@@ -215,6 +215,27 @@ const avatarReq = {
             // window.API.$emit('AVATARGALLERYIMAGE:ADD', args);
             return args;
         });
+    },
+
+    /**
+     * @param {string[]} order
+     * @returns {Promise<{json: any, params}>}
+     */
+    setAvatarGalleryOrder(order) {
+        const params = {
+            ids: order
+        };
+        return window.API.call('files/order', {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            // window.API.$emit('AVATARGALLERYIMAGE:ORDER', args);
+            return args;
+        });
     }
 };
 // #endregion

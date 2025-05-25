@@ -9535,6 +9535,7 @@ console.log(`isLinux: ${LINUX}`);
         bundleSizes: [],
         platformInfo: {},
         galleryImages: [],
+        galleryLoading: false,
         lastUpdated: '',
         inCache: false,
         cacheSize: 0,
@@ -9578,6 +9579,7 @@ console.log(`isLinux: ${LINUX}`);
         D.bundleSizes = [];
         D.platformInfo = {};
         D.galleryImages = [];
+        D.galleryLoading = true;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (API.currentUser.$isVRCPlus &&
@@ -9637,18 +9639,30 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getAvatarGallery = async function (avatarId) {
         var D = this.avatarDialog;
-        const args = await avatarRequest.getAvatarGallery(avatarId);
+        const args = await avatarRequest
+            .getAvatarGallery(avatarId)
+            .finally(() => {
+                D.galleryLoading = false;
+            });
         if (args.params.galleryId !== D.id) {
             return;
         }
         D.galleryImages = [];
-        for (const file of args.json) {
+        // wtf is this? why is order sorting only needed if it's your own avatar?
+        const sortedGallery = args.json.sort((a, b) => {
+            if (!a.order && !b.order) {
+                return 0;
+            }
+            return a.order - b.order;
+        });
+        for (const file of sortedGallery) {
             const url = file.versions[file.versions.length - 1].file.url;
             D.galleryImages.push(url);
         }
 
         // for JSON tab treeData
         D.ref.gallery = args.json;
+        return D.galleryImages;
     };
 
     $app.methods.selectAvatarWithConfirmation = function (id) {
