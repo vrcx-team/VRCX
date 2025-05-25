@@ -61,11 +61,12 @@
     }
 
     async function saveEditAndSendInviteResponse() {
+        const I = props.sendInviteResponseDialog;
         const D = props.editAndSendInviteResponseDialog;
         D.visible = false;
-        const messageType = D.messageType;
-        const slot = D.inviteMessage.slot;
-        if (D.inviteMessage.message !== D.newMessage) {
+        const messageType = I.messageSlot.messageType;
+        const slot = I.messageSlot.slot;
+        if (I.messageSlot.message !== D.newMessage) {
             const params = {
                 message: D.newMessage
             };
@@ -88,7 +89,6 @@
                     return args;
                 });
         }
-        const I = props.sendInviteResponseDialog;
         const params = {
             responseSlot: slot,
             rsvp: true
@@ -107,9 +107,10 @@
                         message: 'Invite response message sent',
                         type: 'success'
                     });
-
-                    emit('closeInviteDialog');
                     return args;
+                })
+                .finally(() => {
+                    emit('closeInviteDialog');
                 });
         } else {
             notificationRequest
@@ -125,8 +126,10 @@
                         message: 'Invite response message sent',
                         type: 'success'
                     });
-                    emit('closeInviteDialog');
                     return args;
+                })
+                .finally(() => {
+                    emit('closeInviteDialog');
                 });
         }
     }

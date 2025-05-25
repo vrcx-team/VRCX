@@ -359,7 +359,10 @@ console.log(`isLinux: ${LINUX}`);
                 showGallerySelectDialog: this.showGallerySelectDialog,
                 showGalleryDialog: this.showGalleryDialog,
                 getImageUrlFromImageId: this.getImageUrlFromImageId,
-                getAvatarGallery: this.getAvatarGallery
+                getAvatarGallery: this.getAvatarGallery,
+                inviteImageUpload: this.inviteImageUpload,
+                clearInviteImageUpload: this.clearInviteImageUpload,
+                isLinux: this.isLinux
             };
         },
         el: '#root',
