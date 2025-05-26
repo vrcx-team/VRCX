@@ -86,40 +86,58 @@ namespace VRCX
                 
         public override string GetVRChatCacheLocation()
         {
-            var json = ReadConfigFile();
-            if (!string.IsNullOrEmpty(json))
+            var defaultPath = Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
+            try
             {
+                var json = ReadConfigFile();
+                if (string.IsNullOrEmpty(json))
+                    return defaultPath;
+
                 var obj = JsonConvert.DeserializeObject<JObject>(json);
-                if (obj["cache_directory"] != null)
-                {
-                    var cacheDir = (string)obj["cache_directory"];
-                    if (!string.IsNullOrEmpty(cacheDir) && Directory.Exists(cacheDir))
-                    {
-                        return cacheDir;
-                    }
-                }
+                if (obj["cache_directory"] == null)
+                    return defaultPath;
+
+                var cacheDir = (string)obj["cache_directory"];
+                if (string.IsNullOrEmpty(cacheDir))
+                    return defaultPath;
+
+                var cachePath = Path.Join(cacheDir, "Cache-WindowsPlayer");
+                if (!Directory.Exists(cacheDir))
+                    return defaultPath;
+                
+                return cachePath;
             }
-            
-            return Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
+            catch (Exception e)
+            {
+                logger.Error($"Error reading VRChat config file for cache location: {e}");
+            }
+            return defaultPath;
         }
 
         public override string GetVRChatPhotosLocation()
         {
-            var json = ReadConfigFile();
-            if (!string.IsNullOrEmpty(json))
+            var defaultPath = Path.Join(_vrcPrefixPath, "drive_c/users/steamuser/Pictures/VRChat");
+            try
             {
+                var json = ReadConfigFile();
+                if (string.IsNullOrEmpty(json))
+                    return defaultPath;
+
                 var obj = JsonConvert.DeserializeObject<JObject>(json);
-                if (obj["picture_output_folder"] != null)
-                {
-                    var photosDir = (string)obj["picture_output_folder"];
-                    if (!string.IsNullOrEmpty(photosDir) && Directory.Exists(photosDir))
-                    {
-                        return photosDir;
-                    }
-                }
+                if (obj["picture_output_folder"] == null)
+                    return defaultPath;
+                
+                var photosDir = (string)obj["picture_output_folder"];
+                if (string.IsNullOrEmpty(photosDir) || !Directory.Exists(photosDir))
+                    return defaultPath;
+
+                return photosDir;
             }
-            
-            return Path.Join(_vrcPrefixPath, "drive_c/users/steamuser/Pictures/VRChat");
+            catch (Exception e)
+            {
+                logger.Error($"Error reading VRChat config file for photos location: {e}");
+            }
+            return defaultPath;
         }
         
         public override string GetUGCPhotoLocation(string path = "")
@@ -263,7 +281,9 @@ namespace VRCX
                         }
                     };
                     process.Start();
-                    return;
+                    process.WaitForExit();
+                    if (process.ExitCode == 0)
+                        return;
                 }
                 catch (Exception)
                 {

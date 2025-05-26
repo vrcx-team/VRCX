@@ -44,28 +44,35 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                logger.Error(e);
-                return defaultPath;
+                logger.Error($"Error reading VRChat config file for cache location: {e}");
             }
+            return defaultPath;
         }
 
         public override string GetVRChatPhotosLocation()
         {
-            var json = ReadConfigFile();
-            if (!string.IsNullOrEmpty(json))
+            var defaultPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+            try
             {
-                var obj = JsonConvert.DeserializeObject<JObject>(json);
-                if (obj["picture_output_folder"] != null)
-                {
-                    var photosDir = (string)obj["picture_output_folder"];
-                    if (!string.IsNullOrEmpty(photosDir) && Directory.Exists(photosDir))
-                    {
-                        return photosDir;
-                    }
-                }
-            }
+                var json = ReadConfigFile();
+                if (string.IsNullOrEmpty(json))
+                    return defaultPath;
 
-            return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                if (obj["picture_output_folder"] == null)
+                    return defaultPath;
+                
+                var photosDir = (string)obj["picture_output_folder"];
+                if (string.IsNullOrEmpty(photosDir) || !Directory.Exists(photosDir))
+                    return defaultPath;
+
+                return photosDir;
+            }
+            catch (Exception e)
+            {
+                logger.Error($"Error reading VRChat config file for photos location: {e}");
+            }
+            return defaultPath;
         }
         
         public override string GetUGCPhotoLocation(string path = "")
