@@ -698,10 +698,7 @@
         });
     }
     function showEditInviteMessageDialog(messageType, inviteMessage) {
-        emit('showEditInviteMessageDialog', {
-            messageType,
-            inviteMessage
-        });
+        emit('showEditInviteMessageDialog', messageType, inviteMessage);
     }
     function refreshInviteMessageTable(messageType) {
         inviteMessagesRequest.refreshInviteMessageTableData(messageType);

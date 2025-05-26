@@ -77,7 +77,7 @@
                 })
                 .then((args) => {
                     API.$emit(`INVITE:${messageType.toUpperCase()}`, args);
-                    if (args.json[slot].message === D.inviteMessage.message) {
+                    if (args.json[slot].message === I.messageSlot.message) {
                         $message({
                             message: "VRChat API didn't update message, try again",
                             type: 'error'

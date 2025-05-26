@@ -112,7 +112,7 @@
     function showEditAndSendInviteResponseDialog(row) {
         props.sendInviteResponseDialog.messageSlot = row;
         editAndSendInviteResponseDialog.value = {
-            newMessage: messageSlot.message,
+            newMessage: row.message,
             visible: true
         };
     }

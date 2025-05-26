@@ -71,7 +71,11 @@
     const API = inject('API');
     const inviteImageUpload = inject('inviteImageUpload');
 
-    defineProps({
+    const props = defineProps({
+        sendInviteResponseDialog: {
+            type: Object,
+            default: () => ({})
+        },
         sendInviteRequestResponseDialogVisible: {
             type: Boolean,
             default: false
@@ -96,15 +100,10 @@
         visible: false
     });
 
-    const sendInviteResponseDialog = ref({
-        messageSlot: {},
-        invite: {}
-    });
-
     function showEditAndSendInviteResponseDialog(row) {
         props.sendInviteResponseDialog.messageSlot = row;
         editAndSendInviteResponseDialog.value = {
-            newMessage: messageSlot.message,
+            newMessage: row.message,
             visible: true
         };
     }
