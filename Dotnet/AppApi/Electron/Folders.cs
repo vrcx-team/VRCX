@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -230,11 +231,45 @@ namespace VRCX
         
         public override void OpenFolderAndSelectItem(string path, bool isFolder = false)
         {
-            path = Path.GetDirectoryName(path);
             if (!File.Exists(path) && !Directory.Exists(path))
                 return;
             
-            Process.Start("xdg-open", path);
+            var directoryPath = isFolder ? path : Path.GetDirectoryName(path);
+            var commandAttempt = new Dictionary<string, string>
+            {
+                { "nautilus", path },
+                { "nemo", path },
+                { "thunar", path },
+                { "caja", path },
+                { "pcmanfm", path },
+                { "dolphin", path },
+                { "ranger", path },
+                { "konqueror", path },
+                { "xdg-open", directoryPath }
+            };
+            
+            foreach (var command in commandAttempt)
+            {
+                try
+                {
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = command.Key,
+                            Arguments = command.Value,
+                            UseShellExecute = true,
+                            CreateNoWindow = true
+                        }
+                    };
+                    process.Start();
+                    return;
+                }
+                catch (Exception)
+                {
+                    // ignore the error and try the next command
+                }
+            }
         }
 
         public override async Task<string> OpenFolderSelectorDialog(string defaultPath = "")
