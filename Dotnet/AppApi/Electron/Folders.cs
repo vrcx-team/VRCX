@@ -230,7 +230,7 @@ namespace VRCX
         
         public override void OpenFolderAndSelectItem(string path, bool isFolder = false)
         {
-            path = Path.GetFullPath(path);
+            path = Path.GetDirectoryName(path);
             if (!File.Exists(path) && !Directory.Exists(path))
                 return;
             
