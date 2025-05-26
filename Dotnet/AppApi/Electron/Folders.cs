@@ -240,11 +240,11 @@ namespace VRCX
                 { "nautilus", path },
                 { "nemo", path },
                 { "thunar", path },
-                { "caja", path },
-                { "pcmanfm", path },
-                { "dolphin", path },
-                { "ranger", path },
-                { "konqueror", path },
+                { "caja", $"--select \"{path}\"" },
+                { "pcmanfm-qt", directoryPath },
+                { "pcmanfm", directoryPath },
+                { "dolphin", $"--select \"{path}\"" },
+                { "konqueror", $"--select \"{path}\"" },
                 { "xdg-open", directoryPath }
             };
             
