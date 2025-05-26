@@ -46,7 +46,7 @@ mixin settingsTab
                 //- General | Application
                 .options-container
                     span.header {{ $t('view.settings.general.application.header') }}
-                    template(v-if='!islinux')
+                    template(v-if='!isLinux')
                         simple-switch(
                             :label='$t("view.settings.general.application.startup")'
                             :value='isStartAtWindowsStartup'
@@ -59,7 +59,7 @@ mixin settingsTab
                         :label='$t("view.settings.general.application.tray")'
                         :value='isCloseToTray'
                         @change='saveVRCXWindowOption("VRCX_CloseToTray")')
-                    template(v-if='!islinux')
+                    template(v-if='!isLinux')
                         simple-switch(
                             :label='$t("view.settings.general.application.disable_gpu_acceleration")'
                             :value='disableGpuAcceleration'
@@ -253,7 +253,7 @@ mixin settingsTab
                                 el-dropdown-item(
                                     v-text='$t("view.settings.appearance.appearance.theme_mode_material3")'
                                     @click.native='saveThemeMode("material3")')
-                    .options-container-item(v-if='!islinux')
+                    .options-container-item(v-if='!isLinux')
                         span.name {{ $t('view.settings.appearance.appearance.zoom') }}
                         el-input-number(
                             size='small'
@@ -541,7 +541,7 @@ mixin settingsTab
                             el-radio-button(label='Game Running') {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label='Game Closed') {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
                             el-radio-button(label='Always') {{ $t('view.settings.notifications.notifications.conditions.always') }}
-                    template(v-if='!islinux')
+                    template(v-if='!isLinux')
                         simple-switch(
                             :label='$t("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay")'
                             :value='openVR'
@@ -657,7 +657,7 @@ mixin settingsTab
                             style='margin-left: 10px') {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
 
             //- Wrist Overlay Tab
-            el-tab-pane(lazy :label='$t("view.settings.category.wrist_overlay")' v-if='!islinux')
+            el-tab-pane(lazy :label='$t("view.settings.category.wrist_overlay")' v-if='!isLinux')
                 //- Wrist Overlay | SteamVR Wrist Overlay
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}
@@ -809,7 +809,7 @@ mixin settingsTab
                         @change='saveOpenVROption("VRCX_relaunchVRChatAfterCrash")'
                         :long-label='true')
                     //- Advanced | VRChat Quit Fix
-                    template(v-if='!islinux')
+                    template(v-if='!isLinux')
                         span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}
                         simple-switch(
                             :label='$t("view.settings.advanced.advanced.vrchat_quit_fix.description")'
@@ -824,7 +824,7 @@ mixin settingsTab
                         @change='saveOpenVROption("VRCX_autoSweepVRChatCache")'
                         :long-label='true')
                     //- Advanced | Disable local world database
-                    template(v-if='!islinux')
+                    template(v-if='!isLinux')
                         span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
                         simple-switch(
                             :label='$t("view.settings.advanced.advanced.local_world_persistence.description")'
@@ -876,7 +876,7 @@ mixin settingsTab
                     .options-container-item
                         el-button(size='small' icon='el-icon-user-solid' @click='showAvatarProviderDialog') {{ $t('view.settings.advanced.advanced.remote_database.avatar_database_provider') }}
                 //- Advanced | Automatic App Launcher
-                template(v-if='!islinux')
+                template(v-if='!isLinux')
                     .options-container
                         span.header {{ $t('view.settings.advanced.advanced.app_launcher.header') }}
                         br
@@ -942,7 +942,7 @@ mixin settingsTab
                     .options-container-item
                         el-button(size='small' icon='el-icon-caret-right' @click='showYouTubeApiDialog') {{ $t('view.settings.advanced.advanced.youtube_api.youtube_api_key') }}
                 //- Advanced | Video Progress Pie
-                .options-container(v-if='!islinux')
+                .options-container(v-if='!isLinux')
                     span.header {{ $t('view.settings.advanced.advanced.video_progress_pie.header') }}
                     simple-switch(
                         :label='$t("view.settings.advanced.advanced.video_progress_pie.enable")'

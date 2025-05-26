@@ -28,7 +28,7 @@
         </div>
 
         <el-input
-            v-if="!islinux"
+            v-if="!isLinux"
             v-model="launchOptionsDialog.vrcLaunchPathOverride"
             type="textarea"
             placeholder="C:\Program Files (x86)\Steam\steamapps\common\VRChat"
