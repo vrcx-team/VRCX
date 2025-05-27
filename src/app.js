@@ -13505,7 +13505,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.ossDialog = false;
 
-    $app.methods.isLinux = function () {
+    $app.computed.isLinux = function () {
         return LINUX;
     };
 
