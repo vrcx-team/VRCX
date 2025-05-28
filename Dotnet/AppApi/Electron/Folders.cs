@@ -93,7 +93,7 @@ namespace VRCX
                 if (string.IsNullOrEmpty(json))
                     return defaultPath;
 
-                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                var obj = JsonConvert.DeserializeObject<JObject>(json, JsonSerializerSettings);
                 if (obj["cache_directory"] == null)
                     return defaultPath;
 
@@ -123,7 +123,7 @@ namespace VRCX
                 if (string.IsNullOrEmpty(json))
                     return defaultPath;
 
-                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                var obj = JsonConvert.DeserializeObject<JObject>(json, JsonSerializerSettings);
                 if (obj["picture_output_folder"] == null)
                     return defaultPath;
                 
