@@ -636,6 +636,11 @@
                         "description": "设置“拍立得”和“贴纸”等内容保存的位置",
                         "set_folder": "设置保存文件夹",
                         "reset_override": "重置为默认"
+                    },
+                    "cloud_data_api": {
+                        "header": "云端数据 API",
+                        "enable": "启用",
+                        "enable_tooltip": "启用后，VRCX 将会从云端服务器获取玩家信息"
                     }
                 },
                 "photon": {
@@ -1587,6 +1592,13 @@
         "allowed_video_player_domains": {
             "header": "允许在视频播放器使用的域名",
             "add_domain": "添加域名",
+            "save": "保存"
+        },
+        "cloud_data_api": {
+            "header": "云端数据 API",
+            "description": "输入你的云端 API URL",
+            "placeholder": "云端数据 API URL",
+            "docs": "查看文档",
             "save": "保存"
         }
     },

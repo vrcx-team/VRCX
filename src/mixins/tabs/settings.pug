@@ -1068,6 +1068,18 @@ mixin settingsTab
                         el-button(size='small' icon='el-icon-time' @click='promptAutoClearVRCXCacheFrequency') {{ $t('view.settings.advanced.advanced.cache_debug.auto_clear_cache') }}
                     .options-container-item
                         el-button(size='small' icon='el-icon-tickets' @click='showConsole') {{ $t('view.settings.advanced.advanced.cache_debug.show_console') }}
+                //- Advanced | VRCX Remote Data API
+                .options-container
+                    span.header {{ $t('view.settings.advanced.advanced.cloud_data_api.header') }}
+                    .options-container-item
+                        simple-switch(
+                            :label='$t("view.settings.advanced.advanced.cloud_data_api.enable")' 
+                            :tooltip='$t("view.settings.advanced.advanced.cloud_data_api.enable_tooltip")'
+                            :value='remoteDataApiEnabled'
+                            @change='changeCloudDataApi'
+                            :long-label='true')
+                    .options-container-item
+                        el-button(size='small' icon='el-icon-link' @click='showCloudDataApiDialog') {{ 'API' }}
                 //- Advanced | VRCX Table Stats
                 .options-container
                     span.sub-header {{ $t('view.settings.advanced.advanced.sqlite_table_size.header') }}

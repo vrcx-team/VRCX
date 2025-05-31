@@ -113,6 +113,7 @@ import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDi
 import NoteExportDialog from './views/Settings/dialogs/NoteExportDialog.vue';
 import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
 import YouTubeApiDialog from './views/Settings/dialogs/YouTubeApiDialog.vue';
+import CloudDataApiDialog from './views/Settings/dialogs/CloudDataApiDialog.vue';
 import NotificationPositionDialog from './views/Settings/dialogs/NotificationPositionDialog.vue';
 import AvatarProviderDialog from './views/Settings/dialogs/AvatarProviderDialog.vue';
 import RegistryBackupDialog from './views/Settings/dialogs/RegistryBackupDialog.vue';
@@ -327,6 +328,7 @@ console.log(`isLinux: ${LINUX}`);
             NoteExportDialog,
             VRChatConfigDialog,
             YouTubeApiDialog,
+            CloudDataApiDialog,
             NotificationPositionDialog,
             AvatarProviderDialog,
             RegistryBackupDialog,
@@ -11265,6 +11267,27 @@ console.log(`isLinux: ${LINUX}`);
         this.customUserTags = new Map();
         this.updateInstanceInfo = 0;
     };
+
+    // Remote Data API
+
+    $app.data.isCloudDataApiDialogVisible = false;
+
+    $app.data.cloudDataApiUrl = await configRepository.getString(
+        'VRCX_CloudDataApiUrl',
+        ''
+    );
+    
+    $app.data.remoteDataApiEnabled = await configRepository.getBool(
+        'VRCX_RemoteDataApiEnabled',
+        false
+    );
+    $app.methods.changeCloudDataApi = async function () {
+        this.remoteDataApiEnabled = !this.remoteDataApiEnabled;
+        this.updateVRConfigVars();
+    }
+    $app.methods.showCloudDataApiDialog = function () {
+        this.isCloudDataApiDialogVisible = true;
+    }
 
     $app.data.sqliteTableSizes = {};
 

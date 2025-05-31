@@ -212,3 +212,7 @@ mixin dialogs
     PrimaryPasswordDialog(
         :enablePrimaryPasswordDialog.sync='enablePrimaryPasswordDialog'
         @setPrimaryPassword='setPrimaryPassword')
+
+    CloudDataApiDialog(
+        :isCloudDataApiDialogVisible.sync='isCloudDataApiDialogVisible'
+        :cloudDataApiUrl.sync='cloudDataApiUrl')
