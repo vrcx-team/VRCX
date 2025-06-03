@@ -27,6 +27,7 @@ import 'default-passive-events';
 
 // util classes
 import configRepository from './service/config.js';
+import requests from './utils/requests.js';
 import webApiService from './service/webapi.js';
 import security from './service/security.js';
 import database from './service/database.js';
@@ -11277,6 +11278,11 @@ console.log(`isLinux: ${LINUX}`);
         ''
     );
     
+    $app.data.cloudDataApiUsername = await configRepository.getString(
+        'VRCX_CloudDataApiUsername',
+        ''
+    );
+    
     $app.data.remoteDataApiEnabled = await configRepository.getBool(
         'VRCX_RemoteDataApiEnabled',
         false
@@ -13953,6 +13959,7 @@ console.log(`isLinux: ${LINUX}`);
     window.$app = $app;
     window.API = API;
     window.$t = $t;
+    window.DAPI = requests.createService($app.cloudDataApiUrl)
     for (let value of Object.values(vrcxClasses)) {
         value.updateRef($app);
     }

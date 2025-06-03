@@ -1597,7 +1597,9 @@
         "cloud_data_api": {
             "header": "云端数据 API",
             "description": "输入你的云端 API URL",
-            "placeholder": "云端数据 API URL",
+            "url_placeholder": "云端数据 API URL",
+            "username_placeholder": "用户名",
+            "password_placeholder": "密码",
             "docs": "查看文档",
             "save": "保存"
         }
@@ -2093,6 +2095,9 @@
                 "invalid_json_response": "无效的 JSON 响应",
                 "403_404_bailing_request": "由于最近出现的 403/404 错误，请求已中止"
             }
+        },
+        "tokenExpired": {
+            "message": "你的访问令牌已过期。请重新登录以获取新的访问令牌。"
         }
     }
 }

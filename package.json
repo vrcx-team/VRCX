@@ -134,6 +134,7 @@
         }
     },
     "dependencies": {
+        "axios": "^1.9.0",
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.9.11"
     }
