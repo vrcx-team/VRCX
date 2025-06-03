@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace VRCX
 {
@@ -16,6 +17,27 @@ namespace VRCX
 
             var json = File.ReadAllText(configFile);
             return json;
+        }
+
+        public string ReadConfigFileSafe()
+        {
+            try
+            {
+                var configFile = ReadConfigFile();
+                if (string.IsNullOrEmpty(configFile))
+                    return string.Empty;
+                
+                var jObject = JsonConvert.DeserializeObject<dynamic>(configFile, JsonSerializerSettings);
+                if (jObject == null)
+                    return string.Empty;
+                
+                return JsonConvert.SerializeObject(jObject, Formatting.Indented);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex, "Failed to parse VRC config.json file");
+                return string.Empty;
+            }
         }
 
         public void WriteConfigFile(string json)

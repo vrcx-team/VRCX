@@ -401,7 +401,7 @@
     }
 
     async function readVRChatConfigFile() {
-        const config = await AppApi.ReadConfigFile();
+        const config = await AppApi.ReadConfigFileSafe();
         if (config) {
             try {
                 const parsedConfig = JSON.parse(config);
