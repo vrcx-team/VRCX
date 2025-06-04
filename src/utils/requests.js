@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { getToken, getTokenExpiration, setToken } from './auth'; // 假设有获取token的工具函数
 
+let refreshPromise = null;
+
 // 创建axios实例
 const service = {
     createService(baseURL) {
@@ -16,30 +18,48 @@ const service = {
         // 请求拦截器
         instance.interceptors.request.use(
             async (config) => {
-                let token = getToken(); // 获取token
-                const exp = getTokenExpiration(); // 获取token过期时间
-                console.log('请求拦截器', token, exp);
-                if (config.url === '/login'){
-                    return config; // 如果是登录请求，不添加token
+                let token = getToken();
+                const exp = getTokenExpiration();
+
+                if (
+                    config.url === '/login' ||
+                    config.url === '/refresh-token'
+                ) {
+                    return config;
                 }
-                // token 过期或则token为空则刷新token
+
+                // token 无效，准备刷新
                 if (!token || (exp && exp < Date.now() / 1000)) {
-                    // 删除 baseURL 后面所有的斜杠
                     const baseURL = config.baseURL.replace(/\/+$/, '');
-                    const { code, data } = await axios.get(
-                        `${baseURL}/refresh-token`,
-                        {
-                            withCredentials: true
-                        }
-                    );
-                    if (code === 401) {
-                        throw new Error(window.$t('api.tokenExpired.message'));
+
+                    if (!refreshPromise) {
+                        refreshPromise = axios
+                            .get(`${baseURL}/refresh-token`, {
+                                withCredentials: true
+                            })
+                            .then(({ data }) => {
+                                if (data.code === 401) {
+                                    throw new Error(
+                                        window.$t('api.tokenExpired.message')
+                                    );
+                                }
+                                setToken(data.data);
+                                return data.data; // 返回新的 token
+                            })
+                            .finally(() => {
+                                refreshPromise = null;
+                            });
                     }
-                    setToken(data.data);
-                    token = data.data; // 更新token
+
+                    try {
+                        token = await refreshPromise;
+                    } catch (err) {
+                        throw err;
+                    }
                 }
+
                 if (token) {
-                    config.headers['Authorization'] = `Bearer ${token}`; // 设置Authorization头
+                    config.headers['Authorization'] = `Bearer ${token}`;
                 }
                 return config;
             },
