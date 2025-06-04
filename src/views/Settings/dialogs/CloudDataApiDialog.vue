@@ -123,7 +123,7 @@
             //     return;
             // }
             try {
-                window.DAPI = requests.createService(data.value.cloudDataApiUrl)
+                window.DAPI = requests.createService(data.value.cloudDataApiUrl);
                 const { data: respData } = await authReq.login({
                     username: data.value.cloudDataApiUsername,
                     password: data.value.cloudDataApiPassword
