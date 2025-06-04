@@ -114,14 +114,14 @@
             closeDialog();
             return;
         } else {
-            // const pattern = /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(:\d+)?(\/[^\s]*)?$/;
-            // if (!pattern.test(data.value.cloudDataApiUrl)) {
-            //     $message({
-            //         message: 'Invalid Cloud Data API URL',
-            //         type: 'error'
-            //     });
-            //     return;
-            // }
+            const pattern = /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(:\d+)?(\/[^\s]*)?$/;
+            if (!pattern.test(data.value.cloudDataApiUrl)) {
+                $message({
+                    message: 'Invalid Cloud Data API URL',
+                    type: 'error'
+                });
+                return;
+            }
             try {
                 window.DAPI = requests.createService(data.value.cloudDataApiUrl);
                 const { data: respData } = await authReq.login({
