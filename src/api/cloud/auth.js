@@ -5,13 +5,7 @@ const authReq = {
       method: 'POST',
       data
     })
-  },
-  test: function () {
-    return window.DAPI({
-      url: '/test',
-      method: 'get',
-    })
-  },
+  }
 }
 
 export default authReq;

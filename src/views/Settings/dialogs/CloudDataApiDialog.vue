@@ -34,8 +34,7 @@
 
         <template #footer>
             <div style="display: flex">
-                <!-- <el-button size="small" @click="openExternalLink('https://www.bilibili.com/')"> -->
-                <el-button size="small" @click="test">
+                <el-button size="small" @click="openExternalLink('https://www.bilibili.com/')">
                     {{ t('dialog.cloud_data_api.docs') }}
                 </el-button>
                 <el-button type="primary" size="small" style="margin-left: auto" @click="saveCloudDataApiUrl">
@@ -86,23 +85,6 @@
         cloudDataApiPassword: props.cloudDataApiPassword
     });
     const emit = defineEmits(['update:isCloudDataApiDialogVisible', 'update:youTubeApiKey']);
-
-    async function test() {
-        authReq
-            .test()
-            .then(() => {
-                $message({
-                    message: 'Cloud Data API is reachable',
-                    type: 'success'
-                });
-            })
-            .catch((error) => {
-                $message({
-                    message: 'Failed to reach Cloud Data API: ' + error.message,
-                    type: 'error'
-                });
-            });
-    }
 
     async function saveCloudDataApiUrl() {
         if (!data.value.cloudDataApiUrl) {
