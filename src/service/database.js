@@ -1,6 +1,10 @@
 import sqliteService from './sqlite.js';
 
 class Database {
+    getClassName(){
+        return this.constructor.name;
+    }
+
     setmaxTableSize(limit) {
         Database.maxTableSize = limit;
     }
@@ -2849,6 +2853,6 @@ class Database {
 }
 
 var self = new Database();
-window.database = self;
+// window.database = self;
 
 export { self as default, Database };

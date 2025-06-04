@@ -30,7 +30,8 @@ import configRepository from './service/config.js';
 import requests from './utils/requests.js';
 import webApiService from './service/webapi.js';
 import security from './service/security.js';
-import database from './service/database.js';
+import sqliteDatabase from './service/database.js';
+import cloudData from './service/cloudData.js';
 import * as localizedStrings from './localization/localizedStrings.js';
 import removeConfusables, { removeWhitespace } from './service/confusables.js';
 import $utils from './classes/utils.js';
@@ -462,13 +463,46 @@ console.log(`isLinux: ${LINUX}`);
     app.methods = { ...app.methods, ..._utils };
     Object.assign($app, app);
 
-    // #endregion
-    // #region | Init: drop/keyup event listeners
-    // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
-    // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
-    document.body.addEventListener('drop', function (e) {
-        e.preventDefault();
-    });
+    // #region |  Cloud Data API
+
+    $app.data.isCloudDataApiDialogVisible = false;
+
+    $app.data.cloudDataApiUrl = await configRepository.getString(
+        'VRCX_CloudDataApiUrl',
+        ''
+    );
+
+    $app.data.cloudDataApiUsername = await configRepository.getString(
+        'VRCX_CloudDataApiUsername',
+        ''
+    );
+
+    $app.data.cloudDataApiEnabled = await configRepository.getBool(
+        'VRCX_CloudDataApiEnabled',
+        false
+    );
+    $app.methods.changeCloudDataApi = async function () {
+        this.cloudDataApiEnabled = !this.cloudDataApiEnabled;
+        console.log(this.cloudDataApiEnabled);
+        await configRepository.setBool('VRCX_CloudDataApiEnabled',this.cloudDataApiEnabled);
+    };
+    $app.methods.showCloudDataApiDialog = function () {
+        this.isCloudDataApiDialogVisible = true;
+    };
+
+    const database = $app.data.cloudDataApiEnabled ? cloudData : sqliteDatabase;
+    window.database = database;
+
+    console.log('Using database:', database.getClassName());
+    
+
+        // #endregion
+        // #region | Init: drop/keyup event listeners
+        // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
+        // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
+        document.body.addEventListener('drop', function (e) {
+            e.preventDefault();
+        });
 
     document.addEventListener('keydown', function (e) {
         if (e.shiftKey) {
@@ -11269,32 +11303,6 @@ console.log(`isLinux: ${LINUX}`);
         this.updateInstanceInfo = 0;
     };
 
-    // Remote Data API
-
-    $app.data.isCloudDataApiDialogVisible = false;
-
-    $app.data.cloudDataApiUrl = await configRepository.getString(
-        'VRCX_CloudDataApiUrl',
-        ''
-    );
-    
-    $app.data.cloudDataApiUsername = await configRepository.getString(
-        'VRCX_CloudDataApiUsername',
-        ''
-    );
-    
-    $app.data.remoteDataApiEnabled = await configRepository.getBool(
-        'VRCX_RemoteDataApiEnabled',
-        false
-    );
-    $app.methods.changeCloudDataApi = async function () {
-        this.remoteDataApiEnabled = !this.remoteDataApiEnabled;
-        this.updateVRConfigVars();
-    }
-    $app.methods.showCloudDataApiDialog = function () {
-        this.isCloudDataApiDialogVisible = true;
-    }
-
     $app.data.sqliteTableSizes = {};
 
     $app.methods.getSqliteTableSizes = async function () {
@@ -13959,7 +13967,7 @@ console.log(`isLinux: ${LINUX}`);
     window.$app = $app;
     window.API = API;
     window.$t = $t;
-    window.DAPI = requests.createService($app.cloudDataApiUrl)
+    window.DAPI = requests.createService($app.cloudDataApiUrl);
     for (let value of Object.values(vrcxClasses)) {
         value.updateRef($app);
     }
