@@ -1,9 +1,8 @@
 import { Database } from './database';
+import memo from '../api/cloud/memo';
+import gamelogJoinLeave from '../api/cloud/gamelogJoinLeave';
 
 class CloudData extends Database {
-    getClassName() {
-        return this.constructor.name;
-    }
     setmaxTableSize(limit) {
         super.setmaxTableSize(limit);
     }
@@ -36,6 +35,10 @@ class CloudData extends Database {
 
     async setUserMemo(entry) {
         super.setUserMemo(entry);
+        window.taskQueue.addTask({
+            ...memo.insert,
+            data: entry
+        });
     }
 
     async deleteUserMemo(userId) {
@@ -136,10 +139,18 @@ class CloudData extends Database {
 
     addGamelogJoinLeaveToDatabase(entry) {
         super.addGamelogJoinLeaveToDatabase(entry);
+        window.taskQueue.addTask({
+            ...gamelogJoinLeave.insert,
+            data: entry
+        });
     }
 
     addGamelogJoinLeaveBulk(inputData) {
         super.addGamelogJoinLeaveBulk(inputData);
+        window.taskQueue.addTask({
+            ...gamelogJoinLeave.batchInsert,
+            data: inputData
+        });
     }
 
     addGamelogPortalSpawnToDatabase(entry) {

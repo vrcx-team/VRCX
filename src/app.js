@@ -26,6 +26,7 @@ import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
 
 // util classes
+import TaskQueue from './service/taskQueue.js';
 import configRepository from './service/config.js';
 import requests from './utils/requests.js';
 import webApiService from './service/webapi.js';
@@ -491,6 +492,11 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     const database = $app.data.cloudDataApiEnabled ? cloudData : sqliteDatabase;
+    if (database.getClassName() === 'CloudData') {
+        const taskQueue = new TaskQueue(database);
+        taskQueue.init();
+        window.taskQueue = taskQueue;
+    }
     window.database = database;
 
     console.log('Using database:', database.getClassName());
@@ -13968,7 +13974,6 @@ console.log(`isLinux: ${LINUX}`);
     window.API = API;
     window.$t = $t;
     window.DAPI = requests.createService($app.cloudDataApiUrl);
-    window.taskQueue = new TaskQueue(database);
     for (let value of Object.values(vrcxClasses)) {
         value.updateRef($app);
     }

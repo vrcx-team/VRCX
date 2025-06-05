@@ -92,7 +92,7 @@ class Database {
             `CREATE TABLE IF NOT EXISTS favorite_avatar (id INTEGER PRIMARY KEY, created_at TEXT, avatar_id TEXT, group_name TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS task_queue (id TEXT PRIMARY KEY, url TEXT NOT NULL, method TEXT NOT NULL, params TEXT NOT NULL, data TEXT NOT NULL, status TEXT NOT NULL, retry INTEGER DEFAULT 0, created_at INTEGER)`
+            `CREATE TABLE IF NOT EXISTS task_queue (id TEXT PRIMARY KEY, url TEXT NOT NULL, method TEXT NOT NULL, params TEXT, data TEXT, status TEXT NOT NULL, retry INTEGER DEFAULT 0, created_at INTEGER)`
         );
     }
 
@@ -2861,8 +2861,8 @@ class Database {
                 '@id': task.id,
                 '@url': task.url,
                 '@method': task.method,
-                '@params': JSON.stringify(task.params),
-                '@data': JSON.stringify(task.data),
+                '@params': task.params ? JSON.stringify(task.params) : '{}',
+                '@data': task.data ? JSON.stringify(task.data) : '{}',
                 '@status': task.status,
                 '@created_at': task.created_at
             }
@@ -2887,6 +2887,7 @@ class Database {
             },
             `SELECT * FROM task_queue WHERE status = 'pending' ORDER BY created_at ASC`
         );
+        return tasks;
     }
 
     async markTaskSuccess(taskId) {

@@ -48,6 +48,7 @@ class TaskQueue {
             await this._upload(task);
             await this.db.markTaskSuccess(task.id);
         } catch (e) {
+            console.error('上传任务失败:', e);
             task.retry++;
             if (task.retry < 3) {
                 this.queue.push(task); // 重试
@@ -61,9 +62,8 @@ class TaskQueue {
     // 实际上传请求
     async _upload(task) {
         await window.DAPI({
-            url: task.url,
-            method: task.method,
-            data: JSON.parse(task.data)
+           ...task
         });
     }
 }
+export default TaskQueue;
