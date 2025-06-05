@@ -1,10 +1,16 @@
 export default {
-    insert: {
-        url: '/game-log/join-leave',
-        method: 'POST'
+    insert: function (data) {
+        window.taskQueue.addTask({
+            url: '/game-log/join-leave',
+            method: 'POST',
+            data
+        });
     },
-    batchInsert: {
-        url: '/game-log/join-leave/batch',
-        method: 'POST'
-    },
+    batchInsert: function (data) {
+        window.taskQueue.addTask({
+            url: '/game-log/join-leave/batch',
+            method: 'POST',
+            data
+        });
+    }
 };

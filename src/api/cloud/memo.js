@@ -1,6 +1,9 @@
 export default {
-    insert: {
-        url: '/memo',
-        method: 'POST'
+    insert: function (data) {
+        window.taskQueue.addTask({
+            url: '/memo',
+            method: 'POST',
+            data
+        });
     }
 };

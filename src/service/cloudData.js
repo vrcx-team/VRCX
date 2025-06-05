@@ -35,10 +35,7 @@ class CloudData extends Database {
 
     async setUserMemo(entry) {
         super.setUserMemo(entry);
-        window.taskQueue.addTask({
-            ...memo.insert,
-            data: entry
-        });
+        memo.insert(entry);
     }
 
     async deleteUserMemo(userId) {
@@ -139,18 +136,13 @@ class CloudData extends Database {
 
     addGamelogJoinLeaveToDatabase(entry) {
         super.addGamelogJoinLeaveToDatabase(entry);
-        window.taskQueue.addTask({
-            ...gamelogJoinLeave.insert,
-            data: entry
-        });
+        console.log('Adding gamelog join/leave entry:', entry);
+        gamelogJoinLeave.insert(entry);
     }
 
     addGamelogJoinLeaveBulk(inputData) {
         super.addGamelogJoinLeaveBulk(inputData);
-        window.taskQueue.addTask({
-            ...gamelogJoinLeave.batchInsert,
-            data: inputData
-        });
+        gamelogJoinLeave.batchInsert(inputData);
     }
 
     addGamelogPortalSpawnToDatabase(entry) {

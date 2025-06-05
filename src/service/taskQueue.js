@@ -20,6 +20,7 @@ class TaskQueue {
             method,
             data,
             params,
+            retry: 0,
             status: 'pending',
             created_at: Date.now()
         };
@@ -62,7 +63,7 @@ class TaskQueue {
     // 实际上传请求
     async _upload(task) {
         await window.DAPI({
-           ...task
+            ...task
         });
     }
 }
