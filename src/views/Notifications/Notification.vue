@@ -425,7 +425,6 @@
     import { parseLocation } from '../../composables/instance/utils';
     import { convertFileUrlToImageUrl } from '../../composables/shared/utils';
     import configRepository from '../../service/config';
-    import database from '../../service/database';
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import Location from '../../components/Location.vue';
@@ -639,7 +638,7 @@
     function deleteNotificationLog(row) {
         utils.removeFromArray(props.notificationTable.data, row);
         if (row.type !== 'friendRequest' && row.type !== 'ignoredFriendRequest') {
-            database.deleteNotification(row.id);
+            window.database.deleteNotification(row.id);
         }
     }
 

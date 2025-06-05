@@ -199,7 +199,6 @@
     import { inject, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import utils from '../../classes/utils';
-    import database from '../../service/database';
     import Location from '../../components/Location.vue';
 
     const { t } = useI18n();
@@ -255,9 +254,9 @@
 
     function deleteGameLogEntry(row) {
         utils.removeFromArray(props.gameLogTable.data, row);
-        database.deleteGameLogEntry(row);
+        window.database.deleteGameLogEntry(row);
         console.log('deleteGameLogEntry', row);
-        database.getGamelogDatabase().then((data) => {
+        window.database.getGamelogDatabase().then((data) => {
             emit('updateGameLogSessionTable', data);
             emit('updateSharedFeed', true);
         });

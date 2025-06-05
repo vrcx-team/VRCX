@@ -1,6 +1,5 @@
 import * as workerTimers from 'worker-timers';
 import configRepository from '../service/config.js';
-import database from '../service/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 
 export default class extends baseClass {
@@ -167,7 +166,7 @@ export default class extends baseClass {
                 }
                 ref.friendNumber = ++this.friendNumber;
                 this.friendLog.set(ref.userId, ref);
-                database.setFriendLogCurrent(ref);
+                window.database.setFriendLogCurrent(ref);
                 var friendRef = this.friends.get(friendLog.id);
                 if (friendRef?.ref) {
                     friendRef.ref.$friendNumber = ref.friendNumber;
@@ -189,7 +188,7 @@ export default class extends baseClass {
                 }
                 ref.friendNumber = --this.friendNumber;
                 this.friendLog.set(ref.userId, ref);
-                database.setFriendLogCurrent(ref);
+                window.database.setFriendLogCurrent(ref);
                 var friendRef = this.friends.get(friendLog.id);
                 if (friendRef?.ref) {
                     friendRef.ref.$friendNumber = ref.friendNumber;
@@ -276,7 +275,7 @@ export default class extends baseClass {
                     friendNumber: i + 1
                 };
                 this.friendLog.set(userId, friendLogCurrent);
-                database.setFriendLogCurrent(friendLogCurrent);
+                window.database.setFriendLogCurrent(friendLogCurrent);
                 this.friendNumber = i + 1;
             }
         }

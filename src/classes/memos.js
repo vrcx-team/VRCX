@@ -1,5 +1,4 @@
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
-import database from '../service/database.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -29,7 +28,7 @@ export default class extends baseClass {
 
         async getUserMemo(userId) {
             try {
-                return await database.getUserMemo(userId);
+                return await window.database.getUserMemo(userId);
             } catch (err) {
                 console.error(err);
                 return {
@@ -42,13 +41,13 @@ export default class extends baseClass {
 
         async saveUserMemo(id, memo) {
             if (memo) {
-                await database.setUserMemo({
+                await window.database.setUserMemo({
                     userId: id,
                     editedAt: new Date().toJSON(),
                     memo
                 });
             } else {
-                await database.deleteUserMemo(id);
+                await window.database.deleteUserMemo(id);
             }
             var ref = this.friends.get(id);
             if (ref) {
@@ -63,7 +62,7 @@ export default class extends baseClass {
         },
 
         async getAllUserMemos() {
-            var memos = await database.getAllUserMemos();
+            var memos = await window.database.getAllUserMemos();
             memos.forEach((memo) => {
                 var ref = $app.friends.get(memo.userId);
                 if (typeof ref !== 'undefined') {
@@ -79,7 +78,7 @@ export default class extends baseClass {
 
         async getWorldMemo(worldId) {
             try {
-                return await database.getWorldMemo(worldId);
+                return await window.database.getWorldMemo(worldId);
             } catch (err) {
                 console.error(err);
                 return {
@@ -92,7 +91,7 @@ export default class extends baseClass {
 
         async getAvatarMemo(avatarId) {
             try {
-                return await database.getAvatarMemoDB(avatarId);
+                return await window.database.getAvatarMemoDB(avatarId);
             } catch (err) {
                 console.error(err);
                 return {

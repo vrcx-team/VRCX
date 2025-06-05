@@ -2,11 +2,9 @@ import * as workerTimers from 'worker-timers';
 import { parseLocation } from '../composables/instance/utils';
 import gameLogService from '../service/gamelog.js';
 import configRepository from '../service/config.js';
-import database from '../service/database.js';
 import { baseClass, $app, API, $utils } from './baseClass.js';
 import { userRequest } from '../api';
 import dayjs from 'dayjs';
-
 export default class extends baseClass {
     constructor(_app, _API, _t) {
         super(_app, _API, _t);
@@ -159,7 +157,7 @@ export default class extends baseClass {
                         userId,
                         time: 0
                     };
-                    database.addGamelogJoinLeaveToDatabase(entry);
+                    window.database.addGamelogJoinLeaveToDatabase(entry);
                     break;
                 case 'player-left':
                     var ref = this.lastLocation.playerList.get(userId);
@@ -195,7 +193,7 @@ export default class extends baseClass {
                         userId,
                         time
                     };
-                    database.addGamelogJoinLeaveToDatabase(entry);
+                    window.database.addGamelogJoinLeaveToDatabase(entry);
                     break;
                 case 'portal-spawn':
                     if (this.ipcEnabled && this.isGameRunning) {
@@ -210,7 +208,7 @@ export default class extends baseClass {
                         instanceId: '',
                         worldName: ''
                     };
-                    database.addGamelogPortalSpawnToDatabase(entry);
+                    window.database.addGamelogPortalSpawnToDatabase(entry);
                     break;
                 case 'video-play':
                     gameLog.videoUrl = decodeURI(gameLog.videoUrl);
@@ -244,7 +242,7 @@ export default class extends baseClass {
                         resourceUrl: gameLog.resourceUrl,
                         location
                     };
-                    database.addGamelogResourceLoadToDatabase(entry);
+                    window.database.addGamelogResourceLoadToDatabase(entry);
                     break;
                 case 'screenshot':
                     // var entry = {
@@ -255,7 +253,7 @@ export default class extends baseClass {
                     //         ''
                     //     )}`
                     // };
-                    // database.addGamelogEventToDatabase(entry);
+                    // window.database.addGamelogEventToDatabase(entry);
 
                     this.processScreenshot(gameLog.screenshotPath);
                     break;
@@ -373,7 +371,7 @@ export default class extends baseClass {
                         type: 'Event',
                         data: gameLog.event
                     };
-                    database.addGamelogEventToDatabase(entry);
+                    window.database.addGamelogEventToDatabase(entry);
                     break;
                 case 'vrc-quit':
                     if (!this.isGameRunning) {
@@ -421,7 +419,7 @@ export default class extends baseClass {
                     //     type: 'Event',
                     //     data: gameLog.data
                     // };
-                    // database.addGamelogEventToDatabase(entry);
+                    // window.database.addGamelogEventToDatabase(entry);
                     break;
                 case 'sticker-spawn':
                     if (!$app.saveInstanceStickers) {
@@ -497,7 +495,7 @@ export default class extends baseClass {
                 ...input,
                 groupName
             };
-            database.addGamelogLocationToDatabase(entry);
+            window.database.addGamelogLocationToDatabase(entry);
         },
 
         async addGameLogVideo(gameLog, location, userId) {
@@ -892,7 +890,7 @@ export default class extends baseClass {
             if (this.gameLogTable.vip) {
                 vipList = Array.from(this.localFavoriteFriends.values());
             }
-            this.gameLogTable.data = await database.lookupGameLogDatabase(
+            this.gameLogTable.data = await window.database.lookupGameLogDatabase(
                 this.gameLogTable.search,
                 this.gameLogTable.filter,
                 vipList
@@ -930,7 +928,7 @@ export default class extends baseClass {
 
         // async refreshEntireGameLog() {
         //     await gameLogService.setDateTill('1970-01-01');
-        //     await database.initTables();
+        //     await window.database.initTables();
         //     await this.resetGameLog();
         //     var location = '';
         //     for (var gameLog of await gameLogService.getAll()) {
@@ -943,9 +941,9 @@ export default class extends baseClass {
         // },
 
         async getGameLogTable() {
-            await database.initTables();
-            this.gameLogSessionTable = await database.getGamelogDatabase();
-            var dateTill = await database.getLastDateGameLogDatabase();
+            await window.database.initTables();
+            this.gameLogSessionTable = await window.database.getGamelogDatabase();
+            var dateTill = await window.database.getLastDateGameLogDatabase();
             this.updateGameLog(dateTill);
         },
 

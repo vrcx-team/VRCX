@@ -61,7 +61,6 @@
     import dayjs from 'dayjs';
     import utils from '../../../classes/utils';
     import { parseLocation } from '../../../composables/instance/utils';
-    import database from '../../../service/database';
     import Location from '../../Location.vue';
 
     export default {
@@ -145,7 +144,7 @@
                 this.location = parseLocation(this.instanceId);
             },
             refreshPreviousInstancesInfoTable() {
-                database.getPlayersFromInstance(this.location.tag).then((data) => {
+                window.database.getPlayersFromInstance(this.location.tag).then((data) => {
                     const array = [];
                     for (const entry of Array.from(data.values())) {
                         entry.timer = utils.timeToText(entry.time);

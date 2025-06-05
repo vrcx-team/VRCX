@@ -1839,7 +1839,6 @@
     } from '../../../composables/shared/utils';
     import { userDialogGroupSortingOptions } from '../../../composables/user/constants/userDialogGroupSortingOptions';
     import { isFriendOnline, languageClass, userOnlineForTimestamp } from '../../../composables/user/utils';
-    import database from '../../../service/database';
     import Location from '../../Location.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
@@ -2549,7 +2548,7 @@
             displayName: ref.displayName
         };
         props.friendLogTable.data.push(friendLogHistory);
-        database.addFriendLogHistory(friendLogHistory);
+        window.database.addFriendLogHistory(friendLogHistory);
 
         // API.$on('FRIEND:REQUEST')
         const D = props.userDialog;
@@ -2576,7 +2575,7 @@
             displayName: ref.displayName
         };
         props.friendLogTable.data.push(friendLogHistory);
-        database.addFriendLogHistory(friendLogHistory);
+        window.database.addFriendLogHistory(friendLogHistory);
 
         // API.$on('FRIEND:REQUEST:CANCEL')
         const D = props.userDialog;

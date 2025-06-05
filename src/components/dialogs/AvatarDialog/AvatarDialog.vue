@@ -619,7 +619,6 @@
         extractFileVersion,
         replaceVrcPackageUrl
     } from '../../../composables/shared/utils';
-    import database from '../../../service/database';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
     import ChangeAvatarImageDialog from './ChangeAvatarImageDialog.vue';
     import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
@@ -745,7 +744,7 @@
 
     function getAvatarTimeSpent() {
         const D = props.avatarDialog;
-        database.getAvatarTimeSpent(D.id).then((aviTime) => {
+        window.database.getAvatarTimeSpent(D.id).then((aviTime) => {
             if (D.id === aviTime.avatarId) {
                 timeSpent.value = aviTime.timeSpent;
                 if (D.id === API.currentUser.currentAvatar && API.currentUser.$previousAvatarSwapTime) {
@@ -757,7 +756,7 @@
 
     function getAvatarMemo() {
         const D = props.avatarDialog;
-        database.getAvatarMemoDB(D.id).then((res) => {
+        window.database.getAvatarMemoDB(D.id).then((res) => {
             if (D.id === res.avatarId) {
                 memo.value = res.memo;
             }
@@ -1086,13 +1085,13 @@
 
     function onAvatarMemoChange() {
         if (memo.value) {
-            database.setAvatarMemo({
+            window.database.setAvatarMemo({
                 avatarId: props.avatarDialog.id,
                 editedAt: new Date().toJSON(),
                 memo: memo.value
             });
         } else {
-            database.deleteAvatarMemo(props.avatarDialog.id);
+            window.database.deleteAvatarMemo(props.avatarDialog.id);
         }
     }
 

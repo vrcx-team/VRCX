@@ -782,7 +782,6 @@
         extractFileId,
         replaceVrcPackageUrl as _replaceVrcPackageUrl
     } from '../../../composables/shared/utils';
-    import database from '../../../service/database.js';
     import NewInstanceDialog from '../NewInstanceDialog.vue';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
     import PreviousInstancesWorldDialog from '../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
@@ -1144,13 +1143,13 @@
                 const worldId = this.worldDialog.id;
                 const memo = this.worldDialog.memo;
                 if (memo) {
-                    database.setWorldMemo({
+                    window.database.setWorldMemo({
                         worldId,
                         editedAt: new Date().toJSON(),
                         memo
                     });
                 } else {
-                    database.deleteWorldMemo(worldId);
+                    window.database.deleteWorldMemo(worldId);
                 }
             },
             showPreviousInstancesWorldDialog(worldRef) {

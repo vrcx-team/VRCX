@@ -117,7 +117,6 @@
 <script>
     import dayjs from 'dayjs';
     import { parseLocation } from '../../../composables/instance/utils';
-    import database from '../../../service/database';
     import utils from '../../../classes/utils';
     import configRepository from '../../../service/config';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
@@ -588,7 +587,7 @@
                 }
             },
             async getAllDateOfActivity() {
-                const utcDateStrings = await database.getDateOfInstanceActivity();
+                const utcDateStrings = await window.database.getDateOfInstanceActivity();
                 const uniqueDates = new Set();
 
                 for (const utcString of utcDateStrings) {
@@ -601,7 +600,7 @@
             async getActivityData() {
                 const localStartDate = dayjs.tz(this.selectedDate).startOf('day').toISOString();
                 const localEndDate = dayjs.tz(this.selectedDate).endOf('day').toISOString();
-                const dbData = await database.getInstanceActivity(localStartDate, localEndDate);
+                const dbData = await window.database.getInstanceActivity(localStartDate, localEndDate);
 
                 const transformData = (item) => ({
                     ...item,
