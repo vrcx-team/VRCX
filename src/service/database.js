@@ -91,6 +91,9 @@ class Database {
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS favorite_avatar (id INTEGER PRIMARY KEY, created_at TEXT, avatar_id TEXT, group_name TEXT)`
         );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS task_queue (id TEXT PRIMARY KEY, url TEXT NOT NULL, method TEXT NOT NULL, params TEXT NOT NULL, data TEXT NOT NULL, status TEXT NOT NULL, retry INTEGER DEFAULT 0, created_at INTEGER)`
+        );
     }
 
     async getFeedDatabase() {
@@ -2850,6 +2853,61 @@ class Database {
         );
         return result;
     }
+
+    async insertTask(task) {
+        sqliteService.executeNonQuery(
+            `INSERT INTO task_queue (id, url, method, params, data, status, created_at) VALUES (@id, @url, @method, @params, @data, @status, @created_at)`,
+            {
+                '@id': task.id,
+                '@url': task.url,
+                '@method': task.method,
+                '@params': JSON.stringify(task.params),
+                '@data': JSON.stringify(task.data),
+                '@status': task.status,
+                '@created_at': task.created_at
+            }
+        );
+    }
+
+    async getAllPendingTasks() {
+        var tasks = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                var task = {
+                    id: dbRow[0],
+                    url: dbRow[1],
+                    method: dbRow[2],
+                    params: JSON.parse(dbRow[3]),
+                    data: JSON.parse(dbRow[4]),
+                    status: dbRow[5],
+                    retry: dbRow[6],
+                    created_at: dbRow[7]                    
+                };
+                tasks.push(task);
+            },
+            `SELECT * FROM task_queue WHERE status = 'pending' ORDER BY created_at ASC`
+        );
+    }
+
+    async markTaskSuccess(taskId) {
+        sqliteService.executeNonQuery(
+            `UPDATE task_queue SET status = 'success' WHERE id = @taskId`,
+            {
+                '@taskId': taskId
+            }
+        );
+    }
+
+    async markTaskFailed(task) {
+        sqliteService.executeNonQuery(
+            `UPDATE task_queue SET status = 'failed', retry = @retry WHERE id = @taskId`,
+            {
+                '@retry': task.retry,
+                '@taskId': task.id
+            }
+        );
+    }
+
 }
 
 var self = new Database();

@@ -13968,6 +13968,7 @@ console.log(`isLinux: ${LINUX}`);
     window.API = API;
     window.$t = $t;
     window.DAPI = requests.createService($app.cloudDataApiUrl);
+    window.taskQueue = new TaskQueue(database);
     for (let value of Object.values(vrcxClasses)) {
         value.updateRef($app);
     }
