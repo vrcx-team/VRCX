@@ -12311,6 +12311,9 @@ console.log(`isLinux: ${LINUX}`);
         if (this.worldDialog.visible && this.worldDialog.id === worldId) {
             this.worldDialog.isFavorite = true;
         }
+
+        // update UI
+        this.sortLocalWorldFavorites();
     };
 
     $app.methods.removeLocalWorldFavorite = function (worldId, group) {
@@ -12554,6 +12557,9 @@ console.log(`isLinux: ${LINUX}`);
         if (this.avatarDialog.visible && this.avatarDialog.id === avatarId) {
             this.avatarDialog.isFavorite = true;
         }
+
+        // update UI
+        this.sortLocalAvatarFavorites();
     };
 
     $app.methods.removeLocalAvatarFavorite = function (avatarId, group) {
