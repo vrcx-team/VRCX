@@ -120,6 +120,7 @@
     import utils from '../../../classes/utils';
     import configRepository from '../../../service/config';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
+    import database  from '../../../service/database';
 
     export default {
         name: 'InstanceActivity',
@@ -587,7 +588,7 @@
                 }
             },
             async getAllDateOfActivity() {
-                const utcDateStrings = await window.database.getDateOfInstanceActivity();
+                const utcDateStrings = await database().getDateOfInstanceActivity();
                 const uniqueDates = new Set();
 
                 for (const utcString of utcDateStrings) {
@@ -600,7 +601,7 @@
             async getActivityData() {
                 const localStartDate = dayjs.tz(this.selectedDate).startOf('day').toISOString();
                 const localEndDate = dayjs.tz(this.selectedDate).endOf('day').toISOString();
-                const dbData = await window.database.getInstanceActivity(localStartDate, localEndDate);
+                const dbData = await database().getInstanceActivity(localStartDate, localEndDate);
 
                 const transformData = (item) => ({
                     ...item,

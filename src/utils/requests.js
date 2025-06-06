@@ -3,8 +3,7 @@ import { getToken, getTokenExpiration, setToken } from './auth'; // 假设有获
 
 let refreshPromise = null;
 
-// 创建axios实例
-const service = {
+class Server {
     createService(baseURL) {
         const instance = axios.create({
             baseURL: baseURL, // API的基础URL
@@ -78,8 +77,15 @@ const service = {
             }
         );
 
-        return instance;
+        this.request = instance;
     }
-};
+}
+const service = new Server();
 
-export default service;
+export function createService(baseURL) {
+    service.createService(baseURL);
+}
+
+export default function (data) {
+    return service.request(data);
+}

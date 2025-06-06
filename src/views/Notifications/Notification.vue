@@ -428,6 +428,7 @@
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import Location from '../../components/Location.vue';
+    import database  from '../../service/database';
 
     const { t } = useI18n();
 
@@ -638,7 +639,7 @@
     function deleteNotificationLog(row) {
         utils.removeFromArray(props.notificationTable.data, row);
         if (row.type !== 'friendRequest' && row.type !== 'ignoredFriendRequest') {
-            window.database.deleteNotification(row.id);
+            database().deleteNotification(row.id);
         }
     }
 

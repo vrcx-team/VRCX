@@ -98,6 +98,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import utils from '../../classes/utils';
     import configRepository from '../../service/config';
+    import database  from '../../service/database.js'
 
     const { t } = useI18n();
     const { proxy } = getCurrentInstance();
@@ -134,6 +135,6 @@
     }
     function deleteFriendLog(row) {
         utils.removeFromArray(props.friendLogTable.data, row);
-        window.database.deleteFriendLogHistory(row.rowId);
+        database().deleteFriendLogHistory(row.rowId);
     }
 </script>

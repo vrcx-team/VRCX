@@ -62,6 +62,7 @@
     import utils from '../../../classes/utils';
     import { parseLocation } from '../../../composables/instance/utils';
     import Location from '../../Location.vue';
+    import database  from '../../../service/database';
 
     export default {
         name: 'PreviousInstancesInfoDialog',
@@ -144,7 +145,7 @@
                 this.location = parseLocation(this.instanceId);
             },
             refreshPreviousInstancesInfoTable() {
-                window.database.getPlayersFromInstance(this.location.tag).then((data) => {
+                database().getPlayersFromInstance(this.location.tag).then((data) => {
                     const array = [];
                     for (const entry of Array.from(data.values())) {
                         entry.timer = utils.timeToText(entry.time);

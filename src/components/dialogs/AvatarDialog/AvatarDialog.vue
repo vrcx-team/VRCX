@@ -623,6 +623,7 @@
     import ChangeAvatarImageDialog from './ChangeAvatarImageDialog.vue';
     import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
     import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
+    import database  from '../../../service/database';
 
     const API = inject('API');
     const showFullscreenImageDialog = inject('showFullscreenImageDialog');
@@ -744,7 +745,7 @@
 
     function getAvatarTimeSpent() {
         const D = props.avatarDialog;
-        window.database.getAvatarTimeSpent(D.id).then((aviTime) => {
+        database().getAvatarTimeSpent(D.id).then((aviTime) => {
             if (D.id === aviTime.avatarId) {
                 timeSpent.value = aviTime.timeSpent;
                 if (D.id === API.currentUser.currentAvatar && API.currentUser.$previousAvatarSwapTime) {
@@ -756,7 +757,7 @@
 
     function getAvatarMemo() {
         const D = props.avatarDialog;
-        window.database.getAvatarMemoDB(D.id).then((res) => {
+        database().getAvatarMemoDB(D.id).then((res) => {
             if (D.id === res.avatarId) {
                 memo.value = res.memo;
             }
@@ -1085,13 +1086,13 @@
 
     function onAvatarMemoChange() {
         if (memo.value) {
-            window.database.setAvatarMemo({
+            database().setAvatarMemo({
                 avatarId: props.avatarDialog.id,
                 editedAt: new Date().toJSON(),
                 memo: memo.value
             });
         } else {
-            window.database.deleteAvatarMemo(props.avatarDialog.id);
+            database().deleteAvatarMemo(props.avatarDialog.id);
         }
     }
 

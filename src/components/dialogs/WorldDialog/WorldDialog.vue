@@ -788,6 +788,7 @@
     import ChangeWorldImageDialog from './ChangeWorldImageDialog.vue';
     import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
     import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
+    import database  from '../../../service/database';
 
     export default {
         name: 'WorldDialog',
@@ -1143,13 +1144,13 @@
                 const worldId = this.worldDialog.id;
                 const memo = this.worldDialog.memo;
                 if (memo) {
-                    window.database.setWorldMemo({
+                    database().setWorldMemo({
                         worldId,
                         editedAt: new Date().toJSON(),
                         memo
                     });
                 } else {
-                    window.database.deleteWorldMemo(worldId);
+                    database().deleteWorldMemo(worldId);
                 }
             },
             showPreviousInstancesWorldDialog(worldRef) {

@@ -2,6 +2,7 @@ import * as workerTimers from 'worker-timers';
 import configRepository from '../service/config.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 import { avatarRequest, favoriteRequest, worldRequest } from '../api';
+import database  from '../service/database.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -468,7 +469,7 @@ export default class extends baseClass {
                                 'VRCX_maxTableSize',
                                 this.maxTableSize
                             );
-                            window.database.setmaxTableSize(this.maxTableSize);
+                            database().setmaxTableSize(this.maxTableSize);
                             this.feedTableLookup();
                             this.gameLogTableLookup();
                         }

@@ -1,5 +1,6 @@
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 import configRepository from '../service/config.js';
+import database  from '../service/database.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -121,7 +122,7 @@ export default class extends baseClass {
             if (this.feedTable.vip) {
                 vipList = Array.from(this.localFavoriteFriends.values());
             }
-            this.feedTable.data = await window.database.lookupFeedDatabase(
+            this.feedTable.data = await database().lookupFeedDatabase(
                 this.feedTable.search,
                 this.feedTable.filter,
                 vipList

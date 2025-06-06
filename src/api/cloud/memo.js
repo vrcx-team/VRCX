@@ -1,9 +1,9 @@
-export default {
-    insert: function (data) {
-        window.taskQueue.addTask({
-            url: '/memo',
-            method: 'POST',
-            data
-        });
-    }
-};
+import taskQueue from '../../service/taskQueue';
+
+export function insert(data) {
+    taskQueue({
+        url: '/memo',
+        method: 'POST',
+        data
+    });
+}

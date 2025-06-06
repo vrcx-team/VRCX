@@ -1,8 +1,11 @@
-import { Database } from './database';
-import memo from '../api/cloud/memo';
-import gamelogJoinLeave from '../api/cloud/gamelogJoinLeave';
+import { LocalDatabase } from './localDatabase';
+import { insert as memoInsert } from '../api/cloud/memo';
+import {
+    insert as gamelogJoinLeaveInsert,
+    batchInsert as gamelogJoinLeaveBatchInsert
+} from '../api/cloud/gamelogJoinLeave';
 
-class CloudData extends Database {
+class CloudDatabase extends LocalDatabase {
     setmaxTableSize(limit) {
         super.setmaxTableSize(limit);
     }
@@ -35,7 +38,7 @@ class CloudData extends Database {
 
     async setUserMemo(entry) {
         super.setUserMemo(entry);
-        memo.insert(entry);
+        memoInsert(entry);
     }
 
     async deleteUserMemo(userId) {
@@ -136,13 +139,12 @@ class CloudData extends Database {
 
     addGamelogJoinLeaveToDatabase(entry) {
         super.addGamelogJoinLeaveToDatabase(entry);
-        console.log('Adding gamelog join/leave entry:', entry);
-        gamelogJoinLeave.insert(entry);
+        gamelogJoinLeaveInsert(entry);
     }
 
     addGamelogJoinLeaveBulk(inputData) {
         super.addGamelogJoinLeaveBulk(inputData);
-        gamelogJoinLeave.batchInsert(inputData);
+        gamelogJoinLeaveBatchInsert(inputData);
     }
 
     addGamelogPortalSpawnToDatabase(entry) {
@@ -530,5 +532,5 @@ class CloudData extends Database {
     }
 }
 
-var self = new CloudData();
-export { self as default, CloudData };
+var self = new CloudDatabase();
+export { self as default, CloudDatabase };

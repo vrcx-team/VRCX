@@ -1,11 +1,9 @@
-const authReq = {
-  login: function (data) {
-    return window.DAPI({
-      url: '/login',
-      method: 'POST',
-      data
-    })
-  }
-}
+import request from '../../utils/requests';
 
-export default authReq;
+export function login(data) {
+    return request({
+        url: '/login',
+        method: 'POST',
+        data
+    });
+}

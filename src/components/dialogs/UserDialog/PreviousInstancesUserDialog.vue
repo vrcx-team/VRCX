@@ -73,6 +73,7 @@
     import utils from '../../../classes/utils';
     import { parseLocation } from '../../../composables/instance/utils';
     import Location from '../../Location.vue';
+    import database  from '../../../service/database';
 
     export default {
         name: 'PreviousInstancesUserDialog',
@@ -164,7 +165,7 @@
         methods: {
             refreshPreviousInstancesUserTable() {
                 this.loading = true;
-                window.database.getpreviousInstancesByUserId(this.previousInstancesUserDialog.userRef).then((data) => {
+                database().getpreviousInstancesByUserId(this.previousInstancesUserDialog.userRef).then((data) => {
                     const array = [];
                     for (const ref of data.values()) {
                         ref.$location = parseLocation(ref.location);
@@ -181,7 +182,7 @@
                 });
             },
             deleteGameLogUserInstance(row) {
-                window.database.deleteGameLogInstance({
+                database().deleteGameLogInstance({
                     id: this.previousInstancesUserDialog.userRef.id,
                     displayName: this.previousInstancesUserDialog.userRef.displayName,
                     location: row.location

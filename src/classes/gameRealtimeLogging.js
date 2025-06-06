@@ -2,6 +2,7 @@ import * as workerTimers from 'worker-timers';
 import { displayLocation, parseLocation } from '../composables/instance/utils';
 import { checkVRChatCache } from '../composables/shared/utils';
 import configRepository from '../service/config.js';
+import database  from '../service/database.js';
 import { baseClass, $app, API, $utils } from './baseClass.js';
 import { instanceRequest, userRequest } from '../api';
 import {
@@ -971,9 +972,9 @@ export default class extends baseClass {
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
             if (entry.type === 'PortalSpawn') {
-                window.database.addGamelogPortalSpawnToDatabase(entry);
+                database().addGamelogPortalSpawnToDatabase(entry);
             } else if (entry.type === 'Event') {
-                window.database.addGamelogEventToDatabase(entry);
+                database().addGamelogEventToDatabase(entry);
             }
         },
 
@@ -1181,7 +1182,7 @@ export default class extends baseClass {
                 };
                 this.queueGameLogNoty(entry);
                 this.addGameLog(entry);
-                window.database.addGamelogEventToDatabase(entry);
+                database().addGamelogEventToDatabase(entry);
             }
         },
 
@@ -1213,7 +1214,7 @@ export default class extends baseClass {
         },
 
         photonModerationUpdate(ref, photonId, block, mute, gameLogDate) {
-            window.database.getModeration(ref.id).then((row) => {
+            database().getModeration(ref.id).then((row) => {
                 var lastType = this.photonLobbyLastModeration.get(photonId);
                 var type = '';
                 var text = '';
@@ -1280,7 +1281,7 @@ export default class extends baseClass {
                     this.updateSharedFeed(true);
                 }
                 if (block || mute) {
-                    window.database.setModeration({
+                    database().setModeration({
                         userId: ref.id,
                         updatedAt: gameLogDate,
                         displayName: ref.displayName,
@@ -1288,7 +1289,7 @@ export default class extends baseClass {
                         mute
                     });
                 } else if (row.block || row.mute) {
-                    window.database.deleteModeration(ref.id);
+                    database().deleteModeration(ref.id);
                 }
             });
         },

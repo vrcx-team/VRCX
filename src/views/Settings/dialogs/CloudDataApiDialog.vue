@@ -46,8 +46,8 @@
 </template>
 
 <script setup>
-    import requests from '../../../utils/requests';
-    import authReq from '../../../api/cloud/auth';
+    import { createService } from '../../../utils/requests';
+    import { login } from '../../../api/cloud/auth';
     import { setToken } from '../../../utils/auth';
     import { ref } from 'vue';
     import { inject, getCurrentInstance } from 'vue';
@@ -105,8 +105,8 @@
                 return;
             }
             try {
-                window.DAPI = requests.createService(data.value.cloudDataApiUrl);
-                const { data: respData } = await authReq.login({
+                createService(data.value.cloudDataApiUrl);
+                const { data: respData } = await login({
                     username: data.value.cloudDataApiUsername,
                     password: data.value.cloudDataApiPassword
                 });
@@ -123,6 +123,7 @@
                     message: 'Failed to save Cloud Data API URL: ' + error.message,
                     type: 'error'
                 });
+                console.error('Failed to save Cloud Data API URL:', error);
             }
         }
     }

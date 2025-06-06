@@ -1830,6 +1830,7 @@
         worldRequest
     } from '../../../api';
     import utils from '../../../classes/utils';
+    import database  from '../../../service/database';
     import { isRealInstance, parseLocation, refreshInstancePlayerCount } from '../../../composables/instance/utils';
     import {
         copyToClipboard,
@@ -2548,7 +2549,7 @@
             displayName: ref.displayName
         };
         props.friendLogTable.data.push(friendLogHistory);
-        window.database.addFriendLogHistory(friendLogHistory);
+        database().addFriendLogHistory(friendLogHistory);
 
         // API.$on('FRIEND:REQUEST')
         const D = props.userDialog;
@@ -2575,7 +2576,7 @@
             displayName: ref.displayName
         };
         props.friendLogTable.data.push(friendLogHistory);
-        window.database.addFriendLogHistory(friendLogHistory);
+        database().addFriendLogHistory(friendLogHistory);
 
         // API.$on('FRIEND:REQUEST:CANCEL')
         const D = props.userDialog;

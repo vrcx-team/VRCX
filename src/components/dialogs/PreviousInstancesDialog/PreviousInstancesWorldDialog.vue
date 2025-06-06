@@ -69,6 +69,7 @@
 <script>
     import utils from '../../../classes/utils';
     import { parseLocation } from '../../../composables/instance/utils';
+    import database  from '../../../service/database';
 
     export default {
         name: 'PreviousInstancesWorldDialog',
@@ -135,7 +136,7 @@
             refreshPreviousInstancesWorldTable() {
                 this.loading = true;
                 const D = this.previousInstancesWorldDialog;
-                window.database.getpreviousInstancesByWorldId(D.worldRef).then((data) => {
+                database().getpreviousInstancesByWorldId(D.worldRef).then((data) => {
                     const array = [];
                     for (const ref of data.values()) {
                         ref.$location = parseLocation(ref.location);
@@ -152,7 +153,7 @@
                 });
             },
             deleteGameLogWorldInstance(row) {
-                window.database.deleteGameLogInstanceByInstanceId({
+                database().deleteGameLogInstanceByInstanceId({
                     location: row.location
                 });
                 utils.removeFromArray(this.previousInstancesWorldDialogTable.data, row);
