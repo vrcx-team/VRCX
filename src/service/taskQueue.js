@@ -74,13 +74,22 @@ class TaskQueue {
 
     // 实际上传请求
     async _upload(task) {
-        const deviceId = await getDeviceId();
-        await request({
-            ...task,
-            data: {
+        let data = {};
+        // 仅在 POST/PUT 请求中添加 deviceId，如需传递请使用 POST/PUT 请求
+        // deviceId is only added in POST/PUT requests; use POST/PUT to send it.
+        if (
+            task.method.toUpperCase() === 'POST' ||
+            task.method.toUpperCase() === 'PUT'
+        ) {
+            const deviceId = await getDeviceId();
+            data = {
                 data: task.data,
                 deviceId
-            }
+            };
+        }
+        await request({
+            ...task,
+            data
         });
     }
 }
