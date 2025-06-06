@@ -31,7 +31,7 @@ import configRepository from './service/config.js';
 import { createService } from './utils/requests.js';
 import webApiService from './service/webapi.js';
 import security from './service/security.js';
-import database, { enableCloudDatabase } from './service/database.js';
+import getDatabase, { enableCloudDatabase } from './service/database.js';
 import * as localizedStrings from './localization/localizedStrings.js';
 import removeConfusables, { removeWhitespace } from './service/confusables.js';
 import $utils from './classes/utils.js';
@@ -494,12 +494,13 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     enableCloudDatabase($app.data.cloudDataApiEnabled);
-    if (database().getClassName() === 'CloudDatabase') {
-        initTaskQueue(database());
+    const database = getDatabase();
+    if (database.getClassName() === 'CloudDatabase') {
+        initTaskQueue(database);
     }
-    window.database = database();
+    window.database = database;
 
-    console.log('Using database:', database().getClassName());
+    console.log('Using database:', database.getClassName());
 
     // #endregion
     // #region | Init: drop/keyup event listeners
@@ -1627,7 +1628,7 @@ console.log(`isLinux: ${LINUX}`);
             }
         } else {
             ref.$isExpired = true;
-            database().updateNotificationExpired(ref);
+            database.updateNotificationExpired(ref);
         }
         this.$emit('NOTIFICATION:EXPIRE', {
             ref,
@@ -1710,7 +1711,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         ref.$isExpired = true;
-        database().updateNotificationExpired(ref);
+        database.updateNotificationExpired(ref);
         this.$emit('NOTIFICATION:EXPIRE', {
             ref,
             params: {
@@ -3569,7 +3570,7 @@ console.log(`isLinux: ${LINUX}`);
                     time
                 };
                 this.addFeed(feed);
-                database().addOnlineOfflineToDatabase(feed);
+                database.addOnlineOfflineToDatabase(feed);
             } else if (
                 newState === 'online' &&
                 (ctx.state === 'offline' || ctx.state === 'active')
@@ -3593,7 +3594,7 @@ console.log(`isLinux: ${LINUX}`);
                     time: ''
                 };
                 this.addFeed(feed);
-                database().addOnlineOfflineToDatabase(feed);
+                database.addOnlineOfflineToDatabase(feed);
             }
             if (newState === 'active') {
                 ctx.ref.$active_for = Date.now();
@@ -4244,19 +4245,19 @@ console.log(`isLinux: ${LINUX}`);
         $app.feedSessionTable = [];
         $app.friendLogInitStatus = false;
         $app.notificationInitStatus = false;
-        await database().initUserTables(args.json.id);
+        await database.initUserTables(args.json.id);
         $app.menuActiveIndex = 'feed';
         await $app.updateDatabaseVersion();
         // eslint-disable-next-line require-atomic-updates
-        $app.gameLogTable.data = await database().lookupGameLogDatabase(
+        $app.gameLogTable.data = await database.lookupGameLogDatabase(
             $app.gameLogTable.search,
             $app.gameLogTable.filter
         );
         // eslint-disable-next-line require-atomic-updates
-        $app.feedSessionTable = await database().getFeedDatabase();
+        $app.feedSessionTable = await database.getFeeddatabase;
         await $app.feedTableLookup();
         // eslint-disable-next-line require-atomic-updates
-        $app.notificationTable.data = await database().getNotifications();
+        $app.notificationTable.data = await database.getNotifications();
         this.refreshNotifications();
         $app.loadCurrentUserGroups(args.json.id, args.json?.presence?.groups);
         try {
@@ -4468,7 +4469,7 @@ console.log(`isLinux: ${LINUX}`);
                     time
                 };
                 $app.addFeed(feed);
-                database().addGPSToDatabase(feed);
+                database.addGPSToDatabase(feed);
                 $app.updateFriendGPS(ref.id);
                 // clear previousLocation after GPS
                 ref.$previousLocation = '';
@@ -4577,7 +4578,7 @@ console.log(`isLinux: ${LINUX}`);
                     previousCurrentAvatarTags
                 };
                 $app.addFeed(feed);
-                database().addAvatarToDatabase(feed);
+                database.addAvatarToDatabase(feed);
             }
         }
         if (props.status || props.statusDescription) {
@@ -4618,7 +4619,7 @@ console.log(`isLinux: ${LINUX}`);
                 previousStatusDescription
             };
             $app.addFeed(feed);
-            database().addStatusToDatabase(feed);
+            database.addStatusToDatabase(feed);
         }
         if (props.bio && props.bio[0] && props.bio[1]) {
             var bio = '';
@@ -4638,7 +4639,7 @@ console.log(`isLinux: ${LINUX}`);
                 previousBio
             };
             $app.addFeed(feed);
-            database().addBioToDatabase(feed);
+            database.addBioToDatabase(feed);
         }
     });
 
@@ -4767,13 +4768,13 @@ console.log(`isLinux: ${LINUX}`);
             dataBaseEntries.unshift(entry);
             this.addGameLog(entry);
         }
-        database().addGamelogJoinLeaveBulk(dataBaseEntries);
+        database.addGamelogJoinLeaveBulk(dataBaseEntries);
         if (this.lastLocation.date !== 0) {
             var update = {
                 time: dateTimeStamp - this.lastLocation.date,
                 created_at: new Date(this.lastLocation.date).toJSON()
             };
-            database().updateGamelogLocationTimeToDatabase(update);
+            database.updateGamelogLocationTimeToDatabase(update);
         }
         this.lastLocationDestination = '';
         this.lastLocationDestinationTime = 0;
@@ -4907,7 +4908,7 @@ console.log(`isLinux: ${LINUX}`);
             }
             this.queueGameLogNoty(ctx);
             this.addGameLog(ctx);
-            database().addGamelogVideoPlayToDatabase(ctx);
+            database.addGamelogVideoPlayToDatabase(ctx);
 
             var displayName = '';
             if (ctx.displayName) {
@@ -5293,7 +5294,7 @@ console.log(`isLinux: ${LINUX}`);
                         }
                     } else {
                         // try fetch from local world favorites
-                        var world = await database().getCachedWorldById(objectId);
+                        var world = await database.getCachedWorldById(objectId);
                         if (world) {
                             ctx.ref = world;
                             ctx.name = world.name;
@@ -5303,7 +5304,7 @@ console.log(`isLinux: ${LINUX}`);
                         if (!world) {
                             // try fetch from local world history
                             var worldName =
-                                await database().getGameLogWorldNameByWorldId(
+                                await database.getGameLogWorldNameByWorldId(
                                     objectId
                                 );
                             if (worldName) {
@@ -5326,7 +5327,7 @@ console.log(`isLinux: ${LINUX}`);
                     } else {
                         // try fetch from local avatar history
                         var avatar =
-                            await database().getCachedAvatarById(objectId);
+                            await database.getCachedAvatarById(objectId);
                         if (avatar) {
                             ctx.ref = avatar;
                             ctx.name = avatar.name;
@@ -5527,7 +5528,7 @@ console.log(`isLinux: ${LINUX}`);
             this.friendLog.set(friend.id, row);
             sqlValues.unshift(row);
         }
-        database().setFriendLogCurrentArray(sqlValues);
+        database.setFriendLogCurrentArray(sqlValues);
         await configRepository.setBool(`friendLogInit_${currentUser.id}`, true);
         this.friendLogInitStatus = true;
     };
@@ -5538,7 +5539,7 @@ console.log(`isLinux: ${LINUX}`);
         this.friendLogTable.data = await VRCXStorage.GetArray(
             `${userId}_friendLogTable`
         );
-        database().addFriendLogHistoryArray(this.friendLogTable.data);
+        database.addFriendLogHistoryArray(this.friendLogTable.data);
         VRCXStorage.Remove(`${userId}_friendLogTable`);
         await configRepository.setBool(`friendLogInit_${userId}`, true);
     };
@@ -5548,17 +5549,17 @@ console.log(`isLinux: ${LINUX}`);
             `VRCX_friendNumber_${currentUser.id}`,
             0
         );
-        var maxFriendLogNumber = await database().getMaxFriendLogNumber();
+        var maxFriendLogNumber = await database.getMaxFriendLogNumber();
         if (this.friendNumber < maxFriendLogNumber) {
             this.friendNumber = maxFriendLogNumber;
         }
 
-        var friendLogCurrentArray = await database().getFriendLogCurrent();
+        var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
             this.friendLog.set(friend.userId, friend);
         }
         this.friendLogTable.data = [];
-        this.friendLogTable.data = await database().getFriendLogHistory();
+        this.friendLogTable.data = await database.getFriendLogHistory();
         this.refreshFriends(currentUser, true);
         await API.refreshFriends();
         await this.tryRestoreFriendNumber();
@@ -5618,7 +5619,7 @@ console.log(`isLinux: ${LINUX}`);
                         friendNumber: ref.$friendNumber
                     };
                     this.friendLogTable.data.push(friendLogHistory);
-                    database().addFriendLogHistory(friendLogHistory);
+                    database.addFriendLogHistory(friendLogHistory);
                     this.queueFriendLogNoty(friendLogHistory);
                     var friendLogCurrent = {
                         userId: id,
@@ -5627,7 +5628,7 @@ console.log(`isLinux: ${LINUX}`);
                         friendNumber: ref.$friendNumber
                     };
                     this.friendLog.set(id, friendLogCurrent);
-                    database().setFriendLogCurrent(friendLogCurrent);
+                    database.setFriendLogCurrent(friendLogCurrent);
                     this.notifyMenu('friendLog');
                     this.deleteFriendRequest(id);
                     this.updateSharedFeed(true);
@@ -5678,10 +5679,10 @@ console.log(`isLinux: ${LINUX}`);
                         displayName: ctx.displayName || id
                     };
                     this.friendLogTable.data.push(friendLogHistory);
-                    database().addFriendLogHistory(friendLogHistory);
+                    database.addFriendLogHistory(friendLogHistory);
                     this.queueFriendLogNoty(friendLogHistory);
                     this.friendLog.delete(id);
-                    database().deleteFriendLogCurrent(id);
+                    database.deleteFriendLogCurrent(id);
                     if (!this.hideUnfriends) {
                         this.notifyMenu('friendLog');
                     }
@@ -5700,7 +5701,7 @@ console.log(`isLinux: ${LINUX}`);
         for (var id of this.friendLog.keys()) {
             if (id === API.currentUser.id) {
                 this.friendLog.delete(id);
-                database().deleteFriendLogCurrent(id);
+                database.deleteFriendLogCurrent(id);
             } else if (!set.has(id)) {
                 this.deleteFriendship(id);
             }
@@ -5726,7 +5727,7 @@ console.log(`isLinux: ${LINUX}`);
                     friendNumber: ref.$friendNumber
                 };
                 this.friendLogTable.data.push(friendLogHistoryDisplayName);
-                database().addFriendLogHistory(friendLogHistoryDisplayName);
+                database.addFriendLogHistory(friendLogHistoryDisplayName);
                 this.queueFriendLogNoty(friendLogHistoryDisplayName);
                 var friendLogCurrent = {
                     userId: ref.id,
@@ -5735,7 +5736,7 @@ console.log(`isLinux: ${LINUX}`);
                     friendNumber: ref.$friendNumber
                 };
                 this.friendLog.set(ref.id, friendLogCurrent);
-                database().setFriendLogCurrent(friendLogCurrent);
+                database.setFriendLogCurrent(friendLogCurrent);
                 ctx.displayName = ref.displayName;
                 this.notifyMenu('friendLog');
                 this.updateSharedFeed(true);
@@ -5759,7 +5760,7 @@ console.log(`isLinux: ${LINUX}`);
                     friendNumber: ref.$friendNumber
                 };
                 this.friendLog.set(ref.id, friendLogCurrent3);
-                database().setFriendLogCurrent(friendLogCurrent3);
+                database.setFriendLogCurrent(friendLogCurrent3);
                 return;
             }
             var friendLogHistoryTrustLevel = {
@@ -5772,7 +5773,7 @@ console.log(`isLinux: ${LINUX}`);
                 friendNumber: ref.$friendNumber
             };
             this.friendLogTable.data.push(friendLogHistoryTrustLevel);
-            database().addFriendLogHistory(friendLogHistoryTrustLevel);
+            database.addFriendLogHistory(friendLogHistoryTrustLevel);
             this.queueFriendLogNoty(friendLogHistoryTrustLevel);
             var friendLogCurrent2 = {
                 userId: ref.id,
@@ -5781,7 +5782,7 @@ console.log(`isLinux: ${LINUX}`);
                 friendNumber: ref.$friendNumber
             };
             this.friendLog.set(ref.id, friendLogCurrent2);
-            database().setFriendLogCurrent(friendLogCurrent2);
+            database.setFriendLogCurrent(friendLogCurrent2);
             this.notifyMenu('friendLog');
             this.updateSharedFeed(true);
         }
@@ -5949,7 +5950,7 @@ console.log(`isLinux: ${LINUX}`);
                 ref.type !== 'ignoredFriendRequest' &&
                 !ref.type.includes('.')
             ) {
-                database().addNotificationToDatabase(ref);
+                database.addNotificationToDatabase(ref);
             }
             if ($app.friendLogInitStatus && $app.notificationInitStatus) {
                 if (
@@ -6225,7 +6226,7 @@ console.log(`isLinux: ${LINUX}`);
     if ($app.data.maxTableSize > 10000) {
         $app.data.maxTableSize = 1000;
     }
-    database().setmaxTableSize($app.data.maxTableSize);
+    database.setmaxTableSize($app.data.maxTableSize);
     $app.data.photonLobbyTimeoutThreshold = await configRepository.getInt(
         'VRCX_photonLobbyTimeoutThreshold',
         6000
@@ -9083,17 +9084,17 @@ console.log(`isLinux: ${LINUX}`);
                 D.memo = memo.memo;
             }
         });
-        database().getLastVisit(D.id, currentWorldMatch).then((ref) => {
+        database.getLastVisit(D.id, currentWorldMatch).then((ref) => {
             if (ref.worldId === D.id) {
                 D.lastVisit = ref.created_at;
             }
         });
-        database().getVisitCount(D.id).then((ref) => {
+        database.getVisitCount(D.id).then((ref) => {
             if (ref.worldId === D.id) {
                 D.visitCount = ref.visitCount;
             }
         });
-        database().getTimeSpentInWorld(D.id).then((ref) => {
+        database.getTimeSpentInWorld(D.id).then((ref) => {
             if (ref.worldId === D.id) {
                 D.timeSpent = ref.timeSpent;
             }
@@ -10356,7 +10357,7 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
 
-        var data = await database().getAllUserStats(userIds, displayNames);
+        var data = await database.getAllUserStats(userIds, displayNames);
         var friendListMap = new Map();
         for (var item of data) {
             if (!item.userId) {
@@ -10407,7 +10408,7 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     $app.methods.getUserStats = async function (ctx) {
-        var ref = await database().getUserStats(ctx);
+        var ref = await database.getUserStats(ctx);
         /* eslint-disable require-atomic-updates */
         ctx.$joinCount = ref.joinCount;
         ctx.$lastSeen = ref.lastSeen;
@@ -10743,7 +10744,7 @@ console.log(`isLinux: ${LINUX}`);
             type: 'Event',
             data: message
         };
-        database().addGamelogEventToDatabase(entry);
+        database.addGamelogEventToDatabase(entry);
         this.queueGameLogNoty(entry);
         this.addGameLog(entry);
         this.launchGame(location, '', this.isGameNoVR);
@@ -11312,19 +11313,19 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getSqliteTableSizes = async function () {
         this.sqliteTableSizes = {
-            gps: await database().getGpsTableSize(),
-            status: await database().getStatusTableSize(),
-            bio: await database().getBioTableSize(),
-            avatar: await database().getAvatarTableSize(),
-            onlineOffline: await database().getOnlineOfflineTableSize(),
-            friendLogHistory: await database().getFriendLogHistoryTableSize(),
-            notification: await database().getNotificationTableSize(),
-            location: await database().getLocationTableSize(),
-            joinLeave: await database().getJoinLeaveTableSize(),
-            portalSpawn: await database().getPortalSpawnTableSize(),
-            videoPlay: await database().getVideoPlayTableSize(),
-            event: await database().getEventTableSize(),
-            external: await database().getExternalTableSize()
+            gps: await database.getGpsTableSize(),
+            status: await database.getStatusTableSize(),
+            bio: await database.getBioTableSize(),
+            avatar: await database.getAvatarTableSize(),
+            onlineOffline: await database.getOnlineOfflineTableSize(),
+            friendLogHistory: await database.getFriendLogHistoryTableSize(),
+            notification: await database.getNotificationTableSize(),
+            location: await database.getLocationTableSize(),
+            joinLeave: await database.getJoinLeaveTableSize(),
+            portalSpawn: await database.getPortalSpawnTableSize(),
+            videoPlay: await database.getVideoPlayTableSize(),
+            event: await database.getEventTableSize(),
+            external: await database.getExternalTableSize()
         };
     };
 
@@ -11487,7 +11488,7 @@ console.log(`isLinux: ${LINUX}`);
                     type: 'Event',
                     data: data.Data
                 };
-                database().addGamelogEventToDatabase(entry);
+                database.addGamelogEventToDatabase(entry);
                 this.queueGameLogNoty(entry);
                 this.addGameLog(entry);
                 break;
@@ -11501,7 +11502,7 @@ console.log(`isLinux: ${LINUX}`);
                     userId: data.UserId,
                     location: this.lastLocation.location
                 };
-                database().addGamelogExternalToDatabase(entry);
+                database.addGamelogExternalToDatabase(entry);
                 this.queueGameLogNoty(entry);
                 this.addGameLog(entry);
                 break;
@@ -11981,7 +11982,7 @@ console.log(`isLinux: ${LINUX}`);
                 groupName: await this.getGroupName(L.groupId),
                 time: 0
             };
-            database().addGamelogLocationToDatabase(entry);
+            database.addGamelogLocationToDatabase(entry);
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
             this.addInstanceJoinHistory(location, dt);
@@ -12000,7 +12001,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getAvatarHistory = async function () {
         this.avatarHistory = new Set();
-        var historyArray = await database().getAvatarHistory(API.currentUser.id);
+        var historyArray = await database.getAvatarHistory(API.currentUser.id);
         this.avatarHistoryArray = historyArray;
         for (var i = 0; i < historyArray.length; i++) {
             var avatar = historyArray[i];
@@ -12016,8 +12017,8 @@ console.log(`isLinux: ${LINUX}`);
         avatarRequest.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
 
-            database().addAvatarToCache(ref);
-            database().addAvatarToHistory(ref.id);
+            database.addAvatarToCache(ref);
+            database.addAvatarToHistory(ref.id);
 
             if (ref.authorId === API.currentUser.id) {
                 return;
@@ -12041,7 +12042,7 @@ console.log(`isLinux: ${LINUX}`);
             return;
         }
         const timeSpent = Date.now() - API.currentUser.$previousAvatarSwapTime;
-        database().addAvatarTimeSpent(avatarId, timeSpent);
+        database.addAvatarTimeSpent(avatarId, timeSpent);
     };
 
     $app.methods.promptClearAvatarHistory = function () {
@@ -12060,7 +12061,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.clearAvatarHistory = function () {
         this.avatarHistory = new Set();
         this.avatarHistoryArray = [];
-        database().clearAvatarHistory();
+        database.clearAvatarHistory();
     };
 
     $app.data.databaseVersion = await configRepository.getInt(
@@ -12083,18 +12084,18 @@ console.log(`isLinux: ${LINUX}`);
                 `Updating database from ${this.databaseVersion} to ${databaseVersion}...`
             );
             try {
-                await database().cleanLegendFromFriendLog(); // fix friendLog spammed with crap
-                await database().fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
-                await database().fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
-                await database().fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
-                await database().fixBrokenGroupInvites(); // fix notification v2 in wrong table
-                await database().fixBrokenNotifications(); // fix notifications being null
-                await database().fixBrokenGroupChange(); // fix spam group left & name change
-                await database().fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
-                await database().fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
-                await database().upgradeDatabaseVersion(); // update database version
-                await database().vacuum(); // succ
-                await database().optimize();
+                await database.cleanLegendFromFriendLog(); // fix friendLog spammed with crap
+                await database.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
+                await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
+                await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
+                await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
+                await database.fixBrokenNotifications(); // fix notifications being null
+                await database.fixBrokenGroupChange(); // fix spam group left & name change
+                await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
+                await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
+                await database.upgradeDatabaseVersion(); // update database version
+                await database.vacuum(); // succ
+                await database.optimize();
                 await configRepository.setInt(
                     'VRCX_databaseVersion',
                     databaseVersion
@@ -12342,8 +12343,8 @@ console.log(`isLinux: ${LINUX}`);
             this.localWorldFavoriteGroups.push(group);
         }
         this.localWorldFavorites[group].unshift(ref);
-        database().addWorldToCache(ref);
-        database().addWorldToFavorites(worldId, group);
+        database.addWorldToCache(ref);
+        database.addWorldToFavorites(worldId, group);
         if (
             this.favoriteDialog.visible &&
             this.favoriteDialog.objectId === worldId
@@ -12384,9 +12385,9 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (!worldInFavorites) {
             $app.removeFromArray(this.localWorldFavoritesList, worldId);
-            database().removeWorldFromCache(worldId);
+            database.removeWorldFromCache(worldId);
         }
-        database().removeWorldFromFavorites(worldId, group);
+        database.removeWorldFromFavorites(worldId, group);
         if (
             this.favoriteDialog.visible &&
             this.favoriteDialog.objectId === worldId
@@ -12406,14 +12407,14 @@ console.log(`isLinux: ${LINUX}`);
         this.localWorldFavoriteGroups = [];
         this.localWorldFavoritesList = [];
         this.localWorldFavorites = {};
-        var worldCache = await database().getWorldCache();
+        var worldCache = await database.getWorldCache();
         for (var i = 0; i < worldCache.length; ++i) {
             var ref = worldCache[i];
             if (!API.cachedWorlds.has(ref.id)) {
                 API.applyWorld(ref);
             }
         }
-        var favorites = await database().getWorldFavorites();
+        var favorites = await database.getWorldFavorites();
         for (var i = 0; i < favorites.length; ++i) {
             var favorite = favorites[i];
             if (!this.localWorldFavoritesList.includes(favorite.worldId)) {
@@ -12497,7 +12498,7 @@ console.log(`isLinux: ${LINUX}`);
 
         $app.removeFromArray(this.localWorldFavoriteGroups, group);
         delete this.localWorldFavorites[group];
-        database().renameWorldFavoriteGroup(newName, group);
+        database.renameWorldFavoriteGroup(newName, group);
         this.sortLocalWorldFavorites();
     };
 
@@ -12523,7 +12524,7 @@ console.log(`isLinux: ${LINUX}`);
 
         $app.removeFromArray(this.localWorldFavoriteGroups, group);
         delete this.localWorldFavorites[group];
-        database().deleteWorldFavoriteGroup(group);
+        database.deleteWorldFavoriteGroup(group);
 
         for (var i = 0; i < this.localWorldFavoriteGroups.length; ++i) {
             var groupName = this.localWorldFavoriteGroups[i];
@@ -12545,14 +12546,14 @@ console.log(`isLinux: ${LINUX}`);
 
         worldIdRemoveList.forEach((id) => {
             $app.removeFromArray(this.localWorldFavoritesList, id);
-            database().removeWorldFromCache(id);
+            database.removeWorldFromCache(id);
         });
     };
 
     API.$on('WORLD', function (args) {
         if ($app.localWorldFavoritesList.includes(args.ref.id)) {
             // update db cache
-            database().addWorldToCache(args.ref);
+            database.addWorldToCache(args.ref);
         }
     });
 
@@ -12585,8 +12586,8 @@ console.log(`isLinux: ${LINUX}`);
             this.localAvatarFavoriteGroups.push(group);
         }
         this.localAvatarFavorites[group].unshift(ref);
-        database().addAvatarToCache(ref);
-        database().addAvatarToFavorites(avatarId, group);
+        database.addAvatarToCache(ref);
+        database.addAvatarToFavorites(avatarId, group);
         if (
             this.favoriteDialog.visible &&
             this.favoriteDialog.objectId === avatarId
@@ -12628,10 +12629,10 @@ console.log(`isLinux: ${LINUX}`);
         if (!avatarInFavorites) {
             $app.removeFromArray(this.localAvatarFavoritesList, avatarId);
             if (!this.avatarHistory.has(avatarId)) {
-                database().removeAvatarFromCache(avatarId);
+                database.removeAvatarFromCache(avatarId);
             }
         }
-        database().removeAvatarFromFavorites(avatarId, group);
+        database.removeAvatarFromFavorites(avatarId, group);
         if (
             this.favoriteDialog.visible &&
             this.favoriteDialog.objectId === avatarId
@@ -12667,7 +12668,7 @@ console.log(`isLinux: ${LINUX}`);
             }
 
             // update db cache
-            database().addAvatarToCache(args.ref);
+            database.addAvatarToCache(args.ref);
         }
     });
 
@@ -12682,14 +12683,14 @@ console.log(`isLinux: ${LINUX}`);
         this.localAvatarFavoriteGroups = [];
         this.localAvatarFavoritesList = [];
         this.localAvatarFavorites = {};
-        var avatarCache = await database().getAvatarCache();
+        var avatarCache = await database.getAvatarCache();
         for (var i = 0; i < avatarCache.length; ++i) {
             var ref = avatarCache[i];
             if (!API.cachedAvatars.has(ref.id)) {
                 API.applyAvatar(ref);
             }
         }
-        var favorites = await database().getAvatarFavorites();
+        var favorites = await database.getAvatarFavorites();
         for (var i = 0; i < favorites.length; ++i) {
             var favorite = favorites[i];
             if (!this.localAvatarFavoritesList.includes(favorite.avatarId)) {
@@ -12815,7 +12816,7 @@ console.log(`isLinux: ${LINUX}`);
 
         $app.removeFromArray(this.localAvatarFavoriteGroups, group);
         delete this.localAvatarFavorites[group];
-        database().renameAvatarFavoriteGroup(newName, group);
+        database.renameAvatarFavoriteGroup(newName, group);
         this.sortLocalAvatarFavorites();
     };
 
@@ -12854,7 +12855,7 @@ console.log(`isLinux: ${LINUX}`);
 
         $app.removeFromArray(this.localAvatarFavoriteGroups, group);
         delete this.localAvatarFavorites[group];
-        database().deleteAvatarFavoriteGroup(group);
+        database.deleteAvatarFavoriteGroup(group);
 
         for (var i = 0; i < this.localAvatarFavoriteGroups.length; ++i) {
             var groupName = this.localAvatarFavoriteGroups[i];
@@ -12904,7 +12905,7 @@ console.log(`isLinux: ${LINUX}`);
             if (!avatarInFavorites) {
                 $app.removeFromArray(this.localAvatarFavoritesList, id);
                 if (!this.avatarHistory.has(id)) {
-                    database().removeAvatarFromCache(id);
+                    database.removeAvatarFromCache(id);
                 }
             }
         });
@@ -13505,7 +13506,7 @@ console.log(`isLinux: ${LINUX}`);
     });
 
     $app.methods.getInstanceJoinHistory = async function () {
-        this.instanceJoinHistory = await database().getInstanceJoinHistory();
+        this.instanceJoinHistory = await database.getInstanceJoinHistory();
     };
 
     $app.methods.addInstanceJoinHistory = function (location, dateTime) {

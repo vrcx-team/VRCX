@@ -1,3 +1,4 @@
+import getDeviceId from '../utils/deviceId';
 import request from '../utils/requests';
 
 class TaskQueue {
@@ -16,18 +17,22 @@ class TaskQueue {
 
     // 添加任务：存入 SQLite 并加入队列
     async addTask({ url, method, data, params }) {
+        const deviceId = await getDeviceId();
         const task = {
             id: crypto.randomUUID(),
             url,
             method,
-            data,
+            data: {
+                data,
+                deviceId
+            },
             params,
             retry: 0,
             status: 'pending',
             created_at: Date.now()
         };
         if (this.db) {
-            await this.db.addTask(task);
+            await this.db.insertTask(task);
         }
         this.queue.push(task);
         this._notify();
@@ -52,7 +57,7 @@ class TaskQueue {
         try {
             await this._upload(task);
             if (this.db) {
-                await this.db.markTaskCompleted(task);
+                await this.db.markTaskSuccess(task);
             }
         } catch (e) {
             console.error('上传任务失败:', e);
@@ -70,9 +75,7 @@ class TaskQueue {
 
     // 实际上传请求
     async _upload(task) {
-        await request({
-            ...task
-        });
+        await request(task);
     }
 }
 const toaskQueue = new TaskQueue();
