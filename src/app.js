@@ -4254,7 +4254,7 @@ console.log(`isLinux: ${LINUX}`);
             $app.gameLogTable.filter
         );
         // eslint-disable-next-line require-atomic-updates
-        $app.feedSessionTable = await database.getFeeddatabase;
+        $app.feedSessionTable = await database.getFeedDatabase();
         await $app.feedTableLookup();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
