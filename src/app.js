@@ -492,7 +492,9 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.showCloudDataApiDialog = function () {
         this.isCloudDataApiDialogVisible = true;
     };
-
+    if ($app.data.cloudDataApiUrl) {
+        createService($app.data.cloudDataApiUrl);
+    }
     enableCloudDatabase($app.data.cloudDataApiEnabled);
     const database = getDatabase();
     if (database.getClassName() === 'CloudDatabase') {
@@ -13973,9 +13975,6 @@ console.log(`isLinux: ${LINUX}`);
     window.$app = $app;
     window.API = API;
     window.$t = $t;
-    if ($app.cloudDataApiUrl) {
-        createService($app.cloudDataApiUrl);
-    }
     for (let value of Object.values(vrcxClasses)) {
         value.updateRef($app);
     }

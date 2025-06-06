@@ -17,15 +17,14 @@ class TaskQueue {
 
     // 添加任务：存入 SQLite 并加入队列
     async addTask({ url, method, data, params }) {
-        const deviceId = await getDeviceId();
+        if (!data || data.length === 0) {
+            return;
+        }
         const task = {
             id: crypto.randomUUID(),
             url,
             method,
-            data: {
-                data,
-                deviceId
-            },
+            data,
             params,
             retry: 0,
             status: 'pending',
@@ -57,7 +56,7 @@ class TaskQueue {
         try {
             await this._upload(task);
             if (this.db) {
-                await this.db.markTaskSuccess(task);
+                await this.db.markTaskSuccess(task.id);
             }
         } catch (e) {
             console.error('上传任务失败:', e);
@@ -75,7 +74,14 @@ class TaskQueue {
 
     // 实际上传请求
     async _upload(task) {
-        await request(task);
+        const deviceId = await getDeviceId();
+        await request({
+            ...task,
+            data: {
+                data: task.data,
+                deviceId
+            }
+        });
     }
 }
 const toaskQueue = new TaskQueue();

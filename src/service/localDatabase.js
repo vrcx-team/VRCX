@@ -11,7 +11,9 @@ class LocalDatabase {
 
     async initUserTables(userId) {
         LocalDatabase.userId = userId;
-        LocalDatabase.userPrefix = userId.replaceAll('-', '').replaceAll('_', '');
+        LocalDatabase.userPrefix = userId
+            .replaceAll('-', '')
+            .replaceAll('_', '');
         // Fix escape, add underscore if prefix starts with a number
         if (LocalDatabase.userPrefix.match(/^\d/)) {
             LocalDatabase.userPrefix = '_' + LocalDatabase.userPrefix;
@@ -92,7 +94,7 @@ class LocalDatabase {
             `CREATE TABLE IF NOT EXISTS favorite_avatar (id INTEGER PRIMARY KEY, created_at TEXT, avatar_id TEXT, group_name TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS task_queue (id TEXT PRIMARY KEY, url TEXT NOT NULL, method TEXT NOT NULL, params TEXT, data TEXT, status TEXT NOT NULL, retry INTEGER DEFAULT 0, created_at INTEGER)`
+            `CREATE TABLE IF NOT EXISTS task_queue (id TEXT PRIMARY KEY, url TEXT NOT NULL, method TEXT NOT NULL, params TEXT NOT NULL, data TEXT NOT NULL, status TEXT NOT NULL, retry INTEGER DEFAULT 0, created_at INTEGER)`
         );
     }
 
@@ -1331,7 +1333,10 @@ class LocalDatabase {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        feedDatabase.splice(0, feedDatabase.length - LocalDatabase.maxTableSize);
+        feedDatabase.splice(
+            0,
+            feedDatabase.length - LocalDatabase.maxTableSize
+        );
         return feedDatabase;
     }
 
@@ -1497,7 +1502,10 @@ class LocalDatabase {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        feedDatabase.splice(0, feedDatabase.length - LocalDatabase.maxTableSize);
+        feedDatabase.splice(
+            0,
+            feedDatabase.length - LocalDatabase.maxTableSize
+        );
         return feedDatabase;
     }
 
@@ -2883,7 +2891,7 @@ class LocalDatabase {
                 created_at: dbRow[7]
             };
             tasks.push(task);
-        }, `SELECT * FROM task_queue WHERE status = 'pending' ORDER BY created_at ASC`);
+        }, `SELECT * FROM task_queue WHERE status != 'success' ORDER BY created_at ASC`);
         return tasks;
     }
 
