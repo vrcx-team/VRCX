@@ -39,7 +39,7 @@ mixin settingsTab
                     .options-container-item
                         span.name {{ $t('view.settings.general.vrcx_updater.update_action') }}
                         br
-                        el-radio-group(v-model='autoUpdateVRCX' size='mini' style='margin-top: 5px')
+                        el-radio-group(v-model='autoUpdateVRCX' size='mini' style='margin-top: 5px' @input='saveAutoUpdateVRCX')
                             el-radio-button(label='Off') {{ $t('view.settings.general.vrcx_updater.auto_update_off') }}
                             el-radio-button(label='Notify') {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
                             el-radio-button(label='Auto Download') {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
