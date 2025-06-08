@@ -3005,7 +3005,10 @@
         }
         const ref = API.cachedUsers.get(targetUserId);
         if (typeof ref !== 'undefined') {
-            ref.note = _note;
+            API.applyUser({
+                id: targetUserId,
+                note: _note
+            });
         }
     }
 

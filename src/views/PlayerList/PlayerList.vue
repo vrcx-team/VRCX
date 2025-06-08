@@ -814,6 +814,11 @@
                             </div>
                         </template>
                     </el-table-column>
+                    <el-table-column :label="t('table.playerList.note')" width="150" prop="ref.note">
+                        <template #default="scope">
+                            <span v-text="scope.row.ref.note"></span>
+                        </template>
+                    </el-table-column>
                 </data-tables>
             </div>
         </div>
