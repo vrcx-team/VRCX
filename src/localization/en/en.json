@@ -1917,6 +1917,7 @@
             "rank": "Rank",
             "language": "Language",
             "bioLink": "Bio Links",
+            "note": "Note",
             "date": "Date",
             "user": "User",
             "type": "Type",
