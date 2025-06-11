@@ -364,7 +364,9 @@ console.log(`isLinux: ${LINUX}`);
                 getAvatarGallery: this.getAvatarGallery,
                 inviteImageUpload: this.inviteImageUpload,
                 clearInviteImageUpload: this.clearInviteImageUpload,
-                isLinux: this.isLinux
+                isLinux: this.isLinux,
+                openFolderGeneric: this.openFolderGeneric,
+                deleteVRChatCache: this.deleteVRChatCache
             };
         },
         el: '#root',
@@ -6277,7 +6279,7 @@ console.log(`isLinux: ${LINUX}`);
     );
     $app.data.hideUserMemos = await configRepository.getBool(
         'VRCX_hideUserMemos',
-        true
+        false
     );
     $app.data.hideUnfriends = await configRepository.getBool(
         'VRCX_hideUnfriends',

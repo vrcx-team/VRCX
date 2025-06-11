@@ -149,7 +149,9 @@
             <el-tab-pane v-loading="galleryDialogEmojisLoading" lazy>
                 <span slot="label">
                     {{ t('dialog.gallery_icons.emojis') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ emojiTable.length }}/9 </span>
+                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                        {{ emojiTable.length }}/{{ API.cachedConfig?.maxUserEmoji }}
+                    </span>
                 </span>
                 <input
                     id="EmojiUploadButton"
@@ -289,7 +291,9 @@
             <el-tab-pane v-loading="galleryDialogStickersLoading" lazy>
                 <span slot="label">
                     {{ t('dialog.gallery_icons.stickers') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ stickerTable.length }}/9 </span>
+                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                        {{ stickerTable.length }}/{{ API.cachedConfig?.maxUserStickers }}
+                    </span>
                 </span>
                 <input
                     id="StickerUploadButton"
