@@ -157,6 +157,8 @@ import _groups from './classes/groups.js';
 import _vrcRegistry from './classes/vrcRegistry.js';
 import _restoreFriendOrder from './classes/restoreFriendOrder.js';
 
+import { userNotes } from './classes/userNotes.js';
+
 import pugTemplate from './app.pug';
 
 // API classes
@@ -766,16 +768,16 @@ console.log(`isLinux: ${LINUX}`);
 
     API.applyUser = function (json) {
         var ref = this.cachedUsers.get(json.id);
-        if (typeof json.statusDescription !== 'undefined') {
+        if (json.statusDescription) {
             json.statusDescription = $utils.replaceBioSymbols(
                 json.statusDescription
             );
             json.statusDescription = $app.removeEmojis(json.statusDescription);
         }
-        if (typeof json.bio !== 'undefined') {
+        if (json.bio) {
             json.bio = $utils.replaceBioSymbols(json.bio);
         }
-        if (typeof json.note !== 'undefined') {
+        if (json.note) {
             json.note = $utils.replaceBioSymbols(json.note);
         }
         if (json.currentAvatarImageUrl === $app.robotUrl) {
@@ -807,7 +809,7 @@ console.log(`isLinux: ${LINUX}`);
                 last_platform: '',
                 location: '',
                 platform: '',
-                note: '',
+                note: null, // keep as null, to detect deleted notes
                 profilePicOverride: '',
                 profilePicOverrideThumbnail: '',
                 pronouns: '',
@@ -951,6 +953,9 @@ console.log(`isLinux: ${LINUX}`);
                     has = true;
                     props[prop] = [tobe, asis];
                 }
+            }
+            if ($ref.note !== null && $ref.note !== ref.note) {
+                userNotes.checkNote(ref.id, ref.note);
             }
             // FIXME
             // if the status is offline, just ignore status and statusDescription only.
@@ -1240,13 +1245,14 @@ console.log(`isLinux: ${LINUX}`);
         }
         ref.$disabledContentSettings = [];
         if (json.contentSettings && Object.keys(json.contentSettings).length) {
-            for (var setting in $app.instanceContentSettings) {
-                if (json.contentSettings[setting]) {
+            for (var setting of $app.instanceContentSettings) {
+                if (
+                    typeof json.contentSettings[setting] === 'undefined' ||
+                    json.contentSettings[setting] === true
+                ) {
                     continue;
                 }
-                ref.$disabledContentSettings.push(
-                    $app.instanceContentSettings[setting]
-                );
+                ref.$disabledContentSettings.push(setting);
             }
         }
         return ref;
@@ -4282,6 +4288,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         await $app.getAvatarHistory();
         await $app.getAllUserMemos();
+        userNotes.init();
         if ($app.randomUserColours) {
             $app.getNameColour(this.currentUser.id).then((colour) => {
                 this.currentUser.$userColour = colour;
@@ -6315,7 +6322,7 @@ console.log(`isLinux: ${LINUX}`);
     );
     $app.data.hideUserMemos = await configRepository.getBool(
         'VRCX_hideUserMemos',
-        false
+        true
     );
     $app.data.hideUnfriends = await configRepository.getBool(
         'VRCX_hideUnfriends',
@@ -12356,6 +12363,9 @@ console.log(`isLinux: ${LINUX}`);
         if (this.worldDialog.visible && this.worldDialog.id === worldId) {
             this.worldDialog.isFavorite = true;
         }
+
+        // update UI
+        this.sortLocalWorldFavorites();
     };
 
     $app.methods.removeLocalWorldFavorite = function (worldId, group) {
@@ -12599,6 +12609,9 @@ console.log(`isLinux: ${LINUX}`);
         if (this.avatarDialog.visible && this.avatarDialog.id === avatarId) {
             this.avatarDialog.isFavorite = true;
         }
+
+        // update UI
+        this.sortLocalAvatarFavorites();
     };
 
     $app.methods.removeLocalAvatarFavorite = function (avatarId, group) {

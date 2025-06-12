@@ -49,13 +49,7 @@ class LocalDatabase {
             `CREATE TABLE IF NOT EXISTS ${LocalDatabase.userPrefix}_avatar_history (avatar_id TEXT PRIMARY KEY, created_at TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
-        );
-        await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS world_memos (world_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
-        );
-        await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS avatar_memos (avatar_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${LocalDatabase.userPrefix}_notes (user_id TEXT PRIMARY KEY, display_name TEXT, note TEXT, created_at TEXT)`
         );
     }
 
@@ -92,6 +86,15 @@ class LocalDatabase {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS favorite_avatar (id INTEGER PRIMARY KEY, created_at TEXT, avatar_id TEXT, group_name TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS world_memos (world_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS avatar_memos (avatar_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS task_queue (id TEXT PRIMARY KEY, url TEXT NOT NULL, method TEXT NOT NULL, params TEXT NOT NULL, data TEXT NOT NULL, status TEXT NOT NULL, retry INTEGER DEFAULT 0, created_at INTEGER)`
@@ -2862,6 +2865,8 @@ class LocalDatabase {
         return result;
     }
 
+    // task queue
+    
     async insertTask(task) {
         sqliteService.executeNonQuery(
             `INSERT INTO task_queue (id, url, method, params, data, status, created_at) VALUES (@id, @url, @method, @params, @data, @status, @created_at)`,
@@ -2913,8 +2918,46 @@ class LocalDatabase {
             }
         );
     }
+
+    // user notes
+
+    async addUserNote(note) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${LocalDatabase.userPrefix}_notes (user_id, display_name, note, created_at) VALUES (@user_id, @display_name, @note, @created_at)`,
+            {
+                '@user_id': note.userId,
+                '@display_name': note.displayName,
+                '@note': note.note,
+                '@created_at': note.createdAt
+            }
+        );
+    }
+
+    async getAllUserNotes() {
+        var data = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                userId: dbRow[0],
+                displayName: dbRow[1],
+                note: dbRow[2],
+                createdAt: dbRow[3]
+            };
+            data.push(row);
+        }, `SELECT user_id, display_name, note, created_at FROM ${LocalDatabase.userPrefix}_notes`);
+        return data;
+    }
+
+    async deleteUserNote(userId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${LocalDatabase.userPrefix}_notes WHERE user_id = @userId`,
+            {
+                '@userId': userId
+            }
+        );
+    }
 }
 
 var self = new LocalDatabase();
+window.database = self;
 
 export { self as default, LocalDatabase };
