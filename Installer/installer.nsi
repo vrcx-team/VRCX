@@ -9,15 +9,10 @@
 
 ;--------------------------------
 ;Version
-    ; Check if PRODUCT_VERSION_FROM_FILE is defined externally.
-    ; If not, this means the build script didn't pass the version, so we error out.
-    !ifndef PRODUCT_VERSION_FROM_FILE
-        !error "PRODUCT_VERSION_FROM_FILE is not defined. Please pass it to makensis.exe using /D."
-    !endif
+    !include "version_define.nsh"
 
-    ; *** OVERRIDE YOUR DEFINES HERE ***
-    !define PRODUCT_VERSION "${PRODUCT_VERSION_FROM_FILE}"
-    !define VERSION "${PRODUCT_VERSION_FROM_FILE}"
+    !define PRODUCT_VERSION ${PRODUCT_VERSION_FROM_FILE}
+    !define VERSION ${PRODUCT_VERSION_FROM_FILE}
 
     VIProductVersion "${PRODUCT_VERSION}"
     VIFileVersion "${VERSION}"
