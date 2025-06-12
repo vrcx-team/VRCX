@@ -1,16 +1,16 @@
 import taskQueue from '../../service/taskQueue';
 
-export function insert(data) {
+export function cacheWorldInsert(data) {
     taskQueue({
-        url: '/memo',
+        url: '/cache/world',
         method: 'POST',
         data
     });
 }
 
-export function del(id) {
+export function cacheWorldDeleteById(id) {
     taskQueue({
-        url: `/memo/${id}`,
+        url: `/cache/world/${id}`,
         method: 'DELETE'
     });
 }

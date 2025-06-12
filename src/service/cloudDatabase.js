@@ -1,9 +1,46 @@
 import { LocalDatabase } from './localDatabase';
-import { insert as memoInsert } from '../api/cloud/memo';
+import { insert as memoInsert, del as memoDelete } from '../api/cloud/memo';
 import {
     insert as gamelogJoinLeaveInsert,
-    batchInsert as gamelogJoinLeaveBatchInsert
+    batchInsert as gamelogJoinLeaveBatchInsert,
+    gameLogInstanceDelete
 } from '../api/cloud/gamelogJoinLeave';
+import {
+    deleteWorldMemoByWorldId,
+    insertWorldMemo
+} from '../api/cloud/worldMemo';
+import {
+    deleteAvatarMemoByAvatarId,
+    insertAvatarMemo
+} from '../api/cloud/avatarMemo';
+import {
+    friendLogCurrentDeleteByUserId,
+    friendLogCurrentInsert,
+    friendLogCurrentInsertBatch
+} from '../api/cloud/FriendLogCurrent';
+import {
+    friendLogHistoryDeleteById,
+    friendLogHistoryInsert,
+    friendLogHistoryInsertBatch
+} from '../api/cloud/friendLogHistory';
+import { insertFeedGps } from '../api/cloud/feedGps';
+import { insertFeedStatus } from '../api/cloud/feedStatus';
+import { insertFeedBio } from '../api/cloud/feedBio';
+import { insertFeedAvatar } from '../api/cloud/feedAvatar';
+import { insertFeedOnlineOffline } from '../api/cloud/feedOnlineOffline';
+import { insertGameLogLocation, updateGameLogLocation } from '../api/cloud/gameLogLocation';
+import { gameLogPortalSpawnInsert } from '../api/cloud/gameLogPortalSpawn';
+import { gameLogVideoPlayDelete, gameLogVideoPlayInsert } from '../api/cloud/gameLogVideoPlay';
+import { gamelogResourceLoadDelete, gamelogResourceLoadInsert } from '../api/cloud/gamelogResourceLoad';
+import { gameLogEventDelete, gameLogEventInsert } from '../api/cloud/gameLogEvent';
+import { gameLogExternalDelete, gameLogExternalInsert } from '../api/cloud/gamelogExternal';
+import { notificationExpiredUpdate, notificationsDel, notificationsInsert } from '../api/cloud/notification';
+import { moderationDel, moderationInsert } from '../api/cloud/moderation';
+import { cacheAvatarDelete, cacheAvatarInsert } from '../api/cloud/cacheAvatar';
+import { avatarHistoryAddTime, avatarHistoryClear, avatarHistoryInsert } from '../api/cloud/avatarHistory';
+import { favoriteAvatarDeleteByAvatarAndGroupName, favoriteAvatarDeleteByGroupName, favoriteAvatarInsert, favoriteAvatarRename } from '../api/cloud/favoriteAvatar';
+import { cacheWorldDeleteById, cacheWorldInsert } from '../api/cloud/cacheWorld';
+import { favoriteWorldDelete, favoriteWorldDeleteByGroupName, favoriteWorldInsert, favoriteWorldRename } from '../api/cloud/favoriteWorld';
 
 class CloudDatabase extends LocalDatabase {
     setmaxTableSize(limit) {
@@ -43,6 +80,7 @@ class CloudDatabase extends LocalDatabase {
 
     async deleteUserMemo(userId) {
         super.deleteUserMemo(userId);
+        memoDelete(userId);
     }
 
     async getWorldMemo(worldId) {
@@ -51,10 +89,12 @@ class CloudDatabase extends LocalDatabase {
 
     setWorldMemo(entry) {
         super.setWorldMemo(entry);
+        insertWorldMemo(entry);
     }
 
     deleteWorldMemo(worldId) {
         super.deleteWorldMemo(worldId);
+        deleteWorldMemoByWorldId(worldId);
     }
 
     async getAvatarMemoDB(avatarId) {
@@ -63,10 +103,12 @@ class CloudDatabase extends LocalDatabase {
 
     setAvatarMemo(entry) {
         super.setAvatarMemo(entry);
+        insertAvatarMemo(entry);
     }
 
     deleteAvatarMemo(avatarId) {
         super.deleteAvatarMemo(avatarId);
+        deleteAvatarMemoByAvatarId(avatarId);
     }
 
     async getFriendLogCurrent() {
@@ -75,14 +117,27 @@ class CloudDatabase extends LocalDatabase {
 
     setFriendLogCurrent(entry) {
         super.setFriendLogCurrent(entry);
+        friendLogCurrentInsert({
+            ...entry,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     setFriendLogCurrentArray(inputData) {
         super.setFriendLogCurrentArray(inputData);
+        friendLogCurrentInsertBatch(
+            inputData.map((e) => {
+                return {
+                    ...e,
+                    currentUser: LocalDatabase.userPrefix
+                };
+            })
+        );
     }
 
     deleteFriendLogCurrent(userId) {
         super.deleteFriendLogCurrent(userId);
+        friendLogCurrentDeleteByUserId(userId);
     }
 
     async getMaxFriendLogNumber() {
@@ -95,34 +150,67 @@ class CloudDatabase extends LocalDatabase {
 
     addFriendLogHistory(entry) {
         super.addFriendLogHistory(entry);
+        friendLogHistoryInsert({
+            ...entry,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     addFriendLogHistoryArray(inputData) {
-        super.addFriendLogHistoryArray(inputData);
+        super.addFriendLogHistoryArray(
+            inputData.map((e) => {
+                return {
+                    ...e,
+                    currentUser: LocalDatabase.userPrefix
+                };
+            })
+        );
+        friendLogHistoryInsertBatch();
     }
 
     deleteFriendLogHistory(rowId) {
         super.deleteFriendLogHistory(rowId);
+        friendLogHistoryDeleteById(rowId);
     }
 
     addGPSToDatabase(entry) {
         super.addGPSToDatabase(entry);
+        insertFeedGps({
+            ...entry,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     addStatusToDatabase(entry) {
         super.addStatusToDatabase(entry);
+        insertFeedStatus({
+            ...entry,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     addBioToDatabase(entry) {
         super.addBioToDatabase(entry);
+        insertFeedBio({
+            ...entry,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     addAvatarToDatabase(entry) {
         super.addAvatarToDatabase(entry);
+        insertFeedAvatar({
+            ...entry,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     addOnlineOfflineToDatabase(entry) {
         super.addOnlineOfflineToDatabase(entry);
+        insertFeedOnlineOffline({
+            ...entry,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     async getGamelogDatabase() {
@@ -131,10 +219,12 @@ class CloudDatabase extends LocalDatabase {
 
     addGamelogLocationToDatabase(entry) {
         super.addGamelogLocationToDatabase(entry);
+        insertGameLogLocation(entry);
     }
 
     updateGamelogLocationTimeToDatabase(entry) {
         super.updateGamelogLocationTimeToDatabase(entry);
+        updateGameLogLocation(entry);
     }
 
     addGamelogJoinLeaveToDatabase(entry) {
@@ -149,22 +239,27 @@ class CloudDatabase extends LocalDatabase {
 
     addGamelogPortalSpawnToDatabase(entry) {
         super.addGamelogPortalSpawnToDatabase(entry);
+        gameLogPortalSpawnInsert(entry)
     }
 
     addGamelogVideoPlayToDatabase(entry) {
         super.addGamelogVideoPlayToDatabase(entry);
+        gameLogVideoPlayInsert(entry)
     }
 
     addGamelogResourceLoadToDatabase(entry) {
         super.addGamelogResourceLoadToDatabase(entry);
+        gamelogResourceLoadInsert(entry)
     }
 
     addGamelogEventToDatabase(entry) {
         super.addGamelogEventToDatabase(entry);
+        gameLogEventInsert(entry);
     }
 
     addGamelogExternalToDatabase(entry) {
         super.addGamelogExternalToDatabase(entry);
+        gameLogExternalInsert(entry)
     }
 
     async getNotifications() {
@@ -173,14 +268,22 @@ class CloudDatabase extends LocalDatabase {
 
     addNotificationToDatabase(row) {
         super.addNotificationToDatabase(row);
+        notificationsInsert({
+            ...row,
+            id: null,
+            notId: row.id,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     deleteNotification(rowId) {
         super.deleteNotification(rowId);
+        notificationsDel(rowId)
     }
 
     updateNotificationExpired(entry) {
         super.updateNotificationExpired(entry);
+        notificationExpiredUpdate(entry)
     }
 
     async getGpsTableSize() {
@@ -301,10 +404,12 @@ class CloudDatabase extends LocalDatabase {
 
     setModeration(entry) {
         super.setModeration(entry);
+        moderationInsert(entry)
     }
 
     deleteModeration(userId) {
         super.deleteModeration(userId);
+        moderationDel(userId)
     }
 
     async getpreviousInstancesByUserId(input) {
@@ -313,6 +418,7 @@ class CloudDatabase extends LocalDatabase {
 
     deleteGameLogInstance(input) {
         super.deleteGameLogInstance(input);
+        gameLogInstanceDelete(input)
     }
 
     deleteGameLogEntry(input) {
@@ -321,18 +427,22 @@ class CloudDatabase extends LocalDatabase {
 
     deleteGameLogVideoPlay(input) {
         super.deleteGameLogVideoPlay(input);
+        gameLogVideoPlayDelete(input)
     }
 
     deleteGameLogEvent(input) {
         super.deleteGameLogEvent(input);
+        gameLogEventDelete(input)
     }
 
     deleteGameLogExternal(input) {
         super.deleteGameLogExternal(input);
+        gameLogExternalDelete(input)
     }
 
     deleteGameLogResourceLoad(input) {
         super.deleteGameLogResourceLoad(input);
+        gamelogResourceLoadDelete(input)
     }
 
     async getpreviousInstancesByWorldId(input) {
@@ -357,10 +467,20 @@ class CloudDatabase extends LocalDatabase {
 
     addAvatarToCache(entry) {
         super.addAvatarToCache(entry);
+        cacheAvatarInsert({
+            ...entry,
+            addedAt: new Date().toJSON()
+        });
     }
 
     addAvatarToHistory(avatarId) {
         super.addAvatarToHistory(avatarId);
+        avatarHistoryInsert({
+            avatarId: avatarId,
+            created_at: new Date().toJSON(),
+            time: 0,
+            currentUser: LocalDatabase.userPrefix
+        });
     }
 
     async getAvatarTimeSpent(avatarId) {
@@ -369,6 +489,10 @@ class CloudDatabase extends LocalDatabase {
 
     addAvatarTimeSpent(avatarId, timeSpent) {
         super.addAvatarTimeSpent(avatarId, timeSpent);
+        avatarHistoryAddTime({
+            avatarId,
+            time: timeSpent
+        });
     }
 
     async getAvatarHistory(currentUserId, limit = 100) {
@@ -381,22 +505,37 @@ class CloudDatabase extends LocalDatabase {
 
     clearAvatarHistory() {
         super.clearAvatarHistory();
+        avatarHistoryClear(LocalDatabase.userPrefix);
     }
 
     addAvatarToFavorites(avatarId, groupName) {
         super.addAvatarToFavorites(avatarId, groupName);
+        favoriteAvatarInsert({
+            avatarId,
+            groupName,
+            created_at: new Date().toJSON()
+        });
     }
 
     renameAvatarFavoriteGroup(newGroupName, groupName) {
         super.renameAvatarFavoriteGroup(newGroupName, groupName);
+        favoriteAvatarRename({
+            newGroupName,
+            groupName
+        });
     }
 
     deleteAvatarFavoriteGroup(groupName) {
         super.deleteAvatarFavoriteGroup(groupName);
+        favoriteAvatarDeleteByGroupName(groupName);
     }
 
     removeAvatarFromFavorites(avatarId, groupName) {
         super.removeAvatarFromFavorites(avatarId, groupName);
+        favoriteAvatarDeleteByAvatarAndGroupName({
+            avatarId,
+            groupName
+        });
     }
 
     async getAvatarFavorites() {
@@ -405,6 +544,7 @@ class CloudDatabase extends LocalDatabase {
 
     removeAvatarFromCache(avatarId) {
         super.removeAvatarFromCache(avatarId);
+        cacheAvatarDelete(avatarId);
     }
 
     async getAvatarCache() {
@@ -413,22 +553,37 @@ class CloudDatabase extends LocalDatabase {
 
     addWorldToCache(entry) {
         super.addWorldToCache(entry);
+        cacheWorldInsert(entry)
     }
 
     addWorldToFavorites(worldId, groupName) {
         super.addWorldToFavorites(worldId, groupName);
+        favoriteWorldInsert({
+            worldId,
+            groupName,
+            createdAt: new Date().toJSON()
+        });
     }
 
     renameWorldFavoriteGroup(newGroupName, groupName) {
         super.renameWorldFavoriteGroup(newGroupName, groupName);
+        favoriteWorldRename({
+            newGroupName,
+            groupName
+        });
     }
 
     deleteWorldFavoriteGroup(groupName) {
         super.deleteWorldFavoriteGroup(groupName);
+        favoriteWorldDelete(groupName);
     }
 
     removeWorldFromFavorites(worldId, groupName) {
         super.removeWorldFromFavorites(worldId, groupName);
+        favoriteWorldDeleteByGroupName({
+            worldId,
+            groupName
+        })
     }
 
     async getWorldFavorites() {
@@ -437,6 +592,7 @@ class CloudDatabase extends LocalDatabase {
 
     removeWorldFromCache(worldId) {
         super.removeWorldFromCache(worldId);
+        cacheWorldDeleteById(worldId)
     }
 
     async getWorldCache() {

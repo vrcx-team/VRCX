@@ -99,5 +99,5 @@ export function initTaskQueue(db) {
 }
 
 export default function (data) {
-    return toaskQueue.addTask(data);
+    toaskQueue.addTask(data);
 }

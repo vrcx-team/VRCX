@@ -14,3 +14,11 @@ export function batchInsert(data) {
         data
     });
 }
+
+export function gameLogInstanceDelete(params) {
+    taskQueue({
+        url: '',
+        method: 'DELETE',
+        params
+    });
+}
