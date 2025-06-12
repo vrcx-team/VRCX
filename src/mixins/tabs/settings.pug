@@ -1069,7 +1069,7 @@ mixin settingsTab
                     .options-container-item
                         el-button(size='small' icon='el-icon-tickets' @click='showConsole') {{ $t('view.settings.advanced.advanced.cache_debug.show_console') }}
                 //- Advanced | VRCX Remote Data API
-                .options-container
+                .options-container(style="display: none")
                     span.header {{ $t('view.settings.advanced.advanced.cloud_data_api.header') }}
                     .options-container-item
                         simple-switch(
