@@ -40,7 +40,7 @@ export default class extends baseClass {
                 return true;
             }
             if (
-                value.startsWith('wrld_') &&
+                (value.startsWith('wrld_') || value.startsWith('grp_')) &&
                 String(row.location).toUpperCase().includes(value)
             ) {
                 return true;
