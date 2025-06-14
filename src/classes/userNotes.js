@@ -9,9 +9,10 @@ const userNotes = {
     notes: new Map(),
 
     async init() {
+        this.lastNoteCheck = new Date();
+        this.lastDbNoteDate = null;
+        this.notes.clear();
         try {
-            this.lastNoteCheck = new Date();
-            this.notes.clear();
             // todo: get users from store
             const users = window.API.cachedUsers;
             const dbNotes = await database.getAllUserNotes();
@@ -93,7 +94,6 @@ const userNotes = {
     },
 
     async checkNote(userId, newNote) {
-        console.log('checkNote', userId, newNote);
         // last check was more than than 5 minutes ago
         if (
             !this.lastNoteCheck ||

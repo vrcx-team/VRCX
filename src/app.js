@@ -2001,6 +2001,14 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('LOGIN', function () {
         $app.localFavoriteFriends.clear();
         $app.currentUserGroupsInit = false;
+        this.cachedGroups.clear();
+        this.cachedAvatars.clear();
+        this.cachedWorlds.clear();
+        this.cachedUsers.clear();
+        this.cachedInstances.clear();
+        this.cachedAvatarNames.clear();
+        this.cachedAvatarModerations.clear();
+        this.cachedPlayerModerations.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         this.cachedFavoriteGroups.clear();
@@ -5681,6 +5689,9 @@ console.log(`isLinux: ${LINUX}`);
         }
         if (ctx.friendNumber) {
             ref.$friendNumber = ctx.friendNumber;
+        }
+        if (!ref.$friendNumber) {
+            ref.$friendNumber = 0; // no null
         }
         if (ctx.displayName !== ref.displayName) {
             if (ctx.displayName) {
