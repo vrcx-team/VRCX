@@ -21,6 +21,8 @@ import inviteMessagesRequest from './inviteMessages';
 import imageRequest from './image';
 import miscRequest from './misc';
 import groupRequest from './group';
+import inventoryRequest from './inventory';
+import propRequest from './prop';
 
 window.request = {
     userRequest,
@@ -37,7 +39,9 @@ window.request = {
     inviteMessagesRequest,
     imageRequest,
     miscRequest,
-    groupRequest
+    groupRequest,
+    inventoryRequest,
+    propRequest
 };
 
 export {
@@ -55,5 +59,7 @@ export {
     inviteMessagesRequest,
     imageRequest,
     miscRequest,
-    groupRequest
+    groupRequest,
+    inventoryRequest,
+    propRequest
 };

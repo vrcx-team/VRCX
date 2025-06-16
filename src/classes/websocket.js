@@ -559,6 +559,15 @@ export default class extends baseClass {
                         // on avatar gallery image upload
                     } else if (contentType === 'invitePhoto') {
                         // on uploading invite photo
+                    } else if (contentType === 'inventory') {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogInventoryLoading
+                        ) {
+                            $app.getInventory();
+                        }
+                        // on consuming a bundle
+                        // {contentType: 'inventory', itemId: 'inv_', itemType: 'prop', actionType: 'add'}
                     } else if (!contentType) {
                         console.log(
                             'content-refresh without contentType',

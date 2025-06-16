@@ -153,6 +153,7 @@ import _languages from './classes/languages.js';
 import _groups from './classes/groups.js';
 import _vrcRegistry from './classes/vrcRegistry.js';
 import _restoreFriendOrder from './classes/restoreFriendOrder.js';
+import _inventory from './classes/inventory.js';
 
 import { userNotes } from './classes/userNotes.js';
 
@@ -244,7 +245,8 @@ console.log(`isLinux: ${LINUX}`);
         languages: new _languages($app, API, $t),
         groups: new _groups($app, API, $t),
         vrcRegistry: new _vrcRegistry($app, API, $t),
-        restoreFriendOrder: new _restoreFriendOrder($app, API, $t)
+        restoreFriendOrder: new _restoreFriendOrder($app, API, $t),
+        inventory: new _inventory($app, API, $t)
     };
 
     await configRepository.init();
@@ -2014,6 +2016,7 @@ console.log(`isLinux: ${LINUX}`);
         this.cachedFavoriteGroups.clear();
         this.cachedFavoriteGroupsByTypeName.clear();
         this.currentUserGroups.clear();
+        this.currentUserInventory.clear();
         this.queuedInstances.clear();
         this.favoriteFriendGroups = [];
         this.favoriteWorldGroups = [];
@@ -9859,7 +9862,8 @@ console.log(`isLinux: ${LINUX}`);
         'stickers',
         'pedestals',
         'prints',
-        'drones'
+        'drones',
+        'items'
     ];
 
     $app.methods.createNewInstance = async function (worldId = '', options) {
@@ -10803,6 +10807,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.galleryDialogEmojisLoading = false;
     $app.data.galleryDialogStickersLoading = false;
     $app.data.galleryDialogPrintsLoading = false;
+    $app.data.galleryDialogInventoryLoading = false;
 
     API.$on('LOGIN', function () {
         $app.galleryTable = [];
@@ -10815,6 +10820,7 @@ console.log(`isLinux: ${LINUX}`);
         this.refreshEmojiTable();
         this.refreshStickerTable();
         this.refreshPrintTable();
+        this.getInventory();
         workerTimers.setTimeout(() => this.setGalleryTab(pageNum), 100);
     };
 
