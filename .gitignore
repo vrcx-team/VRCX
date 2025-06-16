@@ -5,3 +5,4 @@ obj1/
 .idea/
 *.log
 *.DotSettings.user
+Installer/version_define.nsh

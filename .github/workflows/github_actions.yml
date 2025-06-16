@@ -12,24 +12,27 @@ jobs:
         runs-on: ubuntu-latest
         outputs:
             version: ${{ steps.version.outputs.version }}
+            date: ${{ steps.version.outputs.date }}
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - id: version
               run: |
                   git_hash=$(git rev-parse --short "$GITHUB_SHA")
                   export FILENAME="$(date '+%Y-%m-%dT%H.%M')-${git_hash}"
-                  echo "::set-output name=version::${FILENAME}"
+                  export DATE="$(date '+%Y.%m.%d')"
+                  echo "version=${FILENAME}" >> $GITHUB_OUTPUT
+                  echo "date=${DATE}" >> $GITHUB_OUTPUT
 
     build_dotnet_windows:
         runs-on: windows-latest
         needs: set_version
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup .NET 9
-              uses: actions/setup-dotnet@v3
+              uses: actions/setup-dotnet@v4
               with:
                   dotnet-version: '9.0.x'
             - name: Set version
@@ -51,10 +54,10 @@ jobs:
         needs: set_version
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Setup .NET 9
-              uses: actions/setup-dotnet@v3
+              uses: actions/setup-dotnet@v4
               with:
                   dotnet-version: '9.0.x'
             - name: Set version
@@ -74,16 +77,16 @@ jobs:
         needs: [set_version, build_dotnet_linux]
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Set version
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
-            - name: Use Node.js ${{ matrix.node-version }}
+            - name: Use Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: lts/*
             - name: Restore dependencies
               run: npm ci
             - name: Build Cef-html
@@ -115,8 +118,11 @@ jobs:
             [set_version, build_node, build_dotnet_windows, build_dotnet_linux]
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
+            - name: Set version
+              run: |
+                echo "!define PRODUCT_VERSION_FROM_FILE \"${{ needs.set_version.outputs.date }}.0\"" > Installer/version_define.nsh
             - name: Install 7-zip and makensis
               run: sudo apt update && sudo apt install -y p7zip-full nsis nsis-pluginapi
             - name: Set plugin permissions
