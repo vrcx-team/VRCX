@@ -98,7 +98,7 @@
     export default {
         name: 'LaunchDialog',
         components: { InviteDialog },
-        inject: ['showPreviousInstancesInfoDialog', 'adjustDialogZ'],
+        inject: ['friends', 'showPreviousInstancesInfoDialog', 'adjustDialogZ'],
         props: {
             hideTooltips: Boolean,
             launchDialogData: { type: Object, required: true },
