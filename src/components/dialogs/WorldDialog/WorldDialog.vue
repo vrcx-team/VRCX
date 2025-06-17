@@ -267,7 +267,7 @@
                                         {{ $t('dialog.world.actions.change_preview') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Tags">
-                                        {{ $t('dialog.world.actions.change_tags') }}
+                                        {{ $t('dialog.world.actions.change_warnings_settings_tags') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Allowed Domains">
                                         {{ $t('dialog.world.actions.change_allowed_video_player_domains') }}

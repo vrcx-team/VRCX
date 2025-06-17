@@ -67,6 +67,10 @@
         <el-checkbox v-model="setWorldTagsDialog.drones">
             {{ $t('dialog.new_instance.content_drones') }}
         </el-checkbox>
+        <br />
+        <el-checkbox v-model="setWorldTagsDialog.props">
+            {{ $t('dialog.new_instance.content_items') }}
+        </el-checkbox>
         <template #footer>
             <div style="display: flex">
                 <el-button size="small" @click="setWorldTagsDialog.visible = false">
@@ -121,7 +125,8 @@
                     stickers: true,
                     pedestals: true,
                     prints: true,
-                    drones: true
+                    drones: true,
+                    props: true
                 }
             };
         },
@@ -203,6 +208,9 @@
                         case 'feature_drones_disabled':
                             D.drones = false;
                             break;
+                        case 'feature_props_disabled':
+                            D.props = false;
+                            break;
                     }
                 });
                 D.authorTags = authorTags.toString();
@@ -271,6 +279,9 @@
                 }
                 if (!D.drones) {
                     tags.unshift('feature_drones_disabled');
+                }
+                if (!D.props) {
+                    tags.unshift('feature_props_disabled');
                 }
                 worldRequest
                     .saveWorld({

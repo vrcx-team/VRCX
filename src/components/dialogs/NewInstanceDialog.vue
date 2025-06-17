@@ -98,6 +98,10 @@
                                     class="x-friend-item"
                                     value="drones"
                                     :label="$t('dialog.new_instance.content_drones')"></el-option>
+                                <el-option
+                                    class="x-friend-item"
+                                    value="props"
+                                    :label="$t('dialog.new_instance.content_items')"></el-option>
                             </el-option-group>
                         </el-select>
                     </el-form-item>

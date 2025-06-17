@@ -9863,7 +9863,7 @@ console.log(`isLinux: ${LINUX}`);
         'pedestals',
         'prints',
         'drones',
-        'items'
+        'props'
     ];
 
     $app.methods.createNewInstance = async function (worldId = '', options) {

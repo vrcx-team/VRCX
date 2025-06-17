@@ -50,7 +50,7 @@
                     icon="el-icon-picture-outline"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
                     @click="showGalleryDialog()"
-                    >{{ t('view.profile.profile.manage_gallery_icon') }}</el-button
+                    >{{ t('view.profile.profile.manage_gallery_inventory_icon') }}</el-button
                 >
                 <el-button
                     size="small"

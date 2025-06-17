@@ -367,7 +367,7 @@
                                 }}</el-dropdown-item>
                                 <template v-if="userDialog.ref.id === API.currentUser.id">
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Manage Gallery" divided>{{
-                                        t('dialog.user.actions.manage_gallery_icon')
+                                        t('dialog.user.actions.manage_gallery_inventory_icon')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author">{{
                                         t('dialog.user.actions.show_avatar_author')
