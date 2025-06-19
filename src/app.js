@@ -10678,6 +10678,7 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
+    $app.data.lastCrashedTime = null;
     $app.methods.checkIfGameCrashed = function () {
         if (!this.relaunchVRChatAfterCrash) {
             return;
@@ -10687,6 +10688,15 @@ console.log(`isLinux: ${LINUX}`);
             if (result || !isRealInstance(location)) {
                 return;
             }
+            // check if relaunched less than 2mins ago (prvent crash loop)
+            if (
+                this.lastCrashedTime &&
+                new Date() - this.lastCrashedTime < 120_000
+            ) {
+                console.log('VRChat was recently crashed, not relaunching');
+                return;
+            }
+            this.lastCrashedTime = new Date();
             // wait a bit for SteamVR to potentially close before deciding to relaunch
             var restartDelay = 8000;
             if (this.isGameNoVR) {
