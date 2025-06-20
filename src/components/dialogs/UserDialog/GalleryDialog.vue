@@ -452,6 +452,14 @@
                 </span>
                 <br />
                 <br />
+                <div style="display: flex; align-items: center">
+                    <el-button-group>
+                        <el-button type="default" size="small" @click="getInventory" icon="el-icon-refresh">
+                            {{ t('dialog.gallery_icons.refresh') }}
+                        </el-button>
+                    </el-button-group>
+                </div>
+                <br />
                 <div
                     class="x-friend-item"
                     v-for="item in inventoryTable"
@@ -577,6 +585,7 @@
         'refreshStickerTable',
         'refreshEmojiTable',
         'refreshPrintTable',
+        'getInventory',
         'closeGalleryDialog'
     ]);
 
@@ -1058,6 +1067,10 @@
         emit('refreshPrintTable');
     }
 
+    function getInventory() {
+        emit('getInventory');
+    }
+
     function displayPrintUpload() {
         document.getElementById('PrintUploadButton').click();
     }
@@ -1090,7 +1103,7 @@
                     break;
                 }
             }
-            this.getInventory();
+            getInventory();
         } catch (error) {
             console.error('Error consuming inventory bundle:', error);
         }

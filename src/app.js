@@ -6375,6 +6375,9 @@ console.log(`isLinux: ${LINUX}`);
             case 'VRCX_udonExceptionLogging':
                 this.udonExceptionLogging = !this.udonExceptionLogging;
                 break;
+            case 'VRCX_autoDeleteOldPrints':
+                this.autoDeleteOldPrints = !this.autoDeleteOldPrints;
+                break;
             default:
                 break;
         }
@@ -6513,6 +6516,11 @@ console.log(`isLinux: ${LINUX}`);
         await configRepository.setBool(
             'VRCX_udonExceptionLogging',
             this.udonExceptionLogging
+        );
+
+        await configRepository.setBool(
+            'VRCX_autoDeleteOldPrints',
+            this.autoDeleteOldPrints
         );
 
         this.updateSharedFeed(true);
@@ -10167,13 +10175,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'icon'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogIconsLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'icon') {
             $app.VRCPlusIconsTable = args.json.reverse();
-            $app.galleryDialogIconsLoading = false;
         }
     });
 
@@ -10840,13 +10849,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'gallery'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogGalleryLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'gallery') {
             $app.galleryTable = args.json.reverse();
-            $app.galleryDialogGalleryLoading = false;
         }
     });
 
@@ -10868,13 +10878,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'sticker'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogStickersLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'sticker') {
             $app.stickerTable = args.json.reverse();
-            $app.galleryDialogStickersLoading = false;
         }
     });
 
@@ -10963,20 +10974,24 @@ console.log(`isLinux: ${LINUX}`);
 
     API.$on('LOGIN', function () {
         $app.printTable = [];
+        if ($app.autoDeleteOldPrints) {
+            $app.tryDeleteOldPrints();
+        }
     });
 
-    $app.methods.refreshPrintTable = function () {
+    $app.methods.refreshPrintTable = async function () {
         this.galleryDialogPrintsLoading = true;
         var params = {
             n: 100
         };
-        vrcPlusImageRequest.getPrints(params);
-    };
-
-    API.$on('PRINT:LIST', function (args) {
+        const args = await vrcPlusImageRequest.getPrints(params).finally(() => {
+            this.galleryDialogPrintsLoading = false;
+        });
+        args.json.sort((a, b) => {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        });
         $app.printTable = args.json;
-        $app.galleryDialogPrintsLoading = false;
-    });
+    };
 
     $app.data.printUploadNote = '';
     $app.data.printCropBorder = true;
@@ -11076,13 +11091,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'emoji'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogEmojisLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'emoji') {
             $app.emojiTable = args.json.reverse();
-            $app.galleryDialogEmojisLoading = false;
         }
     });
 
@@ -12191,6 +12207,48 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.openUGCFolderSelector = async function () {
         var path = await this.folderSelectorDialog(this.ugcFolderPath);
         await this.setUGCFolderPath(path);
+    };
+
+    // auto delete old prints
+
+    $app.data.autoDeleteOldPrints = await configRepository.getBool(
+        'VRCX_autoDeleteOldPrints',
+        false
+    );
+
+    $app.methods.tryDeleteOldPrints = async function () {
+        await this.refreshPrintTable();
+        const printLimit = 64 - 2; // 2 reserved for new prints
+        const printCount = $app.printTable.length;
+        if (printCount <= printLimit) {
+            return;
+        }
+        const deleteCount = printCount - printLimit;
+        if (deleteCount <= 0) {
+            return;
+        }
+        let idList = [];
+        for (let i = 0; i < deleteCount; i++) {
+            const print = $app.printTable[printCount - 1 - i];
+            idList.push(print.id);
+        }
+        console.log(`Deleting ${deleteCount} old prints`, idList);
+        try {
+            for (const printId of idList) {
+                await vrcPlusImageRequest.deletePrint(printId);
+                var text = `Old print automaticly deleted: ${printId}`;
+                if (this.errorNoty) {
+                    this.errorNoty.close();
+                }
+                this.errorNoty = new Noty({
+                    type: 'info',
+                    text
+                }).show();
+            }
+        } catch (err) {
+            console.error('Failed to delete old print:', err);
+        }
+        await this.refreshPrintTable();
     };
 
     // avatar database provider

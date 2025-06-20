@@ -818,6 +818,16 @@ mixin settingsTab
                         @change='saveScreenshotHelper("VRCX_screenshotHelperCopyToClipboard")'
                         :long-label='true')
 
+                //- Pictures | Auto Delete Old Prints
+                .options-container
+                    span.header {{ $t('view.settings.pictures.pictures.auto_delete_old_prints') }}
+                    .options-container-item(style='margin-top: 0')
+                        simple-switch(
+                            :label='$t("view.settings.pictures.pictures.auto_delete_prints_from_vrc")'
+                            :value='autoDeleteOldPrints'
+                            @change='saveOpenVROption("VRCX_autoDeleteOldPrints")'
+                            :long-label='true')
+
                 //- Pictures | User Generated Content
                 .options-container
                     span.header {{ $t('view.settings.advanced.advanced.user_generated_content.header') }}

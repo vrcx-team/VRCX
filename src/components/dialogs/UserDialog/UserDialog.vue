@@ -1812,6 +1812,7 @@
             @refreshStickerTable="refreshStickerTable"
             @refreshEmojiTable="refreshEmojiTable"
             @refreshPrintTable="refreshPrintTable"
+            @getInventory="getInventory"
             @closeGalleryDialog="closeGalleryDialog" />
     </safe-dialog>
 </template>
@@ -2059,6 +2060,7 @@
         'refreshStickerTable',
         'refreshEmojiTable',
         'refreshPrintTable',
+        'getInventory',
         'closeGalleryDialog'
     ]);
 
@@ -3289,5 +3291,8 @@
     }
     function refreshPrintTable() {
         emit('refreshPrintTable');
+    }
+    function getInventory() {
+        emit('getInventory');
     }
 </script>

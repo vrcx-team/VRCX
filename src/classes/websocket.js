@@ -539,16 +539,20 @@ export default class extends baseClass {
                         ) {
                             $app.refreshEmojiTable();
                         }
-                    } else if (
-                        contentType === 'print' ||
-                        contentType === 'prints'
-                    ) {
+                    } else if (contentType === 'print') {
                         if (
+                            $app.autoDeleteOldPrints &&
+                            content.actionType === 'created'
+                        ) {
+                            $app.tryDeleteOldPrints();
+                        } else if (
                             $app.galleryDialogVisible &&
                             !$app.galleryDialogPrintsLoading
                         ) {
                             $app.refreshPrintTable();
                         }
+                    } else if (contentType === 'prints') {
+                        // lol
                     } else if (contentType === 'avatar') {
                         // hmm, utilizing this might be too spamy and cause UI to move around
                     } else if (contentType === 'world') {

@@ -77,6 +77,9 @@ export default class extends baseClass {
                 })
                 .then((response) => {
                     if (!response.data) {
+                        if ($app.debugWebRequests) {
+                            console.log(init, response);
+                        }
                         return response;
                     }
                     try {

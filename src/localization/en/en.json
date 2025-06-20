@@ -522,7 +522,9 @@
                     "header": "Pictures",
                     "open_folder": "Open Folder",
                     "vrc_photos": "VRChat Photos",
-                    "steam_screenshots": "Steam Screenshots"
+                    "steam_screenshots": "Steam Screenshots",
+                    "auto_delete_old_prints": "Auto Delete Old Prints",
+                    "auto_delete_prints_from_vrc": "Delete Old Prints from VRC when reaching print limit"
                 }
             },
             "advanced": {
