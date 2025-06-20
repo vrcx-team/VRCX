@@ -12152,6 +12152,9 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.folderSelectorDialogVisible = false;
 
     $app.methods.setUGCFolderPath = async function (path) {
+        if (typeof path !== 'string') {
+            path = '';
+        }
         await configRepository.setString('VRCX_userGeneratedContentPath', path);
         this.ugcFolderPath = path;
     };

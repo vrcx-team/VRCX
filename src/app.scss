@@ -90,7 +90,13 @@
 .el-table .cell {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+    // -webkit-line-clamp: 1;
+}
+
+// expand table cell on hover, TODO: replace with a better solution
+.el-table__row:hover .el-table__cell .cell {
+    -webkit-box-orient: unset;
+    -webkit-line-clamp: unset;
 }
 
 .el-table th.is-sortable .cell {
