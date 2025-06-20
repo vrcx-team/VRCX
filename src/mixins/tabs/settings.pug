@@ -39,7 +39,11 @@ mixin settingsTab
                     .options-container-item
                         span.name {{ $t('view.settings.general.vrcx_updater.update_action') }}
                         br
-                        el-radio-group(v-model='autoUpdateVRCX' size='mini' style='margin-top: 5px' @input='saveAutoUpdateVRCX')
+                        el-radio-group(
+                            v-model='autoUpdateVRCX'
+                            size='mini'
+                            style='margin-top: 5px'
+                            @input='saveAutoUpdateVRCX')
                             el-radio-button(label='Off') {{ $t('view.settings.general.vrcx_updater.auto_update_off') }}
                             el-radio-button(label='Notify') {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
                             el-radio-button(label='Auto Download') {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
@@ -770,6 +774,84 @@ mixin settingsTab
                         @change='saveDiscordOption("discordHideImage")'
                         :disabled='!discordActive')
 
+            //- "Pictures" Tab
+            el-tab-pane(lazy :label='$t("view.settings.category.pictures")')
+                .options-container(style='margin-top: 0')
+                    span.header {{ $t('view.settings.category.pictures') }}
+
+                .options-container
+                    el-button(size='small' icon='el-icon-picture' @click='showScreenshotMetadataDialog()') {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
+
+                .options-container
+                    span.header {{ $t('view.settings.pictures.pictures.open_folder') }}
+                    .options-container-item(style='margin-top: 15px')
+                        el-button-group
+                            el-button(size='small' icon='el-icon-folder' @click='openVrcPhotosFolder()') {{ $t('view.settings.pictures.pictures.vrc_photos') }}
+                            el-button(size='small' icon='el-icon-folder' @click='openVrcScreenshotsFolder()') {{ $t('view.settings.pictures.pictures.steam_screenshots') }}
+
+                //- Pictures | Screenshot Helper
+                .options-container
+                    span.header {{ $t('view.settings.advanced.advanced.screenshot_helper.header') }}
+                    .options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.description') }}
+                            el-tooltip(
+                                placement='top'
+                                style='margin-left: 5px'
+                                :content='$t("view.settings.advanced.advanced.screenshot_helper.description_tooltip")')
+                                i.el-icon-info
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.screenshot_helper.enable")'
+                        :value='screenshotHelper'
+                        @change='saveScreenshotHelper("VRCX_screenshotHelper")'
+                        :long-label='true')
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename")'
+                        :value='screenshotHelperModifyFilename'
+                        @change='saveScreenshotHelper("VRCX_screenshotHelperModifyFilename")'
+                        :disabled='!screenshotHelper'
+                        :tooltip='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip")'
+                        :long-label='true')
+
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard")'
+                        :value='screenshotHelperCopyToClipboard'
+                        @change='saveScreenshotHelper("VRCX_screenshotHelperCopyToClipboard")'
+                        :long-label='true')
+
+                //- Pictures | User Generated Content
+                .options-container
+                    span.header {{ $t('view.settings.advanced.advanced.user_generated_content.header') }}
+                    .options-container-item
+                        span.name(style='min-width: 300px') {{ $t('view.settings.advanced.advanced.user_generated_content.description') }}
+                        br
+                        el-button(size='small' icon='el-icon-folder' @click='openUGCFolder()' style='margin-top: 5px') {{ $t('view.settings.advanced.advanced.user_generated_content.folder') }}
+                        el-button(size='small' icon='el-icon-folder-opened' @click='openUGCFolderSelector()') {{ $t('view.settings.advanced.advanced.user_generated_content.set_folder') }}
+                        el-button(size='small' icon='el-icon-delete' @click='resetUGCFolder()' v-if='ugcFolderPath') {{ $t('view.settings.advanced.advanced.user_generated_content.reset_override') }}
+                    br
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.header') }}
+                        el-tooltip(
+                            placement='top'
+                            style='margin-left: 5px'
+                            :content='$t("view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip")')
+                            i.el-icon-info
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.save_instance_prints_to_file.description")'
+                        :value='saveInstancePrints'
+                        @change='saveVRCXWindowOption("VRCX_saveInstancePrints")'
+                        :long-label='true')
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.save_instance_prints_to_file.crop")'
+                        :value='cropInstancePrints'
+                        @change='saveVRCXWindowOption("VRCX_cropInstancePrints")'
+                        :long-label='true')
+                    br
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.save_instance_stickers_to_file.description")'
+                        :value='saveInstanceStickers'
+                        @change='saveVRCXWindowOption("VRCX_saveInstanceStickers")'
+                        :long-label='true')
+
             //- "Advanced" Tab
             el-tab-pane(lazy :label='$t("view.settings.category.advanced")')
                 //- Advanced | Advanced
@@ -779,7 +861,6 @@ mixin settingsTab
                         el-button-group
                             el-button(size='small' icon='el-icon-s-operation' @click='showVRChatConfig()') VRChat config.json
                             el-button(size='small' icon='el-icon-s-operation' @click='showLaunchOptions()') {{ $t('view.settings.advanced.advanced.launch_options') }}
-                            el-button(size='small' icon='el-icon-picture' @click='showScreenshotMetadataDialog()') {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
                             el-button(size='small' icon='el-icon-goods' @click='showRegistryBackupDialog()') {{ $t('view.settings.advanced.advanced.vrc_registry_backup') }}
                 //- Advanced | Common Folders
                 .options-container
@@ -788,8 +869,6 @@ mixin settingsTab
                         el-button-group
                             el-button(size='small' icon='el-icon-folder' @click='openVrcxAppDataFolder()') AppData (VRCX)
                             el-button(size='small' icon='el-icon-folder' @click='openVrcAppDataFolder()') AppData
-                            el-button(size='small' icon='el-icon-folder' @click='openVrcPhotosFolder()') Photos
-                            el-button(size='small' icon='el-icon-folder' @click='openVrcScreenshotsFolder()') Screenshots
                             el-button(size='small' icon='el-icon-folder' @click='openCrashVrcCrashDumps()') Crash Dumps
                 //- Advanced | Primary Password
                 .options-container
@@ -832,39 +911,6 @@ mixin settingsTab
                             @change='saveVRCXWindowOption("VRCX_DisableWorldDatabase")'
                             :long-label='true')
 
-                //- Advanced | User Generated Content
-                .options-container
-                    span.header {{ $t('view.settings.advanced.advanced.user_generated_content.header') }}
-                    .options-container-item
-                        span.name(style='min-width: 300px') {{ $t('view.settings.advanced.advanced.user_generated_content.description') }}
-                        br
-                        el-button(size='small' icon='el-icon-folder' @click='openUGCFolder()' style='margin-top: 5px') {{ $t('view.settings.advanced.advanced.user_generated_content.folder') }}
-                        el-button(size='small' icon='el-icon-folder-opened' @click='openUGCFolderSelector()') {{ $t('view.settings.advanced.advanced.user_generated_content.set_folder') }}
-                        el-button(size='small' icon='el-icon-delete' @click='resetUGCFolder()' v-if='ugcFolderPath') {{ $t('view.settings.advanced.advanced.user_generated_content.reset_override') }}
-                    br
-                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.header') }}
-                        el-tooltip(
-                            placement='top'
-                            style='margin-left: 5px'
-                            :content='$t("view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip")')
-                            i.el-icon-info
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.save_instance_prints_to_file.description")'
-                        :value='saveInstancePrints'
-                        @change='saveVRCXWindowOption("VRCX_saveInstancePrints")'
-                        :long-label='true')
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.save_instance_prints_to_file.crop")'
-                        :value='cropInstancePrints'
-                        @change='saveVRCXWindowOption("VRCX_cropInstancePrints")'
-                        :long-label='true')
-                    br
-                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.save_instance_stickers_to_file.description")'
-                        :value='saveInstanceStickers'
-                        @change='saveVRCXWindowOption("VRCX_saveInstanceStickers")'
-                        :long-label='true')
                 //- Advanced | Remote Avatar Database
                 .options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
@@ -900,35 +946,6 @@ mixin settingsTab
                             :value='enableAppLauncherAutoClose'
                             @change='updateAppLauncherSettings("VRCX_enableAppLauncherAutoClose")'
                             :long-label='true')
-
-                //- Advanced | Screenshot Helper
-                .options-container
-                    span.header {{ $t('view.settings.advanced.advanced.screenshot_helper.header') }}
-                    .options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.description') }}
-                            el-tooltip(
-                                placement='top'
-                                style='margin-left: 5px'
-                                :content='$t("view.settings.advanced.advanced.screenshot_helper.description_tooltip")')
-                                i.el-icon-info
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.screenshot_helper.enable")'
-                        :value='screenshotHelper'
-                        @change='saveScreenshotHelper("VRCX_screenshotHelper")'
-                        :long-label='true')
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename")'
-                        :value='screenshotHelperModifyFilename'
-                        @change='saveScreenshotHelper("VRCX_screenshotHelperModifyFilename")'
-                        :disabled='!screenshotHelper'
-                        :tooltip='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip")'
-                        :long-label='true')
-
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard")'
-                        :value='screenshotHelperCopyToClipboard'
-                        @change='saveScreenshotHelper("VRCX_screenshotHelperCopyToClipboard")'
-                        :long-label='true')
 
                 //- Advanced | YouTube API
                 .options-container

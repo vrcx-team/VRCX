@@ -298,6 +298,7 @@
                 "notifications": "Notifications",
                 "wrist_overlay": "Wrist Overlay",
                 "discord_presence": "Discord Presence",
+                "pictures": "Pictures",
                 "advanced": "Advanced"
             },
             "general": {
@@ -514,6 +515,14 @@
                     "join_button": "Join button (public only)",
                     "show_details_in_private": "Show world details in private",
                     "show_images": "Show world images"
+                }
+            },
+            "pictures": {
+                "pictures": {
+                    "header": "Pictures",
+                    "open_folder": "Open Folder",
+                    "vrc_photos": "VRChat Photos",
+                    "steam_screenshots": "Steam Screenshots"
                 }
             },
             "advanced": {
