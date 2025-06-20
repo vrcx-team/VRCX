@@ -579,9 +579,19 @@ mixin settingsTab
                         :value='ovrtWristNotifications'
                         @change='saveOpenVROption("VRCX_ovrtWristNotifications")')
                     simple-switch(
-                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.user_images")'
+                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications")'
                         :value='imageNotifications'
                         @change='saveOpenVROption("VRCX_imageNotifications")')
+                    .options-container-item
+                        span.name(style='vertical-align: top; padding-top: 10px') {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity') }}
+                        el-slider(
+                            v-model='notificationOpacity'
+                            @input='saveOpenVROption("VRCX_notificationOpacity")'
+                            :show-tooltip='false'
+                            :min='0'
+                            :max='100'
+                            show-input
+                            style='display: inline-block; width: 300px')
                     .options-container-item
                         el-button(
                             size='small'

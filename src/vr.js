@@ -166,7 +166,8 @@ Vue.component('marquee-text', MarqueeText);
             onlineForTimer: '',
             wristFeed: [],
             devices: [],
-            deviceCount: 0
+            deviceCount: 0,
+            notificationOpacity: 100
         },
         computed: {},
         methods: {
@@ -202,6 +203,10 @@ Vue.component('marquee-text', MarqueeText);
             AppApiVr.ToggleSystemMonitor(
                 this.cpuUsageEnabled || this.pcUptimeEnabled
             );
+        }
+        if (this.config.notificationOpacity !== this.notificationOpacity) {
+            this.notificationOpacity = this.config.notificationOpacity;
+            this.setNotyOpacity(this.notificationOpacity);
         }
     };
 
@@ -270,6 +275,19 @@ Vue.component('marquee-text', MarqueeText);
                 head.appendChild($vrCustomScript);
             }
         });
+    };
+
+    $app.methods.setNotyOpacity = function (value) {
+        var opacity = parseFloat(value / 100).toFixed(2);
+        let element = document.getElementById('noty-opacity');
+        if (!element) {
+            document.body.insertAdjacentHTML(
+                'beforeend',
+                `<style id="noty-opacity">.noty_layout { opacity: ${opacity}; }</style>`
+            );
+            element = document.getElementById('noty-opacity');
+        }
+        element.innerHTML = `.noty_layout { opacity: ${opacity}; }`;
     };
 
     $app.methods.updateStatsLoop = async function () {

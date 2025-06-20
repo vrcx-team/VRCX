@@ -6156,6 +6156,10 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_notificationTTSNickName',
         false
     );
+    $app.data.notificationOpacity = await configRepository.getFloat(
+        'VRCX_notificationOpacity',
+        100
+    );
 
     // It's not necessary to store it in configRepo because it's rarely used.
     $app.data.isTestTTSVisible = false;
@@ -6521,6 +6525,11 @@ console.log(`isLinux: ${LINUX}`);
         await configRepository.setBool(
             'VRCX_autoDeleteOldPrints',
             this.autoDeleteOldPrints
+        );
+
+        await configRepository.setInt(
+            'VRCX_notificationOpacity',
+            this.notificationOpacity
         );
 
         this.updateSharedFeed(true);
@@ -7392,7 +7401,8 @@ console.log(`isLinux: ${LINUX}`);
             backgroundEnabled: this.vrBackgroundEnabled,
             dtHour12: this.dtHour12,
             pcUptimeOnFeed: this.pcUptimeOnFeed,
-            appLanguage: this.appLanguage
+            appLanguage: this.appLanguage,
+            notificationOpacity: this.notificationOpacity
         };
         var json = JSON.stringify(VRConfigVars);
         AppApi.ExecuteVrFeedFunction('configUpdate', json);
