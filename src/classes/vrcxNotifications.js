@@ -570,9 +570,10 @@ export default class extends baseClass {
         },
 
         displayXSNotification(noty, message, image) {
-            var timeout = Math.floor(
+            const timeout = Math.floor(
                 parseInt(this.notificationTimeout, 10) / 1000
             );
+            const opacity = parseFloat(this.notificationOpacity) / 100;
             switch (noty.type) {
                 case 'OnPlayerJoined':
                     AppApi.XSNotification(
@@ -968,9 +969,10 @@ export default class extends baseClass {
             message,
             image
         ) {
-            var timeout = Math.floor(
+            const timeout = Math.floor(
                 parseInt(this.notificationTimeout, 10) / 1000
             );
+            const opacity = parseFloat(this.notificationOpacity) / 100;
             switch (noty.type) {
                 case 'OnPlayerJoined':
                     AppApi.OVRTNotification(

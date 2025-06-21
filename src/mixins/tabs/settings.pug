@@ -788,9 +788,9 @@ mixin settingsTab
             el-tab-pane(lazy :label='$t("view.settings.category.pictures")')
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.category.pictures') }}
-
-                .options-container
-                    el-button(size='small' icon='el-icon-picture' @click='showScreenshotMetadataDialog()') {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
+                    .options-container-item(style='margin-top: 15px')
+                        el-button-group
+                            el-button(size='small' icon='el-icon-picture' @click='showScreenshotMetadataDialog()') {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
 
                 .options-container
                     span.header {{ $t('view.settings.pictures.pictures.open_folder') }}

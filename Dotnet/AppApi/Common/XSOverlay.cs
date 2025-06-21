@@ -13,7 +13,7 @@ namespace VRCX
         /// <param name="content">The content of the notification.</param>
         /// <param name="timeout">The duration of the notification in milliseconds.</param>
         /// <param name="image">The optional image to display in the notification.</param>
-        public void XSNotification(string title, string content, int timeout, int opacity, string image = "")
+        public void XSNotification(string title, string content, int timeout, double opacity, string image = "")
         {
             var broadcastSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             var endPoint = new IPEndPoint(IPAddress.Loopback, 42069);
@@ -44,7 +44,7 @@ namespace VRCX
                 audioPath = string.Empty,
                 useBase64Icon = useBase64Icon,
                 icon = icon,
-                opacity = opacity / 100f
+                opacity = (float)opacity
             };
             
             var byteBuffer = JsonSerializer.SerializeToUtf8Bytes(msg);

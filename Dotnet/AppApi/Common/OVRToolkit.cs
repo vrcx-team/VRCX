@@ -89,7 +89,7 @@ namespace VRCX
         /// <param name="body">The content of the notification.</param>
         /// <param name="timeout">[CURRENTLY UNUSED]The timeout of the notification.</param>
         /// <param name="image">The image of the notification.</param>
-        public void OVRTNotification(bool hudNotification, bool wristNotification, string title, string body, int timeout, int opacity, string image = "")
+        public void OVRTNotification(bool hudNotification, bool wristNotification, string title, string body, int timeout, double opacity, string image = "")
         {
             List<OvrtMessage> messages = [];
 
