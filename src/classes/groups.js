@@ -920,6 +920,30 @@ export default class extends baseClass {
             }
         },
 
+        leaveGroup(groupId) {
+            groupRequest
+                .leaveGroup({
+                    groupId
+                })
+                .then((args) => {
+                    const groupId = args.params.groupId;
+                    if (
+                        this.groupDialog.visible &&
+                        this.groupDialog.id === groupId
+                    ) {
+                        this.groupDialog.inGroup = false;
+                        this.getGroupDialogGroup(groupId);
+                    }
+                    if (
+                        this.userDialog.visible &&
+                        this.userDialog.id === this.currentUser.id &&
+                        this.userDialog.representedGroup.id === groupId
+                    ) {
+                        this.getCurrentUserRepresentedGroup();
+                    }
+                });
+        },
+
         leaveGroupPrompt(groupId) {
             this.$confirm(
                 'Are you sure you want to leave this group?',
@@ -930,31 +954,7 @@ export default class extends baseClass {
                     type: 'info',
                     callback: (action) => {
                         if (action === 'confirm') {
-                            groupRequest
-                                .leaveGroup({
-                                    groupId
-                                })
-                                .then((args) => {
-                                    // API.$on('GROUP:LEAVE', function (args) {
-                                    const groupId = args.params.groupId;
-                                    if (
-                                        this.groupDialog.visible &&
-                                        this.groupDialog.id === groupId
-                                    ) {
-                                        this.groupDialog.inGroup = false;
-                                        this.getGroupDialogGroup(groupId);
-                                    }
-                                    if (
-                                        this.userDialog.visible &&
-                                        this.userDialog.id ===
-                                            this.currentUser.id &&
-                                        this.userDialog.representedGroup.id ===
-                                            groupId
-                                    ) {
-                                        this.getCurrentUserRepresentedGroup();
-                                    }
-                                    // });
-                                });
+                            this.leaveGroup(groupId);
                         }
                     }
                 }

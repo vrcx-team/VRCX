@@ -1325,7 +1325,7 @@
                                             icon="el-icon-close"
                                             circle
                                             style="color: #f56c6c; margin-left: 5px"
-                                            @click.stop="leaveGroupPrompt(group.id)">
+                                            @click.stop="leaveGroup(group.id)">
                                         </el-button>
                                         <el-button
                                             v-else
@@ -2054,6 +2054,7 @@
         'refreshUserDialogTreeData',
         'saveUserMemo',
         'setGroupVisibility',
+        'leaveGroup',
         'leaveGroupPrompt',
         'refreshGalleryTable',
         'refreshVRCPlusIconsTable',
@@ -3170,7 +3171,7 @@
     // Leave (remove user from) all selected groups
     function bulkLeaveGroups() {
         for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
-            leaveGroupPrompt(groupId);
+            leaveGroup(groupId);
         }
     }
 
@@ -3252,6 +3253,9 @@
     }
     function refreshUserDialogAvatars() {
         emit('refreshUserDialogAvatars');
+    }
+    function leaveGroup(id) {
+        emit('leaveGroup', id);
     }
     function leaveGroupPrompt(id) {
         emit('leaveGroupPrompt', id);
