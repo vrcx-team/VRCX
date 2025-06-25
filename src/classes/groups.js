@@ -936,7 +936,7 @@ export default class extends baseClass {
                     }
                     if (
                         this.userDialog.visible &&
-                        this.userDialog.id === this.currentUser.id &&
+                        this.userDialog.id === API.currentUser.id &&
                         this.userDialog.representedGroup.id === groupId
                     ) {
                         this.getCurrentUserRepresentedGroup();
