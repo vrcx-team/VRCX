@@ -871,6 +871,18 @@ mixin settingsTab
                         :value='saveInstanceStickers'
                         @change='saveVRCXWindowOption("VRCX_saveInstanceStickers")'
                         :long-label='true')
+                    br
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
+                        el-tooltip(
+                            placement='top'
+                            style='margin-left: 5px'
+                            :content='$t("view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip")')
+                            i.el-icon-info
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.save_instance_emoji_to_file.description")'
+                        :value='saveInstanceEmoji'
+                        @change='saveVRCXWindowOption("VRCX_saveInstanceEmoji")'
+                        :long-label='true')
 
             //- "Advanced" Tab
             el-tab-pane(lazy :label='$t("view.settings.category.advanced")')

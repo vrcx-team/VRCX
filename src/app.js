@@ -32,6 +32,7 @@ import {
     groupRequest,
     imageRequest,
     instanceRequest,
+    inventoryRequest,
     inviteMessagesRequest,
     miscRequest,
     notificationRequest,
@@ -119,6 +120,7 @@ import { userDialogGroupSortingOptions } from './composables/user/constants/user
 import {
     getPrintFileName,
     getPrintLocalDate,
+    getEmojiFileName,
     languageClass
 } from './composables/user/utils';
 import InteropApi from './ipc-electron/interopApi.js';
@@ -6768,6 +6770,9 @@ console.log(`isLinux: ${LINUX}`);
             case 'VRCX_saveInstanceStickers':
                 this.saveInstanceStickers = !this.saveInstanceStickers;
                 break;
+            case 'VRCX_saveInstanceEmoji':
+                this.saveInstanceEmoji = !this.saveInstanceEmoji;
+                break;
             case 'VRCX_StartAsMinimizedState':
                 this.isStartAsMinimizedState = !this.isStartAsMinimizedState;
                 break;
@@ -6806,6 +6811,11 @@ console.log(`isLinux: ${LINUX}`);
         await configRepository.setBool(
             'VRCX_saveInstanceStickers',
             this.saveInstanceStickers
+        );
+
+        await configRepository.setBool(
+            'VRCX_saveInstanceEmoji',
+            this.saveInstanceEmoji
         );
 
         VRCXStorage.Set(
@@ -10955,6 +10965,75 @@ console.log(`isLinux: ${LINUX}`);
     };
 
     // #endregion
+    // #region | Emoji
+
+    $app.data.instanceInventoryCache = [];
+    $app.data.instanceInventoryQueue = [];
+    $app.data.instanceInventoryQueueWorker = null;
+
+    $app.methods.queueCheckInstanceInventory = function (inventoryId) {
+        if (this.instanceInventoryCache.includes(inventoryId)) {
+            return;
+        }
+        this.instanceInventoryCache.push(inventoryId);
+        if (this.instanceInventoryCache.length > 100) {
+            this.instanceInventoryCache.shift();
+        }
+
+        this.instanceInventoryQueue.push(inventoryId);
+
+        if (!this.instanceInventoryQueueWorker) {
+            this.instanceInventoryQueueWorker = workerTimers.setInterval(() => {
+                let inventoryId = this.instanceInventoryQueue.shift();
+                if (inventoryId) {
+                    this.trySaveEmojiToFile(inventoryId);
+                }
+            }, 2_500);
+        }
+    };
+
+    $app.methods.trySaveEmojiToFile = async function (inventoryId) {
+        const args = await inventoryRequest.getInventoryItem({
+            inventoryId
+        });
+
+        if (args.json.itemType !== 'emoji') {
+            // Not an emoji, skip
+            return;
+        }
+
+        const userArgs = await userRequest.getCachedUser({
+            userId: args.json.holderId
+        });
+        const displayName = userArgs.json?.displayName ?? '';
+
+        let emoji = args.json.metadata;
+        emoji.name = `${displayName}_${inventoryId}`;
+
+        const emojiFileName = getEmojiFileName(emoji);
+        const imageUrl = args.json.metadata?.imageUrl ?? args.json.imageUrl;
+        const createdAt = args.json.created_at;
+        const monthFolder = createdAt.slice(0, 7);
+
+        const filePath = await AppApi.SaveEmojiToFile(
+            imageUrl,
+            this.ugcFolderPath,
+            monthFolder,
+            emojiFileName
+        );
+        if (filePath) {
+            console.log(
+                `Emoji saved to file: ${monthFolder}\\${emojiFileName}`
+            );
+        }
+
+        if (this.instanceInventoryQueue.length === 0) {
+            workerTimers.clearInterval(this.instanceInventoryQueueWorker);
+            this.instanceInventoryQueueWorker = null;
+        }
+    };
+
+    // #endregion
     // #region | Prints
     $app.methods.cropPrintsChanged = function () {
         if (!this.cropInstancePrints) return;
@@ -11035,6 +11114,11 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.saveInstanceStickers = await configRepository.getBool(
         'VRCX_saveInstanceStickers',
+        false
+    );
+
+    $app.data.saveInstanceEmoji = await configRepository.getBool(
+        'VRCX_saveInstanceEmoji',
         false
     );
 

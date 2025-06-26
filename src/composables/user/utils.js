@@ -35,6 +35,15 @@ function getPrintFileName(print) {
     return fileName;
 }
 
+function getEmojiFileName(emoji) {
+    if (emoji.frames) {
+        const loopStyle = emoji.loopStyle || 'linear';
+        return `${emoji.name}_${emoji.animationStyle}animationStyle_${emoji.frames}frames_${emoji.framesOverTime}fps_${loopStyle}loopStyle.png`;
+    } else {
+        return `${emoji.name}_${emoji.animationStyle}animationStyle.png`;
+    }
+}
+
 function getPrintLocalDate(print) {
     if (print.createdAt) {
         const createdAt = new Date(print.createdAt);
@@ -75,5 +84,6 @@ export {
     languageClass,
     getPrintFileName,
     getPrintLocalDate,
+    getEmojiFileName,
     isFriendOnline
 };

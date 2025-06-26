@@ -257,5 +257,26 @@ namespace VRCX
             
             return filePath;
         }
+        
+        public async Task<string> SaveEmojiToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
+        {
+            var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Emoji", MakeValidFileName(monthFolder));
+            Directory.CreateDirectory(folder);
+            var filePath = Path.Join(folder, MakeValidFileName(fileName));
+            if (File.Exists(filePath))
+                return null;
+
+            try
+            {
+                await ImageCache.SaveImageToFile(url, filePath);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to save print to file");
+                return null;
+            }
+            
+            return filePath;
+        }
     }
 }

@@ -260,6 +260,10 @@ export default class extends baseClass {
                     this.processScreenshot(gameLog.screenshotPath);
                     break;
                 case 'api-request':
+                    if ($app.debugWebRequests) {
+                        console.log('API Request:', gameLog.url);
+                    }
+
                     // var userId = '';
                     // try {
                     //     var url = new URL(gameLog.url);
@@ -277,23 +281,43 @@ export default class extends baseClass {
                     //     break;
                     // }
 
-                    if (!$app.saveInstancePrints) {
-                        break;
+                    if ($app.saveInstanceEmoji) {
+                        try {
+                            // https://api.vrchat.cloud/api/1/inventory/spawn?id=inv_75781d65-92fe-4a80-a1ff-27ee6e843b08
+                            const url = new URL(gameLog.url);
+                            if (
+                                url.pathname.substring(0, 22) ===
+                                '/api/1/inventory/spawn'
+                            ) {
+                                const inventoryId = url.searchParams.get('id');
+                                if (inventoryId && inventoryId.length === 40) {
+                                    $app.queueCheckInstanceInventory(
+                                        inventoryId
+                                    );
+                                }
+                            }
+                        } catch (err) {
+                            console.error(err);
+                        }
                     }
-                    try {
-                        var printId = '';
-                        var url = new URL(gameLog.url);
-                        if (
-                            url.pathname.substring(0, 14) === '/api/1/prints/'
-                        ) {
-                            var pathArray = url.pathname.split('/');
-                            printId = pathArray[4];
+
+                    if ($app.saveInstancePrints) {
+                        try {
+                            let printId = '';
+                            const url1 = new URL(gameLog.url);
+                            if (
+                                url1.pathname.substring(0, 14) ===
+                                '/api/1/prints/'
+                            ) {
+                                const pathArray = url1.pathname.split('/');
+                                printId = pathArray[4];
+                            }
+                            if (printId && printId.length === 41) {
+                                $app.queueSavePrintToFile(printId);
+                            }
+                        } catch (err) {
+                            console.error(err);
                         }
-                        if (printId && printId.length === 41) {
-                            $app.queueSavePrintToFile(printId);
-                        }
-                    } catch (err) {
-                        console.error(err);
                     }
                     break;
                 case 'avatar-change':

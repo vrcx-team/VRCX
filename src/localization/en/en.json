@@ -568,6 +568,10 @@
                         "header": "Save Instance Stickers To File",
                         "description": "Save placed stickers to your VRChat Pictures folder"
                     },
+                    "save_instance_emoji_to_file": {
+                        "header": "Save Instance Emoji To File",
+                        "description": "Save spawned emoji to your VRChat Pictures folder"
+                    },
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",
