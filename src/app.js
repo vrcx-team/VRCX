@@ -9921,13 +9921,6 @@ console.log(`isLinux: ${LINUX}`);
                     'instanceDialogQueueEnabled',
                     true
                 ),
-                contentSettings: this.instanceContentSettings || [],
-                selectedContentSettings: JSON.parse(
-                    await configRepository.getString(
-                        'instanceDialogSelectedContentSettings',
-                        JSON.stringify(this.instanceContentSettings || [])
-                    )
-                ),
                 roleIds: [],
                 groupRef: {}
             };
@@ -9961,18 +9954,12 @@ console.log(`isLinux: ${LINUX}`);
         } else if (D.region === 'Japan') {
             region = 'jp';
         }
-        var contentSettings = {};
-        for (var setting of D.contentSettings) {
-            contentSettings[setting] =
-                D.selectedContentSettings.includes(setting);
-        }
         var params = {
             type,
             canRequestInvite,
             worldId: D.worldId,
             ownerId: API.currentUser.id,
-            region,
-            contentSettings
+            region
         };
         if (type === 'group') {
             params.groupAccessType = D.groupAccessType;

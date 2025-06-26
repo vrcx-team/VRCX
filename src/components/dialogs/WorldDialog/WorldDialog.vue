@@ -753,7 +753,6 @@
         <NewInstanceDialog
             :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
             :create-new-instance="createNewInstance"
-            :instance-content-settings="instanceContentSettings"
             :offline-friends="offlineFriends"
             :active-friends="activeFriends"
             :online-friends="onlineFriends"
@@ -825,7 +824,6 @@
             isAgeGatedInstancesVisible: Boolean,
 
             createNewInstance: Function,
-            instanceContentSettings: Array,
             offlineFriends: Array,
             activeFriends: Array,
             onlineFriends: Array,

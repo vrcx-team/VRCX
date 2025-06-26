@@ -70,41 +70,6 @@
                             <el-radio-button label="Japan">{{ $t('dialog.new_instance.region_jp') }}</el-radio-button>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item :label="$t('dialog.new_instance.content_settings')">
-                        <el-select
-                            v-model="newInstanceDialog.selectedContentSettings"
-                            multiple
-                            :placeholder="$t('dialog.new_instance.content_placeholder')"
-                            style="width: 100%"
-                            @change="buildInstance">
-                            <el-option-group :label="$t('dialog.new_instance.content_placeholder')">
-                                <el-option
-                                    class="x-friend-item"
-                                    value="emoji"
-                                    :label="$t('dialog.new_instance.content_emoji')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="stickers"
-                                    :label="$t('dialog.new_instance.content_stickers')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="pedestals"
-                                    :label="$t('dialog.new_instance.content_pedestals')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="prints"
-                                    :label="$t('dialog.new_instance.content_prints')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="drones"
-                                    :label="$t('dialog.new_instance.content_drones')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="props"
-                                    :label="$t('dialog.new_instance.content_items')"></el-option>
-                            </el-option-group>
-                        </el-select>
-                    </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="$t('dialog.new_instance.queueEnabled')">
@@ -528,10 +493,6 @@
                 type: Array,
                 required: true
             },
-            instanceContentSettings: {
-                type: Array,
-                required: true
-            },
             createNewInstance: {
                 type: Function,
                 required: true
@@ -579,9 +540,7 @@
                     lastSelectedGroupId: '',
                     selectedGroupRoles: [],
                     roleIds: [],
-                    groupRef: {},
-                    contentSettings: this.instanceContentSettings,
-                    selectedContentSettings: []
+                    groupRef: {}
                 },
                 inviteDialog: {
                     visible: false,
@@ -690,23 +649,10 @@
                 configRepository
                     .getBool('instanceDialogAgeGate', false)
                     .then((value) => (this.newInstanceDialog.ageGate = value));
-
-                configRepository
-                    .getString('instanceDialogSelectedContentSettings', JSON.stringify(this.instanceContentSettings))
-                    .then((value) => (this.newInstanceDialog.selectedContentSettings = JSON.parse(value)));
             },
             saveNewInstanceDialog() {
-                const {
-                    accessType,
-                    region,
-                    instanceName,
-                    userId,
-                    groupId,
-                    groupAccessType,
-                    queueEnabled,
-                    ageGate,
-                    selectedContentSettings
-                } = this.newInstanceDialog;
+                const { accessType, region, instanceName, userId, groupId, groupAccessType, queueEnabled, ageGate } =
+                    this.newInstanceDialog;
 
                 configRepository.setString('instanceDialogAccessType', accessType);
                 configRepository.setString('instanceRegion', region);
@@ -716,10 +662,6 @@
                 configRepository.setString('instanceDialogGroupAccessType', groupAccessType);
                 configRepository.setBool('instanceDialogQueueEnabled', queueEnabled);
                 configRepository.setBool('instanceDialogAgeGate', ageGate);
-                configRepository.setString(
-                    'instanceDialogSelectedContentSettings',
-                    JSON.stringify(selectedContentSettings)
-                );
             },
             newInstanceTabClick(tab) {
                 if (tab === '1') {
