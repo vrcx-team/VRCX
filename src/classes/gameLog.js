@@ -951,7 +951,6 @@ export default class extends baseClass {
 
         async updateGameLog(dateTill) {
             await gameLogService.setDateTill(dateTill);
-            await gameLogService.reset();
             await new Promise((resolve) => {
                 workerTimers.setTimeout(resolve, 10000);
             });

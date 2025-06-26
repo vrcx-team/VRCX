@@ -33,8 +33,9 @@ namespace VRCX
         private ReaderWriterLockSlim m_LogListLock;
         private bool m_FirstRun = true;
         private bool m_ResetLog;
-        private Thread m_Thread;
-        private DateTime tillDate = DateTime.UtcNow;
+        private bool threadActive;
+        private Thread? m_Thread;
+        private DateTime tillDate;
         public bool VrcClosedGracefully;
         private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
 
@@ -62,6 +63,7 @@ namespace VRCX
 
         public void Exit()
         {
+            threadActive = false;
             var thread = m_Thread;
             m_Thread = null;
             thread.Interrupt();
@@ -77,6 +79,7 @@ namespace VRCX
         public void SetDateTill(string date)
         {
             tillDate = DateTime.Parse(date, CultureInfo.InvariantCulture, DateTimeStyles.None).ToUniversalTime();
+            threadActive = true;
             logger.Info("SetDateTill: {0}", tillDate.ToLocalTime());
         }
 
@@ -84,7 +87,8 @@ namespace VRCX
         {
             while (m_Thread != null)
             {
-                Update();
+                if (threadActive)
+                    Update();
 
                 try
                 {
@@ -130,15 +134,11 @@ namespace VRCX
                 foreach (var fileInfo in fileInfos)
                 {
                     fileInfo.Refresh();
-                    if (fileInfo.Exists == false)
-                    {
+                    if (!fileInfo.Exists)
                         continue;
-                    }
 
                     if (DateTime.Compare(fileInfo.LastWriteTimeUtc, tillDate) < 0)
-                    {
                         continue;
-                    }
 
                     if (m_LogContextMap.TryGetValue(fileInfo.Name, out var logContext))
                     {
@@ -151,9 +151,7 @@ namespace VRCX
                     }
 
                     if (logContext.Length == fileInfo.Length)
-                    {
                         continue;
-                    }
 
                     logContext.Length = fileInfo.Length;
                     ParseLog(fileInfo, logContext);
@@ -491,14 +489,19 @@ namespace VRCX
                     return true;
 
                 var userInfo = ParseUserInfo(line.Substring(lineOffset));
+                if (string.IsNullOrEmpty(userInfo.DisplayName) && string.IsNullOrEmpty(userInfo.UserId))
+                {
+                    logger.Warn("Failed to parse user info from log line: {0}", line);
+                    return true;
+                }
 
                 AppendLog(new[]
                 {
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "player-joined",
-                    userInfo.DisplayName,
-                    userInfo.UserId
+                    userInfo.DisplayName ?? string.Empty,
+                    userInfo.UserId ?? string.Empty
                 });
 
                 return true;
@@ -514,14 +517,19 @@ namespace VRCX
                     return true;
 
                 var userInfo = ParseUserInfo(line.Substring(lineOffset));
+                if (string.IsNullOrEmpty(userInfo.DisplayName) && string.IsNullOrEmpty(userInfo.UserId))
+                {
+                    logger.Warn("Failed to parse user info from log line: {0}", line);
+                    return true;
+                }
 
                 AppendLog(new[]
                 {
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "player-left",
-                    userInfo.DisplayName,
-                    userInfo.UserId
+                    userInfo.DisplayName ?? string.Empty,
+                    userInfo.UserId ?? string.Empty
                 });
 
                 return true;
@@ -621,7 +629,7 @@ namespace VRCX
 
             // 2024.07.31 22:28:47 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
             // 2024.07.31 23:04:15 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
-            
+
             // 2025.05.04 22:38:12 Error      -  Attempted to play an untrusted URL (Domain: localhost) that is not allowlisted for public instances. If this URL is needed for the world to work, the domain needs to be added to the world's Video Player Allowed Domains list on the website.
             const string youtubeBotError = "Sign in to confirm you’re not a bot";
             const string youtubeBotErrorFixUrl = "[VRCX]: We've made a program to help with this error, you can grab it from here: https://github.com/EllyVR/VRCVideoCacher";
@@ -651,7 +659,7 @@ namespace VRCX
                 var data = line.Substring(offset + 20);
                 if (!logContext.VideoPlaybackErrors.Add(data))
                     return true;
-                
+
                 if (data.Contains(youtubeBotError))
                     data = $"{youtubeBotErrorFixUrl}\n{data}";
 
@@ -668,7 +676,7 @@ namespace VRCX
 
             return false;
         }
-        
+
         private bool ParseUntrustedUrl(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2025.05.04 22:38:12 Error      -  Attempted to play an untrusted URL (Domain: localhost) that is not allowlisted for public instances. If this URL is needed for the world to work, the domain needs to be added to the world's Video Player Allowed Domains list on the website.
@@ -678,7 +686,7 @@ namespace VRCX
                 var data = line.Substring(offset);
                 if (!logContext.VideoPlaybackErrors.Add(data))
                     return true;
-                
+
                 AppendLog(new[]
                 {
                     fileInfo.Name,
@@ -686,7 +694,7 @@ namespace VRCX
                     "event",
                     "VideoError: " + data
                 });
-                
+
                 return true;
             }
 
@@ -1392,10 +1400,10 @@ namespace VRCX
             return new string[][] { };
         }
 
-        private static (string DisplayName, string UserId) ParseUserInfo(string userInfo)
+        private static (string? DisplayName, string? UserId) ParseUserInfo(string userInfo)
         {
-            string userDisplayName;
-            string userId;
+            string? userDisplayName;
+            string? userId;
 
             int pos = userInfo.LastIndexOf(" (", StringComparison.Ordinal);
             if (pos >= 0)
