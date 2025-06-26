@@ -1791,29 +1791,6 @@
         <LanguageDialog :language-dialog="languageDialog" />
         <BioDialog :bio-dialog="bioDialog" />
         <PronounsDialog :pronouns-dialog="pronounsDialog" />
-        <GalleryDialog
-            :gallery-dialog-visible.sync="galleryDialogVisible"
-            :gallery-dialog-gallery-loading="galleryDialogGalleryLoading"
-            :gallery-dialog-icons-loading="galleryDialogIconsLoading"
-            :gallery-dialog-emojis-loading="galleryDialogEmojisLoading"
-            :gallery-dialog-stickers-loading="galleryDialogStickersLoading"
-            :gallery-dialog-prints-loading="galleryDialogPrintsLoading"
-            :gallery-dialog-inventory-loading="galleryDialogInventoryLoading"
-            :gallery-table="galleryTable"
-            :VRCPlusIconsTable="VRCPlusIconsTable"
-            :emoji-table="emojiTable"
-            :sticker-table="stickerTable"
-            :print-upload-note="printUploadNote"
-            :print-crop-border="printCropBorder"
-            :print-table="printTable"
-            :inventory-table="inventoryTable"
-            @refreshGalleryTable="refreshGalleryTable"
-            @refreshVRCPlusIconsTable="refreshVRCPlusIconsTable"
-            @refreshStickerTable="refreshStickerTable"
-            @refreshEmojiTable="refreshEmojiTable"
-            @refreshPrintTable="refreshPrintTable"
-            @getInventory="getInventory"
-            @closeGalleryDialog="closeGalleryDialog" />
     </safe-dialog>
 </template>
 
@@ -1848,7 +1825,6 @@
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
     import BioDialog from './BioDialog.vue';
-    import GalleryDialog from './GalleryDialog.vue';
     import LanguageDialog from './LanguageDialog.vue';
     import PreviousInstancesUserDialog from './PreviousInstancesUserDialog.vue';
     import PronounsDialog from './PronounsDialog.vue';
@@ -1979,68 +1955,6 @@
         activeFriends: {
             type: Array,
             default: () => []
-        },
-        // Gallery Dialog
-        galleryDialogVisible: {
-            type: Boolean,
-            required: true
-        },
-        galleryDialogGalleryLoading: {
-            type: Boolean,
-            required: true
-        },
-        galleryDialogIconsLoading: {
-            type: Boolean,
-            required: true
-        },
-        galleryDialogEmojisLoading: {
-            type: Boolean,
-            required: true
-        },
-        galleryDialogStickersLoading: {
-            type: Boolean,
-            required: true
-        },
-        galleryDialogPrintsLoading: {
-            type: Boolean,
-            required: true
-        },
-        galleryDialogInventoryLoading: {
-            type: Boolean,
-            required: true
-        },
-        galleryTable: {
-            type: Array,
-            required: true
-        },
-        // eslint-disable-next-line vue/prop-name-casing
-        VRCPlusIconsTable: {
-            type: Array,
-            required: true
-        },
-        emojiTable: {
-            type: Array,
-            required: true
-        },
-        stickerTable: {
-            type: Array,
-            required: true
-        },
-        printUploadNote: {
-            type: String,
-            required: true
-        },
-        printCropBorder: {
-            type: Boolean,
-            required: true
-        },
-        printTable: {
-            type: Array,
-            required: true
-        },
-        inventoryTable: {
-            type: Array,
-            required: true
         }
     });
 
@@ -2055,14 +1969,7 @@
         'saveUserMemo',
         'setGroupVisibility',
         'leaveGroup',
-        'leaveGroupPrompt',
-        'refreshGalleryTable',
-        'refreshVRCPlusIconsTable',
-        'refreshStickerTable',
-        'refreshEmojiTable',
-        'refreshPrintTable',
-        'getInventory',
-        'closeGalleryDialog'
+        'leaveGroupPrompt'
     ]);
 
     watch(
@@ -2176,10 +2083,6 @@
     function cleanNote(note) {
         // remove newlines because they aren't supported
         props.userDialog.note = note.replace(/[\r\n]/g, '');
-    }
-
-    function closeGalleryDialog() {
-        emit('closeGalleryDialog');
     }
 
     function toggleLastActiveTab(userId) {
@@ -3280,23 +3183,5 @@
     }
     function closeInviteDialog() {
         clearInviteImageUpload();
-    }
-    function refreshGalleryTable() {
-        emit('refreshGalleryTable');
-    }
-    function refreshVRCPlusIconsTable() {
-        emit('refreshVRCPlusIconsTable');
-    }
-    function refreshStickerTable() {
-        emit('refreshStickerTable');
-    }
-    function refreshEmojiTable() {
-        emit('refreshEmojiTable');
-    }
-    function refreshPrintTable() {
-        emit('refreshPrintTable');
-    }
-    function getInventory() {
-        emit('getInventory');
     }
 </script>

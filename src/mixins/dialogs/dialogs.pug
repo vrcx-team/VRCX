@@ -82,27 +82,6 @@ mixin dialogs
         :onlineFriends='onlineFriends'
         :offlineFriends='offlineFriends'
         :activeFriends='activeFriends'
-        :galleryDialogVisible='galleryDialogVisible'
-        :galleryDialogGalleryLoading='galleryDialogGalleryLoading'
-        :galleryDialogIconsLoading='galleryDialogIconsLoading'
-        :galleryDialogEmojisLoading='galleryDialogEmojisLoading'
-        :galleryDialogStickersLoading='galleryDialogStickersLoading'
-        :galleryDialogPrintsLoading='galleryDialogPrintsLoading'
-        :galleryDialogInventoryLoading='galleryDialogInventoryLoading'
-        :galleryTable='galleryTable'
-        :VRCPlusIconsTable='VRCPlusIconsTable'
-        :emojiTable='emojiTable'
-        :stickerTable='stickerTable'
-        :printUploadNote='printUploadNote'
-        :printCropBorder='printCropBorder'
-        :printTable='printTable'
-        :inventoryTable='inventoryTable'
-        @refreshGalleryTable='refreshGalleryTable'
-        @refreshEmojiTable='refreshEmojiTable'
-        @refreshStickerTable='refreshStickerTable'
-        @refreshVRCPlusIconsTable='refreshVRCPlusIconsTable'
-        @refreshPrintTable='refreshPrintTable'
-        @getInventory='getInventory'
         @sortUserDialogAvatars='sortUserDialogAvatars'
         @logout='logout'
         @showAvatarAuthorDialog='showAvatarAuthorDialog'
@@ -113,8 +92,7 @@ mixin dialogs
         @saveUserMemo='saveUserMemo'
         @setGroupVisibility='setGroupVisibility'
         @leaveGroup='leaveGroup'
-        @leaveGroupPrompt='leaveGroupPrompt'
-        @closeGalleryDialog='galleryDialogVisible = false')
+        @leaveGroupPrompt='leaveGroupPrompt')
 
     WorldDialog(
         :worldDialog.sync='worldDialog'
@@ -220,3 +198,28 @@ mixin dialogs
     PrimaryPasswordDialog(
         :enablePrimaryPasswordDialog.sync='enablePrimaryPasswordDialog'
         @setPrimaryPassword='setPrimaryPassword')
+
+
+    GalleryDialog(
+        :gallery-dialog-visible.sync="galleryDialogVisible"
+        :gallery-dialog-gallery-loading="galleryDialogGalleryLoading"
+        :gallery-dialog-icons-loading="galleryDialogIconsLoading"
+        :gallery-dialog-emojis-loading="galleryDialogEmojisLoading"
+        :gallery-dialog-stickers-loading="galleryDialogStickersLoading"
+        :gallery-dialog-prints-loading="galleryDialogPrintsLoading"
+        :gallery-dialog-inventory-loading="galleryDialogInventoryLoading"
+        :gallery-table="galleryTable"
+        :VRCPlusIconsTable="VRCPlusIconsTable"
+        :emoji-table="emojiTable"
+        :sticker-table="stickerTable"
+        :print-upload-note="printUploadNote"
+        :print-crop-border="printCropBorder"
+        :print-table="printTable"
+        :inventory-table="inventoryTable"
+        @refreshGalleryTable="refreshGalleryTable"
+        @refreshVRCPlusIconsTable="refreshVRCPlusIconsTable"
+        @refreshStickerTable="refreshStickerTable"
+        @refreshEmojiTable="refreshEmojiTable"
+        @refreshPrintTable="refreshPrintTable"
+        @getInventory="getInventory"
+        @closeGalleryDialog="closeGalleryDialog")
