@@ -40,16 +40,6 @@ namespace VRCX
             using var fileMemoryStream = new MemoryStream(imageData);
             var image = Image.Load(fileMemoryStream);
 
-            // for APNG, check if image is png format and less than maxSize
-            if ((!matchingDimensions || image.Width == image.Height) &&
-                image.Metadata.DecodedImageFormat == PngFormat.Instance &&
-                imageData.Length < maxSize &&
-                image.Width <= maxWidth &&
-                image.Height <= maxHeight)
-            {
-                return imageData;
-            }
-
             if (image.Width > maxWidth)
             {
                 var sizingFactor = image.Width / (double)maxWidth;

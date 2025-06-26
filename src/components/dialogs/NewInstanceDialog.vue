@@ -98,6 +98,10 @@
                                     class="x-friend-item"
                                     value="drones"
                                     :label="$t('dialog.new_instance.content_drones')"></el-option>
+                                <el-option
+                                    class="x-friend-item"
+                                    value="props"
+                                    :label="$t('dialog.new_instance.content_items')"></el-option>
                             </el-option-group>
                         </el-select>
                     </el-form-item>
@@ -490,7 +494,7 @@
             :active-friends="activeFriends"
             :invite-message-table="inviteMessageTable"
             :upload-image="uploadImage"
-            @close-invite-dialog="closeInviteDialog" />
+            @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
 </template>
 
@@ -506,7 +510,7 @@
     export default {
         name: 'NewInstanceDialog',
         components: { InviteDialog },
-        inject: ['API', 'userImage', 'userStatusClass', 'showLaunchDialog', 'adjustDialogZ'],
+        inject: ['API', 'friends', 'userImage', 'userStatusClass', 'showLaunchDialog', 'adjustDialogZ'],
         props: {
             vipFriends: {
                 type: Array,

@@ -5,11 +5,15 @@
 ;https://nsis.sourceforge.io/NsProcess_plugin
 ;https://nsis.sourceforge.io/Inetc_plug-in
 
+!addplugindir "Plugins\x86-unicode"
+
 ;--------------------------------
 ;Version
+    !include "version_define.nsh"
 
-    !define PRODUCT_VERSION "1.0.0.0"
-    !define VERSION "1.0.0.0"
+    !define PRODUCT_VERSION ${PRODUCT_VERSION_FROM_FILE}
+    !define VERSION ${PRODUCT_VERSION_FROM_FILE}
+
     VIProductVersion "${PRODUCT_VERSION}"
     VIFileVersion "${VERSION}"
     VIAddVersionKey "FileVersion" "${VERSION}"
@@ -166,6 +170,10 @@ Section "Install" SecInstall
     WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
     WriteUninstaller "$INSTDIR\Uninstall.exe"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayName" "VRCX"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "Publisher" "vrcx-team"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayVersion" "${VERSION}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayArch" "x64"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "InstallLocation" "$INSTDIR"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayIcon" "$\"$INSTDIR\VRCX.ico$\""
 

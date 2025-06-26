@@ -257,7 +257,7 @@
                 "vrchat_credits": "VRChat Credits",
                 "refresh": "Click to refresh",
                 "logout": "Logout",
-                "manage_gallery_icon": "Manage VRC+ Images",
+                "manage_gallery_inventory_icon": "Manage VRC+ Images & Inventory",
                 "export_friend_list": "Export Friends List",
                 "export_own_avatars": "Export Own Avatars",
                 "discord_names": "Discord Names",
@@ -298,6 +298,7 @@
                 "notifications": "Notifications",
                 "wrist_overlay": "Wrist Overlay",
                 "discord_presence": "Discord Presence",
+                "pictures": "Pictures",
                 "advanced": "Advanced"
             },
             "general": {
@@ -324,7 +325,7 @@
                     "minimized": "Start minimized",
                     "tray": "Minimize to tray when closing",
                     "disable_gpu_acceleration": "Disable GPU Acceleration",
-                    "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, breaks SteamVR overlay, may fix issues with UI, requires restarting VRCX",
+                    "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, may fix issues with UI, requires restarting VRCX",
                     "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
                     "disable_vr_overlay_gpu_acceleration_tooltip": "VR Overlay GPU acceleration can cause VRCX to crash or cause VRAM memory leaks, requires restarting VRCX",
                     "proxy": "Proxy settings"
@@ -452,6 +453,7 @@
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
                         "user_images": "User Images (slower)",
+                        "notification_opacity": "Notification Opacity",
                         "notification_timeout": "Notification Timeout"
                     },
                     "conditions": {
@@ -514,6 +516,16 @@
                     "join_button": "Join button (public only)",
                     "show_details_in_private": "Show world details in private",
                     "show_images": "Show world images"
+                }
+            },
+            "pictures": {
+                "pictures": {
+                    "header": "Pictures",
+                    "open_folder": "Open Folder",
+                    "vrc_photos": "VRChat Photos",
+                    "steam_screenshots": "Steam Screenshots",
+                    "auto_delete_old_prints": "Auto Delete Old Prints",
+                    "auto_delete_prints_from_vrc": "Delete Old Prints from VRC when reaching print limit"
                 }
             },
             "advanced": {
@@ -713,7 +725,7 @@
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
                 "send_boop": "Send Boop",
-                "manage_gallery_icon": "Manage VRC+ Images",
+                "manage_gallery_inventory_icon": "Manage VRC+ Images & Inventory",
                 "accept_friend_request": "Accept Friend Request",
                 "decline_friend_request": "Decline Friend Request",
                 "cancel_friend_request": "Cancel Friend Request",
@@ -874,7 +886,7 @@
                 "change_capacity": "Change Capacity",
                 "change_recommended_capacity": "Change Recommended Capacity",
                 "change_preview": "Change Youtube Preview",
-                "change_tags": "Change Tags",
+                "change_warnings_settings_tags": "Change Content Warnings, Settings and Tags",
                 "change_image": "Change Image",
                 "change_allowed_video_player_domains": "Change Allowed Video Player Domains",
                 "download_package": "Download Unity Package",
@@ -961,7 +973,7 @@
                 "rename": "Rename",
                 "change_description": "Change Description",
                 "change_content_tags": "Change Content Tags",
-                "change_styles": "Change Styles",
+                "change_styles_author_tags": "Change Styles and Author Tags",
                 "change_image": "Change Image",
                 "download_package": "Download Unity Package",
                 "delete": "Delete",
@@ -981,7 +993,9 @@
                 "platform": "Platform",
                 "time_spent": "Time Spent",
                 "memo": "Memo",
-                "memo_placeholder": "Click to add a memo"
+                "memo_placeholder": "Click to add a memo",
+                "listings": "Listings",
+                "gallery": "Gallery"
             },
             "json": {
                 "header": "JSON",
@@ -1017,6 +1031,9 @@
                 "unsubscribe": "Unsubscribe From Announcements",
                 "subscribe": "Subscribe To Announcements",
                 "invite_to_group": "Invite To Group",
+                "manage_selected": "Manage Selected Groups",
+                "select_all": "Select All",
+                "deselect_all": "Deselect All",
                 "visibility_everyone": "Visibility Everyone",
                 "visibility_friends": "Visibility Friends",
                 "visibility_hidden": "Visibility Hidden",
@@ -1152,6 +1169,7 @@
             "content_pedestals": "Pedestals",
             "content_prints": "Prints",
             "content_drones": "Drones",
+            "content_items": "Items",
             "world_id": "World ID",
             "instance_id": "Instance ID",
             "instance_id_placeholder": "Random",
@@ -1439,6 +1457,7 @@
             "emojis": "Emojis",
             "stickers": "Stickers",
             "prints": "Prints",
+            "inventory": "Inventory",
             "refresh": "Refresh",
             "upload": "Upload",
             "clear": "Clear",
@@ -1449,7 +1468,8 @@
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
             "note": "Note",
-            "crop_print_border": "Crop Print Border"
+            "crop_print_border": "Crop Print Border",
+            "consume_bundle": "Consume"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
@@ -1634,6 +1654,15 @@
         "gallery": {
             "uploaded": "Gallery image uploaded",
             "failed": "Failed to upload gallery image"
+        },
+        "avatar_gallery": {
+            "uploaded": "Avatar gallery image uploaded",
+            "failed": "Failed to upload avatar gallery image",
+            "deleted": "Avatar gallery image deleted",
+            "not_found": "Avatar gallery fileId not found",
+            "already_first": "Already first image",
+            "already_last": "Already last image",
+            "reordered": "Successfully reordered avatar gallery images"
         },
         "world": {
             "image_changed": "World image changed",
@@ -1903,6 +1932,7 @@
             "rank": "Rank",
             "language": "Language",
             "bioLink": "Bio Links",
+            "note": "Note",
             "date": "Date",
             "user": "User",
             "type": "Type",

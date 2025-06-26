@@ -4,7 +4,7 @@
         class="x-dialog x-avatar-dialog"
         :visible.sync="avatarDialog.visible"
         :show-close="false"
-        width="600px">
+        width="700px">
         <div v-loading="avatarDialog.loading">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
@@ -197,6 +197,16 @@
                                         }}</template>
                                         <template v-else>{{ tag.replace('content_', '') }}</template>
                                     </el-tag>
+                                    <el-tag
+                                        v-if="tag.startsWith('author_tag_')"
+                                        :key="tag"
+                                        effect="plain"
+                                        size="mini"
+                                        style="margin-right: 5px; margin-top: 5px">
+                                        <template>
+                                            {{ tag.replace('author_tag_', '') }}
+                                        </template>
+                                    </el-tag>
                                 </template>
                             </div>
                         </div>
@@ -314,8 +324,8 @@
                                     <el-dropdown-item icon="el-icon-edit" command="Change Content Tags">{{
                                         t('dialog.avatar.actions.change_content_tags')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change Styles">{{
-                                        t('dialog.avatar.actions.change_styles')
+                                    <el-dropdown-item icon="el-icon-edit" command="Change Styles and Author Tags">{{
+                                        t('dialog.avatar.actions.change_styles_author_tags')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Change Image">{{
                                         t('dialog.avatar.actions.change_image')
@@ -355,7 +365,88 @@
             </div>
             <el-tabs>
                 <el-tab-pane :label="t('dialog.avatar.info.header')">
-                    <div class="x-friend-list">
+                    <div class="x-friend-list" style="max-height: unset">
+                        <div
+                            v-if="avatarDialog.galleryImages.length || avatarDialog.ref.authorId === API.currentUser.id"
+                            style="width: 100%">
+                            <span class="name">{{ t('dialog.avatar.info.gallery') }}</span>
+                            <input
+                                id="AvatarGalleryUploadButton"
+                                type="file"
+                                accept="image/*"
+                                style="display: none"
+                                @change="onFileChangeAvatarGallery" />
+                            <el-button
+                                v-if="avatarDialog.ref.authorId === API.currentUser.id"
+                                v-loading="avatarDialog.galleryLoading"
+                                size="small"
+                                icon="el-icon-upload2"
+                                style="margin-left: 5px"
+                                @click="displayAvatarGalleryUpload"
+                                >{{ t('dialog.screenshot_metadata.upload') }}</el-button
+                            >
+                            <el-carousel
+                                v-if="avatarDialog.galleryImages.length"
+                                type="card"
+                                :autoplay="false"
+                                height="200px">
+                                <el-carousel-item v-for="imageUrl in avatarDialog.galleryImages" :key="imageUrl">
+                                    <img
+                                        :src="imageUrl"
+                                        style="width: 100%; height: 100%; object-fit: contain"
+                                        @click="showFullscreenImageDialog(imageUrl)" />
+                                    <div
+                                        v-if="avatarDialog.ref.authorId === API.currentUser.id"
+                                        style="position: absolute; bottom: 5px; left: 33.3%">
+                                        <el-button
+                                            size="mini"
+                                            icon="el-icon-back"
+                                            circle
+                                            class="x-link"
+                                            style="margin-left: 0px"
+                                            @click.stop="reorderAvatarGalleryImage(imageUrl, -1)"></el-button>
+                                        <el-button
+                                            size="mini"
+                                            icon="el-icon-right"
+                                            circle
+                                            class="x-link"
+                                            style="margin-left: 0px"
+                                            @click.stop="reorderAvatarGalleryImage(imageUrl, 1)"></el-button>
+                                        <el-button
+                                            size="mini"
+                                            icon="el-icon-delete"
+                                            circle
+                                            class="x-link"
+                                            style="margin-left: 0px"
+                                            @click.stop="deleteAvatarGalleryImage(imageUrl)"></el-button>
+                                    </div>
+                                </el-carousel-item>
+                            </el-carousel>
+                        </div>
+                        <div v-if="avatarDialog.ref.publishedListings?.length">
+                            <span class="name">{{ t('dialog.avatar.info.listings') }}</span>
+                            <div
+                                v-for="listing in avatarDialog.ref.publishedListings"
+                                :key="listing.id"
+                                class="x-friend-item"
+                                style="width: 100%; cursor: default">
+                                <div class="avatar">
+                                    <img
+                                        :src="getImageUrlFromImageId(listing.imageId)"
+                                        @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))" />
+                                </div>
+                                <div class="detail">
+                                    <span class="name">{{ listing.displayName }}</span>
+                                    <span class="extra" style="text-decoration: underline; font-style: italic"
+                                        >${{ commaNumber(listing.priceTokens) }}V</span
+                                    >
+                                    <span
+                                        class="extra"
+                                        style="text-overflow: ellipsis; text-wrap: auto"
+                                        v-text="listing.description"></span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name" style="margin-bottom: 5px">{{ t('dialog.avatar.info.memo') }}</span>
@@ -541,6 +632,8 @@
     const showFavoriteDialog = inject('showFavoriteDialog');
     const openExternalLink = inject('openExternalLink');
     const adjustDialogZ = inject('adjustDialogZ');
+    const getImageUrlFromImageId = inject('getImageUrlFromImageId');
+    const getAvatarGallery = inject('getAvatarGallery');
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
@@ -596,7 +689,9 @@
         primaryStyle: '',
         secondaryStyle: '',
         availableAvatarStyles: [],
-        availableAvatarStylesMap: new Map()
+        availableAvatarStylesMap: new Map(),
+        initialTags: [],
+        authorTags: ''
     });
 
     const avatarDialogPlatform = computed(() => {
@@ -677,6 +772,10 @@
         emit('deleteVRChatCache', ref);
     }
 
+    function commaNumber(num) {
+        return utils.commaNumber(num);
+    }
+
     function avatarDialogCommand(command) {
         const D = props.avatarDialog;
         switch (command) {
@@ -684,7 +783,7 @@
                 showAvatarDialog(D.id);
                 break;
             case 'Share':
-                copyToClipboard(D.id);
+                copyAvatarUrl(D.id);
                 break;
             case 'Rename':
                 promptRenameAvatar(D);
@@ -701,7 +800,7 @@
             case 'Change Content Tags':
                 showSetAvatarTagsDialog(D.id);
                 break;
-            case 'Change Styles':
+            case 'Change Styles and Author Tags':
                 showSetAvatarStylesDialog(D.id);
                 break;
             case 'Download Unity Package':
@@ -1045,9 +1144,6 @@
                 }
             }
         }
-        if (!assetUrl) {
-            assetUrl = D.ref.assetUrl;
-        }
         const fileId = extractFileId(assetUrl);
         const version = parseInt(extractFileVersion(assetUrl), 10);
         if (!fileId || !version) {
@@ -1154,8 +1250,127 @@
         D.secondaryStyle = props.avatarDialog.ref.styles?.secondary || '';
         D.initialPrimaryStyle = D.primaryStyle;
         D.initialSecondaryStyle = D.secondaryStyle;
+        D.initialTags = props.avatarDialog.ref.tags;
+        D.authorTags = '';
+        for (const tag of D.initialTags) {
+            if (tag.startsWith('author_tag_')) {
+                if (D.authorTags) {
+                    D.authorTags += ',';
+                }
+                D.authorTags += tag.substring(11);
+            }
+        }
         nextTick(() => {
             D.loading = false;
+        });
+    }
+
+    function displayAvatarGalleryUpload() {
+        document.getElementById('AvatarGalleryUploadButton').click();
+    }
+
+    function onFileChangeAvatarGallery(e) {
+        const clearFile = function () {
+            if (document.querySelector('#AvatarGalleryUploadButton')) {
+                document.querySelector('#AvatarGalleryUploadButton').value = '';
+            }
+        };
+        const files = e.target.files || e.dataTransfer.files;
+        if (!files.length) {
+            return;
+        }
+        if (files[0].size >= 100000000) {
+            // 100MB
+            $message({
+                message: t('message.file.too_large'),
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        if (!files[0].type.match(/image.*/)) {
+            $message({
+                message: t('message.file.not_image'),
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        const r = new FileReader();
+        r.onload = function () {
+            props.avatarDialog.galleryLoading = true;
+            const base64Body = btoa(r.result);
+            avatarRequest
+                .uploadAvatarGalleryImage(base64Body, props.avatarDialog.id)
+                .then((args) => {
+                    $message({
+                        message: t('message.avatar_gallery.uploaded'),
+                        type: 'success'
+                    });
+                    console.log(args);
+                    props.avatarDialog.galleryImages = getAvatarGallery(props.avatarDialog.id);
+                    return args;
+                })
+                .finally(() => {
+                    props.avatarDialog.galleryLoading = false;
+                });
+        };
+        r.readAsBinaryString(files[0]);
+        clearFile();
+    }
+
+    function deleteAvatarGalleryImage(imageUrl) {
+        const fileId = extractFileId(imageUrl);
+        miscRequest.deleteFile(fileId).then((args) => {
+            $message({
+                message: t('message.avatar_gallery.deleted'),
+                type: 'success'
+            });
+            props.avatarDialog.galleryImages = getAvatarGallery(props.avatarDialog.id);
+            return args;
+        });
+    }
+
+    function reorderAvatarGalleryImage(imageUrl, direction) {
+        const fileId = extractFileId(imageUrl);
+        let fileIds = [];
+        props.avatarDialog.ref.gallery.forEach((item) => {
+            fileIds.push(extractFileId(item.id));
+        });
+        const index = fileIds.indexOf(fileId);
+        if (index === -1) {
+            $message({
+                message: t('message.avatar_gallery.not_found'),
+                type: 'error'
+            });
+            return;
+        }
+        if (direction === -1 && index === 0) {
+            $message({
+                message: t('message.avatar_gallery.already_first'),
+                type: 'warning'
+            });
+            return;
+        }
+        if (direction === 1 && index === fileIds.length - 1) {
+            $message({
+                message: t('message.avatar_gallery.already_last'),
+                type: 'warning'
+            });
+            return;
+        }
+        if (direction === -1) {
+            utils.moveArrayItem(fileIds, index, index - 1);
+        } else {
+            utils.moveArrayItem(fileIds, index, index + 1);
+        }
+        avatarRequest.setAvatarGalleryOrder(fileIds).then((args) => {
+            $message({
+                message: t('message.avatar_gallery.reordered'),
+                type: 'success'
+            });
+            props.avatarDialog.galleryImages = getAvatarGallery(props.avatarDialog.id);
+            return args;
         });
     }
 </script>

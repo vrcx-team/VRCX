@@ -84,7 +84,7 @@
             :active-friends="activeFriends"
             :invite-message-table="inviteMessageTable"
             :upload-image="uploadImage"
-            @close-invite-dialog="closeInviteDialog" />
+            @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
 </template>
 
@@ -98,7 +98,7 @@
     export default {
         name: 'LaunchDialog',
         components: { InviteDialog },
-        inject: ['showPreviousInstancesInfoDialog', 'adjustDialogZ'],
+        inject: ['friends', 'showPreviousInstancesInfoDialog', 'adjustDialogZ'],
         props: {
             hideTooltips: Boolean,
             launchDialogData: { type: Object, required: true },

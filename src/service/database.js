@@ -43,13 +43,7 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_avatar_history (avatar_id TEXT PRIMARY KEY, created_at TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
-        );
-        await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS world_memos (world_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
-        );
-        await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS avatar_memos (avatar_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_notes (user_id TEXT PRIMARY KEY, display_name TEXT, note TEXT, created_at TEXT)`
         );
     }
 
@@ -86,6 +80,15 @@ class Database {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS favorite_avatar (id INTEGER PRIMARY KEY, created_at TEXT, avatar_id TEXT, group_name TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS world_memos (world_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS avatar_memos (avatar_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
     }
 
@@ -1330,7 +1333,7 @@ class Database {
 
     async lookupFeedDatabase(search, filters, vipList) {
         var search = search.replaceAll("'", "''");
-        if (search.startsWith('wrld_')) {
+        if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return Database.getFeedByInstanceId(search, filters, vipList);
         }
         var vipQuery = '';
@@ -1398,7 +1401,7 @@ class Database {
                     groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${Database.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (status) {
             await sqliteService.execute((dbRow) => {
@@ -1476,7 +1479,7 @@ class Database {
                     groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${Database.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
@@ -1654,7 +1657,7 @@ class Database {
 
     async lookupGameLogDatabase(search, filters, vipList = []) {
         var search = search.replaceAll("'", "''");
-        if (search.startsWith('wrld_')) {
+        if (search.startsWith('wrld_') || search.startsWith('grp_')) {
             return Database.getGameLogByLocation(search, filters);
         }
         let vipQuery = '';
@@ -1733,7 +1736,7 @@ class Database {
                     groupName: dbRow[6]
                 };
                 gamelogDatabase.unshift(row);
-            }, `SELECT * FROM gamelog_location WHERE world_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM gamelog_location WHERE world_name LIKE '%${search}%' OR group_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (onplayerjoined || onplayerleft) {
             var query = '';
@@ -2845,6 +2848,43 @@ class Database {
             }
         );
         return result;
+    }
+
+    // user notes
+
+    async addUserNote(note) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${Database.userPrefix}_notes (user_id, display_name, note, created_at) VALUES (@user_id, @display_name, @note, @created_at)`,
+            {
+                '@user_id': note.userId,
+                '@display_name': note.displayName,
+                '@note': note.note,
+                '@created_at': note.createdAt
+            }
+        );
+    }
+
+    async getAllUserNotes() {
+        var data = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                userId: dbRow[0],
+                displayName: dbRow[1],
+                note: dbRow[2],
+                createdAt: dbRow[3]
+            };
+            data.push(row);
+        }, `SELECT user_id, display_name, note, created_at FROM ${Database.userPrefix}_notes`);
+        return data;
+    }
+
+    async deleteUserNote(userId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_notes WHERE user_id = @userId`,
+            {
+                '@userId': userId
+            }
+        );
     }
 }
 

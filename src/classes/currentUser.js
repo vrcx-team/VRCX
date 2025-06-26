@@ -228,6 +228,7 @@ export default class extends baseClass {
                     hideContentFilterSettings: false,
                     homeLocation: '',
                     id: '',
+                    isAdult: true,
                     isBoopingEnabled: false,
                     isFriend: false,
                     last_activity: '',

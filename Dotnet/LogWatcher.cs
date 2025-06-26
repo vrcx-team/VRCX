@@ -392,9 +392,7 @@ namespace VRCX
                 // logContext.onJoinPhotonDisplayName = string.Empty;
                 // logContext.onJoinPhotonDisplayNameDate = string.Empty;
                 logContext.LastAudioDevice = string.Empty;
-                logContext.LastVideoPlaybackError = string.Empty;
-                logContext.LastAVProError = string.Empty;
-                logContext.locationDestination = string.Empty;
+                logContext.VideoPlaybackErrors.Clear();
                 VrcClosedGracefully = false;
 
                 return true;
@@ -439,10 +437,10 @@ namespace VRCX
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "location-destination",
-                    logContext.locationDestination
+                    logContext.LocationDestination
                 });
 
-                logContext.locationDestination = string.Empty;
+                logContext.LocationDestination = string.Empty;
 
                 return true;
             }
@@ -456,7 +454,7 @@ namespace VRCX
                 if (lineOffset >= line.Length)
                     return true;
 
-                logContext.locationDestination = line.Substring(lineOffset);
+                logContext.LocationDestination = line.Substring(lineOffset);
 
                 return true;
             }
@@ -626,17 +624,16 @@ namespace VRCX
             
             // 2025.05.04 22:38:12 Error      -  Attempted to play an untrusted URL (Domain: localhost) that is not allowlisted for public instances. If this URL is needed for the world to work, the domain needs to be added to the world's Video Player Allowed Domains list on the website.
             const string youtubeBotError = "Sign in to confirm you’re not a bot";
-            const string youtubeBotErrorFixUrl = "\n[VRCX]: We've made a program to help with this error, you can try it out here: https://github.com/EllyVR/VRCVideoCacher";
+            const string youtubeBotErrorFixUrl = "[VRCX]: We've made a program to help with this error, you can grab it from here: https://github.com/EllyVR/VRCVideoCacher";
 
             if (line.Contains("[Video Playback] ERROR: "))
             {
                 var data = line.Substring(offset + 24);
-                if (data == logContext.LastVideoPlaybackError)
+                if (!logContext.VideoPlaybackErrors.Add(data))
                     return true;
-                logContext.LastVideoPlaybackError = data;
-                
+
                 if (data.Contains(youtubeBotError))
-                    data += youtubeBotErrorFixUrl;
+                    data = $"{youtubeBotErrorFixUrl}\n{data}";
 
                 AppendLog(new[]
                 {
@@ -652,12 +649,11 @@ namespace VRCX
             if (line.Contains("[AVProVideo] Error: "))
             {
                 var data = line.Substring(offset + 20);
-                if (data == logContext.LastAVProError)
+                if (!logContext.VideoPlaybackErrors.Add(data))
                     return true;
-                logContext.LastAVProError = data;
                 
                 if (data.Contains(youtubeBotError))
-                    data += youtubeBotErrorFixUrl;
+                    data = $"{youtubeBotErrorFixUrl}\n{data}";
 
                 AppendLog(new[]
                 {
@@ -680,10 +676,9 @@ namespace VRCX
             if (line.Contains("Attempted to play an untrusted URL"))
             {
                 var data = line.Substring(offset);
-                if (data == logContext.LastVideoPlaybackError)
+                if (!logContext.VideoPlaybackErrors.Add(data))
                     return true;
                 
-                logContext.LastVideoPlaybackError = data;
                 AppendLog(new[]
                 {
                     fileInfo.Name,
@@ -1421,10 +1416,9 @@ namespace VRCX
         {
             public bool AudioDeviceChanged;
             public string LastAudioDevice;
-            public string LastVideoPlaybackError;
-            public string LastAVProError;
+            public readonly HashSet<string> VideoPlaybackErrors = new(50);
             public long Length;
-            public string locationDestination;
+            public string LocationDestination;
             public long Position;
             public string RecentWorldName;
             public bool ShaderKeywordsLimitReached;

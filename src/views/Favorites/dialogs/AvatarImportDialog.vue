@@ -337,7 +337,7 @@
                         if (D.avatarImportFavoriteGroup) {
                             await this.addFavoriteAvatar(ref, D.avatarImportFavoriteGroup, false);
                         } else if (D.avatarImportLocalFavoriteGroup) {
-                            this.$emit('add-local-avatar-favorite', ref.id, D.avatarImportLocalFavoriteGroup);
+                            this.$emit('addLocalAvatarFavorite', ref.id, D.avatarImportLocalFavoriteGroup);
                         }
                         utils.removeFromArray(this.avatarImportTable.data, ref);
                         D.avatarIdList.delete(ref.id);

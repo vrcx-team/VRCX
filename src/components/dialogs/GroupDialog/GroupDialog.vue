@@ -1248,7 +1248,7 @@
     const emit = defineEmits([
         'update:group-dialog',
         'groupDialogCommand',
-        'get-group-dialog-group',
+        'getGroupDialogGroup',
         'updateGroupPostSearch'
     ]);
 
@@ -1401,11 +1401,12 @@
             })
             .then((args) => {
                 // API.$on('GROUP:SETREPRESENTATION', function (args) {
-                if (props.groupDialog.visible && props.groupDialog.id === args.groupId) {
+                if (props.groupDialog.visible && props.groupDialog.id === groupId) {
                     updateGroupDialogData({
                         ...props.groupDialog,
                         ref: { ...props.groupDialog.ref, isRepresenting: args.params.isRepresenting }
                     });
+                    getGroupDialogGroup(groupId);
                 }
             });
     }
@@ -1417,9 +1418,8 @@
             })
             .then((args) => {
                 // API.$on('GROUP:CANCELJOINREQUEST', function (args) {
-                const groupId = args.params.groupId;
-                if (props.groupDialog.visible && props.groupDialog.id === groupId) {
-                    getGroupDialogGroup(groupId);
+                if (props.groupDialog.visible && props.groupDialog.id === id) {
+                    getGroupDialogGroup(id);
                 }
                 // });
             });
@@ -1536,35 +1536,13 @@
             })
             .then((args) => {
                 // API.$on('GROUP:JOIN', function (args) {
-                const json = {
-                    $memberId: args.json.id,
-                    id: args.json.groupId,
-                    membershipStatus: args.json.membershipStatus,
-                    myMember: {
-                        isRepresenting: args.json.isRepresenting,
-                        id: args.json.id,
-                        roleIds: args.json.roleIds,
-                        joinedAt: args.json.joinedAt,
-                        membershipStatus: args.json.membershipStatus,
-                        visibility: args.json.visibility,
-                        isSubscribedToAnnouncements: args.json.isSubscribedToAnnouncements
-                    }
-                };
-                const groupId = json.id;
-                API.$emit('GROUP', {
-                    json,
-                    params: {
-                        groupId,
-                        userId: args.params.userId
-                    }
-                });
-                if (props.groupDialog.visible && props.groupDialog.id === groupId) {
+                if (props.groupDialog.visible && props.groupDialog.id === id) {
                     updateGroupDialogData({
                         ...props.groupDialog,
-                        inGroup: json.membershipStatus === 'member'
+                        inGroup: args.json.membershipStatus === 'member'
                     });
-                    // props.groupDialog.inGroup = json.membershipStatus === 'member';
-                    getGroupDialogGroup(groupId);
+                    // props.groupDialog.inGroup = args.json.membershipStatus === 'member';
+                    getGroupDialogGroup(id);
                 }
                 // });
                 if (args.json.membershipStatus === 'member') {
@@ -1803,7 +1781,7 @@
         emit('update:group-dialog', obj);
     }
     function getGroupDialogGroup(groupId) {
-        emit('get-group-dialog-group', groupId);
+        emit('getGroupDialogGroup', groupId);
     }
     function updateGroupPostSearch() {
         emit('updateGroupPostSearch');

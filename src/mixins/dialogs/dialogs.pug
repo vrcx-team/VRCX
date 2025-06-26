@@ -88,6 +88,7 @@ mixin dialogs
         :galleryDialogEmojisLoading='galleryDialogEmojisLoading'
         :galleryDialogStickersLoading='galleryDialogStickersLoading'
         :galleryDialogPrintsLoading='galleryDialogPrintsLoading'
+        :galleryDialogInventoryLoading='galleryDialogInventoryLoading'
         :galleryTable='galleryTable'
         :VRCPlusIconsTable='VRCPlusIconsTable'
         :emojiTable='emojiTable'
@@ -95,11 +96,13 @@ mixin dialogs
         :printUploadNote='printUploadNote'
         :printCropBorder='printCropBorder'
         :printTable='printTable'
+        :inventoryTable='inventoryTable'
         @refreshGalleryTable='refreshGalleryTable'
         @refreshEmojiTable='refreshEmojiTable'
         @refreshStickerTable='refreshStickerTable'
         @refreshVRCPlusIconsTable='refreshVRCPlusIconsTable'
         @refreshPrintTable='refreshPrintTable'
+        @getInventory='getInventory'
         @sortUserDialogAvatars='sortUserDialogAvatars'
         @logout='logout'
         @showAvatarAuthorDialog='showAvatarAuthorDialog'
@@ -109,8 +112,8 @@ mixin dialogs
         @refreshUserDialogTreeData='refreshUserDialogTreeData'
         @saveUserMemo='saveUserMemo'
         @setGroupVisibility='setGroupVisibility'
+        @leaveGroup='leaveGroup'
         @leaveGroupPrompt='leaveGroupPrompt'
-        @clearInviteImageUpload='clearInviteImageUpload'
         @closeGalleryDialog='galleryDialogVisible = false')
 
     WorldDialog(
@@ -143,6 +146,10 @@ mixin dialogs
         :groupDialogFilterOptions='groupDialogFilterOptions'
         :isGroupGalleryLoading='isGroupGalleryLoading'
         :randomUserColours='randomUserColours'
+        :offlineFriends='offlineFriends'
+        :activeFriends='activeFriends'
+        :onlineFriends='onlineFriends'
+        :vipFriends='vipFriends'
         @updateGroupPostSearch='updateGroupPostSearch'
         @groupDialogCommand='groupDialogCommand'
         @getGroupDialogGroup='getGroupDialogGroup')

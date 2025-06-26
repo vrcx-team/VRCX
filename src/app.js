@@ -153,6 +153,9 @@ import _languages from './classes/languages.js';
 import _groups from './classes/groups.js';
 import _vrcRegistry from './classes/vrcRegistry.js';
 import _restoreFriendOrder from './classes/restoreFriendOrder.js';
+import _inventory from './classes/inventory.js';
+
+import { userNotes } from './classes/userNotes.js';
 
 import pugTemplate from './app.pug';
 
@@ -242,7 +245,8 @@ console.log(`isLinux: ${LINUX}`);
         languages: new _languages($app, API, $t),
         groups: new _groups($app, API, $t),
         vrcRegistry: new _vrcRegistry($app, API, $t),
-        restoreFriendOrder: new _restoreFriendOrder($app, API, $t)
+        restoreFriendOrder: new _restoreFriendOrder($app, API, $t),
+        inventory: new _inventory($app, API, $t)
     };
 
     await configRepository.init();
@@ -336,6 +340,7 @@ console.log(`isLinux: ${LINUX}`);
         provide() {
             return {
                 API,
+                friends: this.friends,
                 showUserDialog: this.showUserDialog,
                 adjustDialogZ: this.adjustDialogZ,
                 getWorldName: this.getWorldName,
@@ -356,7 +361,14 @@ console.log(`isLinux: ${LINUX}`);
                 languageClass: this.languageClass,
                 showGroupDialog: this.showGroupDialog,
                 showGallerySelectDialog: this.showGallerySelectDialog,
-                showGalleryDialog: this.showGalleryDialog
+                showGalleryDialog: this.showGalleryDialog,
+                getImageUrlFromImageId: this.getImageUrlFromImageId,
+                getAvatarGallery: this.getAvatarGallery,
+                inviteImageUpload: this.inviteImageUpload,
+                clearInviteImageUpload: this.clearInviteImageUpload,
+                isLinux: this.isLinux,
+                openFolderGeneric: this.openFolderGeneric,
+                deleteVRChatCache: this.deleteVRChatCache
             };
         },
         el: '#root',
@@ -715,16 +727,16 @@ console.log(`isLinux: ${LINUX}`);
 
     API.applyUser = function (json) {
         var ref = this.cachedUsers.get(json.id);
-        if (typeof json.statusDescription !== 'undefined') {
+        if (json.statusDescription) {
             json.statusDescription = $utils.replaceBioSymbols(
                 json.statusDescription
             );
             json.statusDescription = $app.removeEmojis(json.statusDescription);
         }
-        if (typeof json.bio !== 'undefined') {
+        if (json.bio) {
             json.bio = $utils.replaceBioSymbols(json.bio);
         }
-        if (typeof json.note !== 'undefined') {
+        if (json.note) {
             json.note = $utils.replaceBioSymbols(json.note);
         }
         if (json.currentAvatarImageUrl === $app.robotUrl) {
@@ -756,7 +768,7 @@ console.log(`isLinux: ${LINUX}`);
                 last_platform: '',
                 location: '',
                 platform: '',
-                note: '',
+                note: null, // keep as null, to detect deleted notes
                 profilePicOverride: '',
                 profilePicOverrideThumbnail: '',
                 pronouns: '',
@@ -900,6 +912,9 @@ console.log(`isLinux: ${LINUX}`);
                     has = true;
                     props[prop] = [tobe, asis];
                 }
+            }
+            if ($ref.note !== null && $ref.note !== ref.note) {
+                userNotes.checkNote(ref.id, ref.note);
             }
             // FIXME
             // if the status is offline, just ignore status and statusDescription only.
@@ -1189,13 +1204,14 @@ console.log(`isLinux: ${LINUX}`);
         }
         ref.$disabledContentSettings = [];
         if (json.contentSettings && Object.keys(json.contentSettings).length) {
-            for (var setting in $app.instanceContentSettings) {
-                if (json.contentSettings[setting]) {
+            for (var setting of $app.instanceContentSettings) {
+                if (
+                    typeof json.contentSettings[setting] === 'undefined' ||
+                    json.contentSettings[setting] === true
+                ) {
                     continue;
                 }
-                ref.$disabledContentSettings.push(
-                    $app.instanceContentSettings[setting]
-                );
+                ref.$disabledContentSettings.push(setting);
             }
         }
         return ref;
@@ -1436,25 +1452,30 @@ console.log(`isLinux: ${LINUX}`);
         var ref = this.cachedAvatars.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
-                id: '',
-                name: '',
-                description: '',
+                acknowledgements: '',
                 authorId: '',
                 authorName: '',
-                tags: [],
-                assetUrl: '',
-                assetUrlObject: {},
+                created_at: '',
+                description: '',
+                featured: false,
+                highestPrice: null,
+                id: '',
                 imageUrl: '',
-                thumbnailImageUrl: '',
+                lock: false,
+                lowestPrice: null,
+                name: '',
+                productId: null,
+                publishedListings: [],
                 releaseStatus: '',
+                searchable: false,
                 styles: [],
-                version: 0,
-                unityPackages: [],
+                tags: [],
+                thumbnailImageUrl: '',
                 unityPackageUrl: '',
                 unityPackageUrlObject: {},
-                created_at: '',
+                unityPackages: [],
                 updated_at: '',
-                featured: false,
+                version: 0,
                 ...json
             };
             this.cachedAvatars.set(ref.id, ref);
@@ -1468,6 +1489,10 @@ console.log(`isLinux: ${LINUX}`);
             ) {
                 ref.unityPackages = unityPackages;
             }
+        }
+        for (const listing of ref?.publishedListings) {
+            listing.displayName = $utils.replaceBioSymbols(listing.displayName);
+            listing.description = $utils.replaceBioSymbols(listing.description);
         }
         ref.name = $utils.replaceBioSymbols(ref.name);
         ref.description = $utils.replaceBioSymbols(ref.description);
@@ -1978,11 +2003,20 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('LOGIN', function () {
         $app.localFavoriteFriends.clear();
         $app.currentUserGroupsInit = false;
+        this.cachedGroups.clear();
+        this.cachedAvatars.clear();
+        this.cachedWorlds.clear();
+        this.cachedUsers.clear();
+        this.cachedInstances.clear();
+        this.cachedAvatarNames.clear();
+        this.cachedAvatarModerations.clear();
+        this.cachedPlayerModerations.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         this.cachedFavoriteGroups.clear();
         this.cachedFavoriteGroupsByTypeName.clear();
         this.currentUserGroups.clear();
+        this.currentUserInventory.clear();
         this.queuedInstances.clear();
         this.favoriteFriendGroups = [];
         this.favoriteWorldGroups = [];
@@ -4222,6 +4256,7 @@ console.log(`isLinux: ${LINUX}`);
         }
         await $app.getAvatarHistory();
         await $app.getAllUserMemos();
+        userNotes.init();
         if ($app.randomUserColours) {
             $app.getNameColour(this.currentUser.id).then((colour) => {
                 this.currentUser.$userColour = colour;
@@ -5658,6 +5693,9 @@ console.log(`isLinux: ${LINUX}`);
         if (ctx.friendNumber) {
             ref.$friendNumber = ctx.friendNumber;
         }
+        if (!ref.$friendNumber) {
+            ref.$friendNumber = 0; // no null
+        }
         if (ctx.displayName !== ref.displayName) {
             if (ctx.displayName) {
                 var friendLogHistoryDisplayName = {
@@ -6118,6 +6156,10 @@ console.log(`isLinux: ${LINUX}`);
         'VRCX_notificationTTSNickName',
         false
     );
+    $app.data.notificationOpacity = await configRepository.getFloat(
+        'VRCX_notificationOpacity',
+        100
+    );
 
     // It's not necessary to store it in configRepo because it's rarely used.
     $app.data.isTestTTSVisible = false;
@@ -6337,6 +6379,9 @@ console.log(`isLinux: ${LINUX}`);
             case 'VRCX_udonExceptionLogging':
                 this.udonExceptionLogging = !this.udonExceptionLogging;
                 break;
+            case 'VRCX_autoDeleteOldPrints':
+                this.autoDeleteOldPrints = !this.autoDeleteOldPrints;
+                break;
             default:
                 break;
         }
@@ -6475,6 +6520,16 @@ console.log(`isLinux: ${LINUX}`);
         await configRepository.setBool(
             'VRCX_udonExceptionLogging',
             this.udonExceptionLogging
+        );
+
+        await configRepository.setBool(
+            'VRCX_autoDeleteOldPrints',
+            this.autoDeleteOldPrints
+        );
+
+        await configRepository.setInt(
+            'VRCX_notificationOpacity',
+            this.notificationOpacity
         );
 
         this.updateSharedFeed(true);
@@ -7346,7 +7401,8 @@ console.log(`isLinux: ${LINUX}`);
             backgroundEnabled: this.vrBackgroundEnabled,
             dtHour12: this.dtHour12,
             pcUptimeOnFeed: this.pcUptimeOnFeed,
-            appLanguage: this.appLanguage
+            appLanguage: this.appLanguage,
+            notificationOpacity: this.notificationOpacity
         };
         var json = JSON.stringify(VRConfigVars);
         AppApi.ExecuteVrFeedFunction('configUpdate', json);
@@ -7583,18 +7639,9 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.showGroupDialogShortCode = function (shortCode) {
         groupRequest.groupStrictsearch({ query: shortCode }).then((args) => {
             for (const group of args.json) {
-                // API.$on('GROUP:STRICTSEARCH', function (args) {
-                // for (var json of args.json) {
-                API.$emit('GROUP', {
-                    group,
-                    params: {
-                        groupId: group.id
-                    }
-                });
-                // }
-                // });
                 if (`${group.shortCode}.${group.discriminator}` === shortCode) {
                     this.showGroupDialog(group.id);
+                    break;
                 }
             }
             return args;
@@ -9523,6 +9570,8 @@ console.log(`isLinux: ${LINUX}`);
         isIos: false,
         bundleSizes: [],
         platformInfo: {},
+        galleryImages: [],
+        galleryLoading: false,
         lastUpdated: '',
         inCache: false,
         cacheSize: 0,
@@ -9565,6 +9614,8 @@ console.log(`isLinux: ${LINUX}`);
         D.lastUpdated = '';
         D.bundleSizes = [];
         D.platformInfo = {};
+        D.galleryImages = [];
+        D.galleryLoading = true;
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (API.currentUser.$isVRCPlus &&
@@ -9587,6 +9638,7 @@ console.log(`isLinux: ${LINUX}`);
             .then((args) => {
                 var { ref } = args;
                 D.ref = ref;
+                this.getAvatarGallery(avatarId);
                 this.updateVRChatAvatarCache();
                 if (/quest/.test(ref.tags)) {
                     D.isQuestFallback = true;
@@ -9619,6 +9671,34 @@ console.log(`isLinux: ${LINUX}`);
             .finally(() => {
                 this.$nextTick(() => (D.loading = false));
             });
+    };
+
+    $app.methods.getAvatarGallery = async function (avatarId) {
+        var D = this.avatarDialog;
+        const args = await avatarRequest
+            .getAvatarGallery(avatarId)
+            .finally(() => {
+                D.galleryLoading = false;
+            });
+        if (args.params.galleryId !== D.id) {
+            return;
+        }
+        D.galleryImages = [];
+        // wtf is this? why is order sorting only needed if it's your own avatar?
+        const sortedGallery = args.json.sort((a, b) => {
+            if (!a.order && !b.order) {
+                return 0;
+            }
+            return a.order - b.order;
+        });
+        for (const file of sortedGallery) {
+            const url = file.versions[file.versions.length - 1].file.url;
+            D.galleryImages.push(url);
+        }
+
+        // for JSON tab treeData
+        D.ref.gallery = args.json;
+        return D.galleryImages;
     };
 
     $app.methods.selectAvatarWithConfirmation = function (id) {
@@ -9791,7 +9871,8 @@ console.log(`isLinux: ${LINUX}`);
         'stickers',
         'pedestals',
         'prints',
-        'drones'
+        'drones',
+        'props'
     ];
 
     $app.methods.createNewInstance = async function (worldId = '', options) {
@@ -10029,7 +10110,7 @@ console.log(`isLinux: ${LINUX}`);
         if (desktopMode) {
             args.push('--no-vr');
         }
-        if (vrcLaunchPathOverride) {
+        if (vrcLaunchPathOverride && !LINUX) {
             AppApi.StartGameFromPath(
                 vrcLaunchPathOverride,
                 args.join(' ')
@@ -10104,13 +10185,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'icon'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogIconsLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'icon') {
             $app.VRCPlusIconsTable = args.json.reverse();
-            $app.galleryDialogIconsLoading = false;
         }
     });
 
@@ -10615,6 +10697,7 @@ console.log(`isLinux: ${LINUX}`);
         }
     };
 
+    $app.data.lastCrashedTime = null;
     $app.methods.checkIfGameCrashed = function () {
         if (!this.relaunchVRChatAfterCrash) {
             return;
@@ -10624,6 +10707,15 @@ console.log(`isLinux: ${LINUX}`);
             if (result || !isRealInstance(location)) {
                 return;
             }
+            // check if relaunched less than 2mins ago (prvent crash loop)
+            if (
+                this.lastCrashedTime &&
+                new Date() - this.lastCrashedTime < 120_000
+            ) {
+                console.log('VRChat was recently crashed, not relaunching');
+                return;
+            }
+            this.lastCrashedTime = new Date();
             // wait a bit for SteamVR to potentially close before deciding to relaunch
             var restartDelay = 8000;
             if (this.isGameNoVR) {
@@ -10735,6 +10827,7 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.galleryDialogEmojisLoading = false;
     $app.data.galleryDialogStickersLoading = false;
     $app.data.galleryDialogPrintsLoading = false;
+    $app.data.galleryDialogInventoryLoading = false;
 
     API.$on('LOGIN', function () {
         $app.galleryTable = [];
@@ -10747,6 +10840,7 @@ console.log(`isLinux: ${LINUX}`);
         this.refreshEmojiTable();
         this.refreshStickerTable();
         this.refreshPrintTable();
+        this.getInventory();
         workerTimers.setTimeout(() => this.setGalleryTab(pageNum), 100);
     };
 
@@ -10765,13 +10859,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'gallery'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogGalleryLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'gallery') {
             $app.galleryTable = args.json.reverse();
-            $app.galleryDialogGalleryLoading = false;
         }
     });
 
@@ -10793,13 +10888,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'sticker'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogStickersLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'sticker') {
             $app.stickerTable = args.json.reverse();
-            $app.galleryDialogStickersLoading = false;
         }
     });
 
@@ -10888,20 +10984,24 @@ console.log(`isLinux: ${LINUX}`);
 
     API.$on('LOGIN', function () {
         $app.printTable = [];
+        if ($app.autoDeleteOldPrints) {
+            $app.tryDeleteOldPrints();
+        }
     });
 
-    $app.methods.refreshPrintTable = function () {
+    $app.methods.refreshPrintTable = async function () {
         this.galleryDialogPrintsLoading = true;
         var params = {
             n: 100
         };
-        vrcPlusImageRequest.getPrints(params);
-    };
-
-    API.$on('PRINT:LIST', function (args) {
+        const args = await vrcPlusImageRequest.getPrints(params).finally(() => {
+            this.galleryDialogPrintsLoading = false;
+        });
+        args.json.sort((a, b) => {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        });
         $app.printTable = args.json;
-        $app.galleryDialogPrintsLoading = false;
-    });
+    };
 
     $app.data.printUploadNote = '';
     $app.data.printCropBorder = true;
@@ -11001,13 +11101,14 @@ console.log(`isLinux: ${LINUX}`);
             n: 100,
             tag: 'emoji'
         };
-        vrcPlusIconRequest.getFileList(params);
+        vrcPlusIconRequest.getFileList(params).finally(() => {
+            this.galleryDialogEmojisLoading = false;
+        });
     };
 
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'emoji') {
             $app.emojiTable = args.json.reverse();
-            $app.galleryDialogEmojisLoading = false;
         }
     });
 
@@ -11146,6 +11247,10 @@ console.log(`isLinux: ${LINUX}`);
             return user.profilePicOverride;
         }
         return user.currentAvatarImageUrl;
+    };
+
+    $app.methods.getImageUrlFromImageId = function (imageId) {
+        return `https://api.vrchat.cloud/api/1/file/${imageId}/1/`;
     };
 
     $app.methods.showConsole = function () {
@@ -12073,6 +12178,9 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.folderSelectorDialogVisible = false;
 
     $app.methods.setUGCFolderPath = async function (path) {
+        if (typeof path !== 'string') {
+            path = '';
+        }
         await configRepository.setString('VRCX_userGeneratedContentPath', path);
         this.ugcFolderPath = path;
     };
@@ -12109,6 +12217,48 @@ console.log(`isLinux: ${LINUX}`);
     $app.methods.openUGCFolderSelector = async function () {
         var path = await this.folderSelectorDialog(this.ugcFolderPath);
         await this.setUGCFolderPath(path);
+    };
+
+    // auto delete old prints
+
+    $app.data.autoDeleteOldPrints = await configRepository.getBool(
+        'VRCX_autoDeleteOldPrints',
+        false
+    );
+
+    $app.methods.tryDeleteOldPrints = async function () {
+        await this.refreshPrintTable();
+        const printLimit = 64 - 2; // 2 reserved for new prints
+        const printCount = $app.printTable.length;
+        if (printCount <= printLimit) {
+            return;
+        }
+        const deleteCount = printCount - printLimit;
+        if (deleteCount <= 0) {
+            return;
+        }
+        let idList = [];
+        for (let i = 0; i < deleteCount; i++) {
+            const print = $app.printTable[printCount - 1 - i];
+            idList.push(print.id);
+        }
+        console.log(`Deleting ${deleteCount} old prints`, idList);
+        try {
+            for (const printId of idList) {
+                await vrcPlusImageRequest.deletePrint(printId);
+                var text = `Old print automaticly deleted: ${printId}`;
+                if (this.errorNoty) {
+                    this.errorNoty.close();
+                }
+                this.errorNoty = new Noty({
+                    type: 'info',
+                    text
+                }).show();
+            }
+        } catch (err) {
+            console.error('Failed to delete old print:', err);
+        }
+        await this.refreshPrintTable();
     };
 
     // avatar database provider
@@ -12259,6 +12409,9 @@ console.log(`isLinux: ${LINUX}`);
         if (this.worldDialog.visible && this.worldDialog.id === worldId) {
             this.worldDialog.isFavorite = true;
         }
+
+        // update UI
+        this.sortLocalWorldFavorites();
     };
 
     $app.methods.removeLocalWorldFavorite = function (worldId, group) {
@@ -12502,6 +12655,9 @@ console.log(`isLinux: ${LINUX}`);
         if (this.avatarDialog.visible && this.avatarDialog.id === avatarId) {
             this.avatarDialog.isFavorite = true;
         }
+
+        // update UI
+        this.sortLocalAvatarFavorites();
     };
 
     $app.methods.removeLocalAvatarFavorite = function (avatarId, group) {
@@ -13453,7 +13609,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.ossDialog = false;
 
-    $app.methods.isLinux = function () {
+    $app.computed.isLinux = function () {
         return LINUX;
     };
 
@@ -13689,7 +13845,7 @@ console.log(`isLinux: ${LINUX}`);
             lastLocationDestination: this.lastLocationDestination,
             isGameRunning: this.isGameRunning,
             inviteResponseMessageTable: this.inviteResponseMessageTable,
-            updateImage: this.updateImage,
+            uploadImage: this.uploadImage,
             checkCanInvite: this.checkCanInvite,
             inviteRequestResponseMessageTable:
                 this.inviteRequestResponseMessageTable
@@ -13841,14 +13997,11 @@ console.log(`isLinux: ${LINUX}`);
         };
     };
 
-    //
-
     $app.methods.languageClass = function (key) {
         return languageClass(key);
     };
 
     // #endregion
-
     // #region | Electron
 
     if (LINUX) {

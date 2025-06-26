@@ -5,7 +5,6 @@
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
-[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | **Español** | [Polski](./README.pl.md)
@@ -25,30 +24,30 @@ Versión beta/nocturna disponible [aquí](https://vrcx.app/github/nightly) o en 
 <div align="left">
 
 - :family: Gestión de listas de amigos, mundos y avatares
-  - Administra tu lista de amigos, listas de mundos/grupos/avatares fuera de VRChat.
-  - Monitorea la actividad de mundos/avatares de tus amigos y verifica su estado en línea.
-  - Lleva un registro de cuándo los agregaste por primera vez y cuándo los viste por última vez.
-  - Ve cuánto tiempo han pasado juntos en mundos y cuántas veces.
-  - Lleva un registro de los cambios de nombre de amigos.
-  - Guarda notas para recordar cómo los conociste.
+    - Administra tu lista de amigos, listas de mundos/grupos/avatares fuera de VRChat.
+    - Monitorea la actividad de mundos/avatares de tus amigos y verifica su estado en línea.
+    - Lleva un registro de cuándo los agregaste por primera vez y cuándo los viste por última vez.
+    - Ve cuánto tiempo han pasado juntos en mundos y cuántas veces.
+    - Lleva un registro de los cambios de nombre de amigos.
+    - Guarda notas para recordar cómo los conociste.
 - :electric_plug: Inicia automáticamente aplicaciones cuando inicias VRChat
-  - Puedes configurar VRCX para iniciar otras aplicaciones cuando inicias VRChat.
-  - Por ejemplo, podrías hacer que VRCX inicie una aplicación OSC o una aplicación de cambio de voz cuando se abra VRChat.
+    - Puedes configurar VRCX para iniciar otras aplicaciones cuando inicias VRChat.
+    - Por ejemplo, podrías hacer que VRCX inicie una aplicación OSC o una aplicación de cambio de voz cuando se abra VRChat.
 - :floppy_disk: Persistencia de mundos
-  - Para los mundos que soportan la función, VRCX puede guardar configuraciones de mundos, estados guardados, inventarios y otros datos.
-  - **Nota**: Para usar esta función, debes tener "Permitir URLs no confiables" habilitado en la configuración de VRChat.
-  - Para desarrolladores: [Página Wiki - Persistencia de Mundos (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
+    - Para los mundos que soportan la función, VRCX puede guardar configuraciones de mundos, estados guardados, inventarios y otros datos.
+    - **Nota**: Para usar esta función, debes tener "Permitir URLs no confiables" habilitado en la configuración de VRChat.
+    - Para desarrolladores: [Página Wiki - Persistencia de Mundos (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: Busca avatares, usuarios, mundos y grupos
 - :earth_americas: Crea una lista de favoritos de mundos local y sin restricciones
 - :camera: Almacena datos de mundos en las fotos que tomas en el juego, para que puedas recordar ese mundo donde tomaste esas fotos geniales hace como... 6 meses.
 - :bell: Monitorea/responde a notificaciones
-  - Puedes enviar/recibir invitaciones y solicitudes de amistad desde VRCX, así como ver la información de la instancia de las invitaciones que recibes.
+    - Puedes enviar/recibir invitaciones y solicitudes de amistad desde VRCX, así como ver la información de la instancia de las invitaciones que recibes.
 - :scroll: Ve estadísticas/jugadores de tu instancia actual
 - :tv: Ve los enlaces a videos que se están reproduciendo en el mundo en el que estás, así como varios otros datos registrados.
 - :bar_chart: Presencia mejorada en Discord
-  - Opcionalmente, puedes mostrar más información sobre tu instancia actual en Discord.
-  - Integración de mundos para mundos populares como PyPyDance, LSMedia, Movies&Chill y VRDancing.
-  - Esto incluye la miniatura del mundo, nombre, ID de instancia y cantidad de jugadores, dependiendo de tu configuración y si el lobby es privado. ¡También puedes agregar un botón de unirse para lobbies públicos!
+    - Opcionalmente, puedes mostrar más información sobre tu instancia actual en Discord.
+    - Integración de mundos para mundos populares como PyPyDance, LSMedia, Movies&Chill y VRDancing.
+    - Esto incluye la miniatura del mundo, nombre, ID de instancia y cantidad de jugadores, dependiendo de tu configuración y si el lobby es privado. ¡También puedes agregar un botón de unirse para lobbies públicos!
 - :crystal_ball: Superposición de VR con feed en vivo configurable de todos los eventos/notificaciones soportados
 - :outbox_tray: Sube imágenes de avatares/mundos sin Unity
 - :page_facing_up: Administra y edita detalles de avatares/mundos subidos sin Unity

@@ -160,7 +160,7 @@
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             :upload-image="uploadImage"
-            @close-invite-dialog="closeInviteDialog" />
+            @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
 </template>
 
@@ -180,6 +180,7 @@
     const userStatusClass = inject('userStatusClass');
     const userImage = inject('userImage');
     const API = inject('API');
+    const clearInviteImageUpload = inject('clearInviteImageUpload');
 
     const props = defineProps({
         inviteDialog: {
@@ -209,10 +210,14 @@
         }
     });
 
-    const emit = defineEmits(['clearInviteImageUpload', 'inviteImageUpload', 'closeInviteDialog']);
+    const emit = defineEmits(['closeInviteDialog']);
 
     const sendInviteDialogVisible = ref(false);
-    const sendInviteDialog = ref({ message: '', messageSlot: 0, userId: '', messageType: '', params: {} });
+    const sendInviteDialog = ref({
+        messageSlot: {},
+        userId: '',
+        params: {}
+    });
 
     function closeInviteDialog() {
         emit('closeInviteDialog');
@@ -222,15 +227,11 @@
         sendInviteDialog.value = {
             params,
             userId,
-            messageType: 'invite'
+            messageSlot: {}
         };
         inviteMessagesRequest.refreshInviteMessageTableData('message');
         clearInviteImageUpload();
         sendInviteDialogVisible.value = true;
-    }
-
-    function clearInviteImageUpload() {
-        emit('clearInviteImageUpload');
     }
 
     function addSelfToInvite() {

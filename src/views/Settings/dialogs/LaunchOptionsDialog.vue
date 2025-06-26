@@ -23,17 +23,19 @@
             style="margin-top: 10px">
         </el-input>
 
-        <div style="font-size: 12px; margin-top: 10px">
-            {{ t('dialog.launch_options.path_override') }}
-        </div>
+        <template v-if="!isLinux">
+            <div style="font-size: 12px; margin-top: 10px">
+                {{ t('dialog.launch_options.path_override') }}
+            </div>
 
-        <el-input
-            v-model="launchOptionsDialog.vrcLaunchPathOverride"
-            type="textarea"
-            placeholder="C:\Program Files (x86)\Steam\steamapps\common\VRChat"
-            :rows="1"
-            style="display: block; margin-top: 10px">
-        </el-input>
+            <el-input
+                v-model="launchOptionsDialog.vrcLaunchPathOverride"
+                type="textarea"
+                placeholder="C:\Program Files (x86)\Steam\steamapps\common\VRChat"
+                :rows="1"
+                style="display: block; margin-top: 10px">
+            </el-input>
+        </template>
 
         <template #footer>
             <div style="display: flex">
@@ -59,6 +61,7 @@
     import configRepository from '../../../service/config';
 
     const openExternalLink = inject('openExternalLink');
+    const isLinux = inject('isLinux');
 
     const { t } = useI18n();
 

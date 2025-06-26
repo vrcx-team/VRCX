@@ -149,7 +149,9 @@
             <el-tab-pane v-loading="galleryDialogEmojisLoading" lazy>
                 <span slot="label">
                     {{ t('dialog.gallery_icons.emojis') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ emojiTable.length }}/9 </span>
+                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                        {{ emojiTable.length }}/{{ API.cachedConfig?.maxUserEmoji }}
+                    </span>
                 </span>
                 <input
                     id="EmojiUploadButton"
@@ -289,7 +291,9 @@
             <el-tab-pane v-loading="galleryDialogStickersLoading" lazy>
                 <span slot="label">
                     {{ t('dialog.gallery_icons.stickers') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ stickerTable.length }}/9 </span>
+                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                        {{ stickerTable.length }}/{{ API.cachedConfig?.maxUserStickers }}
+                    </span>
                 </span>
                 <input
                     id="StickerUploadButton"
@@ -440,6 +444,56 @@
                     </div>
                 </div>
             </el-tab-pane>
+
+            <el-tab-pane v-loading="galleryDialogInventoryLoading" lazy>
+                <span slot="label">
+                    {{ t('dialog.gallery_icons.inventory') }}
+                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ inventoryTable.length }} </span>
+                </span>
+                <br />
+                <br />
+                <div style="display: flex; align-items: center">
+                    <el-button-group>
+                        <el-button type="default" size="small" @click="getInventory" icon="el-icon-refresh">
+                            {{ t('dialog.gallery_icons.refresh') }}
+                        </el-button>
+                    </el-button-group>
+                </div>
+                <br />
+                <div
+                    class="x-friend-item"
+                    v-for="item in inventoryTable"
+                    :key="item.id"
+                    style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
+                    <div class="vrcplus-icon" style="overflow: hidden; cursor: default">
+                        <img class="avatar" v-lazy="item.imageUrl" />
+                    </div>
+                    <div style="margin-top: 5px; width: 208px">
+                        <span class="x-ellipsis" v-text="item.name" style="display: block"></span>
+                        <span
+                            v-if="item.description"
+                            class="x-ellipsis"
+                            v-text="item.description"
+                            style="display: block"></span>
+                        <span v-else style="display: block">&nbsp;</span>
+                        <span
+                            class="x-ellipsis"
+                            style="color: #909399; font-family: monospace; font-size: 11px; display: block">
+                            {{ item.created_at | formatDate('long') }}
+                        </span>
+                        <span v-text="item.itemType" style="display: block"></span>
+                    </div>
+                    <el-button
+                        v-if="item.itemType === 'bundle'"
+                        type="default"
+                        @click="consumeInventoryBundle(item.id)"
+                        size="mini"
+                        icon="el-icon-plus"
+                        circle>
+                        {{ t('dialog.gallery_icons.consume_bundle') }}
+                    </el-button>
+                </div>
+            </el-tab-pane>
         </el-tabs>
     </safe-dialog>
 </template>
@@ -447,7 +501,7 @@
 <script setup>
     import { getCurrentInstance, inject, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import { userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../../api';
+    import { userRequest, vrcPlusIconRequest, vrcPlusImageRequest, miscRequest, inventoryRequest } from '../../../api';
     import { extractFileId } from '../../../composables/shared/utils';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../composables/user/constants/emoji';
     import { getPrintFileName } from '../../../composables/user/utils';
@@ -486,6 +540,10 @@
             type: Boolean,
             required: true
         },
+        galleryDialogInventoryLoading: {
+            type: Boolean,
+            required: true
+        },
         galleryTable: {
             type: Array,
             required: true
@@ -514,6 +572,10 @@
         printTable: {
             type: Array,
             required: true
+        },
+        inventoryTable: {
+            type: Array,
+            required: true
         }
     });
 
@@ -523,6 +585,7 @@
         'refreshStickerTable',
         'refreshEmojiTable',
         'refreshPrintTable',
+        'getInventory',
         'closeGalleryDialog'
     ]);
 
@@ -623,7 +686,7 @@
     }
 
     function deleteGalleryImage(fileId) {
-        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
+        miscRequest.deleteFile(fileId).then((args) => {
             // API.$emit('GALLERYIMAGE:DELETE', args);
             // API.$on('GALLERYIMAGE:DELETE')
             const array = props.galleryTable;
@@ -726,7 +789,7 @@
     }
 
     function deleteVRCPlusIcon(fileId) {
-        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
+        miscRequest.deleteFile(fileId).then((args) => {
             // API.$emit('VRCPLUSICON:DELETE', args);
             // API.$on('VRCPLUSICON:DELETE')
             const array = props.VRCPlusIconsTable;
@@ -857,7 +920,7 @@
     }
 
     function deleteEmoji(fileId) {
-        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
+        miscRequest.deleteFile(fileId).then((args) => {
             // API.$emit('EMOJI:DELETE', args);
             // API.$on('EMOJI:DELETE')
             const array = props.emojiTable;
@@ -927,7 +990,7 @@
     }
 
     function deleteSticker(fileId) {
-        vrcPlusIconRequest.deleteFile(fileId).then((args) => {
+        miscRequest.deleteFile(fileId).then((args) => {
             // API.$emit('STICKER:DELETE', args);
             // API.$on('STICKER:DELETE')
             const array = props.stickerTable;
@@ -1004,6 +1067,10 @@
         emit('refreshPrintTable');
     }
 
+    function getInventory() {
+        emit('getInventory');
+    }
+
     function displayPrintUpload() {
         document.getElementById('PrintUploadButton').click();
     }
@@ -1020,5 +1087,28 @@
                 }
             }
         });
+    }
+
+    async function consumeInventoryBundle(inventoryId) {
+        try {
+            const args = await inventoryRequest.consumeInventoryBundle({
+                inventoryId
+            });
+            API.currentUserInventory.delete(inventoryId);
+            const array = props.inventoryTable;
+            const { length } = array;
+            for (let i = 0; i < length; ++i) {
+                if (inventoryId === array[i].id) {
+                    array.splice(i, 1);
+                    break;
+                }
+            }
+            getInventory();
+        } catch (error) {
+            console.error('Error consuming inventory bundle:', error);
+        }
+        // errors: []
+        // inventoryItems : []
+        // inventoryItemsCreated: 0
     }
 </script>

@@ -5,7 +5,6 @@
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
-[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | **简体中文** | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
@@ -24,42 +23,42 @@ VRCX 是一款用于 VRChat 的外部辅助小工具，可以比 VRChat 游戏�
 
 <div align="left">
 
--   :family: 好友、世界和模型列表管理
-    -   在 VRChat 之外管理你的好友/世界/群组以及模型列表。
-    -   查看好友所在的房间，在线状态，以及他们的模型变动情况。
-    -   记录与某人成为好友以及上次见面的时间。
-    -   查看你和朋友们在世界中一起度过了多长时间（以及见了多少次）。
-    -   监视好友的名字变更情况，再也不用担心某人改名之后忘了是谁了！
-    -   保存备注，方便记住彼此。同时也可以通过这个提醒自己：你是怎么认识 TA 的？
--   :electric_plug: 当你启动 VRChat 时自动启动其他程序
-    -   你可以配置 VRCX，让其在启动 VRChat 时自动启动你指定的程序。
-    -   例如，你可以在启动时让 VRCX 打开一个 OSC 应用或变声器。
--   :floppy_disk: 世界数据持久化保存 (World Persistence)
-    -   对于支持此功能的世界，VRCX 将能够保存世界设置、存档、各种清单以及其他可以保存的数据！
-    -   **注意**：要使用此功能，必须在 VRChat 设置中启用 “Allow Untrusted URLs”。
-    -   给世界开发者的指南： [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
--   :mag: 以更加方便的形式搜索模型、房间、世界以及群组。
--   :earth_americas: 创建本地的、没有任何限制的世界收藏夹
--   :camera: 将世界数据存储在你在游戏内拍摄的照片中，这样即使几个月后也能知道当时是在什么世界拍的照片
--   :bell: 监视通知，让你可以及时回复你的朋友
-    -   你可以通过 VRCX 发送/接收各种邀请和好友请求，也可以通过它查看邀请中指向的房间信息。
--   :scroll: 查看当前房间的统计信息和用户列表
--   :tv: 查看你所在世界中正在播放的视频的实际链接，以及各种其他记录
--   :bar_chart: 改进的 Discord 状态面板
-    -   你可以选择在 Discord 的状态面板上显示更多关于当前房间的信息。
-    -   针对 PyPyDance、LSMedia、Movies&Chill、VRDancing 等热门世界进行了深度集成。
-    -   这包括世界封面图、世界名称、房间 ID、用户数量等，具体取决于你的状态设置以及房间是否为私人，公共房间还可以在状态面板上添加一个“加入”按钮！
--   :crystal_ball: VR 叠加界面，可以用于实时监控所有受支持的事件以及通知
--   :outbox_tray: 无需打开 Unity 即可上传模型以及世界的封面图
--   :page_facing_up: 无需打开 Unity 即可管理已上传的模型以及世界的信息。
--   :skull: 当 VRChat 崩溃时自动重启并重新加入崩溃之前的房间。
--   :left_right_arrow: 一键导入/导出收藏列表。
+- :family: 好友、世界和模型列表管理
+    - 在 VRChat 之外管理你的好友/世界/群组以及模型列表。
+    - 查看好友所在的房间，在线状态，以及他们的模型变动情况。
+    - 记录与某人成为好友以及上次见面的时间。
+    - 查看你和朋友们在世界中一起度过了多长时间（以及见了多少次）。
+    - 监视好友的名字变更情况，再也不用担心某人改名之后忘了是谁了！
+    - 保存备注，方便记住彼此。同时也可以通过这个提醒自己：你是怎么认识 TA 的？
+- :electric_plug: 当你启动 VRChat 时自动启动其他程序
+    - 你可以配置 VRCX，让其在启动 VRChat 时自动启动你指定的程序。
+    - 例如，你可以在启动时让 VRCX 打开一个 OSC 应用或变声器。
+- :floppy_disk: 世界数据持久化保存 (World Persistence)
+    - 对于支持此功能的世界，VRCX 将能够保存世界设置、存档、各种清单以及其他可以保存的数据！
+    - **注意**：要使用此功能，必须在 VRChat 设置中启用 “Allow Untrusted URLs”。
+    - 给世界开发者的指南： [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
+- :mag: 以更加方便的形式搜索模型、房间、世界以及群组。
+- :earth_americas: 创建本地的、没有任何限制的世界收藏夹
+- :camera: 将世界数据存储在你在游戏内拍摄的照片中，这样即使几个月后也能知道当时是在什么世界拍的照片
+- :bell: 监视通知，让你可以及时回复你的朋友
+    - 你可以通过 VRCX 发送/接收各种邀请和好友请求，也可以通过它查看邀请中指向的房间信息。
+- :scroll: 查看当前房间的统计信息和用户列表
+- :tv: 查看你所在世界中正在播放的视频的实际链接，以及各种其他记录
+- :bar_chart: 改进的 Discord 状态面板
+    - 你可以选择在 Discord 的状态面板上显示更多关于当前房间的信息。
+    - 针对 PyPyDance、LSMedia、Movies&Chill、VRDancing 等热门世界进行了深度集成。
+    - 这包括世界封面图、世界名称、房间 ID、用户数量等，具体取决于你的状态设置以及房间是否为私人，公共房间还可以在状态面板上添加一个“加入”按钮！
+- :crystal_ball: VR 叠加界面，可以用于实时监控所有受支持的事件以及通知
+- :outbox_tray: 无需打开 Unity 即可上传模型以及世界的封面图
+- :page_facing_up: 无需打开 Unity 即可管理已上传的模型以及世界的信息。
+- :skull: 当 VRChat 崩溃时自动重启并重新加入崩溃之前的房间。
+- :left_right_arrow: 一键导入/导出收藏列表。
 
 ## 一些其他的东西
 
--   想让 VRCX 的外观看起来独特一些？请查看 [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes) （英语）了解如何制作界面主题
--   查看 [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) （英语）以获得从源码构建 VRCX 的相关说明
--   若想了解如何在 Linux 上运行 VRCX，请点击[这里](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)（英语）查看相关说明
+- 想让 VRCX 的外观看起来独特一些？请查看 [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes) （英语）了解如何制作界面主题
+- 查看 [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) （英语）以获得从源码构建 VRCX 的相关说明
+- 若想了解如何在 Linux 上运行 VRCX，请点击[这里](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)（英语）查看相关说明
 
 # 界面截图
 

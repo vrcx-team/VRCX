@@ -39,14 +39,18 @@ mixin settingsTab
                     .options-container-item
                         span.name {{ $t('view.settings.general.vrcx_updater.update_action') }}
                         br
-                        el-radio-group(v-model='autoUpdateVRCX' size='mini' style='margin-top: 5px' @input='saveAutoUpdateVRCX')
+                        el-radio-group(
+                            v-model='autoUpdateVRCX'
+                            size='mini'
+                            style='margin-top: 5px'
+                            @input='saveAutoUpdateVRCX')
                             el-radio-button(label='Off') {{ $t('view.settings.general.vrcx_updater.auto_update_off') }}
                             el-radio-button(label='Notify') {{ $t('view.settings.general.vrcx_updater.auto_update_notify') }}
                             el-radio-button(label='Auto Download') {{ $t('view.settings.general.vrcx_updater.auto_update_download') }}
                 //- General | Application
                 .options-container
                     span.header {{ $t('view.settings.general.application.header') }}
-                    template(v-if='!isLinux()')
+                    template(v-if='!isLinux')
                         simple-switch(
                             :label='$t("view.settings.general.application.startup")'
                             :value='isStartAtWindowsStartup'
@@ -59,7 +63,7 @@ mixin settingsTab
                         :label='$t("view.settings.general.application.tray")'
                         :value='isCloseToTray'
                         @change='saveVRCXWindowOption("VRCX_CloseToTray")')
-                    template(v-if='!isLinux()')
+                    template(v-if='!isLinux')
                         simple-switch(
                             :label='$t("view.settings.general.application.disable_gpu_acceleration")'
                             :value='disableGpuAcceleration'
@@ -253,7 +257,7 @@ mixin settingsTab
                                 el-dropdown-item(
                                     v-text='$t("view.settings.appearance.appearance.theme_mode_material3")'
                                     @click.native='saveThemeMode("material3")')
-                    .options-container-item(v-if='!isLinux()')
+                    .options-container-item(v-if='!isLinux')
                         span.name {{ $t('view.settings.appearance.appearance.zoom') }}
                         el-input-number(
                             size='small'
@@ -541,7 +545,7 @@ mixin settingsTab
                             el-radio-button(label='Game Running') {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label='Game Closed') {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
                             el-radio-button(label='Always') {{ $t('view.settings.notifications.notifications.conditions.always') }}
-                    template(v-if='!isLinux()')
+                    template(v-if='!isLinux')
                         simple-switch(
                             :label='$t("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay")'
                             :value='openVR'
@@ -575,9 +579,19 @@ mixin settingsTab
                         :value='ovrtWristNotifications'
                         @change='saveOpenVROption("VRCX_ovrtWristNotifications")')
                     simple-switch(
-                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.user_images")'
+                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications")'
                         :value='imageNotifications'
                         @change='saveOpenVROption("VRCX_imageNotifications")')
+                    .options-container-item
+                        span.name(style='vertical-align: top; padding-top: 10px') {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity') }}
+                        el-slider(
+                            v-model='notificationOpacity'
+                            @input='saveOpenVROption("VRCX_notificationOpacity")'
+                            :show-tooltip='false'
+                            :min='0'
+                            :max='100'
+                            show-input
+                            style='display: inline-block; width: 300px')
                     .options-container-item
                         el-button(
                             size='small'
@@ -657,7 +671,7 @@ mixin settingsTab
                             style='margin-left: 10px') {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
 
             //- Wrist Overlay Tab
-            el-tab-pane(lazy :label='$t("view.settings.category.wrist_overlay")' v-if='!isLinux()')
+            el-tab-pane(lazy :label='$t("view.settings.category.wrist_overlay")' v-if='!isLinux')
                 //- Wrist Overlay | SteamVR Wrist Overlay
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}
@@ -770,69 +784,61 @@ mixin settingsTab
                         @change='saveDiscordOption("discordHideImage")'
                         :disabled='!discordActive')
 
-            //- "Advanced" Tab
-            el-tab-pane(lazy :label='$t("view.settings.category.advanced")')
-                //- Advanced | Advanced
+            //- "Pictures" Tab
+            el-tab-pane(lazy :label='$t("view.settings.category.pictures")')
                 .options-container(style='margin-top: 0')
-                    span.header {{ $t('view.settings.advanced.advanced.header') }}
+                    span.header {{ $t('view.settings.category.pictures') }}
                     .options-container-item(style='margin-top: 15px')
                         el-button-group
-                            el-button(size='small' icon='el-icon-s-operation' @click='showVRChatConfig()') VRChat config.json
-                            el-button(size='small' icon='el-icon-s-operation' @click='showLaunchOptions()') {{ $t('view.settings.advanced.advanced.launch_options') }}
                             el-button(size='small' icon='el-icon-picture' @click='showScreenshotMetadataDialog()') {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
-                            el-button(size='small' icon='el-icon-goods' @click='showRegistryBackupDialog()') {{ $t('view.settings.advanced.advanced.vrc_registry_backup') }}
-                //- Advanced | Common Folders
+
                 .options-container
-                    span.header {{ $t('view.settings.advanced.advanced.common_folders') }}
+                    span.header {{ $t('view.settings.pictures.pictures.open_folder') }}
                     .options-container-item(style='margin-top: 15px')
                         el-button-group
-                            el-button(size='small' icon='el-icon-folder' @click='openVrcxAppDataFolder()') AppData (VRCX)
-                            el-button(size='small' icon='el-icon-folder' @click='openVrcAppDataFolder()') AppData
-                            el-button(size='small' icon='el-icon-folder' @click='openVrcPhotosFolder()') Photos
-                            el-button(size='small' icon='el-icon-folder' @click='openVrcScreenshotsFolder()') Screenshots
-                            el-button(size='small' icon='el-icon-folder' @click='openCrashVrcCrashDumps()') Crash Dumps
-                //- Advanced | Primary Password
+                            el-button(size='small' icon='el-icon-folder' @click='openVrcPhotosFolder()') {{ $t('view.settings.pictures.pictures.vrc_photos') }}
+                            el-button(size='small' icon='el-icon-folder' @click='openVrcScreenshotsFolder()') {{ $t('view.settings.pictures.pictures.steam_screenshots') }}
+
+                //- Pictures | Screenshot Helper
                 .options-container
-                    //- Advanced | Primary Password Header
-                    span.sub-header {{ $t('view.settings.advanced.advanced.primary_password.header') }}
+                    span.header {{ $t('view.settings.advanced.advanced.screenshot_helper.header') }}
+                    .options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.description') }}
+                            el-tooltip(
+                                placement='top'
+                                style='margin-left: 5px'
+                                :content='$t("view.settings.advanced.advanced.screenshot_helper.description_tooltip")')
+                                i.el-icon-info
                     simple-switch(
-                        :label='$t("view.settings.advanced.advanced.primary_password.description")'
-                        :value='enablePrimaryPassword'
-                        @change='enablePrimaryPasswordChange'
-                        :disabled='!enablePrimaryPassword'
+                        :label='$t("view.settings.advanced.advanced.screenshot_helper.enable")'
+                        :value='screenshotHelper'
+                        @change='saveScreenshotHelper("VRCX_screenshotHelper")'
                         :long-label='true')
-                    span.sub-header {{ $t('view.settings.advanced.advanced.relaunch_vrchat.header') }}
-                    //- Advanced | Relaunch VRChat After Crash
                     simple-switch(
-                        :label='$t("view.settings.advanced.advanced.relaunch_vrchat.description")'
-                        :value='relaunchVRChatAfterCrash'
-                        @change='saveOpenVROption("VRCX_relaunchVRChatAfterCrash")'
+                        :label='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename")'
+                        :value='screenshotHelperModifyFilename'
+                        @change='saveScreenshotHelper("VRCX_screenshotHelperModifyFilename")'
+                        :disabled='!screenshotHelper'
+                        :tooltip='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip")'
                         :long-label='true')
-                    //- Advanced | VRChat Quit Fix
-                    template(v-if='!isLinux()')
-                        span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}
+
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard")'
+                        :value='screenshotHelperCopyToClipboard'
+                        @change='saveScreenshotHelper("VRCX_screenshotHelperCopyToClipboard")'
+                        :long-label='true')
+
+                //- Pictures | Auto Delete Old Prints
+                .options-container
+                    span.header {{ $t('view.settings.pictures.pictures.auto_delete_old_prints') }}
+                    .options-container-item(style='margin-top: 0')
                         simple-switch(
-                            :label='$t("view.settings.advanced.advanced.vrchat_quit_fix.description")'
-                            :value='vrcQuitFix'
-                            @change='saveOpenVROption("VRCX_vrcQuitFix")'
-                            :long-label='true')
-                    //- Advanced | Auto Cache Management
-                    span.sub-header {{ $t('view.settings.advanced.advanced.auto_cache_management.header') }}
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.auto_cache_management.description")'
-                        :value='autoSweepVRChatCache'
-                        @change='saveOpenVROption("VRCX_autoSweepVRChatCache")'
-                        :long-label='true')
-                    //- Advanced | Disable local world database
-                    template(v-if='!isLinux()')
-                        span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
-                        simple-switch(
-                            :label='$t("view.settings.advanced.advanced.local_world_persistence.description")'
-                            :value='!disableWorldDatabase'
-                            @change='saveVRCXWindowOption("VRCX_DisableWorldDatabase")'
+                            :label='$t("view.settings.pictures.pictures.auto_delete_prints_from_vrc")'
+                            :value='autoDeleteOldPrints'
+                            @change='saveOpenVROption("VRCX_autoDeleteOldPrints")'
                             :long-label='true')
 
-                //- Advanced | User Generated Content
+                //- Pictures | User Generated Content
                 .options-container
                     span.header {{ $t('view.settings.advanced.advanced.user_generated_content.header') }}
                     .options-container-item
@@ -865,6 +871,66 @@ mixin settingsTab
                         :value='saveInstanceStickers'
                         @change='saveVRCXWindowOption("VRCX_saveInstanceStickers")'
                         :long-label='true')
+
+            //- "Advanced" Tab
+            el-tab-pane(lazy :label='$t("view.settings.category.advanced")')
+                //- Advanced | Advanced
+                .options-container(style='margin-top: 0')
+                    span.header {{ $t('view.settings.advanced.advanced.header') }}
+                    .options-container-item(style='margin-top: 15px')
+                        el-button-group
+                            el-button(size='small' icon='el-icon-s-operation' @click='showVRChatConfig()') VRChat config.json
+                            el-button(size='small' icon='el-icon-s-operation' @click='showLaunchOptions()') {{ $t('view.settings.advanced.advanced.launch_options') }}
+                            el-button(size='small' icon='el-icon-goods' @click='showRegistryBackupDialog()') {{ $t('view.settings.advanced.advanced.vrc_registry_backup') }}
+                //- Advanced | Common Folders
+                .options-container
+                    span.header {{ $t('view.settings.advanced.advanced.common_folders') }}
+                    .options-container-item(style='margin-top: 15px')
+                        el-button-group
+                            el-button(size='small' icon='el-icon-folder' @click='openVrcxAppDataFolder()') AppData (VRCX)
+                            el-button(size='small' icon='el-icon-folder' @click='openVrcAppDataFolder()') AppData
+                            el-button(size='small' icon='el-icon-folder' @click='openCrashVrcCrashDumps()') Crash Dumps
+                //- Advanced | Primary Password
+                .options-container
+                    //- Advanced | Primary Password Header
+                    span.sub-header {{ $t('view.settings.advanced.advanced.primary_password.header') }}
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.primary_password.description")'
+                        :value='enablePrimaryPassword'
+                        @change='enablePrimaryPasswordChange'
+                        :disabled='!enablePrimaryPassword'
+                        :long-label='true')
+                    span.sub-header {{ $t('view.settings.advanced.advanced.relaunch_vrchat.header') }}
+                    //- Advanced | Relaunch VRChat After Crash
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.relaunch_vrchat.description")'
+                        :value='relaunchVRChatAfterCrash'
+                        @change='saveOpenVROption("VRCX_relaunchVRChatAfterCrash")'
+                        :long-label='true')
+                    //- Advanced | VRChat Quit Fix
+                    template(v-if='!isLinux')
+                        span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}
+                        simple-switch(
+                            :label='$t("view.settings.advanced.advanced.vrchat_quit_fix.description")'
+                            :value='vrcQuitFix'
+                            @change='saveOpenVROption("VRCX_vrcQuitFix")'
+                            :long-label='true')
+                    //- Advanced | Auto Cache Management
+                    span.sub-header {{ $t('view.settings.advanced.advanced.auto_cache_management.header') }}
+                    simple-switch(
+                        :label='$t("view.settings.advanced.advanced.auto_cache_management.description")'
+                        :value='autoSweepVRChatCache'
+                        @change='saveOpenVROption("VRCX_autoSweepVRChatCache")'
+                        :long-label='true')
+                    //- Advanced | Disable local world database
+                    template(v-if='!isLinux')
+                        span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
+                        simple-switch(
+                            :label='$t("view.settings.advanced.advanced.local_world_persistence.description")'
+                            :value='!disableWorldDatabase'
+                            @change='saveVRCXWindowOption("VRCX_DisableWorldDatabase")'
+                            :long-label='true')
+
                 //- Advanced | Remote Avatar Database
                 .options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
@@ -876,7 +942,7 @@ mixin settingsTab
                     .options-container-item
                         el-button(size='small' icon='el-icon-user-solid' @click='showAvatarProviderDialog') {{ $t('view.settings.advanced.advanced.remote_database.avatar_database_provider') }}
                 //- Advanced | Automatic App Launcher
-                template(v-if='!isLinux()')
+                template(v-if='!isLinux')
                     .options-container
                         span.header {{ $t('view.settings.advanced.advanced.app_launcher.header') }}
                         br
@@ -901,35 +967,6 @@ mixin settingsTab
                             @change='updateAppLauncherSettings("VRCX_enableAppLauncherAutoClose")'
                             :long-label='true')
 
-                //- Advanced | Screenshot Helper
-                .options-container
-                    span.header {{ $t('view.settings.advanced.advanced.screenshot_helper.header') }}
-                    .options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.description') }}
-                            el-tooltip(
-                                placement='top'
-                                style='margin-left: 5px'
-                                :content='$t("view.settings.advanced.advanced.screenshot_helper.description_tooltip")')
-                                i.el-icon-info
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.screenshot_helper.enable")'
-                        :value='screenshotHelper'
-                        @change='saveScreenshotHelper("VRCX_screenshotHelper")'
-                        :long-label='true')
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename")'
-                        :value='screenshotHelperModifyFilename'
-                        @change='saveScreenshotHelper("VRCX_screenshotHelperModifyFilename")'
-                        :disabled='!screenshotHelper'
-                        :tooltip='$t("view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip")'
-                        :long-label='true')
-
-                    simple-switch(
-                        :label='$t("view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard")'
-                        :value='screenshotHelperCopyToClipboard'
-                        @change='saveScreenshotHelper("VRCX_screenshotHelperCopyToClipboard")'
-                        :long-label='true')
-
                 //- Advanced | YouTube API
                 .options-container
                     span.header {{ $t('view.settings.advanced.advanced.youtube_api.header') }}
@@ -942,7 +979,7 @@ mixin settingsTab
                     .options-container-item
                         el-button(size='small' icon='el-icon-caret-right' @click='showYouTubeApiDialog') {{ $t('view.settings.advanced.advanced.youtube_api.youtube_api_key') }}
                 //- Advanced | Video Progress Pie
-                .options-container(v-if='!isLinux()')
+                .options-container(v-if='!isLinux')
                     span.header {{ $t('view.settings.advanced.advanced.video_progress_pie.header') }}
                     simple-switch(
                         :label='$t("view.settings.advanced.advanced.video_progress_pie.enable")'

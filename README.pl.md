@@ -5,7 +5,6 @@
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Liczba pobrań](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Status GitHub Workflow](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
-[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
 [![Discord VRCX Discord](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | **Polski**
@@ -23,30 +22,30 @@ Pobierz i uruchom najnowszy instalator (`VRCX_Setup.exe`) [stąd](https://github
 <div align="left">
 
 - :family: Zarządzanie listami znajomych, światów i awatarów
-  - Zarządzaj listami znajomych, światów, grup i awatarów bez uruchamiania VRChatu.
-  - Monitoruj aktywność światów i awatarów Twoich znajomych, oraz sprawdzaj ich status online.
-  - Sprawdzaj kiedy zostali przez Ciebie dodani czy widziani.
-  - Śledź ile czasu spędzaliście razem i jak często.
-  - Obsweruj zmiany nicków znajomych.
-  - Zapisuj notatki, aby pamiętać np. jak się poznaliście.
+    - Zarządzaj listami znajomych, światów, grup i awatarów bez uruchamiania VRChatu.
+    - Monitoruj aktywność światów i awatarów Twoich znajomych, oraz sprawdzaj ich status online.
+    - Sprawdzaj kiedy zostali przez Ciebie dodani czy widziani.
+    - Śledź ile czasu spędzaliście razem i jak często.
+    - Obsweruj zmiany nicków znajomych.
+    - Zapisuj notatki, aby pamiętać np. jak się poznaliście.
 - :electric_plug: Automatycznie uruchamiaj aplikacje podczas startu VRChat
-  - Ustaw, aby VRCX uruchamiał inne aplikacje, gdy włączysz VRChat.
-  - Na przykład, możesz ustawić, aby VRCX uruchamiał aplikację OSC lub modulacji głosu, gdy włączysz VRChat.
+    - Ustaw, aby VRCX uruchamiał inne aplikacje, gdy włączysz VRChat.
+    - Na przykład, możesz ustawić, aby VRCX uruchamiał aplikację OSC lub modulacji głosu, gdy włączysz VRChat.
 - :floppy_disk: Persystencja światów
-  - VRCX może zapisywać ustawienia, stany, ekwipunek czy inne dane światów, jeżeli wspierają one tę funkcję.
-  - **Notatka**: Aby używać tej funkcji, musisz zezwolić na niezaufane linki URL w ustawieniach VRChatu.
-  - Dla programistów: [Strona wiki o persystencji światów](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
+    - VRCX może zapisywać ustawienia, stany, ekwipunek czy inne dane światów, jeżeli wspierają one tę funkcję.
+    - **Notatka**: Aby używać tej funkcji, musisz zezwolić na niezaufane linki URL w ustawieniach VRChatu.
+    - Dla programistów: [Strona wiki o persystencji światów](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: Wyszukuj awatary, użytkwoników, światy i grupy
 - :earth_americas: Twórz lokalną i nieograniczoną listę ulubionych światów
 - :camera: Przechowuj dane światów w zdjęciach robionych w grze, aby pamiętać o światach odwiedzanych dawno temu!
 - :bell: Obserwuj i odpowiadaj na powiadomienia
-  - Możesz wysyłać oraz otrzymywać zaproszenia do instancji i znajomych w VRCX, a także widzieć informacje o tych instancjach.
+    - Możesz wysyłać oraz otrzymywać zaproszenia do instancji i znajomych w VRCX, a także widzieć informacje o tych instancjach.
 - :scroll: Sprawdzaj statystyki i użytkowników bieżącej instancji
 - :tv: Sprawdzaj linki do filmów, które akurat są odtwarzane w instancji, na której jesteś, a także inne logi.
 - :bar_chart: Ulepszone statusy Discord
-  - Możesz udostępniać więcej infomacji o aktualnej instancji w swoim statusie Discord.
-  - Integracja z popularnymi światami jak PyPyDance, LSMedia, Movies&Chill czy VRDancing.
-  - M.in. obrazki światów, nazwa, ID instancji i liczba graczy, w zależności od Twoich ustawień i typu instancji. Możesz także dodać przycisk dołączania dla publicznych instancji!
+    - Możesz udostępniać więcej infomacji o aktualnej instancji w swoim statusie Discord.
+    - Integracja z popularnymi światami jak PyPyDance, LSMedia, Movies&Chill czy VRDancing.
+    - M.in. obrazki światów, nazwa, ID instancji i liczba graczy, w zależności od Twoich ustawień i typu instancji. Możesz także dodać przycisk dołączania dla publicznych instancji!
 - :crystal_ball: Nakładka VR z konfigurowalnym kanałem aktywności, ze wszystkimi wspieranymi wydarzeniami i powiadomieniami.
 - :outbox_tray: Przsyłaj awatary i światy bez Unity
 - :page_facing_up: Edytuj szczegóły przesłanych awatarów i swiatów bez Unity

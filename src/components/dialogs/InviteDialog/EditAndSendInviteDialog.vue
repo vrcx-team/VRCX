@@ -42,6 +42,7 @@
     const $message = instance.proxy.$message;
 
     const API = inject('API');
+    const clearInviteImageUpload = inject('clearInviteImageUpload');
 
     const props = defineProps({
         editAndSendInviteDialog: {
@@ -70,10 +71,11 @@
 
     async function saveEditAndSendInvite() {
         const D = props.editAndSendInviteDialog;
+        const I = props.sendInviteDialog;
         D.visible = false;
-        const messageType = D.messageType;
-        const slot = D.inviteMessage.slot;
-        if (D.inviteMessage.message !== D.newMessage) {
+        const messageType = I.messageSlot.messageType;
+        const slot = I.messageSlot.slot;
+        if (I.messageSlot.message !== D.newMessage) {
             const params = {
                 message: D.newMessage
             };
@@ -84,7 +86,7 @@
                 })
                 .then((args) => {
                     API.$emit(`INVITE:${messageType.toUpperCase()}`, args);
-                    if (args.json[slot].message === D.inviteMessage.message) {
+                    if (args.json[slot].message === I.messageSlot.message) {
                         $message({
                             message: "VRChat API didn't update message, try again",
                             type: 'error'
@@ -96,7 +98,6 @@
                     return args;
                 });
         }
-        const I = props.sendInviteDialog;
         const J = props.inviteDialog;
         if (J?.visible) {
             const inviteLoop = () => {
@@ -146,7 +147,7 @@
                 }
             };
             inviteLoop();
-        } else if (I.messageType === 'invite') {
+        } else if (messageType === 'invite') {
             I.params.messageSlot = slot;
             if (props.uploadImage) {
                 notificationRequest
@@ -175,13 +176,13 @@
                         return args;
                     });
             }
-        } else if (I.messageType === 'requestInvite') {
+        } else if (messageType === 'request') {
             I.params.requestSlot = slot;
             if (props.uploadImage) {
                 notificationRequest
                     .sendRequestInvitePhoto(I.params, I.userId)
                     .catch((err) => {
-                        this.clearInviteImageUpload();
+                        clearInviteImageUpload();
                         throw err;
                     })
                     .then((args) => {
