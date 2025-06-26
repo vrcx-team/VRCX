@@ -1341,25 +1341,31 @@ namespace VRCX
 
         private bool ParseStickerSpawn(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
+            // [StickersManager] User usr_032383a7-748c-4fb2-94e4-bcb928e5de6b (Natsumi-sama) spawned sticker inv_8b380ee4-9a8a-484e-a0c3-b01290b92c6a
             var index = line.IndexOf("[StickersManager] User ", StringComparison.Ordinal);
-            if (index == -1 || !line.Contains("file_") || !line.Contains("spawned sticker"))
+            if (index == -1 || !line.Contains("inv_") || !line.Contains("spawned sticker"))
                 return false;
 
-            string info = line.Substring(index + 23);
+            var info = line.Substring(index + 23);
 
-            var (userId, displayName) = ParseUserInfo(info);
+            var (userId, displayName) = ParseUserInfo(info); // it's flipped
+            if (string.IsNullOrEmpty(displayName) && string.IsNullOrEmpty(userId))
+            {
+                logger.Warn("Failed to parse user info from log line: {0}", line);
+                return true;
+            }
 
-            var fileIdIndex = info.IndexOf("file_", StringComparison.Ordinal);
-            string fileId = info.Substring(fileIdIndex);
+            var inventoryIdIndex = info.IndexOf("inv_", StringComparison.Ordinal);
+            var inventoryId = info.Substring(inventoryIdIndex);
 
             AppendLog(new[]
             {
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "sticker-spawn",
-                userId,
-                displayName,
-                fileId,
+                userId ?? string.Empty,
+                displayName ?? string.Empty,
+                inventoryId
             });
 
             return true;

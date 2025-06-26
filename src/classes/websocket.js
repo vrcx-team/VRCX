@@ -539,6 +539,8 @@ export default class extends baseClass {
                         ) {
                             $app.refreshEmojiTable();
                         }
+                    } else if (contentType === 'sticker') {
+                        // on sticker upload
                     } else if (contentType === 'print') {
                         if (
                             $app.autoDeleteOldPrints &&

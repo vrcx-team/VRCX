@@ -430,7 +430,7 @@ export default class extends baseClass {
 
                     $app.trySaveStickerToFile(
                         gameLog.displayName,
-                        gameLog.fileId
+                        gameLog.inventoryId
                     );
                     break;
             }

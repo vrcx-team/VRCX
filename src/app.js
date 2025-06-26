@@ -10918,23 +10918,31 @@ console.log(`isLinux: ${LINUX}`);
         }
     });
 
-    $app.data.stickersCache = [];
+    $app.data.instanceStickersCache = [];
 
-    $app.methods.trySaveStickerToFile = async function (displayName, fileId) {
-        if ($app.stickersCache.includes(fileId)) return;
-        $app.stickersCache.push(fileId);
-        if ($app.stickersCache.size > 100) {
-            $app.stickersCache.shift();
+    $app.methods.trySaveStickerToFile = async function (
+        displayName,
+        inventoryId
+    ) {
+        if (this.instanceStickersCache.includes(inventoryId)) {
+            return;
         }
-        var args = await API.call(`file/${fileId}`);
-        var imageUrl = args.versions[1].file.url;
-        var createdAt = args.versions[0].created_at;
+        this.instanceStickersCache.push(inventoryId);
+        if (this.instanceStickersCache.size > 100) {
+            this.instanceStickersCache.shift();
+        }
+        var args = await inventoryRequest.getInventoryItem({
+            inventoryId
+        });
+
+        var imageUrl = args.json.metadata?.imageUrl ?? args.json.imageUrl;
+        var createdAt = args.json.created_at;
         var monthFolder = createdAt.slice(0, 7);
         var fileNameDate = createdAt
             .replace(/:/g, '-')
             .replace(/T/g, '_')
             .replace(/Z/g, '');
-        var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
+        var fileName = `${displayName}_${fileNameDate}_${inventoryId}.png`;
         var filePath = await AppApi.SaveStickerToFile(
             imageUrl,
             this.ugcFolderPath,
@@ -11032,7 +11040,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.data.printCache = [];
     $app.data.printQueue = [];
-    $app.data.printQueueWorker = undefined;
+    $app.data.printQueueWorker = null;
 
     $app.methods.queueSavePrintToFile = function (printId) {
         if (this.printCache.includes(printId)) {
@@ -11091,9 +11099,9 @@ console.log(`isLinux: ${LINUX}`);
             }
         }
 
-        if (this.printQueue.length == 0) {
+        if (this.printQueue.length === 0) {
             workerTimers.clearInterval(this.printQueueWorker);
-            this.printQueueWorker = undefined;
+            this.printQueueWorker = null;
         }
     };
 
