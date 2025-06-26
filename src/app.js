@@ -10,164 +10,168 @@ import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
 import '@infolektuell/noto-color-emoji';
-import Noty from 'noty';
-import Vue from 'vue';
-import VueLazyload from 'vue-lazyload';
-import VueI18n from 'vue-i18n';
-import { createI18n } from 'vue-i18n-bridge';
-import { DataTables } from 'vue-data-tables';
-import ElementUI from 'element-ui';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import ElementUI from 'element-ui';
+import Noty from 'noty';
+import Vue from 'vue';
+import { DataTables } from 'vue-data-tables';
+import VueI18n from 'vue-i18n';
+import { createI18n } from 'vue-i18n-bridge';
+import VueLazyload from 'vue-lazyload';
 import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
-
-// util classes
-import configRepository from './service/config.js';
-import webApiService from './service/webapi.js';
-import security from './service/security.js';
-import database from './service/database.js';
-import * as localizedStrings from './localization/localizedStrings.js';
-import removeConfusables, { removeWhitespace } from './service/confusables.js';
-import $utils from './classes/utils.js';
-import _apiInit from './classes/apiInit.js';
-import _apiRequestHandler from './classes/apiRequestHandler.js';
-import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
 import {
-    userRequest,
-    worldRequest,
-    instanceRequest,
-    friendRequest,
-    avatarRequest,
-    notificationRequest,
-    playerModerationRequest,
     avatarModerationRequest,
+    avatarRequest,
     favoriteRequest,
-    vrcPlusIconRequest,
+    friendRequest,
+    groupRequest,
+    imageRequest,
+    instanceRequest,
     inviteMessagesRequest,
     miscRequest,
-    imageRequest,
+    notificationRequest,
+    playerModerationRequest,
+    userRequest,
+    vrcPlusIconRequest,
     vrcPlusImageRequest,
-    groupRequest
+    worldRequest
 } from './api';
-import { userDialogGroupSortingOptions } from './composables/user/constants/userDialogGroupSortingOptions';
-import {
-    getPrintFileName,
-    getPrintLocalDate,
-    languageClass
-} from './composables/user/utils';
+
+import pugTemplate from './app.pug';
+
+// API classes
+import _config from './classes/API/config.js';
+import _apiInit from './classes/apiInit.js';
+import _apiLogin from './classes/apiLogin.js';
+import _apiRequestHandler from './classes/apiRequestHandler.js';
+import _currentUser from './classes/currentUser.js';
+import _discordRpc from './classes/discordRpc.js';
+import _feed from './classes/feed.js';
+import _gameLog from './classes/gameLog.js';
+import _gameRealtimeLogging from './classes/gameRealtimeLogging.js';
+import _groups from './classes/groups.js';
+import _inventory from './classes/inventory.js';
+import _languages from './classes/languages.js';
+import _memos from './classes/memos.js';
+import _prompts from './classes/prompts.js';
+import _restoreFriendOrder from './classes/restoreFriendOrder.js';
+
+// main app classes
+import _sharedFeed from './classes/sharedFeed.js';
+import _uiComponents from './classes/uiComponents.js';
+import _updateLoop from './classes/updateLoop.js';
+
+import { userNotes } from './classes/userNotes.js';
+import $utils from './classes/utils.js';
+import _vrcRegistry from './classes/vrcRegistry.js';
+import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
+import _vrcxNotifications from './classes/vrcxNotifications.js';
+import _vrcxUpdater from './classes/vrcxUpdater.js';
+import _websocket from './classes/websocket.js';
+import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
+import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
+import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
+import GalleryDialog from './components/dialogs/GalleryDialog.vue';
+import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
+import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
+import LaunchDialog from './components/dialogs/LaunchDialog.vue';
+import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
+
+import SafeDialog from './components/dialogs/SafeDialog.vue';
+import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
+import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
+
+// dialogs
+import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
+import Location from './components/Location.vue';
+import NavMenu from './components/NavMenu.vue';
+
+// components
+import SimpleSwitch from './components/SimpleSwitch.vue';
 import {
     compareUnityVersion,
     getPlatformInfo,
     storeAvatarImage
 } from './composables/avatar/utils';
 
-import { displayLocation } from './composables/instance/utils';
-
-import LoginPage from './views/Login/Login.vue';
-
-// tabs
-import ModerationTab from './views/Moderation/Moderation.vue';
-import ChartsTab from './views/Charts/Charts.vue';
-import SideBar from './views/SideBar/SideBar.vue';
-import NavMenu from './components/NavMenu.vue';
-import FriendListTab from './views/FriendList/FriendList.vue';
-import FavoritesTab from './views/Favorites/Favorites.vue';
-import FriendLogTab from './views/FriendLog/FriendLog.vue';
-import GameLogTab from './views/GameLog/GameLog.vue';
-import NotificationTab from './views/Notifications/Notification.vue';
-import FeedTab from './views/Feed/Feed.vue';
-import SearchTab from './views/Search/Search.vue';
-import ProfileTab from './views/Profile/Profile.vue';
-import PlayerListTab from './views/PlayerList/PlayerList.vue';
-
-// components
-import SimpleSwitch from './components/SimpleSwitch.vue';
-import Location from './components/Location.vue';
-
-// dialogs
-import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
-import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
-import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
-import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
-import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
-import LaunchDialog from './components/dialogs/LaunchDialog.vue';
-import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
-import ExportFriendsListDialog from './views/Profile/dialogs/ExportFriendsListDialog.vue';
-import ExportAvatarsListDialog from './views/Profile/dialogs/ExportAvatarsListDialog.vue';
-import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
-import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
-import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
-import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
-import FeedFiltersDialog from './views/Settings/dialogs/FeedFiltersDialog.vue';
-import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
-import OpenSourceSoftwareNoticeDialog from './views/Settings/dialogs/OpenSourceSoftwareNoticeDialog.vue';
-import ChangelogDialog from './views/Settings/dialogs/ChangelogDialog.vue';
-import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
-import ScreenshotMetadataDialog from './views/Settings/dialogs/ScreenshotMetadataDialog.vue';
-import DiscordNamesDialog from './views/Profile/dialogs/DiscordNamesDialog.vue';
-import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
-import NoteExportDialog from './views/Settings/dialogs/NoteExportDialog.vue';
-import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
-import YouTubeApiDialog from './views/Settings/dialogs/YouTubeApiDialog.vue';
-import NotificationPositionDialog from './views/Settings/dialogs/NotificationPositionDialog.vue';
-import AvatarProviderDialog from './views/Settings/dialogs/AvatarProviderDialog.vue';
-import RegistryBackupDialog from './views/Settings/dialogs/RegistryBackupDialog.vue';
-import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
-import ChatboxBlacklistDialog from './views/PlayerList/dialogs/ChatboxBlacklistDialog.vue';
-import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
-
-import SafeDialog from './components/dialogs/SafeDialog.vue';
-
 import { hasGroupPermission } from './composables/group/utils';
-import { isRealInstance, parseLocation } from './composables/instance/utils';
+
 import {
+    displayLocation,
+    isRealInstance,
+    parseLocation
+} from './composables/instance/utils';
+import {
+    _utils,
     checkVRChatCache,
     convertFileUrlToImageUrl,
     deleteVRChatCache,
     extractFileId,
     extractFileVersion,
-    getAvailablePlatforms,
-    _utils
+    getAvailablePlatforms
 } from './composables/shared/utils';
+import { userDialogGroupSortingOptions } from './composables/user/constants/userDialogGroupSortingOptions';
+import {
+    getPrintFileName,
+    getPrintLocalDate,
+    languageClass
+} from './composables/user/utils';
+import InteropApi from './ipc-electron/interopApi.js';
+import * as localizedStrings from './localization/localizedStrings.js';
 
-// main app classes
-import _sharedFeed from './classes/sharedFeed.js';
-import _prompts from './classes/prompts.js';
-import _vrcxNotifications from './classes/vrcxNotifications.js';
-import _uiComponents from './classes/uiComponents.js';
-import _websocket from './classes/websocket.js';
-import _apiLogin from './classes/apiLogin.js';
-import _currentUser from './classes/currentUser.js';
-import _updateLoop from './classes/updateLoop.js';
-import _discordRpc from './classes/discordRpc.js';
-import _vrcxUpdater from './classes/vrcxUpdater.js';
-import _gameLog from './classes/gameLog.js';
-import _gameRealtimeLogging from './classes/gameRealtimeLogging.js';
-import _feed from './classes/feed.js';
-import _memos from './classes/memos.js';
-import _languages from './classes/languages.js';
-import _groups from './classes/groups.js';
-import _vrcRegistry from './classes/vrcRegistry.js';
-import _restoreFriendOrder from './classes/restoreFriendOrder.js';
-import _inventory from './classes/inventory.js';
+// util classes
+import configRepository from './service/config.js';
+import removeConfusables, { removeWhitespace } from './service/confusables.js';
+import database from './service/database.js';
+import security from './service/security.js';
+import webApiService from './service/webapi.js';
+import ChartsTab from './views/Charts/Charts.vue';
+import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
+import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
+import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
+import FavoritesTab from './views/Favorites/Favorites.vue';
+import FeedTab from './views/Feed/Feed.vue';
+import FriendListTab from './views/FriendList/FriendList.vue';
+import FriendLogTab from './views/FriendLog/FriendLog.vue';
+import GameLogTab from './views/GameLog/GameLog.vue';
 
-import { userNotes } from './classes/userNotes.js';
+import LoginPage from './views/Login/Login.vue';
 
-import pugTemplate from './app.pug';
-
-// API classes
-import _config from './classes/API/config.js';
+// tabs
+import ModerationTab from './views/Moderation/Moderation.vue';
+import NotificationTab from './views/Notifications/Notification.vue';
+import ChatboxBlacklistDialog from './views/PlayerList/dialogs/ChatboxBlacklistDialog.vue';
+import PlayerListTab from './views/PlayerList/PlayerList.vue';
+import DiscordNamesDialog from './views/Profile/dialogs/DiscordNamesDialog.vue';
+import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
+import ExportAvatarsListDialog from './views/Profile/dialogs/ExportAvatarsListDialog.vue';
+import ExportFriendsListDialog from './views/Profile/dialogs/ExportFriendsListDialog.vue';
+import ProfileTab from './views/Profile/Profile.vue';
+import SearchTab from './views/Search/Search.vue';
+import AvatarProviderDialog from './views/Settings/dialogs/AvatarProviderDialog.vue';
+import ChangelogDialog from './views/Settings/dialogs/ChangelogDialog.vue';
+import FeedFiltersDialog from './views/Settings/dialogs/FeedFiltersDialog.vue';
+import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
+import NoteExportDialog from './views/Settings/dialogs/NoteExportDialog.vue';
+import NotificationPositionDialog from './views/Settings/dialogs/NotificationPositionDialog.vue';
+import OpenSourceSoftwareNoticeDialog from './views/Settings/dialogs/OpenSourceSoftwareNoticeDialog.vue';
+import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
+import RegistryBackupDialog from './views/Settings/dialogs/RegistryBackupDialog.vue';
+import ScreenshotMetadataDialog from './views/Settings/dialogs/ScreenshotMetadataDialog.vue';
+import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
+import YouTubeApiDialog from './views/Settings/dialogs/YouTubeApiDialog.vue';
+import SideBar from './views/SideBar/SideBar.vue';
 
 // #endregion
 
 // some workaround for failing to get voice list first run
 speechSynthesis.getVoices();
 
-import InteropApi from './ipc-electron/interopApi.js';
 console.log(`isLinux: ${LINUX}`);
 
 // #region | Hey look it's most of VRCX!
@@ -335,7 +339,8 @@ console.log(`isLinux: ${LINUX}`);
             AvatarProviderDialog,
             RegistryBackupDialog,
             PrimaryPasswordDialog,
-            FullscreenImageDialog
+            FullscreenImageDialog,
+            GalleryDialog
         },
         provide() {
             return {
@@ -10832,6 +10837,10 @@ console.log(`isLinux: ${LINUX}`);
     API.$on('LOGIN', function () {
         $app.galleryTable = [];
     });
+
+    $app.methods.closeGalleryDialog = function () {
+        this.galleryDialogVisible = false;
+    };
 
     $app.methods.showGalleryDialog = function (pageNum) {
         this.galleryDialogVisible = true;
