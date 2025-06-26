@@ -413,7 +413,7 @@
     const searchGroupResults = ref([]);
 
     function getSmallThumbnailUrl(url) {
-        convertFileUrlToImageUrl(url);
+        return convertFileUrlToImageUrl(url);
     }
 
     function clearSearch() {
