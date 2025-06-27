@@ -10919,6 +10919,7 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.trySaveStickerToFile = async function (
         displayName,
+        userId,
         inventoryId
     ) {
         if (this.instanceStickersCache.includes(inventoryId)) {
@@ -10928,9 +10929,18 @@ console.log(`isLinux: ${LINUX}`);
         if (this.instanceStickersCache.size > 100) {
             this.instanceStickersCache.shift();
         }
-        var args = await inventoryRequest.getInventoryItem({
-            inventoryId
+        var args = await inventoryRequest.getUserInventoryItem({
+            inventoryId,
+            userId
         });
+
+        if (
+            args.json.itemType !== 'sticker' ||
+            !args.json.flags.includes('ugc')
+        ) {
+            // Not a sticker or ugc, skipping
+            return;
+        }
 
         var imageUrl = args.json.metadata?.imageUrl ?? args.json.imageUrl;
         var createdAt = args.json.created_at;
@@ -10958,8 +10968,11 @@ console.log(`isLinux: ${LINUX}`);
     $app.data.instanceInventoryQueue = [];
     $app.data.instanceInventoryQueueWorker = null;
 
-    $app.methods.queueCheckInstanceInventory = function (inventoryId) {
-        if (this.instanceInventoryCache.includes(inventoryId)) {
+    $app.methods.queueCheckInstanceInventory = function (inventoryId, userId) {
+        if (
+            this.instanceInventoryCache.includes(inventoryId) ||
+            this.instanceStickersCache.includes(inventoryId)
+        ) {
             return;
         }
         this.instanceInventoryCache.push(inventoryId);
@@ -10967,25 +10980,29 @@ console.log(`isLinux: ${LINUX}`);
             this.instanceInventoryCache.shift();
         }
 
-        this.instanceInventoryQueue.push(inventoryId);
+        this.instanceInventoryQueue.push({ inventoryId, userId });
 
         if (!this.instanceInventoryQueueWorker) {
             this.instanceInventoryQueueWorker = workerTimers.setInterval(() => {
-                let inventoryId = this.instanceInventoryQueue.shift();
-                if (inventoryId) {
-                    this.trySaveEmojiToFile(inventoryId);
+                const item = this.instanceInventoryQueue.shift();
+                if (item?.inventoryId) {
+                    this.trySaveEmojiToFile(item.inventoryId, item.userId);
                 }
             }, 2_500);
         }
     };
 
-    $app.methods.trySaveEmojiToFile = async function (inventoryId) {
-        const args = await inventoryRequest.getInventoryItem({
-            inventoryId
+    $app.methods.trySaveEmojiToFile = async function (inventoryId, userId) {
+        const args = await inventoryRequest.getUserInventoryItem({
+            inventoryId,
+            userId
         });
 
-        if (args.json.itemType !== 'emoji') {
-            // Not an emoji, skip
+        if (
+            args.json.itemType !== 'emoji' ||
+            !args.json.flags.includes('ugc')
+        ) {
+            // Not an emoji or ugc, skipping
             return;
         }
 
