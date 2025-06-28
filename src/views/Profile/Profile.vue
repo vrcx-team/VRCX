@@ -567,6 +567,10 @@
         directAccessWorld: {
             type: Function,
             default: () => {}
+        },
+        parseUserUrl: {
+            type: Function,
+            default: () => {}
         }
     });
     const emit = defineEmits(['logout', 'lookupUser', 'showEditInviteMessageDialog']);
@@ -681,7 +685,7 @@
                 if (action === 'confirm' && instance.inputValue) {
                     const testUrl = instance.inputValue.substring(0, 15);
                     if (testUrl === 'https://vrchat.') {
-                        const avatarId = parseAvatarUrl(instance.inputValue);
+                        const avatarId = props.parseAvatarUrl(instance.inputValue);
                         if (avatarId) {
                             showAvatarDialog(avatarId);
                         } else {

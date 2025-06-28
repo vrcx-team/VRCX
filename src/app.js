@@ -14015,7 +14015,8 @@ console.log(`isLinux: ${LINUX}`);
                 this.inviteRequestResponseMessageTable,
             pastDisplayNameTable: this.pastDisplayNameTable,
             friends: this.friends,
-            directAccessWorld: this.directAccessWorld
+            directAccessWorld: this.directAccessWorld,
+            parseUserUrl: this.parseUserUrl
         };
     };
 
