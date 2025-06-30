@@ -621,7 +621,8 @@
         openFolderGeneric,
         replaceVrcPackageUrl,
         storeAvatarImage,
-        timeToText
+        timeToText,
+        moveArrayItem
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -1295,6 +1296,49 @@
         };
         r.readAsBinaryString(files[0]);
         clearFile();
+    }
+
+    function reorderAvatarGalleryImage(imageUrl, direction) {
+        const fileId = extractFileId(imageUrl);
+        let fileIds = [];
+        avatarDialog.value.ref.gallery.forEach((item) => {
+            fileIds.push(extractFileId(item.id));
+        });
+        const index = fileIds.indexOf(fileId);
+        if (index === -1) {
+            $message({
+                message: t('message.avatar_gallery.not_found'),
+                type: 'error'
+            });
+            return;
+        }
+        if (direction === -1 && index === 0) {
+            $message({
+                message: t('message.avatar_gallery.already_first'),
+                type: 'warning'
+            });
+            return;
+        }
+        if (direction === 1 && index === fileIds.length - 1) {
+            $message({
+                message: t('message.avatar_gallery.already_last'),
+                type: 'warning'
+            });
+            return;
+        }
+        if (direction === -1) {
+            moveArrayItem(fileIds, index, index - 1);
+        } else {
+            moveArrayItem(fileIds, index, index + 1);
+        }
+        avatarRequest.setAvatarGalleryOrder(fileIds).then((args) => {
+            $message({
+                message: t('message.avatar_gallery.reordered'),
+                type: 'success'
+            });
+            avatarDialog.value.galleryImages = getAvatarGallery(avatarDialog.value.id);
+            return args;
+        });
     }
 
     function deleteAvatarGalleryImage(imageUrl) {
