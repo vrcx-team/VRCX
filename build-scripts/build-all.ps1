@@ -29,7 +29,9 @@ Move-Item $ZipName ..\..\$ZipName -Force
 cd ..\..\
 
 Write-Host "Creating Installer..." -ForegroundColor Green
+$version = Get-Content -Path "Version" -Raw
 cd "Installer"
+Out-File -FilePath "version_define.nsh" -Encoding UTF8 -InputObject "!define PRODUCT_VERSION_FROM_FILE `"$version.0`""
 $nsisPath = "C:\Program Files (x86)\NSIS\makensis.exe"
 &$nsisPath installer.nsi
 Start-Sleep -Seconds 1
