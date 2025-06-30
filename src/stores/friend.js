@@ -860,43 +860,80 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {Promise<*[]>}
      */
     async function bulkRefreshFriends(args) {
-        // API.bulkRefreshFriends
-        const authStore = useAuthStore();
-        let friends = [];
-        const params = {
-            ...args,
-            n: 50,
-            offset: 0
-        };
         // API offset limit *was* 5000
         // it is now 7500
-        mainLoop: for (let i = 150; i > -1; i--) {
-            retryLoop: for (let j = 0; j < 10; j++) {
-                // handle 429 ratelimit error, retry 10 times
-                try {
-                    const args = await friendRequest.getFriends(params);
-                    if (!args.json || args.json.length === 0) {
-                        break mainLoop;
-                    }
-                    friends = friends.concat(args.json);
-                    break retryLoop;
-                } catch (err) {
-                    console.error(err);
-                    if (!authStore.isLoggedIn) {
-                        console.error(`User isn't logged in`);
-                        break mainLoop;
-                    }
-                    if (err?.message?.includes('Not Found')) {
-                        console.error('Awful workaround for awful VRC API bug');
-                        break retryLoop;
-                    }
-                    await new Promise((resolve) => {
-                        workerTimers.setTimeout(resolve, 5000);
-                    });
-                }
+        const MAX_OFFSET = 7500;
+        const PAGE_SIZE = 50;
+        const CONCURRENCY = 5;
+        const RATE_PER_MINUTE = 60;
+        const MAX_RETRY = 5;
+        const RETRY_BASE_DELAY = 1000;
+
+        const stamps = [];
+        async function throttle() {
+            const now = Date.now();
+            while (stamps.length && now - stamps[0] > 60_000) stamps.shift();
+            if (stamps.length >= RATE_PER_MINUTE) {
+                const wait = 60_000 - (now - stamps[0]);
+                await new Promise((r) => setTimeout(r, wait));
             }
-            params.offset += 50;
+            stamps.push(Date.now());
         }
+
+        async function fetchPage(offset, retries = MAX_RETRY) {
+            try {
+                const { json } = await friendRequest.getFriends({
+                    ...args,
+                    n: PAGE_SIZE,
+                    offset
+                });
+                return Array.isArray(json) ? json : [];
+            } catch (err) {
+                const is429 =
+                    err.status === 429 || (err.message || '').includes('429');
+                if (is429 && retries > 0) {
+                    await new Promise((r) =>
+                        setTimeout(
+                            r,
+                            RETRY_BASE_DELAY * Math.pow(2, MAX_RETRY - retries)
+                        )
+                    );
+                    return fetchPage(offset, retries - 1);
+                }
+                throw err;
+            }
+        }
+
+        let nextOffset = 0;
+        let stopFlag = false;
+        const friends = [];
+
+        function getNextOffset() {
+            if (stopFlag) return null;
+            const cur = nextOffset;
+            nextOffset += PAGE_SIZE;
+            if (cur > MAX_OFFSET) return null;
+            return cur;
+        }
+
+        async function worker() {
+            while (true) {
+                const offset = getNextOffset();
+                if (offset === null) break;
+
+                await throttle();
+
+                const page = await fetchPage(offset);
+                if (page.length === 0) {
+                    stopFlag = true;
+                    break;
+                }
+                friends.push(...page);
+            }
+        }
+
+        await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+
         return friends;
     }
 

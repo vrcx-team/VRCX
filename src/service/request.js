@@ -275,7 +275,10 @@ export function $throw(code, error, endpoint) {
         });
         API.errorNoty.show();
     }
-    throw new Error(text);
+    const e = new Error(text);
+    e.status = code;
+    e.endpoint = endpoint;
+    throw e;
 }
 
 /**
