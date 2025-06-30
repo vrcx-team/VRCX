@@ -71,7 +71,7 @@ function changeAppThemeStyle(themeMode) {
         $appThemeDarkStyle.setAttribute('id', 'app-theme-dark-style');
         $appThemeDarkStyle.rel = 'stylesheet';
         $appThemeDarkStyle.href = darkThemeCssPath;
-        document.head.appendChild($appThemeDarkStyle);
+        document.head.insertBefore($appThemeDarkStyle, $appThemeStyle);
     } else {
         if (themeMode === 'system' && systemIsDarkMode()) {
             if ($appThemeDarkStyle.href === darkThemeCssPath) {
