@@ -168,10 +168,8 @@ namespace DBMerger
                 {
                     FileName = "DBMerger.log",
                     Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
-                    ArchiveFileName = Path.Combine("DBMerger_Logs", "DBMerger.{#}.log"),
-                    ArchiveNumbering = ArchiveNumberingMode.DateAndSequence,
+                    ArchiveSuffixFormat = "{1:yyyy-MM-dd.HH-mm-ss}",
                     ArchiveOldFileOnStartup = true,
-                    ConcurrentWrites = true,
                     KeepFileOpen = true,
                     AutoFlush = true,
                     Encoding = System.Text.Encoding.UTF8
