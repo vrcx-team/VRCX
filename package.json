@@ -28,7 +28,7 @@
     "homepage": "https://github.com/vrcx-team/VRCX#readme",
     "devDependencies": {
         "@electron/rebuild": "^4.0.1",
-        "@eslint/js": "^9.29.0",
+        "@eslint/js": "^9.30.0",
         "@fontsource/noto-sans-jp": "^5.2.6",
         "@fontsource/noto-sans-kr": "^5.2.6",
         "@fontsource/noto-sans-sc": "^5.2.6",
@@ -41,11 +41,11 @@
         "css-loader": "^7.1.2",
         "dayjs": "^1.11.13",
         "echarts": "^5.6.0",
-        "electron": "^36.5.0",
+        "electron": "^37.1.0",
         "electron-builder": "^26.0.12",
         "element-ui": "^2.15.14",
         "esbuild-loader": "^4.3.0",
-        "eslint": "^9.29.0",
+        "eslint": "^9.30.0",
         "eslint-config-prettier": "^10.1.5",
         "eslint-plugin-vue": "^9.33.0",
         "globals": "^16.2.0",
@@ -53,7 +53,7 @@
         "mini-css-extract-plugin": "^2.9.2",
         "noty": "^3.2.0-beta-deprecated",
         "pinia": "^2.3.1",
-        "prettier": "^3.6.0",
+        "prettier": "^3.6.2",
         "pug": "^3.0.3",
         "pug-plain-loader": "^1.1.0",
         "raw-loader": "^4.0.2",
@@ -135,6 +135,6 @@
     },
     "dependencies": {
         "hazardous": "^0.3.0",
-        "node-api-dotnet": "^0.9.11"
+        "node-api-dotnet": "^0.9.12"
     }
 }
