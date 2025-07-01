@@ -99,7 +99,7 @@ namespace VRCX
                     // Layout with padding between the level/logger and message so that the message always starts at the same column
                     Layout =
                         "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
-                    ArchiveSuffixFormat = ".{1:yyyy-MM-dd.HH-mm-ss}",
+                    ArchiveSuffixFormat = "{1:yyyy-MM-dd.HH-mm-ss}",
                     ArchiveEvery = FileArchivePeriod.Day,
                     MaxArchiveFiles = 4,
                     MaxArchiveDays = 7,
@@ -116,7 +116,7 @@ namespace VRCX
                     Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
                     DetectConsoleAvailable = true
                 };
-                builder.ForLogger("VRCX").FilterMinLevel(LogLevel.Info).WriteTo(consoleTarget);
+                builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(consoleTarget);
             });
         }
 
