@@ -60,6 +60,7 @@
                         :type="item.type ? item.type : 'text'"
                         :min="item.min"
                         :max="item.max"
+                        @input="refreshDialogValues"
                         style="flex: 1; margin-top: 5px"
                         ><el-button
                             v-if="item.folderBrowser"
@@ -292,6 +293,7 @@
         const newPath = await folderSelectorDialog(oldPath);
         if (newPath) {
             VRChatConfigFile.value[value] = newPath;
+            refreshDialogValues();
         }
     }
 
