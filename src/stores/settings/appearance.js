@@ -78,6 +78,7 @@ export const useAppearanceSettingsStore = defineStore(
         async function initAppearanceSettings() {
             const [
                 appLanguage,
+                themeMode,
                 displayVRCPlusIconsAsAvatar,
                 hideNicknames,
                 hideTooltips,
@@ -99,6 +100,7 @@ export const useAppearanceSettingsStore = defineStore(
                 trustColor
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
+                configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
                 configRepository.getBool('VRCX_hideTooltips', false),
@@ -150,6 +152,9 @@ export const useAppearanceSettingsStore = defineStore(
                 )
             ]);
 
+            state.themeMode = themeMode;
+            saveThemeMode(themeMode);
+
             if (!appLanguage) {
                 const result = await AppApi.CurrentLanguage();
 
@@ -161,7 +166,7 @@ export const useAppearanceSettingsStore = defineStore(
                     }
                 });
             } else {
-                // i18n.locale = appLanguage;
+                i18n.locale = appLanguage;
                 state.appLanguage = appLanguage;
             }
             changeCJKFontsOrder(state.appLanguage);

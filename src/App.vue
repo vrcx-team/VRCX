@@ -41,13 +41,11 @@
     import Sidebar from './views/Sidebar/Sidebar.vue';
 
     await configRepository.init();
-    const initThemeMode = await configRepository.getString('VRCX_ThemeMode', 'system');
 
     export default {
         template,
         setup() {
             const store = createGlobalStores();
-            store.appearanceSettings.saveThemeMode(initThemeMode);
             Vue.prototype.store = store;
             Vue.prototype.utils = utils;
         },

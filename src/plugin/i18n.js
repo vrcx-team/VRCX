@@ -26,9 +26,6 @@ Vue.use(ElementUI, {
     i18n: (key, value) => i18n.global.t(key, value)
 });
 
-const appLanguage = await configRepository.getString('VRCX_appLanguage', 'en');
-i18n.locale = appLanguage;
-
 const t = i18n.global.t;
 
 export { i18n, t };
