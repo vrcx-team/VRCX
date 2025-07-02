@@ -500,7 +500,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 if (API.debugPhotonLogging) {
                     console.log('VrcxMessage:', data);
                 }
-                state.eventVrcxMessage(data);
+                eventVrcxMessage(data);
                 break;
             case 'Ping':
                 if (!photonStore.photonLoggingEnabled) {
