@@ -8,6 +8,7 @@ using NLog;
 using NLog.Targets;
 using System;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
@@ -99,7 +100,7 @@ namespace VRCX
                     // Layout with padding between the level/logger and message so that the message always starts at the same column
                     Layout =
                         "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
-                    ArchiveSuffixFormat = "{1:yyyy-MM-dd.HH-mm-ss}",
+                    ArchiveSuffixFormat = "{0:000}",
                     ArchiveEvery = FileArchivePeriod.Day,
                     MaxArchiveFiles = 4,
                     MaxArchiveDays = 7,
@@ -122,6 +123,7 @@ namespace VRCX
 
 #if !LINUX
         [STAThread]
+        [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
         private static void Main()
         {
             if (Wine.GetIfWine())
@@ -208,6 +210,7 @@ namespace VRCX
             }
         }
 
+        [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
         private static void Run()
         {
             var args = Environment.GetCommandLineArgs();

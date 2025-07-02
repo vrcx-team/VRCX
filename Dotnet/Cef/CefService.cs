@@ -25,7 +25,7 @@ namespace VRCX
             {
                 RootCachePath = userDataDir,
                 CachePath = Path.Join(userDataDir, "cache"),
-                LogSeverity = Program.LaunchDebug ? LogSeverity.Verbose : LogSeverity.Fatal,
+                LogSeverity = Program.LaunchDebug ? LogSeverity.Verbose : LogSeverity.Error,
                 LogFile = Path.Join(Program.AppDataDirectory, "logs", "cef.log"),
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,

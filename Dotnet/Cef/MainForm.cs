@@ -5,6 +5,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Net;
 using System.Reflection;
@@ -15,6 +16,7 @@ using NLog;
 
 namespace VRCX
 {
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public partial class MainForm : WinformBase
     {
         public static MainForm Instance;

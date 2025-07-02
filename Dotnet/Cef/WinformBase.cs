@@ -12,7 +12,8 @@ namespace VRCX
     {
         protected override void OnHandleCreated(EventArgs e)
         {
-            WinformThemer.SetThemeToGlobal(this);
+            if (!DesignMode)
+                WinformThemer.SetThemeToGlobal(this);
             base.OnHandleCreated(e);
         }
     }
