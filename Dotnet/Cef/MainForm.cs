@@ -7,7 +7,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using CefSharp;
@@ -57,25 +56,35 @@ namespace VRCX
                 DragHandler = new CustomDragHandler(),
                 MenuHandler = new CustomMenuHandler(),
                 DownloadHandler = new CustomDownloadHandler(),
+                RequestHandler = new CustomRequestHandler(),
                 BrowserSettings =
                 {
                     DefaultEncoding = "UTF-8",
                 },
                 Dock = DockStyle.Fill
             };
-
-            Browser.IsBrowserInitializedChanged += (A, B) =>
+            Browser.IsBrowserInitializedChanged += (_, _) =>
             {
                 if (Program.LaunchDebug)
                     Browser.ShowDevTools();
             };
-
-            JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
-            Browser.ConsoleMessage += (_, args) =>
+            Browser.AddressChanged += (_, addressChangedEventArgs) =>
             {
-                logger.Debug(args.Message + " (" + args.Source + ":" + args.Line + ")");
+                logger.Debug("Address changed: " + addressChangedEventArgs.Address);
+            };
+            Browser.LoadingStateChanged += (_, loadingFailedEventArgs) =>
+            {
+                if (loadingFailedEventArgs.IsLoading)
+                    logger.Debug("Loading page");
+                else
+                    logger.Debug("Loaded page: " + loadingFailedEventArgs.Browser.MainFrame.Url);
+            };
+            Browser.ConsoleMessage += (_, consoleMessageEventArgs) =>
+            {
+                logger.Debug(consoleMessageEventArgs.Message + " (" + consoleMessageEventArgs.Source + ":" + consoleMessageEventArgs.Line + ")");
             };
 
+            JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
             Controls.Add(Browser);
         }
 
