@@ -49,6 +49,7 @@
         components: {
             LoginPage,
             NavMenu,
+            Sidebar,
             FeedTab,
             GameLogTab,
             PlayerListTab,
@@ -61,7 +62,6 @@
             ChartsTab,
             ProfileTab,
             SettingsTab,
-            Sidebar,
 
             UserDialog,
             WorldDialog,
