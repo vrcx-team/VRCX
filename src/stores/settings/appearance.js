@@ -5,6 +5,7 @@ import { i18n, t } from '../../plugin';
 import configRepository from '../../service/config';
 import database from '../../service/database';
 import {
+    changeAppDarkStyle,
     changeAppThemeStyle,
     changeCJKFontsOrder,
     formatDateFilter,
@@ -78,6 +79,7 @@ export const useAppearanceSettingsStore = defineStore(
         async function initAppearanceSettings() {
             const [
                 appLanguage,
+                themeMode,
                 displayVRCPlusIconsAsAvatar,
                 hideNicknames,
                 hideTooltips,
@@ -99,6 +101,7 @@ export const useAppearanceSettingsStore = defineStore(
                 trustColor
             ] = await Promise.all([
                 configRepository.getString('VRCX_appLanguage'),
+                configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
                 configRepository.getBool('VRCX_hideTooltips', false),
@@ -161,10 +164,11 @@ export const useAppearanceSettingsStore = defineStore(
                     }
                 });
             } else {
-                i18n.locale = appLanguage;
                 state.appLanguage = appLanguage;
             }
             changeCJKFontsOrder(state.appLanguage);
+
+            state.themeMode = themeMode;
 
             state.displayVRCPlusIconsAsAvatar = displayVRCPlusIconsAsAvatar;
             state.hideNicknames = hideNicknames;
@@ -202,10 +206,11 @@ export const useAppearanceSettingsStore = defineStore(
             await mergeOldSortMethodsSettings();
 
             updateTrustColorClasses(state.trustColor);
+
+            vrStore.updateVRConfigVars();
         }
 
         initAppearanceSettings();
-        changeThemeMode();
 
         const appLanguage = computed(() => state.appLanguage);
         const themeMode = computed(() => state.themeMode);
@@ -421,12 +426,7 @@ export const useAppearanceSettingsStore = defineStore(
          */
         function setIsDarkMode(isDark) {
             state.isDarkMode = isDark;
-            if (isDark) {
-                AppApi.ChangeTheme(1);
-            } else {
-                AppApi.ChangeTheme(0);
-            }
-            configRepository.setString('VRCX_isDarkMode', isDark);
+            changeAppDarkStyle(isDark);
         }
         function setDisplayVRCPlusIconsAsAvatar() {
             state.displayVRCPlusIconsAsAvatar =

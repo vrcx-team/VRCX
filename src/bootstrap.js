@@ -3,14 +3,51 @@ import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
 import '@infolektuell/noto-color-emoji';
-import { PiniaVuePlugin } from 'pinia';
 
+await configRepository.init();
+
+import { PiniaVuePlugin } from 'pinia';
 import Vue from 'vue';
 import { DataTables } from 'vue-data-tables';
 import VueLazyload from 'vue-lazyload';
+import configRepository from './service/config';
 import vrcxJsonStorage from './service/jsonStorage';
-import { commaNumber, textToHex } from './shared/utils';
+import {
+    changeAppDarkStyle,
+    changeAppThemeStyle,
+    commaNumber,
+    refreshCustomCss,
+    refreshCustomScript,
+    systemIsDarkMode,
+    textToHex
+} from './shared/utils';
 import './plugin';
+import { i18n } from './plugin';
+
+AppApi.SetUserAgent();
+
+const appLanguage = await configRepository.getString('VRCX_appLanguage', 'en');
+i18n.locale = appLanguage;
+
+const initThemeMode = await configRepository.getString(
+    'VRCX_ThemeMode',
+    'system'
+);
+
+let isDarkMode;
+
+if (initThemeMode === 'light') {
+    isDarkMode = false;
+} else if (initThemeMode === 'system') {
+    isDarkMode = systemIsDarkMode();
+} else {
+    isDarkMode = true;
+}
+changeAppDarkStyle(isDarkMode);
+changeAppThemeStyle(initThemeMode);
+
+refreshCustomCss();
+refreshCustomScript();
 
 Vue.use(PiniaVuePlugin);
 Vue.use(DataTables);

@@ -38,16 +38,11 @@
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
 
     import { utils } from './shared/utils/_utils';
-    import { refreshCustomCss, refreshCustomScript } from './shared/utils';
-    import configRepository from './service/config.js';
-    await configRepository.init();
-    const initThemeMode = await configRepository.getString('VRCX_ThemeMode', 'system');
 
     export default {
         template,
         setup() {
             const store = createGlobalStores();
-            store.appearanceSettings.saveThemeMode(initThemeMode);
             Vue.prototype.store = store;
             Vue.prototype.utils = utils;
         },
@@ -97,10 +92,7 @@
         },
         created() {
             this.store.updateLoop.updateLoop();
-            AppApi.SetUserAgent();
             AppApi.CheckGameRunning();
-            refreshCustomCss();
-            refreshCustomScript();
         },
         async mounted() {
             this.store.gameLog.getGameLogTable();

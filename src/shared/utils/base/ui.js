@@ -11,6 +11,18 @@ function systemIsDarkMode() {
 
 /**
  *
+ * @param {boolean}isDark
+ */
+function changeAppDarkStyle(isDark) {
+    if (isDark) {
+        AppApi.ChangeTheme(1);
+    } else {
+        AppApi.ChangeTheme(0);
+    }
+}
+
+/**
+ *
  * @param {string} themeMode
  * @returns
  */
@@ -257,6 +269,7 @@ function adjustDialogZ(el) {
 
 export {
     systemIsDarkMode,
+    changeAppDarkStyle,
     changeAppThemeStyle,
     changeCJKFontsOrder,
     updateTrustColorClasses,
