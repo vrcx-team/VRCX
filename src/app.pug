@@ -7,7 +7,7 @@ doctype html
 
     template(v-if='this.store.auth.isLoggedIn')
         //- ### Menu ###
-        NavMenu(ref='menu')
+        NavMenu
 
         //- ### Sidebar ###
         Sidebar
@@ -38,7 +38,23 @@ doctype html
         SettingsTab
 
         //- ## Dialogs ## -\\
+        UserDialog
+
+        WorldDialog
+
+        AvatarDialog
+
+        GroupDialog
+
+        GalleryDialog
+
+        FullscreenImageDialog
+
         PreviousInstancesInfoDialog
+
+        LaunchDialog
+
+        LaunchOptionsDialog
 
         FriendImportDialog
 
@@ -48,24 +64,10 @@ doctype html
 
         ChooseFavoriteGroupDialog
 
-        LaunchDialog
-
-        UserDialog
-
-        WorldDialog
-
-        GroupDialog
-
-        AvatarDialog
-
-        FullscreenImageDialog
-
-        LaunchOptionsDialog
-
         EditInviteMessageDialog
 
         VRChatConfigDialog
 
         PrimaryPasswordDialog
 
-        GalleryDialog
+
