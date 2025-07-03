@@ -169,6 +169,7 @@ export const useAppearanceSettingsStore = defineStore(
             changeCJKFontsOrder(state.appLanguage);
 
             state.themeMode = themeMode;
+            applyThemeMode(themeMode);
 
             state.displayVRCPlusIconsAsAvatar = displayVRCPlusIconsAsAvatar;
             state.hideNicknames = hideNicknames;
@@ -413,9 +414,12 @@ export const useAppearanceSettingsStore = defineStore(
         function setThemeMode(mode) {
             state.themeMode = mode;
             configRepository.setString('VRCX_ThemeMode', mode);
-            if (mode === 'light') {
+            applyThemeMode();
+        }
+        function applyThemeMode() {
+            if (state.themeMode === 'light') {
                 setIsDarkMode(false);
-            } else if (mode === 'system') {
+            } else if (state.themeMode === 'system') {
                 setIsDarkMode(systemIsDarkMode());
             } else {
                 setIsDarkMode(true);
