@@ -3,16 +3,16 @@
         <el-tooltip v-if="state.isValidInstance" placement="bottom">
             <template #content>
                 <div>
-                    <span v-if="state.isClosed">Closed At: {{ state.closedAt | formatDate('long') }}</span
-                    ><br />
-                    <el-button
-                        v-if="state.canCloseInstance"
-                        :disabled="state.isClosed"
-                        size="mini"
-                        type="primary"
-                        @click="closeInstance(props.location)">
-                        {{ t('dialog.user.info.close_instance') }} </el-button
-                    ><br /><br />
+                    <span v-if="state.isClosed">Closed At: {{ state.closedAt | formatDate('long') }}<br /></span>
+                    <template v-if="state.canCloseInstance">
+                        <el-button
+                            :disabled="state.isClosed"
+                            size="mini"
+                            type="primary"
+                            @click="closeInstance(props.location)">
+                            {{ t('dialog.user.info.close_instance') }} </el-button
+                        ><br /><br />
+                    </template>
                     <span><span style="color: #409eff">PC: </span>{{ state.platforms.standalonewindows }}</span
                     ><br />
                     <span><span style="color: #67c23a">Android: </span>{{ state.platforms.android }}</span
