@@ -6,15 +6,3 @@ export const useDiscordStore = defineStore('Discord', () => {
 
     return { state };
 });
-
-export const useDiscordStore = defineStore('Discord', () => {
-    const state = reactive({});
-
-    return { state };
-});
-
-export const useDiscordStore = defineStore('Discord', () => {
-    const state = reactive({});
-
-    return { state };
-});
