@@ -380,8 +380,8 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
     }
     function installVRCXUpdate() {
-        for (const release of this.VRCXUpdateDialog.releases) {
-            if (release.name !== this.VRCXUpdateDialog.release) {
+        for (const release of state.VRCXUpdateDialog.releases) {
+            if (release.name !== state.VRCXUpdateDialog.release) {
                 continue;
             }
             let downloadUrl = '';

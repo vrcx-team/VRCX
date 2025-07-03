@@ -577,7 +577,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 const regexAvatarId =
                     /avtr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
                 if (!avatarId.match(regexAvatarId) || avatarId.length !== 41) {
-                    this.$message({
+                    $app.$message({
                         message: 'Invalid Avatar ID',
                         type: 'error'
                     });
@@ -588,7 +588,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     // Makes sure the window is focused
                     shouldFocusWindow = true;
                 } else {
-                    this.selectAvatarWithoutConfirmation(avatarId);
+                    $app.selectAvatarWithoutConfirmation(avatarId);
                     shouldFocusWindow = false;
                 }
                 break;
@@ -669,7 +669,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 t('dialog.registry_backup.restore_prompt'),
                 t('dialog.registry_backup.header')
             );
-            this.showRegistryBackupDialog();
+            showRegistryBackupDialog();
             await AppApi.FocusWindow();
             await configRepository.setString(
                 'VRCX_VRChatRegistryLastRestoreCheck',

@@ -42,7 +42,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         notificationOpacity: 100,
         folderSelectorDialogVisible: false,
         isVRChatConfigDialogVisible: false,
-        saveInstanceEmoji: false
+        saveInstanceEmoji: false,
+        vrcRegistryAutoBackup: true
     });
 
     async function initAdvancedSettings() {
@@ -70,7 +71,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             ugcFolderPath,
             autoDeleteOldPrints,
             notificationOpacity,
-            saveInstanceEmoji
+            saveInstanceEmoji,
+            vrcRegistryAutoBackup
         ] = await Promise.all([
             configRepository.getBool('enablePrimaryPassword', false),
             configRepository.getBool('VRCX_relaunchVRChatAfterCrash', false),
@@ -104,7 +106,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getString('VRCX_userGeneratedContentPath', ''),
             configRepository.getBool('VRCX_autoDeleteOldPrints', false),
             configRepository.getFloat('VRCX_notificationOpacity', 100),
-            configRepository.getBool('VRCX_saveInstanceEmoji', false)
+            configRepository.getBool('VRCX_saveInstanceEmoji', false),
+            configRepository.getBool('VRCX_vrcRegistryAutoBackup', true)
         ]);
 
         state.enablePrimaryPassword = enablePrimaryPassword;
@@ -131,6 +134,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.autoDeleteOldPrints = autoDeleteOldPrints;
         state.notificationOpacity = notificationOpacity;
         state.saveInstanceEmoji = saveInstanceEmoji;
+        state.vrcRegistryAutoBackup = vrcRegistryAutoBackup;
 
         handleSetAppLauncherSettings();
     }
@@ -203,6 +207,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         get: () => state.saveInstanceEmoji,
         set: (value) => (state.saveInstanceEmoji = value)
     });
+    const vrcRegistryAutoBackup = computed(() => state.vrcRegistryAutoBackup);
 
     /**
      * @param {boolean} value
@@ -375,6 +380,14 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setInt('VRCX_notificationOpacity', value);
     }
 
+    async function setVrcRegistryAutoBackup() {
+        state.vrcRegistryAutoBackup = !state.vrcRegistryAutoBackup;
+        await configRepository.setBool(
+            'VRCX_vrcRegistryAutoBackup',
+            state.vrcRegistryAutoBackup
+        );
+    }
+
     async function getSqliteTableSizes() {
         const [
             gps,
@@ -491,7 +504,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                             duration: 0
                         });
                         try {
-                            await AppApi.CropAllPrints(this.ugcFolderPath);
+                            await AppApi.CropAllPrints(state.ugcFolderPath);
                             $app.$message({
                                 message: 'Batch print cropping complete',
                                 type: 'success'
@@ -612,6 +625,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         notificationOpacity,
         isVRChatConfigDialogVisible,
         saveInstanceEmoji,
+        vrcRegistryAutoBackup,
 
         setEnablePrimaryPasswordConfigRepository,
         setRelaunchVRChatAfterCrash,
@@ -646,6 +660,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         folderSelectorDialog,
         showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
-        setSaveInstanceEmoji
+        setSaveInstanceEmoji,
+        setVrcRegistryAutoBackup
     };
 });

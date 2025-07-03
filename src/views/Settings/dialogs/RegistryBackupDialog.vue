@@ -9,7 +9,7 @@
         <div style="margin-top: 10px">
             <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px">
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.auto_backup') }}</span>
-                <el-switch v-model="vrcRegistryAutoBackup" @change="saveVrcRegistryAutoBackup"></el-switch>
+                <el-switch v-model="vrcRegistryAutoBackup" @change="setVrcRegistryAutoBackup"></el-switch>
             </div>
             <data-tables v-bind="registryBackupTable" style="margin-top: 10px">
                 <el-table-column :label="t('dialog.registry_backup.name')" prop="name"></el-table-column>
@@ -77,11 +77,13 @@
     import configRepository from '../../../service/config';
     import { downloadAndSaveJson, removeFromArray } from '../../../shared/utils';
 
-    import { useAppearanceSettingsStore, useVrcxStore } from '../../../stores';
+    import { useAppearanceSettingsStore, useVrcxStore, useAdvancedSettingsStore } from '../../../stores';
 
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { backupVrcRegistry } = useVrcxStore();
     const { isRegistryBackupDialogVisible } = storeToRefs(useVrcxStore());
+    const { vrcRegistryAutoBackup } = storeToRefs(useAdvancedSettingsStore());
+    const { setVrcRegistryAutoBackup } = useAdvancedSettingsStore();
 
     const { t } = useI18n();
 
@@ -101,8 +103,6 @@
         layout: 'table'
     });
 
-    const vrcRegistryAutoBackup = ref(false);
-
     watch(
         () => isRegistryBackupDialogVisible.value,
         (newVal) => {
@@ -112,21 +112,9 @@
         }
     );
 
-    setVrcRegistryAutoBackup();
-
-    function setVrcRegistryAutoBackup() {
-        configRepository.getBool('VRCX_vrcRegistryAutoBackup', true).then((value) => {
-            vrcRegistryAutoBackup.value = value;
-        });
-    }
-
     async function updateRegistryBackupDialog() {
         const backupsJson = await configRepository.getString('VRCX_VRChatRegistryBackups');
         registryBackupTable.value.data = JSON.parse(backupsJson || '[]');
-    }
-
-    async function saveVrcRegistryAutoBackup() {
-        await configRepository.setBool('VRCX_vrcRegistryAutoBackup', vrcRegistryAutoBackup.value);
     }
 
     function restoreVrcRegistryBackup(row) {
