@@ -5,7 +5,7 @@ import { instanceRequest, userRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
 import configRepository from '../service/config';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { photonEventType } from '../shared/constants';
 import {

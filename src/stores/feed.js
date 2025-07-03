@@ -3,7 +3,7 @@ import { computed, reactive } from 'vue';
 import { $app } from '../app';
 import { t } from '../plugin';
 import configRepository from '../service/config';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { initWebsocket } from '../service/websocket';
 import { getAllUserMemos, getNameColour, migrateMemos } from '../shared/utils';

@@ -759,7 +759,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { t } from '../../../plugin';
-    import database from '../../../service/database.js';
+    import { database } from '../../../service/database.js';
     import { API } from '../../../service/eventBus';
     import {
         adjustDialogZ,

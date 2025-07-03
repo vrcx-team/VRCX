@@ -4,7 +4,7 @@ import { instanceRequest, userRequest, worldRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
 import configRepository from '../service/config';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { instanceContentSettings } from '../shared/constants';
 import {

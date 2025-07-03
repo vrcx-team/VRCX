@@ -70,7 +70,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
-    import database from '../../../service/database';
+    import { database } from '../../../service/database';
     import {
         adjustDialogZ,
         compareByCreatedAt,
@@ -134,7 +134,7 @@
 
     const refreshPreviousInstancesUserTable = async () => {
         loading.value = true;
-        const data = await database.getpreviousInstancesByUserId(props.previousInstancesUserDialog.userRef);
+        const data = await database.getPreviousInstancesByUserId(props.previousInstancesUserDialog.userRef);
         const array = [];
         for (const item of data.values()) {
             item.$location = parseLocation(item.location);

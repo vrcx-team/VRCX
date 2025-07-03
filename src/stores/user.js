@@ -9,7 +9,7 @@ import {
     userRequest
 } from '../api';
 import { $app } from '../app';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { processBulk, request } from '../service/request';
 import { initWebsocket } from '../service/websocket';

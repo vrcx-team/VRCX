@@ -98,7 +98,7 @@
     import { getCurrentInstance, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../service/config';
-    import database from '../../service/database';
+    import { database } from '../../service/database';
     import { removeFromArray } from '../../shared/utils';
     import { useAppearanceSettingsStore, useUiStore, useFriendStore, useUserStore } from '../../stores';
 

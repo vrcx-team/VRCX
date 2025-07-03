@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
-import database from '../service/database';
+import { database } from '../service/database';
 import {
     getGroupName,
     getWorldName,

@@ -1789,7 +1789,7 @@
         userRequest,
         worldRequest
     } from '../../../api';
-    import database from '../../../service/database';
+    import { database } from '../../../service/database';
     import { API } from '../../../service/eventBus';
     import { processBulk, request } from '../../../service/request';
     import { userDialogGroupSortingOptions } from '../../../shared/constants';

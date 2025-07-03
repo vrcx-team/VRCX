@@ -427,7 +427,7 @@
         escapeTag
     } from '../../shared/utils';
     import configRepository from '../../service/config';
-    import database from '../../service/database';
+    import { database } from '../../service/database';
     import {
         useGalleryStore,
         useInviteStore,

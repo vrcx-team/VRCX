@@ -3,7 +3,7 @@ import { computed, reactive, watch } from 'vue';
 import { $app } from '../../app';
 import { t } from '../../plugin';
 import configRepository from '../../service/config';
-import database from '../../service/database';
+import { database } from '../../service/database';
 import { API } from '../../service/eventBus';
 import webApiService from '../../service/webapi';
 import { useAuthStore } from '../auth';

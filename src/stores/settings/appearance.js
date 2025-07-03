@@ -3,7 +3,7 @@ import Vue, { computed, reactive } from 'vue';
 import { $app } from '../../app';
 import { i18n, t } from '../../plugin';
 import configRepository from '../../service/config';
-import database from '../../service/database';
+import { database } from '../../service/database';
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
@@ -693,7 +693,7 @@ export const useAppearanceSettingsStore = defineStore(
                                 'VRCX_maxTableSize',
                                 vrcxStore.maxTableSize
                             );
-                            database.setmaxTableSize(vrcxStore.maxTableSize);
+                            database.setMaxTableSize(vrcxStore.maxTableSize);
                             feedStore.feedTableLookup();
                             gameLogStore.gameLogTableLookup();
                         }

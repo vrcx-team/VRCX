@@ -199,7 +199,7 @@
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import database from '../../service/database';
+    import { database } from '../../service/database';
     import { removeFromArray, openExternalLink } from '../../shared/utils';
     import {
         useUserStore,

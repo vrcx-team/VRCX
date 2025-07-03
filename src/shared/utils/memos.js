@@ -1,5 +1,5 @@
 import { storeToRefs } from 'pinia';
-import database from '../../service/database.js';
+import { database } from '../../service/database.js';
 import { useFriendStore } from '../../stores';
 
 /**

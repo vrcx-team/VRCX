@@ -3,7 +3,7 @@ import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { $app } from '../app';
 import configRepository from '../service/config.js';
-import database from '../service/database';
+import { database } from '../service/database';
 import {
     deleteVRChatCache as _deleteVRChatCache,
     isRealInstance

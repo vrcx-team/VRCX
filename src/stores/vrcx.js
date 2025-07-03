@@ -4,7 +4,7 @@ import { worldRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
 import configRepository from '../service/config';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { failedGetRequests } from '../service/request';
 import {
@@ -133,7 +133,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         if (state.maxTableSize > 10000) {
             state.maxTableSize = 1000;
         }
-        database.setmaxTableSize(state.maxTableSize);
+        database.setMaxTableSize(state.maxTableSize);
     }
 
     init();

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 import { avatarRequest, imageRequest } from '../api';
 import { $app } from '../app';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import webApiService from '../service/webapi';
 import {

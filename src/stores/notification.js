@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import Vue, { computed, reactive, watch } from 'vue';
 import { notificationRequest, userRequest, worldRequest } from '../api';
 import configRepository from '../service/config';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import {
     checkCanInvite,

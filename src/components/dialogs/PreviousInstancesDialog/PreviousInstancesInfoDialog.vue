@@ -60,7 +60,7 @@
 <script>
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
-    import database from '../../../service/database';
+    import { database } from '../../../service/database';
     import { adjustDialogZ, compareByCreatedAt, parseLocation, timeToText } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
 

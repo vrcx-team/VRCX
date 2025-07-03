@@ -4,7 +4,7 @@ import * as workerTimers from 'worker-timers';
 import { favoriteRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
-import database from '../service/database';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { processBulk } from '../service/request';
 import { compareByName, removeFromArray } from '../shared/utils';

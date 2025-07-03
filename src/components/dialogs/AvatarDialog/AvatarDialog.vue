@@ -607,7 +607,7 @@
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, imageRequest, miscRequest } from '../../../api';
-    import database from '../../../service/database';
+    import { database } from '../../../service/database';
     import {
         adjustDialogZ,
         buildTreeData,

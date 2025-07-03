@@ -69,7 +69,7 @@
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import database from '../../../service/database';
+    import { database } from '../../../service/database';
     import {
         adjustDialogZ,
         compareByCreatedAt,
@@ -124,7 +124,7 @@
     function refreshPreviousInstancesWorldTable() {
         loading.value = true;
         const D = props.previousInstancesWorldDialog;
-        database.getpreviousInstancesByWorldId(D.worldRef).then((data) => {
+        database.getPreviousInstancesByWorldId(D.worldRef).then((data) => {
             const array = [];
             for (const ref of data.values()) {
                 ref.$location = parseLocation(ref.location);
