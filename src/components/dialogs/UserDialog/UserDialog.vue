@@ -9,7 +9,10 @@
         <div v-loading="userDialog.loading">
             <div style="display: flex">
                 <el-popover
-                    v-if="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
+                    v-if="
+                        !userDialog.loading &&
+                        (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
+                    "
                     placement="right"
                     width="500px"
                     trigger="click">
@@ -24,7 +27,7 @@
                         style="height: 400px"
                         @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)" />
                 </el-popover>
-                <el-popover v-else placement="right" width="500px" trigger="click">
+                <el-popover v-else-if="!userDialog.loading" placement="right" width="500px" trigger="click">
                     <img
                         slot="reference"
                         class="x-link"
@@ -126,7 +129,7 @@
                                 </el-popover>
                             </template>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div style="margin-top: 5px" v-show="!userDialog.loading">
                             <el-tag
                                 type="info"
                                 effect="plain"
@@ -212,7 +215,11 @@
                                 {{ userDialog.ref.last_platform }}
                             </el-tag>
                             <el-tag
-                                v-if="userDialog.ref.ageVerified || userDialog.ref.ageVerificationStatus !== 'hidden'"
+                                v-if="
+                                    userDialog.ref.ageVerified &&
+                                    userDialog.ref.ageVerificationStatus &&
+                                    userDialog.ref.ageVerificationStatus !== 'hidden'
+                                "
                                 type="info"
                                 effect="plain"
                                 size="mini"
@@ -233,7 +240,11 @@
                                 style="margin-right: 5px; margin-top: 5px"
                                 v-text="userDialog.ref.$customTag"></el-tag>
                             <br />
-                            <el-tooltip v-for="badge in userDialog.ref.badges" :key="badge.badgeId" placement="top">
+                            <el-tooltip
+                                v-show="!userDialog.loading"
+                                v-for="badge in userDialog.ref.badges"
+                                :key="badge.badgeId"
+                                placement="top">
                                 <template #content>
                                     <span>{{ badge.badgeName }}</span>
                                     <span v-if="badge.hidden">&nbsp;(Hidden)</span>
