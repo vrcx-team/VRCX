@@ -58,7 +58,10 @@ function changeAppThemeStyle(themeMode) {
      * when switching from another dark theme to 'dark' theme
      * <del>works on my machine</del>
      */
-    const filePathPrefix = 'file://vrcx/';
+    let filePathPrefix = 'file://vrcx/';
+    if (LINUX) {
+        filePathPrefix = './';
+    }
 
     let $appThemeStyle = document.getElementById('app-theme-style');
     if (!$appThemeStyle) {

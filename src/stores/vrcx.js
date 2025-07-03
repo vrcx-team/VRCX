@@ -374,11 +374,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function saveVRCXWindowOption() {
         if (LINUX) {
-            VRCXStorage.Set('VRCX_LocationX', this.locationX);
-            VRCXStorage.Set('VRCX_LocationY', this.locationY);
-            VRCXStorage.Set('VRCX_SizeWidth', this.sizeWidth);
-            VRCXStorage.Set('VRCX_SizeHeight', this.sizeHeight);
-            VRCXStorage.Set('VRCX_WindowState', this.windowState);
+            VRCXStorage.Set('VRCX_LocationX', state.locationX);
+            VRCXStorage.Set('VRCX_LocationY', state.locationY);
+            VRCXStorage.Set('VRCX_SizeWidth', state.sizeWidth);
+            VRCXStorage.Set('VRCX_SizeHeight', state.sizeHeight);
+            VRCXStorage.Set('VRCX_WindowState', state.windowState);
             VRCXStorage.Flush();
         }
     }
