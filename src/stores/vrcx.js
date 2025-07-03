@@ -642,7 +642,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     async function checkAutoBackupRestoreVrcRegistry() {
-        if (!this.vrcRegistryAutoBackup) {
+        if (!advancedSettingsStore.vrcRegistryAutoBackup) {
             return;
         }
 
