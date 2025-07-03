@@ -421,6 +421,7 @@ export const useSearchStore = defineStore('Search', () => {
         quickSearchUserHistory,
         quickSearchRemoteMethod,
         quickSearchChange,
+        directAccessParse,
         directAccessPaste,
         directAccessWorld,
         verifyShortName

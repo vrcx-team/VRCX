@@ -2,7 +2,12 @@ import Noty from 'noty';
 import { storeToRefs } from 'pinia';
 import { miscRequest } from '../../api';
 import { $app } from '../../app';
-import { useAvatarStore, useInstanceStore, useWorldStore } from '../../stores';
+import {
+    useAvatarStore,
+    useInstanceStore,
+    useWorldStore,
+    useSearchStore
+} from '../../stores';
 import { compareUnityVersion } from './avatar';
 import { escapeTag } from './base/string';
 
@@ -370,6 +375,11 @@ function replaceBioSymbols(text) {
  * @param {string} link
  */
 function openExternalLink(link) {
+    const searchStore = useSearchStore();
+    if (searchStore.directAccessParse(link)) {
+        return;
+    }
+
     $app.$confirm(`${link}`, 'Open External Link', {
         distinguishCancelAndClose: true,
         confirmButtonText: 'Open',
