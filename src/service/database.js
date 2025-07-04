@@ -16,6 +16,7 @@ import { tableSize } from './database/tableSize.js';
 const database = {
     userId: '',
     userPrefix: '',
+    maxTableSize: 100000,
 
     ...feed,
     ...gameLog,

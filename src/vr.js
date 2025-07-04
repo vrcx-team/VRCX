@@ -183,6 +183,7 @@ Vue.component('marquee-text', MarqueeText);
                 this.refreshCustomScript();
                 this.updateStatsLoop();
             }
+            this.setDatetimeFormat();
         }
     };
     Object.assign($app, app);
