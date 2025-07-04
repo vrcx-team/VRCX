@@ -197,7 +197,7 @@
                             :content="t('dialog.world.actions.favorites_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
-                                type="default"
+                                :type="worldDialog.isFavorite ? 'warning' : 'default'"
                                 :icon="worldDialog.isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'"
                                 circle
                                 style="margin-left: 5px"
