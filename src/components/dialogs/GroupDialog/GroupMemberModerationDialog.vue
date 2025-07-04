@@ -18,7 +18,7 @@
                             icon="el-icon-refresh"
                             :loading="isGroupMembersLoading"
                             circle
-                            @click="loadAllGroupMembers"></el-button>
+                            @click="loadAllGroupMembers" />
                         <span style="font-size: 14px; margin-left: 5px; margin-right: 5px">
                             {{ groupMemberModerationTable.data.length }}/{{
                                 groupMemberModeration.groupRef.memberCount
@@ -1260,6 +1260,7 @@
         progressCurrent.value = 0;
         progressTotal.value = 0;
         deselectedUsers(null, true);
+        loadAllGroupMembers();
     }
 
     async function groupMembersSaveNote() {
