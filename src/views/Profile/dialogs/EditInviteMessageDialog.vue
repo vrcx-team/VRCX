@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="editInviteMessageDialog.visible"
         :title="t('dialog.edit_invite_message.header')"
         width="400px"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div style="font-size: 12px">
             <span>{{ t('dialog.edit_invite_message.description') }}</span>
             <el-input
@@ -23,39 +20,31 @@
         <template #footer>
             <el-button type="small" @click="closeDialog">{{ $t('dialog.edit_invite_message.cancel') }}</el-button>
             <el-button type="primary" size="small" @click="saveEditInviteMessage">{{
-                $t('dialog.edit_invite_message.save')
+                t('dialog.edit_invite_message.save')
             }}</el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { ref, watch, inject, getCurrentInstance } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { inviteMessagesRequest } from '../../../api';
+    import { API } from '../../../service/eventBus';
+    import { useInviteStore } from '../../../stores';
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
-    const API = inject('API');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
 
-    const props = defineProps({
-        editInviteMessageDialog: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                newMessage: ''
-            })
-        }
-    });
+    const inviteStore = useInviteStore();
+    const { editInviteMessageDialog } = storeToRefs(inviteStore);
 
     const message = ref('');
 
     watch(
-        () => props.editInviteMessageDialog,
+        () => editInviteMessageDialog.value,
         (newVal) => {
             if (newVal && newVal.visible) {
                 message.value = newVal.newMessage;
@@ -64,10 +53,8 @@
         { deep: true }
     );
 
-    const emit = defineEmits(['update:editInviteMessageDialog']);
-
     function saveEditInviteMessage() {
-        const D = props.editInviteMessageDialog;
+        const D = editInviteMessageDialog.value;
         D.visible = false;
         if (D.inviteMessage.message !== message.value) {
             const slot = D.inviteMessage.slot;
@@ -97,6 +84,6 @@
     }
 
     function closeDialog() {
-        emit('update:editInviteMessageDialog', { ...props.editInviteMessageDialog, visible: false });
+        editInviteMessageDialog.value.visible = false;
     }
 </script>

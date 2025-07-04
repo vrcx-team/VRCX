@@ -1,23 +1,19 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isYouTubeApiDialogVisible"
         :title="t('dialog.youtube_api.header')"
         width="400px"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div style="font-size: 12px">{{ t('dialog.youtube_api.description') }} <br /></div>
 
         <el-input
-            :value="youTubeApiKey"
+            v-model="youTubeApiKey"
             type="textarea"
             :placeholder="t('dialog.youtube_api.placeholder')"
             maxlength="39"
             show-word-limit
-            style="display: block; margin-top: 10px"
-            @input="updateYouTubeApiKey">
+            style="display: block; margin-top: 10px">
         </el-input>
 
         <template #footer>
@@ -32,69 +28,61 @@
                 </el-button>
             </div>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject, getCurrentInstance } from 'vue';
-    import configRepository from '../../../service/config';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
+    import { openExternalLink } from '../../../shared/utils';
+    import { useAdvancedSettingsStore } from '../../../stores';
+
+    const advancedSettingsStore = useAdvancedSettingsStore();
+
+    const { youTubeApiKey } = storeToRefs(advancedSettingsStore);
+
+    const { lookupYouTubeVideo, setYouTubeApiKey } = advancedSettingsStore;
+
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
-    const openExternalLink = inject('openExternalLink');
-
     const props = defineProps({
         isYouTubeApiDialogVisible: {
             type: Boolean,
             default: false
-        },
-        lookupYouTubeVideo: {
-            type: Function,
-            default: () => {}
-        },
-        youTubeApiKey: {
-            type: String,
-            default: ''
         }
     });
 
-    const emit = defineEmits(['update:isYouTubeApiDialogVisible', 'update:youTubeApiKey']);
+    const emit = defineEmits(['update:isYouTubeApiDialogVisible']);
 
     async function testYouTubeApiKey() {
-        if (!props.youTubeApiKey) {
+        const previousKey = youTubeApiKey.value;
+        if (!youTubeApiKey.value) {
             $message({
                 message: 'YouTube API key removed',
                 type: 'success'
             });
-            await configRepository.setString('VRCX_youtubeAPIKey', '');
             closeDialog();
             return;
         }
-        const data = await props.lookupYouTubeVideo('dQw4w9WgXcQ');
+        const data = await lookupYouTubeVideo('dQw4w9WgXcQ');
         if (!data) {
-            updateYouTubeApiKey('');
+            setYouTubeApiKey(previousKey);
             $message({
                 message: 'Invalid YouTube API key',
                 type: 'error'
             });
         } else {
-            await configRepository.setString('VRCX_youtubeAPIKey', props.youTubeApiKey);
+            setYouTubeApiKey(youTubeApiKey.value);
             $message({
                 message: 'YouTube API key valid!',
                 type: 'success'
             });
             closeDialog();
         }
-    }
-
-    function updateYouTubeApiKey(value) {
-        emit('update:youTubeApiKey', value);
     }
 
     function closeDialog() {

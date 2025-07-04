@@ -5,7 +5,6 @@
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
-[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | [English](./README.md) | [Français](./README.fr.md) | **日本語** | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
@@ -23,31 +22,31 @@ VRCX は VRChat クライアント (デスクトップ & VR) や Web サイト�
 <div align="left">
 
 - :family: フレンド、ワールド、アバターの管理
-  - VRChat に入らなくてもフレンドやワールド、グループ、アバターリストを管理することができます。
-  - フレンドのワールド/アバターのアクティビティを見たり、オンラインステータスを確認したりできます。
-  - いつフレンドになったのか、いつ最後に会ったのか、記録しておきましょう！
-  - 一緒に過ごした時間や回数も確認できます。
-  - フレンドのユーザーネームの変更も追跡できます。
-  - メモを保存して、出会いの記録を残しましょう！
+    - VRChat に入らなくてもフレンドやワールド、グループ、アバターリストを管理することができます。
+    - フレンドのワールド/アバターのアクティビティを見たり、オンラインステータスを確認したりできます。
+    - いつフレンドになったのか、いつ最後に会ったのか、記録しておきましょう！
+    - 一緒に過ごした時間や回数も確認できます。
+    - フレンドのユーザーネームの変更も追跡できます。
+    - メモを保存して、出会いの記録を残しましょう！
 - :electric_plug: VRChat 起動時に一緒にアプリを起動
-  - VRChat の起動時に他のアプリを同時起動できるよう設定できます。
-  - 例えば、VRChat を起動したら同時に OSC アプリやボイスチェンジャーを起動するようにできます。
+    - VRChat の起動時に他のアプリを同時起動できるよう設定できます。
+    - 例えば、VRChat を起動したら同時に OSC アプリやボイスチェンジャーを起動するようにできます。
 - :floppy_disk: ワールドの永続化
-  - ワールドが対応している場合、設定やセーブデータ、インベントリなどのデータを保存することができます。
-  - **注意**: この機能を使うには、VRChat の設定で「信頼されていない URL を許可」を有効化しておく必要があります。
-  - 開発者向け: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
+    - ワールドが対応している場合、設定やセーブデータ、インベントリなどのデータを保存することができます。
+    - **注意**: この機能を使うには、VRChat の設定で「信頼されていない URL を許可」を有効化しておく必要があります。
+    - 開発者向け: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: アバター、ユーザー、ワールド、グループの検索
 - :earth_americas: 無制限！ローカル保存のワールドお気に入りリスト
 - :camera: ゲーム内で撮った写真にワールドデータを保存することで、半年前に撮影した綺麗なワールドをいつでも振り返ることができます。
 - :bell: 通知の監視 & 対応
-  - VRCX から招待やフレンドリクエストを送受信したり、受け取った招待先のインスタンス情報を確認することができます。
+    - VRCX から招待やフレンドリクエストを送受信したり、受け取った招待先のインスタンス情報を確認することができます。
 - :scroll: 現在のインスタンスの情報やプレイヤーリストを確認可能
 - :tv: 今いるワールドで再生されている動画やその URL、その他様々なログを確認可能
 - :bar_chart: Discord Rich Presence の強化
-  - 現在のインスタンス情報などを Discord に表示することができます。
-  - PyPyDance、LS Media、Movie and Chill、VR Dancing などの人気ワールドとの連携機能
-  - ワールドサムネイル、ワールド名、インスタンス ID、プレイヤー数が表示され、設定やプライベートインスタンスかどうかで表示内容が変わります。  
-    また、パブリックインスタンスでは参加ボタンを表示することもできます！
+    - 現在のインスタンス情報などを Discord に表示することができます。
+    - PyPyDance、LS Media、Movie and Chill、VR Dancing などの人気ワールドとの連携機能
+    - ワールドサムネイル、ワールド名、インスタンス ID、プレイヤー数が表示され、設定やプライベートインスタンスかどうかで表示内容が変わります。  
+      また、パブリックインスタンスでは参加ボタンを表示することもできます！
 - :crystal_ball: 対応するすべてのイベント/通知のライブフィードを表示/設定可能な VR オーバーレイ
 - :outbox_tray: Unity なしでアバター/ワールド画像をアップロード可能
 - :page_facing_up: Unity なしでアップロードしたアバター/ワールドの詳細を管理可能

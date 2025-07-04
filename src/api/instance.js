@@ -1,4 +1,7 @@
-// #region | API: Instance
+import { $app } from '../app';
+import { t } from '../plugin';
+import { API } from '../service/eventBus';
+import { request } from '../service/request';
 
 const instanceReq = {
     /**
@@ -6,17 +9,14 @@ const instanceReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getInstance(params) {
-        return window.API.call(
-            `instances/${params.worldId}:${params.instanceId}`,
-            {
-                method: 'GET'
-            }
-        ).then((json) => {
+        return request(`instances/${params.worldId}:${params.instanceId}`, {
+            method: 'GET'
+        }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('INSTANCE', args);
+            API.$emit('INSTANCE', args);
             return args;
         });
     },
@@ -37,7 +37,7 @@ const instanceReq = {
      * @returns {Promise<{json: any, params}>}
      */
     createInstance(params) {
-        return window.API.call('instances', {
+        return request('instances', {
             method: 'POST',
             params
         }).then((json) => {
@@ -45,7 +45,7 @@ const instanceReq = {
                 json,
                 params
             };
-            window.API.$emit('INSTANCE', args);
+            API.$emit('INSTANCE', args);
             return args;
         });
     },
@@ -59,7 +59,7 @@ const instanceReq = {
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
-        return window.API.call(
+        return request(
             `instances/${instance.worldId}:${instance.instanceId}/shortName`,
             {
                 method: 'GET',
@@ -80,14 +80,14 @@ const instanceReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getInstanceFromShortName(params) {
-        return window.API.call(`instances/s/${params.shortName}`, {
+        return request(`instances/s/${params.shortName}`, {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('INSTANCE', args);
+            API.$emit('INSTANCE', args);
             return args;
         });
     },
@@ -105,7 +105,7 @@ const instanceReq = {
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
-        return window.API.call(
+        return request(
             `invite/myself/to/${instance.worldId}:${instance.instanceId}`,
             {
                 method: 'POST',
@@ -121,20 +121,19 @@ const instanceReq = {
             })
             .catch((err) => {
                 if (err?.error?.message) {
-                    window.$app.$message({
+                    $app.$message({
                         message: err.error.message,
                         type: 'error'
                     });
                     throw err;
                 }
-                window.$app.$message({
-                    message: window.$t('message.instance.not_allowed'),
+                $app.$message({
+                    message: t('message.instance.not_allowed'),
                     type: 'error'
                 });
                 throw err;
             });
     }
 };
-// #endregion
 
 export default instanceReq;

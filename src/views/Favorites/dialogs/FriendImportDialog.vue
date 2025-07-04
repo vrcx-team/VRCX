@@ -1,12 +1,9 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="friendImportDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="isVisible"
         :title="$t('dialog.friend_import.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ $t('dialog.friend_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -46,7 +43,7 @@
                         ></span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in API.favoriteFriendGroups">
+                        <template v-for="groupAPI in favoriteFriendGroups">
                             <el-dropdown-item
                                 :key="groupAPI.name"
                                 style="display: block; margin: 10px 0"
@@ -122,36 +119,33 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
-    import utils from '../../../classes/utils';
+    import { storeToRefs } from 'pinia';
     import { favoriteRequest, userRequest } from '../../../api';
+    import { adjustDialogZ, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     export default {
         name: 'FriendImportDialog',
-        inject: [
-            'API',
-            'userImage',
-            'userImageFull',
-            'showFullscreenImageDialog',
-            'showUserDialog',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'adjustDialogZ'
-        ],
-        props: {
-            friendImportDialogVisible: {
-                type: Boolean,
-                required: true
-            },
-            friendImportDialogInput: {
-                type: String,
-                required: false,
-                default: ''
-            }
+
+        setup() {
+            const { showUserDialog } = useUserStore();
+            const { favoriteFriendGroups, friendImportDialogInput, friendImportDialogVisible } =
+                storeToRefs(useFavoriteStore());
+            const { showFullscreenImageDialog } = useGalleryStore();
+            return {
+                showUserDialog,
+                favoriteFriendGroups,
+                friendImportDialogInput,
+                friendImportDialogVisible,
+                userImage,
+                userImageFull,
+                adjustDialogZ,
+                showFullscreenImageDialog
+            };
         },
         data() {
             return {
@@ -182,7 +176,7 @@
                     return this.friendImportDialogVisible;
                 },
                 set(value) {
-                    this.$emit('update:friend-import-dialog-visible', value);
+                    this.friendImportDialogVisible = value;
                 }
             }
         },
@@ -205,7 +199,7 @@
                 this.friendImportDialog.loading = false;
             },
             deleteItemFriendImport(ref) {
-                utils.removeFromArray(this.friendImportTable.data, ref);
+                removeFromArray(this.friendImportTable.data, ref);
                 this.friendImportDialog.userIdList.delete(ref.id);
             },
             clearFriendImportTable() {
@@ -231,7 +225,7 @@
                         }
                         ref = data[i];
                         await this.addFavoriteUser(ref, D.friendImportFavoriteGroup, false);
-                        utils.removeFromArray(this.friendImportTable.data, ref);
+                        removeFromArray(this.friendImportTable.data, ref);
                         D.userIdList.delete(ref.id);
                         D.importProgress++;
                     }

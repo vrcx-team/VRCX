@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isNoteExportDialogVisible"
         :title="t('dialog.note_export.header')"
         width="1000px"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div style="font-size: 12px">
             {{ t('dialog.note_export.description1') }} <br />
             {{ t('dialog.note_export.description2') }} <br />
@@ -87,33 +84,27 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { ref, watch, inject } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
     import * as workerTimers from 'worker-timers';
     import { miscRequest } from '../../../api';
+    import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { useFriendStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
-    const userImage = inject('userImage');
-    const userImageFull = inject('userImageFull');
-    const showUserDialog = inject('showUserDialog');
-    const showFullscreenImageDialog = inject('showFullscreenImageDialog');
+    const { friends } = storeToRefs(useFriendStore());
+    const { showUserDialog } = useUserStore();
+    const { showFullscreenImageDialog } = useGalleryStore();
 
     const props = defineProps({
         isNoteExportDialogVisible: {
             type: Boolean
-        },
-        friends: {
-            type: Map,
-            default: () => new Map()
         }
     });
 
@@ -152,7 +143,7 @@
 
     function updateNoteExportDialog() {
         const data = [];
-        props.friends.forEach((ctx) => {
+        friends.value.forEach((ctx) => {
             const newMemo = ctx.memo.replace(/[\r\n]/g, ' ');
             if (ctx.memo && ctx.ref && ctx.ref.note !== newMemo.slice(0, 256)) {
                 data.push({
@@ -180,7 +171,7 @@
                         targetUserId: ctx.id,
                         note: ctx.memo.slice(0, 256)
                     });
-                    utils.removeFromArray(noteExportTable.value.data, ctx);
+                    removeFromArray(noteExportTable.value.data, ctx);
                     progress.value++;
                     await new Promise((resolve) => {
                         workerTimers.setTimeout(resolve, 5000);
@@ -201,7 +192,7 @@
     }
 
     function removeFromNoteExportTable(ref) {
-        utils.removeFromArray(noteExportTable.value.data, ref);
+        removeFromArray(noteExportTable.value.data, ref);
     }
 
     function closeDialog() {

@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="worldImportDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="isVisible"
         :title="$t('dialog.world_import.header')"
         width="650px"
         top="10vh"
-        class="x-dialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        class="x-dialog">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ $t('dialog.world_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -49,7 +46,7 @@
                         </span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in API.favoriteWorldGroups">
+                        <template v-for="groupAPI in favoriteWorldGroups">
                             <el-dropdown-item
                                 :key="groupAPI.name"
                                 style="display: block; margin: 10px 0"
@@ -176,30 +173,36 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
     import { favoriteRequest, worldRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { adjustDialogZ, removeFromArray } from '../../../shared/utils';
+    import { useFavoriteStore, useGalleryStore, useUserStore, useWorldStore } from '../../../stores';
 
     export default {
         name: 'WorldImportDialog',
-        inject: [
-            'API',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'showFullscreenImageDialog',
-            'showUserDialog',
-            'adjustDialogZ',
-            'showWorldDialog'
-        ],
-        props: {
-            worldImportDialogVisible: Boolean,
-            worldImportDialogInput: String,
-            getLocalWorldFavoriteGroupLength: Function,
-            localWorldFavoriteGroups: Array
+        setup() {
+            const { showUserDialog } = useUserStore();
+            const { favoriteWorldGroups, worldImportDialogInput, worldImportDialogVisible, localWorldFavoriteGroups } =
+                storeToRefs(useFavoriteStore());
+            const { getLocalWorldFavoriteGroupLength, addLocalWorldFavorite } = useFavoriteStore();
+            const { showWorldDialog } = useWorldStore();
+            const { showFullscreenImageDialog } = useGalleryStore();
+            return {
+                showUserDialog,
+                favoriteWorldGroups,
+                worldImportDialogInput,
+                worldImportDialogVisible,
+                getLocalWorldFavoriteGroupLength,
+                localWorldFavoriteGroups,
+                addLocalWorldFavorite,
+                showWorldDialog,
+                adjustDialogZ,
+                showFullscreenImageDialog
+            };
         },
         data() {
             return {
@@ -231,7 +234,7 @@
                     return this.worldImportDialogVisible;
                 },
                 set(visible) {
-                    this.$emit('update:world-import-dialog-visible', visible);
+                    this.worldImportDialogVisible = visible;
                 }
             }
         },
@@ -295,7 +298,7 @@
                 D.loading = false;
             },
             deleteItemWorldImport(ref) {
-                utils.removeFromArray(this.worldImportTable.data, ref);
+                removeFromArray(this.worldImportTable.data, ref);
                 this.worldImportDialog.worldIdList.delete(ref.id);
             },
 
@@ -336,9 +339,9 @@
                         if (D.worldImportFavoriteGroup) {
                             await this.addFavoriteWorld(ref, D.worldImportFavoriteGroup, false);
                         } else if (D.worldImportLocalFavoriteGroup) {
-                            this.$emit('add-local-world-favorite', ref.id, D.worldImportLocalFavoriteGroup);
+                            this.addLocalWorldFavorite(ref, D.worldImportLocalFavoriteGroup);
                         }
-                        utils.removeFromArray(this.worldImportTable.data, ref);
+                        removeFromArray(this.worldImportTable.data, ref);
                         D.worldIdList.delete(ref.id);
                         D.importProgress++;
                     }

@@ -439,7 +439,7 @@ namespace VRCX
 
             try
             {
-                funcResult = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.actuallyGetCurrentLocation();", TimeSpan.FromSeconds(5));
+                funcResult = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.store.discordPresence.actuallyGetCurrentLocation();", TimeSpan.FromSeconds(5));
             }
             catch (Exception ex)
             {

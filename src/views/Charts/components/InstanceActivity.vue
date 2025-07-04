@@ -2,15 +2,15 @@
     <div>
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
-                <span>{{ $t('view.charts.instance_activity.header') }}</span>
+                <span>{{ t('view.charts.instance_activity.header') }}</span>
                 <el-popover placement="bottom-start" trigger="hover" width="300">
                     <div class="tips-popover">
-                        <div>{{ $t('view.charts.instance_activity.tips.online_time') }}</div>
-                        <div>{{ $t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
-                        <div>{{ $t('view.charts.instance_activity.tips.click_instance_name') }}</div>
+                        <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
+                        <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
+                        <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
                         <div>
                             <i class="el-icon-warning-outline"></i
-                            ><i>{{ $t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
+                            ><i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
                         </div>
                     </div>
 
@@ -22,14 +22,14 @@
             </div>
 
             <div>
-                <el-tooltip :content="$t('view.charts.instance_activity.refresh')" placement="top"
+                <el-tooltip :content="t('view.charts.instance_activity.refresh')" placement="top"
                     ><el-button icon="el-icon-refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
                 ></el-tooltip>
-                <el-tooltip :content="$t('view.charts.instance_activity.settings.header')" placement="top">
+                <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
                     <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
                         <div class="settings">
                             <div>
-                                <span>{{ $t('view.charts.instance_activity.settings.bar_width') }}</span>
+                                <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
                                 <div>
                                     <el-slider
                                         v-model.lazy="barWidth"
@@ -39,17 +39,17 @@
                                 </div>
                             </div>
                             <div>
-                                <span>{{ $t('view.charts.instance_activity.settings.show_detail') }}</span>
+                                <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
                                 <el-switch v-model="isDetailVisible" @change="changeIsDetailInstanceVisible">
                                 </el-switch>
                             </div>
                             <div v-if="isDetailVisible">
-                                <span>{{ $t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
+                                <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
                                 <el-switch v-model="isSoloInstanceVisible" @change="changeIsSoloInstanceVisible">
                                 </el-switch>
                             </div>
                             <div v-if="isDetailVisible">
-                                <span>{{ $t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
+                                <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
                                 <el-switch
                                     v-model="isNoFriendInstanceVisible"
                                     @change="changeIsNoFriendInstanceVisible">
@@ -61,13 +61,13 @@
                     </el-popover>
                 </el-tooltip>
                 <el-button-group style="margin-right: 10px">
-                    <el-tooltip :content="$t('view.charts.instance_activity.previous_day')" placement="top">
+                    <el-tooltip :content="t('view.charts.instance_activity.previous_day')" placement="top">
                         <el-button
                             icon="el-icon-arrow-left"
                             :disabled="isPrevDayBtnDisabled"
                             @click="changeSelectedDateFromBtn(false)"></el-button>
                     </el-tooltip>
-                    <el-tooltip :content="$t('view.charts.instance_activity.next_day')" placement="top">
+                    <el-tooltip :content="t('view.charts.instance_activity.next_day')" placement="top">
                         <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
                             ><i class="el-icon-arrow-right el-icon--right"></i
                         ></el-button>
@@ -85,7 +85,7 @@
             </div>
         </div>
         <div style="position: relative">
-            <el-statistic :title="$t('view.charts.instance_activity.online_time')">
+            <el-statistic :title="t('view.charts.instance_activity.online_time')">
                 <template #formatter>
                     <span :style="isDarkMode ? 'color:rgb(120,120,120)' : ''">{{ totalOnlineTime }}</span>
                 </template>
@@ -109,16 +109,18 @@
             :activity-detail-data="arr"
             :is-dark-mode="isDarkMode"
             :dt-hour12="dtHour12"
-            :bar-width="barWidth"
-            @open-previous-instance-info-dialog="$emit('open-previous-instance-info-dialog', $event)" />
+            :bar-width="barWidth" />
     </div>
 </template>
 
 <script>
     import dayjs from 'dayjs';
-    import database from '../../../service/database';
-    import utils from '../../../classes/utils';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../../service/config';
+    import database from '../../../service/database';
+    import { getWorldName, loadEcharts, parseLocation, timeToText } from '../../../shared/utils';
+    import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
     export default {
@@ -126,13 +128,21 @@
         components: {
             InstanceActivityDetail
         },
-        inject: ['API'],
-        props: {
-            getWorldName: { type: Function, default: () => [] },
-            isDarkMode: Boolean,
-            dtHour12: Boolean,
-            friendsMap: Map,
-            localFavoriteFriends: Set
+        setup() {
+            const appearanceSettingsStore = useAppearanceSettingsStore();
+            const friendStore = useFriendStore();
+            const { isDarkMode, dtHour12 } = storeToRefs(appearanceSettingsStore);
+            const { localFavoriteFriends, friends } = storeToRefs(friendStore);
+            const { currentUser } = storeToRefs(useUserStore());
+            const { t } = useI18n();
+            return {
+                isDarkMode,
+                localFavoriteFriends,
+                friends,
+                dtHour12,
+                currentUser,
+                t
+            };
         },
         data() {
             return {
@@ -141,7 +151,7 @@
                 echartsInstance: null,
                 resizeObserver: null,
                 intersectionObservers: [],
-                selectedDate: dayjs().add(-1, 'day'),
+                selectedDate: dayjs(),
                 // data
                 activityData: [],
                 activityDetailData: [],
@@ -158,7 +168,7 @@
         },
         computed: {
             totalOnlineTime() {
-                return utils.timeToText(
+                return timeToText(
                     this.activityData.reduce((acc, item) => acc + item.time, 0),
                     true
                 );
@@ -252,7 +262,7 @@
                 this.getAllDateOfActivity();
                 const [echartsModule] = await Promise.all([
                     // lazy load echarts
-                    utils.loadEcharts().catch((error) => {
+                    loadEcharts().catch((error) => {
                         console.error('lazy load echarts failed', error);
                         return null;
                     }),
@@ -299,7 +309,7 @@
                         const detailDataIdx = this.filteredActivityDetailData.findIndex((arr) => {
                             const sameLocation = arr[0]?.location === this.activityData[params?.dataIndex]?.location;
                             const sameJoinTime = arr
-                                .find((item) => item.user_id === this.API.currentUser.id)
+                                .find((item) => item.user_id === this.currentUser.id)
                                 ?.joinTime.isSame(this.activityData[params?.dataIndex].joinTime);
                             return sameLocation && sameJoinTime;
                         });
@@ -376,10 +386,10 @@
                     const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
                     const formattedJoinDateTime = dayjs(instanceData.joinTime).format(format);
 
-                    const timeString = utils.timeToText(param.data, true);
+                    const timeString = timeToText(param.data, true);
                     const color = param.color;
                     const name = param.name;
-                    const location = utils.parseLocation(instanceData.location);
+                    const location = parseLocation(instanceData.location);
 
                     return `
                         <div style="display: flex; align-items: center;">
@@ -550,8 +560,8 @@
                     }
                 }
                 this.selectedDate = isNext
-                    ? this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1]
-                    : this.allDateOfActivityArray[0];
+                    ? this.allDateOfActivityArray[0]
+                    : this.allDateOfActivityArray[this.allDateOfActivityArray.length - 1];
                 this.reloadData();
             },
             getDatePickerDisabledDate(time) {
@@ -573,9 +583,8 @@
                 this.worldNameArray = await Promise.all(
                     this.activityData.map(async (item) => {
                         try {
-                            return await this.getWorldName(item.location);
+                            return await getWorldName(item.location);
                         } catch {
-                            // TODO: no notification
                             console.error('getWorldName failed location', item.location);
                             return 'Unknown world';
                         }
@@ -607,9 +616,9 @@
                     joinTime: dayjs(item.created_at).subtract(item.time, 'millisecond'),
                     leaveTime: dayjs(item.created_at),
                     time: item.time < 0 ? 0 : item.time,
-                    isFriend: item.user_id === this.API.currentUser.id ? null : this.friendsMap.has(item.user_id),
+                    isFriend: item.user_id === this.currentUser.id ? null : this.friends.has(item.user_id),
                     isFavorite:
-                        item.user_id === this.API.currentUser.id ? null : this.localFavoriteFriends.has(item.user_id)
+                        item.user_id === this.currentUser.id ? null : this.localFavoriteFriends.has(item.user_id)
                 });
 
                 this.activityData = dbData.currentUserData.map(transformData);
@@ -633,7 +642,7 @@
 
                 this.activityDetailData = this.handleSplitActivityDetailData(
                     preSplitActivityDetailData,
-                    this.API.currentUser.id
+                    this.currentUser.id
                 );
 
                 if (this.activityDetailData.length) {

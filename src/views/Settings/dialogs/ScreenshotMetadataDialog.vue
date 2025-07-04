@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible.sync="screenshotMetadataDialog.visible"
         :title="t('dialog.screenshot_metadata.header')"
         width="1050px"
-        top="10vh"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        top="10vh">
         <div
             v-if="screenshotMetadataDialog.visible"
             v-loading="screenshotMetadataDialog.loading"
@@ -39,7 +36,7 @@
                 >{{ t('dialog.screenshot_metadata.open_folder') }}</el-button
             >
             <el-button
-                v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath"
+                v-if="currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath"
                 size="small"
                 icon="el-icon-upload2"
                 @click="uploadScreenshotToGallery"
@@ -98,7 +95,7 @@
                 v-if="screenshotMetadataDialog.metadata.world"
                 :location="screenshotMetadataDialog.metadata.world.instanceId"
                 :hint="screenshotMetadataDialog.metadata.world.name" />
-            <display-name
+            <DisplayName
                 v-if="screenshotMetadataDialog.metadata.author"
                 :userid="screenshotMetadataDialog.metadata.author.id"
                 :hint="screenshotMetadataDialog.metadata.author.displayName"
@@ -161,42 +158,36 @@
                 <br />
             </span>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { ref, inject, computed, getCurrentInstance, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { vrcPlusImageRequest } from '../../../api';
-    import Location from '../../../components/Location.vue';
+    import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
 
-    const API = inject('API');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
-    const showFullscreenImageDialog = inject('showFullscreenImageDialog');
+    const { showFullscreenImageDialog } = useGalleryStore();
+    const { currentlyDroppingFile } = storeToRefs(useVrcxStore());
+    const { currentUser } = storeToRefs(useUserStore());
 
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
 
+    const userStore = useUserStore();
+    const { lookupUser } = userStore;
+
+    const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
+
     const props = defineProps({
         screenshotMetadataDialog: {
             type: Object,
             required: true
-        },
-        currentlyDroppingFile: {
-            type: String,
-            default: null
-        },
-        fullscreenImageDialog: {
-            type: Object,
-            default: null
         }
     });
-
-    const emit = defineEmits(['lookupUser']);
 
     watch(
         () => props.screenshotMetadataDialog.visible,
@@ -223,13 +214,13 @@
     };
 
     function handleDrop(event) {
-        if (props.currentlyDroppingFile === null) {
+        if (currentlyDroppingFile.value === null) {
             return;
         }
-        console.log('Dropped file into viewer: ', props.currentlyDroppingFile);
+        console.log('Dropped file into viewer: ', currentlyDroppingFile.value);
 
         screenshotMetadataResetSearch();
-        getAndDisplayScreenshot(props.currentlyDroppingFile);
+        getAndDisplayScreenshot(currentlyDroppingFile.value);
 
         event.preventDefault();
     }
@@ -302,6 +293,9 @@
                 vrcPlusImageRequest
                     .uploadGalleryImage(base64Body)
                     .then((args) => {
+                        // about uploadGalleryImage -> emit 'GALLERYIMAGE:ADD'
+                        // no need to add to the gallery logic here
+                        // because it refreshes when you open the gallery
                         $message({
                             message: t('message.gallery.uploaded'),
                             type: 'success'
@@ -396,12 +390,9 @@
             screenshotMetadataCarouselRef.value.setActiveItem(1);
         }
 
-        if (props.fullscreenImageDialog.visible) {
+        if (fullscreenImageDialog.value.visible) {
             // TODO
         }
-    }
-    function lookupUser(user) {
-        emit('lookupUser', user);
     }
 
     function screenshotMetadataResetSearch() {
@@ -508,7 +499,7 @@
             D.metadata.dateTime = Date.parse(metadata.creationDate);
         }
 
-        if (props.fullscreenImageDialog?.visible) {
+        if (fullscreenImageDialog.value.visible) {
             showFullscreenImageDialog(D.metadata.filePath);
         }
     }

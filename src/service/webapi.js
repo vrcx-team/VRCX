@@ -13,6 +13,10 @@ class WebApiService {
         return WebApi.SetCookies(cookie);
     }
 
+    /**
+     * @param {string} options
+     * @returns {Promise<{status: number, data?: string}>}
+     */
     async execute(options) {
         if (!options) {
             throw new Error('options is required');

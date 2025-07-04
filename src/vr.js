@@ -9,15 +9,18 @@ import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
 import '@infolektuell/noto-color-emoji';
+import ElementUI from 'element-ui';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import ElementUI from 'element-ui';
-import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
+import * as workerTimers from 'worker-timers';
 import * as localizedStrings from './localization/localizedStrings.js';
 
-import $utils from './classes/utils.js';
+import { displayLocation, parseLocation } from './shared/utils/location';
+import { escapeTag, escapeTagRecursive } from './shared/utils/base/string';
+import { removeFromArray } from './shared/utils/base/array';
+import { timeToText } from './shared/utils/base/format';
 
 import pugTemplate from './vr.pug';
 
@@ -79,7 +82,7 @@ Vue.component('marquee-text', MarqueeText);
         methods: {
             parse() {
                 this.text = this.location;
-                var L = $utils.parseLocation(this.location);
+                var L = parseLocation(this.location);
                 if (L.isOffline) {
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
@@ -165,12 +168,11 @@ Vue.component('marquee-text', MarqueeText);
             onlineForTimer: '',
             wristFeed: [],
             devices: [],
-            deviceCount: 0
+            deviceCount: 0,
+            notificationOpacity: 100
         },
         computed: {},
-        methods: {
-            ...$utils
-        },
+        methods: {},
         watch: {},
         el: '#root',
         async mounted() {
@@ -201,6 +203,10 @@ Vue.component('marquee-text', MarqueeText);
             AppApiVr.ToggleSystemMonitor(
                 this.cpuUsageEnabled || this.pcUptimeEnabled
             );
+        }
+        if (this.config.notificationOpacity !== this.notificationOpacity) {
+            this.notificationOpacity = this.config.notificationOpacity;
+            this.setNotyOpacity(this.notificationOpacity);
         }
     };
 
@@ -271,6 +277,19 @@ Vue.component('marquee-text', MarqueeText);
         });
     };
 
+    $app.methods.setNotyOpacity = function (value) {
+        var opacity = parseFloat(value / 100).toFixed(2);
+        let element = document.getElementById('noty-opacity');
+        if (!element) {
+            document.body.insertAdjacentHTML(
+                'beforeend',
+                `<style id="noty-opacity">.noty_layout { opacity: ${opacity}; }</style>`
+            );
+            element = document.getElementById('noty-opacity');
+        }
+        element.innerHTML = `.noty_layout { opacity: ${opacity}; }`;
+    };
+
     $app.methods.updateStatsLoop = async function () {
         try {
             this.currentTime = new Date()
@@ -292,14 +311,14 @@ Vue.component('marquee-text', MarqueeText);
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
             if (this.lastLocation.date !== 0) {
-                this.lastLocationTimer = $utils.timeToText(
+                this.lastLocationTimer = timeToText(
                     Date.now() - this.lastLocation.date
                 );
             } else {
                 this.lastLocationTimer = '';
             }
             if (this.lastLocation.onlineFor) {
-                this.onlineForTimer = $utils.timeToText(
+                this.onlineForTimer = timeToText(
                     Date.now() - this.lastLocation.onlineFor
                 );
             } else {
@@ -358,7 +377,7 @@ Vue.component('marquee-text', MarqueeText);
             if (this.config.pcUptimeOnFeed) {
                 AppApiVr.GetUptime().then((uptime) => {
                     if (uptime) {
-                        this.pcUptime = $utils.timeToText(uptime);
+                        this.pcUptime = timeToText(uptime);
                     }
                 });
             } else {
@@ -376,8 +395,8 @@ Vue.component('marquee-text', MarqueeText);
             console.error('noty is undefined');
             return;
         }
-        var noty = $utils.escapeTagRecursive(noty);
-        var message = $utils.escapeTag(message) || '';
+        var noty = escapeTagRecursive(noty);
+        var message = escapeTag(message) || '';
         var text = '';
         var img = '';
         if (image) {
@@ -396,7 +415,7 @@ Vue.component('marquee-text', MarqueeText);
             case 'GPS':
                 text = `<strong>${
                     noty.displayName
-                }</strong> is in ${this.displayLocation(
+                }</strong> is in ${displayLocation(
                     noty.location,
                     noty.worldName,
                     noty.groupName
@@ -405,7 +424,7 @@ Vue.component('marquee-text', MarqueeText);
             case 'Online':
                 var locationName = '';
                 if (noty.worldName) {
-                    locationName = ` to ${this.displayLocation(
+                    locationName = ` to ${displayLocation(
                         noty.location,
                         noty.worldName,
                         noty.groupName
@@ -422,7 +441,7 @@ Vue.component('marquee-text', MarqueeText);
             case 'invite':
                 text = `<strong>${
                     noty.senderUsername
-                }</strong> has invited you to ${this.displayLocation(
+                }</strong> has invited you to ${displayLocation(
                     noty.details.worldId,
                     noty.details.worldName
                 )}${message}`;
@@ -482,7 +501,7 @@ Vue.component('marquee-text', MarqueeText);
                 if (noty.displayName) {
                     text = `<strong>${
                         noty.displayName
-                    }</strong> has spawned a portal to ${this.displayLocation(
+                    }</strong> has spawned a portal to ${displayLocation(
                         noty.instanceId,
                         noty.worldName,
                         noty.groupName
@@ -588,7 +607,7 @@ Vue.component('marquee-text', MarqueeText);
         var dt = Date.now();
         this.hudFeed.forEach((item) => {
             if (item.time + this.config.photonOverlayMessageTimeout < dt) {
-                $utils.removeFromArray(this.hudFeed, item);
+                removeFromArray(this.hudFeed, item);
             }
         });
         if (this.hudFeed.length > 10) {
@@ -609,7 +628,7 @@ Vue.component('marquee-text', MarqueeText);
                 item.text === data.text
             ) {
                 combo = item.combo + 1;
-                $utils.removeFromArray(this.hudFeed, item);
+                removeFromArray(this.hudFeed, item);
             }
         });
         this.hudFeed.unshift({

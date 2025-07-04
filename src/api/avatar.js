@@ -1,4 +1,5 @@
-// #region | API: Avatar
+import { API } from '../service/eventBus';
+import { request } from '../service/request';
 
 const avatarReq = {
     /**
@@ -6,14 +7,14 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getAvatar(params) {
-        return window.API.call(`avatars/${params.avatarId}`, {
+        return request(`avatars/${params.avatarId}`, {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR', args);
+            API.$emit('AVATAR', args);
             return args;
         });
     },
@@ -37,7 +38,7 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getAvatars(params) {
-        return window.API.call('avatars', {
+        return request('avatars', {
             method: 'GET',
             params
         }).then((json) => {
@@ -45,7 +46,15 @@ const avatarReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR:LIST', args);
+            for (const json of args.json) {
+                API.$emit('AVATAR', {
+                    json,
+                    params: {
+                        avatarId: json.id
+                    }
+                });
+            }
+
             return args;
         });
     },
@@ -54,7 +63,7 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     saveAvatar(params) {
-        return window.API.call(`avatars/${params.id}`, {
+        return request(`avatars/${params.id}`, {
             method: 'PUT',
             params
         }).then((json) => {
@@ -62,7 +71,15 @@ const avatarReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR:SAVE', args);
+            API.$emit('AVATAR:SAVE', args);
+
+            const { user } = args;
+            API.$emit('AVATAR', {
+                json: user,
+                params: {
+                    avatarId: user.id
+                }
+            });
             return args;
         });
     },
@@ -72,7 +89,7 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     selectAvatar(params) {
-        return window.API.call(`avatars/${params.avatarId}/select`, {
+        return request(`avatars/${params.avatarId}/select`, {
             method: 'PUT',
             params
         }).then((json) => {
@@ -80,7 +97,7 @@ const avatarReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR:SELECT', args);
+            API.$emit('USER:CURRENT', args);
             return args;
         });
     },
@@ -90,7 +107,7 @@ const avatarReq = {
      * @return { Promise<{json: any, params}> }
      */
     selectFallbackAvatar(params) {
-        return window.API.call(`avatars/${params.avatarId}/selectfallback`, {
+        return request(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
             params
         }).then((json) => {
@@ -98,7 +115,7 @@ const avatarReq = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR:SELECT', args);
+            API.$emit('USER:CURRENT', args);
             return args;
         });
     },
@@ -108,14 +125,13 @@ const avatarReq = {
      * @return { Promise<{json: any, params}> }
      */
     deleteAvatar(params) {
-        return window.API.call(`avatars/${params.avatarId}`, {
+        return request(`avatars/${params.avatarId}`, {
             method: 'DELETE'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('AVATAR:DELETE', args);
             return args;
         });
     },
@@ -125,14 +141,13 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     createImposter(params) {
-        return window.API.call(`avatars/${params.avatarId}/impostor/enqueue`, {
+        return request(`avatars/${params.avatarId}/impostor/enqueue`, {
             method: 'POST'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            // window.API.$emit('AVATAR:IMPOSTER:CREATE', args);
             return args;
         });
     },
@@ -142,14 +157,13 @@ const avatarReq = {
      * @returns {Promise<{json: T, params}>}
      */
     deleteImposter(params) {
-        return window.API.call(`avatars/${params.avatarId}/impostor`, {
+        return request(`avatars/${params.avatarId}/impostor`, {
             method: 'DELETE'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            // window.API.$emit('AVATAR:IMPOSTER:DELETE', args);
             return args;
         });
     },
@@ -158,17 +172,81 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getAvailableAvatarStyles() {
-        return window.API.call('avatarStyles', {
+        return request('avatarStyles', {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json
             };
-            // window.API.$emit('AVATAR:STYLES', args);
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ avatarId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    getAvatarGallery(avatarId) {
+        const params = {
+            tag: 'avatargallery',
+            galleryId: avatarId,
+            n: 100,
+            offset: 0
+        };
+        return request(`files`, {
+            params,
+            method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {{ imageData: string, avatarId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    uploadAvatarGalleryImage(imageData, avatarId) {
+        const params = {
+            tag: 'avatargallery',
+            galleryId: avatarId
+        };
+        return request('file/image', {
+            uploadImage: true,
+            matchingDimensions: false,
+            postData: JSON.stringify(params),
+            imageData
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    /**
+     * @param {string[]} order
+     * @returns {Promise<{json: any, params}>}
+     */
+    setAvatarGalleryOrder(order) {
+        const params = {
+            ids: order
+        };
+        return request('files/order', {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
             return args;
         });
     }
 };
-// #endregion
 
 export default avatarReq;

@@ -61,11 +61,21 @@ class ConfigRepository extends SharedRepository {
         dirtyKeySet.add(_key);
     }
 
+    /**
+     * @param {string} key
+     * @param {string} defaultValue
+     * @returns {Promise<string | null>}
+     */
     getString(key, defaultValue = null) {
         var _key = transformKey(key);
         return sharedRepository.getString(_key, defaultValue);
     }
 
+    /**
+     * @param {string} key
+     * @param {string} value
+     * @returns {Promise<void>}
+     */
     async setString(key, value) {
         var _key = transformKey(key);
         var _value = String(value);

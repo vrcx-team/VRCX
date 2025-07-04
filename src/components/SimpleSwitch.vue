@@ -11,32 +11,20 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'SimpleSwitch',
-        props: {
-            label: {
-                type: String
-            },
-            value: {
-                type: Boolean
-            },
-            tooltip: {
-                type: String
-            },
-            disabled: {
-                type: Boolean
-            },
-            longLabel: {
-                type: Boolean
-            }
-        },
-        methods: {
-            change(event) {
-                this.$emit('change', event);
-            }
-        }
-    };
+<script setup>
+    defineProps({
+        label: String,
+        value: Boolean,
+        tooltip: String,
+        disabled: Boolean,
+        longLabel: Boolean
+    });
+
+    const emit = defineEmits(['change']);
+
+    function change(event) {
+        emit('change', event);
+    }
 </script>
 
 <style lang="scss">

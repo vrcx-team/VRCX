@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="groupDialogRef"
-        :before-close="beforeDialogClose"
         :visible.sync="groupDialog.visible"
         :show-close="false"
         width="770px"
         top="10vh"
-        class="x-dialog x-group-dialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        class="x-dialog x-group-dialog">
         <div class="group-banner-image">
             <el-popover placement="right" width="500px" trigger="click">
                 <img
@@ -39,7 +36,7 @@
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
-                        <span v-if="groupDialog.ref.ownerId === API.currentUser.id" style="margin-right: 5px">👑</span>
+                        <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
                         <span class="dialog-title" style="margin-right: 5px" v-text="groupDialog.ref.name"></span>
                         <span
                             class="group-discriminator x-grey"
@@ -404,7 +401,7 @@
                             <div style="margin: 5px 0">
                                 <location :location="room.tag" style="display: inline-block" />
                                 <el-tooltip placement="top" content="Invite yourself" :disabled="hideTooltips">
-                                    <invite-yourself :location="room.tag" style="margin-left: 5px" />
+                                    <InviteYourself :location="room.tag" style="margin-left: 5px" />
                                 </el-tooltip>
                                 <el-tooltip placement="top" content="Refresh player count" :disabled="hideTooltips">
                                     <el-button
@@ -414,12 +411,11 @@
                                         circle
                                         @click="refreshInstancePlayerCount(room.tag)" />
                                 </el-tooltip>
-                                <last-join :location="room.tag" :currentlocation="lastLocation.location" />
-                                <instance-info
+                                <LastJoin :location="room.tag" :currentlocation="lastLocation.location" />
+                                <InstanceInfo
                                     :location="room.tag"
                                     :instance="room.ref"
-                                    :friendcount="room.friendCount"
-                                    :updateelement="updateInstanceInfo" />
+                                    :friendcount="room.friendCount" />
                             </div>
                             <div
                                 v-if="room.users.length"
@@ -440,10 +436,10 @@
                                             v-text="user.displayName" />
                                         <span v-if="user.location === 'traveling'" class="extra">
                                             <i class="el-icon-loading" style="margin-right: 5px" />
-                                            <timer :epoch="user.$travelingToTime" />
+                                            <Timer :epoch="user.$travelingToTime" />
                                         </span>
                                         <span v-else class="extra">
-                                            <timer :epoch="user.$location_at" />
+                                            <Timer :epoch="user.$location_at" />
                                         </span>
                                     </div>
                                 </div>
@@ -514,12 +510,12 @@
                                         </template>
                                         <i class="el-icon-view" style="margin-right: 5px" />
                                     </el-tooltip>
-                                    <display-name
+                                    <DisplayName
                                         :userid="groupDialog.announcement.authorId"
                                         style="margin-right: 5px" />
                                     <span v-if="groupDialog.announcement.editorId" style="margin-right: 5px">
                                         ({{ t('dialog.group.posts.edited_by') }}
-                                        <display-name :userid="groupDialog.announcement.editorId" />)
+                                        <DisplayName :userid="groupDialog.announcement.editorId" />)
                                     </span>
                                     <el-tooltip placement="bottom">
                                         <template #content>
@@ -539,7 +535,7 @@
                                                 >
                                             </template>
                                         </template>
-                                        <timer :epoch="Date.parse(groupDialog.announcement.updatedAt)" />
+                                        <Timer :epoch="Date.parse(groupDialog.announcement.updatedAt)" />
                                     </el-tooltip>
                                     <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
                                         <el-tooltip
@@ -791,10 +787,10 @@
                                             </template>
                                             <i class="el-icon-view" style="margin-right: 5px" />
                                         </el-tooltip>
-                                        <display-name :userid="post.authorId" style="margin-right: 5px" />
+                                        <DisplayName :userid="post.authorId" style="margin-right: 5px" />
                                         <span v-if="post.editorId" style="margin-right: 5px"
                                             >({{ t('dialog.group.posts.edited_by') }}
-                                            <display-name :userid="post.editorId" />)</span
+                                            <DisplayName :userid="post.editorId" />)</span
                                         >
                                         <el-tooltip placement="bottom">
                                             <template slot="content">
@@ -810,7 +806,7 @@
                                                     >
                                                 </template>
                                             </template>
-                                            <timer :epoch="Date.parse(post.updatedAt)" />
+                                            <Timer :epoch="Date.parse(post.updatedAt)" />
                                         </el-tooltip>
                                         <template
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
@@ -888,7 +884,7 @@
                                     @click.native.stop>
                                     <el-button size="mini">
                                         <span
-                                            >{{ groupDialog.memberSortOrder.name }}
+                                            >{{ t(groupDialog.memberSortOrder.name) }}
                                             <i class="el-icon-arrow-down el-icon--right"
                                         /></span>
                                     </el-button>
@@ -897,7 +893,7 @@
                                             v-for="item in groupDialogSortingOptions"
                                             :key="item.name"
                                             @click.native="setGroupMemberSortOrder(item)"
-                                            v-text="item.name" />
+                                            v-text="t(item.name)" />
                                     </el-dropdown-menu>
                                 </el-dropdown>
                                 <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
@@ -909,7 +905,7 @@
                                     @click.native.stop>
                                     <el-button size="mini">
                                         <span
-                                            >{{ groupDialog.memberFilter.name }}
+                                            >{{ t(groupDialog.memberFilter.name) }}
                                             <i class="el-icon-arrow-down el-icon--right"
                                         /></span>
                                     </el-button>
@@ -918,7 +914,7 @@
                                             v-for="item in groupDialogFilterOptions"
                                             :key="item.name"
                                             @click.native="setGroupMemberFilter(item)"
-                                            v-text="item.name" />
+                                            v-text="t(item.name)" />
                                         <el-dropdown-item
                                             v-for="item in groupDialog.ref.roles"
                                             v-if="!item.defaultRole"
@@ -985,16 +981,16 @@
                                                 </template>
                                                 <i class="el-icon-edit-outline" style="margin-right: 5px" />
                                             </el-tooltip>
-                                            <template v-for="roleId in user.roleIds">
-                                                <span
-                                                    v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                    v-if="role.id === roleId"
-                                                    :key="rIndex"
-                                                    v-text="role.name" />
-                                                <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                    >,&nbsp;</span
-                                                >
-                                            </template>
+                                        </template>
+                                        <template v-for="roleId in user.roleIds">
+                                            <span
+                                                v-for="(role, rIndex) in groupDialog.ref.roles"
+                                                v-if="role.id === roleId"
+                                                :key="rIndex"
+                                                v-text="role.name" />
+                                            <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
+                                                >,&nbsp;</span
+                                            >
                                         </template>
                                     </span>
                                 </div>
@@ -1049,16 +1045,16 @@
                                                 </template>
                                                 <i class="el-icon-edit-outline" style="margin-right: 5px" />
                                             </el-tooltip>
-                                            <template v-for="roleId in user.roleIds">
-                                                <span
-                                                    v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                    v-if="role.id === roleId"
-                                                    :key="rIndex"
-                                                    v-text="role.name" />
-                                                <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                    >,&nbsp;</span
-                                                >
-                                            </template>
+                                        </template>
+                                        <template v-for="roleId in user.roleIds">
+                                            <span
+                                                v-for="(role, rIndex) in groupDialog.ref.roles"
+                                                v-if="role.id === roleId"
+                                                :key="rIndex"
+                                                v-text="role.name" />
+                                            <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
+                                                >,&nbsp;</span
+                                            >
                                         </template>
                                     </span>
                                 </div>
@@ -1151,100 +1147,74 @@
             </el-tabs>
         </div>
         <!--Nested-->
-        <GroupPostEditDialog
-            :gallery-select-dialog="gallerySelectDialog"
-            :dialog-data.sync="groupPostEditDialog"
-            @clear-image-gallery-select="clearImageGallerySelect" />
+        <GroupPostEditDialog :dialog-data.sync="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
         <GroupMemberModerationDialog
-            :group-dialog="groupDialog"
             :is-group-members-loading.sync="isGroupMembersLoading"
-            :group-dialog-filter-options="groupDialogFilterOptions"
-            :group-dialog-sorting-options="groupDialogSortingOptions"
-            :random-user-colours="randomUserColours"
             :group-member-moderation="groupMemberModeration"
             @close-dialog="closeMemberModerationDialog"
             @group-members-search="groupMembersSearch"
             @load-all-group-members="loadAllGroupMembers"
             @set-group-member-filter="setGroupMemberFilter"
             @set-group-member-sort-order="setGroupMemberSortOrder" />
-    </el-dialog>
+        <InviteGroupDialog />
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { getCurrentInstance, nextTick, reactive, ref, watch, inject } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
-    import { groupRequest } from '../../../api';
-    import Location from '../../Location.vue';
-    import GroupPostEditDialog from './GroupPostEditDialog.vue';
-    import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
     import * as workerTimers from 'worker-timers';
+    import { groupRequest } from '../../../api';
+    import { $app } from '../../../app';
+    import { API } from '../../../service/eventBus';
+    import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
+    import {
+        adjustDialogZ,
+        buildTreeData,
+        copyToClipboard,
+        downloadAndSaveJson,
+        getFaviconUrl,
+        hasGroupPermission,
+        languageClass,
+        openExternalLink,
+        refreshInstancePlayerCount,
+        removeFromArray,
+        userImage,
+        userStatusClass
+    } from '../../../shared/utils';
+    import {
+        useAppearanceSettingsStore,
+        useGalleryStore,
+        useGroupStore,
+        useLocationStore,
+        useUserStore
+    } from '../../../stores';
+    import InviteGroupDialog from '../InviteGroupDialog.vue';
+    import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
+    import GroupPostEditDialog from './GroupPostEditDialog.vue';
 
-    const API = inject('API');
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
-    const showFullscreenImageDialog = inject('showFullscreenImageDialog');
-    const languageClass = inject('languageClass');
-    const showUserDialog = inject('showUserDialog');
-    const userStatusClass = inject('userStatusClass');
-    const userImage = inject('userImage');
-    const openExternalLink = inject('openExternalLink');
-    const adjustDialogZ = inject('adjustDialogZ');
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { showUserDialog } = useUserStore();
+    const { currentUser } = storeToRefs(useUserStore());
+    const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());
+    const {
+        getGroupDialogGroup,
+        updateGroupPostSearch,
+        showGroupDialog,
+        leaveGroupPrompt,
+        setGroupVisibility,
+        getCachedGroup,
+        applyGroupMember
+    } = useGroupStore();
+
+    const { lastLocation } = storeToRefs(useLocationStore());
+    const { showFullscreenImageDialog } = useGalleryStore();
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
     const $confirm = instance.proxy.$confirm;
     const $message = instance.proxy.$message;
-
-    const props = defineProps({
-        groupDialog: {
-            type: Object,
-            required: true
-        },
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        },
-        lastLocation: {
-            type: Object,
-            required: true
-        },
-        updateInstanceInfo: {
-            type: Number,
-            required: true
-        },
-        groupDialogSortingOptions: {
-            type: Object,
-            required: true
-        },
-        groupDialogFilterOptions: {
-            type: Object,
-            required: true
-        },
-        gallerySelectDialog: {
-            type: Object,
-            default: () => ({})
-        },
-        randomUserColours: {
-            type: Boolean,
-            default: true
-        }
-    });
-
-    const emit = defineEmits([
-        'update:group-dialog',
-        'update:gallery-select-dialog',
-        'update:group-member-moderation',
-        'group-dialog-command',
-        'update:group-dialog',
-        'get-group-dialog-group',
-        'get-group-dialog-group-members',
-        'refresh-instance-player-count',
-        'update-group-post-search',
-        'set-group-member-sort-order',
-        'clear-image-gallery-select'
-    ]);
 
     const groupDialogRef = ref(null);
     const isGroupMembersDone = ref(false);
@@ -1254,6 +1224,10 @@
     const groupDialogGalleryCurrentName = ref('0');
     const groupDialogTabCurrentName = ref('0');
     const isGroupGalleryLoading = ref(false);
+    const selectedGalleryFile = ref({
+        selectedFileId: '',
+        selectedImageUrl: ''
+    });
     const groupPostEditDialog = reactive({
         visible: false,
         groupRef: {},
@@ -1276,7 +1250,7 @@
     let loadMoreGroupMembersParams = {};
 
     watch(
-        () => props.groupDialog.loading,
+        () => groupDialog.value.loading,
         (val) => {
             if (val) {
                 nextTick(() => adjustDialogZ(groupDialogRef.value.$el));
@@ -1285,7 +1259,7 @@
     );
 
     watch(
-        () => props.groupDialog.isGetGroupDialogGroupLoading,
+        () => groupDialog.value.isGetGroupDialogGroupLoading,
         (val) => {
             if (val) {
                 getCurrentTabData();
@@ -1293,8 +1267,10 @@
         }
     );
 
-    function getFaviconUrl(link) {
-        return utils.getFaviconUrl(link);
+    function showInviteGroupDialog(groupId, userId) {
+        inviteGroupDialog.value.groupId = groupId;
+        inviteGroupDialog.value.userId = userId;
+        inviteGroupDialog.value.visible = true;
     }
 
     function setGroupRepresentation(groupId) {
@@ -1333,7 +1309,7 @@
     }
 
     function groupMembersSearchDebounce() {
-        const D = props.groupDialog;
+        const D = groupDialog.value;
         const search = D.memberSearch;
         D.memberSearchResults = [];
         if (!search || search.length < 3) {
@@ -1348,7 +1324,6 @@
                 offset: 0
             })
             .then((args) => {
-                // API.$on('GROUP:MEMBERS:SEARCH', function (args) {
                 for (const json of args.json.results) {
                     API.$emit('GROUP:MEMBER', {
                         json,
@@ -1357,7 +1332,6 @@
                         }
                     });
                 }
-                // });
                 if (D.id === args.params.groupId) {
                     D.memberSearchResults = args.json.results;
                 }
@@ -1373,12 +1347,12 @@
                 isRepresenting: isSet
             })
             .then((args) => {
-                // API.$on('GROUP:SETREPRESENTATION', function (args) {
-                if (props.groupDialog.visible && props.groupDialog.id === args.groupId) {
+                if (groupDialog.value.visible && groupDialog.value.id === args.groupId) {
                     updateGroupDialogData({
-                        ...props.groupDialog,
-                        ref: { ...props.groupDialog.ref, isRepresenting: args.params.isRepresenting }
+                        ...groupDialog.value,
+                        ref: { ...groupDialog.value.ref, isRepresenting: args.params.isRepresenting }
                     });
+                    getGroupDialogGroup(groupId);
                 }
             });
     }
@@ -1389,12 +1363,9 @@
                 groupId: id
             })
             .then((args) => {
-                // API.$on('GROUP:CANCELJOINREQUEST', function (args) {
-                const groupId = args.params.groupId;
-                if (props.groupDialog.visible && props.groupDialog.id === groupId) {
-                    getGroupDialogGroup(groupId);
+                if (groupDialog.value.visible && groupDialog.value.id === id) {
+                    getGroupDialogGroup(id);
                 }
-                // });
             });
     }
     function confirmDeleteGroupPost(post) {
@@ -1410,8 +1381,7 @@
                             postId: post.id
                         })
                         .then((args) => {
-                            // API.$on('GROUP:POST:DELETE', function (args) {
-                            const D = props.groupDialog;
+                            const D = groupDialog.value;
                             if (D.id !== args.params.groupId) {
                                 return;
                             }
@@ -1420,7 +1390,7 @@
                             // remove existing post
                             for (const item of D.posts) {
                                 if (item.id === postId) {
-                                    utils.removeFromArray(D.posts, item);
+                                    removeFromArray(D.posts, item);
                                     break;
                                 }
                             }
@@ -1433,15 +1403,12 @@
                                 }
                             }
                             updateGroupPostSearch();
-                            // });
                         });
                 }
             }
         });
     }
-    function copyToClipboard(text) {
-        utils.copyToClipboard(text);
-    }
+
     function groupGalleryStatus(gallery) {
         const style = {};
         if (!gallery.membersOnly) {
@@ -1455,23 +1422,112 @@
     }
 
     function groupDialogCommand(command) {
+        const D = groupDialog.value;
+        if (D.visible === false) {
+            return;
+        }
         switch (command) {
             case 'Share':
-                copyToClipboard(props.groupDialog.ref.$url);
+                copyToClipboard(groupDialog.value.ref.$url);
                 break;
             case 'Create Post':
-                showGroupPostEditDialog(props.groupDialog.id, null);
+                showGroupPostEditDialog(groupDialog.value.id, null);
                 break;
             case 'Moderation Tools':
-                showGroupMemberModerationDialog(props.groupDialog.id);
+                showGroupMemberModerationDialog(groupDialog.value.id);
                 break;
-            default:
-                emit('group-dialog-command', command);
+            case 'Invite To Group':
+                showInviteGroupDialog(D.id, '');
+                break;
+            case 'Refresh':
+                showGroupDialog(D.id);
+                break;
+            case 'Leave Group':
+                leaveGroupPrompt(D.id);
+                break;
+            case 'Block Group':
+                blockGroup(D.id);
+                break;
+            case 'Unblock Group':
+                unblockGroup(D.id);
+                break;
+            case 'Visibility Everyone':
+                setGroupVisibility(D.id, 'visible');
+                break;
+            case 'Visibility Friends':
+                setGroupVisibility(D.id, 'friends');
+                break;
+            case 'Visibility Hidden':
+                setGroupVisibility(D.id, 'hidden');
+                break;
+            case 'Subscribe To Announcements':
+                setGroupSubscription(D.id, true);
+                break;
+            case 'Unsubscribe To Announcements':
+                setGroupSubscription(D.id, false);
+                break;
         }
     }
 
+    function setGroupSubscription(groupId, subscribe) {
+        return groupRequest
+            .setGroupMemberProps(currentUser.value.id, groupId, {
+                isSubscribedToAnnouncements: subscribe
+            })
+            .then((args) => {
+                $app.$message({
+                    message: 'Group subscription updated',
+                    type: 'success'
+                });
+                return args;
+            });
+    }
+
+    function blockGroup(groupId) {
+        $app.$confirm('Are you sure you want to block this group?', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    groupRequest
+                        .blockGroup({
+                            groupId
+                        })
+                        .then((args) => {
+                            if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
+                                showGroupDialog(args.params.groupId);
+                            }
+                        });
+                }
+            }
+        });
+    }
+
+    function unblockGroup(groupId) {
+        $app.$confirm('Are you sure you want to unblock this group?', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    groupRequest
+                        .unblockGroup({
+                            groupId,
+                            userId: currentUser.value.id
+                        })
+                        .then((args) => {
+                            if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
+                                showGroupDialog(args.params.groupId);
+                            }
+                        });
+                }
+            }
+        });
+    }
+
     function showGroupMemberModerationDialog(groupId) {
-        if (groupId !== props.groupDialog.id) {
+        if (groupId !== groupDialog.value.id) {
             return;
         }
         const D = groupMemberModeration;
@@ -1479,16 +1535,14 @@
 
         D.groupRef = {};
         D.auditLogTypes = [];
-        API.getCachedGroup({ groupId }).then((args) => {
+        getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
-            if (utils.hasGroupPermission(D.groupRef, 'group-audit-view')) {
+            if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
                 groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
-                    // API.$on('GROUP:AUDITLOGTYPES', function (args) {
                     if (groupMemberModeration.id !== args.params.groupId) {
                         return;
                     }
                     groupMemberModeration.auditLogTypes = args.json;
-                    // });
                 });
             }
         });
@@ -1503,38 +1557,14 @@
                 groupId: id
             })
             .then((args) => {
-                // API.$on('GROUP:JOIN', function (args) {
-                const json = {
-                    $memberId: args.json.id,
-                    id: args.json.groupId,
-                    membershipStatus: args.json.membershipStatus,
-                    myMember: {
-                        isRepresenting: args.json.isRepresenting,
-                        id: args.json.id,
-                        roleIds: args.json.roleIds,
-                        joinedAt: args.json.joinedAt,
-                        membershipStatus: args.json.membershipStatus,
-                        visibility: args.json.visibility,
-                        isSubscribedToAnnouncements: args.json.isSubscribedToAnnouncements
-                    }
-                };
-                const groupId = json.id;
-                API.$emit('GROUP', {
-                    json,
-                    params: {
-                        groupId,
-                        userId: args.params.userId
-                    }
-                });
-                if (props.groupDialog.visible && props.groupDialog.id === groupId) {
+                if (groupDialog.value.visible && groupDialog.value.id === id) {
                     updateGroupDialogData({
-                        ...props.groupDialog,
-                        inGroup: json.membershipStatus === 'member'
+                        ...groupDialog.value,
+                        inGroup: args.json.membershipStatus === 'member'
                     });
-                    // props.groupDialog.inGroup = json.membershipStatus === 'member';
-                    getGroupDialogGroup(groupId);
+                    // groupDialog.value.inGroup = json.membershipStatus === 'member';
+                    getGroupDialogGroup(id);
                 }
-                // });
                 if (args.json.membershipStatus === 'member') {
                     $message({
                         message: 'Group joined',
@@ -1569,27 +1599,30 @@
         D.roleIds = [];
         D.postId = '';
         D.groupId = groupId;
-        emit('update:gallery-select-dialog', { ...D, selectedFileId: '', selectedImageUrl: '' });
+        selectedGalleryFile.value = {
+            selectedFileId: '',
+            selectedImageUrl: ''
+        };
+
         if (post) {
             D.title = post.title;
             D.text = post.text;
             D.visibility = post.visibility;
             D.roleIds = post.roleIds;
             D.postId = post.id;
-            emit('update:gallery-select-dialog', {
-                ...D,
+            selectedGalleryFile.value = {
                 selectedFileId: post.imageId,
                 selectedImageUrl: post.imageUrl
-            });
+            };
         }
-        API.getCachedGroup({ groupId }).then((args) => {
+        getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
         });
         D.visible = true;
     }
 
     async function getGroupDialogGroupMembers() {
-        const D = props.groupDialog;
+        const D = groupDialog.value;
         D.members = [];
         isGroupMembersDone.value = false;
         loadMoreGroupMembersParams = {
@@ -1607,12 +1640,12 @@
             await groupRequest
                 .getGroupMember({
                     groupId: D.id,
-                    userId: API.currentUser.id
+                    userId: currentUser.value.id
                 })
                 .then((args) => {
-                    args.ref = API.applyGroupMember(args.json);
+                    args.ref = applyGroupMember(args.json);
                     if (args.json) {
-                        args.json.user = API.currentUser;
+                        args.json.user = currentUser.value;
                         if (D.memberFilter.id === null) {
                             // when flitered by role don't include self
                             D.members.push(args.json);
@@ -1628,7 +1661,7 @@
         if (isGroupMembersDone.value || isGroupMembersLoading.value) {
             return;
         }
-        const D = props.groupDialog;
+        const D = groupDialog.value;
         const params = loadMoreGroupMembersParams;
         D.memberSearch = '';
         isGroupMembersLoading.value = true;
@@ -1640,8 +1673,8 @@
             .then((args) => {
                 for (let i = 0; i < args.json.length; i++) {
                     const member = args.json[i];
-                    if (member.userId === API.currentUser.id) {
-                        if (D.members.length > 0 && D.members[0].userId === API.currentUser.id) {
+                    if (member.userId === currentUser.value.id) {
+                        if (D.members.length > 0 && D.members[0].userId === currentUser.value.id) {
                             // remove duplicate and keep sort order
                             D.members.splice(0, 1);
                         }
@@ -1672,12 +1705,12 @@
     }
 
     async function getGroupGalleries() {
-        updateGroupDialogData({ ...props.groupDialog, galleries: {} });
+        updateGroupDialogData({ ...groupDialog.value, galleries: {} });
         groupDialogGalleryCurrentName.value = '0';
         isGroupGalleryLoading.value = true;
-        for (let i = 0; i < props.groupDialog.ref.galleries.length; i++) {
-            const gallery = props.groupDialog.ref.galleries[i];
-            await getGroupGallery(props.groupDialog.id, gallery.id);
+        for (let i = 0; i < groupDialog.value.ref.galleries.length; i++) {
+            const gallery = groupDialog.value.ref.galleries[i];
+            await getGroupGallery(groupDialog.value.id, gallery.id);
         }
         isGroupGalleryLoading.value = false;
     }
@@ -1694,16 +1727,14 @@
             for (let i = 0; i < count; i++) {
                 const args = await groupRequest.getGroupGallery(params);
                 if (args) {
-                    // API.$on('GROUP:GALLERY', function (args) {
                     for (const json of args.json) {
-                        if (props.groupDialog.id === json.groupId) {
-                            if (!props.groupDialog.galleries[json.galleryId]) {
-                                props.groupDialog.galleries[json.galleryId] = [];
+                        if (groupDialog.value.id === json.groupId) {
+                            if (!groupDialog.value.galleries[json.galleryId]) {
+                                groupDialog.value.galleries[json.galleryId] = [];
                             }
-                            props.groupDialog.galleries[json.galleryId].push(json);
+                            groupDialog.value.galleries[json.galleryId].push(json);
                         }
                     }
-                    // });
                 }
                 params.offset += 100;
                 if (args.json.length < 100) {
@@ -1716,8 +1747,8 @@
     }
 
     function refreshGroupDialogTreeData() {
-        const D = props.groupDialog;
-        const treeData = utils.buildTreeData({
+        const D = groupDialog.value;
+        const treeData = buildTreeData({
             group: D.ref,
             posts: D.posts,
             instances: D.instances,
@@ -1725,7 +1756,7 @@
             galleries: D.galleries
         });
         updateGroupDialogData({
-            ...props.groupDialog,
+            ...groupDialog.value,
             treeData
         });
     }
@@ -1735,7 +1766,7 @@
             return;
         }
         await getGroupDialogGroupMembers();
-        while (props.groupDialog.visible && !isGroupMembersDone.value) {
+        while (groupDialog.value.visible && !isGroupMembersDone.value) {
             isGroupMembersLoading.value = true;
             await new Promise((resolve) => {
                 workerTimers.setTimeout(resolve, 1000);
@@ -1746,8 +1777,8 @@
     }
 
     async function setGroupMemberSortOrder(sortOrder) {
-        const D = props.groupDialog;
-        if (D.memberSortOrder === sortOrder) {
+        const D = groupDialog.value;
+        if (D.memberSortOrder.value === sortOrder) {
             return;
         }
         D.memberSortOrder = sortOrder;
@@ -1755,34 +1786,18 @@
     }
 
     async function setGroupMemberFilter(filter) {
-        const D = props.groupDialog;
-        if (D.memberFilter === filter) {
+        const D = groupDialog.value;
+        if (D.memberFilter.value === filter) {
             return;
         }
         D.memberFilter = filter;
         await getGroupDialogGroupMembers();
     }
 
-    function hasGroupPermission(ref, permission) {
-        return utils.hasGroupPermission(ref, permission);
-    }
     function updateGroupDialogData(obj) {
-        // Be careful with the deep merge
-        emit('update:group-dialog', obj);
-    }
-    function getGroupDialogGroup(groupId) {
-        emit('get-group-dialog-group', groupId);
-    }
-    function refreshInstancePlayerCount(tag) {
-        emit('refresh-instance-player-count', tag);
-    }
-    function updateGroupPostSearch() {
-        emit('update-group-post-search');
-    }
-    function downloadAndSaveJson(fileName, data) {
-        utils.downloadAndSaveJson(fileName, data);
-    }
-    function clearImageGallerySelect() {
-        emit('clear-image-gallery-select');
+        groupDialog.value = {
+            ...groupDialog.value,
+            ...obj
+        };
     }
 </script>

@@ -1,11 +1,5 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
-        :visible.sync="isDialogVisible"
-        :title="$t('dialog.world_export.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog :visible.sync="isDialogVisible" :title="$t('dialog.world_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
@@ -32,7 +26,7 @@
                 <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectWorldExportGroup(null)">
                     None
                 </el-dropdown-item>
-                <template v-for="groupAPI in API.favoriteWorldGroups">
+                <template v-for="groupAPI in favoriteWorldGroups">
                     <el-dropdown-item
                         :key="groupAPI.name"
                         style="display: block; margin: 10px 0"
@@ -84,19 +78,39 @@
             readonly
             style="margin-top: 15px"
             @click.native="handleCopyWorldExportData"></el-input>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
+    import { useFavoriteStore, useWorldStore } from '../../../stores';
+
     export default {
         name: 'WorldExportDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
         props: {
-            favoriteWorlds: Array,
-            worldExportDialogVisible: Boolean,
-            localWorldFavorites: Object,
-            localWorldFavoriteGroups: Array,
-            localWorldFavoritesList: Array
+            worldExportDialogVisible: Boolean
+        },
+        setup() {
+            const favoriteStore = useFavoriteStore();
+            const {
+                favoriteWorlds,
+                favoriteWorldGroups,
+                localWorldFavorites,
+                localWorldFavoriteGroups,
+                localWorldFavoritesList
+            } = storeToRefs(favoriteStore);
+            const { getLocalWorldFavoriteGroupLength } = favoriteStore;
+            const worldStore = useWorldStore();
+            const { cachedWorlds } = storeToRefs(worldStore);
+            return {
+                favoriteWorlds,
+                favoriteWorldGroups,
+                getLocalWorldFavoriteGroupLength,
+                localWorldFavorites,
+                localWorldFavoriteGroups,
+                localWorldFavoritesList,
+                cachedWorlds
+            };
         },
         data() {
             return {
@@ -180,7 +194,7 @@
                 const lines = [this.exportSelectedOptions.join(',')];
 
                 if (this.worldExportFavoriteGroup) {
-                    this.API.favoriteWorldGroups.forEach((group) => {
+                    this.favoriteWorldGroups.forEach((group) => {
                         if (this.worldExportFavoriteGroup === group) {
                             this.favoriteWorlds.forEach((ref) => {
                                 if (group.key === ref.groupKey) {
@@ -205,7 +219,7 @@
                     });
                     for (let i = 0; i < this.localWorldFavoritesList.length; ++i) {
                         const worldId = this.localWorldFavoritesList[i];
-                        const ref = this.API.cachedWorlds.get(worldId);
+                        const ref = this.cachedWorlds.get(worldId);
                         if (typeof ref !== 'undefined') {
                             lines.push(resText(ref));
                         }
@@ -224,13 +238,6 @@
                 this.worldExportLocalFavoriteGroup = group;
                 this.worldExportFavoriteGroup = null;
                 this.updateWorldExportDialog();
-            },
-            getLocalWorldFavoriteGroupLength(group) {
-                const favoriteGroup = this.localWorldFavorites[group];
-                if (!favoriteGroup) {
-                    return 0;
-                }
-                return favoriteGroup.length;
             }
         }
     };

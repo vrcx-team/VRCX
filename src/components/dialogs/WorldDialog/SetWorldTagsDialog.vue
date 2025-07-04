@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
+    <safe-dialog
         :visible.sync="isVisible"
         :title="$t('dialog.set_world_tags.header')"
         width="400px"
         destroy-on-close
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <el-checkbox v-model="setWorldTagsDialog.avatarScalingDisabled">
             {{ $t('dialog.set_world_tags.avatar_scaling_disabled') }}
         </el-checkbox>
@@ -70,6 +67,10 @@
         <el-checkbox v-model="setWorldTagsDialog.drones">
             {{ $t('dialog.new_instance.content_drones') }}
         </el-checkbox>
+        <br />
+        <el-checkbox v-model="setWorldTagsDialog.props">
+            {{ $t('dialog.new_instance.content_items') }}
+        </el-checkbox>
         <template #footer>
             <div style="display: flex">
                 <el-button size="small" @click="setWorldTagsDialog.visible = false">
@@ -80,15 +81,15 @@
                 </el-button>
             </div>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
     import { worldRequest } from '../../../api';
+    import { useWorldStore } from '../../../stores';
 
     export default {
         name: 'SetWorldTagsDialog',
-        inject: ['beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp', 'showWorldDialog'],
         props: {
             oldTags: {
                 type: Array,
@@ -107,6 +108,12 @@
                 required: true
             }
         },
+        setup() {
+            const worldStore = useWorldStore();
+            const { showWorldDialog } = worldStore;
+
+            return { showWorldDialog };
+        },
         data() {
             return {
                 setWorldTagsDialog: {
@@ -124,7 +131,8 @@
                     stickers: true,
                     pedestals: true,
                     prints: true,
-                    drones: true
+                    drones: true,
+                    props: true
                 }
             };
         },
@@ -206,6 +214,9 @@
                         case 'feature_drones_disabled':
                             D.drones = false;
                             break;
+                        case 'feature_props_disabled':
+                            D.props = false;
+                            break;
                     }
                 });
                 D.authorTags = authorTags.toString();
@@ -274,6 +285,9 @@
                 }
                 if (!D.drones) {
                     tags.unshift('feature_drones_disabled');
+                }
+                if (!D.props) {
+                    tags.unshift('feature_props_disabled');
                 }
                 worldRequest
                     .saveWorld({

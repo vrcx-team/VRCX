@@ -2,7 +2,7 @@
  * VRCX Material-You-like theme by Kamiya
  * https://github.com/kamiya10/VRCX-theme
  */
-@import 'theme.dark';
+@use 'theme.dark';
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&family=Roboto&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
@@ -589,6 +589,10 @@ input[type='number'],
 .el-table .el-table__body-wrapper table tr th:first-child,
 .el-table table tr td:first-child {
     border-left: none;
+}
+.feed .el-table .el-table_1_column_5.el-table__cell > div {
+    display: flex;
+    align-items: center;
 }
 .el-table .el-table__body-wrapper table tr:last-child th,
 .el-table table tr:last-child td,

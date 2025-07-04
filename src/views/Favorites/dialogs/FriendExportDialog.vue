@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
+    <safe-dialog
         :visible.sync="isDialogVisible"
         class="x-dialog"
         :title="$t('dialog.friend_export.header')"
         width="650px"
-        destroy-on-close
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        destroy-on-close>
         <el-dropdown trigger="click" size="small" @click.native.stop>
             <el-button size="mini">
                 <span v-if="friendExportFavoriteGroup">
@@ -22,7 +19,7 @@
                 <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectFriendExportGroup(null)">
                     All Favorites
                 </el-dropdown-item>
-                <template v-for="groupAPI in API.favoriteFriendGroups">
+                <template v-for="groupAPI in favoriteFriendGroups">
                     <el-dropdown-item
                         :key="groupAPI.name"
                         style="display: block; margin: 10px 0"
@@ -42,16 +39,25 @@
             readonly
             style="margin-top: 15px"
             @click.native="handleCopyFriendExportData"></el-input>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
+    import { useFavoriteStore } from '../../../stores';
+
     export default {
         name: 'FriendExportDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
         props: {
-            friendExportDialogVisible: Boolean,
-            favoriteFriends: Array
+            friendExportDialogVisible: Boolean
+        },
+        setup() {
+            const favoriteStore = useFavoriteStore();
+            const { favoriteFriends, favoriteFriendGroups } = storeToRefs(favoriteStore);
+            return {
+                favoriteFriends,
+                favoriteFriendGroups
+            };
         },
         data() {
             return {
@@ -109,7 +115,7 @@
                     return str;
                 };
                 const lines = ['UserID,Name'];
-                this.API.favoriteFriendGroups.forEach((group) => {
+                this.favoriteFriendGroups.forEach((group) => {
                     if (!this.friendExportFavoriteGroup || this.friendExportFavoriteGroup === group) {
                         this.favoriteFriends.forEach((ref) => {
                             if (group.key === ref.groupKey) {

@@ -1,5 +1,5 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
         :visible.sync="enablePrimaryPasswordDialog.visible"
         :before-close="enablePrimaryPasswordDialog.beforeClose"
@@ -32,28 +32,26 @@
                     enablePrimaryPasswordDialog.password.length === 0 ||
                     enablePrimaryPasswordDialog.password !== enablePrimaryPasswordDialog.rePassword
                 "
-                @click="setPrimaryPassword">
+                @click="handleSetPrimaryPassword()">
                 {{ t('dialog.primary_password.ok') }}
             </el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
+    import { useAuthStore } from '../../../stores';
+
     const { t } = useI18n();
 
-    const props = defineProps({
-        enablePrimaryPasswordDialog: {
-            type: Object,
-            required: true
-        }
-    });
+    const authStore = useAuthStore();
+    const { enablePrimaryPasswordDialog } = storeToRefs(authStore);
+    const { setPrimaryPassword } = authStore;
 
-    const emit = defineEmits(['setPrimaryPassword']);
-
-    function setPrimaryPassword() {
-        emit('setPrimaryPassword', props.enablePrimaryPasswordDialog.password);
-        props.enablePrimaryPasswordDialog.visible = false;
+    function handleSetPrimaryPassword() {
+        setPrimaryPassword(enablePrimaryPasswordDialog.value.password);
+        enablePrimaryPasswordDialog.value.visible = false;
     }
 </script>

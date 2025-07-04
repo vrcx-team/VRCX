@@ -3,7 +3,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div>
                 <el-button size="small" @click="showExportDialog">{{ $t('view.favorite.export') }}</el-button>
-                <el-button size="small" style="margin-left: 5px" @click="$emit('show-world-import-dialog')">{{
+                <el-button size="small" style="margin-left: 5px" @click="showWorldImportDialog">{{
                     $t('view.favorite.import')
                 }}</el-button>
             </div>
@@ -59,7 +59,7 @@
         </div>
         <span style="display: block; margin-top: 20px">{{ $t('view.favorite.worlds.vrchat_favorites') }}</span>
         <el-collapse style="border: 0">
-            <el-collapse-item v-for="group in API.favoriteWorldGroups" :key="group.name">
+            <el-collapse-item v-for="group in favoriteWorldGroups" :key="group.name">
                 <template slot="title">
                     <div style="display: flex; align-items: center">
                         <span
@@ -125,10 +125,8 @@
                         :favorite="favorite"
                         :edit-favorites-mode="editFavoritesMode"
                         :hide-tooltips="hideTooltips"
-                        :shift-held="shiftHeld"
                         @click="showWorldDialog(favorite.id)"
-                        @handle-select="favorite.$selected = $event"
-                        @new-instance-self-invite="newInstanceSelfInvite" />
+                        @handle-select="favorite.$selected = $event" />
                 </div>
                 <div
                     v-else
@@ -196,9 +194,7 @@
                         :favorite="favorite"
                         :edit-favorites-mode="editFavoritesMode"
                         :hide-tooltips="hideTooltips"
-                        :shift-held="shiftHeld"
                         @click="showWorldDialog(favorite.id)"
-                        @new-instance-self-invite="newInstanceSelfInvite"
                         @remove-local-world-favorite="removeLocalWorldFavorite" />
                 </div>
                 <div
@@ -215,19 +211,16 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <WorldExportDialog
-            :favorite-worlds="favoriteWorlds"
-            :world-export-dialog-visible.sync="worldExportDialogVisible"
-            :local-world-favorites="localWorldFavorites"
-            :local-world-favorite-groups="localWorldFavoriteGroups"
-            :local-world-favorites-list="localWorldFavoritesList" />
+        <WorldExportDialog :world-export-dialog-visible.sync="worldExportDialogVisible" />
     </div>
 </template>
 
 <script>
-    import FavoritesWorldItem from './FavoritesWorldItem.vue';
-    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
+    import { storeToRefs } from 'pinia';
     import { favoriteRequest } from '../../../api';
+    import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../../stores';
+    import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
+    import FavoritesWorldItem from './FavoritesWorldItem.vue';
 
     export default {
         name: 'FavoritesWorldTab',
@@ -235,17 +228,39 @@
             FavoritesWorldItem,
             WorldExportDialog
         },
-        inject: ['API', 'showWorldDialog'],
         props: {
-            sortFavorites: Boolean,
-            hideTooltips: Boolean,
-            favoriteWorlds: Array,
             editFavoritesMode: Boolean,
-            shiftHeld: Boolean,
-            refreshingLocalFavorites: Boolean,
-            localWorldFavoriteGroups: Array,
-            localWorldFavorites: Object,
-            localWorldFavoritesList: Array
+            refreshingLocalFavorites: Boolean
+        },
+        setup() {
+            const { hideTooltips, sortFavorites, setSortFavorites } = storeToRefs(useAppearanceSettingsStore());
+            const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites, localWorldFavoriteGroups } =
+                storeToRefs(useFavoriteStore());
+            const {
+                showWorldImportDialog,
+                getLocalWorldFavoriteGroupLength,
+                deleteLocalWorldFavoriteGroup,
+                renameLocalWorldFavoriteGroup,
+                removeLocalWorldFavorite,
+                newLocalWorldFavoriteGroup
+            } = useFavoriteStore();
+            const { showWorldDialog } = useWorldStore();
+            return {
+                hideTooltips,
+                sortFavorites,
+                setSortFavorites,
+                favoriteWorlds,
+                favoriteWorldGroups,
+                showWorldImportDialog,
+                getLocalWorldFavoriteGroupLength,
+                localWorldFavorites,
+                localWorldFavoriteGroups,
+                deleteLocalWorldFavoriteGroup,
+                renameLocalWorldFavoriteGroup,
+                removeLocalWorldFavorite,
+                newLocalWorldFavoriteGroup,
+                showWorldDialog
+            };
         },
         data() {
             return {
@@ -274,8 +289,8 @@
                 get() {
                     return this.sortFavorites;
                 },
-                set(value) {
-                    this.$emit('update:sort-favorites', value);
+                set() {
+                    this.setSortFavorites();
                 }
             }
         },
@@ -321,7 +336,7 @@
                         inputErrorMessage: $t('prompt.new_local_favorite_group.input_error'),
                         callback: (action, instance) => {
                             if (action === 'confirm' && instance.inputValue) {
-                                this.$emit('new-local-world-favorite-group', instance.inputValue);
+                                this.newLocalWorldFavoriteGroup(instance.inputValue);
                             }
                         }
                     }
@@ -340,7 +355,7 @@
                         inputValue: group,
                         callback: (action, instance) => {
                             if (action === 'confirm' && instance.inputValue) {
-                                this.$emit('rename-local-world-favorite-group', instance.inputValue, group);
+                                this.renameLocalWorldFavoriteGroup(instance.inputValue, group);
                             }
                         }
                     }
@@ -353,17 +368,10 @@
                     type: 'info',
                     callback: (action) => {
                         if (action === 'confirm') {
-                            this.$emit('delete-local-world-favorite-group', group);
+                            this.deleteLocalWorldFavoriteGroup(group);
                         }
                     }
                 });
-            },
-            getLocalWorldFavoriteGroupLength(group) {
-                const favoriteGroup = this.localWorldFavorites[group];
-                if (!favoriteGroup) {
-                    return 0;
-                }
-                return favoriteGroup.length;
             },
 
             clearFavoriteGroup(ctx) {
@@ -435,13 +443,6 @@
             },
             changeFavoriteGroupName(group) {
                 this.$emit('change-favorite-group-name', group);
-            },
-            newInstanceSelfInvite(event) {
-                this.$emit('new-instance-self-invite', event);
-            },
-
-            removeLocalWorldFavorite(param1, param2) {
-                this.$emit('remove-local-world-favorite', param1, param2);
             }
         }
     };

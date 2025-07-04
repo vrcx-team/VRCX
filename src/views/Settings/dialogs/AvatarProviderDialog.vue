@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
         :visible="isAvatarProviderDialogVisible"
         :title="t('dialog.avatar_database_provider.header')"
         width="600px"
-        :before-close="beforeDialogClose"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div>
             <el-input
                 v-for="(provider, index) in avatarRemoteDatabaseProviderList"
@@ -24,43 +21,29 @@
                 {{ t('dialog.avatar_database_provider.add_provider') }}
             </el-button>
         </div>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
+    import { useAvatarProviderStore } from '../../../stores';
+
     const { t } = useI18n();
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
+    const avatarProviderStore = useAvatarProviderStore();
+
+    const { avatarRemoteDatabaseProviderList } = storeToRefs(avatarProviderStore);
+    const { saveAvatarProviderList, removeAvatarProvider } = avatarProviderStore;
 
     defineProps({
-        avatarRemoteDatabaseProviderList: {
-            type: Array,
-            required: true
-        },
         isAvatarProviderDialogVisible: {
             type: Boolean,
             required: true
         }
     });
 
-    const emit = defineEmits([
-        'update:isAvatarProviderDialogVisible',
-        'update:avatarRemoteDatabaseProviderList',
-        'saveAvatarProviderList',
-        'removeAvatarProvider'
-    ]);
-
-    function saveAvatarProviderList() {
-        emit('saveAvatarProviderList');
-    }
-
-    function removeAvatarProvider(provider) {
-        emit('removeAvatarProvider', provider);
-    }
+    const emit = defineEmits(['update:isAvatarProviderDialogVisible']);
 
     function closeDialog() {
         emit('update:isAvatarProviderDialogVisible', false);

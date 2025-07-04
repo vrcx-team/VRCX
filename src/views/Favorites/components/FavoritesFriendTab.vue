@@ -21,7 +21,7 @@
         </div>
         <span style="display: block; margin-top: 30px">{{ $t('view.favorite.avatars.vrchat_favorites') }}</span>
         <el-collapse style="border: 0">
-            <el-collapse-item v-for="group in API.favoriteFriendGroups" :key="group.name">
+            <el-collapse-item v-for="group in favoriteFriendGroups" :key="group.name">
                 <template slot="title">
                     <span
                         style="font-weight: bold; font-size: 14px; margin-left: 10px"
@@ -70,27 +70,44 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <FriendExportDialog
-            :friend-export-dialog-visible.sync="friendExportDialogVisible"
-            :favorite-friends="favoriteFriends" />
+        <FriendExportDialog :friend-export-dialog-visible.sync="friendExportDialogVisible" />
     </div>
 </template>
 
 <script>
-    import FavoritesFriendItem from './FavoritesFriendItem.vue';
-    import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
+    import { storeToRefs } from 'pinia';
     import { favoriteRequest } from '../../../api';
+    import { API } from '../../../service/eventBus';
+    import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../../stores';
+    import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
+    import FavoritesFriendItem from './FavoritesFriendItem.vue';
 
     export default {
         name: 'FavoritesFriendTab',
         components: { FriendExportDialog, FavoritesFriendItem },
-        inject: ['showUserDialog', 'API'],
         props: {
-            favoriteFriends: Array,
-            sortFavorites: Boolean,
-            hideTooltips: Boolean,
-            groupedByGroupKeyFavoriteFriends: Object,
             editFavoritesMode: Boolean
+        },
+        setup() {
+            const appearanceSettingsStore = useAppearanceSettingsStore();
+            const { hideTooltips, sortFavorites } = storeToRefs(appearanceSettingsStore);
+            const setSortFavorites = appearanceSettingsStore;
+            const userStore = useUserStore();
+            const { showUserDialog } = userStore;
+            const favoriteStore = useFavoriteStore();
+            const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(favoriteStore);
+            const { showFriendImportDialog, saveSortFavoritesOption } = favoriteStore;
+            return {
+                hideTooltips,
+                sortFavorites,
+                setSortFavorites,
+                API,
+                showUserDialog,
+                favoriteFriendGroups,
+                showFriendImportDialog,
+                groupedByGroupKeyFavoriteFriends,
+                saveSortFavoritesOption
+            };
         },
         data() {
             return {
@@ -103,19 +120,13 @@
                     return this.sortFavorites;
                 },
                 set(value) {
-                    this.$emit('update:sort-favorites', value);
+                    this.setSortFavorites(value);
                 }
             }
         },
         methods: {
             showFriendExportDialog() {
                 this.friendExportDialogVisible = true;
-            },
-            showFriendImportDialog() {
-                this.$emit('show-friend-import-dialog');
-            },
-            saveSortFavoritesOption() {
-                this.$emit('save-sort-favorites-option');
             },
 
             clearFavoriteGroup(ctx) {

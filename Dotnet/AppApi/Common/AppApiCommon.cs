@@ -6,6 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using librsync.net;
+using Newtonsoft.Json;
 using NLog;
 
 namespace VRCX
@@ -18,6 +19,14 @@ namespace VRCX
         public void Init()
         {
         }
+        
+        public JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
+        {
+            Error = delegate(object _, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+            {
+                args.ErrorContext.Handled = true;
+            }
+        };
 
         public string MD5File(string blob)
         {

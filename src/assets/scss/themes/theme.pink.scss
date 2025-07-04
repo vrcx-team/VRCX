@@ -2,7 +2,7 @@
  * VRCX Pink theme by Kamiya
  * https://github.com/kamiya10/VRCX-theme
  */
-@import 'theme.dark';
+@use 'theme.dark';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 :root {
     --theme: #dfa2a2;

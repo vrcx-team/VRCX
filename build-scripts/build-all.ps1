@@ -16,9 +16,11 @@ dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:
 Write-Host "Building Node.js..." -ForegroundColor Green
 Remove-Item -Path "node_modules" -Force -Recurse -ErrorAction SilentlyContinue
 npm ci --loglevel=error
+$ErrorActionPreference = "Continue"
 npm run prod
+$ErrorActionPreference = "Stop"
 Remove-Item -Path "build\Cef\html" -Force -Recurse -ErrorAction SilentlyContinue
-New-Item -ItemType Junction -Path "build\Cef\html" -Target "html"
+New-Item -ItemType Junction -Path "build\Cef\html" -Target "build\html"
 
 Write-Host "Creating Zip..." -ForegroundColor Green
 cd "build\Cef"
@@ -27,7 +29,9 @@ Move-Item $ZipName ..\..\$ZipName -Force
 cd ..\..\
 
 Write-Host "Creating Installer..." -ForegroundColor Green
+$version = Get-Content -Path "Version" -Raw
 cd "Installer"
+Out-File -FilePath "version_define.nsh" -Encoding UTF8 -InputObject "!define PRODUCT_VERSION_FROM_FILE `"$version.0`""
 $nsisPath = "C:\Program Files (x86)\NSIS\makensis.exe"
 &$nsisPath installer.nsi
 Start-Sleep -Seconds 1

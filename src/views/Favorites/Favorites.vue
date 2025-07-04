@@ -15,82 +15,52 @@
             <el-tooltip placement="bottom" :content="$t('view.favorite.refresh_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
-                    :loading="API.isFavoriteLoading"
-                    @click="
-                        API.refreshFavorites();
-                        getLocalWorldFavorites();
-                    "
+                    :loading="isFavoriteLoading"
                     size="small"
                     icon="el-icon-refresh"
-                    circle></el-button>
+                    circle
+                    @click="
+                        refreshFavorites();
+                        getLocalWorldFavorites();
+                    "></el-button>
             </el-tooltip>
         </div>
-        <el-tabs v-model="currentTabName" v-loading="API.isFavoriteLoading" type="card" style="height: 100%">
-            <el-tab-pane name="friend" :label="$t('view.favorite.friends.header')" lazy>
+        <el-tabs v-model="currentTabName" v-loading="isFavoriteLoading" type="card" style="height: 100%">
+            <el-tab-pane name="friend" :label="$t('view.favorite.friends.header')">
                 <FavoritesFriendTab
-                    :favorite-friends="favoriteFriends"
-                    :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
-                    :grouped-by-group-key-favorite-friends="groupedByGroupKeyFavoriteFriends"
                     :edit-favorites-mode="editFavoritesMode"
-                    @show-friend-import-dialog="showFriendImportDialog"
-                    @save-sort-favorites-option="saveSortFavoritesOption"
                     @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
             <el-tab-pane name="world" :label="$t('view.favorite.worlds.header')" lazy>
                 <FavoritesWorldTab
-                    @show-world-import-dialog="showWorldImportDialog"
-                    @save-sort-favorites-option="saveSortFavoritesOption"
-                    @change-favorite-group-name="changeFavoriteGroupName"
-                    @new-instance-self-invite="newInstanceSelfInvite"
-                    @refresh-local-world-favorite="refreshLocalWorldFavorites"
-                    @delete-local-world-favorite-group="deleteLocalWorldFavoriteGroup"
-                    @remove-local-world-favorite="removeLocalWorldFavorite"
-                    @rename-local-world-favorite-group="renameLocalWorldFavoriteGroup"
-                    @new-local-world-favorite-group="newLocalWorldFavoriteGroup"
-                    :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
-                    :favorite-worlds="favoriteWorlds"
                     :edit-favorites-mode="editFavoritesMode"
-                    :shift-held="shiftHeld"
                     :refresh-local-world-favorites="refreshLocalWorldFavorites"
-                    :local-world-favorite-groups="localWorldFavoriteGroups"
-                    :local-world-favorites="localWorldFavorites"
-                    :local-world-favorites-list="localWorldFavoritesList" />
+                    @change-favorite-group-name="changeFavoriteGroupName"
+                    @refresh-local-world-favorite="refreshLocalWorldFavorites" />
             </el-tab-pane>
             <el-tab-pane name="avatar" :label="$t('view.favorite.avatars.header')" lazy>
                 <FavoritesAvatarTab
-                    :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
-                    :shift-held="shiftHeld"
                     :edit-favorites-mode="editFavoritesMode"
-                    :avatar-history-array="avatarHistoryArray"
                     :refreshing-local-favorites="refreshingLocalFavorites"
-                    :local-avatar-favorite-groups="localAvatarFavoriteGroups"
-                    :local-avatar-favorites="localAvatarFavorites"
-                    :favorite-avatars="favoriteAvatars"
-                    :local-avatar-favorites-list="localAvatarFavoritesList"
-                    @show-avatar-import-dialog="showAvatarImportDialog"
-                    @save-sort-favorites-option="saveSortFavoritesOption"
                     @change-favorite-group-name="changeFavoriteGroupName"
-                    @remove-local-avatar-favorite="removeLocalAvatarFavorite"
-                    @select-avatar-with-confirmation="selectAvatarWithConfirmation"
-                    @prompt-clear-avatar-history="promptClearAvatarHistory"
-                    @prompt-new-local-avatar-favorite-group="promptNewLocalAvatarFavoriteGroup"
-                    @refresh-local-avatar-favorites="refreshLocalAvatarFavorites"
-                    @prompt-local-avatar-favorite-group-rename="promptLocalAvatarFavoriteGroupRename"
-                    @prompt-local-avatar-favorite-group-delete="promptLocalAvatarFavoriteGroupDelete" />
+                    @refresh-local-avatar-favorites="refreshLocalAvatarFavorites" />
             </el-tab-pane>
         </el-tabs>
     </div>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
+    import * as workerTimers from 'worker-timers';
+    import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
+    import { API } from '../../service/eventBus';
+    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore } from '../../stores';
+    import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
     import FavoritesFriendTab from './components/FavoritesFriendTab.vue';
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
-    import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
-    import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
-    import * as workerTimers from 'worker-timers';
 
     export default {
         name: 'FavoritesTab',
@@ -99,23 +69,40 @@
             FavoritesWorldTab,
             FavoritesAvatarTab
         },
-        inject: ['API'],
-        props: {
-            menuActiveIndex: String,
-            hideTooltips: Boolean,
-            shiftHeld: Boolean,
-            favoriteFriends: Array,
-            sortFavorites: Boolean,
-            groupedByGroupKeyFavoriteFriends: Object,
-            favoriteWorlds: Array,
-            localWorldFavoriteGroups: Array,
-            localWorldFavorites: Object,
-            avatarHistoryArray: Array,
-            localAvatarFavoriteGroups: Array,
-            localAvatarFavorites: Object,
-            favoriteAvatars: Array,
-            localAvatarFavoritesList: Array,
-            localWorldFavoritesList: Array
+        setup() {
+            const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+            const {
+                favoriteFriends,
+                favoriteWorlds,
+                favoriteAvatars,
+                isFavoriteLoading,
+                localAvatarFavoritesList,
+                localWorldFavoritesList
+            } = storeToRefs(useFavoriteStore());
+            const {
+                refreshFavorites,
+                refreshFavoriteGroups,
+                clearBulkFavoriteSelection,
+                bulkCopyFavoriteSelection,
+                getLocalWorldFavorites
+            } = useFavoriteStore();
+            const { menuActiveIndex } = storeToRefs(useUiStore());
+            return {
+                hideTooltips,
+                favoriteFriends,
+                favoriteWorlds,
+                favoriteAvatars,
+                API,
+                refreshFavorites,
+                refreshFavoriteGroups,
+                isFavoriteLoading,
+                clearBulkFavoriteSelection,
+                bulkCopyFavoriteSelection,
+                localAvatarFavoritesList,
+                localWorldFavoritesList,
+                getLocalWorldFavorites,
+                menuActiveIndex
+            };
         },
         data() {
             return {
@@ -123,16 +110,6 @@
                 refreshingLocalFavorites: false,
                 currentTabName: 'friend'
             };
-        },
-        computed: {
-            isSortByTime: {
-                get() {
-                    return this.sortFavorites;
-                },
-                set(value) {
-                    this.$emit('update:sort-favorites', value);
-                }
-            }
         },
         methods: {
             showBulkUnfavoriteSelectionConfirm() {
@@ -207,7 +184,7 @@
                                             type: 'success'
                                         });
                                         // load new group name
-                                        this.API.refreshFavoriteGroups();
+                                        this.refreshFavoriteGroups();
                                     });
                             }
                         }
@@ -258,60 +235,6 @@
                     });
                 }
                 this.refreshingLocalFavorites = false;
-            },
-            clearBulkFavoriteSelection() {
-                this.$emit('clear-bulk-favorite-selection');
-            },
-            bulkCopyFavoriteSelection() {
-                this.$emit('bulk-copy-favorite-selection', this.currentTabName);
-            },
-            getLocalWorldFavorites() {
-                this.$emit('get-local-world-favorites');
-            },
-            showFriendImportDialog() {
-                this.$emit('show-friend-import-dialog');
-            },
-            saveSortFavoritesOption() {
-                this.$emit('save-sort-favorites-option');
-            },
-            showWorldImportDialog() {
-                this.$emit('show-world-import-dialog');
-            },
-            newInstanceSelfInvite(worldId) {
-                this.$emit('new-instance-self-invite', worldId);
-            },
-            deleteLocalWorldFavoriteGroup(group) {
-                this.$emit('delete-local-world-favorite-group', group);
-            },
-            removeLocalWorldFavorite(worldId, group) {
-                this.$emit('remove-local-world-favorite', worldId, group);
-            },
-            showAvatarImportDialog() {
-                this.$emit('show-avatar-import-dialog');
-            },
-            removeLocalAvatarFavorite(avatarId, group) {
-                this.$emit('remove-local-avatar-favorite', avatarId, group);
-            },
-            selectAvatarWithConfirmation(id) {
-                this.$emit('select-avatar-with-confirmation', id);
-            },
-            promptClearAvatarHistory() {
-                this.$emit('prompt-clear-avatar-history');
-            },
-            promptNewLocalAvatarFavoriteGroup() {
-                this.$emit('prompt-new-local-avatar-favorite-group');
-            },
-            promptLocalAvatarFavoriteGroupRename(group) {
-                this.$emit('prompt-local-avatar-favorite-group-rename', group);
-            },
-            promptLocalAvatarFavoriteGroupDelete(group) {
-                this.$emit('prompt-local-avatar-favorite-group-delete', group);
-            },
-            renameLocalWorldFavoriteGroup(inputValue, group) {
-                this.$emit('rename-local-world-favorite-group', inputValue, group);
-            },
-            newLocalWorldFavoriteGroup(inputValue) {
-                this.$emit('new-local-world-favorite-group', inputValue);
             }
         }
     };

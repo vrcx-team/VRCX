@@ -1,12 +1,9 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="avatarImportDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="isVisible"
         :title="$t('dialog.avatar_import.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ $t('dialog.avatar_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -46,7 +43,7 @@
                         </span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in API.favoriteAvatarGroups">
+                        <template v-for="groupAPI in favoriteAvatarGroups">
                             <el-dropdown-item
                                 :key="groupAPI.name"
                                 style="display: block; margin: 10px 0"
@@ -171,30 +168,40 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
     import { avatarRequest, favoriteRequest } from '../../../api';
-    import utils from '../../../classes/utils';
+    import { adjustDialogZ, removeFromArray } from '../../../shared/utils';
+    import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     export default {
         name: 'AvatarImportDialog',
-        inject: [
-            'API',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'adjustDialogZ',
-            'showFullscreenImageDialog',
-            'showUserDialog',
-            'showAvatarDialog'
-        ],
-        props: {
-            getLocalAvatarFavoriteGroupLength: Function,
-            localAvatarFavoriteGroups: Array,
-            avatarImportDialogInput: String,
-            avatarImportDialogVisible: Boolean
+        setup() {
+            const { showUserDialog } = useUserStore();
+            const {
+                favoriteAvatarGroups,
+                avatarImportDialogInput,
+                avatarImportDialogVisible,
+                localAvatarFavoriteGroups
+            } = storeToRefs(useFavoriteStore());
+            const { addLocalAvatarFavorite, getLocalAvatarFavoriteGroupLength } = useFavoriteStore();
+            const { showAvatarDialog } = useAvatarStore();
+            const { showFullscreenImageDialog } = useGalleryStore();
+            return {
+                showUserDialog,
+                favoriteAvatarGroups,
+                avatarImportDialogInput,
+                avatarImportDialogVisible,
+                addLocalAvatarFavorite,
+                getLocalAvatarFavoriteGroupLength,
+                localAvatarFavoriteGroups,
+                showAvatarDialog,
+                adjustDialogZ,
+                showFullscreenImageDialog
+            };
         },
         data() {
             return {
@@ -226,7 +233,7 @@
                     return this.avatarImportDialogVisible;
                 },
                 set(value) {
-                    this.$emit('update:avatar-import-dialog-visible', value);
+                    this.avatarImportDialogVisible = value;
                 }
             }
         },
@@ -287,7 +294,7 @@
             },
 
             deleteItemAvatarImport(ref) {
-                utils.removeFromArray(this.avatarImportTable.data, ref);
+                removeFromArray(this.avatarImportTable.data, ref);
                 this.avatarImportDialog.avatarIdList.delete(ref.id);
             },
 
@@ -349,9 +356,9 @@
                         if (D.avatarImportFavoriteGroup) {
                             await this.addFavoriteAvatar(ref, D.avatarImportFavoriteGroup, false);
                         } else if (D.avatarImportLocalFavoriteGroup) {
-                            this.$emit('add-local-avatar-favorite', ref.id, D.avatarImportLocalFavoriteGroup);
+                            this.addLocalAvatarFavorite(ref.id, D.avatarImportLocalFavoriteGroup);
                         }
-                        utils.removeFromArray(this.avatarImportTable.data, ref);
+                        removeFromArray(this.avatarImportTable.data, ref);
                         D.avatarIdList.delete(ref.id);
                         D.importProgress++;
                     }

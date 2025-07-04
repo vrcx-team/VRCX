@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible="isVRChatConfigDialogVisible"
         :title="t('dialog.config_json.header')"
         width="420px"
         top="10vh"
-        @close="closeDialog"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        @close="closeDialog">
         <div v-loading="loading">
             <div style="font-size: 12px; word-break: keep-all">
                 {{ t('dialog.config_json.description1') }} <br />
@@ -185,56 +182,28 @@
                 </div>
             </div>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { ref, watch, inject, getCurrentInstance, computed } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { computed, getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import {
-        getVRChatResolution,
-        VRChatScreenshotResolutions,
-        VRChatCameraResolutions
-    } from '../../../composables/settings/constants/vrchatResolutions';
+    import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
+    import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
+    import { useAdvancedSettingsStore, useAppearanceSettingsStore, useGameStore } from '../../../stores';
+
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { VRChatUsedCacheSize, VRChatTotalCacheSize, VRChatCacheSizeLoading } = storeToRefs(useGameStore());
+    const { sweepVRChatCache, getVRChatCacheSize } = useGameStore();
+    const { folderSelectorDialog } = useAdvancedSettingsStore();
+    const { isVRChatConfigDialogVisible } = storeToRefs(useAdvancedSettingsStore());
+
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const $confirm = instance.proxy.$confirm;
     const $message = instance.proxy.$message;
-
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
-    const openExternalLink = inject('openExternalLink');
-
-    const props = defineProps({
-        isVRChatConfigDialogVisible: {
-            type: Boolean,
-            required: true
-        },
-        VRChatUsedCacheSize: {
-            type: [String, Number],
-            required: true
-        },
-        VRChatTotalCacheSize: {
-            type: [String, Number],
-            required: true
-        },
-        VRChatCacheSizeLoading: {
-            type: Boolean,
-            required: true
-        },
-        folderSelectorDialog: {
-            type: Function,
-            required: true
-        },
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        }
-    });
-
-    const emit = defineEmits(['update:isVRChatConfigDialogVisible', 'getVRChatCacheSize', 'sweepVRChatCache']);
 
     const VRChatConfigFile = ref({});
     // it's a object
@@ -286,7 +255,7 @@
     const loading = ref(false);
 
     watch(
-        () => props.isVRChatConfigDialogVisible,
+        () => isVRChatConfigDialogVisible.value,
         async (newValue) => {
             if (newValue) {
                 loading.value = true;
@@ -297,12 +266,8 @@
     );
 
     const totalCacheSize = computed(() => {
-        return VRChatConfigFile.value.cache_size || props.VRChatTotalCacheSize;
+        return VRChatConfigFile.value.cache_size || VRChatTotalCacheSize.value;
     });
-
-    function getVRChatCacheSize() {
-        emit('getVRChatCacheSize');
-    }
 
     function showDeleteAllVRChatCacheConfirm() {
         $confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
@@ -322,13 +287,9 @@
         getVRChatCacheSize();
     }
 
-    function sweepVRChatCache() {
-        emit('sweepVRChatCache');
-    }
-
     async function openConfigFolderBrowser(value) {
         const oldPath = VRChatConfigFile.value[value];
-        const newPath = await props.folderSelectorDialog(oldPath);
+        const newPath = await folderSelectorDialog(oldPath);
         if (newPath) {
             VRChatConfigFile.value[value] = newPath;
         }
@@ -406,7 +367,7 @@
     }
 
     async function readVRChatConfigFile() {
-        const config = await AppApi.ReadConfigFile();
+        const config = await AppApi.ReadConfigFileSafe();
         if (config) {
             try {
                 const parsedConfig = JSON.parse(config);
@@ -425,6 +386,6 @@
     }
 
     function closeDialog() {
-        emit('update:isVRChatConfigDialogVisible', false);
+        isVRChatConfigDialogVisible.value = false;
     }
 </script>

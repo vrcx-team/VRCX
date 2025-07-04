@@ -40,16 +40,6 @@ namespace VRCX
             using var fileMemoryStream = new MemoryStream(imageData);
             var image = Image.Load(fileMemoryStream);
 
-            // for APNG, check if image is png format and less than maxSize
-            if ((!matchingDimensions || image.Width == image.Height) &&
-                image.Metadata.DecodedImageFormat == PngFormat.Instance &&
-                imageData.Length < maxSize &&
-                image.Width <= maxWidth &&
-                image.Height <= maxHeight)
-            {
-                return imageData;
-            }
-
             if (image.Width > maxWidth)
             {
                 var sizingFactor = image.Width / (double)maxWidth;
@@ -250,6 +240,27 @@ namespace VRCX
         public async Task<string> SaveStickerToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
         {
             var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Stickers", MakeValidFileName(monthFolder));
+            Directory.CreateDirectory(folder);
+            var filePath = Path.Join(folder, MakeValidFileName(fileName));
+            if (File.Exists(filePath))
+                return null;
+
+            try
+            {
+                await ImageCache.SaveImageToFile(url, filePath);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to save print to file");
+                return null;
+            }
+            
+            return filePath;
+        }
+        
+        public async Task<string> SaveEmojiToFile(string url, string ugcFolderPath, string monthFolder, string fileName)
+        {
+            var folder = Path.Join(GetUGCPhotoLocation(ugcFolderPath), "Emoji", MakeValidFileName(monthFolder));
             Directory.CreateDirectory(folder);
             var filePath = Path.Join(folder, MakeValidFileName(fileName));
             if (File.Exists(filePath))

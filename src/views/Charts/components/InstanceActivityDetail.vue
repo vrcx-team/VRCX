@@ -6,10 +6,7 @@
                     v-show="!isLoading"
                     class="location"
                     :location="activityDetailData[0].location"
-                    is-open-previous-instance-info-dialog
-                    @open-previous-instance-info-dialog="
-                        $emit('open-previous-instance-info-dialog', $event)
-                    "></location>
+                    is-open-previous-instance-info-dialog></location>
             </transition>
         </div>
 
@@ -19,15 +16,13 @@
 
 <script>
     import dayjs from 'dayjs';
-    import utils from '../../../classes/utils';
-    import Location from '../../../components/Location.vue';
+    import { storeToRefs } from 'pinia';
+
+    import { loadEcharts, timeToText } from '../../../shared/utils';
+    import { useUserStore } from '../../../stores';
 
     export default {
         name: 'InstanceActivityDetail',
-        components: {
-            Location
-        },
-        inject: ['API', 'showUserDialog'],
         props: {
             activityDetailData: {
                 type: Array,
@@ -47,6 +42,11 @@
                 default: 10
             }
         },
+        setup() {
+            const { showUserDialog } = useUserStore();
+            const { currentUser } = storeToRefs(useUserStore());
+            return { showUserDialog, currentUser };
+        },
         data() {
             return {
                 echarts: null,
@@ -58,13 +58,11 @@
         },
         computed: {
             startTimeStamp() {
-                return this.activityDetailData
-                    .find((item) => item.user_id === this.API.currentUser.id)
-                    ?.joinTime.valueOf();
+                return this.activityDetailData.find((item) => item.user_id === this.currentUser.id)?.joinTime.valueOf();
             },
             endTimeStamp() {
                 return this.activityDetailData
-                    .find((item) => item.user_id === this.API.currentUser.id)
+                    .find((item) => item.user_id === this.currentUser.id)
                     ?.leaveTime.valueOf();
             }
         },
@@ -101,11 +99,10 @@
             // prevent switch tab play resize animation
             this.resizeObserver.disconnect();
         },
-
         methods: {
             async initEcharts(isFirstLoad = false) {
                 if (!this.echarts) {
-                    this.echarts = await utils.loadEcharts();
+                    this.echarts = await loadEcharts();
                 }
 
                 const chartsHeight = this.activityDetailData.length * (this.barWidth + 10) + 200;
@@ -270,7 +267,7 @@
                     const formattedLeftDateTime = dayjs(instanceData.leaveTime).format(format);
                     const formattedJoinDateTime = dayjs(instanceData.joinTime).format(format);
 
-                    const timeString = utils.timeToText(instanceData.time, true);
+                    const timeString = timeToText(instanceData.time, true);
                     const color = param.color;
 
                     return `

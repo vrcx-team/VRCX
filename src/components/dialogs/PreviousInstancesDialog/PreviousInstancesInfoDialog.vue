@@ -1,15 +1,12 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="dialog"
-        :before-close="beforeDialogClose"
-        :visible="visible"
+        :visible="previousInstancesInfoDialogVisible"
         :title="$t('dialog.previous_instances.info')"
         width="800px"
         :fullscreen="fullscreen"
         destroy-on-close
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp"
-        @close="$emit('update:visible', false)">
+        @close="closeDialog">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <location :location="location.tag" style="font-size: 14px"></location>
             <el-input
@@ -57,31 +54,33 @@
                 </template>
             </el-table-column>
         </data-tables>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
-    import utils from '../../../classes/utils';
-    import database from '../../../service/database';
     import dayjs from 'dayjs';
-    import Location from '../../Location.vue';
+    import { storeToRefs } from 'pinia';
+    import database from '../../../service/database';
+    import { adjustDialogZ, compareByCreatedAt, parseLocation, timeToText } from '../../../shared/utils';
+    import { useAppearanceSettingsStore, useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
 
     export default {
         name: 'PreviousInstancesInfoDialog',
-        components: {
-            Location
-        },
-        inject: ['adjustDialogZ', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
-        props: {
-            visible: {
-                type: Boolean,
-                default: false
-            },
-            instanceId: { type: String, required: true },
-            gameLogIsFriend: { type: Function, required: true },
-            gameLogIsFavorite: { type: Function, required: true },
-            lookupUser: { type: Function, required: true },
-            isDarkMode: { type: Boolean, required: true }
+        setup() {
+            const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
+            const { lookupUser } = useUserStore();
+            const { previousInstancesInfoDialogVisible, previousInstancesInfoDialogInstanceId } =
+                storeToRefs(useInstanceStore());
+            const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
+            return {
+                isDarkMode,
+                lookupUser,
+                previousInstancesInfoDialogVisible,
+                previousInstancesInfoDialogInstanceId,
+                adjustDialogZ,
+                gameLogIsFriend,
+                gameLogIsFavorite
+            };
         },
         data() {
             return {
@@ -128,15 +127,15 @@
             }
         },
         watch: {
-            visible(value) {
+            previousInstancesInfoDialogVisible(value) {
                 if (value) {
                     this.$nextTick(() => {
                         this.init();
                         this.refreshPreviousInstancesInfoTable();
                     });
-                    utils.loadEcharts().then((echarts) => {
-                        this.echarts = echarts;
-                    });
+                    // loadEcharts().then((echarts) => {
+                    //     this.echarts = echarts;
+                    // });
                 }
             }
         },
@@ -144,19 +143,22 @@
             init() {
                 this.adjustDialogZ(this.$refs.dialog.$el);
                 this.loading = true;
-                this.location = utils.parseLocation(this.instanceId);
+                this.location = parseLocation(this.previousInstancesInfoDialogInstanceId);
             },
             refreshPreviousInstancesInfoTable() {
                 database.getPlayersFromInstance(this.location.tag).then((data) => {
                     const array = [];
                     for (const entry of Array.from(data.values())) {
-                        entry.timer = utils.timeToText(entry.time);
+                        entry.timer = timeToText(entry.time);
                         array.push(entry);
                     }
-                    array.sort(utils.compareByCreatedAt);
+                    array.sort(compareByCreatedAt);
                     this.dataTable.data = array;
                     this.loading = false;
                 });
+            },
+            closeDialog() {
+                this.previousInstancesInfoDialogVisible = false;
             }
         }
     };

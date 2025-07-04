@@ -1,11 +1,5 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
-        :title="$t('dialog.export_friends_list.header')"
-        :visible.sync="isVisible"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog :title="$t('dialog.export_friends_list.header')" :visible.sync="isVisible" width="650px">
         <el-tabs type="card">
             <el-tab-pane :label="$t('dialog.export_friends_list.csv')">
                 <el-input
@@ -30,16 +24,25 @@
                     @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
         </el-tabs>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
+
+    import { useUserStore } from '../../../stores';
+
     export default {
         name: 'ExportFriendsListDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
         props: {
             friends: Map,
             isExportFriendsListDialogVisible: Boolean
+        },
+        setup() {
+            const { currentUser } = storeToRefs(useUserStore());
+            return {
+                currentUser
+            };
         },
         data() {
             return {
@@ -66,7 +69,7 @@
         },
         methods: {
             initExportFriendsListDialog() {
-                const { friends } = this.API.currentUser;
+                const { friends } = this.currentUser;
                 if (Array.isArray(friends) === false) {
                     return;
                 }

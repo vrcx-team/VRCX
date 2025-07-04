@@ -1,4 +1,13 @@
-// #region | API: User
+import { API } from '../service/eventBus';
+import { request } from '../service/request';
+import { useUserStore } from '../stores';
+
+function getCurrentUserId() {
+    return useUserStore().currentUser.id;
+}
+function getCachedUserId(params) {
+    return useUserStore().cachedUsers.get(params.userId);
+}
 
 const userReq = {
     /**
@@ -7,14 +16,19 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getUser(params) {
-        return window.API.call(`users/${params.userId}`, {
+        return request(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
+            if (!json) {
+                throw new Error(
+                    `getUser missing user data for: ${params.userId}`
+                );
+            }
             const args = {
                 json,
                 params
             };
-            window.API.$emit('USER', args);
+            API.$emit('USER', args);
             return args;
         });
     },
@@ -26,7 +40,7 @@ const userReq = {
      */
     getCachedUser(params) {
         return new Promise((resolve, reject) => {
-            const ref = window.API.cachedUsers.get(params.userId);
+            const ref = getCachedUserId(params);
             if (typeof ref === 'undefined') {
                 userReq.getUser(params).catch(reject).then(resolve);
             } else {
@@ -54,7 +68,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getUsers(params) {
-        return window.API.call('users', {
+        return request('users', {
             method: 'GET',
             params
         }).then((json) => {
@@ -62,7 +76,6 @@ const userReq = {
                 json,
                 params
             };
-            window.API.$emit('USER:LIST', args);
             return args;
         });
     },
@@ -72,7 +85,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     addUserTags(params) {
-        return window.API.call(`users/${window.API.currentUser.id}/addTags`, {
+        return request(`users/${getCurrentUserId()}/addTags`, {
             method: 'POST',
             params
         }).then((json) => {
@@ -80,7 +93,7 @@ const userReq = {
                 json,
                 params
             };
-            window.API.$emit('USER:CURRENT:SAVE', args);
+            API.$emit('USER:CURRENT', args);
             return args;
         });
     },
@@ -90,18 +103,15 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     removeUserTags(params) {
-        return window.API.call(
-            `users/${window.API.currentUser.id}/removeTags`,
-            {
-                method: 'POST',
-                params
-            }
-        ).then((json) => {
+        return request(`users/${getCurrentUserId()}/removeTags`, {
+            method: 'POST',
+            params
+        }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('USER:CURRENT:SAVE', args);
+            API.$emit('USER:CURRENT', args);
             return args;
         });
     },
@@ -111,7 +121,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getUserFeedback(params) {
-        return window.API.call(`users/${params.userId}/feedback`, {
+        return request(`users/${params.userId}/feedback`, {
             method: 'GET',
             params: {
                 n: 100
@@ -121,11 +131,52 @@ const userReq = {
                 json,
                 params
             };
-            window.API.$emit('USER:FEEDBACK', args);
+            return args;
+        });
+    },
+
+    /**
+     * @typedef {{
+     *     status: 'active' | 'offline' | 'busy' | 'ask me' | 'join me',
+     *     statusDescription: string
+     * }} SaveCurrentUserParameters
+     */
+
+    /**
+     * Updates current user's status.
+     * @param params {SaveCurrentUserParameters} new status to be set
+     * @returns {Promise<{json: any, params}>}
+     */
+    saveCurrentUser(params) {
+        return request(`users/${getCurrentUserId()}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            API.$emit('USER:CURRENT', args);
+            return args;
+        });
+    },
+
+    /**
+     * @param params {{ offset: number, n: number }}
+     * @returns {Promise<{json: any, params}>}
+     */
+    getUserNotes(params) {
+        return request(`userNotes`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
             return args;
         });
     }
 };
-// #endregion
 
 export default userReq;

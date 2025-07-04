@@ -1,11 +1,5 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
-        :visible.sync="isVisible"
-        :title="$t('dialog.export_own_avatars.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog :visible.sync="isVisible" :title="$t('dialog.export_own_avatars.header')" width="650px">
         <el-input
             v-model="exportAvatarsListCsv"
             v-loading="loading"
@@ -16,17 +10,27 @@
             readonly
             style="margin-top: 15px"
             @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
     import { avatarRequest } from '../../../api';
+    import { processBulk } from '../../../service/request';
+    import { useAvatarStore, useUserStore } from '../../../stores';
 
     export default {
         name: 'ExportAvatarsListDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
         props: {
             isExportAvatarsListDialogVisible: Boolean
+        },
+        setup() {
+            const { cachedAvatars } = storeToRefs(useAvatarStore());
+            const { currentUser } = storeToRefs(useUserStore());
+            return {
+                cachedAvatars,
+                currentUser
+            };
         },
         data() {
             return {
@@ -54,9 +58,9 @@
         methods: {
             initExportAvatarsListDialog() {
                 this.loading = true;
-                for (const ref of this.API.cachedAvatars.values()) {
-                    if (ref.authorId === this.API.currentUser.id) {
-                        this.API.cachedAvatars.delete(ref.id);
+                for (const ref of this.cachedAvatars.values()) {
+                    if (ref.authorId === this.currentUser.id) {
+                        this.cachedAvatars.delete(ref.id);
                     }
                 }
                 const params = {
@@ -68,13 +72,13 @@
                     user: 'me'
                 };
                 const map = new Map();
-                this.API.bulk({
+                processBulk({
                     fn: avatarRequest.getAvatars,
                     N: -1,
                     params,
                     handle: (args) => {
                         for (const json of args.json) {
-                            const $ref = this.API.cachedAvatars.get(json.id);
+                            const $ref = this.cachedAvatars.get(json.id);
                             if (typeof $ref !== 'undefined') {
                                 map.set($ref.id, $ref);
                             }

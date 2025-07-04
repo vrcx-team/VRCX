@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -71,7 +72,7 @@ namespace VRCX
                     libraryPath = parts[4].Replace("\"", "");
                 }
 
-                if (line.Contains($"\"{appId}\""))
+                if (line.Contains($"\"{appId}\"") && Directory.Exists(libraryPath))
                     return libraryPath;
             }
 
@@ -85,26 +86,58 @@ namespace VRCX
                 
         public override string GetVRChatCacheLocation()
         {
-            var json = ReadConfigFile();
-            if (!string.IsNullOrEmpty(json))
+            var defaultPath = Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
+            try
             {
-                var obj = JsonConvert.DeserializeObject<JObject>(json);
-                if (obj["cache_directory"] != null)
-                {
-                    var cacheDir = (string)obj["cache_directory"];
-                    if (!string.IsNullOrEmpty(cacheDir) && Directory.Exists(cacheDir))
-                    {
-                        return cacheDir;
-                    }
-                }
+                var json = ReadConfigFile();
+                if (string.IsNullOrEmpty(json))
+                    return defaultPath;
+
+                var obj = JsonConvert.DeserializeObject<JObject>(json, JsonSerializerSettings);
+                if (obj["cache_directory"] == null)
+                    return defaultPath;
+
+                var cacheDir = (string)obj["cache_directory"];
+                if (string.IsNullOrEmpty(cacheDir))
+                    return defaultPath;
+
+                var cachePath = Path.Join(cacheDir, "Cache-WindowsPlayer");
+                if (!Directory.Exists(cacheDir))
+                    return defaultPath;
+                
+                return cachePath;
             }
-            
-            return Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
+            catch (Exception e)
+            {
+                logger.Error($"Error reading VRChat config file for cache location: {e}");
+            }
+            return defaultPath;
         }
 
         public override string GetVRChatPhotosLocation()
         {
-            return Path.Join(_vrcPrefixPath, "drive_c/users/steamuser/Pictures/VRChat");
+            var defaultPath = Path.Join(_vrcPrefixPath, "drive_c/users/steamuser/Pictures/VRChat");
+            try
+            {
+                var json = ReadConfigFile();
+                if (string.IsNullOrEmpty(json))
+                    return defaultPath;
+
+                var obj = JsonConvert.DeserializeObject<JObject>(json, JsonSerializerSettings);
+                if (obj["picture_output_folder"] == null)
+                    return defaultPath;
+                
+                var photosDir = (string)obj["picture_output_folder"];
+                if (string.IsNullOrEmpty(photosDir) || !Directory.Exists(photosDir))
+                    return defaultPath;
+
+                return photosDir;
+            }
+            catch (Exception e)
+            {
+                logger.Error($"Error reading VRChat config file for photos location: {e}");
+            }
+            return defaultPath;
         }
         
         public override string GetUGCPhotoLocation(string path = "")
@@ -216,11 +249,47 @@ namespace VRCX
         
         public override void OpenFolderAndSelectItem(string path, bool isFolder = false)
         {
-            path = Path.GetFullPath(path);
             if (!File.Exists(path) && !Directory.Exists(path))
                 return;
             
-            Process.Start("xdg-open", path);
+            var directoryPath = isFolder ? path : Path.GetDirectoryName(path);
+            var commandAttempt = new Dictionary<string, string>
+            {
+                { "nautilus", path },
+                { "nemo", path },
+                { "thunar", path },
+                { "caja", $"--select \"{path}\"" },
+                { "pcmanfm-qt", directoryPath },
+                { "pcmanfm", directoryPath },
+                { "dolphin", $"--select \"{path}\"" },
+                { "konqueror", $"--select \"{path}\"" },
+                { "xdg-open", directoryPath }
+            };
+            
+            foreach (var command in commandAttempt)
+            {
+                try
+                {
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = command.Key,
+                            Arguments = command.Value,
+                            UseShellExecute = true,
+                            CreateNoWindow = true
+                        }
+                    };
+                    process.Start();
+                    process.WaitForExit();
+                    if (process.ExitCode == 0)
+                        return;
+                }
+                catch (Exception)
+                {
+                    // ignore the error and try the next command
+                }
+            }
         }
 
         public override async Task<string> OpenFolderSelectorDialog(string defaultPath = "")

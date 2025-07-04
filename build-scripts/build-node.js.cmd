@@ -1,5 +1,4 @@
-cd ../src
+cd ../
 call npm ci
 call npm run prod
-cd ..
 pause

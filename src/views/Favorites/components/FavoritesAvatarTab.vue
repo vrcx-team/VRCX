@@ -3,29 +3,29 @@
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div>
                 <el-button size="small" @click="showAvatarExportDialog">
-                    {{ $t('view.favorite.export') }}
+                    {{ t('view.favorite.export') }}
                 </el-button>
                 <el-button size="small" style="margin-left: 5px" @click="showAvatarImportDialog">
-                    {{ $t('view.favorite.import') }}
+                    {{ t('view.favorite.import') }}
                 </el-button>
             </div>
             <div style="display: flex; align-items: center; font-size: 13px; margin-right: 10px">
                 <span class="name" style="margin-right: 5px; line-height: 10px">
-                    {{ $t('view.favorite.sort_by') }}
+                    {{ t('view.favorite.sort_by') }}
                 </span>
                 <el-radio-group v-model="sortFav" style="margin-right: 12px" @change="saveSortFavoritesOption">
                     <el-radio :label="false">
-                        {{ $t('view.settings.appearance.appearance.sort_favorite_by_name') }}
+                        {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
                     </el-radio>
                     <el-radio :label="true">
-                        {{ $t('view.settings.appearance.appearance.sort_favorite_by_date') }}
+                        {{ t('view.settings.appearance.appearance.sort_favorite_by_date') }}
                     </el-radio>
                 </el-radio-group>
                 <el-input
                     v-model="avatarFavoriteSearch"
                     clearable
                     size="mini"
-                    :placeholder="$t('view.favorite.avatars.search')"
+                    :placeholder="t('view.favorite.avatars.search')"
                     style="width: 200px"
                     @input="searchAvatarFavorites" />
             </div>
@@ -56,16 +56,16 @@
             </div>
         </div>
         <span style="display: block; margin-top: 20px">
-            {{ $t('view.favorite.avatars.vrchat_favorites') }}
+            {{ t('view.favorite.avatars.vrchat_favorites') }}
         </span>
         <el-collapse style="border: 0">
-            <el-collapse-item v-for="group in API.favoriteAvatarGroups" :key="group.name">
+            <el-collapse-item v-for="group in favoriteAvatarGroups" :key="group.name">
                 <template slot="title">
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group.displayName" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         {{ group.count }}/{{ group.capacity }}
                     </span>
-                    <el-tooltip placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
                             icon="el-icon-edit"
@@ -73,7 +73,7 @@
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)" />
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="$t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
                             icon="el-icon-delete"
@@ -89,12 +89,9 @@
                         :favorite="favorite"
                         :group="group"
                         :hide-tooltips="hideTooltips"
-                        :shift-held="shiftHeld"
                         :edit-favorites-mode="editFavoritesMode"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         @handle-select="favorite.$selected = $event"
-                        @remove-local-avatar-favorite="removeLocalAvatarFavorite"
-                        @select-avatar-with-confirmation="selectAvatarWithConfirmation"
                         @click="showAvatarDialog(favorite.id)" />
                 </div>
                 <div
@@ -132,7 +129,6 @@
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         :favorite="favorite"
                         :hide-tooltips="hideTooltips"
-                        @select-avatar-with-confirmation="selectAvatarWithConfirmation"
                         @click="showAvatarDialog(favorite.id)" />
                 </div>
                 <div
@@ -148,21 +144,21 @@
                     <span>No Data</span>
                 </div>
             </el-collapse-item>
-            <span style="display: block; margin-top: 20px">{{ $t('view.favorite.avatars.local_favorites') }}</span>
+            <span style="display: block; margin-top: 20px">{{ t('view.favorite.avatars.local_favorites') }}</span>
             <br />
             <el-button size="small" :disabled="!isLocalUserVrcplusSupporter" @click="promptNewLocalAvatarFavoriteGroup">
-                {{ $t('view.favorite.avatars.new_group') }}
+                {{ t('view.favorite.avatars.new_group') }}
             </el-button>
             <el-button
                 v-if="!refreshingLocalFavorites"
                 size="small"
                 style="margin-left: 5px"
                 @click="refreshLocalAvatarFavorites">
-                {{ $t('view.favorite.avatars.refresh') }}
+                {{ t('view.favorite.avatars.refresh') }}
             </el-button>
             <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
                 <i class="el-icon-loading" style="margin-right: 5px"></i>
-                <span>{{ $t('view.favorite.avatars.cancel_refresh') }}</span>
+                <span>{{ t('view.favorite.avatars.cancel_refresh') }}</span>
             </el-button>
             <el-collapse-item
                 v-for="group in localAvatarFavoriteGroups"
@@ -173,7 +169,7 @@
                     <span :style="{ color: '#909399', fontSize: '12px', marginLeft: '10px' }">{{
                         getLocalAvatarFavoriteGroupLength(group)
                     }}</span>
-                    <el-tooltip placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
                             icon="el-icon-edit"
@@ -181,10 +177,7 @@
                             :style="{ marginLeft: '5px' }"
                             @click.stop="promptLocalAvatarFavoriteGroupRename(group)"></el-button>
                     </el-tooltip>
-                    <el-tooltip
-                        placement="right"
-                        :content="$t('view.favorite.delete_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
                             icon="el-icon-delete"
@@ -202,11 +195,8 @@
                         :favorite="favorite"
                         :group="group"
                         :hide-tooltips="hideTooltips"
-                        :shift-held="shiftHeld"
                         :edit-favorites-mode="editFavoritesMode"
                         @handle-select="favorite.$selected = $event"
-                        @remove-local-avatar-favorite="removeLocalAvatarFavorite"
-                        @select-avatar-with-confirmation="selectAvatarWithConfirmation"
                         @click="showAvatarDialog(favorite.id)" />
                 </div>
                 <div
@@ -223,36 +213,65 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <AvatarExportDialog
-            :avatar-export-dialog-visible.sync="avatarExportDialogVisible"
-            :favorite-avatars="favoriteAvatars"
-            :local-avatar-favorite-groups="localAvatarFavoriteGroups"
-            :local-avatar-favorites="localAvatarFavorites"
-            :local-avatar-favorites-list="localAvatarFavoritesList" />
+        <AvatarExportDialog :avatar-export-dialog-visible.sync="avatarExportDialogVisible" />
     </div>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n-bridge';
+    import { favoriteRequest } from '../../../api';
+    import { API } from '../../../service/eventBus';
+    import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
+    import AvatarExportDialog from '../dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './FavoritesAvatarLocalHistoryItem.vue';
-    import AvatarExportDialog from '../dialogs/AvatarExportDialog.vue';
-    import { favoriteRequest } from '../../../api';
 
     export default {
         name: 'FavoritesAvatarTab',
         components: { FavoritesAvatarItem, FavoritesAvatarLocalHistoryItem, AvatarExportDialog },
-        inject: ['API', 'showAvatarDialog'],
         props: {
-            sortFavorites: Boolean,
-            hideTooltips: Boolean,
-            shiftHeld: Boolean,
             editFavoritesMode: Boolean,
-            avatarHistoryArray: Array,
-            refreshingLocalFavorites: Boolean,
-            localAvatarFavoriteGroups: Array,
-            localAvatarFavorites: Object,
-            favoriteAvatars: Array,
-            localAvatarFavoritesList: Array
+            refreshingLocalFavorites: Boolean
+        },
+        setup() {
+            const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+            const { setSortFavorites } = useAppearanceSettingsStore();
+            const { favoriteAvatars, favoriteAvatarGroups, localAvatarFavorites, localAvatarFavoriteGroups } =
+                storeToRefs(useFavoriteStore());
+            const {
+                showAvatarImportDialog,
+                getLocalAvatarFavoriteGroupLength,
+                deleteLocalAvatarFavoriteGroup,
+                renameLocalAvatarFavoriteGroup,
+                newLocalAvatarFavoriteGroup,
+                saveSortFavoritesOption
+            } = useFavoriteStore();
+            const { showAvatarDialog, avatarHistoryArray } = storeToRefs(useAvatarStore());
+            const { promptClearAvatarHistory } = useAvatarStore();
+            const { currentUser } = storeToRefs(useUserStore());
+            const { t } = useI18n();
+            return {
+                hideTooltips,
+                sortFavorites,
+                setSortFavorites,
+                favoriteAvatars,
+                favoriteAvatarGroups,
+                API,
+                showAvatarImportDialog,
+                getLocalAvatarFavoriteGroupLength,
+                localAvatarFavorites,
+                localAvatarFavoriteGroups,
+                showAvatarDialog,
+                deleteLocalAvatarFavoriteGroup,
+                renameLocalAvatarFavoriteGroup,
+                newLocalAvatarFavoriteGroup,
+                avatarHistoryArray,
+                promptClearAvatarHistory,
+                saveSortFavoritesOption,
+                t,
+                currentUser
+            };
         },
         data() {
             return {
@@ -266,8 +285,8 @@
                 get() {
                     return this.sortFavorites;
                 },
-                set(value) {
-                    this.$emit('update:sort-favorites', value);
+                set() {
+                    this.setSortFavorites();
                 }
             },
             groupedByGroupKeyFavoriteAvatars() {
@@ -284,17 +303,10 @@
                 return groupedByGroupKeyFavoriteAvatars;
             },
             isLocalUserVrcplusSupporter() {
-                return this.API.currentUser.$isVRCPlus;
+                return this.currentUser.$isVRCPlus;
             }
         },
         methods: {
-            getLocalAvatarFavoriteGroupLength(group) {
-                const favoriteGroup = this.localAvatarFavorites[group];
-                if (!favoriteGroup) {
-                    return 0;
-                }
-                return favoriteGroup.length;
-            },
             searchAvatarFavorites() {
                 let ref = null;
                 const search = this.avatarFavoriteSearch.toLowerCase();
@@ -365,35 +377,61 @@
             showAvatarExportDialog() {
                 this.avatarExportDialogVisible = true;
             },
-            showAvatarImportDialog() {
-                this.$emit('show-avatar-import-dialog');
-            },
-            saveSortFavoritesOption() {
-                this.$emit('save-sort-favorites-option');
-            },
+
             changeFavoriteGroupName(group) {
                 this.$emit('change-favorite-group-name', group);
             },
-            removeLocalAvatarFavorite(id, group) {
-                this.$emit('remove-local-avatar-favorite', id, group);
-            },
-            selectAvatarWithConfirmation(id) {
-                this.$emit('select-avatar-with-confirmation', id);
-            },
-            promptClearAvatarHistory() {
-                this.$emit('prompt-clear-avatar-history');
-            },
             promptNewLocalAvatarFavoriteGroup() {
-                this.$emit('prompt-new-local-avatar-favorite-group');
+                this.$prompt(
+                    this.t('prompt.new_local_favorite_group.description'),
+                    this.t('prompt.new_local_favorite_group.header'),
+                    {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: this.t('prompt.new_local_favorite_group.ok'),
+                        cancelButtonText: this.t('prompt.new_local_favorite_group.cancel'),
+                        inputPattern: /\S+/,
+                        inputErrorMessage: this.t('prompt.new_local_favorite_group.input_error'),
+                        callback: (action, instance) => {
+                            if (action === 'confirm' && instance.inputValue) {
+                                this.newLocalAvatarFavoriteGroup(instance.inputValue);
+                            }
+                        }
+                    }
+                );
             },
             refreshLocalAvatarFavorites() {
                 this.$emit('refresh-local-avatar-favorites');
             },
             promptLocalAvatarFavoriteGroupRename(group) {
-                this.$emit('prompt-local-avatar-favorite-group-rename', group);
+                this.$prompt(
+                    this.t('prompt.local_favorite_group_rename.description'),
+                    this.t('prompt.local_favorite_group_rename.header'),
+                    {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: this.t('prompt.local_favorite_group_rename.save'),
+                        cancelButtonText: this.t('prompt.local_favorite_group_rename.cancel'),
+                        inputPattern: /\S+/,
+                        inputErrorMessage: this.t('prompt.local_favorite_group_rename.input_error'),
+                        inputValue: group,
+                        callback: (action, instance) => {
+                            if (action === 'confirm' && instance.inputValue) {
+                                this.renameLocalAvatarFavoriteGroup(instance.inputValue, group);
+                            }
+                        }
+                    }
+                );
             },
             promptLocalAvatarFavoriteGroupDelete(group) {
-                this.$emit('prompt-local-avatar-favorite-group-delete', group);
+                this.$confirm(`Delete Group? ${group}`, 'Confirm', {
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    type: 'info',
+                    callback: (action) => {
+                        if (action === 'confirm') {
+                            this.deleteLocalAvatarFavoriteGroup(group);
+                        }
+                    }
+                });
             }
         }
     };

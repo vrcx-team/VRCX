@@ -2,7 +2,7 @@
  * VRCX Dark-Vanilla theme by MintLily
  * https://github.com/MintLily/Dark-Vanilla
  */
-@import 'theme.dark';
+@use 'theme.dark';
 :root {
     --ThemeName: 'Dark Vanilla';
     --ThemeVersion: 'v1.7';
@@ -272,8 +272,11 @@ a {
 .el-slider__button {
     border-color: var(--theme-text-muted) !important;
 }
-.el-table .descending .sort-caret.descending,
+
 .el-table .ascending .sort-caret.ascending {
+    border-bottom-color: var(--theme-text) !important;
+}
+.el-table .descending .sort-caret.descending {
     border-top-color: var(--theme-text) !important;
 }
 

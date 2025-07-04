@@ -1,11 +1,5 @@
 <template>
-    <el-dialog
-        :before-close="beforeDialogClose"
-        :visible.sync="isDialogVisible"
-        :title="$t('dialog.avatar_export.header')"
-        width="650px"
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+    <safe-dialog :visible.sync="isDialogVisible" :title="$t('dialog.avatar_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
@@ -32,7 +26,7 @@
                 <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectAvatarExportGroup(null)">
                     All Favorites
                 </el-dropdown-item>
-                <template v-for="groupAPI in API.favoriteAvatarGroups">
+                <template v-for="groupAPI in favoriteAvatarGroups">
                     <el-dropdown-item
                         :key="groupAPI.name"
                         style="display: block; margin: 10px 0"
@@ -82,19 +76,39 @@
             readonly
             style="margin-top: 15px"
             @click.native="handleCopyAvatarExportData"></el-input>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script>
+    import { storeToRefs } from 'pinia';
+    import { useAvatarStore, useFavoriteStore } from '../../../stores';
+
     export default {
         name: 'AvatarExportDialog',
-        inject: ['API', 'beforeDialogClose', 'dialogMouseDown', 'dialogMouseUp'],
         props: {
-            avatarExportDialogVisible: Boolean,
-            favoriteAvatars: Array,
-            localAvatarFavoriteGroups: Array,
-            localAvatarFavorites: Object,
-            localAvatarFavoritesList: Array
+            avatarExportDialogVisible: Boolean
+        },
+        setup() {
+            const favoriteStore = useFavoriteStore();
+            const {
+                favoriteAvatars,
+                favoriteAvatarGroups,
+                localAvatarFavorites,
+                localAvatarFavoritesList,
+                localAvatarFavoriteGroups
+            } = storeToRefs(favoriteStore);
+            const { getLocalAvatarFavoriteGroupLength } = favoriteStore;
+            const avatarStore = useAvatarStore();
+            const { cachedAvatars } = storeToRefs(avatarStore);
+            return {
+                favoriteAvatars,
+                favoriteAvatarGroups,
+                getLocalAvatarFavoriteGroupLength,
+                localAvatarFavorites,
+                localAvatarFavoritesList,
+                localAvatarFavoriteGroups,
+                cachedAvatars
+            };
         },
         data() {
             return {
@@ -174,7 +188,7 @@
                 const lines = [this.exportSelectedOptions.join(',')];
 
                 if (this.avatarExportFavoriteGroup) {
-                    this.API.favoriteAvatarGroups.forEach((group) => {
+                    this.favoriteAvatarGroups.forEach((group) => {
                         if (!this.avatarExportFavoriteGroup || this.avatarExportFavoriteGroup === group) {
                             this.favoriteAvatars.forEach((ref) => {
                                 if (group.key === ref.groupKey) {
@@ -199,7 +213,7 @@
                     });
                     for (let i = 0; i < this.localAvatarFavoritesList.length; ++i) {
                         const avatarId = this.localAvatarFavoritesList[i];
-                        const ref = this.API.cachedAvatars.get(avatarId);
+                        const ref = this.cachedAvatars.get(avatarId);
                         if (typeof ref !== 'undefined') {
                             lines.push(resText(ref));
                         }
@@ -216,13 +230,6 @@
                 this.avatarExportLocalFavoriteGroup = group;
                 this.avatarExportFavoriteGroup = null;
                 this.updateAvatarExportDialog();
-            },
-            getLocalAvatarFavoriteGroupLength(group) {
-                const favoriteGroup = this.localAvatarFavorites[group];
-                if (!favoriteGroup) {
-                    return 0;
-                }
-                return favoriteGroup.length;
             }
         }
     };

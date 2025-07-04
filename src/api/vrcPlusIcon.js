@@ -1,8 +1,9 @@
-// #region | App: VRCPlus Icons
+import { API } from '../service/eventBus';
+import { request } from '../service/request';
 
 const VRCPlusIconsReq = {
     getFileList(params) {
-        return window.API.call('files', {
+        return request('files', {
             method: 'GET',
             params
         }).then((json) => {
@@ -10,13 +11,13 @@ const VRCPlusIconsReq = {
                 json,
                 params
             };
-            window.API.$emit('FILES:LIST', args);
+            API.$emit('FILES:LIST', args);
             return args;
         });
     },
 
     deleteFile(fileId) {
-        return window.API.call(`file/${fileId}`, {
+        return request(`file/${fileId}`, {
             method: 'DELETE'
         }).then((json) => {
             const args = {
@@ -31,7 +32,7 @@ const VRCPlusIconsReq = {
         const params = {
             tag: 'icon'
         };
-        return window.API.call('file/image', {
+        return request('file/image', {
             uploadImage: true,
             matchingDimensions: true,
             postData: JSON.stringify(params),
@@ -41,15 +42,12 @@ const VRCPlusIconsReq = {
                 json,
                 params
             };
-            window.API.$emit('VRCPLUSICON:ADD', args);
             return args;
         });
     }
 
-    // unused
-    // images.pug line 63
     // deleteFileVersion(params) {
-    //     return window.API.call(`file/${params.fileId}/${params.version}`, {
+    //     return request(`file/${params.fileId}/${params.version}`, {
     //         method: 'DELETE'
     //     }).then((json) => {
     //         const args = {
@@ -60,7 +58,5 @@ const VRCPlusIconsReq = {
     //     });
     // }
 };
-
-// #endregion
 
 export default VRCPlusIconsReq;

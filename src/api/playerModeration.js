@@ -1,14 +1,15 @@
-// #region | API: PlayerModeration
+import { API } from '../service/eventBus';
+import { request } from '../service/request';
 
 const playerModerationReq = {
     getPlayerModerations() {
-        return window.API.call('auth/user/playermoderations', {
+        return request('auth/user/playermoderations', {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json
             };
-            window.API.$emit('PLAYER-MODERATION:LIST', args);
+            API.$emit('PLAYER-MODERATION:LIST', args);
             return args;
         });
     },
@@ -19,7 +20,7 @@ const playerModerationReq = {
      */
     // old-way: POST auth/user/blocks {blocked:userId}
     sendPlayerModeration(params) {
-        return window.API.call('auth/user/playermoderations', {
+        return request('auth/user/playermoderations', {
             method: 'POST',
             params
         }).then((json) => {
@@ -27,7 +28,6 @@ const playerModerationReq = {
                 json,
                 params
             };
-            window.API.$emit('PLAYER-MODERATION:SEND', args);
             return args;
         });
     },
@@ -38,7 +38,7 @@ const playerModerationReq = {
      */
     // old-way: PUT auth/user/unblocks {blocked:userId}
     deletePlayerModeration(params) {
-        return window.API.call('auth/user/unplayermoderate', {
+        return request('auth/user/unplayermoderate', {
             method: 'PUT',
             params
         }).then((json) => {
@@ -46,11 +46,10 @@ const playerModerationReq = {
                 json,
                 params
             };
-            window.API.$emit('PLAYER-MODERATION:DELETE', args);
+            API.$emit('PLAYER-MODERATION:DELETE', args);
             return args;
         });
     }
 };
 
-// #endregion
 export default playerModerationReq;

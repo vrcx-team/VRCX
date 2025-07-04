@@ -1,0 +1,277 @@
+import { defineStore } from 'pinia';
+import Vue, { computed, reactive, watch } from 'vue';
+import { avatarModerationRequest, playerModerationRequest } from '../api';
+import { $app } from '../app';
+import { t } from '../plugin';
+import { API } from '../service/eventBus';
+import { useAuthStore } from './auth';
+import { useAvatarStore } from './avatar';
+import { useUserStore } from './user';
+
+export const useModerationStore = defineStore('Moderation', () => {
+    const avatarStore = useAvatarStore();
+    const userStore = useUserStore();
+    const state = reactive({
+        cachedPlayerModerations: new Map(),
+        cachedPlayerModerationsUserIds: new Set(),
+        isPlayerModerationsLoading: false,
+        playerModerationTable: {
+            data: [],
+            pageSize: 15
+        }
+    });
+
+    const cachedPlayerModerations = computed({
+        get: () => state.cachedPlayerModerations,
+        set: (value) => {
+            state.cachedPlayerModerations = value;
+        }
+    });
+
+    const cachedPlayerModerationsUserIds = computed({
+        get: () => state.cachedPlayerModerationsUserIds,
+        set: (value) => {
+            state.cachedPlayerModerationsUserIds = value;
+        }
+    });
+
+    const isPlayerModerationsLoading = computed({
+        get: () => state.isPlayerModerationsLoading,
+        set: (value) => {
+            state.isPlayerModerationsLoading = value;
+        }
+    });
+
+    const playerModerationTable = computed({
+        get: () => state.playerModerationTable,
+        set: (value) => {
+            state.playerModerationTable = value;
+        }
+    });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (isLoggedIn) {
+                state.cachedPlayerModerations.clear();
+                state.cachedPlayerModerationsUserIds.clear();
+                state.isPlayerModerationsLoading = false;
+                refreshPlayerModerations();
+                state.playerModerationTable.data = [];
+            }
+        }
+    );
+
+    API.$on('PLAYER-MODERATION', function (args) {
+        args.ref = applyPlayerModeration(args.json);
+    });
+
+    API.$on('PLAYER-MODERATION:LIST', function (args) {
+        for (let json of args.json) {
+            API.$emit('PLAYER-MODERATION', {
+                json,
+                params: {
+                    playerModerationId: json.id
+                }
+            });
+        }
+    });
+
+    /**
+     * aka: `API.$on('PLAYER-MODERATION:@SEND')`
+     * @param args
+     */
+    function handlePlayerModerationAtSend(args) {
+        const { ref } = args;
+        const D = userStore.userDialog;
+        if (
+            D.visible === false ||
+            (ref.targetUserId !== D.id &&
+                ref.sourceUserId !== userStore.currentUser.id)
+        ) {
+            return;
+        }
+        if (ref.type === 'block') {
+            D.isBlock = true;
+        } else if (ref.type === 'mute') {
+            D.isMute = true;
+        } else if (ref.type === 'hideAvatar') {
+            D.isHideAvatar = true;
+        } else if (ref.type === 'interactOff') {
+            D.isInteractOff = true;
+        } else if (ref.type === 'muteChat') {
+            D.isMuteChat = true;
+        }
+        $app.$message({
+            message: t('message.user.moderated'),
+            type: 'success'
+        });
+    }
+
+    API.$on('PLAYER-MODERATION:@DELETE', function (args) {
+        const { ref } = args;
+        const D = userStore.userDialog;
+        if (
+            D.visible === false ||
+            ref.targetUserId !== D.id ||
+            ref.sourceUserId !== userStore.currentUser.id
+        ) {
+            return;
+        }
+        if (ref.type === 'block') {
+            D.isBlock = false;
+        } else if (ref.type === 'mute') {
+            D.isMute = false;
+        } else if (ref.type === 'hideAvatar') {
+            D.isHideAvatar = false;
+        } else if (ref.type === 'interactOff') {
+            D.isInteractOff = false;
+        } else if (ref.type === 'muteChat') {
+            D.isMuteChat = false;
+        }
+    });
+
+    API.$on('PLAYER-MODERATION:DELETE', function (args) {
+        let { type, moderated } = args.params;
+        const userId = userStore.currentUser.id;
+        for (let ref of state.cachedPlayerModerations.values()) {
+            if (
+                ref.type === type &&
+                ref.targetUserId === moderated &&
+                ref.sourceUserId === userId
+            ) {
+                state.cachedPlayerModerations.delete(ref.id);
+                API.$emit('PLAYER-MODERATION:@DELETE', {
+                    ref,
+                    params: {
+                        playerModerationId: ref.id
+                    }
+                });
+            }
+        }
+        state.cachedPlayerModerationsUserIds.delete(moderated);
+    });
+
+    API.$on('PLAYER-MODERATION', function (args) {
+        const { ref } = args;
+        const array = state.playerModerationTable.data;
+        const { length } = array;
+        for (let i = 0; i < length; ++i) {
+            if (array[i].id === ref.id) {
+                Vue.set(array, i, ref);
+                return;
+            }
+        }
+        state.playerModerationTable.data.push(ref);
+    });
+
+    API.$on('PLAYER-MODERATION:@DELETE', function (args) {
+        const { ref } = args;
+        const array = state.playerModerationTable.data;
+        const { length } = array;
+        for (let i = 0; i < length; ++i) {
+            if (array[i].id === ref.id) {
+                array.splice(i, 1);
+                return;
+            }
+        }
+    });
+
+    /**
+     * aka: `API.applyPlayerModeration`
+     * @param {object} json
+     * @returns {object}
+     */
+    function applyPlayerModeration(json) {
+        let ref = state.cachedPlayerModerations.get(json.id);
+        if (typeof ref === 'undefined') {
+            ref = {
+                id: '',
+                type: '',
+                sourceUserId: '',
+                sourceDisplayName: '',
+                targetUserId: '',
+                targetDisplayName: '',
+                created: '',
+                // VRCX
+                $isExpired: false,
+                //
+                ...json
+            };
+            state.cachedPlayerModerations.set(ref.id, ref);
+        } else {
+            Object.assign(ref, json);
+            ref.$isExpired = false;
+        }
+        if (json.targetUserId) {
+            state.cachedPlayerModerationsUserIds.add(json.targetUserId);
+        }
+        return ref;
+    }
+
+    /**
+     * aka: `API.expirePlayerModerations`
+     */
+    function expirePlayerModerations() {
+        state.cachedPlayerModerationsUserIds.clear();
+        for (let ref of state.cachedPlayerModerations.values()) {
+            ref.$isExpired = true;
+        }
+    }
+
+    /**
+     * aka: `API.deleteExpiredPlayerModerations`
+     */
+    function deleteExpiredPlayerModerations() {
+        for (let ref of state.cachedPlayerModerations.values()) {
+            if (!ref.$isExpired) {
+                continue;
+            }
+            API.$emit('PLAYER-MODERATION:@DELETE', {
+                ref,
+                params: {
+                    playerModerationId: ref.id
+                }
+            });
+        }
+    }
+
+    /**
+     * aka: `API.refreshPlayerModerations`
+     */
+    function refreshPlayerModerations() {
+        if (state.isPlayerModerationsLoading) {
+            return;
+        }
+        state.isPlayerModerationsLoading = true;
+        expirePlayerModerations();
+        Promise.all([
+            playerModerationRequest.getPlayerModerations(),
+            avatarModerationRequest.getAvatarModerations()
+        ])
+            .finally(() => {
+                state.isPlayerModerationsLoading = false;
+            })
+            .then((res) => {
+                // TODO: compare with cachedAvatarModerations
+                avatarStore.cachedAvatarModerations = new Map();
+                if (res[1]?.json) {
+                    for (const json of res[1].json) {
+                        avatarStore.applyAvatarModeration(json);
+                    }
+                }
+                deleteExpiredPlayerModerations();
+            });
+    }
+
+    return {
+        state,
+        cachedPlayerModerations,
+        cachedPlayerModerationsUserIds,
+        isPlayerModerationsLoading,
+        playerModerationTable,
+
+        refreshPlayerModerations,
+        handlePlayerModerationAtSend
+    };
+});

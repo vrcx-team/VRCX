@@ -1,14 +1,11 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="setAvatarTagsDialog"
         class="x-dialog"
-        :before-close="beforeDialogClose"
         :visible.sync="setAvatarTagsDialog.visible"
         :title="t('dialog.set_avatar_tags.header')"
         width="770px"
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <template v-if="setAvatarTagsDialog.visible">
             <el-checkbox v-model="setAvatarTagsDialog.contentHorror" @change="updateSelectedAvatarTags">{{
                 t('dialog.set_avatar_tags.content_horror')
@@ -93,19 +90,17 @@
                 t('dialog.set_avatar_tags.save')
             }}</el-button>
         </template>
-    </el-dialog>
+    </safe-dialog>
 </template>
 
 <script setup>
-    import { inject, watch, getCurrentInstance } from 'vue';
-
+    import { getCurrentInstance, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { avatarRequest } from '../../../api';
+    import { useAvatarStore } from '../../../stores';
 
-    const beforeDialogClose = inject('beforeDialogClose');
-    const dialogMouseDown = inject('dialogMouseDown');
-    const dialogMouseUp = inject('dialogMouseUp');
-    const showAvatarDialog = inject('showAvatarDialog');
+    const avatarStore = useAvatarStore();
+    const { showAvatarDialog } = avatarStore;
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
@@ -276,15 +271,6 @@
             }
         }
     }
-
-    // useless
-    // $app.data.avatarContentTags = [
-    //     'content_horror',
-    //     'content_gore',
-    //     'content_violence',
-    //     'content_adult',
-    //     'content_sex'
-    // ];
 </script>
 
 <style scoped></style>

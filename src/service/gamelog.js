@@ -90,7 +90,7 @@ class GameLogService {
             case 'sticker-spawn':
                 gameLog.userId = args[0];
                 gameLog.displayName = args[1];
-                gameLog.fileId = args[2];
+                gameLog.inventoryId = args[2];
                 break;
 
             default:

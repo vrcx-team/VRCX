@@ -1,13 +1,10 @@
 <template>
-    <el-dialog
+    <safe-dialog
         ref="newInstanceDialog"
-        :before-close="beforeDialogClose"
         :visible.sync="newInstanceDialog.visible"
         :title="$t('dialog.new_instance.header')"
         width="650px"
-        append-to-body
-        @mousedown.native="dialogMouseDown"
-        @mouseup.native="dialogMouseUp">
+        append-to-body>
         <el-tabs v-model="newInstanceDialog.selectedTab" type="card" @tab-click="newInstanceTabClick">
             <el-tab-pane :label="$t('dialog.new_instance.normal')">
                 <el-form :model="newInstanceDialog" label-width="150px">
@@ -73,37 +70,6 @@
                             <el-radio-button label="Japan">{{ $t('dialog.new_instance.region_jp') }}</el-radio-button>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item :label="$t('dialog.new_instance.content_settings')">
-                        <el-select
-                            v-model="newInstanceDialog.selectedContentSettings"
-                            multiple
-                            :placeholder="$t('dialog.new_instance.content_placeholder')"
-                            style="width: 100%"
-                            @change="buildInstance">
-                            <el-option-group :label="$t('dialog.new_instance.content_placeholder')">
-                                <el-option
-                                    class="x-friend-item"
-                                    value="emoji"
-                                    :label="$t('dialog.new_instance.content_emoji')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="stickers"
-                                    :label="$t('dialog.new_instance.content_stickers')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="pedestals"
-                                    :label="$t('dialog.new_instance.content_pedestals')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="prints"
-                                    :label="$t('dialog.new_instance.content_prints')"></el-option>
-                                <el-option
-                                    class="x-friend-item"
-                                    value="drones"
-                                    :label="$t('dialog.new_instance.content_drones')"></el-option>
-                            </el-option-group>
-                        </el-select>
-                    </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="$t('dialog.new_instance.queueEnabled')">
@@ -138,7 +104,7 @@
                             @change="buildInstance">
                             <el-option-group :label="$t('dialog.new_instance.group_placeholder')">
                                 <el-option
-                                    v-for="group in API.currentUserGroups.values()"
+                                    v-for="group in currentUserGroups.values()"
                                     v-if="
                                         group &&
                                         (hasGroupPermission(group, 'group-instance-public-create') ||
@@ -287,17 +253,17 @@
                             filterable
                             style="width: 100%"
                             @change="buildLegacyInstance">
-                            <el-option-group v-if="API.currentUser" :label="$t('side_panel.me')">
+                            <el-option-group v-if="currentUser" :label="$t('side_panel.me')">
                                 <el-option
                                     class="x-friend-item"
-                                    :label="API.currentUser.displayName"
-                                    :value="API.currentUser.id"
+                                    :label="currentUser.displayName"
+                                    :value="currentUser.id"
                                     style="height: auto">
-                                    <div class="avatar" :class="userStatusClass(API.currentUser)">
-                                        <img v-lazy="userImage(API.currentUser)" />
+                                    <div class="avatar" :class="userStatusClass(currentUser)">
+                                        <img v-lazy="userImage(currentUser)" />
                                     </div>
                                     <div class="detail">
-                                        <span class="name" v-text="API.currentUser.displayName"></span>
+                                        <span class="name" v-text="currentUser.displayName"></span>
                                     </div>
                                 </el-option>
                             </el-option-group>
@@ -403,7 +369,7 @@
                             @change="buildLegacyInstance">
                             <el-option-group :label="$t('dialog.new_instance.group_placeholder')">
                                 <el-option
-                                    v-for="group in API.currentUserGroups.values()"
+                                    v-for="group in currentUserGroups.values()"
                                     v-if="group"
                                     :key="group.id"
                                     class="x-friend-item"
@@ -445,7 +411,7 @@
                     size="small"
                     :disabled="
                         (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
-                        newInstanceDialog.userId !== API.currentUser.id
+                        newInstanceDialog.userId !== currentUser.id
                     "
                     @click="showInviteDialog(newInstanceDialog.location)"
                     >{{ $t('dialog.new_instance.invite') }}</el-button
@@ -474,7 +440,7 @@
                 size="small"
                 :disabled="
                     (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
-                    newInstanceDialog.userId !== API.currentUser.id
+                    newInstanceDialog.userId !== currentUser.id
                 "
                 @click="showInviteDialog(newInstanceDialog.location)"
                 >{{ $t('dialog.new_instance.invite') }}</el-button
@@ -486,56 +452,73 @@
                 >{{ $t('dialog.new_instance.launch') }}</el-button
             >
         </template>
-    </el-dialog>
+        <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
+    </safe-dialog>
 </template>
 
 <script>
-    import { groupRequest, instanceRequest } from '../../api';
-    import utils from '../../classes/utils';
+    import { storeToRefs } from 'pinia';
+    import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
+    import { API } from '../../service/eventBus';
+    import {
+        adjustDialogZ,
+        copyToClipboard,
+        getLaunchURL,
+        hasGroupPermission,
+        isRealInstance,
+        parseLocation,
+        userImage,
+        userStatusClass
+    } from '../../shared/utils';
+    import {
+        useFriendStore,
+        useGalleryStore,
+        useGroupStore,
+        useInstanceStore,
+        useLaunchStore,
+        useLocationStore,
+        useUserStore
+    } from '../../stores';
+    import InviteDialog from './InviteDialog/InviteDialog.vue';
 
     export default {
         name: 'NewInstanceDialog',
-        inject: [
-            'API',
-            'userImage',
-            'userStatusClass',
-            'beforeDialogClose',
-            'dialogMouseDown',
-            'dialogMouseUp',
-            'showInviteDialog',
-            'showLaunchDialog',
-            'adjustDialogZ'
-        ],
+        components: { InviteDialog },
         props: {
-            vipFriends: {
-                type: Array,
-                required: true
-            },
-            onlineFriends: {
-                type: Array,
-                required: true
-            },
-            activeFriends: {
-                type: Array,
-                required: true
-            },
-            offlineFriends: {
-                type: Array,
-                required: true
-            },
-            instanceContentSettings: {
-                type: Array,
-                required: true
-            },
-            createNewInstance: {
-                type: Function,
-                required: true
-            },
             newInstanceDialogLocationTag: {
                 type: String,
                 required: true
             }
+        },
+        setup() {
+            const { friends, vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
+            const { currentUserGroups, cachedGroups } = storeToRefs(useGroupStore());
+            const { lastLocation } = storeToRefs(useLocationStore());
+            const { showLaunchDialog } = useLaunchStore();
+            const { createNewInstance } = useInstanceStore();
+            const { uploadImage } = storeToRefs(useGalleryStore());
+            const { currentUser } = storeToRefs(useUserStore());
+            return {
+                friends,
+                vipFriends,
+                onlineFriends,
+                activeFriends,
+                offlineFriends,
+                currentUserGroups,
+                cachedGroups,
+                lastLocation,
+                API,
+                userStatusClass,
+                hasGroupPermission,
+                userImage,
+                showLaunchDialog,
+                createNewInstance,
+                uploadImage,
+                adjustDialogZ,
+                copyToClipboard,
+                currentUser
+            };
         },
         data() {
             return {
@@ -563,9 +546,15 @@
                     lastSelectedGroupId: '',
                     selectedGroupRoles: [],
                     roleIds: [],
-                    groupRef: {},
-                    contentSettings: this.instanceContentSettings,
-                    selectedContentSettings: []
+                    groupRef: {}
+                },
+                inviteDialog: {
+                    visible: false,
+                    loading: false,
+                    worldId: '',
+                    worldName: '',
+                    userIds: [],
+                    friendsInInstance: []
                 }
             };
         },
@@ -578,13 +567,42 @@
             this.initializeNewInstanceDialog();
         },
         methods: {
+            closeInviteDialog() {
+                this.inviteDialog.visible = false;
+            },
+            showInviteDialog(tag) {
+                if (!isRealInstance(tag)) {
+                    return;
+                }
+                const L = parseLocation(tag);
+                worldRequest
+                    .getCachedWorld({
+                        worldId: L.worldId
+                    })
+                    .then((args) => {
+                        const D = this.inviteDialog;
+                        D.userIds = [];
+                        D.worldId = L.tag;
+                        D.worldName = args.ref.name;
+                        D.friendsInInstance = [];
+                        const friendsInCurrentInstance = this.lastLocation.friendList;
+                        for (const friend of friendsInCurrentInstance.values()) {
+                            const ctx = this.friends.get(friend.userId);
+                            if (typeof ctx.ref === 'undefined') {
+                                continue;
+                            }
+                            D.friendsInInstance.push(ctx);
+                        }
+                        D.visible = true;
+                    });
+            },
             initNewInstanceDialog(tag) {
-                if (!utils.isRealInstance(tag)) {
+                if (!isRealInstance(tag)) {
                     return;
                 }
                 this.$nextTick(() => this.adjustDialogZ(this.$refs.newInstanceDialog.$el));
                 const D = this.newInstanceDialog;
-                const L = utils.parseLocation(tag);
+                const L = parseLocation(tag);
                 if (D.worldId === L.worldId) {
                     // reopening dialog, keep last open instance
                     D.visible = true;
@@ -599,7 +617,7 @@
                 D.strict = false;
                 D.shortName = '';
                 D.secureOrShortName = '';
-                groupRequest.getGroupPermissions({ userId: this.API.currentUser.id });
+                groupRequest.getGroupPermissions({ userId: this.currentUser.id });
                 this.buildInstance();
                 this.buildLegacyInstance();
                 this.updateNewInstanceDialog();
@@ -637,36 +655,19 @@
                 configRepository
                     .getBool('instanceDialogAgeGate', false)
                     .then((value) => (this.newInstanceDialog.ageGate = value));
-
-                configRepository
-                    .getString('instanceDialogSelectedContentSettings', JSON.stringify(this.instanceContentSettings))
-                    .then((value) => (this.newInstanceDialog.selectedContentSettings = JSON.parse(value)));
             },
             saveNewInstanceDialog() {
-                const {
-                    accessType,
-                    region,
-                    instanceName,
-                    userId,
-                    groupId,
-                    groupAccessType,
-                    queueEnabled,
-                    ageGate,
-                    selectedContentSettings
-                } = this.newInstanceDialog;
+                const { accessType, region, instanceName, userId, groupId, groupAccessType, queueEnabled, ageGate } =
+                    this.newInstanceDialog;
 
                 configRepository.setString('instanceDialogAccessType', accessType);
                 configRepository.setString('instanceRegion', region);
                 configRepository.setString('instanceDialogInstanceName', instanceName);
-                configRepository.setString('instanceDialogUserId', userId === this.API.currentUser.id ? '' : userId);
+                configRepository.setString('instanceDialogUserId', userId === this.currentUser.id ? '' : userId);
                 configRepository.setString('instanceDialogGroupId', groupId);
                 configRepository.setString('instanceDialogGroupAccessType', groupAccessType);
                 configRepository.setBool('instanceDialogQueueEnabled', queueEnabled);
                 configRepository.setBool('instanceDialogAgeGate', ageGate);
-                configRepository.setString(
-                    'instanceDialogSelectedContentSettings',
-                    JSON.stringify(selectedContentSettings)
-                );
             },
             newInstanceTabClick(tab) {
                 if (tab === '1') {
@@ -682,16 +683,16 @@
                 } else {
                     D.location = D.worldId;
                 }
-                const L = utils.parseLocation(D.location);
+                const L = parseLocation(D.location);
                 if (noChanges) {
                     L.shortName = D.shortName;
                 } else {
                     D.shortName = '';
                 }
-                D.url = utils.getLaunchURL(L);
+                D.url = getLaunchURL(L);
             },
             selfInvite(location) {
-                const L = utils.parseLocation(location);
+                const L = parseLocation(location);
                 if (!L.isRealInstance) {
                     return;
                 }
@@ -726,11 +727,11 @@
                 D.shortName = '';
                 D.secureOrShortName = '';
                 if (!D.userId) {
-                    D.userId = this.API.currentUser.id;
+                    D.userId = this.currentUser.id;
                 }
                 if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
                     D.roleIds = [];
-                    const ref = this.API.cachedGroups.get(D.groupId);
+                    const ref = this.cachedGroups.get(D.groupId);
                     if (typeof ref !== 'undefined') {
                         D.groupRef = ref;
                         D.selectedGroupRoles = ref.roles;
@@ -767,7 +768,7 @@
                     tags.push(String(randValue).padStart(5, '0'));
                 }
                 if (!D.userId) {
-                    D.userId = this.API.currentUser.id;
+                    D.userId = this.currentUser.id;
                 }
                 const userId = D.userId;
                 if (D.accessType !== 'public') {
@@ -805,7 +806,7 @@
                 }
                 if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
                     D.roleIds = [];
-                    const ref = this.API.cachedGroups.get(D.groupId);
+                    const ref = this.cachedGroups.get(D.groupId);
                     if (typeof ref !== 'undefined') {
                         D.groupRef = ref;
                         D.selectedGroupRoles = ref.roles;
@@ -831,7 +832,7 @@
                 this.saveNewInstanceDialog();
             },
             async copyInstanceUrl(location) {
-                const L = utils.parseLocation(location);
+                const L = parseLocation(location);
                 const args = await instanceRequest.getInstanceShortName({
                     worldId: L.worldId,
                     instanceId: L.instanceId
@@ -851,26 +852,8 @@
                         this.updateNewInstanceDialog(true);
                     }
                 }
-                const newUrl = utils.getLaunchURL(L);
+                const newUrl = getLaunchURL(L);
                 this.copyToClipboard(newUrl);
-            },
-            async copyToClipboard(newUrl) {
-                try {
-                    await navigator.clipboard.writeText(newUrl);
-                    this.$message({
-                        message: 'Instance copied to clipboard',
-                        type: 'success'
-                    });
-                } catch (error) {
-                    this.$message({
-                        message: 'Instance copied failed',
-                        type: 'error'
-                    });
-                    console.error(error.message);
-                }
-            },
-            hasGroupPermission(ref, permission) {
-                return utils.hasGroupPermission(ref, permission);
             }
         }
     };

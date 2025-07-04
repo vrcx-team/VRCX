@@ -10,21 +10,36 @@ class SharedRepository {
         return SharedVariable.Remove(_key);
     }
 
+    /**
+     * @param {string} key
+     * @param {string} defaultValue
+     * @returns {Promise<string | null>}
+     */
     async getString(key, defaultValue = null) {
         var _key = transformKey(key);
         var value = await SharedVariable.Get(_key);
-        if (value === null || value === undefined) {
+        if (value === null || value === undefined || value === 'undefined') {
             return defaultValue;
         }
         return value;
     }
 
+    /**
+     * @param {string} key
+     * @param {string} value
+     * @returns {Promise<void>}
+     */
     async setString(key, value) {
         var _key = transformKey(key);
         var _value = String(value);
         await SharedVariable.Set(_key, _value);
     }
 
+    /**
+     * @param {string} key
+     * @param {boolean} defaultValue
+     * @returns {Promise<boolean | null>}
+     */
     async getBool(key, defaultValue = null) {
         var value = await this.getString(key, null);
         if (value === null || value === undefined) {
@@ -33,10 +48,20 @@ class SharedRepository {
         return value === 'true';
     }
 
+    /**
+     * @param {string} key
+     * @param {boolean} value
+     * @returns {Promise<void>}
+     */
     async setBool(key, value) {
         await this.setString(key, value ? 'true' : 'false');
     }
 
+    /**
+     * @param {string} key
+     * @param {number} defaultValue
+     * @returns {Promise<number | null>}
+     */
     async getInt(key, defaultValue = null) {
         var value = await this.getString(key, null);
         if (value === null || value === undefined) {
@@ -87,6 +112,11 @@ class SharedRepository {
         await this.setString(key, JSON.stringify(value));
     }
 
+    /**
+     * @param {string} key
+     * @param {Array} defaultValue
+     * @returns {Promise<Array | null>}
+     */
     async getArray(key, defaultValue = null) {
         var value = await this.getObject(key, null);
         if (Array.isArray(value) === false) {
