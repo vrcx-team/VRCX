@@ -17,6 +17,12 @@ class ActivityType {
         return this._Competing;
     }
 }
+
 Object.freeze(ActivityType);
+
+Object.defineProperty(ActivityType, '_Playing', { writable: false });
+Object.defineProperty(ActivityType, '_Listening', { writable: false });
+Object.defineProperty(ActivityType, '_Watching', { writable: false });
+Object.defineProperty(ActivityType, '_Competing', { writable: false });
 
 export { ActivityType };
