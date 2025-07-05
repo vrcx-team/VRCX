@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { favoriteRequest } from '../api';
 import { $app } from '../app';
@@ -18,6 +18,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useGeneralSettingsStore } from './settings/general';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useAuthStore } from './auth';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -401,6 +402,18 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         });
         return groupedByGroupKeyFavoriteFriends;
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.favoriteDialog.visible = false;
+                state.worldImportDialogVisible = false;
+                state.avatarImportDialogVisible = false;
+                state.friendImportDialogVisible = false;
+            }
+        }
+    );
 
     API.$on('LOGIN', function () {
         friendStore.localFavoriteFriends.clear();

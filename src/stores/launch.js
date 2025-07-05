@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { instanceRequest } from '../api';
 import { $app } from '../app';
 import configRepository from '../service/config';
 import { parseLocation } from '../shared/utils';
+import { useAuthStore } from './auth';
 
 export const useLaunchStore = defineStore('Launch', () => {
     const state = reactive({
@@ -29,6 +30,15 @@ export const useLaunchStore = defineStore('Launch', () => {
             state.launchDialogData = value;
         }
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.isLaunchOptionsDialogVisible = false;
+            }
+        }
+    );
 
     function showLaunchOptions() {
         state.isLaunchOptionsDialogVisible = true;

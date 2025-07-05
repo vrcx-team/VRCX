@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { $app } from '../app';
 import { t } from '../plugin';
@@ -120,6 +120,17 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             state.updateProgress = value;
         }
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.VRCXUpdateDialog.visible = false;
+                state.changeLogDialog.visible = false;
+            }
+        }
+    );
+
     /**
      * @param {string} value
      */

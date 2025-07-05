@@ -538,6 +538,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 if (command) {
                     eventLaunchCommand(command);
                 }
+            } else {
+                state.isRegistryBackupDialogVisible = false;
             }
         }
     );

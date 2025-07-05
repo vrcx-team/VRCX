@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive } from 'vue';
+import Vue, { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import {
     avatarRequest,
@@ -239,6 +239,16 @@ export const useUserStore = defineStore('User', () => {
             state.customUserTags = value;
         }
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.userDialog.visible = false;
+                state.languageDialog.visible = false;
+            }
+        }
+    );
 
     API.$on('USER', function (args) {
         if (!args?.json?.id) {

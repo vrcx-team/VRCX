@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { avatarRequest, imageRequest } from '../api';
 import { $app } from '../app';
 import { database } from '../service/database';
@@ -20,6 +20,7 @@ import { useFavoriteStore } from './favorite';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
+import { useAuthStore } from './auth';
 
 export const useAvatarStore = defineStore('Avatar', () => {
     const favoriteStore = useFavoriteStore();
@@ -94,6 +95,15 @@ export const useAvatarStore = defineStore('Avatar', () => {
             state.cachedAvatarNames = value;
         }
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.avatarDialog.visible = false;
+            }
+        }
+    );
 
     API.$on('AVATAR', function (args) {
         args.ref = applyAvatar(args.json);

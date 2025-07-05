@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { $app } from '../app';
 import { database } from '../service/database';
@@ -17,6 +17,7 @@ import { useFavoriteStore } from './favorite';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useUserStore } from './user';
+import { useAuthStore } from './auth';
 
 export const useWorldStore = defineStore('World', () => {
     const locationStore = useLocationStore();
@@ -66,6 +67,15 @@ export const useWorldStore = defineStore('World', () => {
             state.cachedWorlds = value;
         }
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.worldDialog.visible = false;
+            }
+        }
+    );
 
     API.$on('WORLD', function (args) {
         args.ref = applyWorld(args.json);

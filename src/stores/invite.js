@@ -61,6 +61,8 @@ export const useInviteStore = defineStore('Invite', () => {
                 state.inviteResponseMessageTable.data = [];
                 state.inviteRequestMessageTable.data = [];
                 state.inviteRequestResponseMessageTable.data = [];
+            } else {
+                state.editInviteMessageDialog.visible = false;
                 state.inviteMessageTable.visible = false;
                 state.inviteResponseMessageTable.visible = false;
                 state.inviteRequestMessageTable.visible = false;

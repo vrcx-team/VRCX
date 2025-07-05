@@ -208,6 +208,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
                     tryDeleteOldPrints();
                 }
                 state.emojiTable = [];
+            } else {
+                state.galleryDialogVisible = false;
+                state.previousImagesDialogVisible = false;
+                state.fullscreenImageDialog.visible = false;
             }
         }
     );

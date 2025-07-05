@@ -145,6 +145,8 @@ export const useInstanceStore = defineStore('Instance', () => {
                 state.currentInstanceUserList.data = [];
                 state.instanceJoinHistory = new Map();
                 getInstanceJoinHistory();
+            } else {
+                state.previousInstancesInfoDialogVisible = false;
             }
         }
     );

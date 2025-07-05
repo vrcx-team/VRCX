@@ -209,6 +209,15 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     });
     const vrcRegistryAutoBackup = computed(() => state.vrcRegistryAutoBackup);
 
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.isVRChatConfigDialogVisible = false;
+            }
+        }
+    );
+
     /**
      * @param {boolean} value
      */

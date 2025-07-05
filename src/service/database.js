@@ -16,7 +16,7 @@ import { tableSize } from './database/tableSize.js';
 const dbVars = {
     userId: '',
     userPrefix: '',
-    maxTableSize: 100000
+    maxTableSize: 1000
 };
 
 const database = {

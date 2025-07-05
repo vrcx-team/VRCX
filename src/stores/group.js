@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import {
     groupRequest,
@@ -16,6 +16,7 @@ import { useFriendStore } from './friend';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useUserStore } from './user';
+import { useAuthStore } from './auth';
 
 export const useGroupStore = defineStore('Group', () => {
     const instanceStore = useInstanceStore();
@@ -116,6 +117,16 @@ export const useGroupStore = defineStore('Group', () => {
             state.currentUserGroupsInit = value;
         }
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.groupDialog.visible = false;
+                state.inviteGroupDialog.visible = false;
+            }
+        }
+    );
 
     function showGroupDialog(groupId) {
         if (!groupId) {

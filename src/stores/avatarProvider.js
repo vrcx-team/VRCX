@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import configRepository from '../service/config';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useAuthStore } from './auth';
 
 export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -93,6 +94,15 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
             state.avatarRemoteDatabaseProviderList = value;
         }
     });
+
+    watch(
+        () => useAuthStore().isLoggedIn,
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.isAvatarProviderDialogVisible = false;
+            }
+        }
+    );
 
     /**
      * @param {string} url
