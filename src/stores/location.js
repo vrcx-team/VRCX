@@ -32,7 +32,8 @@ export const useLocationStore = defineStore('Location', () => {
             location: '',
             name: '',
             playerList: new Map(),
-            friendList: new Map()
+            friendList: new Map(),
+            avatarList: new Map()
         },
         lastLocation$: {
             tag: '',

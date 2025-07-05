@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('Auth', () => {
         attemptingAutoLogin: false,
         autoLoginAttempts: new Set(),
         loginForm: {
-            loading: true,
+            loading: false,
             username: '',
             password: '',
             endpoint: '',

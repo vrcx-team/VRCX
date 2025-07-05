@@ -17,5 +17,6 @@ class ActivityType {
         return this._Competing;
     }
 }
+Object.freeze(ActivityType);
 
 export { ActivityType };
