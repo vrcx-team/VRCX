@@ -16,6 +16,7 @@ import { useUpdateLoopStore } from '../updateLoop';
 import { useUserStore } from '../user';
 import { useWorldStore } from '../world';
 import { useAdvancedSettingsStore } from './advanced';
+import { ActivityType } from '../../shared/constants/discord';
 
 export const useDiscordPresenceSettingsStore = defineStore(
     'DiscordPresenceSettings',
@@ -278,6 +279,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     hidePrivate = true;
                     break;
             }
+            let activityType = ActivityType.Playing;
             let appId = '883308884863901717';
             let bigIcon = 'vrchat';
             let partyId = `${L.worldId}:${L.instanceName}`;
@@ -309,18 +311,21 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     L.worldId === 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c' ||
                     L.worldId === 'wrld_04899f23-e182-4a8d-b2c7-2c74c7c15534'
                 ) {
+                    activityType = ActivityType.Listening;
                     appId = '784094509008551956';
                     bigIcon = 'pypy';
                 } else if (
                     L.worldId === 'wrld_42377cf1-c54f-45ed-8996-5875b0573a83' ||
                     L.worldId === 'wrld_dd6d2888-dbdc-47c2-bc98-3d631b2acd7c'
                 ) {
+                    activityType = ActivityType.Listening;
                     appId = '846232616054030376';
                     bigIcon = 'vr_dancing';
                 } else if (
                     L.worldId === 'wrld_52bdcdab-11cd-4325-9655-0fb120846945' ||
                     L.worldId === 'wrld_2d40da63-8f1f-4011-8a9e-414eb8530acd'
                 ) {
+                    activityType = ActivityType.Listening;
                     appId = '939473404808007731';
                     bigIcon = 'zuwa_zuwa_dance';
                 } else if (
@@ -329,11 +334,13 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e' ||
                     L.worldId === 'wrld_f767d1c8-b249-4ecc-a56f-614e433682c8'
                 ) {
+                    activityType = ActivityType.Watching;
                     appId = '968292722391785512';
                     bigIcon = 'ls_media';
                 } else if (
                     L.worldId === 'wrld_266523e8-9161-40da-acd0-6bd82e075833'
                 ) {
+                    activityType = ActivityType.Watching;
                     appId = '1095440531821170820';
                     bigIcon = 'movie_and_chill';
                 }
@@ -342,9 +349,8 @@ export const useDiscordPresenceSettingsStore = defineStore(
                 }
                 if (gameLogStore.nowPlaying.playing) {
                     Discord.SetTimestamps(
-                        Date.now(),
-                        (gameLogStore.nowPlaying.startTime -
-                            gameLogStore.nowPlaying.offset +
+                        gameLogStore.nowPlaying.startTime * 1000,
+                        (gameLogStore.nowPlaying.startTime +
                             gameLogStore.nowPlaying.length) *
                             1000
                     );
@@ -362,7 +368,8 @@ export const useDiscordPresenceSettingsStore = defineStore(
                 partyMaxSize, // party max size
                 buttonText, // button text
                 buttonUrl, // button url
-                appId // app id
+                appId, // app id
+                activityType // activity type
             );
             // NOTE
             // 글자 수가 짧으면 업데이트가 안된다..

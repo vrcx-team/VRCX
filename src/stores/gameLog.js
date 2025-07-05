@@ -1073,9 +1073,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const videoLength = Number(data[3]);
         let videoId = Number(data[4]);
         const displayName = data[5];
-        const videoName = data[6];
+        let videoName = data[6];
         if (videoId === -1) {
             videoId = 'YouTube';
+        }
+        const videoNameIndex = videoName.indexOf(']</b> ');
+        if (videoNameIndex !== -1) {
+            videoName = videoName.substring(videoNameIndex + 6);
         }
         if (parseInt(videoPos, 10) === parseInt(videoLength, 10)) {
             // ummm okay
