@@ -215,17 +215,18 @@
                                 {{ userDialog.ref.last_platform }}
                             </el-tag>
                             <el-tag
-                                v-if="
-                                    userDialog.ref.ageVerified &&
-                                    userDialog.ref.ageVerificationStatus &&
-                                    userDialog.ref.ageVerificationStatus !== 'hidden'
-                                "
+                                v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                                 type="info"
                                 effect="plain"
                                 size="mini"
                                 class="x-tag-age-verification"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ userDialog.ref.ageVerificationStatus }}
+                                <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
+                                    {{ t('dialog.user.tags.18_plus_verified') }}
+                                </template>
+                                <template v-else>
+                                    {{ t('dialog.user.tags.age_verified') }}
+                                </template>
                             </el-tag>
                             <el-tag
                                 v-if="userDialog.ref.$customTag"
