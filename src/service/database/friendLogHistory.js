@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const friendLogHistory = {
     async getFriendLogHistory() {
@@ -19,13 +20,13 @@ const friendLogHistory = {
                 row.previousTrustLevel = dbRow[7];
             }
             friendLogHistory.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_friend_log_history`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_friend_log_history`);
         return friendLogHistory;
     },
 
     addFriendLogHistory(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level, friend_number) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level, @friend_number)`,
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level, friend_number) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level, @friend_number)`,
             {
                 '@created_at': entry.created_at,
                 '@type': entry.type,
@@ -77,13 +78,13 @@ const friendLogHistory = {
             // sqlValues `('${line.created_at}', '${line.type}', '${line.userId}', '${line.displayName}', '${line.previousDisplayName}', '${line.trustLevel}', '${line.previousTrustLevel}'), `
         }
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level, friend_number) VALUES ${sqlValues}`
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level, friend_number) VALUES ${sqlValues}`
         );
     },
 
     deleteFriendLogHistory(rowId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_friend_log_history WHERE id = @row_id`,
+            `DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE id = @row_id`,
             {
                 '@row_id': rowId
             }

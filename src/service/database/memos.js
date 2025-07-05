@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const memos = {
     // user memos
@@ -137,7 +138,7 @@ const memos = {
 
     async addUserNote(note) {
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${this.userPrefix}_notes (user_id, display_name, note, created_at) VALUES (@user_id, @display_name, @note, @created_at)`,
+            `INSERT OR REPLACE INTO ${dbVars.userPrefix}_notes (user_id, display_name, note, created_at) VALUES (@user_id, @display_name, @note, @created_at)`,
             {
                 '@user_id': note.userId,
                 '@display_name': note.displayName,
@@ -157,13 +158,13 @@ const memos = {
                 createdAt: dbRow[3]
             };
             data.push(row);
-        }, `SELECT user_id, display_name, note, created_at FROM ${this.userPrefix}_notes`);
+        }, `SELECT user_id, display_name, note, created_at FROM ${dbVars.userPrefix}_notes`);
         return data;
     },
 
     async deleteUserNote(userId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_notes WHERE user_id = @userId`,
+            `DELETE FROM ${dbVars.userPrefix}_notes WHERE user_id = @userId`,
             {
                 '@userId': userId
             }

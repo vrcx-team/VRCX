@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const tableAlter = {
     async upgradeDatabaseVersion() {
@@ -68,10 +69,10 @@ const tableAlter = {
             const columnExists = dbRow.some((row) => row.name === 'time');
             if (!columnExists) {
                 sqliteService.executeNonQuery(
-                    `ALTER TABLE ${this.userPrefix}_avatar_history ADD time INTEGER DEFAULT 0`
+                    `ALTER TABLE ${dbVars.userPrefix}_avatar_history ADD time INTEGER DEFAULT 0`
                 );
             }
-        }, `PRAGMA table_info(${this.userPrefix}_avatar_history);`);
+        }, `PRAGMA table_info(${dbVars.userPrefix}_avatar_history);`);
     }
 };
 

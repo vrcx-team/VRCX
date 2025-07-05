@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const notifications = {
     async getNotifications() {
@@ -26,7 +27,7 @@ const notifications = {
                 row.$isExpired = true;
             }
             notifications.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_notifications ORDER BY created_at DESC LIMIT ${this.maxTableSize}`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_notifications ORDER BY created_at DESC LIMIT ${dbVars.maxTableSize}`);
         return notifications;
     },
 
@@ -62,7 +63,7 @@ const notifications = {
             throw new Error('Notification is missing required field');
         }
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_notifications (id, created_at, type, sender_user_id, sender_username, receiver_user_id, message, world_id, world_name, image_url, invite_message, request_message, response_message, expired) VALUES (@id, @created_at, @type, @sender_user_id, @sender_username, @receiver_user_id, @message, @world_id, @world_name, @image_url, @invite_message, @request_message, @response_message, @expired)`,
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_notifications (id, created_at, type, sender_user_id, sender_username, receiver_user_id, message, world_id, world_name, image_url, invite_message, request_message, response_message, expired) VALUES (@id, @created_at, @type, @sender_user_id, @sender_username, @receiver_user_id, @message, @world_id, @world_name, @image_url, @invite_message, @request_message, @response_message, @expired)`,
             {
                 '@id': entry.id,
                 '@created_at': entry.created_at,
@@ -84,7 +85,7 @@ const notifications = {
 
     deleteNotification(rowId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_notifications WHERE id = @row_id`,
+            `DELETE FROM ${dbVars.userPrefix}_notifications WHERE id = @row_id`,
             {
                 '@row_id': rowId
             }
@@ -97,7 +98,7 @@ const notifications = {
             expired = 1;
         }
         sqliteService.executeNonQuery(
-            `UPDATE ${this.userPrefix}_notifications SET expired = @expired WHERE id = @id`,
+            `UPDATE ${dbVars.userPrefix}_notifications SET expired = @expired WHERE id = @id`,
             {
                 '@id': entry.id,
                 '@expired': expired

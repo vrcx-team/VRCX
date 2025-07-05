@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const moderation = {
     async getModeration(userId) {
@@ -21,7 +22,7 @@ const moderation = {
                     mute
                 };
             },
-            `SELECT * FROM ${this.userPrefix}_moderation WHERE user_id = @userId`,
+            `SELECT * FROM ${dbVars.userPrefix}_moderation WHERE user_id = @userId`,
             {
                 '@userId': userId
             }
@@ -39,7 +40,7 @@ const moderation = {
             mute = 1;
         }
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${this.userPrefix}_moderation (user_id, updated_at, display_name, block, mute) VALUES (@user_id, @updated_at, @display_name, @block, @mute)`,
+            `INSERT OR REPLACE INTO ${dbVars.userPrefix}_moderation (user_id, updated_at, display_name, block, mute) VALUES (@user_id, @updated_at, @display_name, @block, @mute)`,
             {
                 '@user_id': entry.userId,
                 '@updated_at': entry.updatedAt,
@@ -52,7 +53,7 @@ const moderation = {
 
     deleteModeration(userId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_moderation WHERE user_id = @user_id`,
+            `DELETE FROM ${dbVars.userPrefix}_moderation WHERE user_id = @user_id`,
             {
                 '@user_id': userId
             }

@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const avatarFavorites = {
     addAvatarToCache(entry) {
@@ -23,7 +24,7 @@ const avatarFavorites = {
 
     addAvatarToHistory(avatarId) {
         sqliteService.executeNonQuery(
-            `INSERT INTO ${this.userPrefix}_avatar_history (avatar_id, created_at, time)
+            `INSERT INTO ${dbVars.userPrefix}_avatar_history (avatar_id, created_at, time)
             VALUES (@avatar_id, @created_at, 0)
             ON CONFLICT(avatar_id) DO UPDATE SET created_at = @created_at`,
             {
@@ -42,7 +43,7 @@ const avatarFavorites = {
             (row) => {
                 ref.timeSpent = row[0];
             },
-            `SELECT time FROM ${this.userPrefix}_avatar_history WHERE avatar_id = @avatarId`,
+            `SELECT time FROM ${dbVars.userPrefix}_avatar_history WHERE avatar_id = @avatarId`,
             {
                 '@avatarId': avatarId
             }
@@ -53,7 +54,7 @@ const avatarFavorites = {
 
     addAvatarTimeSpent(avatarId, timeSpent) {
         sqliteService.executeNonQuery(
-            `UPDATE ${this.userPrefix}_avatar_history SET time = time + @timeSpent WHERE avatar_id = @avatarId`,
+            `UPDATE ${dbVars.userPrefix}_avatar_history SET time = time + @timeSpent WHERE avatar_id = @avatarId`,
             {
                 '@avatarId': avatarId,
                 '@timeSpent': timeSpent
@@ -78,7 +79,7 @@ const avatarFavorites = {
                 version: dbRow[14]
             };
             data.push(row);
-        }, `SELECT * FROM ${this.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${this.userPrefix}_avatar_history.avatar_id WHERE author_id != "${currentUserId}" ORDER BY ${this.userPrefix}_avatar_history.created_at DESC LIMIT ${limit}`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${dbVars.userPrefix}_avatar_history.avatar_id WHERE author_id != "${currentUserId}" ORDER BY ${dbVars.userPrefix}_avatar_history.created_at DESC LIMIT ${limit}`);
         return data;
     },
 
@@ -111,7 +112,7 @@ const avatarFavorites = {
 
     clearAvatarHistory() {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_avatar_history`
+            `DELETE FROM ${dbVars.userPrefix}_avatar_history`
         );
         sqliteService.executeNonQuery('DELETE FROM cache_avatar');
     },

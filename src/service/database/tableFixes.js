@@ -1,9 +1,10 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const tableFixes = {
     async cleanLegendFromFriendLog() {
         await sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_friend_log_history
+            `DELETE FROM ${dbVars.userPrefix}_friend_log_history
             WHERE type = 'TrustLevel' AND created_at > '2022-05-04T01:00:00.000Z'
             AND ((trust_level = 'Veteran User' AND previous_trust_level = 'Trusted User') OR (trust_level = 'Trusted User' AND previous_trust_level = 'Veteran User'))`
         );
@@ -110,19 +111,19 @@ const tableFixes = {
 
     async fixBrokenNotifications() {
         await sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_notifications WHERE (created_at is null or created_at = '')`
+            `DELETE FROM ${dbVars.userPrefix}_notifications WHERE (created_at is null or created_at = '')`
         );
     },
 
     async fixBrokenGroupChange() {
         await sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_notifications WHERE type = 'groupChange' AND created_at < '2024-04-23T03:00:00.000Z'`
+            `DELETE FROM ${dbVars.userPrefix}_notifications WHERE type = 'groupChange' AND created_at < '2024-04-23T03:00:00.000Z'`
         );
     },
 
     async fixCancelFriendRequestTypo() {
         await sqliteService.executeNonQuery(
-            `UPDATE ${this.userPrefix}_friend_log_history SET type = 'CancelFriendRequest' WHERE type = 'CancelFriendRequst'`
+            `UPDATE ${dbVars.userPrefix}_friend_log_history SET type = 'CancelFriendRequest' WHERE type = 'CancelFriendRequst'`
         );
     },
 

@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const friendLogCurrent = {
     async getFriendLogCurrent() {
@@ -11,13 +12,13 @@ const friendLogCurrent = {
                 friendNumber: dbRow[3]
             };
             friendLogCurrent.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_friend_log_current`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_friend_log_current`);
         return friendLogCurrent;
     },
 
     setFriendLogCurrent(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${this.userPrefix}_friend_log_current (user_id, display_name, trust_level, friend_number) VALUES (@user_id, @display_name, @trust_level, @friend_number)`,
+            `INSERT OR REPLACE INTO ${dbVars.userPrefix}_friend_log_current (user_id, display_name, trust_level, friend_number) VALUES (@user_id, @display_name, @trust_level, @friend_number)`,
             {
                 '@user_id': entry.userId,
                 '@display_name': entry.displayName,
@@ -46,13 +47,13 @@ const friendLogCurrent = {
         }
         sqlValues = sqlValues.slice(0, -2);
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${this.userPrefix}_friend_log_current (user_id, display_name, trust_level, friend_number) VALUES ${sqlValues}`
+            `INSERT OR REPLACE INTO ${dbVars.userPrefix}_friend_log_current (user_id, display_name, trust_level, friend_number) VALUES ${sqlValues}`
         );
     },
 
     deleteFriendLogCurrent(userId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${this.userPrefix}_friend_log_current WHERE user_id = @user_id`,
+            `DELETE FROM ${dbVars.userPrefix}_friend_log_current WHERE user_id = @user_id`,
             {
                 '@user_id': userId
             }

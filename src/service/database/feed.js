@@ -1,4 +1,5 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const feed = {
     async getFeedDatabase() {
@@ -20,7 +21,7 @@ const feed = {
                 groupName: dbRow[8]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_feed_gps WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -34,7 +35,7 @@ const feed = {
                 previousStatusDescription: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_feed_status WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -46,7 +47,7 @@ const feed = {
                 previousBio: dbRow[5]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_feed_bio WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -62,7 +63,7 @@ const feed = {
                 previousCurrentAvatarThumbnailImageUrl: dbRow[9]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_feed_avatar WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -76,7 +77,7 @@ const feed = {
                 groupName: dbRow[8]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${this.userPrefix}_feed_online_offline WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -94,7 +95,7 @@ const feed = {
 
     addGPSToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time, group_name) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time, @group_name)`,
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time, group_name) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time, @group_name)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -110,7 +111,7 @@ const feed = {
 
     addStatusToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)`,
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -125,7 +126,7 @@ const feed = {
 
     addBioToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_feed_bio (created_at, user_id, display_name, bio, previous_bio) VALUES (@created_at, @user_id, @display_name, @bio, @previous_bio)`,
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_bio (created_at, user_id, display_name, bio, previous_bio) VALUES (@created_at, @user_id, @display_name, @bio, @previous_bio)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -138,7 +139,7 @@ const feed = {
 
     addAvatarToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)`,
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -158,7 +159,7 @@ const feed = {
 
     addOnlineOfflineToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${this.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time, group_name) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time, @group_name)`,
+            `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time, group_name) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time, @group_name)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -242,7 +243,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${this.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${this.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (status) {
             await sqliteService.execute((dbRow) => {
@@ -258,7 +259,7 @@ const feed = {
                     previousStatusDescription: dbRow[7]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${this.userPrefix}_feed_status WHERE (display_name LIKE '%${search}%' OR status LIKE '%${search}%' OR status_description LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${this.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_status WHERE (display_name LIKE '%${search}%' OR status LIKE '%${search}%' OR status_description LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (bio) {
             await sqliteService.execute((dbRow) => {
@@ -272,7 +273,7 @@ const feed = {
                     previousBio: dbRow[5]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${this.userPrefix}_feed_bio WHERE (display_name LIKE '%${search}%' OR bio LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${this.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_bio WHERE (display_name LIKE '%${search}%' OR bio LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (avatar) {
             var query = '';
@@ -296,7 +297,7 @@ const feed = {
                     previousCurrentAvatarThumbnailImageUrl: dbRow[9]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${this.userPrefix}_feed_avatar WHERE ((display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${this.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_avatar WHERE ((display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (online || offline) {
             var query = '';
@@ -320,7 +321,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${this.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${this.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%' OR group_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
@@ -334,7 +335,7 @@ const feed = {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        feedDatabase.splice(0, feedDatabase.length - this.maxTableSize);
+        feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
         return feedDatabase;
     },
 
@@ -387,7 +388,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${this.userPrefix}_feed_gps WHERE location LIKE '%${instanceId}%' ${vipQuery} ORDER BY id DESC LIMIT ${this.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_gps WHERE location LIKE '%${instanceId}%' ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         if (online || offline) {
             var query = '';
@@ -411,7 +412,7 @@ const feed = {
                     groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${this.userPrefix}_feed_online_offline WHERE (location LIKE '%${instanceId}%' ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${this.maxTableSize}`);
+            }, `SELECT * FROM ${dbVars.userPrefix}_feed_online_offline WHERE (location LIKE '%${instanceId}%' ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${dbVars.maxTableSize}`);
         }
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
@@ -425,7 +426,7 @@ const feed = {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        feedDatabase.splice(0, feedDatabase.length - this.maxTableSize);
+        feedDatabase.splice(0, feedDatabase.length - dbVars.maxTableSize);
         return feedDatabase;
     }
 };

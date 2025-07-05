@@ -1,11 +1,12 @@
 import sqliteService from '../sqlite.js';
+import { dbVars } from '../database';
 
 const tableSize = {
     async getMaxFriendLogNumber() {
         var friendNumber = 0;
         await sqliteService.execute((dbRow) => {
             friendNumber = dbRow[0];
-        }, `SELECT MAX(friend_number) FROM ${this.userPrefix}_friend_log_current`);
+        }, `SELECT MAX(friend_number) FROM ${dbVars.userPrefix}_friend_log_current`);
         return friendNumber;
     },
 
@@ -13,7 +14,7 @@ const tableSize = {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${this.userPrefix}_feed_gps`);
+        }, `SELECT COUNT(*) FROM ${dbVars.userPrefix}_feed_gps`);
         return size;
     },
 
@@ -21,7 +22,7 @@ const tableSize = {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${this.userPrefix}_feed_status`);
+        }, `SELECT COUNT(*) FROM ${dbVars.userPrefix}_feed_status`);
         return size;
     },
 
@@ -29,7 +30,7 @@ const tableSize = {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${this.userPrefix}_feed_bio`);
+        }, `SELECT COUNT(*) FROM ${dbVars.userPrefix}_feed_bio`);
         return size;
     },
 
@@ -37,7 +38,7 @@ const tableSize = {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${this.userPrefix}_feed_avatar`);
+        }, `SELECT COUNT(*) FROM ${dbVars.userPrefix}_feed_avatar`);
         return size;
     },
 
@@ -45,7 +46,7 @@ const tableSize = {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${this.userPrefix}_feed_online_offline`);
+        }, `SELECT COUNT(*) FROM ${dbVars.userPrefix}_feed_online_offline`);
         return size;
     },
 
@@ -53,7 +54,7 @@ const tableSize = {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${this.userPrefix}_friend_log_history`);
+        }, `SELECT COUNT(*) FROM ${dbVars.userPrefix}_friend_log_history`);
         return size;
     },
 
@@ -61,7 +62,7 @@ const tableSize = {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${this.userPrefix}_notifications`);
+        }, `SELECT COUNT(*) FROM ${dbVars.userPrefix}_notifications`);
         return size;
     },
 
