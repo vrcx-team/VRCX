@@ -52,6 +52,10 @@ interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
 interopApi.getDotNetObject('LogWatcher').Init();
 
+interopApi.getDotNetObject('IPCServer').Init();
+
+interopApi.getDotNetObject('AppApiVrElectron').Init();
+
 ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
 });
@@ -260,6 +264,78 @@ function createWindow() {
     mainWindow.on('restore', () => {
         mainWindow.webContents.send('setWindowState', '0');
     });
+}
+
+let testWindow = undefined;
+
+const net = require('net');
+const SOCKET_PATH = '/tmp/vrcx_frame.sock';
+//const fs = require('fs');
+if (fs.existsSync(SOCKET_PATH)) {
+    fs.unlinkSync(SOCKET_PATH);
+}
+
+// Create a Unix socket server to send frame data
+const server = net.createServer((socket) => {
+    console.log('C# client connected to Unix socket');
+    
+    setInterval(() => {
+        //console.log('capturing page');
+        if (testWindow && !testWindow.isDestroyed()) {
+            //console.log('testwindow capturing page');
+            testWindow.webContents.capturePage().then(image => {
+                const buffer = image.toBitmap(); // Get raw pixels (RGBA)
+                //console.log('captured page');
+                socket.write(buffer);
+            }).catch(err => console.error('Error capturing page:', err));
+        }
+    }, 1000 / 24); // 24 FPS
+});
+
+server.listen(SOCKET_PATH, () => {
+    console.log(`Unix socket server listening at ${SOCKET_PATH}`);
+});
+
+function createWindowOffscreen() {
+    const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
+    const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
+    const width = 512;
+    const height = 512;
+
+    testWindow = new BrowserWindow({
+        x,
+        y,
+        width,
+        height,
+        icon: path.join(rootDir, 'VRCX.png'),
+        autoHideMenuBar: true,
+        transparent: true, 
+        frame: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        },
+        webContents: {
+            userAgent: version
+        }
+    });
+
+    const indexPath = path.join(rootDir, 'build/html/vr.html');
+    testWindow.loadFile(indexPath, { userAgent: version });
+
+    offscreenWindow = new BrowserWindow({
+      width: 512,
+      height: 512,
+      show: false,
+      transparent: true,
+      webPreferences: {
+        offscreen: true,
+        preload: path.join(__dirname, 'offscreen-preload.js')
+      }
+    });
+
+    offscreenWindow.loadFile(path.join(__dirname, 'offscreen.html'));
+
+    offscreenWindow.webContents.setFrameRate(60);
 }
 
 function createTray() {
@@ -594,6 +670,8 @@ function applyWindowState() {
 
 app.whenReady().then(() => {
     createWindow();
+
+    createWindowOffscreen();
 
     createTray();
 

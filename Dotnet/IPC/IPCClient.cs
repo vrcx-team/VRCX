@@ -18,7 +18,7 @@ using CefSharp;
 
 namespace VRCX
 {
-    internal class IPCClient
+    public class IPCClient
     {
         private static readonly UTF8Encoding noBomEncoding = new UTF8Encoding(false, false);
         private readonly NamedPipeServerStream _ipcServer;

@@ -671,7 +671,7 @@ mixin settingsTab
                             style='margin-left: 10px') {{ $t('view.settings.notifications.notifications.text_to_speech.play') }}
 
             //- Wrist Overlay Tab
-            el-tab-pane(lazy :label='$t("view.settings.category.wrist_overlay")' v-if='!isLinux')
+            el-tab-pane(lazy :label='$t("view.settings.category.wrist_overlay")')
                 //- Wrist Overlay | SteamVR Wrist Overlay
                 .options-container(style='margin-top: 0')
                     span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}

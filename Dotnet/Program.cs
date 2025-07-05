@@ -23,9 +23,7 @@ namespace VRCX
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-#if !LINUX
         public static VRCXVRInterface VRCXVRInstance { get; private set; }
-#endif
         public static AppApi AppApiInstance { get; private set; }
 
         private static void SetProgramDirectories()
@@ -73,7 +71,7 @@ namespace VRCX
             try
             {
                 var versionFile = File.ReadAllText(Path.Join(BaseDirectory, "Version")).Trim();
-                
+
                 // look for trailing git hash "-22bcd96" to indicate nightly build
                 var version = versionFile.Split('-');
                 if (version.Length > 0 && version[^1].Length == 7)
@@ -233,7 +231,7 @@ namespace VRCX
             SQLiteLegacy.Instance.Init();
             AppApiInstance = new AppApiCef();
 
-            AppApiVr.Instance.Init();
+            AppApiVrCef.Instance.Init();
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
             WorldDBManager.Instance.Init();
@@ -286,6 +284,9 @@ namespace VRCX
 
             AppApiInstance = new AppApiElectron();
             // ProcessMonitor.Instance.Init();
+
+            VRCXVRInstance = new VRCXVRElectron();
+            VRCXVRInstance.Init();
         }
 #endif
     }

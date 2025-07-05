@@ -6,13 +6,13 @@ using CefSharp;
 
 namespace VRCX
 {
-    public class AppApiVr
+    public class AppApiVrCef
     {
-        public static readonly AppApiVr Instance;
+        public static readonly AppApiVrCef Instance;
 
-        static AppApiVr()
+        static AppApiVrCef()
         {
-            Instance = new AppApiVr();
+            Instance = new AppApiVrCef();
         }
 
         public void Init()
@@ -22,22 +22,23 @@ namespace VRCX
         
         public void VrInit()
         {
-            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("$app.vrInit", "");
+            //if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
+            //    MainForm.Instance.Browser.ExecuteScriptAsync("$app.vrInit", "");
         }
         
         public void ToggleSystemMonitor(bool enabled)
         {
-            SystemMonitor.Instance.Start(enabled);
+            //SystemMonitor.Instance.Start(enabled);
         }
-        
+
         /// <summary>
         /// Returns the current CPU usage as a percentage.
         /// </summary>
         /// <returns>The current CPU usage as a percentage.</returns>
         public float CpuUsage()
         {
-            return SystemMonitor.Instance.CpuUsage;
+            //return SystemMonitor.Instance.CpuUsage;
+            return 0;
         }
         
         /// <summary>
@@ -49,14 +50,15 @@ namespace VRCX
         {
             return Program.VRCXVRInstance.GetDevices();
         }
-        
+
         /// <summary>
         /// Returns the number of milliseconds that the system has been running.
         /// </summary>
         /// <returns>The number of milliseconds that the system has been running.</returns>
         public double GetUptime()
         {
-            return SystemMonitor.Instance.UpTime;
+            //return SystemMonitor.Instance.UpTime;
+            return 0;
         }
         
         /// <summary>
@@ -79,11 +81,6 @@ namespace VRCX
             if (File.Exists(filePath))
                 output = filePath;
             return output;
-        }
-        
-        public bool IsRunningUnderWine()
-        {
-            return Wine.GetIfWine();
         }
     }
 }

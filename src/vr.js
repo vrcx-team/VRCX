@@ -21,13 +21,18 @@ import * as localizedStrings from './localization/localizedStrings.js';
 import $utils from './classes/utils.js';
 
 import pugTemplate from './vr.pug';
+import InteropApi from './ipc-electron/interopApi.js';
 
 Vue.component('marquee-text', MarqueeText);
 
 (async function () {
     let $app = {};
 
-    await CefSharp.BindObjectAsync('AppApiVr');
+    if (WINDOWS) {
+        await CefSharp.BindObjectAsync('AppApiVr');
+    } else {
+        window.AppApiVrElectron = InteropApi.AppApiVrElectron;
+    }
 
     Noty.overrideDefaults({
         animation: {
@@ -132,7 +137,7 @@ Vue.component('marquee-text', MarqueeText);
         data: {
             // 1 = 대시보드랑 손목에 보이는거
             // 2 = 항상 화면에 보이는 거
-            appType: location.href.substr(-1),
+            appType: '1',
             appLanguage: 'en',
             currentCulture: 'en-nz',
             isRunningUnderWine: false,
@@ -176,9 +181,15 @@ Vue.component('marquee-text', MarqueeText);
         watch: {},
         el: '#root',
         async mounted() {
-            this.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
-            await this.applyWineEmojis();
-            workerTimers.setTimeout(() => AppApiVr.VrInit(), 5000);
+            if (WINDOWS) {
+                this.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
+                await this.applyWineEmojis();
+            } else {
+                workerTimers.setTimeout(() =>
+                    AppApiVrElectron.SetVrInit(true), 
+                5000);
+            }
+
             if (this.appType === '1') {
                 this.refreshCustomScript();
                 this.updateStatsLoop();
@@ -200,9 +211,11 @@ Vue.component('marquee-text', MarqueeText);
         ) {
             this.cpuUsageEnabled = this.config.vrOverlayCpuUsage;
             this.pcUptimeEnabled = this.config.pcUptimeOnFeed;
-            AppApiVr.ToggleSystemMonitor(
-                this.cpuUsageEnabled || this.pcUptimeEnabled
-            );
+            if (WINDOWS) {
+                AppApiVr.ToggleSystemMonitor(
+                    this.cpuUsageEnabled || this.pcUptimeEnabled
+                );
+            }
         }
         if (this.config.notificationOpacity !== this.notificationOpacity) {
             this.notificationOpacity = this.config.notificationOpacity;
@@ -266,15 +279,27 @@ Vue.component('marquee-text', MarqueeText);
         if (document.contains(document.getElementById('vr-custom-script'))) {
             document.getElementById('vr-custom-script').remove();
         }
-        AppApiVr.CustomVrScriptPath().then((customScript) => {
-            var head = document.head;
-            if (customScript) {
-                var $vrCustomScript = document.createElement('script');
-                $vrCustomScript.setAttribute('id', 'vr-custom-script');
-                $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
-                head.appendChild($vrCustomScript);
-            }
-        });
+        if (WINDOWS) {
+            AppApiVr.CustomVrScriptPath().then((customScript) => {
+                var head = document.head;
+                if (customScript) {
+                    var $vrCustomScript = document.createElement('script');
+                    $vrCustomScript.setAttribute('id', 'vr-custom-script');
+                    $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
+                    head.appendChild($vrCustomScript);
+                }
+            });
+        } else {
+            AppApiVrElectron.CustomVrScriptPath().then((customScript) => {
+                var head = document.head;
+                if (customScript) {
+                    var $vrCustomScript = document.createElement('script');
+                    $vrCustomScript.setAttribute('id', 'vr-custom-script');
+                    $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
+                    head.appendChild($vrCustomScript);
+                }
+            });
+        }
     };
 
     $app.methods.setNotyOpacity = function (value) {
@@ -292,6 +317,25 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.updateStatsLoop = async function () {
         try {
+            if (LINUX) {
+                const queue = await AppApiVrElectron.GetExecuteVrFeedFunctionQueue();
+                if (queue) {
+                    queue.forEach((item) => {
+                        // item[0] is the function name, item[1] is already an object
+                        const fullFunctionName = item[0];
+                        const jsonArg = item[1];
+
+                        // If $app and the function exist
+                        if (typeof window.$app === 'object' && typeof window.$app[fullFunctionName] === 'function') {
+                            // No need to parse here, because it's already an object
+                            window.$app[fullFunctionName](jsonArg);
+                        } else {
+                            console.error(`$app.${fullFunctionName} is not defined or is not a function`);
+                        }
+                    });
+                }
+            }
+
             this.currentTime = new Date()
                 .toLocaleDateString(this.currentCulture, {
                     month: '2-digit',
@@ -306,7 +350,7 @@ Vue.component('marquee-text', MarqueeText);
                 .replace(' PM', ' pm')
                 .replace(',', '');
 
-            if (this.cpuUsageEnabled) {
+            if (WINDOWS && this.cpuUsageEnabled) {
                 var cpuUsage = await AppApiVr.CpuUsage();
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
@@ -325,7 +369,7 @@ Vue.component('marquee-text', MarqueeText);
                 this.onlineForTimer = '';
             }
 
-            if (!this.config.hideDevicesFromFeed) {
+            if (WINDOWS && !this.config.hideDevicesFromFeed) {
                 AppApiVr.GetVRDevices().then((devices) => {
                     var deviceList = [];
                     var baseStations = 0;
@@ -375,11 +419,19 @@ Vue.component('marquee-text', MarqueeText);
                 this.devices = [];
             }
             if (this.config.pcUptimeOnFeed) {
-                AppApiVr.GetUptime().then((uptime) => {
-                    if (uptime) {
-                        this.pcUptime = $utils.timeToText(uptime);
-                    }
-                });
+                if (WINDOWS) {
+                    AppApiVr.GetUptime().then((uptime) => {
+                        if (uptime) {
+                            this.pcUptime = $utils.timeToText(uptime);
+                        }
+                    });
+                } else {
+                    AppApiVrElectron.GetUptime().then((uptime) => {
+                        if (uptime) {
+                            this.pcUptime = $utils.timeToText(uptime);
+                        }
+                    });
+                }
             } else {
                 this.pcUptime = '';
             }
@@ -655,7 +707,11 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     $app.methods.setDatetimeFormat = async function () {
-        this.currentCulture = await AppApiVr.CurrentCulture();
+        if (WINDOWS) {
+            this.currentCulture = await AppApiVr.CurrentCulture();
+        } else {
+            this.currentCulture = await AppApiVrElectron.CurrentCulture();
+        }
         var formatDate = function (date) {
             if (!date) {
                 return '';

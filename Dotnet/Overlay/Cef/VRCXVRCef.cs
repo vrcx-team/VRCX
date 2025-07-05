@@ -24,7 +24,7 @@ using Device4 = SharpDX.Direct3D11.Device4;
 
 namespace VRCX
 {
-    public class VRCXVR : VRCXVRInterface
+    public class VRCXVRCef : VRCXVRInterface
     {
         public static VRCXVRInterface Instance;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
@@ -57,12 +57,12 @@ namespace VRCX
         private bool _wristOverlayWasActive;
 
 
-        static VRCXVR()
+        static VRCXVRCef()
         {
-            Instance = new VRCXVR();
+            Instance = new VRCXVRCef();
         }
 
-        public VRCXVR()
+        public VRCXVRCef()
         {
             _deviceListLock = new ReaderWriterLockSlim();
             _deviceList = new List<string[]>();

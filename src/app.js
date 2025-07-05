@@ -199,6 +199,9 @@ console.log(`isLinux: ${LINUX}`);
         window.LogWatcher = InteropApi.LogWatcher;
         window.Discord = InteropApi.Discord;
         window.AssetBundleManager = InteropApi.AssetBundleManager;
+        if (LINUX) {
+            window.AppApiVrElectron = InteropApi.AppApiVrElectron;
+        }
     }
 
     // #region | localization
@@ -2598,6 +2601,10 @@ console.log(`isLinux: ${LINUX}`);
     workerTimers.setInterval(function () {
         for (var $timer of $timers) {
             $timer.update();
+        }
+
+        if (LINUX && AppApiVrElectron.IsVrInit()) {
+            $app.vrInit(); 
         }
     }, 5000);
 
@@ -7481,6 +7488,9 @@ console.log(`isLinux: ${LINUX}`);
         this.updateSharedFeed(true);
         this.onlineFriendCount = 0;
         this.updateOnlineFriendCoutner();
+        if (LINUX) {
+            AppApiVrElectron.SetVrInit(false);
+        }
     };
 
     API.$on('LOGIN', function () {
