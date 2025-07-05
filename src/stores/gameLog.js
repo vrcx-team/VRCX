@@ -214,6 +214,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function loadPlayerList() {
+        console.log('Loading player list from game log...');
         let ctx;
         let i;
         const data = state.gameLogSessionTable;
@@ -229,7 +230,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     location: ctx.location,
                     name: ctx.worldName,
                     playerList: new Map(),
-                    friendList: new Map()
+                    friendList: new Map(),
+                    avatarList: new Map()
                 };
                 length = i;
                 break;
@@ -267,6 +269,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (ctx.type === 'OnPlayerLeft') {
                     locationStore.lastLocation.playerList.delete(ctx.userId);
                     locationStore.lastLocation.friendList.delete(ctx.userId);
+                    locationStore.lastLocation.avatarList.delete(ctx.userId);
                 }
             }
             locationStore.lastLocation.playerList.forEach((ref1) => {
@@ -528,7 +531,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         location: gameLog.location,
                         name: worldName,
                         playerList: new Map(),
-                        friendList: new Map()
+                        friendList: new Map(),
+                        avatarList: new Map()
                     };
                     instanceStore.removeQueuedInstance(gameLog.location);
                     locationStore.updateCurrentUserLocation();
@@ -625,6 +629,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 const time = dayjs(gameLog.dt) - ref.joinTime;
                 locationStore.lastLocation.playerList.delete(userId);
                 locationStore.lastLocation.friendList.delete(userId);
+                locationStore.lastLocation.avatarList.delete(userId);
                 photonStore.photonLobbyAvatars.delete(userId);
                 vrStore.updateVRLastLocation();
                 instanceStore.getCurrentInstanceUserList();
@@ -762,26 +767,32 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
                 break;
             case 'avatar-change':
-                var ref = locationStore.lastLocation.playerList.get(userId);
+                if (!gameStore.isGameRunning) {
+                    break;
+                }
+                let avatarName =
+                    locationStore.lastLocation.avatarList.get(userId);
                 if (
                     photonStore.photonLoggingEnabled ||
-                    typeof ref === 'undefined' ||
-                    ref.lastAvatar === gameLog.avatarName
+                    avatarName === gameLog.avatarName
                 ) {
                     break;
                 }
-                if (!ref.lastAvatar) {
-                    ref.lastAvatar = gameLog.avatarName;
-                    locationStore.lastLocation.playerList.set(userId, ref);
+                if (!avatarName) {
+                    avatarName = gameLog.avatarName;
+                    locationStore.lastLocation.avatarList.set(
+                        userId,
+                        avatarName
+                    );
                     break;
                 }
-                ref.lastAvatar = gameLog.avatarName;
-                locationStore.lastLocation.playerList.set(userId, ref);
+                avatarName = gameLog.avatarName;
+                locationStore.lastLocation.avatarList.set(userId, avatarName);
                 var entry = {
                     created_at: gameLog.dt,
                     type: 'AvatarChange',
                     userId,
-                    name: gameLog.avatarName,
+                    name: avatarName,
                     displayName: gameLog.displayName
                 };
                 break;
