@@ -95,6 +95,22 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     );
 
+    watch(
+        [() => state.isLoggedIn, () => userStore.currentUser],
+        ([isLoggedIn, currentUser]) => {
+            if (isLoggedIn) {
+                state.twoFactorAuthDialogVisible = false;
+                updateStoredUser(currentUser);
+                new Noty({
+                    type: 'success',
+                    text: `Hello there, <strong>${escapeTag(
+                        currentUser.displayName
+                    )}</strong>!`
+                }).show();
+            }
+        }
+    );
+
     API.$on('LOGOUT', function () {
         if (state.isLoggedIn) {
             new Noty({
@@ -107,16 +123,6 @@ export const useAuthStore = defineStore('Auth', () => {
         state.isLoggedIn = false;
         friendStore.friendLogInitStatus = false;
         notificationStore.notificationInitStatus = false;
-    });
-
-    API.$on('LOGIN', function (args) {
-        new Noty({
-            type: 'success',
-            text: `Hello there, <strong>${escapeTag(
-                args.ref.displayName
-            )}</strong>!`
-        }).show();
-        updateStoredUser(userStore.currentUser);
     });
 
     API.$on('LOGOUT', async function () {
