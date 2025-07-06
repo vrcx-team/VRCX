@@ -1713,12 +1713,12 @@ export const useUserStore = defineStore('User', () => {
                     const ref = args.json;
                     const $ref = state.currentUser;
                     const props = {};
-                    for (var prop in $ref) {
+                    for (const prop in $ref) {
                         if ($ref[prop] !== Object($ref[prop])) {
                             props[prop] = true;
                         }
                     }
-                    for (var prop in ref) {
+                    for (const prop in ref) {
                         if (
                             Array.isArray(ref[prop]) &&
                             Array.isArray($ref[prop])
@@ -1731,7 +1731,7 @@ export const useUserStore = defineStore('User', () => {
                         }
                     }
                     let has = false;
-                    for (var prop in props) {
+                    for (const prop in props) {
                         const asis = $ref[prop];
                         const tobe = ref[prop];
                         if (asis === tobe) {

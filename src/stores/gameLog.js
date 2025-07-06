@@ -488,12 +488,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     function addGameLogEntry(gameLog, location) {
+        let entry = undefined;
         if (advancedSettingsStore.gameLogDisabled) {
             return;
         }
         let userId = String(gameLog.userId || '');
         if (!userId && gameLog.displayName) {
-            for (var ref of userStore.cachedUsers.values()) {
+            for (const ref of userStore.cachedUsers.values()) {
                 if (ref.displayName === gameLog.displayName) {
                     userId = ref.id;
                     break;
@@ -554,7 +555,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     gameLog.dt
                 );
                 const L = parseLocation(gameLog.location);
-                var entry = {
+                entry = {
                     created_at: gameLog.dt,
                     type: 'Location',
                     location: gameLog.location,
@@ -577,7 +578,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     lastAvatar: ''
                 };
                 locationStore.lastLocation.playerList.set(userId, userMap);
-                var ref = userStore.cachedUsers.get(userId);
+                const ref = userStore.cachedUsers.get(userId);
                 if (!userId) {
                     console.error('Missing userId:', gameLog.displayName);
                 } else if (userId === userStore.currentUser.id) {
@@ -603,7 +604,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
                 vrStore.updateVRLastLocation();
                 instanceStore.getCurrentInstanceUserList();
-                var entry = {
+                entry = {
                     created_at: gameLog.dt,
                     type: 'OnPlayerJoined',
                     displayName: gameLog.displayName,
@@ -614,8 +615,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 database.addGamelogJoinLeaveToDatabase(entry);
                 break;
             case 'player-left':
-                var ref = locationStore.lastLocation.playerList.get(userId);
-                if (typeof ref === 'undefined') {
+                const ref1 = locationStore.lastLocation.playerList.get(userId);
+                if (typeof ref1 === 'undefined') {
                     break;
                 }
                 const friendRef = friendStore.friends.get(userId);
@@ -623,7 +624,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     friendRef.ref.$joinCount++;
                     friendRef.ref.$lastSeen = new Date().toJSON();
                     friendRef.ref.$timeSpent +=
-                        dayjs(gameLog.dt) - ref.joinTime;
+                        dayjs(gameLog.dt) - ref1.joinTime;
                     if (
                         appearanceSettingsStore.sidebarSortMethods.includes(
                             'Sort by Last Seen'
@@ -633,14 +634,14 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         friendStore.sortOnlineFriends = true;
                     }
                 }
-                const time = dayjs(gameLog.dt) - ref.joinTime;
+                const time = dayjs(gameLog.dt) - ref1.joinTime;
                 locationStore.lastLocation.playerList.delete(userId);
                 locationStore.lastLocation.friendList.delete(userId);
                 locationStore.lastLocation.avatarList.delete(userId);
                 photonStore.photonLobbyAvatars.delete(userId);
                 vrStore.updateVRLastLocation();
                 instanceStore.getCurrentInstanceUserList();
-                var entry = {
+                entry = {
                     created_at: gameLog.dt,
                     type: 'OnPlayerLeft',
                     displayName: gameLog.displayName,
@@ -654,7 +655,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (vrcxStore.ipcEnabled && gameStore.isGameRunning) {
                     break;
                 }
-                var entry = {
+                entry = {
                     created_at: gameLog.dt,
                     type: 'PortalSpawn',
                     location,
@@ -688,7 +689,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     break;
                 }
                 state.lastResourceloadUrl = gameLog.resourceUrl;
-                var entry = {
+                entry = {
                     created_at: gameLog.dt,
                     type:
                         gameLog.type === 'resource-load-string'
@@ -700,7 +701,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 database.addGamelogResourceLoadToDatabase(entry);
                 break;
             case 'screenshot':
-                // var entry = {
+                // entry = {
                 //     created_at: gameLog.dt,
                 //     type: 'Event',
                 //     data: `Screenshot Processed: ${gameLog.screenshotPath.replace(
@@ -716,12 +717,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (API.debugWebRequests) {
                     console.log('API Request:', gameLog.url);
                 }
-                // var userId = '';
+                // const userId = '';
                 // try {
-                //     var url = new URL(gameLog.url);
-                //     var urlParams = new URLSearchParams(gameLog.url);
+                //     const url = new URL(gameLog.url);
+                //     const urlParams = new URLSearchParams(gameLog.url);
                 //     if (url.pathname.substring(0, 13) === '/api/1/users/') {
-                //         var pathArray = url.pathname.split('/');
+                //         const pathArray = url.pathname.split('/');
                 //         userId = pathArray[4];
                 //     } else if (urlParams.has('userId')) {
                 //         userId = urlParams.get('userId');
@@ -795,13 +796,17 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
                 avatarName = gameLog.avatarName;
                 locationStore.lastLocation.avatarList.set(userId, avatarName);
-                var entry = {
-                    created_at: gameLog.dt,
-                    type: 'AvatarChange',
-                    userId,
-                    name: avatarName,
-                    displayName: gameLog.displayName
-                };
+                const userRef =
+                    locationStore.lastLocation.playerList.get(userId);
+                if (typeof userRef !== 'undefined') {
+                    entry = {
+                        created_at: gameLog.dt,
+                        type: 'AvatarChange',
+                        userId,
+                        name: avatarName,
+                        displayName: gameLog.displayName
+                    };
+                }
                 break;
             case 'vrcx':
                 // VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/jr1NX4Jo8GE.mp4",0.1001,239.606,"0905 : [J-POP] 【まなこ】金曜日のおはよう 踊ってみた (vernities)"
@@ -826,32 +831,32 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     break;
                 }
                 const photonId = parseInt(gameLog.photonId, 10);
-                var ref = photonStore.photonLobby.get(photonId);
-                if (typeof ref === 'undefined') {
-                    for (var ctx of userStore.cachedUsers.values()) {
+                const ref2 = photonStore.photonLobby.get(photonId);
+                if (typeof ref2 === 'undefined') {
+                    for (const ctx of userStore.cachedUsers.values()) {
                         if (ctx.displayName === gameLog.displayName) {
                             photonStore.photonLobby.set(photonId, ctx);
                             photonStore.photonLobbyCurrent.set(photonId, ctx);
                             break;
                         }
                     }
-                    var ctx = {
+                    const ctx1 = {
                         displayName: gameLog.displayName
                     };
-                    photonStore.photonLobby.set(photonId, ctx);
-                    photonStore.photonLobbyCurrent.set(photonId, ctx);
+                    photonStore.photonLobby.set(photonId, ctx1);
+                    photonStore.photonLobbyCurrent.set(photonId, ctx1);
                     instanceStore.getCurrentInstanceUserList();
                 }
                 break;
             case 'notification':
-                // var entry = {
+                // entry = {
                 //     created_at: gameLog.dt,
                 //     type: 'Notification',
                 //     data: gameLog.json
                 // };
                 break;
             case 'event':
-                var entry = {
+                entry = {
                     created_at: gameLog.dt,
                     type: 'Event',
                     data: gameLog.event
@@ -897,7 +902,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (generalSettingsStore.udonExceptionLogging) {
                     console.log('UdonException', gameLog.data);
                 }
-                // var entry = {
+                // entry = {
                 //     created_at: gameLog.dt,
                 //     type: 'Event',
                 //     data: gameLog.data
@@ -916,7 +921,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 );
                 break;
         }
-        if (entry) {
+        if (typeof entry !== 'undefined') {
             // add tag colour
             if (entry.userId) {
                 const tagRef = userStore.customUserTags.get(entry.userId);
@@ -1034,7 +1039,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             displayName = '';
         }
         if (videoUrl === state.nowPlaying.url) {
-            var entry = {
+            const entry = {
                 updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
@@ -1171,7 +1176,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             videoId = 'YouTube';
         }
         if (videoUrl === state.nowPlaying.url) {
-            var entry = {
+            const entry = {
                 updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
@@ -1231,7 +1236,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const videoUrl = videoName;
         const videoId = 'LSMedia';
         if (videoUrl === state.nowPlaying.url) {
-            var entry = {
+            const entry = {
                 updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
