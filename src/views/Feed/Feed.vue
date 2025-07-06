@@ -13,7 +13,7 @@
                 v-model="feedTable.filter"
                 multiple
                 clearable
-                style="flex: 1; height: 40px"
+                style="flex: 1"
                 :placeholder="t('view.feed.filter_placeholder')"
                 @change="feedTableLookup">
                 <el-option
@@ -26,7 +26,7 @@
                 v-model="feedTable.search"
                 :placeholder="t('view.feed.search_placeholder')"
                 clearable
-                style="flex: none; width: 150px; margin: 0 10px"
+                style="flex: none; width: 150px; margin-left: 10px"
                 @keyup.native.13="feedTableLookup"
                 @change="feedTableLookup"></el-input>
         </div>

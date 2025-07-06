@@ -3,14 +3,14 @@
         <div style="padding: 0 10px 0 10px">
             <div style="display: flex; align-items: center; justify-content: space-between">
                 <span class="header">{{ t('view.friend_list.header') }}</span>
-                <div style="font-size: 13px">
+                <div style="font-size: 13px; display: flex; align-items: center">
                     <div v-if="friendsListBulkUnfriendMode" style="display: inline-block; margin-right: 10px">
                         <el-button size="small" @click="showBulkUnfriendSelectionConfirm">
                             {{ t('view.friend_list.bulk_unfriend_selection') }}
                         </el-button>
                         <!-- el-button(size="small" @click="showBulkUnfriendAllConfirm" style="margin-right:5px") Bulk Unfriend All-->
                     </div>
-                    <div style="display: inline-block; margin-right: 10px">
+                    <div style="display: flex; align-items: center; margin-right: 10px">
                         <span class="name">{{ t('view.friend_list.bulk_unfriend') }}</span>
                         <el-switch
                             v-model="friendsListBulkUnfriendMode"

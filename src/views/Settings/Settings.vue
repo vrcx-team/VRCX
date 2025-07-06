@@ -1286,111 +1286,99 @@
                         <span class="name">{{
                             t('view.settings.advanced.advanced.screenshot_helper.description')
                         }}</span>
-                        <el-tooltip
-                            placement="top"
-                            style="margin-left: 5px"
-                            :content="t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')">
-                            <i class="el-icon-info"></i>
-                        </el-tooltip>
                     </div>
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.screenshot_helper.enable')"
                         :value="screenshotHelper"
                         @change="setScreenshotHelper()"
-                        :long-label="true"></simple-switch>
+                        :tooltip="t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')"
+                        :long-label="true" />
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.screenshot_helper.modify_filename')"
                         :value="screenshotHelperModifyFilename"
                         @change="setScreenshotHelperModifyFilename()"
                         :disabled="!screenshotHelper"
                         :tooltip="t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')"
-                        :long-label="true"></simple-switch>
+                        :long-label="true" />
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard')"
                         :value="screenshotHelperCopyToClipboard"
                         @change="setScreenshotHelperCopyToClipboard()"
-                        :long-label="true"></simple-switch>
+                        :long-label="true" />
                 </div>
 
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.pictures.pictures.auto_delete_old_prints') }}</span>
-                    <div class="options-container-item" style="margin-top: 0">
-                        <simple-switch
-                            :label="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')"
-                            :value="autoDeleteOldPrints"
-                            @change="setAutoDeleteOldPrints()"
-                            :long-label="true" />
-                    </div>
+                    <simple-switch
+                        :label="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')"
+                        :value="autoDeleteOldPrints"
+                        @change="setAutoDeleteOldPrints()"
+                        :long-label="true" />
                 </div>
 
                 <!-- //- Pictures | User Generated Content -->
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
-                    <div class="options-container-item">
-                        <span class="name" style="min-width: 300px">{{
-                            t('view.settings.advanced.advanced.user_generated_content.description')
-                        }}</span>
-                        <br />
-                        <el-button
-                            size="small"
-                            icon="el-icon-folder"
-                            @click="openUGCFolder()"
-                            style="margin-top: 5px"
-                            >{{ t('view.settings.advanced.advanced.user_generated_content.folder') }}</el-button
-                        >
-                        <el-button size="small" icon="el-icon-folder-opened" @click="openUGCFolderSelector()">{{
-                            t('view.settings.advanced.advanced.user_generated_content.set_folder')
-                        }}</el-button>
-                        <el-button size="small" icon="el-icon-delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
-                            t('view.settings.advanced.advanced.user_generated_content.reset_override')
-                        }}</el-button>
-                        <br />
-                        <span class="sub-header">{{
-                            t('view.settings.advanced.advanced.save_instance_prints_to_file.header')
-                        }}</span>
-                        <el-tooltip
-                            placement="top"
-                            style="margin-left: 5px"
-                            :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                            <i class="el-icon-info"></i>
-                        </el-tooltip>
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
-                            :value="saveInstancePrints"
-                            @change="setSaveInstancePrints()"
-                            :long-label="true" />
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')"
-                            :value="cropInstancePrints"
-                            @change="setCropInstancePrints()"
-                            :long-label="true" />
-                        <br />
-                        <span class="sub-header">{{
-                            t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')
-                        }}</span>
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')"
-                            :value="saveInstanceStickers"
-                            @change="setSaveInstanceStickers()"
-                            :long-label="true" />
-                        <br />
-                        <span class="sub-header"
-                            >{{ t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
-                            <el-tooltip
-                                placement="top"
-                                style="margin-left: 5px"
-                                :content="
-                                    t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')
-                                ">
-                                <i class="el-icon-info" />
-                            </el-tooltip>
-                        </span>
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
-                            :value="saveInstanceEmoji"
-                            @change="setSaveInstanceEmoji()"
-                            :long-label="true" />
-                    </div>
+
+                    <span class="name" style="min-width: 300px">{{
+                        t('view.settings.advanced.advanced.user_generated_content.description')
+                    }}</span>
+                    <br />
+                    <el-button size="small" icon="el-icon-folder" @click="openUGCFolder()" style="margin-top: 5px">{{
+                        t('view.settings.advanced.advanced.user_generated_content.folder')
+                    }}</el-button>
+                    <el-button size="small" icon="el-icon-folder-opened" @click="openUGCFolderSelector()">{{
+                        t('view.settings.advanced.advanced.user_generated_content.set_folder')
+                    }}</el-button>
+                    <el-button size="small" icon="el-icon-delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
+                        t('view.settings.advanced.advanced.user_generated_content.reset_override')
+                    }}</el-button>
+                    <br />
+                    <br />
+                    <br />
+                    <span class="sub-header">{{
+                        t('view.settings.advanced.advanced.save_instance_prints_to_file.header')
+                    }}</span>
+                    <el-tooltip
+                        placement="top"
+                        style="margin-left: 5px"
+                        :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
+                        <i class="el-icon-info"></i>
+                    </el-tooltip>
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
+                        :value="saveInstancePrints"
+                        @change="setSaveInstancePrints()"
+                        :long-label="true" />
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')"
+                        :value="cropInstancePrints"
+                        @change="setCropInstancePrints()"
+                        :long-label="true" />
+                    <br />
+                    <span class="sub-header">{{
+                        t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')
+                    }}</span>
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')"
+                        :value="saveInstanceStickers"
+                        @change="setSaveInstanceStickers()"
+                        :long-label="true" />
+                    <br />
+                    <span class="sub-header"
+                        >{{ t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
+                    </span>
+                    <el-tooltip
+                        placement="top"
+                        style="margin-left: 5px"
+                        :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
+                        <i class="el-icon-info" />
+                    </el-tooltip>
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
+                        :value="saveInstanceEmoji"
+                        @change="setSaveInstanceEmoji()"
+                        :long-label="true" />
                 </div>
             </el-tab-pane>
 
@@ -1708,11 +1696,20 @@
                     <span class="header">{{ t('view.settings.advanced.advanced.cache_debug.header') }}</span>
                     <br />
                     <div class="options-container-item">
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.cache_debug.disable_gamelog')"
-                            :value="gameLogDisabled"
-                            :long-label="true"
-                            @change="disableGameLogDialog()" />
+                        <el-button size="small" icon="el-icon-delete-solid" @click="clearVRCXCache">{{
+                            t('view.settings.advanced.advanced.cache_debug.clear_cache')
+                        }}</el-button>
+                        <el-button size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency">{{
+                            t('view.settings.advanced.advanced.cache_debug.auto_clear_cache')
+                        }}</el-button>
+                    </div>
+
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.cache_debug.disable_gamelog')"
+                        :value="gameLogDisabled"
+                        :long-label="true"
+                        @change="disableGameLogDialog()" />
+                    <div class="options-container-item">
                         <span class="name" style="margin-left: 15px">{{
                             t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')
                         }}</span>
@@ -1752,14 +1749,6 @@
                             >{{ t('view.settings.advanced.advanced.cache_debug.instance_cache') }}
                             <span v-text="cachedInstances.size"></span
                         ></span>
-                    </div>
-                    <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-delete-solid" @click="clearVRCXCache">{{
-                            t('view.settings.advanced.advanced.cache_debug.clear_cache')
-                        }}</el-button>
-                        <el-button size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency">{{
-                            t('view.settings.advanced.advanced.cache_debug.auto_clear_cache')
-                        }}</el-button>
                     </div>
                     <div class="options-container-item">
                         <el-button size="small" icon="el-icon-tickets" @click="showConsole">{{

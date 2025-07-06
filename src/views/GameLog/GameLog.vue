@@ -40,7 +40,7 @@
                         v-model="gameLogTable.search"
                         :placeholder="t('view.game_log.search_placeholder')"
                         clearable
-                        style="flex: none; width: 150px; margin: 0 10px"
+                        style="flex: none; width: 150px; margin-left: 10px"
                         @keyup.native.enter="gameLogTableLookup"
                         @change="gameLogTableLookup"></el-input>
                 </div>
