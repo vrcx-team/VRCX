@@ -53,7 +53,6 @@ export const useFriendStore = defineStore('Friend', () => {
         localFavoriteFriends: new Set(),
         friendLogInitStatus: false,
         isRefreshFriendsLoading: false,
-        pendingActiveFriends: new Set(),
         onlineFriendCount: 0,
         friendLog: new Map(),
         friendLogTable: {
@@ -243,7 +242,6 @@ export const useFriendStore = defineStore('Friend', () => {
             state.isRefreshFriendsLoading = value;
         }
     });
-    const pendingActiveFriends = state.pendingActiveFriends;
     const onlineFriendCount = computed({
         get() {
             return state.onlineFriendCount;
@@ -276,7 +274,6 @@ export const useFriendStore = defineStore('Friend', () => {
         (isLoggedIn) => {
             if (isLoggedIn) {
                 state.friends.clear();
-                state.pendingActiveFriends.clear();
                 state.friendNumber = 0;
                 groupStore.groupInstances = [];
                 state.vipFriends_ = [];
@@ -1007,48 +1004,6 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
-     * @param {string} userId
-     * @returns {Promise<{json: *, params}>}
-     */
-    function fetchActiveFriend(userId) {
-        state.pendingActiveFriends.add(userId);
-        // FIXME: handle error
-        return userRequest
-            .getUser({
-                userId
-            })
-            .then((args) => {
-                state.pendingActiveFriends.delete(userId);
-                return args;
-            });
-    }
-
-    /**
-     * @param {Object} ref
-     */
-    function checkActiveFriends(ref) {
-        if (
-            Array.isArray(ref.activeFriends) === false ||
-            !state.friendLogInitStatus
-        ) {
-            return;
-        }
-        for (const userId of ref.activeFriends) {
-            if (state.pendingActiveFriends.has(userId)) {
-                continue;
-            }
-            const user = userStore.cachedUsers.get(userId);
-            if (typeof user !== 'undefined' && user.status !== 'offline') {
-                continue;
-            }
-            if (state.pendingActiveFriends.size >= 5) {
-                break;
-            }
-            fetchActiveFriend(userId);
-        }
-    }
-
-    /**
      * @returns {Promise<void>}
      */
     async function refreshFriendsList() {
@@ -1761,7 +1716,6 @@ export const useFriendStore = defineStore('Friend', () => {
         localFavoriteFriends,
         friendLogInitStatus,
         isRefreshFriendsLoading,
-        pendingActiveFriends,
         onlineFriendCount,
         friendLog,
         friendLogTable,
@@ -1773,7 +1727,6 @@ export const useFriendStore = defineStore('Friend', () => {
         refreshFriendsStatus,
         addFriend,
         refreshFriends,
-        checkActiveFriends,
         refreshFriendsList,
         updateOnlineFriendCoutner,
         updateFriendGPS,
