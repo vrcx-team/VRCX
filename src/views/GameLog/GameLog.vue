@@ -117,7 +117,9 @@
                     </template>
                     <template v-else-if="scope.row.type === 'VideoPlay'">
                         <span v-if="scope.row.videoId" style="margin-right: 5px">{{ scope.row.videoId }}:</span>
-                        <span v-if="scope.row.videoId === 'LSMedia'" v-text="scope.row.videoName"></span>
+                        <span
+                            v-if="scope.row.videoId === 'LSMedia' || scope.row.videoId === 'PopcornPalace'"
+                            v-text="scope.row.videoName"></span>
                         <span
                             v-else-if="scope.row.videoName"
                             class="x-link"

@@ -338,11 +338,12 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     appId = '968292722391785512';
                     bigIcon = 'ls_media';
                 } else if (
-                    L.worldId === 'wrld_266523e8-9161-40da-acd0-6bd82e075833'
+                    L.worldId === 'wrld_266523e8-9161-40da-acd0-6bd82e075833' ||
+                    L.worldId === 'wrld_27c7e6b2-d938-447e-a270-3d1a873e2cf3'
                 ) {
                     activityType = ActivityType.Watching;
                     appId = '1095440531821170820';
-                    bigIcon = 'movie_and_chill';
+                    bigIcon = 'popcorn_palace';
                 }
                 if (gameLogStore.nowPlaying.name) {
                     L.worldName = gameLogStore.nowPlaying.name;

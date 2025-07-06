@@ -46,7 +46,7 @@ Beta/nightly build available [here](https://vrcx.app/github/nightly) or in-app `
 - :tv: See the links to videos and that are playing in the world you're in, as well as various other logged data.
 - :bar_chart: Improved Discord Rich Presence
   - You can optionally display more information about your current instance in Discord.
-  - World integration for popular worlds like PyPyDance, LSMedia, Movies&Chill and VRDancing.
+  - World integration for popular worlds like Popcorn Palace, PyPyDance, VRDancing and LSMedia.
   - This includes the world thumbnail, name, instance ID, and player count, depending on your settings and whether the lobby is private. You can also add a join button for public lobbies!
 - :crystal_ball: VR Overlay with configurable live feed of all supported events/notifications
 - :outbox_tray: Upload avatar/world images without Unity

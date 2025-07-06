@@ -182,12 +182,18 @@ export const useGameLogStore = defineStore('GameLog', () => {
             state.nowPlaying = {
                 ...state.nowPlaying,
                 length: ctx.videoLength,
-                startTime: Date.parse(ctx.created_at) / 1000,
                 offset: ctx.videoPos,
                 elapsed: 0,
                 percentage: 0,
                 remainingText: ''
             };
+            if (ctx.updatedAt && ctx.videoPos) {
+                state.nowPlaying.startTime =
+                    Date.parse(ctx.updatedAt) / 1000 - ctx.videoPos;
+            } else {
+                state.nowPlaying.startTime =
+                    Date.parse(ctx.created_at) / 1000 - ctx.videoPos;
+            }
         }
         vrStore.updateVrNowPlaying();
         if (!state.nowPlaying.playing && ctx.videoLength > 0) {
@@ -201,8 +207,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (!state.nowPlaying.playing) {
             return;
         }
+
         const now = Date.now() / 1000;
-        np.elapsed = Math.round((now - np.startTime + np.offset) * 10) / 10;
+        np.elapsed = Math.round((now - np.startTime) * 10) / 10;
         if (np.elapsed >= np.length) {
             clearNowPlaying();
             return;
@@ -807,8 +814,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     addGameLogZuwaZuwaDance(gameLog, location);
                 } else if (type === 'LSMedia') {
                     addGameLogLSMedia(gameLog, location);
-                } else if (type === 'Movie&Chill') {
-                    addGameLogMovieAndChill(gameLog, location);
+                } else if (type === 'VideoPlay(PopcornPalace)') {
+                    addGameLogPopcornPalace(gameLog, location);
                 }
                 break;
             case 'photon-id':
@@ -1015,10 +1022,11 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const text1 = bracketArray.pop();
         let displayName = text1.slice(0, -1);
         let text2 = bracketArray.join('(');
+        let videoId = '';
         if (text2 === 'Custom URL') {
-            var videoId = 'YouTube';
+            videoId = 'YouTube';
         } else {
-            var videoId = text2.substr(0, text2.indexOf(':') - 1);
+            videoId = text2.substr(0, text2.indexOf(':') - 1);
             text2 = text2.substr(text2.indexOf(':') + 2);
         }
         const videoName = text2.slice(0, -1);
@@ -1027,7 +1035,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         if (videoUrl === state.nowPlaying.url) {
             var entry = {
-                created_at: gameLog.dt,
+                updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
                 videoPos
@@ -1045,16 +1053,16 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
         }
         if (videoId === 'YouTube') {
-            var entry = {
+            const entry1 = {
                 dt: gameLog.dt,
                 videoUrl,
                 displayName,
                 videoPos,
                 videoId
             };
-            addGameLogVideo(entry, location, userId);
+            addGameLogVideo(entry1, location, userId);
         } else {
-            var entry = {
+            const entry2 = {
                 created_at: gameLog.dt,
                 type: 'VideoPlay',
                 videoUrl,
@@ -1066,7 +1074,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 userId,
                 videoPos
             };
-            setNowPlaying(entry);
+            setNowPlaying(entry2);
         }
     }
 
@@ -1097,8 +1105,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
             videoPos = 0;
         }
         if (videoUrl === state.nowPlaying.url) {
-            var entry = {
-                created_at: gameLog.dt,
+            const entry = {
+                updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
                 videoPos
@@ -1116,16 +1124,16 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
         }
         if (videoId === 'YouTube') {
-            var entry = {
+            const entry1 = {
                 dt: gameLog.dt,
                 videoUrl,
                 displayName,
                 videoPos,
                 videoId
             };
-            addGameLogVideo(entry, location, userId);
+            addGameLogVideo(entry1, location, userId);
         } else {
-            var entry = {
+            const entry2 = {
                 created_at: gameLog.dt,
                 type: 'VideoPlay',
                 videoUrl,
@@ -1137,7 +1145,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 userId,
                 videoPos
             };
-            setNowPlaying(entry);
+            setNowPlaying(entry2);
         }
     }
 
@@ -1164,7 +1172,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         if (videoUrl === state.nowPlaying.url) {
             var entry = {
-                created_at: gameLog.dt,
+                updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
                 videoPos
@@ -1182,16 +1190,16 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
         }
         if (videoId === 'YouTube') {
-            var entry = {
+            const entry1 = {
                 dt: gameLog.dt,
                 videoUrl,
                 displayName,
                 videoPos,
                 videoId
             };
-            addGameLogVideo(entry, location, userId);
+            addGameLogVideo(entry1, location, userId);
         } else {
-            var entry = {
+            const entry2 = {
                 created_at: gameLog.dt,
                 type: 'VideoPlay',
                 videoUrl,
@@ -1203,7 +1211,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 userId,
                 videoPos
             };
-            setNowPlaying(entry);
+            setNowPlaying(entry2);
         }
     }
 
@@ -1224,58 +1232,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const videoId = 'LSMedia';
         if (videoUrl === state.nowPlaying.url) {
             var entry = {
-                created_at: gameLog.dt,
-                videoUrl,
-                videoLength,
-                videoPos
-            };
-            setNowPlaying(entry);
-            return;
-        }
-        let userId = '';
-        if (displayName) {
-            for (let ref of userStore.cachedUsers.values()) {
-                if (ref.displayName === displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
-        }
-        var entry = {
-            created_at: gameLog.dt,
-            type: 'VideoPlay',
-            videoUrl,
-            videoId,
-            videoName,
-            videoLength,
-            location,
-            displayName,
-            userId,
-            videoPos
-        };
-        setNowPlaying(entry);
-    }
-
-    function addGameLogMovieAndChill(gameLog, location) {
-        // [VRCX] Movie&Chill CurrentTime,Length,PlayerName,MovieName
-        const data = /Movie&Chill ([\d.]+),([\d.]+),(.+?),(.*)/g.exec(
-            gameLog.data
-        );
-        if (!data) {
-            return;
-        }
-        const videoPos = Number(data[1]);
-        const videoLength = Number(data[2]);
-        const displayName = data[3];
-        const videoName = data[4];
-        const videoUrl = videoName;
-        const videoId = 'Movie&Chill';
-        if (!videoName) {
-            return;
-        }
-        if (videoUrl === state.nowPlaying.url) {
-            var entry = {
-                created_at: gameLog.dt,
+                updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
                 videoPos
@@ -1292,7 +1249,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
             }
         }
-        var entry = {
+        const entry1 = {
             created_at: gameLog.dt,
             type: 'VideoPlay',
             videoUrl,
@@ -1304,7 +1261,65 @@ export const useGameLogStore = defineStore('GameLog', () => {
             userId,
             videoPos
         };
-        setNowPlaying(entry);
+        setNowPlaying(entry1);
+    }
+
+    function addGameLogPopcornPalace(gameLog, location) {
+        // [VRCX] VideoPlay(PopcornPalace) {"videoName": "How to Train Your Dragon - 2025-06-06", "videoPos": 37.28777, "videoLength": 11474.05, "thumbnailUrl": "", "displayName": "miner28_3", "isPaused": false, "is3D": false, "looping": false}
+        let data = gameLog.data;
+        if (!data) {
+            return;
+        }
+        try {
+            const j = data.indexOf('{');
+            data = JSON.parse(data.substring(j));
+        } catch (err) {
+            console.error('Failed to parse PopcornPalace data:', err);
+            return;
+        }
+
+        const videoPos = Number(data.videoPos);
+        const videoLength = Number(data.videoLength);
+        const displayName = data.displayName || '';
+        const videoName = data.videoName || '';
+        const videoUrl = videoName;
+        const videoId = 'PopcornPalace';
+        if (!videoName) {
+            clearNowPlaying();
+            return;
+        }
+        if (videoUrl === state.nowPlaying.url) {
+            const entry = {
+                updatedAt: gameLog.dt,
+                videoUrl,
+                videoLength,
+                videoPos
+            };
+            setNowPlaying(entry);
+            return;
+        }
+        let userId = '';
+        if (displayName) {
+            for (const ref of userStore.cachedUsers.values()) {
+                if (ref.displayName === displayName) {
+                    userId = ref.id;
+                    break;
+                }
+            }
+        }
+        const entry1 = {
+            created_at: gameLog.dt,
+            type: 'VideoPlay',
+            videoUrl,
+            videoId,
+            videoName,
+            videoLength,
+            location,
+            displayName,
+            userId,
+            videoPos
+        };
+        setNowPlaying(entry1);
     }
 
     async function getGameLogTable() {

@@ -10,7 +10,8 @@ const rpcWorlds = [
     'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445',
     'wrld_f767d1c8-b249-4ecc-a56f-614e433682c8',
     'wrld_74970324-58e8-4239-a17b-2c59dfdf00db',
-    'wrld_266523e8-9161-40da-acd0-6bd82e075833'
+    'wrld_266523e8-9161-40da-acd0-6bd82e075833',
+    'wrld_27c7e6b2-d938-447e-a270-3d1a873e2cf3'
 ];
 
 export { rpcWorlds };
