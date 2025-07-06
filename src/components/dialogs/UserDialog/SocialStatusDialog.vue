@@ -44,6 +44,7 @@
                 :placeholder="t('dialog.social_status.status_placeholder')"
                 maxlength="32"
                 show-word-limit
+                clearable
                 style="display: block; margin-top: 10px"></el-input>
         </div>
 
