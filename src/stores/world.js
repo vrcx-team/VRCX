@@ -79,17 +79,14 @@ export const useWorldStore = defineStore('World', () => {
 
     API.$on('WORLD', function (args) {
         args.ref = applyWorld(args.json);
-    });
-
-    API.$on('WORLD', function (args) {
-        const D = userStore.userDialog;
-        if (D.visible === false || D.$location.worldId !== args.ref.id) {
+        const userDialog = userStore.userDialog;
+        if (
+            userDialog.visible === false ||
+            userDialog.$location.worldId !== args.ref.id
+        ) {
             return;
         }
         userStore.applyUserDialogLocation();
-    });
-
-    API.$on('WORLD', function (args) {
         const { ref } = args;
         const D = state.worldDialog;
         if (D.visible === false || D.id !== ref.id) {
@@ -114,9 +111,6 @@ export const useWorldStore = defineStore('World', () => {
                 D.bundleSizes = bundleSizes;
             });
         }
-    });
-
-    API.$on('WORLD', function (args) {
         if (favoriteStore.localWorldFavoritesList.includes(args.ref.id)) {
             // update db cache
             database.addWorldToCache(args.ref);

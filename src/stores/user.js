@@ -331,6 +331,26 @@ export const useUserStore = defineStore('User', () => {
         }
         favoriteStore.applyFavorite('friend', args.ref.id);
         friendStore.userOnFriend(args);
+        const { ref } = args;
+        const D = state.userDialog;
+        if (D.visible === false || D.id !== ref.id) {
+            return;
+        }
+        D.ref = ref;
+        D.note = String(ref.note || '');
+        D.noteSaving = false;
+        D.incomingRequest = false;
+        D.outgoingRequest = false;
+        if (D.ref.friendRequestStatus === 'incoming') {
+            D.incomingRequest = true;
+        } else if (D.ref.friendRequestStatus === 'outgoing') {
+            D.outgoingRequest = true;
+        }
+        // refresh user dialog JSON tab
+        if (!state.userDialog.visible || state.userDialog.id !== args.ref.id) {
+            return;
+        }
+        refreshUserDialogTreeData();
     });
 
     API.$on('CONFIG', function (args) {
@@ -349,32 +369,6 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         state.languageDialog.languages = data;
-    });
-
-    API.$on('USER', function (args) {
-        const { ref } = args;
-        const D = state.userDialog;
-        if (D.visible === false || D.id !== ref.id) {
-            return;
-        }
-        D.ref = ref;
-        D.note = String(ref.note || '');
-        D.noteSaving = false;
-        D.incomingRequest = false;
-        D.outgoingRequest = false;
-        if (D.ref.friendRequestStatus === 'incoming') {
-            D.incomingRequest = true;
-        } else if (D.ref.friendRequestStatus === 'outgoing') {
-            D.outgoingRequest = true;
-        }
-    });
-
-    API.$on('USER', function (args) {
-        // refresh user dialog JSON tab
-        if (!state.userDialog.visible || state.userDialog.id !== args.ref.id) {
-            return;
-        }
-        refreshUserDialogTreeData();
     });
 
     /**

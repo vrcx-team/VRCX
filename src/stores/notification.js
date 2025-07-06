@@ -129,6 +129,49 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     API.$on('NOTIFICATION', function (args) {
         args.ref = applyNotification(args.json);
+        const { ref } = args;
+        const array = state.notificationTable.data;
+        const { length } = array;
+        for (let i = 0; i < length; ++i) {
+            if (array[i].id === ref.id) {
+                Vue.set(array, i, ref);
+                return;
+            }
+        }
+        if (ref.senderUserId !== userStore.currentUser.id) {
+            if (
+                ref.type !== 'friendRequest' &&
+                ref.type !== 'ignoredFriendRequest' &&
+                !ref.type.includes('.')
+            ) {
+                database.addNotificationToDatabase(ref);
+            }
+            if (
+                friendStore.friendLogInitStatus &&
+                state.notificationInitStatus
+            ) {
+                if (
+                    state.notificationTable.filters[0].value.length === 0 ||
+                    state.notificationTable.filters[0].value.includes(ref.type)
+                ) {
+                    uiStore.notifyMenu('notification');
+                }
+                state.unseenNotifications.push(ref.id);
+                queueNotificationNoty(ref);
+            }
+        }
+        state.notificationTable.data.push(ref);
+        sharedFeedStore.updateSharedFeed(true);
+        const D = userStore.userDialog;
+        if (
+            D.visible === false ||
+            ref.$isDeleted ||
+            ref.type !== 'friendRequest' ||
+            ref.senderUserId !== D.id
+        ) {
+            return;
+        }
+        D.incomingRequest = true;
     });
 
     API.$on('NOTIFICATION:ACCEPT', function (args) {
@@ -289,62 +332,12 @@ export const useNotificationStore = defineStore('Notification', () => {
             });
     });
 
-    API.$on('NOTIFICATION', function (args) {
-        const { ref } = args;
-        const array = state.notificationTable.data;
-        const { length } = array;
-        for (let i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
-                Vue.set(array, i, ref);
-                return;
-            }
-        }
-        if (ref.senderUserId !== userStore.currentUser.id) {
-            if (
-                ref.type !== 'friendRequest' &&
-                ref.type !== 'ignoredFriendRequest' &&
-                !ref.type.includes('.')
-            ) {
-                database.addNotificationToDatabase(ref);
-            }
-            if (
-                friendStore.friendLogInitStatus &&
-                state.notificationInitStatus
-            ) {
-                if (
-                    state.notificationTable.filters[0].value.length === 0 ||
-                    state.notificationTable.filters[0].value.includes(ref.type)
-                ) {
-                    uiStore.notifyMenu('notification');
-                }
-                state.unseenNotifications.push(ref.id);
-                queueNotificationNoty(ref);
-            }
-        }
-        state.notificationTable.data.push(ref);
-        sharedFeedStore.updateSharedFeed(true);
-    });
-
     API.$on('NOTIFICATION:SEE', function (args) {
         const { notificationId } = args.params;
         removeFromArray(state.unseenNotifications, notificationId);
         if (state.unseenNotifications.length === 0) {
             uiStore.removeNotify('notification');
         }
-    });
-
-    API.$on('NOTIFICATION', function (args) {
-        const { ref } = args;
-        const D = userStore.userDialog;
-        if (
-            D.visible === false ||
-            ref.$isDeleted ||
-            ref.type !== 'friendRequest' ||
-            ref.senderUserId !== D.id
-        ) {
-            return;
-        }
-        D.incomingRequest = true;
     });
 
     API.$on('NOTIFICATION:ACCEPT', function (args) {
