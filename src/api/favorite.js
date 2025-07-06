@@ -36,7 +36,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:LIST', args);
             return args;
         });
     },

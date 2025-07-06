@@ -9,7 +9,6 @@ const playerModerationReq = {
             const args = {
                 json
             };
-            API.$emit('PLAYER-MODERATION:LIST', args);
             return args;
         });
     },

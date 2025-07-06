@@ -1891,7 +1891,7 @@
     const { isGameRunning } = storeToRefs(useGameStore());
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
-    const { handlePlayerModerationAtSend } = useModerationStore();
+    const { handlePlayerModerationAtSend, handlePlayerModeration } = useModerationStore();
 
     watch(
         () => userDialog.value.loading,
@@ -2386,7 +2386,7 @@
                 playerModerationId: args.json.id
             }
         };
-        API.$emit('PLAYER-MODERATION', ref);
+        handlePlayerModeration();
         handlePlayerModerationAtSend(ref);
     }
 

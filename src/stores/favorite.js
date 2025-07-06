@@ -504,18 +504,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
     });
 
-    API.$on('FAVORITE:LIST', function (args) {
-        for (const json of args.json) {
-            API.$emit('FAVORITE', {
-                json,
-                params: {
-                    favoriteId: json.id
-                },
-                sortTop: false
-            });
-        }
-    });
-
     API.$on('FAVORITE:ADD', function (args) {
         API.$emit('FAVORITE', {
             json: args.json,
@@ -1108,6 +1096,17 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             params: {
                 n: 50,
                 offset: 0
+            },
+            handle(args) {
+                for (const json of args.json) {
+                    API.$emit('FAVORITE', {
+                        json,
+                        params: {
+                            favoriteId: json.id
+                        },
+                        sortTop: false
+                    });
+                }
             },
             done(ok) {
                 if (ok) {

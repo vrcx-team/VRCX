@@ -63,7 +63,8 @@ export const useModerationStore = defineStore('Moderation', () => {
         { flush: 'sync' }
     );
 
-    API.$on('PLAYER-MODERATION', function (args) {
+    // API.$on('PLAYER-MODERATION')
+    function handlePlayerModeration(args) {
         args.ref = applyPlayerModeration(args.json);
         const { ref } = args;
         const array = state.playerModerationTable.data;
@@ -75,18 +76,7 @@ export const useModerationStore = defineStore('Moderation', () => {
             }
         }
         state.playerModerationTable.data.push(ref);
-    });
-
-    API.$on('PLAYER-MODERATION:LIST', function (args) {
-        for (let json of args.json) {
-            API.$emit('PLAYER-MODERATION', {
-                json,
-                params: {
-                    playerModerationId: json.id
-                }
-            });
-        }
-    });
+    }
 
     /**
      * aka: `API.$on('PLAYER-MODERATION:@SEND')`
@@ -255,6 +245,16 @@ export const useModerationStore = defineStore('Moderation', () => {
                         avatarStore.applyAvatarModeration(json);
                     }
                 }
+                if (res[0]?.json) {
+                    for (let json of res[0].json) {
+                        handlePlayerModeration({
+                            json,
+                            params: {
+                                playerModerationId: json.id
+                            }
+                        });
+                    }
+                }
                 deleteExpiredPlayerModerations();
             });
     }
@@ -267,6 +267,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         playerModerationTable,
 
         refreshPlayerModerations,
-        handlePlayerModerationAtSend
+        handlePlayerModerationAtSend,
+        handlePlayerModeration
     };
 });
