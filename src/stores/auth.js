@@ -111,28 +111,6 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     );
 
-    API.$on('LOGOUT', function () {
-        if (state.isLoggedIn) {
-            new Noty({
-                type: 'success',
-                text: `See you again, <strong>${escapeTag(
-                    userStore.currentUser.displayName
-                )}</strong>!`
-            }).show();
-        }
-        state.isLoggedIn = false;
-        friendStore.friendLogInitStatus = false;
-        notificationStore.notificationInitStatus = false;
-    });
-
-    API.$on('LOGOUT', async function () {
-        await updateStoredUser(userStore.currentUser);
-        webApiService.clearCookies();
-        state.loginForm.lastUserLoggedIn = '';
-        await configRepository.remove('lastUserLoggedIn');
-        // workerTimers.setTimeout(() => location.reload(), 500);
-    });
-
     // LOGIN STATE
     const isLoggedIn = computed({
         get: () => state.isLoggedIn,
@@ -175,6 +153,29 @@ export const useAuthStore = defineStore('Auth', () => {
             state.cachedConfig = value;
         }
     });
+
+    // API.$on('LOGOUT')
+    async function handleLogoutEvent() {
+        if (state.isLoggedIn) {
+            new Noty({
+                type: 'success',
+                text: `See you again, <strong>${escapeTag(
+                    userStore.currentUser.displayName
+                )}</strong>!`
+            }).show();
+        }
+        state.isLoggedIn = false;
+        friendStore.friendLogInitStatus = false;
+        notificationStore.notificationInitStatus = false;
+        await updateStoredUser(userStore.currentUser);
+        webApiService.clearCookies();
+        state.loginForm.lastUserLoggedIn = '';
+        await configRepository.remove('lastUserLoggedIn');
+        // workerTimers.setTimeout(() => location.reload(), 500);
+        state.attemptingAutoLogin = false;
+        state.autoLoginAttempts.clear();
+        API.$on('LOGOUT');
+    }
 
     /**
      * Automatically logs in the last user after the app is mounted.
@@ -439,7 +440,7 @@ export const useAuthStore = defineStore('Auth', () => {
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    API.$emit('LOGOUT');
+                    handleLogoutEvent();
                 }
             }
         });
@@ -506,7 +507,7 @@ export const useAuthStore = defineStore('Auth', () => {
                             websocket: loginParmas.websocket
                         })
                             .catch((err2) => {
-                                API.$emit('LOGOUT');
+                                handleLogoutEvent();
                                 reject(err2);
                             })
                             .then(() => {
@@ -857,11 +858,6 @@ export const useAuthStore = defineStore('Auth', () => {
         state.attemptingAutoLogin = false;
     });
 
-    API.$on('LOGOUT', function () {
-        state.attemptingAutoLogin = false;
-        state.autoLoginAttempts.clear();
-    });
-
     return {
         state,
         loginForm,
@@ -884,6 +880,7 @@ export const useAuthStore = defineStore('Auth', () => {
         relogin,
         deleteSavedLogin,
         login,
-        handleAutoLogin
+        handleAutoLogin,
+        handleLogoutEvent
     };
 });

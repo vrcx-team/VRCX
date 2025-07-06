@@ -19,6 +19,7 @@ import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
 import { useVrcxStore } from './vrcx';
+import { useAuthStore } from './auth';
 
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();
@@ -125,7 +126,7 @@ export const useFeedStore = defineStore('Feed', () => {
                     message: t('message.friend.load_failed'),
                     type: 'error'
                 });
-                API.$emit('LOGOUT');
+                useAuthStore().handleLogoutEvent();
                 throw err;
             }
         }

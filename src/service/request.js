@@ -374,7 +374,6 @@ API.$bulk = function (options, args) {
     if (
         args.json.length > 0 &&
         ((options.params.offset += args.json.length),
-        // eslint-disable-next-line no-nested-ternary
         options.N > 0
             ? options.N > options.params.offset
             : options.N < 0

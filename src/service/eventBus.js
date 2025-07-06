@@ -41,10 +41,10 @@ API.$emit = function (name, ...args) {
 
 /**
  * @param {string} name
- * @param {function} handler
+ * @param {function?} handler
  * @returns {void}
  */
-API.$on = function (name, handler) {
+API.$on = function (name, handler = undefined) {
     let handlers = eventHandlers.get(name);
     if (typeof handlers === 'undefined') {
         handlers = [];
