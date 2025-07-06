@@ -121,16 +121,6 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
     });
 
-    watch(
-        () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.VRCXUpdateDialog.visible = false;
-                state.changeLogDialog.visible = false;
-            }
-        }
-    );
-
     /**
      * @param {string} value
      */
