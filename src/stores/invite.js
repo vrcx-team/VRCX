@@ -68,7 +68,8 @@ export const useInviteStore = defineStore('Invite', () => {
                 state.inviteRequestMessageTable.visible = false;
                 state.inviteRequestResponseMessageTable.visible = false;
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     const editInviteMessageDialog = computed({

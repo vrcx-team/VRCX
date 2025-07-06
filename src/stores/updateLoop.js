@@ -48,7 +48,8 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 state.nextFriendsRefresh = 3600;
                 state.nextGroupInstanceRefresh = 0;
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     const nextGroupInstanceRefresh = computed({

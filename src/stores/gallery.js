@@ -213,7 +213,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 state.previousImagesDialogVisible = false;
                 state.fullscreenImageDialog.visible = false;
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     API.$on('FILES:LIST', function (args) {

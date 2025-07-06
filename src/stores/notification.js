@@ -123,7 +123,8 @@ export const useNotificationStore = defineStore('Notification', () => {
                 state.isNotificationsLoading = false;
                 state.notificationTable.data = [];
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     API.$on('NOTIFICATION', function (args) {

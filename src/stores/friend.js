@@ -289,7 +289,8 @@ export const useFriendStore = defineStore('Friend', () => {
                 state.sortOfflineFriends = false;
                 groupStore.updateInGameGroupOrder();
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     API.$on('USER:CURRENT', function (args) {

@@ -429,6 +429,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     // use in C# side
+    // eslint-disable-next-line no-unused-vars
     function ipcEvent(json) {
         const authStore = useAuthStore();
         if (!authStore.isLoggedIn) {
@@ -541,7 +542,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             } else {
                 state.isRegistryBackupDialogVisible = false;
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     function eventLaunchCommand(input) {

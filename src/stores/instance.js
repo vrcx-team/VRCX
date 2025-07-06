@@ -148,7 +148,8 @@ export const useInstanceStore = defineStore('Instance', () => {
             } else {
                 state.previousInstancesInfoDialogVisible = false;
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     API.$on('INSTANCE', function (args) {

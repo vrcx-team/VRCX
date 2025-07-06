@@ -61,6 +61,7 @@ export const useAuthStore = defineStore('Auth', () => {
             }
         },
         saveCredentials: null,
+        // it's a flag
         twoFactorAuthDialogVisible: false,
         enableCustomEndpoint: false,
         cachedConfig: {}

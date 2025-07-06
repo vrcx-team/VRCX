@@ -59,7 +59,8 @@ export const useModerationStore = defineStore('Moderation', () => {
                 refreshPlayerModerations();
                 state.playerModerationTable.data = [];
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     API.$on('PLAYER-MODERATION', function (args) {

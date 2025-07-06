@@ -73,7 +73,8 @@ export const useSearchStore = defineStore('Search', () => {
                 state.searchText = '';
                 state.searchUserResults = [];
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     function clearSearch() {
