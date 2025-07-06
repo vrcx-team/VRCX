@@ -27,7 +27,7 @@
     }
 </script>
 
-<style lang="scss">
+<style scoped>
     .simple-switch {
         font-size: 12px;
         margin-top: 5px;

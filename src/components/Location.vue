@@ -18,19 +18,14 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
-    import { API } from '../service/eventBus';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
 
-    const worldStore = useWorldStore();
-    const { cachedWorlds } = storeToRefs(worldStore);
-    const { showWorldDialog } = worldStore;
-    const groupStore = useGroupStore();
-    const { showGroupDialog } = groupStore;
-    const instanceStore = useInstanceStore();
-    const { showPreviousInstancesInfoDialog } = instanceStore;
-    const searchStore = useSearchStore();
-    const { verifyShortName } = searchStore;
+    const { cachedWorlds } = storeToRefs(useWorldStore());
+    const { showWorldDialog } = useWorldStore();
+    const { showGroupDialog } = useGroupStore();
+    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { verifyShortName } = useSearchStore();
 
     const props = defineProps({
         location: String,
@@ -58,7 +53,7 @@
 
     watch(
         () => props.location,
-        (newLocation) => {
+        () => {
             parse();
         }
     );
@@ -66,7 +61,6 @@
     parse();
 
     function parse() {
-        if (!API) return;
         isTraveling.value = false;
         groupName.value = '';
         let instanceId = props.location;
