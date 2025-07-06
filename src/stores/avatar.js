@@ -107,6 +107,34 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     API.$on('AVATAR', function (args) {
         args.ref = applyAvatar(args.json);
+        favoriteStore.applyFavorite('avatar', args.ref.id);
+        if (favoriteStore.localAvatarFavoritesList.includes(args.ref.id)) {
+            for (
+                let i = 0;
+                i < favoriteStore.localAvatarFavoriteGroups.length;
+                ++i
+            ) {
+                const groupName = favoriteStore.localAvatarFavoriteGroups[i];
+                if (!favoriteStore.localAvatarFavorites[groupName]) {
+                    continue;
+                }
+                for (
+                    let j = 0;
+                    j < favoriteStore.localAvatarFavorites[groupName].length;
+                    ++j
+                ) {
+                    const ref =
+                        favoriteStore.localAvatarFavorites[groupName][j];
+                    if (ref.id === args.ref.id) {
+                        favoriteStore.localAvatarFavorites[groupName][j] =
+                            args.ref;
+                    }
+                }
+            }
+
+            // update db cache
+            database.addAvatarToCache(args.ref);
+        }
     });
 
     /**

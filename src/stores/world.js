@@ -79,6 +79,7 @@ export const useWorldStore = defineStore('World', () => {
 
     API.$on('WORLD', function (args) {
         args.ref = applyWorld(args.json);
+        favoriteStore.applyFavorite('world', args.ref.id);
         const userDialog = userStore.userDialog;
         if (
             userDialog.visible === false ||

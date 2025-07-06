@@ -1763,6 +1763,8 @@ export const useUserStore = defineStore('User', () => {
     }
 
     API.$on('USER:CURRENT', function (args) {
+        authStore.attemptingAutoLogin = false;
+        friendStore.checkActiveFriends(args.json);
         const { json } = args;
         args.ref = applyCurrentUser(json);
 

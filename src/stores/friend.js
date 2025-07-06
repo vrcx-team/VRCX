@@ -293,10 +293,6 @@ export const useFriendStore = defineStore('Friend', () => {
         { flush: 'sync' }
     );
 
-    API.$on('USER:CURRENT', function (args) {
-        checkActiveFriends(args.json);
-    });
-
     function updateUserCurrentStatus(args) {
         if (state.friendLogInitStatus) {
             refreshFriendsStatus(args.ref, args.fromGetCurrentUser);

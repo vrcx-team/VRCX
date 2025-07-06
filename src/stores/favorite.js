@@ -684,35 +684,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
     });
 
-    API.$on('WORLD', function (args) {
-        applyFavorite('world', args.ref.id);
-    });
-
-    API.$on('AVATAR', function (args) {
-        applyFavorite('avatar', args.ref.id);
-        if (state.localAvatarFavoritesList.includes(args.ref.id)) {
-            for (let i = 0; i < state.localAvatarFavoriteGroups.length; ++i) {
-                const groupName = state.localAvatarFavoriteGroups[i];
-                if (!state.localAvatarFavorites[groupName]) {
-                    continue;
-                }
-                for (
-                    let j = 0;
-                    j < state.localAvatarFavorites[groupName].length;
-                    ++j
-                ) {
-                    const ref = state.localAvatarFavorites[groupName][j];
-                    if (ref.id === args.ref.id) {
-                        state.localAvatarFavorites[groupName][j] = args.ref;
-                    }
-                }
-            }
-
-            // update db cache
-            database.addAvatarToCache(args.ref);
-        }
-    });
-
     /**
      * aka: `$app.methods.applyFavorite`
      * @param {'friend' | 'world' | 'avatar'} type

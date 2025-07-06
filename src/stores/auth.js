@@ -854,10 +854,6 @@ export const useAuthStore = defineStore('Auth', () => {
             });
     }
 
-    API.$on('USER:CURRENT', function () {
-        state.attemptingAutoLogin = false;
-    });
-
     return {
         state,
         loginForm,
