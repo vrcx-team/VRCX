@@ -217,6 +217,7 @@
 
 <script>
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n-bridge';
     import { favoriteRequest } from '../../../api';
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../../stores';
     import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
@@ -233,6 +234,7 @@
             refreshingLocalFavorites: Boolean
         },
         setup() {
+            const { t } = useI18n();
             const { hideTooltips, sortFavorites, setSortFavorites } = storeToRefs(useAppearanceSettingsStore());
             const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites, localWorldFavoriteGroups } =
                 storeToRefs(useFavoriteStore());
@@ -259,7 +261,8 @@
                 renameLocalWorldFavoriteGroup,
                 removeLocalWorldFavorite,
                 newLocalWorldFavoriteGroup,
-                showWorldDialog
+                showWorldDialog,
+                t
             };
         },
         data() {
@@ -326,14 +329,14 @@
             },
             promptNewLocalWorldFavoriteGroup() {
                 this.$prompt(
-                    $t('prompt.new_local_favorite_group.description'),
-                    $t('prompt.new_local_favorite_group.header'),
+                    this.t('prompt.new_local_favorite_group.description'),
+                    this.t('prompt.new_local_favorite_group.header'),
                     {
                         distinguishCancelAndClose: true,
-                        confirmButtonText: $t('prompt.new_local_favorite_group.ok'),
-                        cancelButtonText: $t('prompt.new_local_favorite_group.cancel'),
+                        confirmButtonText: this.t('prompt.new_local_favorite_group.ok'),
+                        cancelButtonText: this.t('prompt.new_local_favorite_group.cancel'),
                         inputPattern: /\S+/,
-                        inputErrorMessage: $t('prompt.new_local_favorite_group.input_error'),
+                        inputErrorMessage: this.t('prompt.new_local_favorite_group.input_error'),
                         callback: (action, instance) => {
                             if (action === 'confirm' && instance.inputValue) {
                                 this.newLocalWorldFavoriteGroup(instance.inputValue);
@@ -344,14 +347,14 @@
             },
             promptLocalWorldFavoriteGroupRename(group) {
                 this.$prompt(
-                    $t('prompt.local_favorite_group_rename.description'),
-                    $t('prompt.local_favorite_group_rename.header'),
+                    this.t('prompt.local_favorite_group_rename.description'),
+                    this.t('prompt.local_favorite_group_rename.header'),
                     {
                         distinguishCancelAndClose: true,
-                        confirmButtonText: $t('prompt.local_favorite_group_rename.save'),
-                        cancelButtonText: $t('prompt.local_favorite_group_rename.cancel'),
+                        confirmButtonText: this.t('prompt.local_favorite_group_rename.save'),
+                        cancelButtonText: this.t('prompt.local_favorite_group_rename.cancel'),
                         inputPattern: /\S+/,
-                        inputErrorMessage: $t('prompt.local_favorite_group_rename.input_error'),
+                        inputErrorMessage: this.t('prompt.local_favorite_group_rename.input_error'),
                         inputValue: group,
                         callback: (action, instance) => {
                             if (action === 'confirm' && instance.inputValue) {

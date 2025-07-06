@@ -54,6 +54,7 @@
 
 <script>
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n-bridge';
     import * as workerTimers from 'worker-timers';
     import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
     import { API } from '../../service/eventBus';
@@ -70,6 +71,7 @@
             FavoritesAvatarTab
         },
         setup() {
+            const { t } = useI18n();
             const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
             const {
                 favoriteFriends,
@@ -101,7 +103,8 @@
                 localAvatarFavoritesList,
                 localWorldFavoritesList,
                 getLocalWorldFavorites,
-                menuActiveIndex
+                menuActiveIndex,
+                t
             };
         },
         data() {
@@ -160,16 +163,16 @@
             },
             changeFavoriteGroupName(ctx) {
                 this.$prompt(
-                    $t('prompt.change_favorite_group_name.description'),
-                    $t('prompt.change_favorite_group_name.header'),
+                    this.t('prompt.change_favorite_group_name.description'),
+                    this.t('prompt.change_favorite_group_name.header'),
                     {
                         distinguishCancelAndClose: true,
-                        cancelButtonText: $t('prompt.change_favorite_group_name.cancel'),
-                        confirmButtonText: $t('prompt.change_favorite_group_name.change'),
-                        inputPlaceholder: $t('prompt.change_favorite_group_name.input_placeholder'),
+                        cancelButtonText: this.t('prompt.change_favorite_group_name.cancel'),
+                        confirmButtonText: this.t('prompt.change_favorite_group_name.change'),
+                        inputPlaceholder: this.t('prompt.change_favorite_group_name.input_placeholder'),
                         inputValue: ctx.displayName,
                         inputPattern: /\S+/,
-                        inputErrorMessage: $t('prompt.change_favorite_group_name.input_error'),
+                        inputErrorMessage: this.t('prompt.change_favorite_group_name.input_error'),
                         callback: (action, instance) => {
                             if (action === 'confirm') {
                                 favoriteRequest
@@ -180,7 +183,7 @@
                                     })
                                     .then(() => {
                                         this.$message({
-                                            message: $t('prompt.change_favorite_group_name.message.success'),
+                                            message: this.t('prompt.change_favorite_group_name.message.success'),
                                             type: 'success'
                                         });
                                         // load new group name
