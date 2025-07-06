@@ -154,13 +154,9 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     API.$on('INSTANCE', function (args) {
         const { json } = args;
-        if (!json) {
-            return;
+        if (json) {
+            args.ref = applyInstance(args.json);
         }
-        args.ref = applyInstance(args.json);
-    });
-
-    API.$on('INSTANCE', function (args) {
         if (!args.json?.id) {
             return;
         }

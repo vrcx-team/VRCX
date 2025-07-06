@@ -221,6 +221,17 @@ export const useGalleryStore = defineStore('Gallery', () => {
         if (args.params.tag === 'gallery') {
             state.galleryTable = args.json.reverse();
         }
+        if (args.params.tag === 'icon') {
+            state.VRCPlusIconsTable = args.json.reverse();
+        }
+        if (args.params.tag === 'sticker') {
+            state.stickerTable = args.json.reverse();
+            state.galleryDialogStickersLoading = false;
+        }
+        if (args.params.tag === 'emoji') {
+            state.emojiTable = args.json.reverse();
+            state.galleryDialogEmojisLoading = false;
+        }
     });
 
     API.$on('GALLERYIMAGE:ADD', function (args) {
@@ -260,12 +271,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
             state.galleryDialogIconsLoading = false;
         });
     }
-
-    API.$on('FILES:LIST', function (args) {
-        if (args.params.tag === 'icon') {
-            state.VRCPlusIconsTable = args.json.reverse();
-        }
-    });
 
     function inviteImageUpload(e) {
         const files = e.target.files || e.dataTransfer.files;
@@ -314,13 +319,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
             state.galleryDialogStickersLoading = false;
         });
     }
-
-    API.$on('FILES:LIST', function (args) {
-        if (args.params.tag === 'sticker') {
-            state.stickerTable = args.json.reverse();
-            state.galleryDialogStickersLoading = false;
-        }
-    });
 
     API.$on('STICKER:ADD', function (args) {
         if (Object.keys(state.stickerTable).length !== 0) {
@@ -466,13 +464,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
             state.galleryDialogEmojisLoading = false;
         });
     }
-
-    API.$on('FILES:LIST', function (args) {
-        if (args.params.tag === 'emoji') {
-            state.emojiTable = args.json.reverse();
-            state.galleryDialogEmojisLoading = false;
-        }
-    });
 
     async function getInventory() {
         state.inventoryTable = [];

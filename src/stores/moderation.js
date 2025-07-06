@@ -65,6 +65,16 @@ export const useModerationStore = defineStore('Moderation', () => {
 
     API.$on('PLAYER-MODERATION', function (args) {
         args.ref = applyPlayerModeration(args.json);
+        const { ref } = args;
+        const array = state.playerModerationTable.data;
+        const { length } = array;
+        for (let i = 0; i < length; ++i) {
+            if (array[i].id === ref.id) {
+                Vue.set(array, i, ref);
+                return;
+            }
+        }
+        state.playerModerationTable.data.push(ref);
     });
 
     API.$on('PLAYER-MODERATION:LIST', function (args) {
@@ -130,6 +140,15 @@ export const useModerationStore = defineStore('Moderation', () => {
         } else if (ref.type === 'muteChat') {
             D.isMuteChat = false;
         }
+
+        const array = state.playerModerationTable.data;
+        const { length } = array;
+        for (let i = 0; i < length; ++i) {
+            if (array[i].id === ref.id) {
+                array.splice(i, 1);
+                return;
+            }
+        }
     });
 
     API.$on('PLAYER-MODERATION:DELETE', function (args) {
@@ -151,31 +170,6 @@ export const useModerationStore = defineStore('Moderation', () => {
             }
         }
         state.cachedPlayerModerationsUserIds.delete(moderated);
-    });
-
-    API.$on('PLAYER-MODERATION', function (args) {
-        const { ref } = args;
-        const array = state.playerModerationTable.data;
-        const { length } = array;
-        for (let i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
-                Vue.set(array, i, ref);
-                return;
-            }
-        }
-        state.playerModerationTable.data.push(ref);
-    });
-
-    API.$on('PLAYER-MODERATION:@DELETE', function (args) {
-        const { ref } = args;
-        const array = state.playerModerationTable.data;
-        const { length } = array;
-        for (let i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
-                array.splice(i, 1);
-                return;
-            }
-        }
     });
 
     /**

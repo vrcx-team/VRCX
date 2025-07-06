@@ -710,9 +710,6 @@ export const useGroupStore = defineStore('Group', () => {
 
     API.$on('GROUP', function (args) {
         args.ref = applyGroup(args.json);
-    });
-
-    API.$on('GROUP', function (args) {
         const { ref } = args;
         const D = state.groupDialog;
         if (D.visible === false || D.id !== ref.id) {
@@ -754,35 +751,31 @@ export const useGroupStore = defineStore('Group', () => {
     });
 
     API.$on('GROUP:MEMBER:PROPS', function (args) {
-        if (args.userId !== userStore.currentUser.id) {
-            return;
-        }
-        const json = args.json;
-        json.$memberId = json.id;
-        json.id = json.groupId;
-        if (
-            state.groupDialog.visible &&
-            state.groupDialog.id === json.groupId
-        ) {
-            state.groupDialog.ref.myMember.visibility = json.visibility;
-            state.groupDialog.ref.myMember.isSubscribedToAnnouncements =
-                json.isSubscribedToAnnouncements;
-        }
-        if (
-            userStore.userDialog.visible &&
-            userStore.userDialog.id === userStore.currentUser.id
-        ) {
-            getCurrentUserRepresentedGroup();
-        }
-        API.$emit('GROUP:MEMBER', {
-            json,
-            params: {
-                groupId: json.groupId
+        if (args.userId === userStore.currentUser.id) {
+            const json = args.json;
+            json.$memberId = json.id;
+            json.id = json.groupId;
+            if (
+                state.groupDialog.visible &&
+                state.groupDialog.id === json.groupId
+            ) {
+                state.groupDialog.ref.myMember.visibility = json.visibility;
+                state.groupDialog.ref.myMember.isSubscribedToAnnouncements =
+                    json.isSubscribedToAnnouncements;
             }
-        });
-    });
-
-    API.$on('GROUP:MEMBER:PROPS', function (args) {
+            if (
+                userStore.userDialog.visible &&
+                userStore.userDialog.id === userStore.currentUser.id
+            ) {
+                getCurrentUserRepresentedGroup();
+            }
+            API.$emit('GROUP:MEMBER', {
+                json,
+                params: {
+                    groupId: json.groupId
+                }
+            });
+        }
         let member;
         if (state.groupDialog.id === args.json.groupId) {
             let i;

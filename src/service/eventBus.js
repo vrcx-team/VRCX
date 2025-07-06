@@ -83,9 +83,6 @@ API.$on('CONFIG', function (args) {
     };
     args.ref = ref;
     authStore.cachedConfig = ref;
-});
-
-API.$on('CONFIG', function (args) {
     if (typeof args.ref?.whiteListedAssetUrls !== 'object') {
         console.error('Invalid config whiteListedAssetUrls');
     }

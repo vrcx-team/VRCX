@@ -327,14 +327,13 @@ export const useFriendStore = defineStore('Friend', () => {
             return;
         }
         D.isFriend = false;
+        deleteFriendship(args.params.userId);
+        deleteFriend(args.params.userId);
     });
 
     API.$on('FRIEND:ADD', function (args) {
         addFriendship(args.params.userId);
-    });
-
-    API.$on('FRIEND:DELETE', function (args) {
-        deleteFriendship(args.params.userId);
+        addFriend(args.params.userId);
     });
 
     function userOnFriend(args) {
@@ -766,9 +765,9 @@ export const useFriendStore = defineStore('Friend', () => {
 
     /**
      * @param {string} id
-     * @param {string} state_input
+     * @param {string?} state_input
      */
-    function addFriend(id, state_input) {
+    function addFriend(id, state_input = undefined) {
         if (state.friends.has(id)) {
             return;
         }
@@ -1721,14 +1720,6 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         }
     }
-
-    API.$on('FRIEND:ADD', function (args) {
-        addFriend(args.params.userId);
-    });
-
-    API.$on('FRIEND:DELETE', function (args) {
-        deleteFriend(args.params.userId);
-    });
 
     function confirmDeleteFriend(id) {
         $app.$confirm('Continue? Unfriend', 'Confirm', {
