@@ -74,80 +74,63 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { ref, getCurrentInstance, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { favoriteRequest } from '../../../api';
-    import { API } from '../../../service/eventBus';
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../../stores';
     import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
     import FavoritesFriendItem from './FavoritesFriendItem.vue';
 
-    export default {
-        name: 'FavoritesFriendTab',
-        components: { FriendExportDialog, FavoritesFriendItem },
-        props: {
-            editFavoritesMode: Boolean
+    defineProps({
+        editFavoritesMode: {
+            type: Boolean,
+            default: false
+        }
+    });
+
+    const emit = defineEmits(['change-favorite-group-name']);
+
+    const { proxy } = getCurrentInstance();
+
+    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { setSortFavorites } = useAppearanceSettingsStore();
+    const { showUserDialog } = useUserStore();
+    const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(useFavoriteStore());
+    const { showFriendImportDialog, saveSortFavoritesOption } = useFavoriteStore();
+
+    const friendExportDialogVisible = ref(false);
+
+    const sortFav = computed({
+        get() {
+            return sortFavorites.value;
         },
-        setup() {
-            const appearanceSettingsStore = useAppearanceSettingsStore();
-            const { hideTooltips, sortFavorites } = storeToRefs(appearanceSettingsStore);
-            const setSortFavorites = appearanceSettingsStore;
-            const userStore = useUserStore();
-            const { showUserDialog } = userStore;
-            const favoriteStore = useFavoriteStore();
-            const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(favoriteStore);
-            const { showFriendImportDialog, saveSortFavoritesOption } = favoriteStore;
-            return {
-                hideTooltips,
-                sortFavorites,
-                setSortFavorites,
-                API,
-                showUserDialog,
-                favoriteFriendGroups,
-                showFriendImportDialog,
-                groupedByGroupKeyFavoriteFriends,
-                saveSortFavoritesOption
-            };
-        },
-        data() {
-            return {
-                friendExportDialogVisible: false
-            };
-        },
-        computed: {
-            sortFav: {
-                get() {
-                    return this.sortFavorites;
-                },
-                set(value) {
-                    this.setSortFavorites(value);
+        set(value) {
+            setSortFavorites(value);
+        }
+    });
+
+    function showFriendExportDialog() {
+        friendExportDialogVisible.value = true;
+    }
+
+    function clearFavoriteGroup(ctx) {
+        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    favoriteRequest.clearFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name
+                    });
                 }
             }
-        },
-        methods: {
-            showFriendExportDialog() {
-                this.friendExportDialogVisible = true;
-            },
+        });
+    }
 
-            clearFavoriteGroup(ctx) {
-                // FIXME: 메시지 수정
-                this.$confirm('Continue? Clear Group', 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action === 'confirm') {
-                            favoriteRequest.clearFavoriteGroup({
-                                type: ctx.type,
-                                group: ctx.name
-                            });
-                        }
-                    }
-                });
-            },
-            changeFavoriteGroupName(group) {
-                this.$emit('change-favorite-group-name', group);
-            }
-        }
-    };
+    function changeFavoriteGroupName(group) {
+        emit('change-favorite-group-name', group);
+    }
 </script>

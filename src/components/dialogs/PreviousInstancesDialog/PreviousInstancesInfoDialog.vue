@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        ref="dialog"
+        ref="dialogRef"
         :visible="previousInstancesInfoDialogVisible"
         :title="$t('dialog.previous_instances.info')"
         width="800px"
@@ -57,109 +57,79 @@
     </safe-dialog>
 </template>
 
-<script>
-    import dayjs from 'dayjs';
+<script setup>
+    import { ref, watch, nextTick } from 'vue';
     import { storeToRefs } from 'pinia';
     import { database } from '../../../service/database';
     import { adjustDialogZ, compareByCreatedAt, parseLocation, timeToText } from '../../../shared/utils';
-    import { useAppearanceSettingsStore, useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
+    import { useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
 
-    export default {
-        name: 'PreviousInstancesInfoDialog',
-        setup() {
-            const { isDarkMode } = storeToRefs(useAppearanceSettingsStore());
-            const { lookupUser } = useUserStore();
-            const { previousInstancesInfoDialogVisible, previousInstancesInfoDialogInstanceId } =
-                storeToRefs(useInstanceStore());
-            const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
-            return {
-                isDarkMode,
-                lookupUser,
-                previousInstancesInfoDialogVisible,
-                previousInstancesInfoDialogInstanceId,
-                adjustDialogZ,
-                gameLogIsFriend,
-                gameLogIsFavorite
-            };
-        },
-        data() {
-            return {
-                echarts: null,
-                echartsInstance: null,
-                loading: false,
-                location: {},
-                currentTab: 'table',
-                dataTable: {
-                    data: [],
-                    filters: [
-                        {
-                            prop: 'displayName',
-                            value: ''
-                        }
-                    ],
-                    tableProps: {
-                        stripe: true,
-                        size: 'mini',
-                        defaultSort: {
-                            prop: 'created_at',
-                            order: 'descending'
-                        }
-                    },
-                    pageSize: 10,
-                    paginationProps: {
-                        small: true,
-                        layout: 'sizes,prev,pager,next,total',
-                        pageSizes: [10, 25, 50, 100]
-                    }
-                },
-                fullscreen: false
-            };
-        },
-        computed: {
-            activityDetailData() {
-                return this.dataTable.data.map((item) => ({
-                    displayName: item.displayName,
-                    joinTime: dayjs(item.created_at),
-                    leaveTime: dayjs(item.created_at).add(item.time, 'ms'),
-                    time: item.time,
-                    timer: item.timer
-                }));
+    const { lookupUser } = useUserStore();
+    const { previousInstancesInfoDialogVisible, previousInstancesInfoDialogInstanceId } =
+        storeToRefs(useInstanceStore());
+    const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
+
+    const dialogRef = ref(null);
+
+    const loading = ref(false);
+    const location = ref({});
+    const dataTable = ref({
+        data: [],
+        filters: [
+            {
+                prop: 'displayName',
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'mini',
+            defaultSort: {
+                prop: 'created_at',
+                order: 'descending'
             }
         },
-        watch: {
-            previousInstancesInfoDialogVisible(value) {
-                if (value) {
-                    this.$nextTick(() => {
-                        this.init();
-                        this.refreshPreviousInstancesInfoTable();
-                    });
-                    // loadEcharts().then((echarts) => {
-                    //     this.echarts = echarts;
-                    // });
-                }
-            }
-        },
-        methods: {
-            init() {
-                this.adjustDialogZ(this.$refs.dialog.$el);
-                this.loading = true;
-                this.location = parseLocation(this.previousInstancesInfoDialogInstanceId);
-            },
-            refreshPreviousInstancesInfoTable() {
-                database.getPlayersFromInstance(this.location.tag).then((data) => {
-                    const array = [];
-                    for (const entry of Array.from(data.values())) {
-                        entry.timer = timeToText(entry.time);
-                        array.push(entry);
-                    }
-                    array.sort(compareByCreatedAt);
-                    this.dataTable.data = array;
-                    this.loading = false;
+        pageSize: 10,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 25, 50, 100]
+        }
+    });
+    const fullscreen = ref(false);
+
+    watch(
+        () => previousInstancesInfoDialogVisible.value,
+        (value) => {
+            if (value) {
+                nextTick(() => {
+                    init();
+                    refreshPreviousInstancesInfoTable();
                 });
-            },
-            closeDialog() {
-                this.previousInstancesInfoDialogVisible = false;
             }
         }
-    };
+    );
+
+    function init() {
+        adjustDialogZ(dialogRef.value.$el);
+        loading.value = true;
+        location.value = parseLocation(previousInstancesInfoDialogInstanceId.value);
+    }
+
+    function refreshPreviousInstancesInfoTable() {
+        database.getPlayersFromInstance(location.value.tag).then((data) => {
+            const array = [];
+            for (const entry of Array.from(data.values())) {
+                entry.timer = timeToText(entry.time);
+                array.push(entry);
+            }
+            array.sort(compareByCreatedAt);
+            dataTable.value.data = array;
+            loading.value = false;
+        });
+    }
+
+    function closeDialog() {
+        previousInstancesInfoDialogVisible.value = false;
+    }
 </script>

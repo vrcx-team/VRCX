@@ -64,7 +64,7 @@
                             :key="friend.id"
                             :friend="friend"
                             @click="showUserDialog(friend.id)"
-                            @confirm-delete-friend="$emit('confirm-delete-friend', $event)"></friend-item>
+                            @confirm-delete-friend="confirmDeleteFriend"></friend-item>
                     </div>
                 </div>
             </template>
@@ -74,7 +74,7 @@
                 :key="friend.id"
                 :friend="friend"
                 @click="showUserDialog(friend.id)"
-                @confirm-delete-friend="$emit('confirm-delete-friend', $event)">
+                @confirm-delete-friend="confirmDeleteFriend">
             </friend-item>
         </div>
 
@@ -103,7 +103,7 @@
                             is-group-by-instance
                             :style="{ 'margin-bottom': idx === friendArr.length - 1 ? '5px' : undefined }"
                             @click="showUserDialog(friend.id)"
-                            @confirm-delete-friend="$emit('confirm-delete-friend', $event)">
+                            @confirm-delete-friend="confirmDeleteFriend">
                         </friend-item>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
                 :key="friend.id"
                 :friend="friend"
                 @click="showUserDialog(friend.id)"
-                @confirm-delete-friend="$emit('confirm-delete-friend', $event)" />
+                @confirm-delete-friend="confirmDeleteFriend" />
         </div>
         <div
             v-show="activeFriends.length"
@@ -145,7 +145,7 @@
                 :key="friend.id"
                 :friend="friend"
                 @click="showUserDialog(friend.id)"
-                @confirm-delete-friend="$emit('confirm-delete-friend', $event)"></friend-item>
+                @confirm-delete-friend="confirmDeleteFriend"></friend-item>
         </div>
         <div
             v-show="offlineFriends.length"
@@ -163,12 +163,13 @@
                 :key="friend.id"
                 :friend="friend"
                 @click="showUserDialog(friend.id)"
-                @confirm-delete-friend="$emit('confirm-delete-friend', $event)"></friend-item>
+                @confirm-delete-friend="confirmDeleteFriend"></friend-item>
         </div>
     </div>
 </template>
 
-<script>
+<script setup>
+    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import FriendItem from '../../../components/FriendItem.vue';
     import configRepository from '../../../service/config';
@@ -182,202 +183,175 @@
         useLocationStore,
         useUserStore
     } from '../../../stores';
+    const emit = defineEmits(['confirm-delete-friend']);
 
-    export default {
-        name: 'FriendsSidebar',
-        components: {
-            FriendItem
-        },
-        setup() {
-            const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
-            const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup } =
-                storeToRefs(useAppearanceSettingsStore());
-            const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
-            const { showUserDialog } = useUserStore();
-            const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(useFavoriteStore());
-            const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
-            const { isGameRunning } = storeToRefs(useGameStore());
-            const { currentUser } = storeToRefs(useUserStore());
+    const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
+    const { isSidebarGroupByInstance, isHideFriendsInSameInstance, isSidebarDivideByFriendGroup } =
+        storeToRefs(useAppearanceSettingsStore());
+    const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
+    const { showUserDialog } = useUserStore();
+    const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(useFavoriteStore());
+    const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
+    const { isGameRunning } = storeToRefs(useGameStore());
+    const { currentUser } = storeToRefs(useUserStore());
 
-            return {
-                isSidebarGroupByInstance,
-                isHideFriendsInSameInstance,
-                isSidebarDivideByFriendGroup,
-                gameLogDisabled,
-                vipFriends,
-                onlineFriends,
-                activeFriends,
-                offlineFriends,
-                userStatusClass,
-                isRealInstance,
-                showUserDialog,
-                favoriteFriendGroups,
-                userImage,
-                lastLocation,
-                groupedByGroupKeyFavoriteFriends,
-                lastLocationDestination,
-                isGameRunning,
-                currentUser
-            };
-        },
+    const isFriendsGroupMe = ref(true);
+    const isVIPFriends = ref(true);
+    const isOnlineFriends = ref(true);
+    const isActiveFriends = ref(false);
+    const isOfflineFriends = ref(false);
+    const isSidebarGroupByInstanceCollapsed = ref(false);
 
-        data() {
-            return {
-                isFriendsGroupMe: true,
-                isVIPFriends: true,
-                isOnlineFriends: true,
-                isActiveFriends: true,
-                isOfflineFriends: true,
-                isSidebarGroupByInstanceCollapsed: false
-            };
-        },
-        computed: {
-            friendsInSameInstance() {
-                const friendsList = {};
+    loadFriendsGroupStates();
 
-                const allFriends = [...this.vipFriends, ...this.onlineFriends];
-                allFriends.forEach((friend) => {
-                    if (!friend.ref?.$location) {
-                        return;
-                    }
+    const friendsInSameInstance = computed(() => {
+        const friendsList = {};
 
-                    let locationTag = friend.ref.$location.tag;
-                    if (!friend.ref.$location.isRealInstance && this.lastLocation.friendList.has(friend.id)) {
-                        locationTag = this.lastLocation.location;
-                    }
-                    const isRealInstance = this.isRealInstance(locationTag);
-                    if (!isRealInstance) {
-                        return;
-                    }
-
-                    if (!friendsList[locationTag]) {
-                        friendsList[locationTag] = [];
-                    }
-                    friendsList[locationTag].push(friend);
-                });
-
-                const sortedFriendsList = [];
-                for (const group of Object.values(friendsList)) {
-                    if (group.length > 1) {
-                        sortedFriendsList.push(group.sort((a, b) => a.ref?.$location_at - b.ref?.$location_at));
-                    }
-                }
-
-                return sortedFriendsList.sort((a, b) => b.length - a.length);
-            },
-            sameInstanceFriendId() {
-                const sameInstanceFriendId = new Set();
-                for (const item of this.friendsInSameInstance) {
-                    for (const friend of item) {
-                        if (this.isRealInstance(friend.ref?.$location.tag)) {
-                            sameInstanceFriendId.add(friend.id);
-                        }
-                    }
-                }
-                return sameInstanceFriendId;
-            },
-            onlineFriendsByGroupStatus() {
-                if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
-                    return this.onlineFriends;
-                }
-
-                return this.onlineFriends.filter((item) => !this.sameInstanceFriendId.has(item.id));
-            },
-            vipFriendsByGroupStatus() {
-                if (!this.isSidebarGroupByInstance || !this.isHideFriendsInSameInstance) {
-                    return this.vipFriends;
-                }
-
-                return this.vipFriends.filter((item) => !this.sameInstanceFriendId.has(item.id));
-            },
-            // VIP friends divide by group
-            vipFriendsDivideByGroup() {
-                const vipFriendsByGroup = { ...this.groupedByGroupKeyFavoriteFriends };
-                const result = [];
-
-                for (const key in vipFriendsByGroup) {
-                    if (Object.hasOwn(vipFriendsByGroup, key)) {
-                        const groupFriends = vipFriendsByGroup[key];
-                        // sort groupFriends using the order of vipFriends
-                        // avoid unnecessary sorting
-                        const filteredFriends = this.vipFriends.filter((friend) =>
-                            groupFriends.some((item) => {
-                                if (this.isSidebarGroupByInstance && this.isHideFriendsInSameInstance) {
-                                    return item.id === friend.id && !this.sameInstanceFriendId.has(item.id);
-                                }
-                                return item.id === friend.id;
-                            })
-                        );
-
-                        if (filteredFriends.length > 0) {
-                            const groupName =
-                                this.favoriteFriendGroups.find((item) => item.key === key)?.displayName || '';
-                            result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
-                        }
-                    }
-                }
-
-                return result.sort((a, b) => a[0].key.localeCompare(b[0].key));
-            },
-            vipFriendsDisplayNumber() {
-                return this.isSidebarDivideByFriendGroup
-                    ? this.vipFriendsDivideByGroup.length
-                    : this.vipFriendsByGroupStatus.length;
+        const allFriends = [...vipFriends.value, ...onlineFriends.value];
+        allFriends.forEach((friend) => {
+            if (!friend.ref?.$location) {
+                return;
             }
-        },
-        created() {
-            this.loadFriendsGroupStates();
-        },
-        methods: {
-            saveFriendsGroupStates() {
-                configRepository.setBool('VRCX_isFriendsGroupMe', this.isFriendsGroupMe);
-                configRepository.setBool('VRCX_isFriendsGroupFavorites', this.isVIPFriends);
-                configRepository.setBool('VRCX_isFriendsGroupOnline', this.isOnlineFriends);
-                configRepository.setBool('VRCX_isFriendsGroupActive', this.isActiveFriends);
-                configRepository.setBool('VRCX_isFriendsGroupOffline', this.isOfflineFriends);
-            },
-            async loadFriendsGroupStates() {
-                this.isFriendsGroupMe = await configRepository.getBool('VRCX_isFriendsGroupMe', true);
-                this.isVIPFriends = await configRepository.getBool('VRCX_isFriendsGroupFavorites', true);
-                this.isOnlineFriends = await configRepository.getBool('VRCX_isFriendsGroupOnline', true);
-                this.isActiveFriends = await configRepository.getBool('VRCX_isFriendsGroupActive', false);
-                this.isOfflineFriends = await configRepository.getBool('VRCX_isFriendsGroupOffline', false);
-                this.isSidebarGroupByInstanceCollapsed = await configRepository.getBool(
-                    'VRCX_sidebarGroupByInstanceCollapsed',
-                    false
-                );
-            },
-            toggleSwitchGroupByInstanceCollapsed() {
-                this.isSidebarGroupByInstanceCollapsed = !this.isSidebarGroupByInstanceCollapsed;
-                configRepository.setBool(
-                    'VRCX_sidebarGroupByInstanceCollapsed',
-                    this.isSidebarGroupByInstanceCollapsed
-                );
-            },
-            getFriendsLocations(friendsArr) {
-                // prevent the instance title display as "Traveling".
-                if (!friendsArr?.length) {
-                    return '';
-                }
-                for (const friend of friendsArr) {
-                    if (friend.ref?.location !== 'traveling') {
-                        return friend.ref.location;
-                    }
-                }
-                for (const friend of friendsArr) {
-                    if (this.isRealInstance(friend.ref?.travelingToLocation)) {
-                        return friend.ref.travelingToLocation;
-                    }
-                }
-                for (const friend of friendsArr) {
-                    if (this.lastLocation.friendList.has(friend.id)) {
-                        return this.lastLocation.location;
-                    }
-                }
-                return friendsArr[0].ref?.location;
+
+            let locationTag = friend.ref.$location.tag;
+            if (!friend.ref.$location.isRealInstance && lastLocation.value.friendList.has(friend.id)) {
+                locationTag = lastLocation.value.location;
+            }
+            const isReal = isRealInstance(locationTag);
+            if (!isReal) {
+                return;
+            }
+
+            if (!friendsList[locationTag]) {
+                friendsList[locationTag] = [];
+            }
+            friendsList[locationTag].push(friend);
+        });
+
+        const sortedFriendsList = [];
+        for (const group of Object.values(friendsList)) {
+            if (group.length > 1) {
+                sortedFriendsList.push(group.sort((a, b) => a.ref?.$location_at - b.ref?.$location_at));
             }
         }
-    };
+
+        return sortedFriendsList.sort((a, b) => b.length - a.length);
+    });
+
+    const sameInstanceFriendId = computed(() => {
+        const sameInstanceFriendId = new Set();
+        for (const item of friendsInSameInstance.value) {
+            for (const friend of item) {
+                if (isRealInstance(friend.ref?.$location.tag)) {
+                    sameInstanceFriendId.add(friend.id);
+                }
+            }
+        }
+        return sameInstanceFriendId;
+    });
+
+    const onlineFriendsByGroupStatus = computed(() => {
+        if (!isSidebarGroupByInstance.value || !isHideFriendsInSameInstance.value) {
+            return onlineFriends.value;
+        }
+
+        return onlineFriends.value.filter((item) => !sameInstanceFriendId.value.has(item.id));
+    });
+
+    const vipFriendsByGroupStatus = computed(() => {
+        if (!isSidebarGroupByInstance.value || !isHideFriendsInSameInstance.value) {
+            return vipFriends.value;
+        }
+
+        return vipFriends.value.filter((item) => !sameInstanceFriendId.value.has(item.id));
+    });
+
+    // VIP friends divide by group
+    const vipFriendsDivideByGroup = computed(() => {
+        const vipFriendsByGroup = { ...groupedByGroupKeyFavoriteFriends.value };
+        const result = [];
+
+        for (const key in vipFriendsByGroup) {
+            if (Object.hasOwn(vipFriendsByGroup, key)) {
+                const groupFriends = vipFriendsByGroup[key];
+                // sort groupFriends using the order of vipFriends
+                // avoid unnecessary sorting
+                const filteredFriends = vipFriends.value.filter((friend) =>
+                    groupFriends.some((item) => {
+                        if (isSidebarGroupByInstance.value && isHideFriendsInSameInstance.value) {
+                            return item.id === friend.id && !sameInstanceFriendId.value.has(item.id);
+                        }
+                        return item.id === friend.id;
+                    })
+                );
+
+                if (filteredFriends.length > 0) {
+                    const groupName = favoriteFriendGroups.value.find((item) => item.key === key)?.displayName || '';
+                    result.push(filteredFriends.map((item) => ({ groupName, key, ...item })));
+                }
+            }
+        }
+
+        return result.sort((a, b) => a[0].key.localeCompare(b[0].key));
+    });
+
+    const vipFriendsDisplayNumber = computed(() => {
+        return isSidebarDivideByFriendGroup.value
+            ? vipFriendsDivideByGroup.value.length
+            : vipFriendsByGroupStatus.value.length;
+    });
+
+    function saveFriendsGroupStates() {
+        configRepository.setBool('VRCX_isFriendsGroupMe', isFriendsGroupMe.value);
+        configRepository.setBool('VRCX_isFriendsGroupFavorites', isVIPFriends.value);
+        configRepository.setBool('VRCX_isFriendsGroupOnline', isOnlineFriends.value);
+        configRepository.setBool('VRCX_isFriendsGroupActive', isActiveFriends.value);
+        configRepository.setBool('VRCX_isFriendsGroupOffline', isOfflineFriends.value);
+    }
+
+    async function loadFriendsGroupStates() {
+        isFriendsGroupMe.value = await configRepository.getBool('VRCX_isFriendsGroupMe', true);
+        isVIPFriends.value = await configRepository.getBool('VRCX_isFriendsGroupFavorites', true);
+        isOnlineFriends.value = await configRepository.getBool('VRCX_isFriendsGroupOnline', true);
+        isActiveFriends.value = await configRepository.getBool('VRCX_isFriendsGroupActive', false);
+        isOfflineFriends.value = await configRepository.getBool('VRCX_isFriendsGroupOffline', false);
+        isSidebarGroupByInstanceCollapsed.value = await configRepository.getBool(
+            'VRCX_sidebarGroupByInstanceCollapsed',
+            false
+        );
+    }
+
+    function toggleSwitchGroupByInstanceCollapsed() {
+        isSidebarGroupByInstanceCollapsed.value = !isSidebarGroupByInstanceCollapsed.value;
+        configRepository.setBool('VRCX_sidebarGroupByInstanceCollapsed', isSidebarGroupByInstanceCollapsed.value);
+    }
+
+    function getFriendsLocations(friendsArr) {
+        // prevent the instance title display as "Traveling".
+        if (!friendsArr?.length) {
+            return '';
+        }
+        for (const friend of friendsArr) {
+            if (friend.ref?.location !== 'traveling') {
+                return friend.ref.location;
+            }
+        }
+        for (const friend of friendsArr) {
+            if (isRealInstance(friend.ref?.travelingToLocation)) {
+                return friend.ref.travelingToLocation;
+            }
+        }
+        for (const friend of friendsArr) {
+            if (lastLocation.value.friendList.has(friend.id)) {
+                return lastLocation.value.location;
+            }
+        }
+        return friendsArr[0].ref?.location;
+    }
+
+    function confirmDeleteFriend(friend) {
+        emit('confirm-delete-friend', friend);
+    }
 </script>
 
 <style scoped>

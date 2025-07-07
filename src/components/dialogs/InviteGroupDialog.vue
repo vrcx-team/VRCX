@@ -166,120 +166,109 @@
     </safe-dialog>
 </template>
 
-<script>
+<script setup>
+    import { ref, watch, getCurrentInstance, nextTick } from 'vue';
     import { storeToRefs } from 'pinia';
     import { groupRequest, userRequest } from '../../api';
-    import { API } from '../../service/eventBus';
     import { adjustDialogZ, hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
     import { useFriendStore, useGroupStore } from '../../stores';
 
-    export default {
-        name: 'InviteGroupDialog',
-        setup() {
-            const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
-            const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());
-            const { getCachedGroup } = useGroupStore();
-            return {
-                vipFriends,
-                onlineFriends,
-                activeFriends,
-                offlineFriends,
-                currentUserGroups,
-                inviteGroupDialog,
-                userStatusClass,
-                userImage,
-                API,
-                adjustDialogZ,
-                getCachedGroup
-            };
-        },
-        watch: {
-            'inviteGroupDialog.visible'(value) {
-                if (value) {
-                    this.initDialog();
-                }
-            }
-        },
-        methods: {
-            initDialog() {
-                this.$nextTick(() => this.adjustDialogZ(this.$refs.inviteGroupDialogRef.$el));
-                const D = this.inviteGroupDialog;
-                if (D.groupId) {
-                    this.getCachedGroup({
-                        groupId: D.groupId
-                    })
-                        .then((args) => {
-                            D.groupName = args.ref.name;
-                        })
-                        .catch(() => {
-                            D.groupId = '';
-                        });
-                    this.isAllowedToInviteToGroup();
-                }
+    const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
+    const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());
+    const { getCachedGroup } = useGroupStore();
 
-                if (D.userId) {
-                    userRequest.getCachedUser({ userId: D.userId }).then((args) => {
-                        D.userObject = args.ref;
-                        D.userIds = [D.userId];
-                    });
-                }
-            },
-            isAllowedToInviteToGroup() {
-                const D = this.inviteGroupDialog;
-                const groupId = D.groupId;
-                if (!groupId) {
-                    return;
-                }
-                this.inviteGroupDialog.loading = true;
-                groupRequest
-                    .getGroup({ groupId })
-                    .then((args) => {
-                        if (hasGroupPermission(args.ref, 'group-invites-manage')) {
-                            return args;
-                        }
-                        // not allowed to invite
-                        this.inviteGroupDialog.groupId = '';
-                        this.$message({
-                            type: 'error',
-                            message: 'You are not allowed to invite to this group'
-                        });
-                        return args;
-                    })
-                    .finally(() => {
-                        this.inviteGroupDialog.loading = false;
-                    });
-            },
-            sendGroupInvite() {
-                this.$confirm('Continue? Invite User(s) To Group', 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        const D = this.inviteGroupDialog;
-                        if (action !== 'confirm' || D.loading === true) {
-                            return;
-                        }
-                        D.loading = true;
-                        const inviteLoop = () => {
-                            if (D.userIds.length === 0) {
-                                D.loading = false;
-                                return;
-                            }
-                            const receiverUserId = D.userIds.shift();
-                            groupRequest
-                                .sendGroupInvite({
-                                    groupId: D.groupId,
-                                    userId: receiverUserId
-                                })
-                                .then(inviteLoop)
-                                .catch(() => {
-                                    D.loading = false;
-                                });
-                        };
-                        inviteLoop();
-                    }
-                });
+    const { proxy } = getCurrentInstance();
+
+    watch(
+        () => {
+            return inviteGroupDialog.value.visible;
+        },
+        (value) => {
+            if (value) {
+                initDialog();
             }
         }
-    };
+    );
+
+    const inviteGroupDialogRef = ref(null);
+
+    function initDialog() {
+        nextTick(() => adjustDialogZ(inviteGroupDialogRef.value.$el));
+        const D = inviteGroupDialog.value;
+        if (D.groupId) {
+            getCachedGroup({
+                groupId: D.groupId
+            })
+                .then((args) => {
+                    D.groupName = args.ref.name;
+                })
+                .catch(() => {
+                    D.groupId = '';
+                });
+            isAllowedToInviteToGroup();
+        }
+
+        if (D.userId) {
+            userRequest.getCachedUser({ userId: D.userId }).then((args) => {
+                D.userObject = args.ref;
+                D.userIds = [D.userId];
+            });
+        }
+    }
+    function isAllowedToInviteToGroup() {
+        const D = inviteGroupDialog.value;
+        const groupId = D.groupId;
+        if (!groupId) {
+            return;
+        }
+        inviteGroupDialog.value.loading = true;
+        groupRequest
+            .getGroup({ groupId })
+            .then((args) => {
+                if (hasGroupPermission(args.ref, 'group-invites-manage')) {
+                    return args;
+                }
+                // not allowed to invite
+                inviteGroupDialog.value.groupId = '';
+                proxy.$message({
+                    type: 'error',
+                    message: 'You are not allowed to invite to this group'
+                });
+                return args;
+            })
+            .finally(() => {
+                inviteGroupDialog.value.loading = false;
+            });
+    }
+    function sendGroupInvite() {
+        proxy.$confirm('Continue? Invite User(s) To Group', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                const D = inviteGroupDialog.value;
+                if (action !== 'confirm' || D.loading === true) {
+                    return;
+                }
+                D.loading = true;
+                const inviteLoop = () => {
+                    if (D.userIds.length === 0) {
+                        D.loading = false;
+                        return;
+                    }
+                    const receiverUserId = D.userIds.shift();
+                    groupRequest
+                        .sendGroupInvite({
+                            groupId: D.groupId,
+                            userId: receiverUserId
+                        })
+                        .then(inviteLoop)
+                        .catch(() => {
+                            D.loading = false;
+                        });
+                };
+                inviteLoop();
+            }
+        });
+    }
 </script>
