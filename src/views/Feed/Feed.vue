@@ -9,11 +9,18 @@
                     <el-switch v-model="feedTable.vip" active-color="#13ce66" @change="feedTableLookup"></el-switch>
                 </el-tooltip>
             </div>
+            <el-input
+                v-model="feedTable.search"
+                :placeholder="t('view.feed.search_placeholder')"
+                clearable
+                style="flex: 1 1 60%; margin-right: 10px"
+                @keyup.native.13="feedTableLookup"
+                @change="feedTableLookup"></el-input>
             <el-select
                 v-model="feedTable.filter"
                 multiple
                 clearable
-                style="flex: 1; height: 40px"
+                style="flex: 1 1 40%"
                 :placeholder="t('view.feed.filter_placeholder')"
                 @change="feedTableLookup">
                 <el-option
@@ -22,13 +29,6 @@
                     :label="t('view.feed.filters.' + type)"
                     :value="type"></el-option>
             </el-select>
-            <el-input
-                v-model="feedTable.search"
-                :placeholder="t('view.feed.search_placeholder')"
-                clearable
-                style="flex: none; width: 150px; margin: 0 10px"
-                @keyup.native.13="feedTableLookup"
-                @change="feedTableLookup"></el-input>
         </div>
 
         <data-tables v-loading="feedTable.loading" v-bind="feedTable" lazy>

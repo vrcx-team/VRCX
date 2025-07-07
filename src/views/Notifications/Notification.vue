@@ -3,11 +3,15 @@
         <data-tables v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
             <template #tool>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
+                    <el-input
+                        v-model="notificationTable.filters[1].value"
+                        :placeholder="t('view.notification.search_placeholder')"
+                        style="flex: 1 1 60%; margin-right: 10px" />
                     <el-select
                         v-model="notificationTable.filters[0].value"
                         multiple
                         clearable
-                        style="flex: 1"
+                        style="flex: 1 1 40%;"
                         :placeholder="t('view.notification.filter_placeholder')"
                         @change="saveTableFilters">
                         <el-option
@@ -35,10 +39,6 @@
                             :label="t('view.notification.filters.' + type)"
                             :value="type" />
                     </el-select>
-                    <el-input
-                        v-model="notificationTable.filters[1].value"
-                        :placeholder="t('view.notification.search_placeholder')"
-                        style="flex: none; width: 150px; margin: 0 10px" />
                     <el-tooltip
                         placement="bottom"
                         :content="t('view.notification.refresh_tooltip')"

@@ -3,11 +3,15 @@
         <data-tables v-bind="friendLogTable">
             <template #tool>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
+                    <el-input
+                        v-model="friendLogTable.filters[1].value"
+                        :placeholder="t('view.friend_log.search_placeholder')"
+                        style="flex: 1 1 60%; margin-right: 10px"></el-input>
                     <el-select
                         v-model="friendLogTable.filters[0].value"
                         multiple
                         clearable
-                        style="flex: 1"
+                        style="flex: 1 1 40%;"
                         :placeholder="t('view.friend_log.filter_placeholder')"
                         @change="saveTableFilters">
                         <el-option
@@ -23,10 +27,6 @@
                             :label="t('view.friend_log.filters.' + type)"
                             :value="type" />
                     </el-select>
-                    <el-input
-                        v-model="friendLogTable.filters[1].value"
-                        :placeholder="t('view.friend_log.search_placeholder')"
-                        style="flex: none; width: 150px; margin-left: 10px" />
                 </div>
             </template>
 

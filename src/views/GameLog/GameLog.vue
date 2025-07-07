@@ -14,11 +14,18 @@
                                 @change="gameLogTableLookup"></el-switch>
                         </el-tooltip>
                     </div>
+                    <el-input
+                        v-model="gameLogTable.search"
+                        :placeholder="t('view.game_log.search_placeholder')"
+                        clearable
+                        style="flex: 1 1 60%; margin-right: 10px"
+                        @keyup.native.enter="gameLogTableLookup"
+                        @change="gameLogTableLookup"></el-input>
                     <el-select
                         v-model="gameLogTable.filter"
                         multiple
                         clearable
-                        style="flex: 1"
+                        style="flex: 1 1 40%;"
                         :placeholder="t('view.game_log.filter_placeholder')"
                         @change="gameLogTableLookup">
                         <el-option
@@ -36,13 +43,6 @@
                             :label="t('view.game_log.filters.' + type)"
                             :value="type"></el-option>
                     </el-select>
-                    <el-input
-                        v-model="gameLogTable.search"
-                        :placeholder="t('view.game_log.search_placeholder')"
-                        clearable
-                        style="flex: none; width: 150px; margin: 0 10px"
-                        @keyup.native.enter="gameLogTableLookup"
-                        @change="gameLogTableLookup"></el-input>
                 </div>
             </template>
 

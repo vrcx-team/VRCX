@@ -64,15 +64,14 @@
                     :value="friendsListSearch"
                     :placeholder="$t('view.friend_list.search_placeholder')"
                     clearable
-                    style="flex: 1"
+                    style="flex: 1 1 60%; margin-right: 10px"
                     @input="$emit('update:friends-list-search', $event)"
                     @change="friendsListSearchChange"></el-input>
                 <el-select
                     v-model="friendsListSearchFilters"
                     multiple
                     clearable
-                    collapse-tags
-                    style="flex: none; width: 200px; margin: 0 10px"
+                    style="flex: 1 1 40%;"
                     :placeholder="$t('view.friend_list.filter_placeholder')"
                     @change="friendsListSearchChange">
                     <el-option
@@ -86,7 +85,7 @@
                         type="default"
                         icon="el-icon-refresh"
                         circle
-                        style="flex: none"
+                        style="flex: none;"
                         @click="friendsListSearchChange"></el-button>
                 </el-tooltip>
             </div>

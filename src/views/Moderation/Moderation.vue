@@ -9,23 +9,25 @@
             v-loading="API.isPlayerModerationsLoading">
             <template slot="tool">
                 <div class="tool-slot">
-                    <el-select
-                        v-model="filters[0].value"
-                        @change="saveTableFilters()"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="$t('view.moderation.filter_placeholder')">
-                        <el-option
-                            v-for="item in moderationTypes"
-                            :key="item"
-                            :label="$t('view.moderation.filters.' + item)"
-                            :value="item" />
-                    </el-select>
-                    <el-input
-                        v-model="filters[1].value"
-                        :placeholder="$t('view.moderation.search_placeholder')"
-                        class="filter-input" />
+                    <div style="display: flex; align-items: center; margin-right: 10px; width: 100%;">
+                        <el-input
+                            v-model="filters[1].value"
+                            :placeholder="$t('view.moderation.search_placeholder')"
+                            style="flex: 1 1 60%; margin-right: 10px;" />
+                        <el-select
+                            v-model="filters[0].value"
+                            @change="saveTableFilters()"
+                            multiple
+                            clearable
+                            style="flex: 1 1 40%;"
+                            :placeholder="$t('view.moderation.filter_placeholder')">
+                            <el-option
+                                v-for="item in moderationTypes"
+                                :key="item"
+                                :label="$t('view.moderation.filters.' + item)"
+                                :value="item" />
+                        </el-select>
+                    </div>
                     <el-tooltip
                         placement="bottom"
                         :content="$t('view.moderation.refresh_tooltip')"
