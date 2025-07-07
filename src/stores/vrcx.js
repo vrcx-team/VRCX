@@ -542,10 +542,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.isRegistryBackupDialogVisible = false;
-            }
+        () => {
+            state.isRegistryBackupDialogVisible = false;
         },
         { flush: 'sync' }
     );

@@ -42,12 +42,10 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.nextCurrentUserRefresh = 300;
-                state.nextFriendsRefresh = 3600;
-                state.nextGroupInstanceRefresh = 0;
-            }
+        () => {
+            state.nextCurrentUserRefresh = 300;
+            state.nextFriendsRefresh = 3600;
+            state.nextGroupInstanceRefresh = 0;
         },
         { flush: 'sync' }
     );

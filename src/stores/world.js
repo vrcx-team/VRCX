@@ -70,11 +70,10 @@ export const useWorldStore = defineStore('World', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.worldDialog.visible = false;
-            }
-        }
+        () => {
+            state.worldDialog.visible = false;
+        },
+        { flush: 'sync' }
     );
 
     API.$on('WORLD', function (args) {

@@ -143,11 +143,11 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.currentUserInventory.clear();
-            }
-        }
+        () => {
+            state.currentUserInventory.clear();
+            state.isVRChatConfigDialogVisible = false;
+        },
+        { flush: 'sync' }
     );
 
     const enablePrimaryPassword = computed({
@@ -208,15 +208,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         set: (value) => (state.saveInstanceEmoji = value)
     });
     const vrcRegistryAutoBackup = computed(() => state.vrcRegistryAutoBackup);
-
-    watch(
-        () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.isVRChatConfigDialogVisible = false;
-            }
-        }
-    );
 
     /**
      * @param {boolean} value

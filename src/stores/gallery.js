@@ -197,19 +197,16 @@ export const useGalleryStore = defineStore('Gallery', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.previousImagesTable = [];
-                state.galleryTable = [];
-                state.VRCPlusIconsTable = [];
-                state.stickerTable = [];
-                state.printTable = [];
-                state.emojiTable = [];
-            } else {
-                state.galleryDialogVisible = false;
-                state.previousImagesDialogVisible = false;
-                state.fullscreenImageDialog.visible = false;
-            }
+        () => {
+            state.previousImagesTable = [];
+            state.galleryTable = [];
+            state.VRCPlusIconsTable = [];
+            state.stickerTable = [];
+            state.printTable = [];
+            state.emojiTable = [];
+            state.galleryDialogVisible = false;
+            state.previousImagesDialogVisible = false;
+            state.fullscreenImageDialog.visible = false;
         },
         { flush: 'sync' }
     );

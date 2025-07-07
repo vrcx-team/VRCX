@@ -98,11 +98,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.avatarDialog.visible = false;
-            }
-        }
+        () => {
+            state.avatarDialog.visible = false;
+        },
+        { flush: 'sync' }
     );
 
     API.$on('AVATAR', function (args) {

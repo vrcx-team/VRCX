@@ -51,13 +51,11 @@ export const useModerationStore = defineStore('Moderation', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.cachedPlayerModerations.clear();
-                state.cachedPlayerModerationsUserIds.clear();
-                state.isPlayerModerationsLoading = false;
-                state.playerModerationTable.data = [];
-            }
+        () => {
+            state.cachedPlayerModerations.clear();
+            state.cachedPlayerModerationsUserIds.clear();
+            state.isPlayerModerationsLoading = false;
+            state.playerModerationTable.data = [];
         },
         { flush: 'sync' }
     );

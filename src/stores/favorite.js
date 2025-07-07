@@ -405,49 +405,46 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                friendStore.localFavoriteFriends.clear();
-                groupStore.currentUserGroupsInit = false;
-                groupStore.cachedGroups.clear();
-                avatarStore.cachedAvatars.clear();
-                worldStore.cachedWorlds.clear();
-                userStore.cachedUsers.clear();
-                instanceStore.cachedInstances.clear();
-                avatarStore.cachedAvatarNames.clear();
-                avatarStore.cachedAvatarModerations.clear();
-                moderationStore.cachedPlayerModerations.clear();
-                state.cachedFavorites.clear();
-                state.cachedFavoritesByObjectId.clear();
-                state.cachedFavoriteGroups.clear();
-                state.cachedFavoriteGroupsByTypeName.clear();
-                groupStore.currentUserGroups.clear();
-                advancedSettingsStore.currentUserInventory.clear();
-                instanceStore.queuedInstances.clear();
-                state.favoriteFriendGroups = [];
-                state.favoriteWorldGroups = [];
-                state.favoriteAvatarGroups = [];
-                state.isFavoriteLoading = false;
-                state.isFavoriteGroupLoading = false;
-                state.favoriteObjects.clear();
-                state.favoriteFriends_ = [];
-                state.favoriteFriendsSorted = [];
-                state.favoriteWorlds_ = [];
-                state.favoriteWorldsSorted = [];
-                state.favoriteAvatars_ = [];
-                state.favoriteAvatarsSorted = [];
-                state.sortFavoriteFriends = false;
-                state.sortFavoriteWorlds = false;
-                state.sortFavoriteAvatars = false;
-                state.localAvatarFavoriteGroups = [];
-                state.localAvatarFavoritesList = [];
-                state.localAvatarFavorites = {};
-            } else {
-                state.favoriteDialog.visible = false;
-                state.worldImportDialogVisible = false;
-                state.avatarImportDialogVisible = false;
-                state.friendImportDialogVisible = false;
-            }
+        () => {
+            friendStore.localFavoriteFriends.clear();
+            groupStore.currentUserGroupsInit = false;
+            groupStore.cachedGroups.clear();
+            avatarStore.cachedAvatars.clear();
+            worldStore.cachedWorlds.clear();
+            userStore.cachedUsers.clear();
+            instanceStore.cachedInstances.clear();
+            avatarStore.cachedAvatarNames.clear();
+            avatarStore.cachedAvatarModerations.clear();
+            moderationStore.cachedPlayerModerations.clear();
+            state.cachedFavorites.clear();
+            state.cachedFavoritesByObjectId.clear();
+            state.cachedFavoriteGroups.clear();
+            state.cachedFavoriteGroupsByTypeName.clear();
+            groupStore.currentUserGroups.clear();
+            advancedSettingsStore.currentUserInventory.clear();
+            instanceStore.queuedInstances.clear();
+            state.favoriteFriendGroups = [];
+            state.favoriteWorldGroups = [];
+            state.favoriteAvatarGroups = [];
+            state.isFavoriteLoading = false;
+            state.isFavoriteGroupLoading = false;
+            state.favoriteObjects.clear();
+            state.favoriteFriends_ = [];
+            state.favoriteFriendsSorted = [];
+            state.favoriteWorlds_ = [];
+            state.favoriteWorldsSorted = [];
+            state.favoriteAvatars_ = [];
+            state.favoriteAvatarsSorted = [];
+            state.sortFavoriteFriends = false;
+            state.sortFavoriteWorlds = false;
+            state.sortFavoriteAvatars = false;
+            state.localAvatarFavoriteGroups = [];
+            state.localAvatarFavoritesList = [];
+            state.localAvatarFavorites = {};
+            state.favoriteDialog.visible = false;
+            state.worldImportDialogVisible = false;
+            state.avatarImportDialogVisible = false;
+            state.friendImportDialogVisible = false;
         },
         { flush: 'sync' }
     );

@@ -118,11 +118,9 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.isNotificationsLoading = false;
-                state.notificationTable.data = [];
-            }
+        () => {
+            state.isNotificationsLoading = false;
+            state.notificationTable.data = [];
         },
         { flush: 'sync' }
     );

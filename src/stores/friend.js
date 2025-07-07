@@ -271,20 +271,18 @@ export const useFriendStore = defineStore('Friend', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.friends.clear();
-                state.friendNumber = 0;
-                groupStore.groupInstances = [];
-                state.vipFriends_ = [];
-                state.onlineFriends_ = [];
-                state.activeFriends_ = [];
-                state.offlineFriends_ = [];
-                state.sortVIPFriends = false;
-                state.sortOnlineFriends = false;
-                state.sortActiveFriends = false;
-                state.sortOfflineFriends = false;
-            }
+        () => {
+            state.friends.clear();
+            state.friendNumber = 0;
+            groupStore.groupInstances = [];
+            state.vipFriends_ = [];
+            state.onlineFriends_ = [];
+            state.activeFriends_ = [];
+            state.offlineFriends_ = [];
+            state.sortVIPFriends = false;
+            state.sortOnlineFriends = false;
+            state.sortActiveFriends = false;
+            state.sortOfflineFriends = false;
         },
         { flush: 'sync' }
     );

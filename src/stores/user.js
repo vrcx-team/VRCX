@@ -303,12 +303,11 @@ export const useUserStore = defineStore('User', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.userDialog.visible = false;
-                state.languageDialog.visible = false;
-            }
-        }
+        () => {
+            state.userDialog.visible = false;
+            state.languageDialog.visible = false;
+        },
+        { flush: 'sync' }
     );
 
     API.$on('USER', function (args) {

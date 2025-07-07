@@ -37,6 +37,7 @@ export const useFeedStore = defineStore('Feed', () => {
     const gameLogStore = useGameLogStore();
     const userStore = useUserStore();
     const vrcxStore = useVrcxStore();
+    const authStore = useAuthStore();
     const sharedFeedStore = useSharedFeedStore();
     const groupStore = useGroupStore();
     const favoritesStore = useFavoriteStore();
@@ -150,7 +151,7 @@ export const useFeedStore = defineStore('Feed', () => {
                     message: t('message.friend.load_failed'),
                     type: 'error'
                 });
-                useAuthStore().handleLogoutEvent();
+                authStore.handleLogoutEvent();
                 throw err;
             }
         }

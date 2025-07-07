@@ -140,13 +140,10 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.currentInstanceUserList.data = [];
-                state.instanceJoinHistory = new Map();
-            } else {
-                state.previousInstancesInfoDialogVisible = false;
-            }
+        () => {
+            state.currentInstanceUserList.data = [];
+            state.instanceJoinHistory = new Map();
+            state.previousInstancesInfoDialogVisible = false;
         },
         { flush: 'sync' }
     );

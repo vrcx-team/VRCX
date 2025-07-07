@@ -33,11 +33,10 @@ export const useLaunchStore = defineStore('Launch', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.isLaunchOptionsDialogVisible = false;
-            }
-        }
+        () => {
+            state.isLaunchOptionsDialogVisible = false;
+        },
+        { flush: 'sync' }
     );
 
     function showLaunchOptions() {

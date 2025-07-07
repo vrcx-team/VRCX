@@ -55,19 +55,16 @@ export const useInviteStore = defineStore('Invite', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.inviteMessageTable.data = [];
-                state.inviteResponseMessageTable.data = [];
-                state.inviteRequestMessageTable.data = [];
-                state.inviteRequestResponseMessageTable.data = [];
-            } else {
-                state.editInviteMessageDialog.visible = false;
-                state.inviteMessageTable.visible = false;
-                state.inviteResponseMessageTable.visible = false;
-                state.inviteRequestMessageTable.visible = false;
-                state.inviteRequestResponseMessageTable.visible = false;
-            }
+        () => {
+            state.inviteMessageTable.data = [];
+            state.inviteResponseMessageTable.data = [];
+            state.inviteRequestMessageTable.data = [];
+            state.inviteRequestResponseMessageTable.data = [];
+            state.editInviteMessageDialog.visible = false;
+            state.inviteMessageTable.visible = false;
+            state.inviteResponseMessageTable.visible = false;
+            state.inviteRequestMessageTable.visible = false;
+            state.inviteRequestResponseMessageTable.visible = false;
         },
         { flush: 'sync' }
     );

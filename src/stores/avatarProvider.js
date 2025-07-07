@@ -97,11 +97,10 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.isAvatarProviderDialogVisible = false;
-            }
-        }
+        () => {
+            state.isAvatarProviderDialogVisible = false;
+        },
+        { flush: 'sync' }
     );
 
     /**

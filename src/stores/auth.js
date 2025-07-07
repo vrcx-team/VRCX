@@ -88,10 +88,8 @@ export const useAuthStore = defineStore('Auth', () => {
 
     watch(
         () => state.isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.twoFactorAuthDialogVisible = false;
-            }
+        () => {
+            state.twoFactorAuthDialogVisible = false;
         }
     );
 

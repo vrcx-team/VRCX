@@ -120,12 +120,11 @@ export const useGroupStore = defineStore('Group', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (!isLoggedIn) {
-                state.groupDialog.visible = false;
-                state.inviteGroupDialog.visible = false;
-            }
-        }
+        () => {
+            state.groupDialog.visible = false;
+            state.inviteGroupDialog.visible = false;
+        },
+        { flush: 'sync' }
     );
 
     function showGroupDialog(groupId) {

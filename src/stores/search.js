@@ -68,11 +68,9 @@ export const useSearchStore = defineStore('Search', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        (isLoggedIn) => {
-            if (isLoggedIn) {
-                state.searchText = '';
-                state.searchUserResults = [];
-            }
+        () => {
+            state.searchText = '';
+            state.searchUserResults = [];
         },
         { flush: 'sync' }
     );
