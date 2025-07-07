@@ -13,7 +13,14 @@ module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
     return {
         entry: {
-            vendor: ['element-ui', 'noty', 'vue', 'vue-i18n', 'worker-timers'],
+            vendor: [
+                'element-ui',
+                'noty',
+                'vue',
+                'vue-i18n',
+                'worker-timers',
+                `${scssBasePath}emoji.font.scss`
+            ],
             app: {
                 import: ['./src/app.js', './src/app.scss'],
                 dependOn: 'vendor'
@@ -26,8 +33,7 @@ module.exports = (env, argv) => {
             'theme.darkvanillaold': `${themeBasePath}theme.darkvanillaold.scss`,
             'theme.darkvanilla': `${themeBasePath}theme.darkvanilla.scss`,
             'theme.pink': `${themeBasePath}theme.pink.scss`,
-            'theme.material3': `${themeBasePath}theme.material3.scss`,
-            'emoji.font': `${scssBasePath}emoji.font.scss`
+            'theme.material3': `${themeBasePath}theme.material3.scss`
         },
         output: {
             path: path.resolve(__dirname, 'build/html'),
@@ -69,6 +75,9 @@ module.exports = (env, argv) => {
                     }
                 }
             ]
+        },
+        devServer: {
+            port: 9000
         },
         resolve: {
             extensions: ['.js', '.vue', '.css', '.scss'],

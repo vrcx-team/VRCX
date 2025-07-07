@@ -4,6 +4,7 @@
     "private": true,
     "main": "src-electron/main.js",
     "scripts": {
+        "dev": "cross-env PLATFORM=windows webpack serve --config webpack.config.js --mode development",
         "watch": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode development --watch",
         "watch-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode development --watch",
         "localization": "node ./src/localization/localizationHelperCLI.js",
@@ -70,6 +71,7 @@
         "vue-marquee-text-component": "^1.2.0",
         "webpack": "^5.99.9",
         "webpack-cli": "^6.0.1",
+        "webpack-dev-server": "^5.2.2",
         "worker-timers": "^8.0.22",
         "yargs": "^18.0.0"
     },
