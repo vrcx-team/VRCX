@@ -48,7 +48,27 @@
                 </div>
             </div>
 
-            <div style="margin: 10px 0 0 10px; display: flex; align-items: center">
+            <div style="margin: 10px 0px 10px 0px; display: flex; align-items: center">
+                <el-input
+                    :value="friendsListSearch"
+                    :placeholder="$t('view.friend_list.search_placeholder')"
+                    clearable
+                    style="flex: 1 1 30%; margin-right: 10px"
+                    @input="$emit('update:friends-list-search', $event)"
+                    @change="friendsListSearchChange"></el-input>
+                <el-select
+                    v-model="friendsListSearchFilters"
+                    multiple
+                    clearable
+                    style="flex: 1 1 70%; margin-right: 10px"
+                    :placeholder="$t('view.friend_list.filter_placeholder')"
+                    @change="friendsListSearchChange">
+                    <el-option
+                        v-for="type in ['Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Note', 'Memo']"
+                        :key="type"
+                        :label="type"
+                        :value="type"></el-option>
+                </el-select>
                 <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                     <el-tooltip
                         placement="bottom"
@@ -60,33 +80,12 @@
                             @change="friendsListSearchChange"></el-switch>
                     </el-tooltip>
                 </div>
-                <el-input
-                    :value="friendsListSearch"
-                    :placeholder="$t('view.friend_list.search_placeholder')"
-                    clearable
-                    style="flex: 1"
-                    @input="$emit('update:friends-list-search', $event)"
-                    @change="friendsListSearchChange"></el-input>
-                <el-select
-                    v-model="friendsListSearchFilters"
-                    multiple
-                    clearable
-                    collapse-tags
-                    style="flex: none; width: 200px; margin: 0 10px"
-                    :placeholder="$t('view.friend_list.filter_placeholder')"
-                    @change="friendsListSearchChange">
-                    <el-option
-                        v-for="type in ['Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Note', 'Memo']"
-                        :key="type"
-                        :label="type"
-                        :value="type"></el-option>
-                </el-select>
                 <el-tooltip placement="top" :content="$t('view.friend_list.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
                         icon="el-icon-refresh"
                         circle
-                        style="flex: none"
+                        style="flex: none;"
                         @click="friendsListSearchChange"></el-button>
                 </el-tooltip>
             </div>
