@@ -15,17 +15,6 @@ import { useVrcxStore } from './vrcx';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 
 export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
-    const authStore = useAuthStore();
-    const userStore = useUserStore();
-    const friendStore = useFriendStore();
-    const gameStore = useGameStore();
-    const moderationStore = useModerationStore();
-    const vrcxStore = useVrcxStore();
-    const discordPresenceSettingsStore = useDiscordPresenceSettingsStore();
-    const gameLogStore = useGameLogStore();
-    const vrcxUpdaterStore = useVRCXUpdaterStore();
-    const uiStore = useUiStore();
-
     const state = reactive({
         nextCurrentUserRefresh: 300,
         nextFriendsRefresh: 3600,
@@ -58,6 +47,16 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     });
 
     async function updateLoop() {
+        const authStore = useAuthStore();
+        const userStore = useUserStore();
+        const friendStore = useFriendStore();
+        const gameStore = useGameStore();
+        const moderationStore = useModerationStore();
+        const vrcxStore = useVrcxStore();
+        const discordPresenceSettingsStore = useDiscordPresenceSettingsStore();
+        const gameLogStore = useGameLogStore();
+        const vrcxUpdaterStore = useVRCXUpdaterStore();
+        const uiStore = useUiStore();
         try {
             if (authStore.isLoggedIn === true) {
                 if (--state.nextCurrentUserRefresh <= 0) {
