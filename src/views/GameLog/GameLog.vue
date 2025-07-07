@@ -3,29 +3,18 @@
         <data-tables v-loading="gameLogTable.loading" v-bind="gameLogTable" lazy>
             <template #tool>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                        <el-tooltip
-                            placement="bottom"
-                            :content="t('view.feed.favorites_only_tooltip')"
-                            :disabled="hideTooltips">
-                            <el-switch
-                                v-model="gameLogTable.vip"
-                                active-color="#13ce66"
-                                @change="gameLogTableLookup"></el-switch>
-                        </el-tooltip>
-                    </div>
                     <el-input
                         v-model="gameLogTable.search"
                         :placeholder="t('view.game_log.search_placeholder')"
                         clearable
-                        style="flex: 1 1 60%; margin-right: 10px"
+                        style="flex: 1 1 30%; margin-right: 10px"
                         @keyup.native.enter="gameLogTableLookup"
                         @change="gameLogTableLookup"></el-input>
                     <el-select
                         v-model="gameLogTable.filter"
                         multiple
                         clearable
-                        style="flex: 1 1 40%;"
+                        style="flex: 1 1 70%; margin-right: 10px;"
                         :placeholder="t('view.game_log.filter_placeholder')"
                         @change="gameLogTableLookup">
                         <el-option
@@ -43,6 +32,17 @@
                             :label="t('view.game_log.filters.' + type)"
                             :value="type"></el-option>
                     </el-select>
+                    <div style="flex: none; display: flex; align-items: center">
+                        <el-tooltip
+                            placement="bottom"
+                            :content="t('view.feed.favorites_only_tooltip')"
+                            :disabled="hideTooltips">
+                            <el-switch
+                                v-model="gameLogTable.vip"
+                                active-color="#13ce66"
+                                @change="gameLogTableLookup"></el-switch>
+                        </el-tooltip>
+                    </div>
                 </div>
             </template>
 

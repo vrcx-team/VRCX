@@ -6,12 +6,12 @@
                     <el-input
                         v-model="friendLogTable.filters[1].value"
                         :placeholder="t('view.friend_log.search_placeholder')"
-                        style="flex: 1 1 60%; margin-right: 10px"></el-input>
+                        style="flex: 1 1 30%; margin-right: 10px"></el-input>
                     <el-select
                         v-model="friendLogTable.filters[0].value"
                         multiple
                         clearable
-                        style="flex: 1 1 40%;"
+                        style="flex: 1 1 70%;"
                         :placeholder="t('view.friend_log.filter_placeholder')"
                         @change="saveTableFilters">
                         <el-option

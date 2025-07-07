@@ -1,26 +1,18 @@
 <template>
     <div v-show="menuActiveIndex === 'feed'" class="x-container feed">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
-            <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                <el-tooltip
-                    placement="bottom"
-                    :content="t('view.feed.favorites_only_tooltip')"
-                    :disabled="hideTooltips">
-                    <el-switch v-model="feedTable.vip" active-color="#13ce66" @change="feedTableLookup"></el-switch>
-                </el-tooltip>
-            </div>
             <el-input
                 v-model="feedTable.search"
                 :placeholder="t('view.feed.search_placeholder')"
                 clearable
-                style="flex: 1 1 60%; margin-right: 10px"
+                style="flex: 1 1 30%; margin-right: 10px"
                 @keyup.native.13="feedTableLookup"
                 @change="feedTableLookup"></el-input>
             <el-select
                 v-model="feedTable.filter"
                 multiple
                 clearable
-                style="flex: 1 1 40%"
+                style="flex: 1 1 70%; margin-right: 10px"
                 :placeholder="t('view.feed.filter_placeholder')"
                 @change="feedTableLookup">
                 <el-option
@@ -29,6 +21,14 @@
                     :label="t('view.feed.filters.' + type)"
                     :value="type"></el-option>
             </el-select>
+            <div style="flex: none; display: flex; align-items: center">
+                <el-tooltip
+                    placement="bottom"
+                    :content="t('view.feed.favorites_only_tooltip')"
+                    :disabled="hideTooltips">
+                    <el-switch v-model="feedTable.vip" active-color="#13ce66" @change="feedTableLookup"></el-switch>
+                </el-tooltip>
+            </div>
         </div>
 
         <data-tables v-loading="feedTable.loading" v-bind="feedTable" lazy>

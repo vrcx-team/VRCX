@@ -13,13 +13,13 @@
                         <el-input
                             v-model="filters[1].value"
                             :placeholder="$t('view.moderation.search_placeholder')"
-                            style="flex: 1 1 60%; margin-right: 10px;" />
+                            style="flex: 1 1 30%; margin-right: 10px;" />
                         <el-select
                             v-model="filters[0].value"
                             @change="saveTableFilters()"
                             multiple
                             clearable
-                            style="flex: 1 1 40%;"
+                            style="flex: 1 1 70%;"
                             :placeholder="$t('view.moderation.filter_placeholder')">
                             <el-option
                                 v-for="item in moderationTypes"

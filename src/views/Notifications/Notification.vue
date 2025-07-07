@@ -6,12 +6,12 @@
                     <el-input
                         v-model="notificationTable.filters[1].value"
                         :placeholder="t('view.notification.search_placeholder')"
-                        style="flex: 1 1 60%; margin-right: 10px" />
+                        style="flex: 1 1 30%; margin-right: 10px" />
                     <el-select
                         v-model="notificationTable.filters[0].value"
                         multiple
                         clearable
-                        style="flex: 1 1 40%; margin-right: 10px;"
+                        style="flex: 1 1 70%; margin-right: 10px;"
                         :placeholder="t('view.notification.filter_placeholder')"
                         @change="saveTableFilters">
                         <el-option
