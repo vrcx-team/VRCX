@@ -81,35 +81,35 @@ export const useWorldStore = defineStore('World', () => {
         favoriteStore.applyFavorite('world', args.ref.id);
         const userDialog = userStore.userDialog;
         if (
-            userDialog.visible === false ||
-            userDialog.$location.worldId !== args.ref.id
+            userDialog.visible &&
+            userDialog.$location.worldId === args.ref.id
         ) {
-            return;
+            userStore.applyUserDialogLocation();
         }
-        userStore.applyUserDialogLocation();
         const { ref } = args;
         const D = state.worldDialog;
-        if (D.visible === false || D.id !== ref.id) {
-            return;
-        }
-        D.ref = ref;
-        D.avatarScalingDisabled = ref.tags?.includes(
-            'feature_avatar_scaling_disabled'
-        );
-        D.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
-        instanceStore.applyWorldDialogInstances();
-        for (const room of D.rooms) {
-            if (isRealInstance(room.tag)) {
-                instanceRequest.getInstance({
-                    worldId: D.id,
-                    instanceId: room.id
+        if (D.visible && D.id === ref.id) {
+            D.ref = ref;
+            D.avatarScalingDisabled = ref.tags?.includes(
+                'feature_avatar_scaling_disabled'
+            );
+            D.focusViewDisabled = ref.tags?.includes(
+                'feature_focus_view_disabled'
+            );
+            instanceStore.applyWorldDialogInstances();
+            for (const room of D.rooms) {
+                if (isRealInstance(room.tag)) {
+                    instanceRequest.getInstance({
+                        worldId: D.id,
+                        instanceId: room.id
+                    });
+                }
+            }
+            if (D.bundleSizes.length === 0) {
+                getBundleDateSize(ref).then((bundleSizes) => {
+                    D.bundleSizes = bundleSizes;
                 });
             }
-        }
-        if (D.bundleSizes.length === 0) {
-            getBundleDateSize(ref).then((bundleSizes) => {
-                D.bundleSizes = bundleSizes;
-            });
         }
         if (favoriteStore.localWorldFavoritesList.includes(args.ref.id)) {
             // update db cache
