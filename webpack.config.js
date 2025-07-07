@@ -110,13 +110,13 @@ module.exports = (env, argv) => {
                 filename: 'index.html',
                 template: './src/static/index.html',
                 inject: true,
-                chunks: ['vendor', 'app', 'emoji.font']
+                chunks: ['vendor', 'app']
             }),
             new HtmlWebpackPlugin({
                 filename: 'vr.html',
                 template: './src/static/vr.html',
                 inject: true,
-                chunks: ['vendor', 'vr', 'emoji.font']
+                chunks: ['vendor', 'vr']
             }),
             new CopyPlugin({
                 patterns: [
