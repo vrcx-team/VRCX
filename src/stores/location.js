@@ -32,8 +32,7 @@ export const useLocationStore = defineStore('Location', () => {
             location: '',
             name: '',
             playerList: new Map(),
-            friendList: new Map(),
-            avatarList: new Map()
+            friendList: new Map()
         },
         lastLocation$: {
             tag: '',
@@ -233,8 +232,7 @@ export const useLocationStore = defineStore('Location', () => {
             location: '',
             name: '',
             playerList: new Map(),
-            friendList: new Map(),
-            avatarList: new Map()
+            friendList: new Map()
         };
         updateCurrentUserLocation();
         instanceStore.updateCurrentInstanceWorld();

@@ -83,7 +83,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         },
         gameLogSessionTable: [],
         lastVideoUrl: '',
-        lastResourceloadUrl: ''
+        lastResourceloadUrl: '',
+        lastLocationAvatarList: new Map()
     });
 
     async function init() {
@@ -237,8 +238,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     location: ctx.location,
                     name: ctx.worldName,
                     playerList: new Map(),
-                    friendList: new Map(),
-                    avatarList: new Map()
+                    friendList: new Map()
                 };
                 length = i;
                 break;
@@ -276,7 +276,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (ctx.type === 'OnPlayerLeft') {
                     locationStore.lastLocation.playerList.delete(ctx.userId);
                     locationStore.lastLocation.friendList.delete(ctx.userId);
-                    locationStore.lastLocation.avatarList.delete(ctx.userId);
                 }
             }
             locationStore.lastLocation.playerList.forEach((ref1) => {
@@ -516,6 +515,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     locationStore.lastLocationDestinationTime = Date.parse(
                         gameLog.dt
                     );
+                    state.lastLocationAvatarList.clear();
                     instanceStore.removeQueuedInstance(gameLog.location);
                     locationStore.updateCurrentUserLocation();
                     clearNowPlaying();
@@ -539,8 +539,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         location: gameLog.location,
                         name: worldName,
                         playerList: new Map(),
-                        friendList: new Map(),
-                        avatarList: new Map()
+                        friendList: new Map()
                     };
                     instanceStore.removeQueuedInstance(gameLog.location);
                     locationStore.updateCurrentUserLocation();
@@ -637,7 +636,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 const time = dayjs(gameLog.dt) - ref1.joinTime;
                 locationStore.lastLocation.playerList.delete(userId);
                 locationStore.lastLocation.friendList.delete(userId);
-                locationStore.lastLocation.avatarList.delete(userId);
+                state.lastLocationAvatarList.delete(gameLog.displayName);
                 photonStore.photonLobbyAvatars.delete(userId);
                 vrStore.updateVRLastLocation();
                 instanceStore.getCurrentInstanceUserList();
@@ -778,8 +777,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 if (!gameStore.isGameRunning) {
                     break;
                 }
-                let avatarName =
-                    locationStore.lastLocation.avatarList.get(userId);
+                let avatarName = state.lastLocationAvatarList.get(
+                    gameLog.displayName
+                );
                 if (
                     photonStore.photonLoggingEnabled ||
                     avatarName === gameLog.avatarName
@@ -788,25 +788,24 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
                 if (!avatarName) {
                     avatarName = gameLog.avatarName;
-                    locationStore.lastLocation.avatarList.set(
-                        userId,
+                    state.lastLocationAvatarList.set(
+                        gameLog.displayName,
                         avatarName
                     );
                     break;
                 }
                 avatarName = gameLog.avatarName;
-                locationStore.lastLocation.avatarList.set(userId, avatarName);
-                const userRef =
-                    locationStore.lastLocation.playerList.get(userId);
-                if (typeof userRef !== 'undefined') {
-                    entry = {
-                        created_at: gameLog.dt,
-                        type: 'AvatarChange',
-                        userId,
-                        name: avatarName,
-                        displayName: gameLog.displayName
-                    };
-                }
+                state.lastLocationAvatarList.set(
+                    gameLog.displayName,
+                    avatarName
+                );
+                entry = {
+                    created_at: gameLog.dt,
+                    type: 'AvatarChange',
+                    userId,
+                    name: avatarName,
+                    displayName: gameLog.displayName
+                };
                 break;
             case 'vrcx':
                 // VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/jr1NX4Jo8GE.mp4",0.1001,239.606,"0905 : [J-POP] 【まなこ】金曜日のおはよう 踊ってみた (vernities)"

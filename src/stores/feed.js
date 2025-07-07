@@ -110,6 +110,7 @@ export const useFeedStore = defineStore('Feed', () => {
         await database.initUserTables(args.json.id);
         UiStore.menuActiveIndex = 'feed';
 
+        AppApi.CheckGameRunning();
         const command = await AppApi.GetLaunchCommand();
         if (command) {
             vrcxStore.eventLaunchCommand(command);
