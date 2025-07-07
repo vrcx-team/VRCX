@@ -71,7 +71,7 @@
                     v-model="friendsListSearchFilters"
                     multiple
                     clearable
-                    style="flex: 1 1 40%;"
+                    style="flex: 1 1 40%; margin-right: 10px"
                     :placeholder="$t('view.friend_list.filter_placeholder')"
                     @change="friendsListSearchChange">
                     <el-option

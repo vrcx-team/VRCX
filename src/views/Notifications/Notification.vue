@@ -11,7 +11,7 @@
                         v-model="notificationTable.filters[0].value"
                         multiple
                         clearable
-                        style="flex: 1 1 40%;"
+                        style="flex: 1 1 40%; margin-right: 10px;"
                         :placeholder="t('view.notification.filter_placeholder')"
                         @change="saveTableFilters">
                         <el-option
