@@ -202,7 +202,7 @@ export const useAuthStore = defineStore('Auth', () => {
                     state.loginForm.loading = false;
                     throw err;
                 })
-                .then((args) => {
+                .then(() => {
                     userStore
                         .getCurrentUser()
                         .finally(() => {
@@ -212,7 +212,6 @@ export const useAuthStore = defineStore('Auth', () => {
                             updateLoopStore.nextCurrentUserRefresh = 60; // 1min
                             console.error(err);
                         });
-                    return args;
                 });
         }
     }

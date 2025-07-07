@@ -204,9 +204,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 state.VRCPlusIconsTable = [];
                 state.stickerTable = [];
                 state.printTable = [];
-                if (advancedSettingsStore.autoDeleteOldPrints) {
-                    tryDeleteOldPrints();
-                }
                 state.emojiTable = [];
             } else {
                 state.galleryDialogVisible = false;

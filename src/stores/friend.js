@@ -284,7 +284,6 @@ export const useFriendStore = defineStore('Friend', () => {
                 state.sortOnlineFriends = false;
                 state.sortActiveFriends = false;
                 state.sortOfflineFriends = false;
-                groupStore.updateInGameGroupOrder();
             }
         },
         { flush: 'sync' }

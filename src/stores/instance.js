@@ -144,7 +144,6 @@ export const useInstanceStore = defineStore('Instance', () => {
             if (isLoggedIn) {
                 state.currentInstanceUserList.data = [];
                 state.instanceJoinHistory = new Map();
-                getInstanceJoinHistory();
             } else {
                 state.previousInstancesInfoDialogVisible = false;
             }
@@ -1193,6 +1192,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         instanceQueueUpdate,
         showPreviousInstancesInfoDialog,
         addInstanceJoinHistory,
-        getCurrentInstanceUserList
+        getCurrentInstanceUserList,
+        getInstanceJoinHistory
     };
 });

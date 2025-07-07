@@ -429,7 +429,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 state.favoriteAvatarGroups = [];
                 state.isFavoriteLoading = false;
                 state.isFavoriteGroupLoading = false;
-                refreshFavorites();
                 state.favoriteObjects.clear();
                 state.favoriteFriends_ = [];
                 state.favoriteFriendsSorted = [];
@@ -440,11 +439,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 state.sortFavoriteFriends = false;
                 state.sortFavoriteWorlds = false;
                 state.sortFavoriteAvatars = false;
-                getLocalWorldFavorites();
                 state.localAvatarFavoriteGroups = [];
                 state.localAvatarFavoritesList = [];
                 state.localAvatarFavorites = {};
-                workerTimers.setTimeout(() => getLocalAvatarFavorites(), 100);
             } else {
                 state.favoriteDialog.visible = false;
                 state.worldImportDialogVisible = false;

@@ -32,6 +32,13 @@ export function request(endpoint, options) {
     const authStore = useAuthStore();
     const notificationStore = useNotificationStore();
     const updateLoopStore = useUpdateLoopStore();
+    if (
+        !authStore.isLoggedIn &&
+        endpoint.startsWith('/auth') &&
+        endpoint !== 'config'
+    ) {
+        throw `API request blocked while logged out: ${endpoint}`;
+    }
     let req;
     const init = {
         url: `${API.endpointDomain}/${endpoint}`,
@@ -90,6 +97,13 @@ export function request(endpoint, options) {
             $throw(0, err, endpoint);
         })
         .then((response) => {
+            if (
+                !authStore.isLoggedIn &&
+                endpoint.startsWith('/auth') &&
+                endpoint !== 'config'
+            ) {
+                throw `API request blocked while logged out: ${endpoint}`;
+            }
             if (!response.data) {
                 if (API.debugWebRequests) {
                     console.log(init, response, 'no data');

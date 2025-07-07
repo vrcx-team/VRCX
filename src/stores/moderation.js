@@ -56,7 +56,6 @@ export const useModerationStore = defineStore('Moderation', () => {
                 state.cachedPlayerModerations.clear();
                 state.cachedPlayerModerationsUserIds.clear();
                 state.isPlayerModerationsLoading = false;
-                refreshPlayerModerations();
                 state.playerModerationTable.data = [];
             }
         },

@@ -20,6 +20,11 @@ import { useUserStore } from './user';
 import { useVrStore } from './vr';
 import { useVrcxStore } from './vrcx';
 import { useAuthStore } from './auth';
+import { useFavoriteStore } from './favorite';
+import { useAdvancedSettingsStore } from './settings/advanced';
+import { useGalleryStore } from './gallery';
+import { useInstanceStore } from './instance';
+import { useModerationStore } from './moderation';
 
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();
@@ -34,6 +39,11 @@ export const useFeedStore = defineStore('Feed', () => {
     const vrcxStore = useVrcxStore();
     const sharedFeedStore = useSharedFeedStore();
     const groupStore = useGroupStore();
+    const favoritesStore = useFavoriteStore();
+    const advancedSettingsStore = useAdvancedSettingsStore();
+    const galleryStore = useGalleryStore();
+    const instanceStore = useInstanceStore();
+    const moderationStore = useModerationStore();
 
     const state = reactive({
         feedTable: {
@@ -98,6 +108,20 @@ export const useFeedStore = defineStore('Feed', () => {
         notificationStore.notificationInitStatus = false;
         await database.initUserTables(args.json.id);
         UiStore.menuActiveIndex = 'feed';
+
+        const command = await AppApi.GetLaunchCommand();
+        if (command) {
+            vrcxStore.eventLaunchCommand(command);
+        }
+        favoritesStore.refreshFavorites();
+        favoritesStore.getLocalWorldFavorites();
+        favoritesStore.getLocalAvatarFavorites(); // TODO: why did this have a 100ms delay? (test)
+        groupStore.updateInGameGroupOrder();
+        if (advancedSettingsStore.autoDeleteOldPrints) {
+            galleryStore.tryDeleteOldPrints();
+        }
+        instanceStore.getInstanceJoinHistory();
+        moderationStore.refreshPlayerModerations();
 
         gameLogStore.gameLogTable.data = await database.lookupGameLogDatabase(
             gameLogStore.gameLogTable.search,

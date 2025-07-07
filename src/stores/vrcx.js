@@ -542,13 +542,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     watch(
         () => useAuthStore().isLoggedIn,
-        async (isLoggedIn) => {
-            if (isLoggedIn) {
-                const command = await AppApi.GetLaunchCommand();
-                if (command) {
-                    eventLaunchCommand(command);
-                }
-            } else {
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
                 state.isRegistryBackupDialogVisible = false;
             }
         },
