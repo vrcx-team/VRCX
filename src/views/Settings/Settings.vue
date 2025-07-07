@@ -1465,16 +1465,6 @@
                             saveOpenVROption();
                         " />
                     <!--//- Advanced | Disable local world database-->
-                    <template v-if="!isLinux">
-                        <span class="sub-header">{{
-                            t('view.settings.advanced.advanced.local_world_persistence.header')
-                        }}</span>
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.local_world_persistence.description')"
-                            :value="!disableWorldDatabase"
-                            :long-label="true"
-                            @change="setDisableWorldDatabase" />
-                    </template>
                 </div>
 
                 <!--//- Advanced | Remote Avatar Database-->
@@ -2107,7 +2097,6 @@
         relaunchVRChatAfterCrash,
         vrcQuitFix,
         autoSweepVRChatCache,
-        disableWorldDatabase,
         saveInstancePrints,
         cropInstancePrints,
         saveInstanceStickers,
@@ -2133,7 +2122,6 @@
         setRelaunchVRChatAfterCrash,
         setVrcQuitFix,
         setAutoSweepVRChatCache,
-        setDisableWorldDatabase,
         setSaveInstancePrints,
         setCropInstancePrints,
         setSaveInstanceStickers,

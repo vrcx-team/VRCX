@@ -729,10 +729,9 @@ namespace VRCX
                 return false;
 
             var data = line.Substring(offset + 13);
-
-#if !LINUX
-            WorldDBManager.Instance.ProcessLogWorldDataRequest(data);
-#endif
+            
+            // PWI, deprecated
+            logger.Info("VRCX-World data: {0}", data);
             return true;
         }
 

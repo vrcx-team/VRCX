@@ -19,7 +19,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         relaunchVRChatAfterCrash: false,
         vrcQuitFix: true,
         autoSweepVRChatCache: false,
-        disableWorldDatabase: false,
         saveInstancePrints: false,
         cropInstancePrints: false,
         saveInstanceStickers: false,
@@ -52,7 +51,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             relaunchVRChatAfterCrash,
             vrcQuitFix,
             autoSweepVRChatCache,
-            disableWorldDatabase,
             saveInstancePrints,
             cropInstancePrints,
             saveInstanceStickers,
@@ -78,7 +76,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_relaunchVRChatAfterCrash', false),
             configRepository.getBool('VRCX_vrcQuitFix', true),
             configRepository.getBool('VRCX_autoSweepVRChatCache', false),
-            VRCXStorage.Get('VRCX_DisableWorldDatabase'),
             configRepository.getBool('VRCX_saveInstancePrints', false),
             configRepository.getBool('VRCX_cropInstancePrints', false),
             configRepository.getBool('VRCX_saveInstanceStickers', false),
@@ -114,7 +111,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.relaunchVRChatAfterCrash = relaunchVRChatAfterCrash;
         state.vrcQuitFix = vrcQuitFix;
         state.autoSweepVRChatCache = autoSweepVRChatCache;
-        state.disableWorldDatabase = disableWorldDatabase === 'true';
         state.saveInstancePrints = saveInstancePrints;
         state.cropInstancePrints = cropInstancePrints;
         state.saveInstanceStickers = saveInstanceStickers;
@@ -159,7 +155,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     );
     const vrcQuitFix = computed(() => state.vrcQuitFix);
     const autoSweepVRChatCache = computed(() => state.autoSweepVRChatCache);
-    const disableWorldDatabase = computed(() => state.disableWorldDatabase);
     const saveInstancePrints = computed(() => state.saveInstancePrints);
     const cropInstancePrints = computed(() => state.cropInstancePrints);
     const saveInstanceStickers = computed(() => state.saveInstanceStickers);
@@ -231,13 +226,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         configRepository.setBool(
             'VRCX_autoSweepVRChatCache',
             state.autoSweepVRChatCache
-        );
-    }
-    function setDisableWorldDatabase() {
-        state.disableWorldDatabase = !state.disableWorldDatabase;
-        VRCXStorage.Set(
-            'VRCX_DisableWorldDatabase',
-            state.disableWorldDatabase.toString()
         );
     }
     function setSaveInstancePrints() {
@@ -602,7 +590,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         relaunchVRChatAfterCrash,
         vrcQuitFix,
         autoSweepVRChatCache,
-        disableWorldDatabase,
         saveInstancePrints,
         cropInstancePrints,
         saveInstanceStickers,
@@ -631,7 +618,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setRelaunchVRChatAfterCrash,
         setVrcQuitFix,
         setAutoSweepVRChatCache,
-        setDisableWorldDatabase,
         setSaveInstancePrints,
         setCropInstancePrints,
         setSaveInstanceStickers,

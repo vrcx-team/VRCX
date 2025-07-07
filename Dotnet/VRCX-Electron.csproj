@@ -121,8 +121,6 @@
     <Compile Remove="Cef\**" />
     <Content Remove="AppApi\Cef\**" />
     <Compile Remove="AppApi\Cef\**" />
-    <Content Remove="PWI\**" />
-    <Compile Remove="PWI\**" />
     <Content Remove="Overlay\**" />
     <Compile Remove="Overlay\**" />
     <Content Remove="DBMerger\**" />

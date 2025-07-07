@@ -237,7 +237,6 @@ namespace VRCX
             AppApiVr.Instance.Init();
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
-            WorldDBManager.Instance.Init();
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
             AutoAppLaunchManager.Instance.Init();
@@ -259,7 +258,6 @@ namespace VRCX
             AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
-            WorldDBManager.Instance.Stop();
 
             Discord.Instance.Exit();
             SystemMonitor.Instance.Exit();

@@ -539,10 +539,6 @@
                         "header": "關閉 VRChat 時自動管理快取",
                         "description": "自動從快取中刪除舊版本"
                     },
-                    "local_world_persistence": {
-                        "header": "本地世界狀態",
-                        "description": "本地主機 Web 伺服器 (需要重新啟動)"
-                    },
                     "save_instance_prints_to_file": {
                         "header": "將房間拍立得保存到檔案",
                         "header_tooltip": "需要 \"--enable-sdk-log-levels\" VRC 啟動選項",
