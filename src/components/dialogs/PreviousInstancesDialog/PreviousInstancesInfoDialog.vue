@@ -8,7 +8,7 @@
         destroy-on-close
         @close="closeDialog">
         <div style="display: flex; align-items: center; justify-content: space-between">
-            <location :location="location.tag" style="font-size: 14px"></location>
+            <Location :location="location.tag" style="font-size: 14px" />
             <el-input
                 v-model="dataTable.filters[0].value"
                 :placeholder="$t('dialog.previous_instances.search_placeholder')"

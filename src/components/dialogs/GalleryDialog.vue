@@ -405,12 +405,12 @@
                     <div style="margin-top: 5px; width: 208px">
                         <span class="x-ellipsis" v-if="image.note" v-text="image.note" style="display: block"></span>
                         <span v-else style="display: block">&nbsp;</span>
-                        <location
+                        <Location
                             class="x-ellipsis"
                             v-if="image.worldId"
                             :location="image.worldId"
                             :hint="image.worldName"
-                            style="display: block"></location>
+                            style="display: block" />
                         <span v-else style="display: block">&nbsp;</span>
                         <DisplayName
                             class="x-ellipsis"

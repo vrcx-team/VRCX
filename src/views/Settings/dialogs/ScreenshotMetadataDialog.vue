@@ -91,7 +91,7 @@
                 screenshotMetadataDialog.metadata.fileSize
             }}</el-tag>
             <br />
-            <location
+            <Location
                 v-if="screenshotMetadataDialog.metadata.world"
                 :location="screenshotMetadataDialog.metadata.world.instanceId"
                 :hint="screenshotMetadataDialog.metadata.world.name" />

@@ -76,7 +76,7 @@
                         v-else-if="scope.row.type === 'group.queueReady' || scope.row.type === 'instance.closed'"
                         placement="top">
                         <template #content>
-                            <location
+                            <Location
                                 v-if="scope.row.location"
                                 :location="scope.row.location"
                                 :hint="scope.row.worldName"
@@ -169,7 +169,7 @@
             <el-table-column :label="t('table.notification.message')" prop="message">
                 <template #default="scope">
                     <span v-if="scope.row.type === 'invite'" style="display: flex">
-                        <location
+                        <Location
                             v-if="scope.row.details"
                             :location="scope.row.details.worldId"
                             :hint="scope.row.details.worldName"

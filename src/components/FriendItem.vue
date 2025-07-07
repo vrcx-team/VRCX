@@ -26,7 +26,7 @@
                             :epoch="epoch"
                             :style="isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined" />
                     </template>
-                    <location
+                    <Location
                         v-else
                         class="extra"
                         :location="friend.ref.location"

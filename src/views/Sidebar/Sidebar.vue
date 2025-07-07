@@ -25,12 +25,12 @@
                                 <span v-else-if="item.ref.state === 'active'" class="extra">{{
                                     $t('side_panel.search_result_offline')
                                 }}</span>
-                                <location
+                                <Location
                                     v-else
                                     class="extra"
                                     :location="item.ref.location"
                                     :traveling="item.ref.travelingToLocation"
-                                    :link="false"></location>
+                                    :link="false" />
                             </div>
                             <img v-lazy="userImage(item.ref)" class="avatar" />
                         </template>

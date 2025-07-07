@@ -6,7 +6,7 @@
         width="500px"
         append-to-body>
         <div v-if="inviteDialog.visible" v-loading="inviteDialog.loading">
-            <location :location="inviteDialog.worldId" :link="false"></location>
+            <Location :location="inviteDialog.worldId" :link="false" />
             <br />
             <el-button size="mini" style="margin-top: 10px" @click="addSelfToInvite">{{
                 t('dialog.invite.add_self')

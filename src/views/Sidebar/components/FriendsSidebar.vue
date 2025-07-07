@@ -17,21 +17,21 @@
                 </div>
                 <div class="detail">
                     <span class="name" :style="{ color: currentUser.$userColour }">{{ currentUser.displayName }}</span>
-                    <location
+                    <Location
                         v-if="isGameRunning && !gameLogDisabled"
                         class="extra"
                         :location="lastLocation.location"
                         :traveling="lastLocationDestination"
-                        :link="false"></location>
-                    <location
+                        :link="false" />
+                    <Location
                         v-else-if="
                             isRealInstance(currentUser.$locationTag) || isRealInstance(currentUser.$travelingToLocation)
                         "
                         class="extra"
                         :location="currentUser.$locationTag"
                         :traveling="currentUser.$travelingToLocation"
-                        :link="false">
-                    </location>
+                        :link="false" />
+
                     <span v-else class="extra">{{ currentUser.statusDescription }}</span>
                 </div>
             </div>
@@ -89,10 +89,7 @@
             <div v-show="!isSidebarGroupByInstanceCollapsed">
                 <div v-for="friendArr in friendsInSameInstance" :key="friendArr[0].ref.$location.tag">
                     <div style="margin-bottom: 3px">
-                        <location
-                            class="extra"
-                            :location="getFriendsLocations(friendArr)"
-                            style="display: inline"></location>
+                        <Location class="extra" :location="getFriendsLocations(friendArr)" style="display: inline" />
                         <span class="extra" style="margin-left: 5px">{{ `(${friendArr.length})` }}</span>
                     </div>
                     <div v-if="friendArr && friendArr.length">

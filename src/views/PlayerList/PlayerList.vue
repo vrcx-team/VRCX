@@ -374,11 +374,11 @@
                                         v-else-if="scope.row.type === 'PortalSpawn'"
                                         class="x-link"
                                         @click="showWorldDialog(scope.row.location, scope.row.shortName)">
-                                        <location
+                                        <Location
                                             :location="scope.row.location"
                                             :hint="scope.row.worldName"
                                             :grouphint="scope.row.groupName"
-                                            :link="false"></location>
+                                            :link="false" />
                                     </span>
                                     <span
                                         v-else-if="scope.row.type === 'ChatBoxMessage'"
@@ -574,11 +574,11 @@
                                         v-else-if="scope.row.type === 'PortalSpawn'"
                                         class="x-link"
                                         @click="showWorldDialog(scope.row.location, scope.row.shortName)">
-                                        <location
+                                        <Location
                                             :location="scope.row.location"
                                             :hint="scope.row.worldName"
                                             :grouphint="scope.row.groupName"
-                                            :link="false"></location>
+                                            :link="false" />
                                     </span>
                                     <span
                                         v-else-if="scope.row.type === 'ChatBoxMessage'"

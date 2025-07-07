@@ -1972,7 +1972,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     async function saveSortFavoritesOption() {
-        state.getLocalWorldFavorites();
+        getLocalWorldFavorites();
         appearanceSettingsStore.setSortFavorites();
     }
 

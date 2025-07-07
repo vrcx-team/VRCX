@@ -399,7 +399,7 @@
                         </span>
                         <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
                             <div style="margin: 5px 0">
-                                <location :location="room.tag" style="display: inline-block" />
+                                <Location :location="room.tag" style="display: inline-block" />
                                 <el-tooltip placement="top" content="Invite yourself" :disabled="hideTooltips">
                                     <InviteYourself :location="room.tag" style="margin-left: 5px" />
                                 </el-tooltip>

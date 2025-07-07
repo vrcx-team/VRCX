@@ -10,12 +10,12 @@
                         class="name"
                         :style="{ color: favorite.ref.$userColour }"
                         v-text="favorite.ref.displayName"></span>
-                    <location
+                    <Location
                         class="extra"
                         v-if="favorite.ref.location !== 'offline'"
                         :location="favorite.ref.location"
                         :traveling="favorite.ref.travelingToLocation"
-                        :link="false"></location>
+                        :link="false" />
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <template v-if="editFavoritesMode">

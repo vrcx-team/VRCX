@@ -20,10 +20,10 @@
             </el-table-column>
             <el-table-column :label="$t('table.previous_instances.world')" prop="name" sortable>
                 <template slot-scope="scope">
-                    <location
+                    <Location
                         :location="scope.row.location"
                         :hint="scope.row.worldName"
-                        :grouphint="scope.row.groupName"></location>
+                        :grouphint="scope.row.groupName" />
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.previous_instances.instance_creator')" prop="location" width="170">

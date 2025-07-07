@@ -99,16 +99,16 @@
 
             <el-table-column :label="t('table.gameLog.detail')" prop="data">
                 <template #default="scope">
-                    <location
+                    <Location
                         v-if="scope.row.type === 'Location'"
                         :location="scope.row.location"
                         :hint="scope.row.worldName"
-                        :grouphint="scope.row.groupName"></location>
-                    <location
+                        :grouphint="scope.row.groupName" />
+                    <Location
                         v-else-if="scope.row.type === 'PortalSpawn'"
                         :location="scope.row.instanceId"
                         :hint="scope.row.worldName"
-                        :grouphint="scope.row.groupName"></location>
+                        :grouphint="scope.row.groupName" />
                     <template v-else-if="scope.row.type === 'Event'">
                         <span v-text="scope.row.data"></span>
                     </template>

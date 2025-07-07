@@ -589,10 +589,10 @@
                                         :instance="userDialog.instance.ref"
                                         :friendcount="userDialog.instance.friendCount" />
                                 </template>
-                                <location
+                                <Location
                                     :location="userDialog.ref.location"
                                     :traveling="userDialog.ref.travelingToLocation"
-                                    style="display: block; margin-top: 5px"></location>
+                                    style="display: block; margin-top: 5px" />
                             </div>
                             <div class="x-friend-list" style="flex: 1; margin-top: 10px; max-height: 150px">
                                 <div

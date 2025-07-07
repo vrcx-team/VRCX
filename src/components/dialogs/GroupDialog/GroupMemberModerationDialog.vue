@@ -656,7 +656,7 @@
                                 :label="t('dialog.group_member_moderation.description')"
                                 prop="description">
                                 <template slot-scope="scope">
-                                    <location
+                                    <Location
                                         v-if="scope.row?.targetId.startsWith('wrld_')"
                                         :location="scope.row.targetId" />
                                     <span v-text="scope.row.description"></span>

@@ -36,10 +36,10 @@
                 <template #default="scope">
                     <div style="position: relative; font-size: 14px">
                         <template v-if="scope.row.type === 'GPS'">
-                            <location
+                            <Location
                                 v-if="scope.row.previousLocation"
                                 :location="scope.row.previousLocation"
-                                style="display: inline-block"></location>
+                                style="display: inline-block" />
                             <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
                                 timeToText(scope.row.time)
                             }}</el-tag>
@@ -47,29 +47,29 @@
                             <span style="margin-right: 5px">
                                 <i class="el-icon-right"></i>
                             </span>
-                            <location
+                            <Location
                                 v-if="scope.row.location"
                                 :location="scope.row.location"
                                 :hint="scope.row.worldName"
-                                :grouphint="scope.row.groupName"></location>
+                                :grouphint="scope.row.groupName" />
                         </template>
                         <template v-else-if="scope.row.type === 'Offline'">
                             <template v-if="scope.row.location">
-                                <location
+                                <Location
                                     :location="scope.row.location"
                                     :hint="scope.row.worldName"
-                                    :grouphint="scope.row.groupName"></location>
+                                    :grouphint="scope.row.groupName" />
                                 <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
                                     timeToText(scope.row.time)
                                 }}</el-tag>
                             </template>
                         </template>
                         <template v-else-if="scope.row.type === 'Online'">
-                            <location
+                            <Location
                                 v-if="scope.row.location"
                                 :location="scope.row.location"
                                 :hint="scope.row.worldName"
-                                :grouphint="scope.row.groupName"></location>
+                                :grouphint="scope.row.groupName" />
                         </template>
                         <template v-else-if="scope.row.type === 'Avatar'">
                             <div style="display: flex; align-items: center">
@@ -218,18 +218,18 @@
             <el-table-column :label="t('table.feed.detail')">
                 <template #default="scope">
                     <template v-if="scope.row.type === 'GPS'">
-                        <location
+                        <Location
                             v-if="scope.row.location"
                             :location="scope.row.location"
                             :hint="scope.row.worldName"
-                            :grouphint="scope.row.groupName"></location>
+                            :grouphint="scope.row.groupName" />
                     </template>
                     <template v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'">
-                        <location
+                        <Location
                             v-if="scope.row.location"
                             :location="scope.row.location"
                             :hint="scope.row.worldName"
-                            :grouphint="scope.row.groupName"></location>
+                            :grouphint="scope.row.groupName" />
                     </template>
                     <template v-else-if="scope.row.type === 'Status'">
                         <template v-if="scope.row.statusDescription === scope.row.previousStatusDescription">

@@ -33,7 +33,7 @@
                                     >({{ ref.instance.userCount }}/{{ ref.instance.capacity }})</span
                                 >
                             </span>
-                            <location class="extra" :location="ref.instance.location" :link="false" />
+                            <Location class="extra" :location="ref.instance.location" :link="false" />
                         </div>
                     </template>
                 </div>

@@ -2,11 +2,11 @@
     <div style="width: 100%">
         <div style="height: 25px; margin-top: 60px">
             <transition name="el-fade-in-linear">
-                <location
+                <Location
                     v-show="!isLoading"
                     class="location"
                     :location="activityDetailData[0].location"
-                    is-open-previous-instance-info-dialog></location>
+                    is-open-previous-instance-info-dialog />
             </transition>
         </div>
 
