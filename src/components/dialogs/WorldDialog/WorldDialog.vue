@@ -138,7 +138,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px"
-                                @click="openFolder(worldDialog.cachePath)">
+                                @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
                                 | {{ t('dialog.world.tags.cache') }}
                             </el-tag>
@@ -190,7 +190,7 @@
                                 icon="el-icon-delete"
                                 circle
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
-                                @click="deleteWorldFromCache(worldDialog.ref)" />
+                                @click="deleteVRChatCache(worldDialog.ref)" />
                         </el-tooltip>
                         <el-tooltip
                             placement="top"
@@ -464,13 +464,13 @@
                                             @click.native.stop>
                                             <el-button type="default" icon="el-icon-s-order" size="mini" circle />
                                             <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item @click.native="copyWorldId(worldDialog.id)">
+                                                <el-dropdown-item @click.native="copyWorldId()">
                                                     {{ t('dialog.world.info.copy_id') }}
                                                 </el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyWorldUrl(worldDialog.id)">
+                                                <el-dropdown-item @click.native="copyWorldUrl()">
                                                     {{ t('dialog.world.info.copy_url') }}
                                                 </el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyWorldName(worldDialog.ref.name)">
+                                                <el-dropdown-item @click.native="copyWorldName()">
                                                     {{ t('dialog.world.info.copy_name') }}
                                                 </el-dropdown-item>
                                             </el-dropdown-menu>
@@ -754,13 +754,12 @@
     </safe-dialog>
 </template>
 
-<script>
+<script setup>
+    import { computed, ref, watch, nextTick, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
-    import { t } from '../../../plugin';
     import { database } from '../../../service/database.js';
-    import { API } from '../../../service/eventBus';
     import {
         adjustDialogZ,
         buildTreeData,
@@ -771,7 +770,9 @@
         replaceVrcPackageUrl,
         timeToText,
         userImage,
-        userStatusClass
+        userStatusClass,
+        openFolderGeneric,
+        deleteVRChatCache
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -791,618 +792,576 @@
     import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
     import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
 
-    export default {
-        name: 'WorldDialog',
-        components: {
-            PreviousImagesDialog,
-            SetWorldTagsDialog,
-            WorldAllowedDomainsDialog,
-            PreviousInstancesWorldDialog,
-            NewInstanceDialog,
-            ChangeWorldImageDialog
-        },
-        setup() {
-            const { hideTooltips, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
-            const { showUserDialog } = useUserStore();
-            const { currentUser, userDialog } = storeToRefs(useUserStore());
-            const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());
-            const { showWorldDialog } = useWorldStore();
-            const { lastLocation } = storeToRefs(useLocationStore());
-            const { newInstanceSelfInvite } = useInviteStore();
-            const { showFavoriteDialog } = useFavoriteStore();
-            const { showPreviousInstancesInfoDialog } = useInstanceStore();
-            const { instanceJoinHistory } = storeToRefs(useInstanceStore());
-            const { isGameRunning } = storeToRefs(useGameStore());
-            const { deleteVRChatCache } = useGameStore();
-            const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-            const { checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
-            const { t } = useI18n();
-            return {
-                hideTooltips,
-                isAgeGatedInstancesVisible,
-                API,
-                downloadAndSaveJson,
-                refreshInstancePlayerCount,
-                replaceVrcPackageUrl,
-                userStatusClass,
-                showUserDialog,
-                worldDialog,
-                userImage,
-                showWorldDialog,
-                cachedWorlds,
-                lastLocation,
-                newInstanceSelfInvite,
-                showFavoriteDialog,
-                showPreviousInstancesInfoDialog,
-                instanceJoinHistory,
-                isGameRunning,
-                deleteVRChatCache,
-                adjustDialogZ,
-                previousImagesDialogVisible,
-                previousImagesTable,
-                openExternalLink,
-                checkPreviousImageAvailable,
-                showFullscreenImageDialog,
-                currentUser,
-                t,
-                userDialog
-            };
-        },
-        data() {
-            return {
-                treeData: [],
-                worldAllowedDomainsDialog: {
-                    visible: false,
-                    worldId: '',
-                    urlList: []
-                },
-                isSetWorldTagsDialogVisible: false,
-                previousInstancesWorldDialog: {
-                    visible: false,
-                    openFlg: false,
-                    worldRef: {}
-                },
-                newInstanceDialogLocationTag: '',
-                changeWorldImageDialogVisible: false,
-                previousImagesFileId: ''
-            };
-        },
-        computed: {
-            isDialogVisible: {
-                get() {
-                    return this.worldDialog.visible;
-                },
-                set(value) {
-                    this.worldDialog.visible = value;
-                }
-            },
-            memo: {
-                get() {
-                    return this.worldDialog.memo;
-                },
-                set(value) {
-                    this.worldDialog.memo = value;
-                }
-            },
-            isTimeInLabVisible() {
-                return (
-                    this.worldDialog.ref.publicationDate &&
-                    this.worldDialog.ref.publicationDate !== 'none' &&
-                    this.worldDialog.ref.labsPublicationDate &&
-                    this.worldDialog.ref.labsPublicationDate !== 'none'
-                );
-            },
-            timeInLab() {
-                return timeToText(
-                    new Date(this.worldDialog.ref?.publicationDate) -
-                        new Date(this.worldDialog.ref?.labsPublicationDate)
-                );
-            },
-            favoriteRate() {
-                return (
-                    Math.round(
-                        (((this.worldDialog.ref?.favorites - this.worldDialog.ref?.visits) /
-                            this.worldDialog.ref?.visits) *
-                            100 +
-                            100) *
-                            100
-                    ) / 100
-                );
-            },
-            worldTags() {
-                return this.worldDialog.ref?.tags
-                    .filter((tag) => tag.startsWith('author_tag'))
-                    .map((tag) => tag.replace('author_tag_', ''))
-                    .join(', ');
-            },
-            timeSpent() {
-                return timeToText(this.worldDialog.timeSpent);
-            },
-            worldDialogPlatform() {
-                const { ref } = this.worldDialog;
-                const platforms = [];
-                if (ref.unityPackages) {
-                    for (const unityPackage of ref.unityPackages) {
-                        let platform = 'PC';
-                        if (unityPackage.platform === 'standalonewindows') {
-                            platform = 'PC';
-                        } else if (unityPackage.platform === 'android') {
-                            platform = 'Android';
-                        } else if (unityPackage.platform) {
-                            ({ platform } = unityPackage);
-                        }
-                        platforms.unshift(`${platform}/${unityPackage.unityVersion}`);
-                    }
-                }
-                return platforms.join(', ');
-            }
-        },
-        watch: {
-            'worldDialog.loading'(value) {
-                if (value) {
-                    this.$nextTick(() => this.adjustDialogZ(this.$refs.worldDialogRef.$el));
-                }
-            }
-        },
-        methods: {
-            displayPreviousImages(command) {
-                this.previousImagesFileId = '';
-                this.previousImagesTable = [];
-                const { imageUrl } = this.worldDialog.ref;
+    const { proxy } = getCurrentInstance();
 
-                const fileId = extractFileId(imageUrl);
-                if (!fileId) {
-                    return;
-                }
-                const params = {
-                    fileId
-                };
-                if (command === 'Display') {
-                    this.previousImagesDialogVisible = true;
-                }
-                if (command === 'Change') {
-                    this.changeWorldImageDialogVisible = true;
-                }
-                imageRequest.getWorldImages(params).then((args) => {
-                    this.previousImagesFileId = args.json.id;
-                    const images = [];
-                    args.json.versions.forEach((item) => {
-                        if (!item.deleted) {
-                            images.unshift(item);
-                        }
-                    });
-                    this.checkPreviousImageAvailable(images);
-                });
-            },
+    const { hideTooltips, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
+    const { showUserDialog } = useUserStore();
+    const { currentUser, userDialog } = storeToRefs(useUserStore());
+    const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());
+    const { showWorldDialog } = useWorldStore();
+    const { lastLocation } = storeToRefs(useLocationStore());
+    const { newInstanceSelfInvite } = useInviteStore();
+    const { showFavoriteDialog } = useFavoriteStore();
+    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { instanceJoinHistory } = storeToRefs(useInstanceStore());
+    const { isGameRunning } = storeToRefs(useGameStore());
+    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
+    const { checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
+    const { t } = useI18n();
 
-            showNewInstanceDialog(tag) {
-                // trigger watcher
-                this.newInstanceDialogLocationTag = '';
-                this.$nextTick(() => (this.newInstanceDialogLocationTag = tag));
-            },
-            openFolder(path) {
-                this.openFolderGeneric(path);
-            },
-            worldDialogCommand(command) {
-                const D = this.worldDialog;
-                if (D.visible === false) {
-                    return;
-                }
-                switch (command) {
-                    case 'Delete Favorite':
-                    case 'Make Home':
-                    case 'Reset Home':
-                    case 'Publish':
-                    case 'Unpublish':
-                    case 'Delete Persistent Data':
-                    case 'Delete':
-                        this.$confirm(`Continue? ${command}`, 'Confirm', {
-                            confirmButtonText: 'Confirm',
-                            cancelButtonText: 'Cancel',
-                            type: 'info',
-                            callback: (action) => {
-                                if (action !== 'confirm') {
-                                    return;
-                                }
-                                switch (command) {
-                                    case 'Delete Favorite':
-                                        favoriteRequest.deleteFavorite({
-                                            objectId: D.id
-                                        });
-                                        break;
-                                    case 'Make Home':
-                                        userRequest
-                                            .saveCurrentUser({
-                                                homeLocation: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'Home world updated',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Reset Home':
-                                        userRequest
-                                            .saveCurrentUser({
-                                                homeLocation: ''
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'Home world has been reset',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Publish':
-                                        worldRequest
-                                            .publishWorld({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'World has been published',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Unpublish':
-                                        worldRequest
-                                            .unpublishWorld({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'World has been unpublished',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Delete Persistent Data':
-                                        miscRequest
-                                            .deleteWorldPersistData({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                if (
-                                                    args.params.worldId === this.worldDialog.id &&
-                                                    this.worldDialog.visible
-                                                ) {
-                                                    this.worldDialog.hasPersistData = false;
-                                                }
-                                                this.$message({
-                                                    message: 'Persistent data has been deleted',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Delete':
-                                        worldRequest
-                                            .deleteWorld({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                const { json } = args;
-                                                this.cachedWorlds.delete(json.id);
-                                                if (this.worldDialog.ref.authorId === json.authorId) {
-                                                    const map = new Map();
-                                                    for (const ref of this.cachedWorlds.values()) {
-                                                        if (ref.authorId === json.authorId) {
-                                                            map.set(ref.id, ref);
-                                                        }
-                                                    }
-                                                    const array = Array.from(map.values());
-                                                    this.userDialog.worlds = array;
-                                                }
-                                                this.$message({
-                                                    message: 'World has been deleted',
-                                                    type: 'success'
-                                                });
-                                                D.visible = false;
-                                                return args;
-                                            });
-                                        break;
-                                }
-                            }
-                        });
-                        break;
-                    case 'Previous Instances':
-                        this.showPreviousInstancesWorldDialog(D.ref);
-                        break;
-                    case 'Share':
-                        this.copyWorldUrl();
-                        break;
-                    case 'Change Allowed Domains':
-                        this.showWorldAllowedDomainsDialog();
-                        break;
-                    case 'Change Tags':
-                        this.isSetWorldTagsDialogVisible = true;
-                        break;
-                    case 'Download Unity Package':
-                        this.openExternalLink(this.replaceVrcPackageUrl(this.worldDialog.ref.unityPackageUrl));
-                        break;
-                    case 'Change Image':
-                        this.displayPreviousImages('Change');
-                        break;
-                    case 'Previous Images':
-                        this.displayPreviousImages('Display');
-                        break;
-                    case 'Refresh':
-                        this.showWorldDialog(D.id);
-                        break;
-                    case 'New Instance':
-                        this.showNewInstanceDialog(D.$location.tag);
-                        break;
-                    case 'Add Favorite':
-                        this.showFavoriteDialog('world', D.id);
-                        break;
-                    case 'New Instance and Self Invite':
-                        this.newInstanceSelfInvite(D.id);
-                        break;
-                    case 'Rename':
-                        this.promptRenameWorld(D);
-                        break;
-                    case 'Change Description':
-                        this.promptChangeWorldDescription(D);
-                        break;
-                    case 'Change Capacity':
-                        this.promptChangeWorldCapacity(D);
-                        break;
-                    case 'Change Recommended Capacity':
-                        this.promptChangeWorldRecommendedCapacity(D);
-                        break;
-                    case 'Change YouTube Preview':
-                        this.promptChangeWorldYouTubePreview(D);
-                        break;
-                    default:
-                        break;
-                }
-            },
-            promptRenameWorld(world) {
-                this.$prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
-                    distinguishCancelAndClose: true,
-                    confirmButtonText: t('prompt.rename_world.ok'),
-                    cancelButtonText: t('prompt.rename_world.cancel'),
-                    inputValue: world.ref.name,
-                    inputErrorMessage: t('prompt.rename_world.input_error'),
-                    callback: (action, instance) => {
-                        if (action === 'confirm' && instance.inputValue !== world.ref.name) {
-                            worldRequest
-                                .saveWorld({
-                                    id: world.id,
-                                    name: instance.inputValue
-                                })
-                                .then((args) => {
-                                    this.$message({
-                                        message: t('prompt.rename_world.message.success'),
-                                        type: 'success'
-                                    });
-                                    return args;
-                                });
-                        }
-                    }
-                });
-            },
-            promptChangeWorldDescription(world) {
-                this.$prompt(
-                    t('prompt.change_world_description.description'),
-                    t('prompt.change_world_description.header'),
-                    {
-                        distinguishCancelAndClose: true,
-                        confirmButtonText: t('prompt.change_world_description.ok'),
-                        cancelButtonText: t('prompt.change_world_description.cancel'),
-                        inputValue: world.ref.description,
-                        inputErrorMessage: t('prompt.change_world_description.input_error'),
-                        callback: (action, instance) => {
-                            if (action === 'confirm' && instance.inputValue !== world.ref.description) {
-                                worldRequest
-                                    .saveWorld({
-                                        id: world.id,
-                                        description: instance.inputValue
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: t('prompt.change_world_description.message.success'),
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                            }
-                        }
-                    }
-                );
-            },
+    const treeData = ref([]);
+    const worldAllowedDomainsDialog = ref({
+        visible: false,
+        worldId: '',
+        urlList: []
+    });
+    const isSetWorldTagsDialogVisible = ref(false);
+    const previousInstancesWorldDialog = ref({
+        visible: false,
+        openFlg: false,
+        worldRef: {}
+    });
+    const newInstanceDialogLocationTag = ref('');
+    const changeWorldImageDialogVisible = ref(false);
+    const previousImagesFileId = ref('');
 
-            promptChangeWorldCapacity(world) {
-                this.$prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
-                    distinguishCancelAndClose: true,
-                    confirmButtonText: t('prompt.change_world_capacity.ok'),
-                    cancelButtonText: t('prompt.change_world_capacity.cancel'),
-                    inputValue: world.ref.capacity,
-                    inputPattern: /\d+$/,
-                    inputErrorMessage: t('prompt.change_world_capacity.input_error'),
-                    callback: (action, instance) => {
-                        if (action === 'confirm' && instance.inputValue !== world.ref.capacity) {
-                            worldRequest
-                                .saveWorld({
-                                    id: world.id,
-                                    capacity: instance.inputValue
-                                })
-                                .then((args) => {
-                                    this.$message({
-                                        message: t('prompt.change_world_capacity.message.success'),
-                                        type: 'success'
-                                    });
-                                    return args;
-                                });
-                        }
-                    }
-                });
-            },
+    const isDialogVisible = computed({
+        get() {
+            return worldDialog.value.visible;
+        },
+        set(value) {
+            worldDialog.value.visible = value;
+        }
+    });
 
-            promptChangeWorldRecommendedCapacity(world) {
-                this.$prompt(
-                    t('prompt.change_world_recommended_capacity.description'),
-                    t('prompt.change_world_recommended_capacity.header'),
-                    {
-                        distinguishCancelAndClose: true,
-                        confirmButtonText: t('prompt.change_world_capacity.ok'),
-                        cancelButtonText: t('prompt.change_world_capacity.cancel'),
-                        inputValue: world.ref.recommendedCapacity,
-                        inputPattern: /\d+$/,
-                        inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error'),
-                        callback: (action, instance) => {
-                            if (action === 'confirm' && instance.inputValue !== world.ref.recommendedCapacity) {
-                                worldRequest
-                                    .saveWorld({
-                                        id: world.id,
-                                        recommendedCapacity: instance.inputValue
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: t('prompt.change_world_recommended_capacity.message.success'),
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                            }
-                        }
-                    }
-                );
-            },
+    const memo = computed({
+        get() {
+            return worldDialog.value.memo;
+        },
+        set(value) {
+            worldDialog.value.memo = value;
+        }
+    });
 
-            promptChangeWorldYouTubePreview(world) {
-                this.$prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
-                    distinguishCancelAndClose: true,
-                    confirmButtonText: t('prompt.change_world_preview.ok'),
-                    cancelButtonText: t('prompt.change_world_preview.cancel'),
-                    inputValue: world.ref.previewYoutubeId,
-                    inputErrorMessage: t('prompt.change_world_preview.input_error'),
-                    callback: (action, instance) => {
-                        if (action === 'confirm' && instance.inputValue !== world.ref.previewYoutubeId) {
-                            if (instance.inputValue.length > 11) {
-                                try {
-                                    var url = new URL(instance.inputValue);
-                                    var id1 = url.pathname;
-                                    var id2 = url.searchParams.get('v');
-                                    if (id1 && id1.length === 12) {
-                                        instance.inputValue = id1.substring(1, 12);
-                                    }
-                                    if (id2 && id2.length === 11) {
-                                        instance.inputValue = id2;
-                                    }
-                                } catch {
-                                    this.$message({
-                                        message: t('prompt.change_world_preview.message.error'),
-                                        type: 'error'
-                                    });
-                                    return;
-                                }
-                            }
-                            if (instance.inputValue !== world.ref.previewYoutubeId) {
-                                worldRequest
-                                    .saveWorld({
-                                        id: world.id,
-                                        previewYoutubeId: instance.inputValue
-                                    })
-                                    .then((args) => {
-                                        this.$message({
-                                            message: t('prompt.change_world_preview.message.success'),
-                                            type: 'success'
-                                        });
-                                        return args;
-                                    });
-                            }
-                        }
-                    }
-                });
-            },
-            onWorldMemoChange() {
-                const worldId = this.worldDialog.id;
-                const memo = this.worldDialog.memo;
-                if (memo) {
-                    database.setWorldMemo({
-                        worldId,
-                        editedAt: new Date().toJSON(),
-                        memo
-                    });
-                } else {
-                    database.deleteWorldMemo(worldId);
+    const isTimeInLabVisible = computed(() => {
+        return (
+            worldDialog.value.ref.publicationDate &&
+            worldDialog.value.ref.publicationDate !== 'none' &&
+            worldDialog.value.ref.labsPublicationDate &&
+            worldDialog.value.ref.labsPublicationDate !== 'none'
+        );
+    });
+
+    const timeInLab = computed(() => {
+        return timeToText(
+            new Date(worldDialog.value.ref.publicationDate) - new Date(worldDialog.value.ref.labsPublicationDate)
+        );
+    });
+
+    const favoriteRate = computed(() => {
+        return (
+            Math.round(
+                (((worldDialog.value.ref?.favorites - worldDialog.value.ref?.visits) / worldDialog.value.ref?.visits) *
+                    100 +
+                    100) *
+                    100
+            ) / 100
+        );
+    });
+
+    const worldTags = computed(() => {
+        return worldDialog.value.ref?.tags
+            .filter((tag) => tag.startsWith('author_tag'))
+            .map((tag) => tag.replace('author_tag_', ''))
+            .join(', ');
+    });
+
+    const timeSpent = computed(() => {
+        return timeToText(worldDialog.value.timeSpent);
+    });
+
+    const worldDialogPlatform = computed(() => {
+        const { ref } = worldDialog.value;
+        const platforms = [];
+        if (ref.unityPackages) {
+            for (const unityPackage of ref.unityPackages) {
+                let platform = 'PC';
+                if (unityPackage.platform === 'standalonewindows') {
+                    platform = 'PC';
+                } else if (unityPackage.platform === 'android') {
+                    platform = 'Android';
+                } else if (unityPackage.platform) {
+                    ({ platform } = unityPackage);
                 }
-            },
-            showPreviousInstancesWorldDialog(worldRef) {
-                const D = this.previousInstancesWorldDialog;
-                D.worldRef = worldRef;
-                D.visible = true;
-                // trigger watcher
-                D.openFlg = true;
-                this.$nextTick(() => (D.openFlg = false));
-            },
-            refreshWorldDialogTreeData() {
-                this.treeData = buildTreeData(this.worldDialog.ref);
-            },
-            copyWorldId() {
-                navigator.clipboard
-                    .writeText(this.worldDialog.id)
-                    .then(() => {
-                        this.$message({
-                            message: 'World ID copied to clipboard',
-                            type: 'success'
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('copy failed:', err);
-                        this.$message({
-                            message: 'Copy failed',
-                            type: 'error'
-                        });
-                    });
-            },
-            copyWorldUrl() {
-                navigator.clipboard
-                    .writeText(`https://vrchat.com/home/world/${this.worldDialog.id}`)
-                    .then(() => {
-                        this.$message({
-                            message: 'World URL copied to clipboard',
-                            type: 'success'
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('copy failed:', err);
-                        this.$message({
-                            message: 'Copy failed',
-                            type: 'error'
-                        });
-                    });
-            },
-            copyWorldName() {
-                navigator.clipboard
-                    .writeText(this.worldDialog.ref.name)
-                    .then(() => {
-                        this.$message({
-                            message: 'World name copied to clipboard',
-                            type: 'success'
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('copy failed:', err);
-                        this.$message({
-                            message: 'Copy failed',
-                            type: 'error'
-                        });
-                    });
-            },
-            showWorldAllowedDomainsDialog() {
-                const D = this.worldAllowedDomainsDialog;
-                D.worldId = this.worldDialog.id;
-                D.urlList = this.worldDialog.ref?.urlList ?? [];
-                D.visible = true;
+                platforms.unshift(`${platform}/${unityPackage.unityVersion}`);
             }
         }
-    };
+        return platforms.join(', ');
+    });
+
+    const worldDialogRef = ref(null);
+
+    watch(
+        () => worldDialog.value.loading,
+        (newVal) => {
+            if (newVal) {
+                nextTick(() => {
+                    if (worldDialogRef.value?.$el) {
+                        adjustDialogZ(worldDialogRef.value.$el);
+                    }
+                });
+            }
+        }
+    );
+
+    function displayPreviousImages(command) {
+        previousImagesFileId.value = '';
+        previousImagesTable.value = [];
+        const { imageUrl } = worldDialog.value.ref;
+
+        const fileId = extractFileId(imageUrl);
+        if (!fileId) {
+            return;
+        }
+        const params = {
+            fileId
+        };
+        if (command === 'Display') {
+            previousImagesDialogVisible.value = true;
+        }
+        if (command === 'Change') {
+            changeWorldImageDialogVisible.value = true;
+        }
+        imageRequest.getWorldImages(params).then((args) => {
+            previousImagesFileId.value = args.json.id;
+            const images = [];
+            args.json.versions.forEach((item) => {
+                if (!item.deleted) {
+                    images.unshift(item);
+                }
+            });
+            checkPreviousImageAvailable(images);
+        });
+    }
+
+    function showNewInstanceDialog(tag) {
+        // trigger watcher
+        newInstanceDialogLocationTag.value = '';
+        nextTick(() => (newInstanceDialogLocationTag.value = tag));
+    }
+
+    function worldDialogCommand(command) {
+        const D = worldDialog.value;
+        if (D.visible === false) {
+            return;
+        }
+        switch (command) {
+            case 'Delete Favorite':
+            case 'Make Home':
+            case 'Reset Home':
+            case 'Publish':
+            case 'Unpublish':
+            case 'Delete Persistent Data':
+            case 'Delete':
+                proxy.$confirm(`Continue? ${command}`, 'Confirm', {
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    type: 'info',
+                    callback: (action) => {
+                        if (action !== 'confirm') {
+                            return;
+                        }
+                        switch (command) {
+                            case 'Delete Favorite':
+                                favoriteRequest.deleteFavorite({
+                                    objectId: D.id
+                                });
+                                break;
+                            case 'Make Home':
+                                userRequest
+                                    .saveCurrentUser({
+                                        homeLocation: D.id
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'Home world updated',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Reset Home':
+                                userRequest
+                                    .saveCurrentUser({
+                                        homeLocation: ''
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'Home world has been reset',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Publish':
+                                worldRequest
+                                    .publishWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'World has been published',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Unpublish':
+                                worldRequest
+                                    .unpublishWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'World has been unpublished',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Delete Persistent Data':
+                                miscRequest
+                                    .deleteWorldPersistData({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
+                                            worldDialog.value.hasPersistData = false;
+                                        }
+                                        proxy.$message({
+                                            message: 'Persistent data has been deleted',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Delete':
+                                worldRequest
+                                    .deleteWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        const { json } = args;
+                                        cachedWorlds.value.delete(json.id);
+                                        if (worldDialog.value.ref.authorId === json.authorId) {
+                                            const map = new Map();
+                                            for (const ref of cachedWorlds.value.values()) {
+                                                if (ref.authorId === json.authorId) {
+                                                    map.set(ref.id, ref);
+                                                }
+                                            }
+                                            const array = Array.from(map.values());
+                                            userDialog.value.worlds = array;
+                                        }
+                                        proxy.$message({
+                                            message: 'World has been deleted',
+                                            type: 'success'
+                                        });
+                                        D.visible = false;
+                                        return args;
+                                    });
+                                break;
+                        }
+                    }
+                });
+                break;
+            case 'Previous Instances':
+                showPreviousInstancesWorldDialog(D.ref);
+                break;
+            case 'Share':
+                copyWorldUrl();
+                break;
+            case 'Change Allowed Domains':
+                showWorldAllowedDomainsDialog();
+                break;
+            case 'Change Tags':
+                isSetWorldTagsDialogVisible.value = true;
+                break;
+            case 'Download Unity Package':
+                openExternalLink(replaceVrcPackageUrl(worldDialog.value.ref.unityPackageUrl));
+                break;
+            case 'Change Image':
+                displayPreviousImages('Change');
+                break;
+            case 'Previous Images':
+                displayPreviousImages('Display');
+                break;
+            case 'Refresh':
+                showWorldDialog(D.id);
+                break;
+            case 'New Instance':
+                showNewInstanceDialog(D.$location.tag);
+                break;
+            case 'Add Favorite':
+                showFavoriteDialog('world', D.id);
+                break;
+            case 'New Instance and Self Invite':
+                newInstanceSelfInvite(D.id);
+                break;
+            case 'Rename':
+                promptRenameWorld(D);
+                break;
+            case 'Change Description':
+                promptChangeWorldDescription(D);
+                break;
+            case 'Change Capacity':
+                promptChangeWorldCapacity(D);
+                break;
+            case 'Change Recommended Capacity':
+                promptChangeWorldRecommendedCapacity(D);
+                break;
+            case 'Change YouTube Preview':
+                promptChangeWorldYouTubePreview(D);
+                break;
+            default:
+                break;
+        }
+    }
+
+    function promptRenameWorld(world) {
+        proxy.$prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.rename_world.ok'),
+            cancelButtonText: t('prompt.rename_world.cancel'),
+            inputValue: world.ref.name,
+            inputErrorMessage: t('prompt.rename_world.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.name) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            name: instance.inputValue
+                        })
+                        .then((args) => {
+                            proxy.$message({
+                                message: t('prompt.rename_world.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            }
+        });
+    }
+    function promptChangeWorldDescription(world) {
+        proxy.$prompt(t('prompt.change_world_description.description'), t('prompt.change_world_description.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.change_world_description.ok'),
+            cancelButtonText: t('prompt.change_world_description.cancel'),
+            inputValue: world.ref.description,
+            inputErrorMessage: t('prompt.change_world_description.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.description) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            description: instance.inputValue
+                        })
+                        .then((args) => {
+                            proxy.$message({
+                                message: t('prompt.change_world_description.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            }
+        });
+    }
+
+    function promptChangeWorldCapacity(world) {
+        proxy.$prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.change_world_capacity.ok'),
+            cancelButtonText: t('prompt.change_world_capacity.cancel'),
+            inputValue: world.ref.capacity,
+            inputPattern: /\d+$/,
+            inputErrorMessage: t('prompt.change_world_capacity.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.capacity) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            capacity: instance.inputValue
+                        })
+                        .then((args) => {
+                            proxy.$message({
+                                message: t('prompt.change_world_capacity.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            }
+        });
+    }
+
+    function promptChangeWorldRecommendedCapacity(world) {
+        proxy.$prompt(
+            t('prompt.change_world_recommended_capacity.description'),
+            t('prompt.change_world_recommended_capacity.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.change_world_capacity.ok'),
+                cancelButtonText: t('prompt.change_world_capacity.cancel'),
+                inputValue: world.ref.recommendedCapacity,
+                inputPattern: /\d+$/,
+                inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue !== world.ref.recommendedCapacity) {
+                        worldRequest
+                            .saveWorld({
+                                id: world.id,
+                                recommendedCapacity: instance.inputValue
+                            })
+                            .then((args) => {
+                                proxy.$message({
+                                    message: t('prompt.change_world_recommended_capacity.message.success'),
+                                    type: 'success'
+                                });
+                                return args;
+                            });
+                    }
+                }
+            }
+        );
+    }
+
+    function promptChangeWorldYouTubePreview(world) {
+        proxy.$prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.change_world_preview.ok'),
+            cancelButtonText: t('prompt.change_world_preview.cancel'),
+            inputValue: world.ref.previewYoutubeId,
+            inputErrorMessage: t('prompt.change_world_preview.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.previewYoutubeId) {
+                    if (instance.inputValue.length > 11) {
+                        try {
+                            var url = new URL(instance.inputValue);
+                            var id1 = url.pathname;
+                            var id2 = url.searchParams.get('v');
+                            if (id1 && id1.length === 12) {
+                                instance.inputValue = id1.substring(1, 12);
+                            }
+                            if (id2 && id2.length === 11) {
+                                instance.inputValue = id2;
+                            }
+                        } catch {
+                            proxy.$message({
+                                message: t('prompt.change_world_preview.message.error'),
+                                type: 'error'
+                            });
+                            return;
+                        }
+                    }
+                    if (instance.inputValue !== world.ref.previewYoutubeId) {
+                        worldRequest
+                            .saveWorld({
+                                id: world.id,
+                                previewYoutubeId: instance.inputValue
+                            })
+                            .then((args) => {
+                                proxy.$message({
+                                    message: t('prompt.change_world_preview.message.success'),
+                                    type: 'success'
+                                });
+                                return args;
+                            });
+                    }
+                }
+            }
+        });
+    }
+    function onWorldMemoChange() {
+        const worldId = worldDialog.value.id;
+        const memo = worldDialog.value.memo;
+        if (memo) {
+            database.setWorldMemo({
+                worldId,
+                editedAt: new Date().toJSON(),
+                memo
+            });
+        } else {
+            database.deleteWorldMemo(worldId);
+        }
+    }
+    function showPreviousInstancesWorldDialog(worldRef) {
+        const D = previousInstancesWorldDialog.value;
+        D.worldRef = worldRef;
+        D.visible = true;
+        // trigger watcher
+        D.openFlg = true;
+        nextTick(() => (D.openFlg = false));
+    }
+    function refreshWorldDialogTreeData() {
+        treeData.value = buildTreeData(worldDialog.value.ref);
+    }
+    function copyWorldId() {
+        navigator.clipboard
+            .writeText(worldDialog.value.id)
+            .then(() => {
+                proxy.$message({
+                    message: 'World ID copied to clipboard',
+                    type: 'success'
+                });
+            })
+            .catch((err) => {
+                console.error('copy failed:', err);
+                proxy.$message({
+                    message: 'Copy failed',
+                    type: 'error'
+                });
+            });
+    }
+    function copyWorldUrl() {
+        navigator.clipboard
+            .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
+            .then(() => {
+                proxy.$message({
+                    message: 'World URL copied to clipboard',
+                    type: 'success'
+                });
+            })
+            .catch((err) => {
+                console.error('copy failed:', err);
+                proxy.$message({
+                    message: 'Copy failed',
+                    type: 'error'
+                });
+            });
+    }
+    function copyWorldName() {
+        navigator.clipboard
+            .writeText(worldDialog.value.ref.name)
+            .then(() => {
+                proxy.$message({
+                    message: 'World name copied to clipboard',
+                    type: 'success'
+                });
+            })
+            .catch((err) => {
+                console.error('copy failed:', err);
+                proxy.$message({
+                    message: 'Copy failed',
+                    type: 'error'
+                });
+            });
+    }
+    function showWorldAllowedDomainsDialog() {
+        const D = worldAllowedDomainsDialog.value;
+        D.worldId = worldDialog.value.id;
+        D.urlList = worldDialog.value.ref?.urlList ?? [];
+        D.visible = true;
+    }
 </script>
