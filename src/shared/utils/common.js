@@ -169,11 +169,14 @@ function copyToClipboard(text, message = 'Copied successfully!') {
  * @returns {string}
  */
 function getFaviconUrl(resource) {
+    if (!resource) {
+        return '';
+    }
     try {
         const url = new URL(resource);
         return `https://icons.duckduckgo.com/ip2/${url.host}.ico`;
     } catch (err) {
-        console.error('Invalid URL:', err);
+        console.error('Invalid URL:', resource, err);
         return '';
     }
 }

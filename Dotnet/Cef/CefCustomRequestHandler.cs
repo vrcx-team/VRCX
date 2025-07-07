@@ -16,14 +16,13 @@ namespace VRCX
         
         public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
         {
-            if (!Program.LaunchDebug)
-                if (!request.Url.StartsWith("file://vrcx/") && !request.Url.StartsWith("chrome-extension://"))
-                {
-                    _logger.Error("Blocking navigation to: {Url}", request.Url);
-                    return true;
-                }
-
-            return false;
+            if (Program.LaunchDebug ||
+                request.Url.StartsWith("file://vrcx/") ||
+                request.Url.StartsWith("chrome-extension://"))
+                return false;
+            
+            _logger.Error("Blocking navigation to: {Url}", request.Url);
+            return true;
         }
 
         public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser)
