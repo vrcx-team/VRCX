@@ -26,7 +26,7 @@ namespace VRCX
                 }
 
                 // forgive me father for i have sinned once again
-                Program.AppApiInstance.ExecuteAppFunction("dragEnterCef", file);
+                Program.AppApiInstance.ExecuteAppFunction("$app.store.vrcx.dragEnterCef", file);
                 dragData.Dispose();
                 return false;
             }
