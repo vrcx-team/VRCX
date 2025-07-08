@@ -145,9 +145,7 @@
         }
     );
 
-    onMounted(() => {
-        getConfig();
-    });
+    getConfig();
 
     function closeInviteDialog() {
         inviteDialog.value.visible = false;
