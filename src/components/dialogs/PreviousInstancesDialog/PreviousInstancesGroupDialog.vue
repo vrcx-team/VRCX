@@ -115,7 +115,7 @@ export default {
                 return this.previousInstancesGroupDialog.visible;
             },
             set(value) {
-                this.$emit('update:previous-instances-group-dialog', {
+                this.$emit('update:previousInstancesGroupDialog', {
                     ...this.previousInstancesGroupDialog,
                     visible: value
                 });
