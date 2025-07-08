@@ -217,222 +217,201 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { ref, computed, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
     import { favoriteRequest } from '../../../api';
-    import { API } from '../../../service/eventBus';
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
     import AvatarExportDialog from '../dialogs/AvatarExportDialog.vue';
     import FavoritesAvatarItem from './FavoritesAvatarItem.vue';
     import FavoritesAvatarLocalHistoryItem from './FavoritesAvatarLocalHistoryItem.vue';
 
-    export default {
-        name: 'FavoritesAvatarTab',
-        components: { FavoritesAvatarItem, FavoritesAvatarLocalHistoryItem, AvatarExportDialog },
-        props: {
-            editFavoritesMode: Boolean,
-            refreshingLocalFavorites: Boolean
+    defineProps({
+        editFavoritesMode: {
+            type: Boolean,
+            default: false
         },
-        setup() {
-            const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
-            const { setSortFavorites } = useAppearanceSettingsStore();
-            const { favoriteAvatars, favoriteAvatarGroups, localAvatarFavorites, localAvatarFavoriteGroups } =
-                storeToRefs(useFavoriteStore());
-            const {
-                showAvatarImportDialog,
-                getLocalAvatarFavoriteGroupLength,
-                deleteLocalAvatarFavoriteGroup,
-                renameLocalAvatarFavoriteGroup,
-                newLocalAvatarFavoriteGroup,
-                saveSortFavoritesOption
-            } = useFavoriteStore();
-            const { showAvatarDialog, avatarHistoryArray } = storeToRefs(useAvatarStore());
-            const { promptClearAvatarHistory } = useAvatarStore();
-            const { currentUser } = storeToRefs(useUserStore());
-            const { t } = useI18n();
-            return {
-                hideTooltips,
-                sortFavorites,
-                setSortFavorites,
-                favoriteAvatars,
-                favoriteAvatarGroups,
-                API,
-                showAvatarImportDialog,
-                getLocalAvatarFavoriteGroupLength,
-                localAvatarFavorites,
-                localAvatarFavoriteGroups,
-                showAvatarDialog,
-                deleteLocalAvatarFavoriteGroup,
-                renameLocalAvatarFavoriteGroup,
-                newLocalAvatarFavoriteGroup,
-                avatarHistoryArray,
-                promptClearAvatarHistory,
-                saveSortFavoritesOption,
-                t,
-                currentUser
-            };
-        },
-        data() {
-            return {
-                avatarExportDialogVisible: false,
-                avatarFavoriteSearch: '',
-                avatarFavoriteSearchResults: []
-            };
-        },
-        computed: {
-            sortFav: {
-                get() {
-                    return this.sortFavorites;
-                },
-                set() {
-                    this.setSortFavorites();
-                }
-            },
-            groupedByGroupKeyFavoriteAvatars() {
-                const groupedByGroupKeyFavoriteAvatars = {};
-                this.favoriteAvatars.forEach((avatar) => {
-                    if (avatar.groupKey) {
-                        if (!groupedByGroupKeyFavoriteAvatars[avatar.groupKey]) {
-                            groupedByGroupKeyFavoriteAvatars[avatar.groupKey] = [];
-                        }
-                        groupedByGroupKeyFavoriteAvatars[avatar.groupKey].push(avatar);
-                    }
-                });
+        refreshingLocalFavorites: {
+            type: Boolean,
+            default: false
+        }
+    });
 
-                return groupedByGroupKeyFavoriteAvatars;
-            },
-            isLocalUserVrcplusSupporter() {
-                return this.currentUser.$isVRCPlus;
+    const { proxy } = getCurrentInstance();
+    const emit = defineEmits(['change-favorite-group-name', 'refresh-local-avatar-favorites']);
+
+    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { setSortFavorites } = useAppearanceSettingsStore();
+    const { favoriteAvatars, favoriteAvatarGroups, localAvatarFavorites, localAvatarFavoriteGroups } =
+        storeToRefs(useFavoriteStore());
+    const {
+        showAvatarImportDialog,
+        getLocalAvatarFavoriteGroupLength,
+        deleteLocalAvatarFavoriteGroup,
+        renameLocalAvatarFavoriteGroup,
+        newLocalAvatarFavoriteGroup,
+        saveSortFavoritesOption
+    } = useFavoriteStore();
+    const { avatarHistoryArray } = storeToRefs(useAvatarStore());
+    const { promptClearAvatarHistory, showAvatarDialog } = useAvatarStore();
+    const { currentUser } = storeToRefs(useUserStore());
+    const { t } = useI18n();
+
+    const avatarExportDialogVisible = ref(false);
+    const avatarFavoriteSearch = ref('');
+    const avatarFavoriteSearchResults = ref([]);
+
+    const sortFav = computed({
+        get() {
+            return sortFavorites.value;
+        },
+        set() {
+            setSortFavorites();
+        }
+    });
+
+    const groupedByGroupKeyFavoriteAvatars = computed(() => {
+        const groupedByGroupKeyFavoriteAvatars = {};
+        favoriteAvatars.value.forEach((avatar) => {
+            if (avatar.groupKey) {
+                if (!groupedByGroupKeyFavoriteAvatars[avatar.groupKey]) {
+                    groupedByGroupKeyFavoriteAvatars[avatar.groupKey] = [];
+                }
+                groupedByGroupKeyFavoriteAvatars[avatar.groupKey].push(avatar);
             }
-        },
-        methods: {
-            searchAvatarFavorites() {
-                let ref = null;
-                const search = this.avatarFavoriteSearch.toLowerCase();
-                if (search.length < 3) {
-                    this.avatarFavoriteSearchResults = [];
-                    return;
-                }
+        });
 
-                const results = [];
-                for (let i = 0; i < this.localAvatarFavoriteGroups.length; ++i) {
-                    const group = this.localAvatarFavoriteGroups[i];
-                    if (!this.localAvatarFavorites[group]) {
-                        continue;
-                    }
-                    for (let j = 0; j < this.localAvatarFavorites[group].length; ++j) {
-                        ref = this.localAvatarFavorites[group][j];
-                        if (
-                            !ref ||
-                            typeof ref.id === 'undefined' ||
-                            typeof ref.name === 'undefined' ||
-                            typeof ref.authorName === 'undefined'
-                        ) {
-                            continue;
-                        }
-                        if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
-                            if (!results.some((r) => r.id === ref.id)) {
-                                results.push(ref);
-                            }
-                        }
-                    }
-                }
+        return groupedByGroupKeyFavoriteAvatars;
+    });
 
-                for (let i = 0; i < this.favoriteAvatars.length; ++i) {
-                    ref = this.favoriteAvatars[i].ref;
-                    if (
-                        !ref ||
-                        typeof ref.id === 'undefined' ||
-                        typeof ref.name === 'undefined' ||
-                        typeof ref.authorName === 'undefined'
-                    ) {
-                        continue;
-                    }
-                    if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
-                        if (!results.some((r) => r.id === ref.id)) {
-                            results.push(ref);
-                        }
+    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
+
+    function searchAvatarFavorites() {
+        let ref = null;
+        const search = avatarFavoriteSearch.value.toLowerCase();
+        if (search.length < 3) {
+            avatarFavoriteSearchResults.value = [];
+            return;
+        }
+
+        const results = [];
+        for (let i = 0; i < localAvatarFavoriteGroups.value.length; ++i) {
+            const group = localAvatarFavoriteGroups.value[i];
+            if (!localAvatarFavorites.value[group]) {
+                continue;
+            }
+            for (let j = 0; j < localAvatarFavorites.value[group].length; ++j) {
+                ref = localAvatarFavorites.value[group][j];
+                if (
+                    !ref ||
+                    typeof ref.id === 'undefined' ||
+                    typeof ref.name === 'undefined' ||
+                    typeof ref.authorName === 'undefined'
+                ) {
+                    continue;
+                }
+                if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+                    if (!results.some((r) => r.id === ref.id)) {
+                        results.push(ref);
                     }
                 }
-
-                this.avatarFavoriteSearchResults = results;
-            },
-            clearFavoriteGroup(ctx) {
-                // FIXME: 메시지 수정
-                this.$confirm('Continue? Clear Group', 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action === 'confirm') {
-                            favoriteRequest.clearFavoriteGroup({
-                                type: ctx.type,
-                                group: ctx.name
-                            });
-                        }
-                    }
-                });
-            },
-            showAvatarExportDialog() {
-                this.avatarExportDialogVisible = true;
-            },
-
-            changeFavoriteGroupName(group) {
-                this.$emit('change-favorite-group-name', group);
-            },
-            promptNewLocalAvatarFavoriteGroup() {
-                this.$prompt(
-                    this.t('prompt.new_local_favorite_group.description'),
-                    this.t('prompt.new_local_favorite_group.header'),
-                    {
-                        distinguishCancelAndClose: true,
-                        confirmButtonText: this.t('prompt.new_local_favorite_group.ok'),
-                        cancelButtonText: this.t('prompt.new_local_favorite_group.cancel'),
-                        inputPattern: /\S+/,
-                        inputErrorMessage: this.t('prompt.new_local_favorite_group.input_error'),
-                        callback: (action, instance) => {
-                            if (action === 'confirm' && instance.inputValue) {
-                                this.newLocalAvatarFavoriteGroup(instance.inputValue);
-                            }
-                        }
-                    }
-                );
-            },
-            refreshLocalAvatarFavorites() {
-                this.$emit('refresh-local-avatar-favorites');
-            },
-            promptLocalAvatarFavoriteGroupRename(group) {
-                this.$prompt(
-                    this.t('prompt.local_favorite_group_rename.description'),
-                    this.t('prompt.local_favorite_group_rename.header'),
-                    {
-                        distinguishCancelAndClose: true,
-                        confirmButtonText: this.t('prompt.local_favorite_group_rename.save'),
-                        cancelButtonText: this.t('prompt.local_favorite_group_rename.cancel'),
-                        inputPattern: /\S+/,
-                        inputErrorMessage: this.t('prompt.local_favorite_group_rename.input_error'),
-                        inputValue: group,
-                        callback: (action, instance) => {
-                            if (action === 'confirm' && instance.inputValue) {
-                                this.renameLocalAvatarFavoriteGroup(instance.inputValue, group);
-                            }
-                        }
-                    }
-                );
-            },
-            promptLocalAvatarFavoriteGroupDelete(group) {
-                this.$confirm(`Delete Group? ${group}`, 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action === 'confirm') {
-                            this.deleteLocalAvatarFavoriteGroup(group);
-                        }
-                    }
-                });
             }
         }
-    };
+
+        for (let i = 0; i < favoriteAvatars.value.length; ++i) {
+            ref = favoriteAvatars.value[i].ref;
+            if (
+                !ref ||
+                typeof ref.id === 'undefined' ||
+                typeof ref.name === 'undefined' ||
+                typeof ref.authorName === 'undefined'
+            ) {
+                continue;
+            }
+            if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+                if (!results.some((r) => r.id === ref.id)) {
+                    results.push(ref);
+                }
+            }
+        }
+
+        avatarFavoriteSearchResults.value = results;
+    }
+
+    function clearFavoriteGroup(ctx) {
+        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    favoriteRequest.clearFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name
+                    });
+                }
+            }
+        });
+    }
+
+    function showAvatarExportDialog() {
+        avatarExportDialogVisible.value = true;
+    }
+
+    function changeFavoriteGroupName(group) {
+        emit('change-favorite-group-name', group);
+    }
+
+    function promptNewLocalAvatarFavoriteGroup() {
+        proxy.$prompt(t('prompt.new_local_favorite_group.description'), t('prompt.new_local_favorite_group.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.new_local_favorite_group.ok'),
+            cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
+            inputPattern: /\S+/,
+            inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue) {
+                    newLocalAvatarFavoriteGroup(instance.inputValue);
+                }
+            }
+        });
+    }
+
+    function refreshLocalAvatarFavorites() {
+        emit('refresh-local-avatar-favorites');
+    }
+
+    function promptLocalAvatarFavoriteGroupRename(group) {
+        proxy.$prompt(
+            t('prompt.local_favorite_group_rename.description'),
+            t('prompt.local_favorite_group_rename.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.local_favorite_group_rename.save'),
+                cancelButtonText: t('prompt.local_favorite_group_rename.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.local_favorite_group_rename.input_error'),
+                inputValue: group,
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        renameLocalAvatarFavoriteGroup(instance.inputValue, group);
+                    }
+                }
+            }
+        );
+    }
+
+    function promptLocalAvatarFavoriteGroupDelete(group) {
+        proxy.$confirm(`Delete Group? ${group}`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    deleteLocalAvatarFavoriteGroup(group);
+                }
+            }
+        });
+    }
 </script>

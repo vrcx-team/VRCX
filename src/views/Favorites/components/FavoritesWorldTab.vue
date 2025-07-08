@@ -9,10 +9,7 @@
             </div>
             <div style="display: flex; align-items: center; font-size: 13px; margin-right: 10px">
                 <span class="name" style="margin-right: 5px; line-height: 10px">{{ $t('view.favorite.sort_by') }}</span>
-                <el-radio-group
-                    v-model="sortFav"
-                    style="margin-right: 12px"
-                    @change="$emit('save-sort-favorites-option')">
+                <el-radio-group v-model="sortFav" style="margin-right: 12px" @change="saveSortFavoritesOption">
                     <el-radio :label="false">{{
                         $t('view.settings.appearance.appearance.sort_favorite_by_name')
                     }}</el-radio>
@@ -151,7 +148,7 @@
             v-if="!refreshingLocalFavorites"
             size="small"
             style="margin-left: 5px"
-            @click="$emit('refresh-local-world-favorite')"
+            @click="refreshLocalWorldFavorite"
             >{{ $t('view.favorite.worlds.refresh') }}</el-button
         >
         <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
@@ -215,7 +212,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { computed, ref, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
     import { favoriteRequest } from '../../../api';
@@ -223,232 +221,227 @@
     import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
     import FavoritesWorldItem from './FavoritesWorldItem.vue';
 
-    export default {
-        name: 'FavoritesWorldTab',
-        components: {
-            FavoritesWorldItem,
-            WorldExportDialog
+    defineProps({
+        editFavoritesMode: {
+            type: Boolean,
+            default: false
         },
-        props: {
-            editFavoritesMode: Boolean,
-            refreshingLocalFavorites: Boolean
-        },
-        setup() {
-            const { t } = useI18n();
-            const { hideTooltips, sortFavorites, setSortFavorites } = storeToRefs(useAppearanceSettingsStore());
-            const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites, localWorldFavoriteGroups } =
-                storeToRefs(useFavoriteStore());
-            const {
-                showWorldImportDialog,
-                getLocalWorldFavoriteGroupLength,
-                deleteLocalWorldFavoriteGroup,
-                renameLocalWorldFavoriteGroup,
-                removeLocalWorldFavorite,
-                newLocalWorldFavoriteGroup
-            } = useFavoriteStore();
-            const { showWorldDialog } = useWorldStore();
-            return {
-                hideTooltips,
-                sortFavorites,
-                setSortFavorites,
-                favoriteWorlds,
-                favoriteWorldGroups,
-                showWorldImportDialog,
-                getLocalWorldFavoriteGroupLength,
-                localWorldFavorites,
-                localWorldFavoriteGroups,
-                deleteLocalWorldFavoriteGroup,
-                renameLocalWorldFavoriteGroup,
-                removeLocalWorldFavorite,
-                newLocalWorldFavoriteGroup,
-                showWorldDialog,
-                t
-            };
-        },
-        data() {
-            return {
-                worldGroupVisibilityOptions: ['private', 'friends', 'public'],
-                worldFavoriteSearch: '',
-                worldExportDialogVisible: false,
-                worldFavoriteSearchResults: []
-            };
-        },
-        computed: {
-            groupedByGroupKeyFavoriteWorlds() {
-                const groupedByGroupKeyFavoriteWorlds = {};
+        refreshingLocalFavorites: {
+            type: Boolean,
+            default: false
+        }
+    });
 
-                this.favoriteWorlds.forEach((world) => {
-                    if (world.groupKey) {
-                        if (!groupedByGroupKeyFavoriteWorlds[world.groupKey]) {
-                            groupedByGroupKeyFavoriteWorlds[world.groupKey] = [];
-                        }
-                        groupedByGroupKeyFavoriteWorlds[world.groupKey].push(world);
-                    }
-                });
+    const emit = defineEmits([
+        'change-favorite-group-name',
+        'save-sort-favorites-option',
+        'refresh-local-world-favorite'
+    ]);
 
-                return groupedByGroupKeyFavoriteWorlds;
-            },
-            sortFav: {
-                get() {
-                    return this.sortFavorites;
-                },
-                set() {
-                    this.setSortFavorites();
+    const { proxy } = getCurrentInstance();
+
+    const { t } = useI18n();
+    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { setSortFavorites } = useAppearanceSettingsStore();
+    const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites, localWorldFavoriteGroups } =
+        storeToRefs(useFavoriteStore());
+    const {
+        showWorldImportDialog,
+        getLocalWorldFavoriteGroupLength,
+        deleteLocalWorldFavoriteGroup,
+        renameLocalWorldFavoriteGroup,
+        removeLocalWorldFavorite,
+        newLocalWorldFavoriteGroup
+    } = useFavoriteStore();
+    const { showWorldDialog } = useWorldStore();
+
+    const worldGroupVisibilityOptions = ref(['private', 'friends', 'public']);
+    const worldExportDialogVisible = ref(false);
+    const worldFavoriteSearch = ref('');
+    const worldFavoriteSearchResults = ref([]);
+
+    const groupedByGroupKeyFavoriteWorlds = computed(() => {
+        const groupedByGroupKeyFavoriteWorlds = {};
+
+        favoriteWorlds.value.forEach((world) => {
+            if (world.groupKey) {
+                if (!groupedByGroupKeyFavoriteWorlds[world.groupKey]) {
+                    groupedByGroupKeyFavoriteWorlds[world.groupKey] = [];
+                }
+                groupedByGroupKeyFavoriteWorlds[world.groupKey].push(world);
+            }
+        });
+
+        return groupedByGroupKeyFavoriteWorlds;
+    });
+
+    const sortFav = computed({
+        get() {
+            return sortFavorites.value;
+        },
+        set() {
+            setSortFavorites();
+        }
+    });
+
+    function showExportDialog() {
+        worldExportDialogVisible.value = true;
+    }
+
+    function userFavoriteWorldsStatusForFavTab(visibility) {
+        let style = '';
+        if (visibility === 'public') {
+            style = '';
+        } else if (visibility === 'friends') {
+            style = 'success';
+        } else {
+            style = 'info';
+        }
+        return style;
+    }
+
+    function changeWorldGroupVisibility(name, visibility) {
+        const params = {
+            type: 'world',
+            group: name,
+            visibility
+        };
+        favoriteRequest.saveFavoriteGroup(params).then((args) => {
+            proxy.$message({
+                message: 'Group visibility changed',
+                type: 'success'
+            });
+            return args;
+        });
+    }
+
+    function promptNewLocalWorldFavoriteGroup() {
+        proxy.$prompt(t('prompt.new_local_favorite_group.description'), t('prompt.new_local_favorite_group.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.new_local_favorite_group.ok'),
+            cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
+            inputPattern: /\S+/,
+            inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue) {
+                    newLocalWorldFavoriteGroup(instance.inputValue);
                 }
             }
-        },
-        methods: {
-            showExportDialog() {
-                this.worldExportDialogVisible = true;
-            },
+        });
+    }
 
-            userFavoriteWorldsStatusForFavTab(visibility) {
-                let style = '';
-                if (visibility === 'public') {
-                    style = '';
-                } else if (visibility === 'friends') {
-                    style = 'success';
-                } else {
-                    style = 'info';
+    function promptLocalWorldFavoriteGroupRename(group) {
+        proxy.$prompt(
+            t('prompt.local_favorite_group_rename.description'),
+            t('prompt.local_favorite_group_rename.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.local_favorite_group_rename.save'),
+                cancelButtonText: t('prompt.local_favorite_group_rename.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.local_favorite_group_rename.input_error'),
+                inputValue: group,
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        renameLocalWorldFavoriteGroup(instance.inputValue, group);
+                    }
                 }
-                return style;
-            },
-            changeWorldGroupVisibility(name, visibility) {
-                const params = {
-                    type: 'world',
-                    group: name,
-                    visibility
-                };
-                favoriteRequest.saveFavoriteGroup(params).then((args) => {
-                    this.$message({
-                        message: 'Group visibility changed',
-                        type: 'success'
+            }
+        );
+    }
+
+    function promptLocalWorldFavoriteGroupDelete(group) {
+        proxy.$confirm(`Delete Group? ${group}`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    deleteLocalWorldFavoriteGroup(group);
+                }
+            }
+        });
+    }
+
+    function clearFavoriteGroup(ctx) {
+        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    favoriteRequest.clearFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name
                     });
-                    return args;
-                });
-            },
-            promptNewLocalWorldFavoriteGroup() {
-                this.$prompt(
-                    this.t('prompt.new_local_favorite_group.description'),
-                    this.t('prompt.new_local_favorite_group.header'),
-                    {
-                        distinguishCancelAndClose: true,
-                        confirmButtonText: this.t('prompt.new_local_favorite_group.ok'),
-                        cancelButtonText: this.t('prompt.new_local_favorite_group.cancel'),
-                        inputPattern: /\S+/,
-                        inputErrorMessage: this.t('prompt.new_local_favorite_group.input_error'),
-                        callback: (action, instance) => {
-                            if (action === 'confirm' && instance.inputValue) {
-                                this.newLocalWorldFavoriteGroup(instance.inputValue);
-                            }
-                        }
-                    }
-                );
-            },
-            promptLocalWorldFavoriteGroupRename(group) {
-                this.$prompt(
-                    this.t('prompt.local_favorite_group_rename.description'),
-                    this.t('prompt.local_favorite_group_rename.header'),
-                    {
-                        distinguishCancelAndClose: true,
-                        confirmButtonText: this.t('prompt.local_favorite_group_rename.save'),
-                        cancelButtonText: this.t('prompt.local_favorite_group_rename.cancel'),
-                        inputPattern: /\S+/,
-                        inputErrorMessage: this.t('prompt.local_favorite_group_rename.input_error'),
-                        inputValue: group,
-                        callback: (action, instance) => {
-                            if (action === 'confirm' && instance.inputValue) {
-                                this.renameLocalWorldFavoriteGroup(instance.inputValue, group);
-                            }
-                        }
-                    }
-                );
-            },
-            promptLocalWorldFavoriteGroupDelete(group) {
-                this.$confirm(`Delete Group? ${group}`, 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action === 'confirm') {
-                            this.deleteLocalWorldFavoriteGroup(group);
-                        }
-                    }
-                });
-            },
-
-            clearFavoriteGroup(ctx) {
-                // FIXME: 메시지 수정
-                this.$confirm('Continue? Clear Group', 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action === 'confirm') {
-                            favoriteRequest.clearFavoriteGroup({
-                                type: ctx.type,
-                                group: ctx.name
-                            });
-                        }
-                    }
-                });
-            },
-            searchWorldFavorites(worldFavoriteSearch) {
-                let ref = null;
-                const search = worldFavoriteSearch.toLowerCase();
-                if (search.length < 3) {
-                    this.worldFavoriteSearchResults = [];
-                    return;
                 }
+            }
+        });
+    }
 
-                const results = [];
-                for (let i = 0; i < this.localWorldFavoriteGroups.length; ++i) {
-                    const group = this.localWorldFavoriteGroups[i];
-                    if (!this.localWorldFavorites[group]) {
-                        continue;
-                    }
-                    for (let j = 0; j < this.localWorldFavorites[group].length; ++j) {
-                        ref = this.localWorldFavorites[group][j];
-                        if (
-                            !ref ||
-                            typeof ref.id === 'undefined' ||
-                            typeof ref.name === 'undefined' ||
-                            typeof ref.authorName === 'undefined'
-                        ) {
-                            continue;
-                        }
-                        if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
-                            if (!results.some((r) => r.id === ref.id)) {
-                                results.push(ref);
-                            }
-                        }
+    function searchWorldFavorites(worldFavoriteSearch) {
+        let ref = null;
+        const search = worldFavoriteSearch.toLowerCase();
+        if (search.length < 3) {
+            worldFavoriteSearchResults.value = [];
+            return;
+        }
+
+        const results = [];
+        for (let i = 0; i < localWorldFavoriteGroups.value.length; ++i) {
+            const group = localWorldFavoriteGroups.value[i];
+            if (!localWorldFavorites.value[group]) {
+                continue;
+            }
+            for (let j = 0; j < localWorldFavorites.value[group].length; ++j) {
+                ref = localWorldFavorites.value[group][j];
+                if (
+                    !ref ||
+                    typeof ref.id === 'undefined' ||
+                    typeof ref.name === 'undefined' ||
+                    typeof ref.authorName === 'undefined'
+                ) {
+                    continue;
+                }
+                if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+                    if (!results.some((r) => r.id === ref.id)) {
+                        results.push(ref);
                     }
                 }
-
-                for (let i = 0; i < this.favoriteWorlds.length; ++i) {
-                    ref = this.favoriteWorlds[i].ref;
-                    if (
-                        !ref ||
-                        typeof ref.id === 'undefined' ||
-                        typeof ref.name === 'undefined' ||
-                        typeof ref.authorName === 'undefined'
-                    ) {
-                        continue;
-                    }
-                    if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
-                        if (!results.some((r) => r.id === ref.id)) {
-                            results.push(ref);
-                        }
-                    }
-                }
-
-                this.worldFavoriteSearchResults = results;
-            },
-            changeFavoriteGroupName(group) {
-                this.$emit('change-favorite-group-name', group);
             }
         }
-    };
+
+        for (let i = 0; i < favoriteWorlds.value.length; ++i) {
+            ref = favoriteWorlds.value[i].ref;
+            if (
+                !ref ||
+                typeof ref.id === 'undefined' ||
+                typeof ref.name === 'undefined' ||
+                typeof ref.authorName === 'undefined'
+            ) {
+                continue;
+            }
+            if (ref.name.toLowerCase().includes(search) || ref.authorName.toLowerCase().includes(search)) {
+                if (!results.some((r) => r.id === ref.id)) {
+                    results.push(ref);
+                }
+            }
+        }
+
+        worldFavoriteSearchResults.value = results;
+    }
+
+    function changeFavoriteGroupName(group) {
+        emit('change-favorite-group-name', group);
+    }
+
+    function refreshLocalWorldFavorite() {
+        emit('refresh-local-world-favorite');
+    }
+
+    function saveSortFavoritesOption() {
+        emit('save-sort-favorites-option');
+    }
 </script>
 
 <style scoped></style>
