@@ -1312,7 +1312,7 @@ import PreviousInstancesGroupDialog from "../PreviousInstancesDialog/PreviousIns
         userObject: {}
     });
 
-    const previousInstancesGroupDialog = reactive({
+    const previousInstancesGroupDialog = ref({
         visible: false,
         openFlg: false,
         groupRef: {}
@@ -1350,7 +1350,7 @@ import PreviousInstancesGroupDialog from "../PreviousInstancesDialog/PreviousIns
     }
 
     function showPreviousInstancesGroupDialog(groupRef) {
-        const D = previousInstancesGroupDialog;
+        const D = previousInstancesGroupDialog.value;
         D.groupRef = groupRef;
         D.visible = true;
         D.openFlg = true;
