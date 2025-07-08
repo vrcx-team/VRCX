@@ -1319,11 +1319,12 @@
                 <!-- //- Pictures | User Generated Content -->
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
-
-                    <span class="name" style="min-width: 300px">{{
-                        t('view.settings.advanced.advanced.user_generated_content.description')
-                    }}</span>
                     <br />
+                    <div class="options-container-item">
+                        <span class="name" style="min-width: 300px">{{
+                            t('view.settings.advanced.advanced.user_generated_content.description')
+                        }}</span>
+                    </div>
                     <el-button size="small" icon="el-icon-folder" @click="openUGCFolder()" style="margin-top: 5px">{{
                         t('view.settings.advanced.advanced.user_generated_content.folder')
                     }}</el-button>
