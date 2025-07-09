@@ -452,7 +452,6 @@
     import { ref, watch, nextTick, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
     import {
@@ -485,7 +484,6 @@
     const { t } = useI18n();
 
     const { proxy } = getCurrentInstance();
-    const { t } = useI18n();
 
     const { friends, vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, cachedGroups } = storeToRefs(useGroupStore());
