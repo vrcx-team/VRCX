@@ -110,6 +110,7 @@
 
 <script setup>
     import { ref, computed, getCurrentInstance } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
     import GallerySelectDialog from './GallerySelectDialog.vue';
@@ -125,6 +126,7 @@
     const emit = defineEmits(['update:dialogData']);
 
     const { proxy } = getCurrentInstance();
+    const { t } = useI18n();
 
     const { showFullscreenImageDialog } = useGalleryStore();
     const { handleGroupPost } = useGroupStore();

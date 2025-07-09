@@ -1194,6 +1194,8 @@
     import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
 
+    const { t } = useI18n();
+
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
@@ -1211,7 +1213,6 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
 
-    const { t } = useI18n();
     const instance = getCurrentInstance();
     const $confirm = instance.proxy.$confirm;
     const $message = instance.proxy.$message;
