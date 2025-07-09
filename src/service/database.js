@@ -1076,6 +1076,55 @@ class Database {
         return ref;
     }
 
+    async getLastGroupVisit(groupName) {
+        var ref = {
+            created_at: '',
+            groupName: ''
+        };
+        await sqliteService.execute(
+            (row) => {
+                ref = {
+                    created_at: row[0],
+                    groupName: row[1]
+                };
+            },
+            `SELECT created_at, group_name FROM gamelog_location WHERE group_name = @groupName ORDER BY id DESC LIMIT 1`,
+            {
+                '@groupName': groupName
+            }
+        );
+        return ref;
+    }
+
+    async getpreviousInstancesByGroupName(groupName) {
+        var data = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                var time = 0;
+                if (dbRow[2]) {
+                    time = dbRow[2];
+                }
+                var ref = data.get(dbRow[1]);
+                if (typeof ref !== 'undefined') {
+                    time += ref.time;
+                }
+                var row = {
+                    created_at: dbRow[0],
+                    location: dbRow[1],
+                    time,
+                    worldName: dbRow[3],
+                    groupName: dbRow[4]
+                };
+                data.set(row.location, row);
+            },
+            `SELECT created_at, location, time, world_name, group_name FROM gamelog_location WHERE group_name = @groupName ORDER BY id DESC`,
+            {
+                '@groupName': groupName
+            }
+        );
+        return data;
+    }
+
     async getLastSeen(input, inCurrentWorld) {
         if (inCurrentWorld) {
             var count = 2;

@@ -596,6 +596,14 @@
                                 <span class="extra">{{ groupDialog.ref.createdAt | formatDate('long') }}</span>
                             </div>
                         </div>
+                        <el-tooltip :disabled="hideTooltips" placement="top" :content="t('dialog.user.info.open_previouse_instance')">
+                            <div class="x-friend-item x-link" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
+                                <div class="detail">
+                                    <span class="name">{{ t('dialog.group.info.last_visited') }}</span>
+                                    <span class="extra">{{ groupDialog.lastVisit | formatDate('long') }} <span v-if="lastVisitDays">({{ lastVisitDays }})</span></span>
+                                </div>
+                            </div>
+                        </el-tooltip>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.links') }}</span>
@@ -1167,11 +1175,14 @@
             :online-friends="onlineFriends"
             :offline-friends="offlineFriends"
             :active-friends="activeFriends" />
+        <PreviousInstancesGroupDialog
+            :previous-instances-group-dialog.sync="previousInstancesGroupDialog"
+        />
     </safe-dialog>
 </template>
 
 <script setup>
-    import { getCurrentInstance, inject, nextTick, reactive, ref, watch } from 'vue';
+    import { getCurrentInstance, inject, nextTick, reactive, ref, watch, computed } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import * as workerTimers from 'worker-timers';
     import { groupRequest } from '../../../api';
@@ -1180,10 +1191,12 @@
     import { refreshInstancePlayerCount } from '../../../composables/instance/utils';
     import { copyToClipboard, downloadAndSaveJson, getFaviconUrl } from '../../../composables/shared/utils';
     import { languageClass } from '../../../composables/user/utils';
+import dayjs from 'dayjs';
     import Location from '../../Location.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
+import PreviousInstancesGroupDialog from "../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue";
 
     const API = inject('API');
     const showFullscreenImageDialog = inject('showFullscreenImageDialog');
@@ -1253,6 +1266,12 @@
     ]);
 
     const groupDialogRef = ref(null);
+    const lastVisitDays = computed(() => {
+        if (!props.groupDialog.lastVisit) {
+            return '';
+        }
+        return dayjs().diff(dayjs(props.groupDialog.lastVisit), 'day');
+    });
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
     const groupMembersSearchTimer = ref(null);
@@ -1293,6 +1312,12 @@
         userObject: {}
     });
 
+    const previousInstancesGroupDialog = ref({
+        visible: false,
+        openFlg: false,
+        groupRef: {}
+    });
+
     let loadMoreGroupMembersParams = {};
 
     watch(
@@ -1322,6 +1347,14 @@
         D.userId = userId;
         D.userObject = {};
         D.visible = true;
+    }
+
+    function showPreviousInstancesGroupDialog(groupRef) {
+        const D = previousInstancesGroupDialog.value;
+        D.groupRef = groupRef;
+        D.visible = true;
+        D.openFlg = true;
+        nextTick(() => (D.openFlg = false));
     }
 
     function setGroupRepresentation(groupId) {

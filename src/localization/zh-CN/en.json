@@ -1045,7 +1045,8 @@
                 "role_description": "描述：",
                 "role_updated_at": "更新时间：",
                 "role_created_at": "创建时间：",
-                "role_permissions": "权限："
+                "role_permissions": "权限：",
+                "last_visited": "上次访问"
             },
             "posts": {
                 "header": "帖子",

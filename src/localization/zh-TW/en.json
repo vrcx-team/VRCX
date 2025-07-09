@@ -1043,7 +1043,8 @@
                 "role_description": "敘述：",
                 "role_updated_at": "更新時間：",
                 "role_created_at": "創建時間：",
-                "role_permissions": "權限："
+                "role_permissions": "權限：",
+                "last_visited": "上次造訪"
             },
             "posts": {
                 "header": "貼文",

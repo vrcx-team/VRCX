@@ -1066,7 +1066,8 @@
                 "role_description": "Description:",
                 "role_updated_at": "Updated At:",
                 "role_created_at": "Created At:",
-                "role_permissions": "Permissions:"
+                "role_permissions": "Permissions:",
+                "last_visited": "Last Visited"
             },
             "posts": {
                 "header": "Posts",
