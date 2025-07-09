@@ -3,6 +3,7 @@ import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { groupRequest } from '../api';
 import { database } from '../service/database';
+import { watchState } from '../service/watchState';
 import { useAuthStore } from './auth';
 import { useFriendStore } from './friend';
 import { useGameStore } from './game';
@@ -30,7 +31,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.nextCurrentUserRefresh = 300;
             state.nextFriendsRefresh = 3600;
@@ -58,7 +59,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         const vrcxUpdaterStore = useVRCXUpdaterStore();
         const uiStore = useUiStore();
         try {
-            if (authStore.isLoggedIn === true) {
+            if (watchState.isLoggedIn) {
                 if (--state.nextCurrentUserRefresh <= 0) {
                     state.nextCurrentUserRefresh = 300; // 5min
                     userStore.getCurrentUser();
@@ -72,7 +73,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     }
                 }
                 if (--state.nextGroupInstanceRefresh <= 0) {
-                    if (friendStore.friendLogInitStatus) {
+                    if (watchState.isFriendsLoaded) {
                         state.nextGroupInstanceRefresh = 300; // 5min
                         groupRequest.getUsersGroupInstances();
                     }

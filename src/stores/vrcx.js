@@ -7,13 +7,13 @@ import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { failedGetRequests } from '../service/request';
+import { watchState } from '../service/watchState';
 import {
     debounce,
     parseLocation,
     refreshCustomCss,
     removeFromArray
 } from '../shared/utils';
-import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
@@ -431,8 +431,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     // use in C# side
     // eslint-disable-next-line no-unused-vars
     function ipcEvent(json) {
-        const authStore = useAuthStore();
-        if (!authStore.isLoggedIn) {
+        if (!watchState.isLoggedIn) {
             return;
         }
         let data;
@@ -541,9 +540,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.isRegistryBackupDialogVisible = false;
+            if (isLoggedIn) {
+                startupLaunchCommand();
+            }
         },
         { flush: 'sync' }
     );
@@ -556,8 +558,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     function eventLaunchCommand(input) {
-        const authStore = useAuthStore();
-        if (!authStore.isLoggedIn) {
+        if (!watchState.isLoggedIn) {
             return;
         }
         console.log('LaunchCommand:', input);

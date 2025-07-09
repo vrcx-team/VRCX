@@ -3,8 +3,8 @@ import { computed, reactive, watch } from 'vue';
 import { instanceRequest } from '../api';
 import { $app } from '../app';
 import configRepository from '../service/config';
+import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
-import { useAuthStore } from './auth';
 
 export const useLaunchStore = defineStore('Launch', () => {
     const state = reactive({
@@ -32,7 +32,7 @@ export const useLaunchStore = defineStore('Launch', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.isLaunchOptionsDialogVisible = false;
         },

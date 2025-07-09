@@ -6,18 +6,14 @@ import { t } from '../plugin';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { processBulk } from '../service/request';
+import { watchState } from '../service/watchState';
 import { compareByName, removeFromArray } from '../shared/utils';
 import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
-import { useGroupStore } from './group';
-import { useInstanceStore } from './instance';
-import { useModerationStore } from './moderation';
-import { useAdvancedSettingsStore } from './settings/advanced';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useGeneralSettingsStore } from './settings/general';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useAuthStore } from './auth';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -25,10 +21,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     const generalSettingsStore = useGeneralSettingsStore();
     const avatarStore = useAvatarStore();
     const worldStore = useWorldStore();
-    const groupStore = useGroupStore();
-    const instanceStore = useInstanceStore();
-    const moderationStore = useModerationStore();
-    const advancedSettingsStore = useAdvancedSettingsStore();
     const userStore = useUserStore();
 
     const state = reactive({
@@ -403,25 +395,13 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             friendStore.localFavoriteFriends.clear();
-            groupStore.currentUserGroupsInit = false;
-            groupStore.cachedGroups.clear();
-            avatarStore.cachedAvatars.clear();
-            worldStore.cachedWorlds.clear();
-            userStore.cachedUsers.clear();
-            instanceStore.cachedInstances.clear();
-            avatarStore.cachedAvatarNames.clear();
-            avatarStore.cachedAvatarModerations.clear();
-            moderationStore.cachedPlayerModerations.clear();
             state.cachedFavorites.clear();
             state.cachedFavoritesByObjectId.clear();
             state.cachedFavoriteGroups.clear();
             state.cachedFavoriteGroupsByTypeName.clear();
-            groupStore.currentUserGroups.clear();
-            advancedSettingsStore.currentUserInventory.clear();
-            instanceStore.queuedInstances.clear();
             state.favoriteFriendGroups = [];
             state.favoriteWorldGroups = [];
             state.favoriteAvatarGroups = [];
@@ -444,6 +424,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             state.worldImportDialogVisible = false;
             state.avatarImportDialogVisible = false;
             state.friendImportDialogVisible = false;
+            if (isLoggedIn) {
+                initFavorites();
+            }
         },
         { flush: 'sync' }
     );

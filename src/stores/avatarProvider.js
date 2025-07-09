@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
 import configRepository from '../service/config';
+import { watchState } from '../service/watchState';
 import { useAdvancedSettingsStore } from './settings/advanced';
-import { useAuthStore } from './auth';
 
 export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -96,7 +96,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.isAvatarProviderDialogVisible = false;
         },

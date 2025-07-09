@@ -5,6 +5,7 @@ import { notificationRequest, userRequest, worldRequest } from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
+import { watchState } from '../service/watchState';
 import {
     checkCanInvite,
     displayLocation,
@@ -14,7 +15,6 @@ import {
     parseLocation,
     removeFromArray
 } from '../shared/utils';
-import { useAuthStore } from './auth';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
 import { useGameStore } from './game';
@@ -117,10 +117,13 @@ export const useNotificationStore = defineStore('Notification', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.isNotificationsLoading = false;
             state.notificationTable.data = [];
+            if (isLoggedIn) {
+                initNotifications();
+            }
         },
         { flush: 'sync' }
     );
@@ -144,10 +147,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             ) {
                 database.addNotificationToDatabase(ref);
             }
-            if (
-                friendStore.friendLogInitStatus &&
-                state.notificationInitStatus
-            ) {
+            if (watchState.isFriendsLoaded && state.notificationInitStatus) {
                 if (
                     state.notificationTable.filters[0].value.length === 0 ||
                     state.notificationTable.filters[0].value.includes(ref.type)
@@ -580,7 +580,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     function playNoty(noty) {
         if (
             userStore.currentUser.status === 'busy' ||
-            !friendStore.friendLogInitStatus
+            !watchState.isFriendsLoaded
         ) {
             return;
         }
@@ -2307,7 +2307,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
     }
 
-    async function initNotificationTable() {
+    async function initNotifications() {
         state.notificationInitStatus = false;
         state.notificationTable.data = await database.getNotifications();
         refreshNotifications();
@@ -2320,7 +2320,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         unseenNotifications,
         isNotificationsLoading,
 
-        initNotificationTable,
+        initNotifications,
         expireNotification,
         refreshNotifications,
         queueNotificationNoty,

@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { $app } from '../app';
 import { t } from '../plugin';
 import configRepository from '../service/config';
 import { API } from '../service/eventBus';
+import { watchState } from '../service/watchState';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useAuthStore } from './auth';
@@ -267,7 +268,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 state.pendingVRCXUpdate = true;
                 uiStore.notifyMenu('settings');
                 const type = 'Auto';
-                if (!authStore.isLoggedIn) {
+                if (!watchState.isLoggedIn) {
                     showVRCXUpdateDialog();
                 } else if (state.autoUpdateVRCX === 'Notify') {
                     // this.showVRCXUpdateDialog();

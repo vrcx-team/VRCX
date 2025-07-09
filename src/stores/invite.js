@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
 import { instanceRequest, inviteMessagesRequest } from '../api';
 import { $app } from '../app';
+import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
-import { useAuthStore } from './auth';
 import { useInstanceStore } from './instance';
 
 export const useInviteStore = defineStore('Invite', () => {
@@ -54,7 +54,7 @@ export const useInviteStore = defineStore('Invite', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.inviteMessageTable.data = [];
             state.inviteResponseMessageTable.data = [];

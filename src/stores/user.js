@@ -13,6 +13,7 @@ import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { processBulk, request } from '../service/request';
 import { initWebsocket } from '../service/websocket';
+import { watchState } from '../service/watchState';
 import {
     arraysMatch,
     buildTreeData,
@@ -28,7 +29,8 @@ import {
     isRealInstance,
     parseLocation,
     removeEmojis,
-    replaceBioSymbols
+    replaceBioSymbols,
+    getAllUserMemos
 } from '../shared/utils';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
@@ -302,10 +304,21 @@ export const useUserStore = defineStore('User', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.userDialog.visible = false;
             state.languageDialog.visible = false;
+        },
+        { flush: 'sync' }
+    );
+
+    watch(
+        () => watchState.isFriendsLoaded,
+        (isFriendsLoaded) => {
+            if (isFriendsLoaded) {
+                getAllUserMemos();
+                initUserNotes();
+            }
         },
         { flush: 'sync' }
     );
@@ -1853,7 +1866,7 @@ export const useUserStore = defineStore('User', () => {
 
     function applyCurrentUser(json) {
         let ref = state.currentUser;
-        if (authStore.isLoggedIn) {
+        if (watchState.isLoggedIn) {
             if (json.currentAvatar !== ref.currentAvatar) {
                 avatarStore.addAvatarToHistory(json.currentAvatar);
                 if (gameStore.isGameRunning) {
@@ -1995,6 +2008,7 @@ export const useUserStore = defineStore('User', () => {
             applyUserLanguage(ref);
             applyPresenceLocation(ref);
             groupStore.applyPresenceGroups(ref);
+            state.cachedUsers.clear(); // clear before running applyUser
             state.currentUser = ref;
             authStore.loginComplete();
         }

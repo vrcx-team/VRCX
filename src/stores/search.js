@@ -6,8 +6,8 @@ import { $app } from '../app';
 import { t } from '../plugin';
 import removeConfusables, { removeWhitespace } from '../service/confusables';
 import { API } from '../service/eventBus';
+import { watchState } from '../service/watchState';
 import { compareByName, localeIncludes } from '../shared/utils';
-import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
@@ -67,7 +67,7 @@ export const useSearchStore = defineStore('Search', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.searchText = '';
             state.searchUserResults = [];

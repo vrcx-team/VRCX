@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive } from 'vue';
+import Vue, { computed, reactive, watch } from 'vue';
 import { $app } from '../../app';
 import { i18n, t } from '../../plugin';
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
+import { watchState } from '../../service/watchState';
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
@@ -251,6 +252,16 @@ export const useAppearanceSettingsStore = defineStore(
         const randomUserColours = computed(() => state.randomUserColours);
         const trustColor = computed(() => state.trustColor);
 
+        watch(
+            () => watchState.isFriendsLoaded,
+            (isFriendsLoaded) => {
+                if (isFriendsLoaded) {
+                    tryInitUserColours();
+                }
+            },
+            { flush: 'sync' }
+        );
+
         /**
          *
          * @param {string} language
@@ -307,9 +318,8 @@ export const useAppearanceSettingsStore = defineStore(
                 });
             }
             if (state.randomUserColours) {
-                getNameColour(userStore.currentUser.id).then((colour) => {
-                    userStore.currentUser.$userColour = colour;
-                });
+                const colour = await getNameColour(userStore.currentUser.id);
+                userStore.currentUser.$userColour = colour;
                 userColourInit();
             } else {
                 applyUserTrustLevel(userStore.currentUser);
@@ -389,7 +399,7 @@ export const useAppearanceSettingsStore = defineStore(
                 trustColor = 'vip';
                 ref.$trustSortNum += 0.3;
             }
-            if (state.randomUserColours && friendStore.friendLogInitStatus) {
+            if (state.randomUserColours && watchState.isFriendsLoaded) {
                 if (!ref.$userColour) {
                     getNameColour(ref.id).then((colour) => {
                         ref.$userColour = colour;
@@ -706,9 +716,9 @@ export const useAppearanceSettingsStore = defineStore(
             if (!state.randomUserColours) {
                 return;
             }
-            userColourInit();
             const colour = await getNameColour(userStore.currentUser.id);
             userStore.currentUser.$userColour = colour;
+            await userColourInit();
         }
 
         return {

@@ -4,7 +4,7 @@ import { avatarModerationRequest, playerModerationRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
 import { API } from '../service/eventBus';
-import { useAuthStore } from './auth';
+import { watchState } from '../service/watchState';
 import { useAvatarStore } from './avatar';
 import { useUserStore } from './user';
 
@@ -50,12 +50,15 @@ export const useModerationStore = defineStore('Moderation', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.cachedPlayerModerations.clear();
             state.cachedPlayerModerationsUserIds.clear();
             state.isPlayerModerationsLoading = false;
             state.playerModerationTable.data = [];
+            if (isLoggedIn) {
+                refreshPlayerModerations();
+            }
         },
         { flush: 'sync' }
     );

@@ -8,6 +8,7 @@ import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { reconnectWebSocket } from '../service/websocket';
+import { watchState } from '../service/watchState';
 import {
     compareByCreatedAtAscending,
     migrateMemos,
@@ -54,7 +55,6 @@ export const useFriendStore = defineStore('Friend', () => {
         sortActiveFriends: false,
         sortOfflineFriends: false,
         localFavoriteFriends: new Set(),
-        friendLogInitStatus: false,
         isRefreshFriendsLoading: false,
         onlineFriendCount: 0,
         friendLog: new Map(),
@@ -173,14 +173,6 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     });
     const localFavoriteFriends = state.localFavoriteFriends;
-    const friendLogInitStatus = computed({
-        get() {
-            return state.friendLogInitStatus;
-        },
-        set(value) {
-            state.friendLogInitStatus = value;
-        }
-    });
 
     // VIP friends
     const vipFriends = computed(() => {
@@ -273,8 +265,8 @@ export const useFriendStore = defineStore('Friend', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.friends.clear();
             state.friendNumber = 0;
             groupStore.groupInstances = [];
@@ -286,12 +278,26 @@ export const useFriendStore = defineStore('Friend', () => {
             state.sortOnlineFriends = false;
             state.sortActiveFriends = false;
             state.sortOfflineFriends = false;
+            state.onlineFriendCount = 0;
+            if (isLoggedIn) {
+                initFriendsList();
+            }
+        },
+        { flush: 'sync' }
+    );
+
+    watch(
+        () => watchState.isFriendsLoaded,
+        (isFriendsLoaded) => {
+            if (isFriendsLoaded) {
+                updateOnlineFriendCoutner();
+            }
         },
         { flush: 'sync' }
     );
 
     function updateUserCurrentStatus(args) {
-        if (state.friendLogInitStatus) {
+        if (watchState.isFriendsLoaded) {
             refreshFriendsStatus(args.ref, args.fromGetCurrentUser);
         }
         updateOnlineFriendCoutner();
@@ -332,7 +338,7 @@ export const useFriendStore = defineStore('Friend', () => {
     function userOnFriend(args) {
         updateFriendship(args.ref);
         if (
-            state.friendLogInitStatus &&
+            watchState.isFriendsLoaded &&
             args.json.isFriend &&
             !state.friendLog.has(args.ref.id) &&
             args.json.id !== userStore.currentUser.id
@@ -449,7 +455,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 // AddFriend (CurrentUser) 이후,
                 // 서버에서 오는 순서라고 보면 될 듯.
                 if (ctx.state === 'online') {
-                    if (state.friendLogInitStatus) {
+                    if (watchState.isFriendsLoaded) {
                         userRequest.getUser({
                             userId: id
                         });
@@ -514,7 +520,7 @@ export const useFriendStore = defineStore('Friend', () => {
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
-            if (!state.friendLogInitStatus) {
+            if (!watchState.isFriendsLoaded) {
                 updateFriendDelayedCheck(ctx, location, $location_at);
                 return;
             }
@@ -783,7 +789,7 @@ export const useFriendStore = defineStore('Friend', () => {
             pendingState: '',
             $nickName: ''
         };
-        if (state.friendLogInitStatus) {
+        if (watchState.isFriendsLoaded) {
             getUserMemo(id).then((memo) => {
                 if (memo.userId === id) {
                     ctx.memo = memo.memo;
@@ -836,7 +842,7 @@ export const useFriendStore = defineStore('Friend', () => {
             });
             var friends = onlineFriends.concat(offlineFriends);
             friends = await refetchBrokenFriends(friends);
-            if (!state.friendLogInitStatus) {
+            if (!watchState.isFriendsLoaded) {
                 friends = await refreshRemainingFriends(friends);
             }
 
@@ -988,7 +994,7 @@ export const useFriendStore = defineStore('Friend', () => {
         for (const userId of userStore.currentUser.friends) {
             if (!friends.some((x) => x.id === userId)) {
                 try {
-                    if (!authStore.isLoggedIn) {
+                    if (!watchState.isLoggedIn) {
                         console.error(`User isn't logged in`);
                         return friends;
                     }
@@ -1111,7 +1117,7 @@ export const useFriendStore = defineStore('Friend', () => {
      */
     function addFriendship(id) {
         if (
-            !state.friendLogInitStatus ||
+            !watchState.isFriendsLoaded ||
             state.friendLog.has(id) ||
             id === userStore.currentUser.id
         ) {
@@ -1259,7 +1265,7 @@ export const useFriendStore = defineStore('Friend', () => {
      */
     function updateFriendship(ref) {
         const ctx = state.friendLog.get(ref.id);
-        if (!state.friendLogInitStatus || typeof ctx === 'undefined') {
+        if (!watchState.isFriendsLoaded || typeof ctx === 'undefined') {
             return;
         }
         if (ctx.friendNumber) {
@@ -1365,7 +1371,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         database.setFriendLogCurrentArray(sqlValues);
         await configRepository.setBool(`friendLogInit_${currentUser.id}`, true);
-        state.friendLogInitStatus = true;
+        watchState.isFriendsLoaded = true;
     }
 
     /**
@@ -1407,9 +1413,9 @@ export const useFriendStore = defineStore('Friend', () => {
         refreshFriendsStatus(currentUser, true);
 
         await refreshFriends();
-        state.friendLogInitStatus = true;
+        watchState.isFriendsLoaded = true;
 
-        // check for friend/name/rank change AFTER friendLogInitStatus is set
+        // check for friend/name/rank change AFTER isFriendsLoaded is set
         for (friend of friendLogCurrentArray) {
             const ref = userStore.cachedUsers.get(friend.userId);
             if (typeof ref !== 'undefined') {
@@ -1699,7 +1705,7 @@ export const useFriendStore = defineStore('Friend', () => {
     async function initFriendsList() {
         const userId = userStore.currentUser.id;
         state.isRefreshFriendsLoading = true;
-        state.friendLogInitStatus = false;
+        watchState.isFriendsLoaded = false;
         state.friendLog = new Map();
         initFriendLogHistoryTable();
 
@@ -1754,7 +1760,6 @@ export const useFriendStore = defineStore('Friend', () => {
         sortOfflineFriends,
 
         localFavoriteFriends,
-        friendLogInitStatus,
         isRefreshFriendsLoading,
         onlineFriendCount,
         friendLog,

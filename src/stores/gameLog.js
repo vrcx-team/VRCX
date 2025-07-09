@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { userRequest } from '../api';
 import { $app } from '../app';
@@ -8,6 +8,7 @@ import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import gameLogService from '../service/gamelog.js';
+import { watchState } from '../service/watchState';
 import {
     convertYoutubeTime,
     formatSeconds,
@@ -134,6 +135,28 @@ export const useGameLogStore = defineStore('GameLog', () => {
             state.lastResourceloadUrl = value;
         }
     });
+
+    watch(
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
+            state.gameLogTable.data = [];
+            state.gameLogSessionTable = [];
+            if (isLoggedIn) {
+                initGameLogTable();
+            }
+        },
+        { flush: 'sync' }
+    );
+
+    watch(
+        () => watchState.isFriendsLoaded,
+        (isFriendsLoaded) => {
+            if (isFriendsLoaded) {
+                tryLoadPlayerList();
+            }
+        },
+        { flush: 'sync' }
+    );
 
     function clearNowPlaying() {
         state.nowPlaying = {
@@ -826,10 +849,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 }
                 break;
             case 'photon-id':
-                if (
-                    !gameStore.isGameRunning ||
-                    !friendStore.friendLogInitStatus
-                ) {
+                if (!gameStore.isGameRunning || !watchState.isFriendsLoaded) {
                     break;
                 }
                 const photonId = parseInt(gameLog.photonId, 10);

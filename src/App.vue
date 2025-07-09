@@ -2,6 +2,7 @@
     import Vue, { onMounted } from 'vue';
     import template from './app.pug';
     import { createGlobalStores } from './stores';
+    import { watchState } from './service/watchState';
 
     import Login from './views/Login/Login.vue';
     import NavMenu from './components/NavMenu.vue';
@@ -80,6 +81,7 @@
             const store = createGlobalStores();
             Vue.prototype.store = store;
             Vue.prototype.utils = utils;
+            Vue.prototype.watchState = watchState;
 
             store.updateLoop.updateLoop();
 

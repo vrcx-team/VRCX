@@ -3,8 +3,6 @@ import * as workerTimers from 'worker-timers';
 import { groupRequest } from '../api';
 import { escapeTag, parseLocation } from '../shared/utils';
 import {
-    useAdvancedSettingsStore,
-    useAuthStore,
     useFriendStore,
     useGalleryStore,
     useGroupStore,
@@ -17,13 +15,13 @@ import {
 } from '../stores';
 import { API } from './eventBus';
 import { request } from './request';
+import { watchState } from '../service/watchState';
 
 let webSocket = null;
 let lastWebSocketMessage = '';
 
 export function initWebsocket() {
-    const friendStore = useFriendStore();
-    if (!(friendStore.friendLogInitStatus && webSocket === null)) {
+    if (!watchState.isFriendsLoaded || webSocket !== null) {
         return;
     }
     return request('auth', {
@@ -44,8 +42,6 @@ export function initWebsocket() {
  */
 function connectWebSocket(token) {
     const userStore = useUserStore();
-    const authStore = useAuthStore();
-    const friendStore = useFriendStore();
     if (webSocket !== null) {
         return;
     }
@@ -69,8 +65,8 @@ function connectWebSocket(token) {
         }
         workerTimers.setTimeout(() => {
             if (
-                authStore.isLoggedIn &&
-                friendStore.friendLogInitStatus &&
+                watchState.isLoggedIn &&
+                watchState.isFriendsLoaded &&
                 webSocket === null
             ) {
                 initWebsocket();
@@ -97,7 +93,9 @@ function connectWebSocket(token) {
             const json = JSON.parse(data);
             try {
                 json.content = JSON.parse(json.content);
-            } catch (err) {}
+            } catch {
+                // ignore parse error
+            }
             handlePipeline({
                 json
             });
@@ -140,9 +138,7 @@ function closeWebSocket() {
  * @returns {void}
  */
 export function reconnectWebSocket() {
-    const authStore = useAuthStore();
-    const friendStore = useFriendStore();
-    if (!authStore.isLoggedIn || !friendStore.friendLogInitStatus) {
+    if (!watchState.isLoggedIn || !watchState.isFriendsLoaded) {
         return;
     }
     closeWebSocket();
@@ -158,7 +154,6 @@ function handlePipeline(args) {
     const locationStore = useLocationStore();
     const galleryStore = useGalleryStore();
     const notificationStore = useNotificationStore();
-    const advancedSettingsStore = useAdvancedSettingsStore();
     const sharedFeedStore = useSharedFeedStore();
     const friendStore = useFriendStore();
     const groupStore = useGroupStore();
@@ -295,8 +290,8 @@ function handlePipeline(args) {
         case 'friend-online':
             // Where is instanceId, travelingToWorld, travelingToInstance?
             // More JANK, what a mess
-            var $location = parseLocation(content.location);
-            var $travelingToLocation = parseLocation(
+            const $location = parseLocation(content.location);
+            const $travelingToLocation = parseLocation(
                 content.travelingToLocation
             );
             if (content?.user?.id) {
@@ -387,22 +382,23 @@ function handlePipeline(args) {
             break;
 
         case 'friend-location':
-            var $location = parseLocation(content.location);
-            var $travelingToLocation = parseLocation(
+            const $location1 = parseLocation(content.location);
+            const $travelingToLocation1 = parseLocation(
                 content.travelingToLocation
             );
             if (!content?.user?.id) {
-                var ref = userStore.get(content.userId);
+                const ref = userStore.get(content.userId);
                 if (typeof ref !== 'undefined') {
                     API.$emit('USER', {
                         json: {
                             ...ref,
                             location: content.location,
                             worldId: content.worldId,
-                            instanceId: $location.instanceId,
+                            instanceId: $location1.instanceId,
                             travelingToLocation: content.travelingToLocation,
-                            travelingToWorld: $travelingToLocation.worldId,
-                            travelingToInstance: $travelingToLocation.instanceId
+                            travelingToWorld: $travelingToLocation1.worldId,
+                            travelingToInstance:
+                                $travelingToLocation1.instanceId
                         },
                         params: {
                             userId: content.userId
@@ -415,10 +411,10 @@ function handlePipeline(args) {
                 json: {
                     location: content.location,
                     worldId: content.worldId,
-                    instanceId: $location.instanceId,
+                    instanceId: $location1.instanceId,
                     travelingToLocation: content.travelingToLocation,
-                    travelingToWorld: $travelingToLocation.worldId,
-                    travelingToInstance: $travelingToLocation.instanceId,
+                    travelingToWorld: $travelingToLocation1.worldId,
+                    travelingToInstance: $travelingToLocation1.instanceId,
                     ...content.user,
                     state: 'online' // JANK
                 },
@@ -466,7 +462,7 @@ function handlePipeline(args) {
             break;
 
         case 'group-role-updated':
-            var groupId = content.role.groupId;
+            const groupId = content.role.groupId;
             groupRequest.getGroup({ groupId, includeRoles: true });
             console.log('group-role-updated', content);
 
@@ -491,17 +487,17 @@ function handlePipeline(args) {
                 console.error('group-member-updated missing member', content);
                 break;
             }
-            var groupId = member.groupId;
+            const groupId1 = member.groupId;
             if (
                 groupStore.groupDialog.visible &&
-                groupStore.groupDialog.id === groupId
+                groupStore.groupDialog.id === groupId1
             ) {
-                groupStore.getGroupDialogGroup(groupId);
+                groupStore.getGroupDialogGroup(groupId1);
             }
             API.$emit('GROUP:MEMBER', {
                 json: member,
                 params: {
-                    groupId
+                    groupId: groupId1
                 }
             });
             console.log('group-member-updated', member);
@@ -516,14 +512,12 @@ function handlePipeline(args) {
             break;
 
         case 'instance-queue-ready':
-            var instanceId = content.instanceLocation;
             // var expiry = Date.parse(content.expiry);
-            instanceStore.instanceQueueReady(instanceId);
+            instanceStore.instanceQueueReady(content.instanceLocation);
             break;
 
         case 'instance-queue-left':
-            var instanceId = content.instanceLocation;
-            instanceStore.removeQueuedInstance(instanceId);
+            instanceStore.removeQueuedInstance(content.instanceLocation);
             // $app.instanceQueueClear();
             break;
 

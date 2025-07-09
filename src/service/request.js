@@ -12,6 +12,7 @@ import {
 } from '../stores';
 import { API } from './eventBus.js';
 import webApiService from './webapi.js';
+import { watchState } from '../service/watchState';
 
 API.endpointDomainVrchat = 'https://api.vrchat.cloud/api/1';
 API.websocketDomainVrchat = 'wss://pipeline.vrchat.cloud';
@@ -33,7 +34,7 @@ export function request(endpoint, options) {
     const notificationStore = useNotificationStore();
     const updateLoopStore = useUpdateLoopStore();
     if (
-        !authStore.isLoggedIn &&
+        !watchState.isLoggedIn &&
         endpoint.startsWith('/auth') &&
         endpoint !== 'config'
     ) {
@@ -98,7 +99,7 @@ export function request(endpoint, options) {
         })
         .then((response) => {
             if (
-                !authStore.isLoggedIn &&
+                !watchState.isLoggedIn &&
                 endpoint.startsWith('/auth') &&
                 endpoint !== 'config'
             ) {

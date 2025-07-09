@@ -4,6 +4,7 @@ import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { $app } from '../app';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
+import { watchState } from '../service/watchState';
 import {
     checkVRChatCache,
     getAvailablePlatforms,
@@ -17,7 +18,6 @@ import { useFavoriteStore } from './favorite';
 import { useInstanceStore } from './instance';
 import { useLocationStore } from './location';
 import { useUserStore } from './user';
-import { useAuthStore } from './auth';
 
 export const useWorldStore = defineStore('World', () => {
     const locationStore = useLocationStore();
@@ -69,9 +69,10 @@ export const useWorldStore = defineStore('World', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.worldDialog.visible = false;
+            state.cachedWorlds.clear();
         },
         { flush: 'sync' }
     );

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { groupRequest, worldRequest } from '../api';
+import { watchState } from '../service/watchState';
 import { useFeedStore } from './feed';
 import { useFriendStore } from './friend';
 import { useGameLogStore } from './gameLog';
@@ -15,6 +16,7 @@ import { useNotificationsSettingsStore } from './settings/notifications';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useAuthStore } from './auth';
 
 export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const friendStore = useFriendStore();
@@ -30,6 +32,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const feedStore = useFeedStore();
     const worldStore = useWorldStore();
     const photonStore = usePhotonStore();
+    const authStore = useAuthStore();
 
     const state = reactive({
         sharedFeed: {
@@ -68,7 +71,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     });
 
     function updateSharedFeed(forceUpdate) {
-        if (!friendStore.friendLogInitStatus) {
+        if (!watchState.isFriendsLoaded) {
             return;
         }
         if (state.updateSharedFeedTimer) {

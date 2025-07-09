@@ -11,12 +11,12 @@ import {
 import { $app } from '../app';
 import { t } from '../plugin';
 import { API } from '../service/eventBus';
+import { watchState } from '../service/watchState';
 import {
     getEmojiFileName,
     getPrintFileName,
     getPrintLocalDate
 } from '../shared/utils';
-import { useAuthStore } from './auth';
 import { useAdvancedSettingsStore } from './settings/advanced';
 
 export const useGalleryStore = defineStore('Gallery', () => {
@@ -196,8 +196,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.previousImagesTable = [];
             state.galleryTable = [];
             state.VRCPlusIconsTable = [];
@@ -207,6 +207,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
             state.galleryDialogVisible = false;
             state.previousImagesDialogVisible = false;
             state.fullscreenImageDialog.visible = false;
+            if (isLoggedIn) {
+                tryDeleteOldPrints();
+            }
         },
         { flush: 'sync' }
     );

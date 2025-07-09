@@ -59,7 +59,6 @@ export function createGlobalStores() {
         notification: useNotificationStore(),
         feed: useFeedStore(),
         ui: useUiStore(),
-        auth: useAuthStore(),
         gameLog: useGameLogStore(),
         search: useSearchStore(),
         game: useGameStore(),
@@ -67,7 +66,8 @@ export function createGlobalStores() {
         vr: useVrStore(),
         vrcx: useVrcxStore(),
         sharedFeed: useSharedFeedStore(),
-        updateLoop: useUpdateLoopStore()
+        updateLoop: useUpdateLoopStore(),
+        auth: useAuthStore()
     };
 }
 

@@ -1,11 +1,11 @@
 doctype html
 #x-app.x-app(@dragenter.prevent @dragover.prevent @drop.prevent)
     //- ### Login ###
-    Login(v-if='!this.store.auth.isLoggedIn')
+    Login(v-if='!this.watchState.isLoggedIn')
 
     VRCXUpdateDialog
 
-    template(v-if='this.store.auth.isLoggedIn')
+    template(v-if='this.watchState.isLoggedIn')
         //- ### Menu ###
         NavMenu
 

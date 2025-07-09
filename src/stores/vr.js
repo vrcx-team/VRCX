@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import { isRpcWorld } from '../shared/utils';
+import { watchState } from '../service/watchState';
 import { useFriendStore } from './friend';
 import { useGameStore } from './game';
 import { useGameLogStore } from './gameLog';
@@ -28,12 +29,24 @@ export const useVrStore = defineStore('Vr', () => {
 
     const state = reactive({});
 
+    watch(
+        () => watchState.isFriendsLoaded,
+        (isFriendsLoaded) => {
+            if (isFriendsLoaded) {
+                vrInit();
+            }
+        },
+        { flush: 'sync' }
+    );
+
+    // also runs from CEF C# on overlay browser startup
     function vrInit() {
         updateVRConfigVars();
         updateVRLastLocation();
         updateVrNowPlaying();
+        // run these methods again to send data to the overlay
         sharedFeedStore.updateSharedFeed(true);
-        friendStore.onlineFriendCount = 0;
+        friendStore.onlineFriendCount = 0; // force an update
         friendStore.updateOnlineFriendCoutner();
     }
 

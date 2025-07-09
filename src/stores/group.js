@@ -9,20 +9,18 @@ import {
 } from '../api';
 import { $app } from '../app';
 import configRepository from '../service/config';
+import { watchState } from '../service/watchState';
 import { API } from '../service/eventBus';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import { replaceBioSymbols } from '../shared/utils';
-import { useFriendStore } from './friend';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useUserStore } from './user';
-import { useAuthStore } from './auth';
 
 export const useGroupStore = defineStore('Group', () => {
     const instanceStore = useInstanceStore();
     const gameStore = useGameStore();
     const userStore = useUserStore();
-    const friendStore = useFriendStore();
 
     const state = reactive({
         groupDialog: {
@@ -119,10 +117,16 @@ export const useGroupStore = defineStore('Group', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.groupDialog.visible = false;
             state.inviteGroupDialog.visible = false;
+            state.currentUserGroupsInit = false;
+            state.cachedGroups.clear();
+            state.currentUserGroups.clear();
+            if (isLoggedIn) {
+                initUserGroups();
+            }
         },
         { flush: 'sync' }
     );
@@ -872,7 +876,7 @@ export const useGroupStore = defineStore('Group', () => {
             });
             const ref = state.cachedGroups.get(json.ownerId);
             if (typeof ref === 'undefined') {
-                if (friendStore.friendLogInitStatus) {
+                if (watchState.isFriendsLoaded) {
                     groupRequest.getGroup({ groupId: json.ownerId });
                 }
                 return;

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
+import { watchState } from '../service/watchState';
 import { useNotificationStore } from './notification';
 
 export const useUiStore = defineStore('Ui', () => {
@@ -37,6 +38,16 @@ export const useUiStore = defineStore('Ui', () => {
             state.notifiedMenus = value;
         }
     });
+
+    watch(
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
+            if (isLoggedIn) {
+                state.menuActiveIndex = 'feed';
+            }
+        },
+        { flush: 'sync' }
+    );
 
     function notifyMenu(index) {
         if (

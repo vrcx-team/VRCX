@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import configRepository from '../service/config';
 import { database } from '../service/database';
+import { watchState } from '../service/watchState';
 import { useFriendStore } from './friend';
 import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
@@ -65,6 +66,18 @@ export const useFeedStore = defineStore('Feed', () => {
             state.feedSessionTable = value;
         }
     });
+
+    watch(
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
+            state.feedTable.data = [];
+            state.feedSessionTable = [];
+            if (isLoggedIn) {
+                initFeedTable();
+            }
+        },
+        { flush: 'sync' }
+    );
 
     function feedSearch(row) {
         const value = state.feedTable.search.toUpperCase();
@@ -209,8 +222,6 @@ export const useFeedStore = defineStore('Feed', () => {
 
     async function initFeedTable() {
         state.feedTable.loading = true;
-        state.feedTable.data = [];
-        state.feedSessionTable = [];
 
         feedTableLookup();
         state.feedSessionTable = await database.getFeedDatabase();

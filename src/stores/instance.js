@@ -6,6 +6,7 @@ import { t } from '../plugin';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
+import { watchState } from '../service/watchState';
 import { instanceContentSettings } from '../shared/constants';
 import {
     checkVRChatCache,
@@ -20,7 +21,6 @@ import {
     isRealInstance,
     parseLocation
 } from '../shared/utils';
-import { useAuthStore } from './auth';
 import { useFriendStore } from './friend';
 import { useGroupStore } from './group';
 import { useLocationStore } from './location';
@@ -139,11 +139,16 @@ export const useInstanceStore = defineStore('Instance', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.currentInstanceUserList.data = [];
             state.instanceJoinHistory = new Map();
             state.previousInstancesInfoDialogVisible = false;
+            state.cachedInstances.clear();
+            state.queuedInstances.clear();
+            if (isLoggedIn) {
+                getInstanceJoinHistory();
+            }
         },
         { flush: 'sync' }
     );
@@ -1015,7 +1020,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function getCurrentInstanceUserList() {
-        if (!friendStore.friendLogInitStatus) {
+        if (!watchState.isFriendsLoaded) {
             return;
         }
         if (state.updatePlayerListTimer) {

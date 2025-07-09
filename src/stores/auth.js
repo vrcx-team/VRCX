@@ -11,47 +11,19 @@ import { request } from '../service/request';
 import security from '../service/security';
 import webApiService from '../service/webapi';
 import { initWebsocket } from '../service/websocket';
-import { escapeTag, getAllUserMemos } from '../shared/utils';
-import { useFriendStore } from './friend';
+import { watchState } from '../service/watchState';
+import { escapeTag } from '../shared/utils';
 import { useNotificationStore } from './notification';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
-import { useAppearanceSettingsStore } from './settings/appearance';
-import { useVrStore } from './vr';
-import { useAvatarStore } from './avatar';
-import { useGameLogStore } from './gameLog';
-import { useVrcxStore } from './vrcx';
-import { useSharedFeedStore } from './sharedFeed';
-import { useGroupStore } from './group';
-import { useFavoriteStore } from './favorite';
-import { useGalleryStore } from './gallery';
-import { useInstanceStore } from './instance';
-import { useModerationStore } from './moderation';
-import { useFeedStore } from './feed';
-import { useUiStore } from './ui';
 
 export const useAuthStore = defineStore('Auth', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const notificationStore = useNotificationStore();
-    const friendStore = useFriendStore();
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
-    const appearanceSettingsStore = useAppearanceSettingsStore();
-    const vrStore = useVrStore();
-    const avatarStore = useAvatarStore();
-    const gameLogStore = useGameLogStore();
-    const vrcxStore = useVrcxStore();
-    const sharedFeedStore = useSharedFeedStore();
-    const groupStore = useGroupStore();
-    const favoriteStore = useFavoriteStore();
-    const galleryStore = useGalleryStore();
-    const instanceStore = useInstanceStore();
-    const moderationStore = useModerationStore();
-    const feedStore = useFeedStore();
-    const uiStore = useUiStore();
     const state = reactive({
-        isLoggedIn: false,
         attemptingAutoLogin: false,
         autoLoginAttempts: new Set(),
         loginForm: {
@@ -113,31 +85,6 @@ export const useAuthStore = defineStore('Auth', () => {
 
     init();
 
-    watch(
-        [() => state.isLoggedIn, () => userStore.currentUser],
-        ([isLoggedIn, currentUser]) => {
-            state.twoFactorAuthDialogVisible = false;
-            if (isLoggedIn) {
-                updateStoredUser(currentUser);
-                new Noty({
-                    type: 'success',
-                    text: `Hello there, <strong>${escapeTag(
-                        currentUser.displayName
-                    )}</strong>!`
-                }).show();
-            }
-        },
-        { flush: 'sync' }
-    );
-
-    // LOGIN STATE
-    const isLoggedIn = computed({
-        get: () => state.isLoggedIn,
-        set: (value) => {
-            state.isLoggedIn = value;
-        }
-    });
-
     const loginForm = computed({
         get: () => state.loginForm,
         set: (value) => {
@@ -180,9 +127,37 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     });
 
+    watch(
+        [() => watchState.isLoggedIn, () => userStore.currentUser],
+        ([isLoggedIn, currentUser]) => {
+            state.twoFactorAuthDialogVisible = false;
+            if (isLoggedIn) {
+                updateStoredUser(currentUser);
+                new Noty({
+                    type: 'success',
+                    text: `Hello there, <strong>${escapeTag(
+                        currentUser.displayName
+                    )}</strong>!`
+                }).show();
+            }
+        },
+        { flush: 'sync' }
+    );
+
+    watch(
+        () => watchState.isFriendsLoaded,
+        (isFriendsLoaded) => {
+            if (isFriendsLoaded) {
+                initWebsocket();
+                AppApi.IPCAnnounceStart();
+            }
+        },
+        { flush: 'sync' }
+    );
+
     // API.$on('LOGOUT')
     async function handleLogoutEvent() {
-        if (state.isLoggedIn) {
+        if (watchState.isLoggedIn) {
             new Noty({
                 type: 'success',
                 text: `See you again, <strong>${escapeTag(
@@ -190,8 +165,8 @@ export const useAuthStore = defineStore('Auth', () => {
                 )}</strong>!`
             }).show();
         }
-        state.isLoggedIn = false;
-        friendStore.friendLogInitStatus = false;
+        watchState.isLoggedIn = false;
+        watchState.isFriendsLoaded = false;
         notificationStore.notificationInitStatus = false;
         await updateStoredUser(userStore.currentUser);
         webApiService.clearCookies();
@@ -881,33 +856,9 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     async function loginComplete() {
-        const userId = userStore.currentUser.id;
-        state.isLoggedIn = true;
-        uiStore.menuActiveIndex = 'feed';
+        await database.initUserTables(userStore.currentUser.id);
+        watchState.isLoggedIn = true;
         AppApi.CheckGameRunning(); // restore state from hot-reload
-        vrcxStore.startupLaunchCommand();
-        await database.initUserTables(userId);
-
-        feedStore.initFeedTable();
-        gameLogStore.initGameLogTable();
-        notificationStore.initNotificationTable();
-        favoriteStore.initFavorites();
-        groupStore.initUserGroups();
-        instanceStore.getInstanceJoinHistory();
-        moderationStore.refreshPlayerModerations();
-        avatarStore.getAvatarHistory();
-        galleryStore.tryDeleteOldPrints();
-
-        await friendStore.initFriendsList();
-
-        getAllUserMemos();
-        userStore.initUserNotes();
-        appearanceSettingsStore.tryInitUserColours();
-        sharedFeedStore.updateSharedFeed(true);
-        vrStore.vrInit();
-        initWebsocket();
-        gameLogStore.tryLoadPlayerList();
-        AppApi.IPCAnnounceStart();
     }
 
     return {
@@ -916,7 +867,6 @@ export const useAuthStore = defineStore('Auth', () => {
         enablePrimaryPasswordDialog,
         saveCredentials,
         twoFactorAuthDialogVisible,
-        isLoggedIn,
         cachedConfig,
         enableCustomEndpoint,
 

@@ -6,6 +6,7 @@ import { $app } from '../app';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import webApiService from '../service/webapi';
+import { watchState } from '../service/watchState';
 import {
     checkVRChatCache,
     extractFileId,
@@ -97,9 +98,17 @@ export const useAvatarStore = defineStore('Avatar', () => {
     });
 
     watch(
-        () => useAuthStore().isLoggedIn,
-        () => {
+        () => watchState.isLoggedIn,
+        (isLoggedIn) => {
             state.avatarDialog.visible = false;
+            state.cachedAvatars.clear();
+            state.cachedAvatarNames.clear();
+            state.cachedAvatarModerations.clear();
+            state.avatarHistory.clear();
+            state.avatarHistoryArray = [];
+            if (isLoggedIn) {
+                getAvatarHistory();
+            }
         },
         { flush: 'sync' }
     );

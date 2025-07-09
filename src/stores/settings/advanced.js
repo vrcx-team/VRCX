@@ -6,7 +6,7 @@ import configRepository from '../../service/config';
 import { database } from '../../service/database';
 import { API } from '../../service/eventBus';
 import webApiService from '../../service/webapi';
-import { useAuthStore } from '../auth';
+import { watchState } from '../../service/watchState';
 import { useGameStore } from '../game';
 import { useVrcxStore } from '../vrcx';
 
@@ -138,7 +138,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     initAdvancedSettings();
 
     watch(
-        () => useAuthStore().isLoggedIn,
+        () => watchState.isLoggedIn,
         () => {
             state.currentUserInventory.clear();
             state.isVRChatConfigDialogVisible = false;
