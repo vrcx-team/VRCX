@@ -1043,7 +1043,8 @@
                 "role_description": "Описание:",
                 "role_updated_at": "Обновлена:",
                 "role_created_at": "Создана:",
-                "role_permissions": "Права доступа:"
+                "role_permissions": "Права доступа:",
+                "last_visited": "Последний визит"
             },
             "posts": {
                 "header": "Объявления",

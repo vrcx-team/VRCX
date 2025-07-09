@@ -873,7 +873,8 @@
                 "role_description": "설명:",
                 "role_updated_at": "업데이트:",
                 "role_created_at": "생성일:",
-                "role_permissions": "권한:"
+                "role_permissions": "권한:",
+                "last_visited": "마지막 방문"
             },
             "posts": {
                 "header": "Posts",

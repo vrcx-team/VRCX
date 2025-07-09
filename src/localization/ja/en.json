@@ -1042,7 +1042,8 @@
                 "role_description": "説明:",
                 "role_updated_at": "更新日:",
                 "role_created_at": "作成日:",
-                "role_permissions": "権限:"
+                "role_permissions": "権限:",
+                "last_visited": "最終訪問"
             },
             "posts": {
                 "header": "投稿",

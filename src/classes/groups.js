@@ -8,6 +8,7 @@ import {
     groupRequest
 } from '../api';
 import $utils from './utils';
+import database from '../service/database.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -507,7 +508,8 @@ export default class extends baseClass {
                 value: 'joinedAt:desc'
             },
             postsSearch: '',
-            galleries: {}
+            galleries: {},
+            lastVisit: ''
         },
         inviteGroupDialog: {
             visible: false,
@@ -771,6 +773,7 @@ export default class extends baseClass {
             D.postsFiltered = [];
             D.instances = [];
             D.memberRoles = [];
+            D.lastVisit = '';
             D.memberSearch = '';
             D.memberSearchResults = [];
             D.galleries = {};
@@ -802,6 +805,11 @@ export default class extends baseClass {
                                 D.ownerDisplayName = args1.ref.displayName;
                                 return args1;
                             });
+                        database.getLastGroupVisit(D.ref.name).then((r) => {
+                            if (D.id === args.ref.id) {
+                                D.lastVisit = r.created_at;
+                            }
+                        });
                         this.applyGroupDialogInstances();
                         this.getGroupDialogGroup(groupId);
                     }

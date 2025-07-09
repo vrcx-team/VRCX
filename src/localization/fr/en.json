@@ -989,7 +989,8 @@
                 "role_description": "Description :",
                 "role_updated_at": "Mis à jour le :",
                 "role_created_at": "Créé le :",
-                "role_permissions": "Permissions :"
+                "role_permissions": "Permissions :",
+                "last_visited": "Dernière visite"
             },
             "posts": {
                 "header": "Publications",

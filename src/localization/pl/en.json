@@ -873,7 +873,8 @@
                 "role_description": "Opis:",
                 "role_updated_at": "Zaktualizowano:",
                 "role_created_at": "Data utworzenia:",
-                "role_permissions": "Uprawnienia:"
+                "role_permissions": "Uprawnienia:",
+                "last_visited": "Ostatnia wizyta"
             },
             "posts": {
                 "header": "Posty",

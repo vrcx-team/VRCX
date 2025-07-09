@@ -873,7 +873,8 @@
                 "role_description": "Mô tả:",
                 "role_updated_at": "Cập nhật lúc:",
                 "role_created_at": "Tạo lúc:",
-                "role_permissions": "Quyền:"
+                "role_permissions": "Quyền:",
+                "last_visited": "Lần truy cập cuối"
             },
             "posts": {
                 "header": "Posts",
