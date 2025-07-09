@@ -2,7 +2,7 @@
     <safe-dialog
         :visible.sync="isDialogVisible"
         class="x-dialog"
-        :title="$t('dialog.friend_export.header')"
+        :title="t('dialog.friend_export.header')"
         width="650px"
         destroy-on-close>
         <el-dropdown trigger="click" size="small" @click.native.stop>
@@ -42,95 +42,94 @@
     </safe-dialog>
 </template>
 
-<script>
+<script setup>
+    import { ref, computed, watch, getCurrentInstance } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
     import { storeToRefs } from 'pinia';
     import { useFavoriteStore } from '../../../stores';
 
-    export default {
-        name: 'FriendExportDialog',
-        props: {
-            friendExportDialogVisible: Boolean
-        },
-        setup() {
-            const favoriteStore = useFavoriteStore();
-            const { favoriteFriends, favoriteFriendGroups } = storeToRefs(favoriteStore);
-            return {
-                favoriteFriends,
-                favoriteFriendGroups
-            };
-        },
-        data() {
-            return {
-                friendExportFavoriteGroup: null,
-                friendExportContent: ''
-            };
-        },
-        computed: {
-            isDialogVisible: {
-                get() {
-                    return this.friendExportDialogVisible;
-                },
-                set(value) {
-                    this.$emit('update:friend-export-dialog-visible', value);
-                }
-            }
-        },
-        watch: {
-            friendExportDialogVisible(value) {
-                if (value) {
-                    this.showFriendExportDialog();
-                }
-            }
-        },
-        methods: {
-            showFriendExportDialog() {
-                this.friendExportFavoriteGroup = null;
-                this.updateFriendExportDialog();
-            },
+    const { t } = useI18n();
+    const { proxy } = getCurrentInstance();
 
-            handleCopyFriendExportData(event) {
-                if (event.target.tagName === 'TEXTAREA') {
-                    event.target.select();
-                }
-                navigator.clipboard
-                    .writeText(this.friendExportContent)
-                    .then(() => {
-                        this.$message({
-                            message: 'Copied successfully!',
-                            type: 'success',
-                            duration: 2000
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('Copy failed:', err);
-                        this.$message.error('Copy failed!');
-                    });
-            },
+    const props = defineProps({
+        friendExportDialogVisible: {
+            type: Boolean,
+            required: true
+        }
+    });
 
-            updateFriendExportDialog() {
-                const _ = function (str) {
-                    if (/[\x00-\x1f,"]/.test(str) === true) {
-                        return `"${str.replace(/"/g, '""')}"`;
-                    }
-                    return str;
-                };
-                const lines = ['UserID,Name'];
-                this.favoriteFriendGroups.forEach((group) => {
-                    if (!this.friendExportFavoriteGroup || this.friendExportFavoriteGroup === group) {
-                        this.favoriteFriends.forEach((ref) => {
-                            if (group.key === ref.groupKey) {
-                                lines.push(`${_(ref.id)},${_(ref.name)}`);
-                            }
-                        });
-                    }
-                });
-                this.friendExportContent = lines.join('\n');
-            },
+    const emit = defineEmits(['update:friendExportDialogVisible']);
 
-            selectFriendExportGroup(group) {
-                this.friendExportFavoriteGroup = group;
-                this.updateFriendExportDialog();
+    const favoriteStore = useFavoriteStore();
+    const { favoriteFriends, favoriteFriendGroups } = storeToRefs(favoriteStore);
+
+    const friendExportFavoriteGroup = ref(null);
+    const friendExportContent = ref('');
+
+    const isDialogVisible = computed({
+        get() {
+            return props.friendExportDialogVisible;
+        },
+        set(value) {
+            emit('update:friendExportDialogVisible', value);
+        }
+    });
+
+    watch(
+        () => props.friendExportDialogVisible,
+        (value) => {
+            if (value) {
+                showFriendExportDialog();
             }
         }
-    };
+    );
+
+    function showFriendExportDialog() {
+        friendExportFavoriteGroup.value = null;
+        updateFriendExportDialog();
+    }
+
+    function handleCopyFriendExportData(event) {
+        if (event.target.tagName === 'TEXTAREA') {
+            event.target.select();
+        }
+        navigator.clipboard
+            .writeText(friendExportContent.value)
+            .then(() => {
+                proxy.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                proxy.$message.error('Copy failed!');
+            });
+    }
+
+    function updateFriendExportDialog() {
+        const _ = function (str) {
+            if (/[\x00-\x1f,"]/.test(str) === true) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+        const lines = ['UserID,Name'];
+        favoriteFriendGroups.value.forEach((group) => {
+            if (!friendExportFavoriteGroup.value || friendExportFavoriteGroup.value === group) {
+                favoriteFriends.value.forEach((ref) => {
+                    if (group.key === ref.groupKey) {
+                        lines.push(`${_(ref.id)},${_(ref.name)}`);
+                    }
+                });
+            }
+        });
+        friendExportContent.value = lines.join('\n');
+    }
+
+    function selectFriendExportGroup(group) {
+        friendExportFavoriteGroup.value = group;
+        updateFriendExportDialog();
+    }
 </script>

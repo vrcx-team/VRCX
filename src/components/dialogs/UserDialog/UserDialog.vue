@@ -962,8 +962,9 @@
                             <el-tooltip placement="top" :disabled="!userDialog.dateFriendedInfo.length">
                                 <template v-if="userDialog.dateFriendedInfo.length" #content>
                                     <template v-for="ref in userDialog.dateFriendedInfo">
-                                        <span>{{ ref.type }}: {{ ref.created_at | formatDate('long') }}</span
-                                        ><br />
+                                        <span :key="ref.userId"
+                                            >{{ ref.type }}: {{ ref.created_at | formatDate('long') }}</span
+                                        ><br :key="ref.userId" />
                                     </template>
                                 </template>
                                 <div class="detail">
@@ -1802,7 +1803,6 @@
         worldRequest
     } from '../../../api';
     import { database } from '../../../service/database';
-    import { API } from '../../../service/eventBus';
     import { processBulk, request } from '../../../service/request';
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
