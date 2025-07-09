@@ -451,6 +451,7 @@
 <script setup>
     import { ref, watch, nextTick, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n-bridge';
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
     import {
@@ -479,6 +480,8 @@
             required: true
         }
     });
+
+    const { t } = useI18n();
 
     const { proxy } = getCurrentInstance();
 
