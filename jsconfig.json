@@ -3,7 +3,7 @@
         "module": "ESNext",
         "target": "ESNext",
         "allowJs": true,
-        "checkJs": false,
+        "checkJs": true,
         "jsx": "preserve",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
