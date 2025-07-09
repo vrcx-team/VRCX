@@ -1055,6 +1055,14 @@ export const useGroupStore = defineStore('Group', () => {
             });
     }
 
+    async function initUserGroups() {
+        updateInGameGroupOrder();
+        loadCurrentUserGroups(
+            userStore.currentUser.id,
+            userStore.currentUser?.presence?.groups
+        );
+    }
+
     return {
         state,
         groupDialog,
@@ -1064,6 +1072,7 @@ export const useGroupStore = defineStore('Group', () => {
         inGameGroupOrder,
         groupInstances,
         currentUserGroupsInit,
+        initUserGroups,
         showGroupDialog,
         applyGroup,
         saveCurrentUserGroups,

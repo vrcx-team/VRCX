@@ -221,7 +221,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         workerTimers.setTimeout(() => updateNowPlaying(), 1000);
     }
 
-    function loadPlayerList() {
+    function tryLoadPlayerList() {
+        if (!gameStore.isGameRunning) {
+            return;
+        }
         console.log('Loading player list from game log...');
         let ctx;
         let i;
@@ -1391,6 +1394,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
     }
 
+    async function initGameLogTable() {
+        state.gameLogTable.data = await database.lookupGameLogDatabase(
+            state.gameLogTable.search,
+            state.gameLogTable.filter
+        );
+    }
+
     return {
         state,
         nowPlaying,
@@ -1398,8 +1408,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
         gameLogSessionTable,
         lastVideoUrl,
         lastResourceloadUrl,
+        initGameLogTable,
         clearNowPlaying,
-        loadPlayerList,
+        tryLoadPlayerList,
         gameLogIsFriend,
         gameLogIsFavorite,
         gameLogTableLookup,

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import * as workerTimers from 'worker-timers';
 import { favoriteRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
@@ -1976,6 +1975,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         appearanceSettingsStore.setSortFavorites();
     }
 
+    async function initFavorites() {
+        refreshFavorites();
+        getLocalWorldFavorites();
+        getLocalAvatarFavorites();
+    }
+
     return {
         state,
 
@@ -2017,6 +2022,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         localWorldFavoriteGroups,
         groupedByGroupKeyFavoriteFriends,
 
+        initFavorites,
         applyFavorite,
         refreshFavoriteGroups,
         refreshFavorites,

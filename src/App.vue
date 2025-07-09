@@ -82,7 +82,6 @@
             Vue.prototype.utils = utils;
 
             store.updateLoop.updateLoop();
-            AppApi.CheckGameRunning();
 
             onMounted(async () => {
                 store.gameLog.getGameLogTable();

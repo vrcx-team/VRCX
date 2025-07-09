@@ -493,6 +493,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
     }
 
     async function tryDeleteOldPrints() {
+        if (!advancedSettingsStore.deleteOldPrints) {
+            return;
+        }
         await refreshPrintTable();
         const printLimit = 64 - 2; // 2 reserved for new prints
         const printCount = state.printTable.length;

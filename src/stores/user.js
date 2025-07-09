@@ -1996,11 +1996,7 @@ export const useUserStore = defineStore('User', () => {
             applyPresenceLocation(ref);
             groupStore.applyPresenceGroups(ref);
             state.currentUser = ref;
-            authStore.isLoggedIn = true;
-            API.$emit('LOGIN', {
-                json,
-                ref
-            });
+            authStore.loginComplete();
         }
         return ref;
     }

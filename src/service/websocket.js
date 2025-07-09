@@ -554,10 +554,7 @@ function handlePipeline(args) {
             } else if (contentType === 'sticker') {
                 // on sticker upload
             } else if (contentType === 'print') {
-                if (
-                    advancedSettingsStore.autoDeleteOldPrints &&
-                    content.actionType === 'created'
-                ) {
+                if (content.actionType === 'created') {
                     galleryStore.tryDeleteOldPrints();
                 } else if (
                     galleryStore.galleryDialogVisible &&

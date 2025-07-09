@@ -1,50 +1,19 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
-import { $app } from '../app';
-import { t } from '../plugin';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
-import { initWebsocket } from '../service/websocket';
-import { getAllUserMemos, getNameColour, migrateMemos } from '../shared/utils';
-import { useAvatarStore } from './avatar';
 import { useFriendStore } from './friend';
-import { useGameStore } from './game';
-import { useGameLogStore } from './gameLog';
-import { useGroupStore } from './group';
 import { useNotificationStore } from './notification';
-import { useAppearanceSettingsStore } from './settings/appearance';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
-import { useUserStore } from './user';
-import { useVrStore } from './vr';
 import { useVrcxStore } from './vrcx';
-import { useAuthStore } from './auth';
-import { useFavoriteStore } from './favorite';
-import { useAdvancedSettingsStore } from './settings/advanced';
-import { useGalleryStore } from './gallery';
-import { useInstanceStore } from './instance';
-import { useModerationStore } from './moderation';
 
 export const useFeedStore = defineStore('Feed', () => {
     const friendStore = useFriendStore();
     const notificationStore = useNotificationStore();
     const UiStore = useUiStore();
-    const appearanceSettingsStore = useAppearanceSettingsStore();
-    const gameStore = useGameStore();
-    const vrStore = useVrStore();
-    const avatarStore = useAvatarStore();
-    const gameLogStore = useGameLogStore();
-    const userStore = useUserStore();
     const vrcxStore = useVrcxStore();
-    const authStore = useAuthStore();
     const sharedFeedStore = useSharedFeedStore();
-    const groupStore = useGroupStore();
-    const favoritesStore = useFavoriteStore();
-    const advancedSettingsStore = useAdvancedSettingsStore();
-    const galleryStore = useGalleryStore();
-    const instanceStore = useInstanceStore();
-    const moderationStore = useModerationStore();
 
     const state = reactive({
         feedTable: {
@@ -95,94 +64,6 @@ export const useFeedStore = defineStore('Feed', () => {
         set: (value) => {
             state.feedSessionTable = value;
         }
-    });
-
-    API.$on('LOGIN', async function (args) {
-        // early loading indicator
-        friendStore.isRefreshFriendsLoading = true;
-        state.feedTable.loading = true;
-
-        friendStore.friendLog = new Map();
-        state.feedTable.data = [];
-        state.feedSessionTable = [];
-        friendStore.friendLogInitStatus = false;
-        notificationStore.notificationInitStatus = false;
-        await database.initUserTables(args.json.id);
-        UiStore.menuActiveIndex = 'feed';
-
-        AppApi.CheckGameRunning();
-        const command = await AppApi.GetLaunchCommand();
-        if (command) {
-            vrcxStore.eventLaunchCommand(command);
-        }
-        favoritesStore.refreshFavorites();
-        favoritesStore.getLocalWorldFavorites();
-        favoritesStore.getLocalAvatarFavorites(); // TODO: why did this have a 100ms delay? (test)
-        groupStore.updateInGameGroupOrder();
-        if (advancedSettingsStore.autoDeleteOldPrints) {
-            galleryStore.tryDeleteOldPrints();
-        }
-        instanceStore.getInstanceJoinHistory();
-        moderationStore.refreshPlayerModerations();
-
-        gameLogStore.gameLogTable.data = await database.lookupGameLogDatabase(
-            gameLogStore.gameLogTable.search,
-            gameLogStore.gameLogTable.filter
-        );
-        state.feedSessionTable = await database.getFeedDatabase();
-        await feedTableLookup();
-        notificationStore.notificationTable.data =
-            await database.getNotifications();
-        notificationStore.refreshNotifications();
-        groupStore.loadCurrentUserGroups(
-            args.json.id,
-            args.json?.presence?.groups
-        );
-        try {
-            if (
-                await configRepository.getBool(`friendLogInit_${args.json.id}`)
-            ) {
-                await friendStore.getFriendLog(args.ref);
-            } else {
-                await friendStore.initFriendLog(args.ref);
-            }
-        } catch (err) {
-            if (!API.dontLogMeOut) {
-                $app.$message({
-                    message: t('message.friend.load_failed'),
-                    type: 'error'
-                });
-                authStore.handleLogoutEvent();
-                throw err;
-            }
-        }
-        await avatarStore.getAvatarHistory();
-        await getAllUserMemos();
-        userStore.initUserNotes();
-        if (appearanceSettingsStore.randomUserColours) {
-            getNameColour(userStore.currentUser.id).then((colour) => {
-                userStore.currentUser.$userColour = colour;
-            });
-            await appearanceSettingsStore.userColourInit();
-        }
-        await friendStore.getAllUserStats();
-        friendStore.sortVIPFriends = true;
-        friendStore.sortOnlineFriends = true;
-        friendStore.sortActiveFriends = true;
-        friendStore.sortOfflineFriends = true;
-        initWebsocket();
-        sharedFeedStore.updateSharedFeed(true);
-        if (gameStore.isGameRunning) {
-            gameLogStore.loadPlayerList();
-        }
-        vrStore.vrInit();
-        // remove old data from json file and migrate to SQLite
-        if (await VRCXStorage.Get(`${args.json.id}_friendLogUpdatedAt`)) {
-            VRCXStorage.Remove(`${args.json.id}_feedTable`);
-            migrateMemos();
-            friendStore.migrateFriendLog(args.json.id);
-        }
-        await AppApi.IPCAnnounceStart();
     });
 
     function feedSearch(row) {
@@ -326,5 +207,21 @@ export const useFeedStore = defineStore('Feed', () => {
         }
     }
 
-    return { state, feedTable, feedSessionTable, feedTableLookup, addFeed };
+    async function initFeedTable() {
+        state.feedTable.loading = true;
+        state.feedTable.data = [];
+        state.feedSessionTable = [];
+
+        feedTableLookup();
+        state.feedSessionTable = await database.getFeedDatabase();
+    }
+
+    return {
+        state,
+        feedTable,
+        feedSessionTable,
+        initFeedTable,
+        feedTableLookup,
+        addFeed
+    };
 });

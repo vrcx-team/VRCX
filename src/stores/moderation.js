@@ -221,7 +221,7 @@ export const useModerationStore = defineStore('Moderation', () => {
     /**
      * aka: `API.refreshPlayerModerations`
      */
-    function refreshPlayerModerations() {
+    async function refreshPlayerModerations() {
         if (state.isPlayerModerationsLoading) {
             return;
         }

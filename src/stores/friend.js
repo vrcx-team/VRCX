@@ -3,12 +3,14 @@ import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { friendRequest, userRequest } from '../api';
 import { $app } from '../app';
+import { t } from '../plugin';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { reconnectWebSocket } from '../service/websocket';
 import {
     compareByCreatedAtAscending,
+    migrateMemos,
     getFriendsSortFunction,
     getGroupName,
     getNameColour,
@@ -39,6 +41,7 @@ export const useFriendStore = defineStore('Friend', () => {
     const groupStore = useGroupStore();
     const sharedFeedStore = useSharedFeedStore();
     const updateLoopStore = useUpdateLoopStore();
+    const authStore = useAuthStore();
 
     const state = reactive({
         friends: new Map(),
@@ -1401,11 +1404,9 @@ export const useFriendStore = defineStore('Friend', () => {
         for (friend of friendLogCurrentArray) {
             state.friendLog.set(friend.userId, friend);
         }
-        state.friendLogTable.data = [];
-        state.friendLogTable.data = await database.getFriendLogHistory();
         refreshFriendsStatus(currentUser, true);
+
         await refreshFriends();
-        await tryRestoreFriendNumber();
         state.friendLogInitStatus = true;
 
         // check for friend/name/rank change AFTER friendLogInitStatus is set
@@ -1418,6 +1419,10 @@ export const useFriendStore = defineStore('Friend', () => {
         if (typeof currentUser.friends !== 'undefined') {
             updateFriendships(currentUser);
         }
+    }
+
+    async function initFriendLogHistoryTable() {
+        state.friendLogTable.data = await database.getFriendLogHistory();
     }
 
     async function tryRestoreFriendNumber() {
@@ -1691,6 +1696,44 @@ export const useFriendStore = defineStore('Friend', () => {
         state.sortOfflineFriends = true;
     }
 
+    async function initFriendsList() {
+        const userId = userStore.currentUser.id;
+        state.isRefreshFriendsLoading = true;
+        state.friendLogInitStatus = false;
+        state.friendLog = new Map();
+        initFriendLogHistoryTable();
+
+        try {
+            if (await configRepository.getBool(`friendLogInit_${userId}`)) {
+                await getFriendLog(userStore.currentUser);
+            } else {
+                await initFriendLog(userStore.currentUser);
+            }
+        } catch (err) {
+            if (!API.dontLogMeOut) {
+                $app.$message({
+                    message: t('message.friend.load_failed'),
+                    type: 'error'
+                });
+                authStore.handleLogoutEvent();
+                throw err;
+            }
+        }
+
+        getAllUserStats(); // joinCount, lastSeen, timeSpent
+        state.sortVIPFriends = true;
+        state.sortOnlineFriends = true;
+        state.sortActiveFriends = true;
+        state.sortOfflineFriends = true;
+
+        // remove old data from json file and migrate to SQLite (July 2021)
+        if (await VRCXStorage.Get(`${userId}_friendLogUpdatedAt`)) {
+            VRCXStorage.Remove(`${userId}_feedTable`);
+            migrateMemos();
+            migrateFriendLog(userId);
+        }
+    }
+
     return {
         state,
 
@@ -1717,6 +1760,7 @@ export const useFriendStore = defineStore('Friend', () => {
         friendLog,
         friendLogTable,
 
+        initFriendsList,
         updateLocalFavoriteFriends,
         updateSidebarFriendsList,
         updateFriend,

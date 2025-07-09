@@ -548,6 +548,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         { flush: 'sync' }
     );
 
+    async function startupLaunchCommand() {
+        const command = await AppApi.GetLaunchCommand();
+        if (command) {
+            eventLaunchCommand(command);
+        }
+    }
+
     function eventLaunchCommand(input) {
         const authStore = useAuthStore();
         if (!authStore.isLoggedIn) {
@@ -744,6 +751,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         showConsole,
         applyWineEmojis,
         clearVRCXCache,
+        startupLaunchCommand,
         eventVrcxMessage,
         showRegistryBackupDialog,
         checkAutoBackupRestoreVrcRegistry,

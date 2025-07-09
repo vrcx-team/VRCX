@@ -702,6 +702,15 @@ export const useAppearanceSettingsStore = defineStore(
             );
         }
 
+        async function tryInitUserColours() {
+            if (!state.randomUserColours) {
+                return;
+            }
+            userColourInit();
+            const colour = await getNameColour(userStore.currentUser.id);
+            userStore.currentUser.$userColour = colour;
+        }
+
         return {
             state,
 
@@ -755,6 +764,7 @@ export const useAppearanceSettingsStore = defineStore(
             setRandomUserColours,
             setTrustColor,
             saveThemeMode,
+            tryInitUserColours,
             updateTrustColor,
             changeThemeMode,
             userColourInit,

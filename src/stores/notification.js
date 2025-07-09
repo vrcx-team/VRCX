@@ -2307,6 +2307,12 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
     }
 
+    async function initNotificationTable() {
+        state.notificationInitStatus = false;
+        state.notificationTable.data = await database.getNotifications();
+        refreshNotifications();
+    }
+
     return {
         state,
         notificationInitStatus,
@@ -2314,6 +2320,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         unseenNotifications,
         isNotificationsLoading,
 
+        initNotificationTable,
         expireNotification,
         refreshNotifications,
         queueNotificationNoty,

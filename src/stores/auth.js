@@ -5,17 +5,31 @@ import { loginRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
 import configRepository from '../service/config';
+import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { request } from '../service/request';
 import security from '../service/security';
 import webApiService from '../service/webapi';
 import { initWebsocket } from '../service/websocket';
-import { escapeTag } from '../shared/utils';
+import { escapeTag, getAllUserMemos } from '../shared/utils';
 import { useFriendStore } from './friend';
 import { useNotificationStore } from './notification';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
+import { useAppearanceSettingsStore } from './settings/appearance';
+import { useVrStore } from './vr';
+import { useAvatarStore } from './avatar';
+import { useGameLogStore } from './gameLog';
+import { useVrcxStore } from './vrcx';
+import { useSharedFeedStore } from './sharedFeed';
+import { useGroupStore } from './group';
+import { useFavoriteStore } from './favorite';
+import { useGalleryStore } from './gallery';
+import { useInstanceStore } from './instance';
+import { useModerationStore } from './moderation';
+import { useFeedStore } from './feed';
+import { useUiStore } from './ui';
 
 export const useAuthStore = defineStore('Auth', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -23,6 +37,19 @@ export const useAuthStore = defineStore('Auth', () => {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
+    const appearanceSettingsStore = useAppearanceSettingsStore();
+    const vrStore = useVrStore();
+    const avatarStore = useAvatarStore();
+    const gameLogStore = useGameLogStore();
+    const vrcxStore = useVrcxStore();
+    const sharedFeedStore = useSharedFeedStore();
+    const groupStore = useGroupStore();
+    const favoriteStore = useFavoriteStore();
+    const galleryStore = useGalleryStore();
+    const instanceStore = useInstanceStore();
+    const moderationStore = useModerationStore();
+    const feedStore = useFeedStore();
+    const uiStore = useUiStore();
     const state = reactive({
         isLoggedIn: false,
         attemptingAutoLogin: false,
@@ -87,17 +114,10 @@ export const useAuthStore = defineStore('Auth', () => {
     init();
 
     watch(
-        () => state.isLoggedIn,
-        () => {
-            state.twoFactorAuthDialogVisible = false;
-        }
-    );
-
-    watch(
         [() => state.isLoggedIn, () => userStore.currentUser],
         ([isLoggedIn, currentUser]) => {
+            state.twoFactorAuthDialogVisible = false;
             if (isLoggedIn) {
-                state.twoFactorAuthDialogVisible = false;
                 updateStoredUser(currentUser);
                 new Noty({
                     type: 'success',
@@ -106,7 +126,8 @@ export const useAuthStore = defineStore('Auth', () => {
                     )}</strong>!`
                 }).show();
             }
-        }
+        },
+        { flush: 'sync' }
     );
 
     // LOGIN STATE
@@ -537,6 +558,7 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     async function login() {
+        // TODO: remove/refactor saveCredentials & primaryPassword (security)
         await webApiService.clearCookies();
         if (!state.loginForm.loading) {
             state.loginForm.loading = true;
@@ -851,6 +873,36 @@ export const useAuthStore = defineStore('Auth', () => {
             });
     }
 
+    async function loginComplete() {
+        const userId = userStore.currentUser.id;
+        state.isLoggedIn = true;
+        uiStore.menuActiveIndex = 'feed';
+        AppApi.CheckGameRunning(); // restore state from hot-reload
+        vrcxStore.startupLaunchCommand();
+        await database.initUserTables(userId);
+
+        feedStore.initFeedTable();
+        gameLogStore.initGameLogTable();
+        notificationStore.initNotificationTable();
+        favoriteStore.initFavorites();
+        groupStore.initUserGroups();
+        instanceStore.getInstanceJoinHistory();
+        moderationStore.refreshPlayerModerations();
+        avatarStore.getAvatarHistory();
+        galleryStore.tryDeleteOldPrints();
+
+        await friendStore.initFriendsList();
+
+        getAllUserMemos();
+        userStore.initUserNotes();
+        appearanceSettingsStore.tryInitUserColours();
+        sharedFeedStore.updateSharedFeed(true);
+        vrStore.vrInit();
+        initWebsocket();
+        gameLogStore.tryLoadPlayerList();
+        AppApi.IPCAnnounceStart();
+    }
+
     return {
         state,
         loginForm,
@@ -874,6 +926,7 @@ export const useAuthStore = defineStore('Auth', () => {
         deleteSavedLogin,
         login,
         handleAutoLogin,
-        handleLogoutEvent
+        handleLogoutEvent,
+        loginComplete
     };
 });
