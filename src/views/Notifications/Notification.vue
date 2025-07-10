@@ -407,12 +407,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'NotificationTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref } from 'vue';

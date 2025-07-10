@@ -964,7 +964,7 @@
                                     <template v-for="ref in userDialog.dateFriendedInfo">
                                         <span :key="ref.userId"
                                             >{{ ref.type }}: {{ ref.created_at | formatDate('long') }}</span
-                                        ><br :key="ref.userId" />
+                                        ><br :key="ref.userId + 'br'" />
                                     </template>
                                 </template>
                                 <div class="detail">

@@ -93,12 +93,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'ModerationTab'
-    };
-</script>
-
 <script setup>
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';

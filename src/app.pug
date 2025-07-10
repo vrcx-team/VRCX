@@ -1,7 +1,7 @@
 doctype html
 #x-app.x-app(@dragenter.prevent @dragover.prevent @drop.prevent)
     //- ### Login ###
-    LoginPage(v-if="!this.store.auth.isLoggedIn")
+    Login(v-if='!this.store.auth.isLoggedIn')
 
     VRCXUpdateDialog
 
@@ -13,29 +13,29 @@ doctype html
         Sidebar
 
         //- ### Tabs ###
-        FeedTab
+        Feed
 
-        GameLogTab
+        GameLog
 
-        PlayerListTab
+        PlayerList
 
-        SearchTab
+        Search
 
-        FavoritesTab
+        Favorites
 
-        FriendLogTab
+        FriendLog
 
-        ModerationTab
+        Moderation
 
-        NotificationTab
+        Notification
 
-        FriendListTab
+        FriendList
 
-        ChartsTab
+        Charts
 
-        ProfileTab
+        Profile
 
-        SettingsTab
+        Settings
 
         //- ## Dialogs ## -\\
         UserDialog
@@ -69,5 +69,3 @@ doctype html
         VRChatConfigDialog
 
         PrimaryPasswordDialog
-
-

@@ -191,12 +191,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'GameLogTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance } from 'vue';

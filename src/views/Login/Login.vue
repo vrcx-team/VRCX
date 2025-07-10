@@ -149,12 +149,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'LoginPage'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { onBeforeUnmount, ref } from 'vue';

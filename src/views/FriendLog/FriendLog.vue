@@ -87,12 +87,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'FriendLogTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, watch } from 'vue';

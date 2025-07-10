@@ -825,12 +825,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'PlayerListTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';

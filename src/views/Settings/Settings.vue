@@ -1842,12 +1842,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'SettingsTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref, getCurrentInstance, computed } from 'vue';

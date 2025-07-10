@@ -313,12 +313,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'SearchTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';

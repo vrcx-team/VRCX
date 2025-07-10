@@ -3,21 +3,21 @@
     import template from './app.pug';
     import { createGlobalStores } from './stores';
 
-    import LoginPage from './views/Login/Login.vue';
+    import Login from './views/Login/Login.vue';
     import NavMenu from './components/NavMenu.vue';
     import Sidebar from './views/Sidebar/Sidebar.vue';
-    import FeedTab from './views/Feed/Feed.vue';
-    import GameLogTab from './views/GameLog/GameLog.vue';
-    import PlayerListTab from './views/PlayerList/PlayerList.vue';
-    import SearchTab from './views/Search/Search.vue';
-    import FavoritesTab from './views/Favorites/Favorites.vue';
-    import FriendLogTab from './views/FriendLog/FriendLog.vue';
-    import ModerationTab from './views/Moderation/Moderation.vue';
-    import NotificationTab from './views/Notifications/Notification.vue';
-    import FriendListTab from './views/FriendList/FriendList.vue';
-    import ChartsTab from './views/Charts/Charts.vue';
-    import ProfileTab from './views/Profile/Profile.vue';
-    import SettingsTab from './views/Settings/Settings.vue';
+    import Feed from './views/Feed/Feed.vue';
+    import GameLog from './views/GameLog/GameLog.vue';
+    import PlayerList from './views/PlayerList/PlayerList.vue';
+    import Search from './views/Search/Search.vue';
+    import Favorites from './views/Favorites/Favorites.vue';
+    import FriendLog from './views/FriendLog/FriendLog.vue';
+    import Moderation from './views/Moderation/Moderation.vue';
+    import Notification from './views/Notifications/Notification.vue';
+    import FriendList from './views/FriendList/FriendList.vue';
+    import Charts from './views/Charts/Charts.vue';
+    import Profile from './views/Profile/Profile.vue';
+    import Settings from './views/Settings/Settings.vue';
 
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
@@ -42,21 +42,21 @@
     export default {
         template,
         components: {
-            LoginPage,
+            Login,
             NavMenu,
             Sidebar,
-            FeedTab,
-            GameLogTab,
-            PlayerListTab,
-            SearchTab,
-            FavoritesTab,
-            FriendLogTab,
-            ModerationTab,
-            NotificationTab,
-            FriendListTab,
-            ChartsTab,
-            ProfileTab,
-            SettingsTab,
+            Feed,
+            GameLog,
+            PlayerList,
+            Search,
+            Favorites,
+            FriendLog,
+            Moderation,
+            Notification,
+            FriendList,
+            Charts,
+            Profile,
+            Settings,
 
             UserDialog,
             WorldDialog,

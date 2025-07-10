@@ -10,12 +10,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'ChartsTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';

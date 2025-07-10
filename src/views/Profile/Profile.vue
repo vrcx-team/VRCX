@@ -489,12 +489,6 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'ProfileTab'
-    };
-</script>
-
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref, getCurrentInstance } from 'vue';
