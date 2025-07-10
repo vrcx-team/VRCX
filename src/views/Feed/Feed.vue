@@ -186,9 +186,9 @@
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
-                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -313,7 +313,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
     import { useGalleryStore, useAppearanceSettingsStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
-    import { timeToText, statusClass } from '../../shared/utils';
+    import { timeToText, statusClass, formatDateFilter } from '../../shared/utils';
 
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();

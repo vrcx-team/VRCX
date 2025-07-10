@@ -522,7 +522,7 @@
                                         <template #content>
                                             <span
                                                 >{{ t('dialog.group.posts.created_at') }}
-                                                {{ groupDialog.announcement.createdAt | formatDate('long') }}</span
+                                                {{ formatDateFilter(groupDialog.announcement.createdAt, 'long') }}</span
                                             >
                                             <template
                                                 v-if="
@@ -532,7 +532,9 @@
                                                 <br />
                                                 <span
                                                     >{{ t('dialog.group.posts.edited_at') }}
-                                                    {{ groupDialog.announcement.updatedAt | formatDate('long') }}</span
+                                                    {{
+                                                        formatDateFilter(groupDialog.announcement.updatedAt, 'long')
+                                                    }}</span
                                                 >
                                             </template>
                                         </template>
@@ -593,7 +595,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.created_at') }}</span>
-                                <span class="extra">{{ groupDialog.ref.createdAt | formatDate('long') }}</span>
+                                <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
@@ -667,7 +669,7 @@
                                     <div class="detail">
                                         <span class="name">{{ t('dialog.group.info.joined_at') }}</span>
                                         <span class="extra">{{
-                                            groupDialog.ref.myMember.joinedAt | formatDate('long')
+                                            formatDateFilter(groupDialog.ref.myMember.joinedAt, 'long')
                                         }}</span>
                                     </div>
                                 </div>
@@ -688,11 +690,11 @@
                                                         <br />
                                                         <span v-if="role.updatedAt"
                                                             >{{ t('dialog.group.info.role_updated_at') }}
-                                                            {{ role.updatedAt | formatDate('long') }}</span
+                                                            {{ formatDateFilter(role.updatedAt, 'long') }}</span
                                                         >
                                                         <span v-else
                                                             >{{ t('dialog.group.info.role_created_at') }}
-                                                            {{ role.createdAt | formatDate('long') }}</span
+                                                            {{ formatDateFilter(role.createdAt, 'long') }}</span
                                                         >
                                                         <br />
                                                         <span>{{ t('dialog.group.info.role_permissions') }}</span>
@@ -799,13 +801,13 @@
                                             <template slot="content">
                                                 <span
                                                     >{{ t('dialog.group.posts.created_at') }}
-                                                    {{ post.createdAt | formatDate('long') }}</span
+                                                    {{ formatDateFilter(post.createdAt, 'long') }}</span
                                                 >
                                                 <template v-if="post.updatedAt !== post.createdAt">
                                                     <br />
                                                     <span
                                                         >{{ t('dialog.group.posts.edited_at') }}
-                                                        {{ post.updatedAt | formatDate('long') }}</span
+                                                        {{ formatDateFilter(post.updatedAt, 'long') }}</span
                                                     >
                                                 </template>
                                             </template>
@@ -1183,7 +1185,8 @@
         refreshInstancePlayerCount,
         removeFromArray,
         userImage,
-        userStatusClass
+        userStatusClass,
+        formatDateFilter
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,

@@ -166,6 +166,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     });
 
+    const maxTableSize = computed({
+        get: () => state.maxTableSize,
+        set: (value) => {
+            state.maxTableSize = value;
+        }
+    });
+
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
     // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
     document.body.addEventListener('drop', function (e) {
@@ -749,6 +756,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         isRegistryBackupDialogVisible,
         ipcEnabled,
         clearVRCXCacheFrequency,
+        maxTableSize,
         showConsole,
         applyWineEmojis,
         clearVRCXCache,

@@ -170,7 +170,7 @@
                                 prop="joinedAt"
                                 sortable>
                                 <template slot-scope="scope">
-                                    <span>{{ scope.row.joinedAt | formatDate('long') }}</span>
+                                    <span>{{ formatDateFilter(scope.row.joinedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -283,7 +283,7 @@
                                 prop="joinedAt"
                                 sortable>
                                 <template slot-scope="scope">
-                                    <span>{{ scope.row.joinedAt | formatDate('long') }}</span>
+                                    <span>{{ formatDateFilter(scope.row.joinedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -292,7 +292,7 @@
                                 prop="bannedAt"
                                 sortable>
                                 <template slot-scope="scope">
-                                    <span>{{ scope.row.bannedAt | formatDate('long') }}</span>
+                                    <span>{{ formatDateFilter(scope.row.bannedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
                         </data-tables>
@@ -628,7 +628,7 @@
                                 prop="created_at"
                                 sortable>
                                 <template slot-scope="scope">
-                                    <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                                    <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -814,7 +814,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { groupRequest, userRequest } from '../../../api';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
-    import { hasGroupPermission, userImage, userImageFull } from '../../../shared/utils';
+    import { hasGroupPermission, userImage, userImageFull, formatDateFilter } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
 

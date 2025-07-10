@@ -15,6 +15,7 @@ declare global {
         Discord: Discord;
         AssetBundleManager: AssetBundleManager;
         webApiService: webApiService;
+        request: {};
         configRepository: any;
         datebase: any;
         gameLogService: any;

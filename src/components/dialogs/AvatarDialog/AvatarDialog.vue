@@ -497,16 +497,18 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.avatar.info.created_at') }}</span>
-                                <span class="extra">{{ avatarDialog.ref.created_at | formatDate('long') }}</span>
+                                <span class="extra">{{ formatDateFilter(avatarDialog.ref.created_at, 'long') }}</span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.avatar.info.last_updated') }}</span>
                                 <span v-if="avatarDialog.lastUpdated" class="extra">{{
-                                    avatarDialog.lastUpdated | formatDate('long')
+                                    formatDateFilter(avatarDialog.lastUpdated, 'long')
                                 }}</span>
-                                <span v-else class="extra">{{ avatarDialog.ref.updated_at | formatDate('long') }}</span>
+                                <span v-else class="extra">{{
+                                    formatDateFilter(avatarDialog.ref.updated_at, 'long')
+                                }}</span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
@@ -622,7 +624,8 @@
         replaceVrcPackageUrl,
         storeAvatarImage,
         timeToText,
-        moveArrayItem
+        moveArrayItem,
+        formatDateFilter
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,

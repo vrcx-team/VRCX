@@ -15,11 +15,9 @@ import vrcxJsonStorage from './service/jsonStorage';
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
-    commaNumber,
     refreshCustomCss,
     refreshCustomScript,
-    systemIsDarkMode,
-    textToHex
+    systemIsDarkMode
 } from './shared/utils';
 import './plugin';
 import { i18n } from './plugin';
@@ -61,8 +59,6 @@ Vue.use(VueLazyload, {
     },
     attempt: 3
 });
-Vue.filter('commaNumber', commaNumber);
-Vue.filter('textToHex', textToHex);
 
 new vrcxJsonStorage(VRCXStorage);
 

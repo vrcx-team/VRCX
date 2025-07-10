@@ -3,7 +3,7 @@
         <el-tooltip v-if="state.isValidInstance" placement="bottom">
             <template #content>
                 <div>
-                    <span v-if="state.isClosed">Closed At: {{ state.closedAt | formatDate('long') }}<br /></span>
+                    <span v-if="state.isClosed">Closed At: {{ formatDateFilter(state.closedAt, 'long') }}<br /></span>
                     <template v-if="state.canCloseInstance">
                         <el-button
                             :disabled="state.isClosed"
@@ -61,7 +61,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { miscRequest } from '../api';
     import { API } from '../service/eventBus';
-    import { hasGroupPermission } from '../shared/utils';
+    import { hasGroupPermission, formatDateFilter } from '../shared/utils';
     import { useGroupStore, useLocationStore, useUserStore } from '../stores';
 
     const { t } = useI18n();

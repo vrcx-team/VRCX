@@ -220,7 +220,7 @@
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.$lastSeen | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.$lastSeen, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -230,7 +230,7 @@
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_activity')">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.last_activity | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.last_activity, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -240,7 +240,7 @@
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.last_login | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.last_login, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -279,7 +279,8 @@
         statusClass,
         timeToText,
         userImage,
-        userImageFull
+        userImageFull,
+        formatDateFilter
     } from '../../shared/utils';
     import {
         useAppearanceSettingsStore,

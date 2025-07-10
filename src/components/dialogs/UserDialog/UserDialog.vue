@@ -88,7 +88,7 @@
                                     style="margin-left: 5px; margin-right: 5px; cursor: pointer"
                                     v-text="userDialog.ref.displayName"></span>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
-                                    userDialog.ref.displayName | textToHex
+                                    textToHex(userDialog.ref.displayName)
                                 }}</span>
                             </el-popover>
                             <el-tooltip
@@ -124,7 +124,7 @@
                                         "
                                         v-text="currentUser.username"></span>
                                     <span style="display: block; text-align: center; font-family: monospace">{{
-                                        currentUser.username | textToHex
+                                        textToHex(currentUser.username)
                                     }}</span>
                                 </el-popover>
                             </template>
@@ -281,7 +281,7 @@
                                             class="x-grey"
                                             style="font-family: monospace; font-size: 12px">
                                             {{ t('dialog.user.badges.assigned') }}:
-                                            {{ badge.assignedAt | formatDate('long') }}
+                                            {{ formatDateFilter(badge.assignedAt, 'long') }}
                                         </span>
                                         <template v-if="userDialog.id === currentUser.id">
                                             <br />
@@ -834,7 +834,7 @@
                                             <i class="el-icon-warning"></i>
                                         </el-tooltip>
                                     </span>
-                                    <span class="extra">{{ userDialog.lastSeen | formatDate('long') }}</span>
+                                    <span class="extra">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
                                 </div>
                             </div>
                             <el-tooltip
@@ -901,7 +901,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <el-tooltip :placement="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
                                 <template #content>
-                                    <span>{{ userOnlineForTimestamp(userDialog) | formatDate('short') }}</span>
+                                    <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
                                 </template>
                                 <div class="detail">
                                     <span
@@ -935,12 +935,12 @@
                                 <template #content>
                                     <span
                                         >{{ t('dialog.user.info.last_login') }}
-                                        {{ userDialog.ref.last_login | formatDate('long') }}</span
+                                        {{ formatDateFilter(userDialog.ref.last_login, 'long') }}</span
                                     >
                                     <br />
                                     <span
                                         >{{ t('dialog.user.info.last_activity') }}
-                                        {{ userDialog.ref.last_activity | formatDate('long') }}</span
+                                        {{ formatDateFilter(userDialog.ref.last_activity, 'long') }}</span
                                     >
                                 </template>
                                 <div class="detail">
@@ -963,7 +963,7 @@
                                 <template v-if="userDialog.dateFriendedInfo.length" #content>
                                     <template v-for="ref in userDialog.dateFriendedInfo">
                                         <span :key="ref.userId"
-                                            >{{ ref.type }}: {{ ref.created_at | formatDate('long') }}</span
+                                            >{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
                                         ><br :key="ref.userId + 'br'" />
                                     </template>
                                 </template>
@@ -988,7 +988,7 @@
                                             <i class="el-icon-warning"></i>
                                         </el-tooltip>
                                     </span>
-                                    <span class="extra">{{ userDialog.dateFriended | formatDate('long') }}</span>
+                                    <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
                                 </div>
                             </el-tooltip>
                         </div>
@@ -1827,7 +1827,9 @@
         userImage,
         userOnlineFor,
         userOnlineForTimestamp,
-        userStatusClass
+        userStatusClass,
+        textToHex,
+        formatDateFilter
     } from '../../../shared/utils';
     import {
         useAdvancedSettingsStore,

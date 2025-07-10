@@ -172,8 +172,8 @@
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.capacity') }}</span>
                             <span class="extra"
-                                >{{ currentInstanceWorld.ref.recommendedCapacity | commaNumber }} ({{
-                                    currentInstanceWorld.ref.capacity | commaNumber
+                                >{{ commaNumber(currentInstanceWorld.ref.recommendedCapacity) }} ({{
+                                    commaNumber(currentInstanceWorld.ref.capacity)
                                 }})</span
                             >
                         </div>
@@ -181,13 +181,15 @@
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.last_updated') }}</span>
-                            <span class="extra">{{ currentInstanceWorld.lastUpdated | formatDate('long') }}</span>
+                            <span class="extra">{{ formatDateFilter(currentInstanceWorld.lastUpdated, 'long') }}</span>
                         </div>
                     </div>
                     <div class="x-friend-item" style="cursor: default">
                         <div class="detail">
                             <span class="name">{{ t('dialog.world.info.created_at') }}</span>
-                            <span class="extra">{{ currentInstanceWorld.ref.created_at | formatDate('long') }}</span>
+                            <span class="extra">{{
+                                formatDateFilter(currentInstanceWorld.ref.created_at, 'long')
+                            }}</span>
                         </div>
                     </div>
                 </div>
@@ -242,9 +244,9 @@
                                 <template #default="scope">
                                     <el-tooltip placement="right">
                                         <template #content>
-                                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                                         </template>
-                                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                                     </el-tooltip>
                                 </template>
                             </el-table-column>
@@ -442,9 +444,9 @@
                                 <template #default="scope">
                                     <el-tooltip placement="right">
                                         <template #content>
-                                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                                         </template>
-                                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                                     </el-tooltip>
                                 </template>
                             </el-table-column>
@@ -835,7 +837,9 @@
         openExternalLink,
         statusClass,
         userImage,
-        userImageFull
+        userImageFull,
+        commaNumber,
+        formatDateFilter
     } from '../../shared/utils';
     import {
         useLocationStore,

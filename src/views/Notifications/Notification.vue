@@ -58,9 +58,9 @@
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
-                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -422,7 +422,8 @@
         convertFileUrlToImageUrl,
         removeFromArray,
         checkCanInvite,
-        escapeTag
+        escapeTag,
+        formatDateFilter
     } from '../../shared/utils';
     import configRepository from '../../service/config';
     import { database } from '../../service/database';

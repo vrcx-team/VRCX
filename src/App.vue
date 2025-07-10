@@ -81,7 +81,6 @@
             const store = createGlobalStores();
             Vue.prototype.store = store;
             Vue.prototype.utils = utils;
-            Vue.prototype.watchState = watchState;
 
             store.updateLoop.updateLoop();
 
@@ -102,7 +101,8 @@
             });
 
             return {
-                store
+                store,
+                watchState
             };
         }
     };

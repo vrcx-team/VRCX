@@ -15,7 +15,7 @@
                 <div class="x-friend-item" style="cursor: default">
                     <div class="detail">
                         <span class="name">{{ t('view.profile.profile.last_activity') }}</span>
-                        <span class="extra">{{ currentUser.last_activity | formatDate('long') }}</span>
+                        <span class="extra">{{ formatDateFilter(currentUser.last_activity, 'long') }}</span>
                     </div>
                 </div>
                 <div class="x-friend-item" style="cursor: default">
@@ -371,7 +371,7 @@
                     prop="updated_at"
                     sortable="custom">
                     <template #default="scope">
-                        <span>{{ scope.row.updated_at | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.updated_at, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -494,7 +494,14 @@
     import { ref, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { loginRequest, miscRequest, userRequest } from '../../api';
-    import { parseAvatarUrl, buildTreeData, openExternalLink, userImage, parseUserUrl } from '../../shared/utils';
+    import {
+        parseAvatarUrl,
+        buildTreeData,
+        openExternalLink,
+        userImage,
+        parseUserUrl,
+        formatDateFilter
+    } from '../../shared/utils';
     import { useAuthStore } from '../../stores';
     import DiscordNamesDialog from './dialogs/DiscordNamesDialog.vue';
     import ExportFriendsListDialog from './dialogs/ExportFriendsListDialog.vue';

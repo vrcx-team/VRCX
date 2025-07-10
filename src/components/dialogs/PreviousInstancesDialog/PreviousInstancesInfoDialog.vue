@@ -20,9 +20,9 @@
                 <template slot-scope="scope">
                     <el-tooltip placement="left">
                         <template slot="content">
-                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -61,7 +61,13 @@
     import { ref, watch, nextTick } from 'vue';
     import { storeToRefs } from 'pinia';
     import { database } from '../../../service/database';
-    import { adjustDialogZ, compareByCreatedAt, parseLocation, timeToText } from '../../../shared/utils';
+    import {
+        adjustDialogZ,
+        compareByCreatedAt,
+        parseLocation,
+        timeToText,
+        formatDateFilter
+    } from '../../../shared/utils';
     import { useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
 
     const { lookupUser } = useUserStore();

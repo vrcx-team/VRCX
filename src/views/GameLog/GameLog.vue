@@ -50,9 +50,9 @@
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
-                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -196,7 +196,7 @@
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { database } from '../../service/database';
-    import { removeFromArray, openExternalLink } from '../../shared/utils';
+    import { removeFromArray, openExternalLink, formatDateFilter } from '../../shared/utils';
     import {
         useUserStore,
         useUiStore,

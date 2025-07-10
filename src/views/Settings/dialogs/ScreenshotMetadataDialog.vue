@@ -81,7 +81,7 @@
                 <br />
             </template>
             <span v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-right: 5px">{{
-                screenshotMetadataDialog.metadata.dateTime | formatDate('long')
+                formatDateFilter(screenshotMetadataDialog.metadata.dateTime, 'long')
             }}</span>
             <span
                 v-if="screenshotMetadataDialog.metadata.fileResolution"
@@ -167,6 +167,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { vrcPlusImageRequest } from '../../../api';
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
+    import { formatDateFilter } from '../../../shared/utils';
 
     const { showFullscreenImageDialog } = useGalleryStore();
     const { currentlyDroppingFile } = storeToRefs(useVrcxStore());

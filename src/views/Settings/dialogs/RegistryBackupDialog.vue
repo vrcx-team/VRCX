@@ -15,7 +15,7 @@
                 <el-table-column :label="t('dialog.registry_backup.name')" prop="name"></el-table-column>
                 <el-table-column :label="t('dialog.registry_backup.date')" prop="date">
                     <template #default="scope">
-                        <span>{{ scope.row.date | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.date, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('dialog.registry_backup.action')" width="90" align="right">
@@ -75,7 +75,7 @@
     import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../../service/config';
-    import { downloadAndSaveJson, removeFromArray } from '../../../shared/utils';
+    import { downloadAndSaveJson, removeFromArray, formatDateFilter } from '../../../shared/utils';
 
     import { useAppearanceSettingsStore, useVrcxStore, useAdvancedSettingsStore } from '../../../stores';
 

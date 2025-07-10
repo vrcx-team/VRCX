@@ -423,7 +423,7 @@
                             class="x-ellipsis"
                             v-if="image.createdAt"
                             style="color: #909399; font-family: monospace; font-size: 11px; display: block">
-                            {{ image.createdAt | formatDate('long') }}
+                            {{ formatDateFilter(image.createdAt, 'long') }}
                         </span>
                         <span v-else style="display: block">&nbsp;</span>
                     </div>
@@ -479,7 +479,7 @@
                         <span
                             class="x-ellipsis"
                             style="color: #909399; font-family: monospace; font-size: 11px; display: block">
-                            {{ item.created_at | formatDate('long') }}
+                            {{ formatDateFilter(item.created_at, 'long') }}
                         </span>
                         <span v-text="item.itemType" style="display: block"></span>
                     </div>
@@ -506,7 +506,7 @@
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
     import { API } from '../../service/eventBus';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
-    import { extractFileId, getEmojiFileName, getPrintFileName } from '../../shared/utils';
+    import { extractFileId, getEmojiFileName, getPrintFileName, formatDateFilter } from '../../shared/utils';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../stores';
 
     const { t } = useI18n();

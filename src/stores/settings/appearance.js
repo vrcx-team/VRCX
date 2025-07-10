@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { $app } from '../../app';
 import { i18n, t } from '../../plugin';
 import configRepository from '../../service/config';
@@ -9,7 +9,6 @@ import {
     changeAppDarkStyle,
     changeAppThemeStyle,
     changeCJKFontsOrder,
-    formatDateFilter,
     getNameColour,
     HueToHex,
     systemIsDarkMode,
@@ -74,7 +73,8 @@ export const useAppearanceSettingsStore = defineStore(
                 veteran: '#B18FFF',
                 vip: '#FF2626',
                 troll: '#782F2F'
-            }
+            },
+            currentCulture: ''
         });
 
         async function initAppearanceSettings() {
@@ -184,7 +184,8 @@ export const useAppearanceSettingsStore = defineStore(
 
             state.dtHour12 = dtHour12;
             state.dtIsoFormat = dtIsoFormat;
-            await handleSetDatetimeFormat();
+
+            state.currentCulture = await AppApi.CurrentCulture();
 
             state.sidebarSortMethods = JSON.parse(sidebarSortMethods);
             if (state.sidebarSortMethods?.length === 3) {
@@ -251,6 +252,7 @@ export const useAppearanceSettingsStore = defineStore(
         const hideUnfriends = computed(() => state.hideUnfriends);
         const randomUserColours = computed(() => state.randomUserColours);
         const trustColor = computed(() => state.trustColor);
+        const currentCulture = computed(() => state.currentCulture);
 
         watch(
             () => watchState.isFriendsLoaded,
@@ -488,12 +490,10 @@ export const useAppearanceSettingsStore = defineStore(
         function setDtHour12() {
             state.dtHour12 = !state.dtHour12;
             configRepository.setBool('VRCX_dtHour12', state.dtHour12);
-            handleSetDatetimeFormat();
         }
         function setDtIsoFormat() {
             state.dtIsoFormat = !state.dtIsoFormat;
             configRepository.setBool('VRCX_dtIsoFormat', state.dtIsoFormat);
-            handleSetDatetimeFormat();
         }
         /**
          * @param {string} method
@@ -578,7 +578,7 @@ export const useAppearanceSettingsStore = defineStore(
             );
         }
         /**
-         * @param {Object<string>} color
+         * @param {object} color
          */
         function setTrustColor(color) {
             state.trustColor = color;
@@ -586,14 +586,6 @@ export const useAppearanceSettingsStore = defineStore(
                 'VRCX_trustColor',
                 JSON.stringify(color)
             );
-        }
-
-        async function handleSetDatetimeFormat() {
-            const formatDate = await formatDateFilter(
-                state.dtIsoFormat,
-                state.dtHour12
-            );
-            Vue.filter('formatDate', formatDate);
         }
 
         function handleSaveSidebarSortOrder() {
@@ -749,6 +741,7 @@ export const useAppearanceSettingsStore = defineStore(
             hideUnfriends,
             randomUserColours,
             trustColor,
+            currentCulture,
 
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,

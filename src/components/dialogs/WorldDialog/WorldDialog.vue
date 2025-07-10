@@ -516,7 +516,7 @@
                                     {{ t('dialog.world.info.players') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.occupants | commaNumber }}
+                                    {{ commaNumber(worldDialog.ref.occupants) }}
                                 </span>
                             </div>
                         </div>
@@ -526,7 +526,7 @@
                                     {{ t('dialog.world.info.favorites') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.favorites | commaNumber
+                                    {{ commaNumber(worldDialog.ref.favorites)
                                     }}<span
                                         v-if="worldDialog.ref?.favorites > 0 && worldDialog.ref?.visits > 0"
                                         class="extra">
@@ -541,7 +541,7 @@
                                     {{ t('dialog.world.info.visits') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.visits | commaNumber }}
+                                    {{ commaNumber(worldDialog.ref.visits) }}
                                 </span>
                             </div>
                         </div>
@@ -551,8 +551,8 @@
                                     {{ t('dialog.world.info.capacity') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.recommendedCapacity | commaNumber }} ({{
-                                        worldDialog.ref.capacity | commaNumber
+                                    {{ commaNumber(worldDialog.ref.recommendedCapacity) }} ({{
+                                        commaNumber(worldDialog.ref.capacity)
                                     }})
                                 </span>
                             </div>
@@ -563,7 +563,7 @@
                                     {{ t('dialog.world.info.created_at') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.created_at | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.created_at, 'long') }}
                                 </span>
                             </div>
                         </div>
@@ -573,10 +573,10 @@
                                     {{ t('dialog.world.info.last_updated') }}
                                 </span>
                                 <span v-if="worldDialog.lastUpdated" class="extra">
-                                    {{ worldDialog.lastUpdated | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.lastUpdated, 'long') }}
                                 </span>
                                 <span v-else class="extra">
-                                    {{ worldDialog.ref.updated_at | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.updated_at, 'long') }}
                                 </span>
                             </div>
                         </div>
@@ -589,7 +589,7 @@
                                     {{ t('dialog.world.info.labs_publication_date') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.labsPublicationDate | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.labsPublicationDate, 'long') }}
                                 </span>
                             </div>
                         </div>
@@ -611,7 +611,7 @@
                                     <i class="el-icon-arrow-down" />
                                 </el-tooltip>
                                 <span class="extra">
-                                    {{ worldDialog.ref.publicationDate | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
                                 </span>
                             </div>
                         </div>
@@ -629,7 +629,7 @@
                                     {{ t('dialog.world.info.heat') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
+                                    {{ commaNumber(worldDialog.ref.heat) }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
                                 </span>
                             </div>
                         </div>
@@ -639,7 +639,7 @@
                                     {{ t('dialog.world.info.popularity') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.popularity | commaNumber }}
+                                    {{ commaNumber(worldDialog.ref.popularity) }}
                                     {{ '💖'.repeat(worldDialog.ref.popularity) }}
                                 </span>
                             </div>
@@ -664,7 +664,7 @@
                                         ><i class="el-icon-warning"></i
                                     ></el-tooltip>
                                 </span>
-                                <span class="extra">{{ worldDialog.lastVisit | formatDate('long') }}</span>
+                                <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
                             </div>
                         </div>
                         <el-tooltip
@@ -772,7 +772,9 @@
         userImage,
         userStatusClass,
         openFolderGeneric,
-        deleteVRChatCache
+        deleteVRChatCache,
+        commaNumber,
+        formatDateFilter
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,

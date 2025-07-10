@@ -43,9 +43,9 @@
                 <template slot-scope="scope">
                     <el-tooltip placement="right">
                         <template slot="content">
-                            <span>{{ scope.row.created | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -101,6 +101,7 @@
     import configRepository from '../../service/config.js';
     import { useUiStore, useModerationStore, useUserStore, useAppearanceSettingsStore } from '../../stores';
     import { moderationTypes } from '../../shared/constants';
+    import { formatDateFilter } from '../../shared/utils';
 
     const { t } = useI18n();
     const { proxy } = getCurrentInstance();

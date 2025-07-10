@@ -15,7 +15,7 @@
         <data-tables v-loading="loading" v-bind="previousInstancesUserDialogTable" style="margin-top: 10px">
             <el-table-column :label="$t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                    <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.previous_instances.world')" prop="name" sortable>
@@ -76,7 +76,8 @@
         compareByCreatedAt,
         parseLocation,
         removeFromArray,
-        timeToText
+        timeToText,
+        formatDateFilter
     } from '../../../shared/utils';
     import { useInstanceStore, useLaunchStore, useUiStore } from '../../../stores';
 

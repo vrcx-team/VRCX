@@ -34,9 +34,9 @@
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
-                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -93,7 +93,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../service/config';
     import { database } from '../../service/database';
-    import { removeFromArray } from '../../shared/utils';
+    import { removeFromArray, formatDateFilter } from '../../shared/utils';
     import { useAppearanceSettingsStore, useUiStore, useFriendStore, useUserStore } from '../../stores';
 
     const { hideUnfriends } = storeToRefs(useAppearanceSettingsStore());
