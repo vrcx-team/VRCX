@@ -62,6 +62,7 @@ namespace VRCX
 
         public override void ExecuteVrOverlayFunction(string function, string json)
         {
+            Program.VRCXVRInstance.ExecuteVrOverlayFunction(function, json);
         }
 
         public override void FocusWindow()

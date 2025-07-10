@@ -48,6 +48,16 @@ namespace VRCX
             return list;
         }
 
+        public List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
+        {
+            var list = new List<KeyValuePair<string, string>>();
+            while (Program.VRCXVRInstance.GetExecuteVrOverlayFunctionQueue().TryDequeue(out var item))
+            {
+                list.Add(item);
+            }
+            return list;
+        }
+
         public void ToggleSystemMonitor(bool enabled)
         {
             //SystemMonitor.Instance.Start(enabled);

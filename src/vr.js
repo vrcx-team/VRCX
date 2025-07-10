@@ -29,7 +29,7 @@ Vue.component('marquee-text', MarqueeText);
     let $app = {};
 
     if (WINDOWS) {
-        await CefSharp.BindObjectAsync('AppApiVr');
+        await CefSharp.BindObjectAsync('AppApiVrCef');
     } else {
         window.AppApiVrElectron = InteropApi.AppApiVrElectron;
     }
@@ -137,7 +137,7 @@ Vue.component('marquee-text', MarqueeText);
         data: {
             // 1 = 대시보드랑 손목에 보이는거
             // 2 = 항상 화면에 보이는 거
-            appType: '1',
+            appType: location.href.substr(-1),
             appLanguage: 'en',
             currentCulture: 'en-nz',
             isRunningUnderWine: false,
@@ -182,13 +182,17 @@ Vue.component('marquee-text', MarqueeText);
         el: '#root',
         async mounted() {
             if (WINDOWS) {
-                this.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
+                this.isRunningUnderWine = await AppApiVrCef.IsRunningUnderWine();
                 await this.applyWineEmojis();
             } else {
                 workerTimers.setTimeout(() =>
                     AppApiVrElectron.SetVrInit(true), 
                 5000);
             }
+
+            if (LINUX) {
+                this.updateVrLoop();
+            } 
 
             if (this.appType === '1') {
                 this.refreshCustomScript();
@@ -212,7 +216,7 @@ Vue.component('marquee-text', MarqueeText);
             this.cpuUsageEnabled = this.config.vrOverlayCpuUsage;
             this.pcUptimeEnabled = this.config.pcUptimeOnFeed;
             if (WINDOWS) {
-                AppApiVr.ToggleSystemMonitor(
+                AppApiVrCef.ToggleSystemMonitor(
                     this.cpuUsageEnabled || this.pcUptimeEnabled
                 );
             }
@@ -280,7 +284,7 @@ Vue.component('marquee-text', MarqueeText);
             document.getElementById('vr-custom-script').remove();
         }
         if (WINDOWS) {
-            AppApiVr.CustomVrScriptPath().then((customScript) => {
+            AppApiVrCef.CustomVrScriptPath().then((customScript) => {
                 var head = document.head;
                 if (customScript) {
                     var $vrCustomScript = document.createElement('script');
@@ -317,25 +321,6 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.updateStatsLoop = async function () {
         try {
-            if (LINUX) {
-                const queue = await AppApiVrElectron.GetExecuteVrFeedFunctionQueue();
-                if (queue) {
-                    queue.forEach((item) => {
-                        // item[0] is the function name, item[1] is already an object
-                        const fullFunctionName = item[0];
-                        const jsonArg = item[1];
-
-                        // If $app and the function exist
-                        if (typeof window.$app === 'object' && typeof window.$app[fullFunctionName] === 'function') {
-                            // No need to parse here, because it's already an object
-                            window.$app[fullFunctionName](jsonArg);
-                        } else {
-                            console.error(`$app.${fullFunctionName} is not defined or is not a function`);
-                        }
-                    });
-                }
-            }
-
             this.currentTime = new Date()
                 .toLocaleDateString(this.currentCulture, {
                     month: '2-digit',
@@ -351,7 +336,7 @@ Vue.component('marquee-text', MarqueeText);
                 .replace(',', '');
 
             if (WINDOWS && this.cpuUsageEnabled) {
-                var cpuUsage = await AppApiVr.CpuUsage();
+                var cpuUsage = await AppApiVrCef.CpuUsage();
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
             if (this.lastLocation.date !== 0) {
@@ -370,7 +355,7 @@ Vue.component('marquee-text', MarqueeText);
             }
 
             if (WINDOWS && !this.config.hideDevicesFromFeed) {
-                AppApiVr.GetVRDevices().then((devices) => {
+                AppApiVrCef.GetVRDevices().then((devices) => {
                     var deviceList = [];
                     var baseStations = 0;
                     devices.forEach((device) => {
@@ -420,7 +405,7 @@ Vue.component('marquee-text', MarqueeText);
             }
             if (this.config.pcUptimeOnFeed) {
                 if (WINDOWS) {
-                    AppApiVr.GetUptime().then((uptime) => {
+                    AppApiVrCef.GetUptime().then((uptime) => {
                         if (uptime) {
                             this.pcUptime = $utils.timeToText(uptime);
                         }
@@ -439,6 +424,45 @@ Vue.component('marquee-text', MarqueeText);
             console.error(err);
         }
         workerTimers.setTimeout(() => this.updateStatsLoop(), 500);
+    };
+
+    $app.methods.updateVrLoop = async function () {
+        try {
+            if (this.appType === '1') {
+                const wristOverlayQueue = await AppApiVrElectron.GetExecuteVrFeedFunctionQueue();
+                if (wristOverlayQueue) {
+                    wristOverlayQueue.forEach((item) => {
+                        // item[0] is the function name, item[1] is already an object
+                        const fullFunctionName = item[0];
+                        const jsonArg = item[1];
+
+                        if (typeof window.$app === 'object' && typeof window.$app[fullFunctionName] === 'function') {
+                            window.$app[fullFunctionName](jsonArg);
+                        } else {
+                            console.error(`$app.${fullFunctionName} is not defined or is not a function`);
+                        }
+                    });
+                }
+            } else {
+                const hmdOverlayQueue = await AppApiVrElectron.GetExecuteVrOverlayFunctionQueue();
+                if (hmdOverlayQueue) {
+                    hmdOverlayQueue.forEach((item) => {
+                        // item[0] is the function name, item[1] is already an object
+                        const fullFunctionName = item[0];
+                        const jsonArg = item[1];
+
+                        if (typeof window.$app === 'object' && typeof window.$app[fullFunctionName] === 'function') {
+                            window.$app[fullFunctionName](jsonArg);
+                        } else {
+                            console.error(`$app.${fullFunctionName} is not defined or is not a function`);
+                        }
+                    });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        workerTimers.setTimeout(() => this.updateVrLoop(), 500);
     };
 
     $app.methods.playNoty = function (json) {
@@ -708,7 +732,7 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.setDatetimeFormat = async function () {
         if (WINDOWS) {
-            this.currentCulture = await AppApiVr.CurrentCulture();
+            this.currentCulture = await AppApiVrCef.CurrentCulture();
         } else {
             this.currentCulture = await AppApiVrElectron.CurrentCulture();
         }

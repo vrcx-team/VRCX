@@ -266,43 +266,35 @@ function createWindow() {
     });
 }
 
-let testWindow = undefined;
-
 const net = require('net');
-const SOCKET_PATH = '/tmp/vrcx_frame.sock';
-//const fs = require('fs');
-if (fs.existsSync(SOCKET_PATH)) {
-    fs.unlinkSync(SOCKET_PATH);
+
+const WRIST_OVERLAY_SOCKET_PATH = '/tmp/vrcx_frame1.sock';
+if (fs.existsSync(WRIST_OVERLAY_SOCKET_PATH)) {
+    fs.unlinkSync(WRIST_OVERLAY_SOCKET_PATH);
 }
 
+let wristOverlayWindow = undefined;
+
 // Create a Unix socket server to send frame data
-const server = net.createServer((socket) => {
-    console.log('C# client connected to Unix socket');
-    
+const wristOverlayServer = net.createServer((wristOverlaySocket) => {
     setInterval(() => {
-        //console.log('capturing page');
-        if (testWindow && !testWindow.isDestroyed()) {
-            //console.log('testwindow capturing page');
-            testWindow.webContents.capturePage().then(image => {
+        if (wristOverlayWindow && !wristOverlayWindow.isDestroyed()) {
+            wristOverlayWindow.webContents.capturePage().then(image => {
                 const buffer = image.toBitmap(); // Get raw pixels (RGBA)
-                //console.log('captured page');
-                socket.write(buffer);
+                wristOverlaySocket.write(buffer);
             }).catch(err => console.error('Error capturing page:', err));
         }
-    }, 1000 / 24); // 24 FPS
+    }, 1000 / 2); // 24 FPS
 });
+wristOverlayServer.listen(WRIST_OVERLAY_SOCKET_PATH);
 
-server.listen(SOCKET_PATH, () => {
-    console.log(`Unix socket server listening at ${SOCKET_PATH}`);
-});
-
-function createWindowOffscreen() {
+function createWristOverlayWindowOffscreen() {
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = 512;
     const height = 512;
 
-    testWindow = new BrowserWindow({
+    wristOverlayWindow = new BrowserWindow({
         x,
         y,
         width,
@@ -318,24 +310,60 @@ function createWindowOffscreen() {
             userAgent: version
         }
     });
+    wristOverlayWindow.webContents.setFrameRate(2);
 
     const indexPath = path.join(rootDir, 'build/html/vr.html');
-    testWindow.loadFile(indexPath, { userAgent: version });
+    const fileUrl = `file://${indexPath}?1`;
+    wristOverlayWindow.loadURL(fileUrl, { userAgent: version });
+}
 
-    offscreenWindow = new BrowserWindow({
-      width: 512,
-      height: 512,
-      show: false,
-      transparent: true,
-      webPreferences: {
-        offscreen: true,
-        preload: path.join(__dirname, 'offscreen-preload.js')
-      }
+const HMD_OVERLAY_SOCKET_PATH = '/tmp/vrcx_frame2.sock';
+if (fs.existsSync(HMD_OVERLAY_SOCKET_PATH)) {
+    fs.unlinkSync(HMD_OVERLAY_SOCKET_PATH);
+}
+
+let hmdOverlayWindow = undefined;
+
+// Create a Unix socket server to send frame data
+const hmdOverlayServer = net.createServer((hmdOverlaySocket) => {
+    setInterval(() => {
+        if (hmdOverlayWindow && !hmdOverlayWindow.isDestroyed()) {
+            hmdOverlayWindow.webContents.capturePage().then(image => {
+                const buffer = image.toBitmap(); // Get raw pixels (RGBA)
+                hmdOverlaySocket.write(buffer);
+            }).catch(err => console.error('Error capturing page:', err));
+        }
+    }, 1000 / 24); // 24 FPS
+});
+hmdOverlayServer.listen(HMD_OVERLAY_SOCKET_PATH);
+
+function createHmdOverlayWindowOffscreen() {
+    const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
+    const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
+    const width = 1024;
+    const height = 1024;
+
+    hmdOverlayWindow = new BrowserWindow({
+        x,
+        y,
+        width,
+        height,
+        icon: path.join(rootDir, 'VRCX.png'),
+        autoHideMenuBar: true,
+        transparent: true, 
+        frame: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        },
+        webContents: {
+            userAgent: version
+        }
     });
+    hmdOverlayWindow.webContents.setFrameRate(24);
 
-    offscreenWindow.loadFile(path.join(__dirname, 'offscreen.html'));
-
-    offscreenWindow.webContents.setFrameRate(60);
+    const indexPath = path.join(rootDir, 'build/html/vr.html');
+    const fileUrl = `file://${indexPath}?2`;
+    hmdOverlayWindow.loadURL(fileUrl, { userAgent: version });
 }
 
 function createTray() {
@@ -671,21 +699,50 @@ function applyWindowState() {
 app.whenReady().then(() => {
     createWindow();
 
-    createWindowOffscreen();
+    createWristOverlayWindowOffscreen();
+
+    createHmdOverlayWindowOffscreen();
 
     createTray();
 
-    installVRCX();
+    installVRCX();  
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 });
 
-// app.on('before-quit', function () {
-//    mainWindow.webContents.send('windowClosed');
-// });
+function dispose() {
+    if (wristOverlayServer) {
+        wristOverlayServer.close();
+    }
+    if (hmdOverlayServer) {
+        hmdOverlayServer.close();
+    }
+
+    if (fs.existsSync(WRIST_OVERLAY_SOCKET_PATH)) {
+        fs.unlinkSync(WRIST_OVERLAY_SOCKET_PATH);
+    }
+    if (fs.existsSync(HMD_OVERLAY_SOCKET_PATH)) {
+        fs.unlinkSync(HMD_OVERLAY_SOCKET_PATH);
+    }
+
+    if (wristOverlayWindow) {
+        wristOverlayWindow.close();
+    }
+    if (hmdOverlayWindow) {
+        hmdOverlayWindow.close();
+    }
+}
+
+app.on('before-quit', function () {
+    dispose();
+
+    mainWindow.webContents.send('windowClosed');
+});
 
 app.on('window-all-closed', function () {
+    dispose();
+
     if (process.platform !== 'darwin') app.quit();
 });

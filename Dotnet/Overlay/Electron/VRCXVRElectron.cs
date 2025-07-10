@@ -46,15 +46,23 @@ namespace VRCX
         private bool _wristOverlayActive;
         private bool _wristOverlayWasActive;
 
-        private const string SOCKET_PATH = "/tmp/vrcx_frame.sock";
-        private const int FRAME_WIDTH = 512;
-        private const int FRAME_HEIGHT = 512;
-        private const int FRAME_SIZE = FRAME_WIDTH * FRAME_HEIGHT * 4; // RGBA
-        private byte[] frameBuffer = new byte[FRAME_SIZE];
-        private bool frameReady = false;
-        private Socket _socket;
+        private const string WRIST_OVERLAY_SOCKET_PATH = "/tmp/vrcx_frame1.sock";
+        private const string HMD_OVERLAY_SOCKET_PATH = "/tmp/vrcx_frame2.sock";
+        private const int WRIST_FRAME_WIDTH = 512;
+        private const int WRIST_FRAME_HEIGHT = 512;
+        private const int WRIST_FRAME_SIZE = WRIST_FRAME_WIDTH * WRIST_FRAME_HEIGHT * 4; // RGBA
+        private byte[] wristFrameBuffer = new byte[WRIST_FRAME_SIZE];
+        private const int HMD_FRAME_WIDTH = 1024;
+        private const int HMD_FRAME_HEIGHT = 1024;
+        private const int HMD_FRAME_SIZE = HMD_FRAME_WIDTH * HMD_FRAME_HEIGHT * 4; // RGBA
+        private byte[] hmdFrameBuffer = new byte[HMD_FRAME_SIZE];
+        private bool wristFrameReady = false;
+        private bool hmdFrameReady = false;
+        private Socket _wristOverlaySocket;
+        private Socket _hmdOverlaySocket;
         private int _bytesInBuffer = 0;
-        private readonly ConcurrentQueue<KeyValuePair<string, string>> m_VrFeedFunctionQueue = new ConcurrentQueue<KeyValuePair<string, string>>();
+        private readonly ConcurrentQueue<KeyValuePair<string, string>> _wristFeedFunctionQueue = new ConcurrentQueue<KeyValuePair<string, string>>();
+        private readonly ConcurrentQueue<KeyValuePair<string, string>> _hmdFeedFunctionQueue = new ConcurrentQueue<KeyValuePair<string, string>>();
 
         static VRCXVRElectron()
         {
@@ -75,8 +83,11 @@ namespace VRCX
         // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
         public override void Init()
         {
-            _socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
-            _socket.Blocking = false; // non‐blocking receive
+            _wristOverlaySocket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
+            _wristOverlaySocket.Blocking = false; // non‐blocking receive
+
+            _hmdOverlaySocket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
+            _hmdOverlaySocket.Blocking = false; // non‐blocking receive
 
             _thread.Start();
         }
@@ -117,39 +128,39 @@ namespace VRCX
 
         }
 
-        private void PumpSocket()
+        private void PumpWristOverlaySocket()
         {
-            if (_socket == null) return;
+            if (_wristOverlaySocket == null) return;
 
-            if (!_socket.Connected)
+            if (!_wristOverlaySocket.Connected)
             {
-                _socket.Connect(new UnixDomainSocketEndPoint(SOCKET_PATH));
+                _wristOverlaySocket.Connect(new UnixDomainSocketEndPoint(WRIST_OVERLAY_SOCKET_PATH));
             }
 
             try
             {
                 // Poll(0) returns immediately: is there data to read?
-                if (_socket.Poll(0, SelectMode.SelectRead))
+                if (_wristOverlaySocket.Poll(0, SelectMode.SelectRead))
                 {
                     // Read as many bytes as are available, up to filling the frame
-                    int toRead = Math.Min(FRAME_SIZE - _bytesInBuffer, _socket.Available);
+                    int toRead = Math.Min(WRIST_FRAME_SIZE - _bytesInBuffer, _wristOverlaySocket.Available);
                     if (toRead > 0)
                     {
-                        int n = _socket.Receive(frameBuffer, _bytesInBuffer, toRead, SocketFlags.None);
+                        int n = _wristOverlaySocket.Receive(wristFrameBuffer, _bytesInBuffer, toRead, SocketFlags.None);
                         if (n > 0)
                         {
                             _bytesInBuffer += n;
-                            if (_bytesInBuffer == FRAME_SIZE)
+                            if (_bytesInBuffer == WRIST_FRAME_SIZE)
                             {
                                 // We have a complete frame
-                                frameReady = true;
+                                wristFrameReady = true;
                                 _bytesInBuffer = 0; // reset for next frame
                             }
                         }
                         else
                         {
                             // Peer closed
-                            CleanupSocket();
+                            CleanupWristOverlaySocket();
                         }
                     }
                 }
@@ -162,20 +173,81 @@ namespace VRCX
             }
         }
 
-        private void CleanupSocket()
+        private void CleanupWristOverlaySocket()
         {
-            try { _socket?.Close(); }
+            try { _wristOverlaySocket?.Close(); }
             catch { }
-            _socket = null;
-            Console.WriteLine("Socket disconnected.");
+            _wristOverlaySocket = null;
         }
 
-        public byte[] GetLatestFrame()
+        public byte[] GetLatestWristOverlayFrame()
         {
-            if (frameReady)
+            if (wristFrameReady)
             {
-                frameReady = false;
-                return frameBuffer;
+                wristFrameReady = false;
+                return wristFrameBuffer;
+            }
+            return null;
+        }
+
+        private void PumpHmdOverlaySocket()
+        {
+            if (_hmdOverlaySocket == null) return;
+
+            if (!_hmdOverlaySocket.Connected)
+            {
+                _hmdOverlaySocket.Connect(new UnixDomainSocketEndPoint(HMD_OVERLAY_SOCKET_PATH));
+            }
+
+            try
+            {
+                // Poll(0) returns immediately: is there data to read?
+                if (_hmdOverlaySocket.Poll(0, SelectMode.SelectRead))
+                {
+                    // Read as many bytes as are available, up to filling the frame
+                    int toRead = Math.Min(HMD_FRAME_SIZE - _bytesInBuffer, _hmdOverlaySocket.Available);
+                    if (toRead > 0)
+                    {
+                        int n = _hmdOverlaySocket.Receive(hmdFrameBuffer, _bytesInBuffer, toRead, SocketFlags.None);
+                        if (n > 0)
+                        {
+                            _bytesInBuffer += n;
+                            if (_bytesInBuffer == HMD_FRAME_SIZE)
+                            {
+                                // We have a complete frame
+                                hmdFrameReady = true;
+                                _bytesInBuffer = 0; // reset for next frame
+                            }
+                        }
+                        else
+                        {
+                            // Peer closed
+                            CleanupHmdOverlaySocket();
+                        }
+                    }
+                }
+            }
+            catch (SocketException se)
+            {
+                // EWOULDBLOCK (10035) is normal for non‐blocking with no data
+                if (se.SocketErrorCode != SocketError.WouldBlock)
+                    Console.WriteLine($"Socket error: {se}");
+            }
+        }
+
+        private void CleanupHmdOverlaySocket()
+        {
+            try { _hmdOverlaySocket?.Close(); }
+            catch { }
+            _hmdOverlaySocket = null;
+        }
+
+        public byte[] GetLatestHmdOverlayFrame()
+        {
+            if (hmdFrameReady)
+            {
+                hmdFrameReady = false;
+                return hmdFrameBuffer;
             }
             return null;
         }
@@ -209,18 +281,6 @@ namespace VRCX
             var overlayVisible2 = false;
             var dashboardHandle = 0UL;
 
-            //_wristOverlay = new OffScreenBrowser(
-            //    "file://vrcx/vr.html?1",
-            //    512,
-            //    512
-            //);
-
-            //_hmdOverlay = new OffScreenBrowser(
-            //    "file://vrcx/vr.html?2",
-            //    1024,
-            //    1024
-            //);
-
             while (_thread != null)
             {
                 try
@@ -236,7 +296,8 @@ namespace VRCX
 
                 if (_active)
                 {
-                    PumpSocket();
+                    PumpWristOverlaySocket();
+                    PumpHmdOverlaySocket();
 
                     var system = OpenVR.System;
                     if (system == null)
@@ -292,7 +353,7 @@ namespace VRCX
                         var overlay = OpenVR.Overlay;
                         if (overlay != null)
                         {
-                            //var dashboardVisible = overlay.IsDashboardVisible();
+                            var dashboardVisible = overlay.IsDashboardVisible();
                             //var err = ProcessDashboard(overlay, ref dashboardHandle, dashboardVisible);
                             //if (err != EVROverlayError.None &&
                             //    dashboardHandle != 0)
@@ -302,12 +363,10 @@ namespace VRCX
                             //    logger.Error(err);
                             //}
 
-                            //Console.WriteLine("_hmdOverlayActive: {0}", _hmdOverlayActive);
-
                             if (_wristOverlayActive)
                             {
                                 var err = ProcessOverlay1(overlay, ref _wristOverlayHandle, ref overlayVisible1,
-                                    false, overlayIndex);
+                                    dashboardVisible, overlayIndex);
                                 if (err != EVROverlayError.None &&
                                     _wristOverlayHandle != 0)
                                 {
@@ -320,7 +379,7 @@ namespace VRCX
                             if (_hmdOverlayActive)
                             {
                                 var err = ProcessOverlay2(overlay, ref _hmdOverlayHandle, ref overlayVisible2,
-                                    false);
+                                    dashboardVisible);
                                 if (err != EVROverlayError.None &&
                                     _hmdOverlayHandle != 0)
                                 {
@@ -349,6 +408,8 @@ namespace VRCX
                 }
             }
 
+            CleanupWristOverlaySocket();
+            CleanupHmdOverlaySocket();
             _hmdOverlayTextureWriter.Dispose();
             _wristOverlayTextureWriter.Dispose();
             GLContext.Cleanup();
@@ -734,10 +795,10 @@ namespace VRCX
             {
                 if (_wristOverlayTextureWriter != null)
                 {
-                    byte[] imageData = GetLatestFrame();
+                    byte[] imageData = GetLatestWristOverlayFrame();
                     if (imageData != null)
                     {
-                        FlipImageVertically(imageData, FRAME_WIDTH, FRAME_HEIGHT);
+                        FlipImageVertically(imageData, WRIST_FRAME_WIDTH, WRIST_FRAME_HEIGHT);
                         _wristOverlayTextureWriter.WriteImageToBuffer(imageData);
                         _wristOverlayTextureWriter.UpdateTexture();
 
@@ -777,14 +838,10 @@ namespace VRCX
 
         internal EVROverlayError ProcessOverlay2(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible)
         {
-            //Console.WriteLine("VR - Overlay: VRCX2");
-
             var err = EVROverlayError.None;
 
             if (overlayHandle == 0)
             {
-                Console.WriteLine("VR - Overlay: VRCX2");
-
                 err = overlay.FindOverlay("VRCX2", ref overlayHandle);
                 if (err != EVROverlayError.None)
                 {
@@ -845,25 +902,33 @@ namespace VRCX
 
             if (!dashboardVisible)
             {
-                //var texture = new Texture_t
-                //{
-                //    handle = _texture2.NativePointer
-                //};
-                //err = overlay.SetOverlayTexture(overlayHandle, ref texture);
-                //if (err != EVROverlayError.None)
-                //{
-                //    return err;
-                //}
-
-                if (!overlayVisible)
+                if (_hmdOverlayTextureWriter != null)
                 {
-                    err = overlay.ShowOverlay(overlayHandle);
-                    if (err != EVROverlayError.None)
+                    byte[] imageData = GetLatestHmdOverlayFrame();
+                    if (imageData != null)
                     {
-                        return err;
-                    }
+                        FlipImageVertically(imageData, HMD_FRAME_WIDTH, HMD_FRAME_HEIGHT);
+                        _hmdOverlayTextureWriter.WriteImageToBuffer(imageData);
+                        _hmdOverlayTextureWriter.UpdateTexture();
 
-                    overlayVisible = true;
+                        Texture_t texture = _hmdOverlayTextureWriter.AsTextureT();
+                        err = OpenVR.Overlay.SetOverlayTexture(overlayHandle, ref texture);
+                        if (err != EVROverlayError.None)
+                        {
+                            return err;
+                        }
+
+                        if (!overlayVisible)
+                        {
+                            err = overlay.ShowOverlay(overlayHandle);
+                            if (err != EVROverlayError.None)
+                            {
+                                return err;
+                            }
+
+                            overlayVisible = true;
+                        }
+                    }
                 }
             }
             else if (overlayVisible)
@@ -882,31 +947,33 @@ namespace VRCX
 
         public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
         {
-            return m_VrFeedFunctionQueue;
+            return _wristFeedFunctionQueue;
         }
 
         public override void ExecuteVrFeedFunction(string function, string json)
         {
-            // if (_wristOverlay == null) return;
+            //if (_hmdOverlaySocket == null || !_hmdOverlaySocket.Connected) return;
             // if (_wristOverlay.IsLoading)
             //     Restart();
             // _wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
             //Console.WriteLine($"ExecuteVrFeedFunction: {function}");
 
-            m_VrFeedFunctionQueue.Enqueue(new KeyValuePair<string, string>(function, json));
+            _wristFeedFunctionQueue.Enqueue(new KeyValuePair<string, string>(function, json));
+        }
+
+        public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
+        {
+            return _hmdFeedFunctionQueue;
         }
 
         public override void ExecuteVrOverlayFunction(string function, string json)
         {
-            // if (_hmdOverlay == null) return;
+            //if (_hmdOverlaySocket == null || !_hmdOverlaySocket.Connected) return;
             // if (_hmdOverlay.IsLoading)
             //     Restart();
             //  _hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
-        }
 
-        //public abstract ConcurrentQueue<string> GetExecuteVrOverlayFunctionQueue()
-        //{
-        //    throw new NotImplementedException();
-        //}
+            _hmdFeedFunctionQueue.Enqueue(new KeyValuePair<string, string>(function, json));
+        }
     }
 }
