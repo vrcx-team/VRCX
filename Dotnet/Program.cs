@@ -150,7 +150,7 @@ namespace VRCX
                 {
                     case DialogResult.Yes:
                         logger.Fatal("Handled Exception, user selected auto install of vc_redist.");
-                        Update.DownloadInstallRedist();
+                        Update.DownloadInstallRedist().GetAwaiter().GetResult();
                         MessageBox.Show(
                             "vc_redist has finished installing, if the issue persists upon next restart, please reinstall VRCX From GitHub,\nVRCX Will now restart.",
                             "vc_redist installation complete", MessageBoxButtons.OK);
