@@ -879,11 +879,7 @@
                             saveOpenVROption();
                         " />
                     <simple-switch
-                        :label="
-                            t(
-                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
-                            )
-                        "
+                        :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
                         :value="imageNotifications"
                         @change="
                             setImageNotifications();

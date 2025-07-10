@@ -10,7 +10,7 @@ function getVRChatResolution(res) {
         case '1920x1080':
             return '1920x1080 (1080p)';
         case '2560x1440':
-            return '2560x1440 (2K)';
+            return '2560x1440 (1440p)';
         case '3840x2160':
             return '3840x2160 (4K)';
         case '7680x4320':
