@@ -4,9 +4,90 @@ declare global {
     const WINDOWS: boolean;
     const LINUX: boolean;
 
+    interface Window {
+        $app: any;
+        API: API;
+        AppApi: AppApi;
+        WebApi: WebApi;
+        VRCXStorage: VRCXStorage;
+        SQLite: SQLite;
+        LogWatcher: LogWatcher;
+        Discord: Discord;
+        AssetBundleManager: AssetBundleManager;
+        webApiService: webApiService;
+        configRepository: any;
+        datebase: any;
+        gameLogService: any;
+        crypto: any;
+        sqliteService: any;
+        interopApi: {
+            callDotNetMethod: (
+                className: any,
+                methodName: any,
+                args: any
+            ) => Promise<any>;
+        };
+        electron: {
+            openFileDialog: () => Promise<string>;
+            openDirectoryDialog: () => Promise<string>;
+            desktopNotification: (
+                displayName: string,
+                body?: string,
+                image?: string
+            ) => Promise<void>;
+            onWindowPositionChanged: (
+                Function: (
+                    event: any,
+                    position: { x: number; y: number }
+                ) => void
+            ) => void;
+            onWindowSizeChanged: (
+                Function: (
+                    event: any,
+                    size: { width: number; height: number }
+                ) => void
+            ) => void;
+            onWindowStateChange: (
+                Function: (event: any, state: { windowState: any }) => void
+            ) => void;
+            restartApp: () => Promise<void>;
+        };
+    }
+
+    declare const API: {
+        // HTTP request methods
+        $bulk: (options: any, args?: any) => Promise<any>;
+        bulk: (options: any) => Promise<any>;
+
+        // Event system
+        $emit: (event: string, ...args: any[]) => void;
+        $off: (event: string, handler?: Function) => void;
+        $on: (event: string, handler: Function) => void;
+
+        // Debug functions
+        debug: boolean | ((message: any) => void);
+        debugCurrentUserDiff: boolean | ((data: any) => void);
+        debugFriendState: boolean | ((data: any) => void);
+        debugGameLog: boolean | ((data: any) => void);
+        debugPhotonLogging: boolean | ((data: any) => void);
+        debugUserDiff: boolean | ((data: any) => void);
+        debugWebRequests: boolean | ((data: any) => void);
+        debugWebSocket: boolean | ((data: any) => void);
+
+        // Configuration
+        dontLogMeOut: boolean;
+        endpointDomain: string;
+        endpointDomainVrchat: string;
+        websocketDomain: string;
+        websocketDomainVrchat: string;
+
+        // Error handling
+        errorNoty: (error: any) => void;
+    };
+
     const CefSharp: {
         PostMessage: (message: any) => void;
-        BindObjectAsync: (name: string) => Promise<any>;
+        BindObjectAsync: (...args: string[]) => Promise<any>;
         BindObject: (name: string) => any;
         ExecuteScriptAsync: (script: string) => Promise<any>;
         ExecuteScript: (script: string) => any;
@@ -299,6 +380,7 @@ declare global {
             variant: string,
             variantVersion: number
         ): Promise<void>;
+        DeleteAllCache: () => Promise<void>;
     };
 
     const webApiService: {

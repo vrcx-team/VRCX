@@ -1,3 +1,4 @@
+// @ts-nocheck
 import InteropApi from '../ipc-electron/interopApi.js';
 
 // #region | Init Cef C# bindings

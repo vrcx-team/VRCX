@@ -49,7 +49,7 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @param {string} shortName
      * @returns {Promise<void>}
      */
-    async function showLaunchDialog(tag, shortName) {
+    async function showLaunchDialog(tag, shortName = null) {
         state.launchDialogData = {
             visible: true,
             // flag, use for trigger adjustDialogZ

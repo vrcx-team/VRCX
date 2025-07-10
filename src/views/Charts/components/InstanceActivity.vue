@@ -98,7 +98,7 @@
         </div>
 
         <transition name="el-fade-in-linear">
-            <div v-show="isDetailVisible && !isLoading && !activityData.length === 0" class="divider">
+            <div v-show="isDetailVisible && !isLoading && activityData.length !== 0" class="divider">
                 <el-divider>·</el-divider>
             </div>
         </transition>

@@ -757,6 +757,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         checkAutoBackupRestoreVrcRegistry,
         processScreenshot,
         ipcEvent,
-        dragEnterCef
+        dragEnterCef,
+        backupVrcRegistry
     };
 });

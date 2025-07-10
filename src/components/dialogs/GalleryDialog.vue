@@ -565,7 +565,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.proxy.$message({
+            proxy.$message({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -573,7 +573,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.proxy.$message({
+            proxy.$message({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -584,7 +584,7 @@
         r.onload = function () {
             const base64Body = btoa(r.result);
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
-                proxy.proxy.$message({
+                proxy.$message({
                     message: t('message.gallery.uploaded'),
                     type: 'success'
                 });
@@ -601,7 +601,7 @@
 
     function setProfilePicOverride(fileId) {
         if (!currentUser.value.$isVRCPlus) {
-            proxy.proxy.$message({
+            proxy.$message({
                 message: 'VRCPlus required',
                 type: 'error'
             });
@@ -619,7 +619,7 @@
                 profilePicOverride
             })
             .then((args) => {
-                proxy.proxy.$message({
+                proxy.$message({
                     message: 'Profile picture changed',
                     type: 'success'
                 });

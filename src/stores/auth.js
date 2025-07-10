@@ -173,6 +173,13 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     });
 
+    const enableCustomEndpoint = computed({
+        get: () => state.enableCustomEndpoint,
+        set: (value) => {
+            state.enableCustomEndpoint = value;
+        }
+    });
+
     // API.$on('LOGOUT')
     async function handleLogoutEvent() {
         if (state.isLoggedIn) {
@@ -911,6 +918,7 @@ export const useAuthStore = defineStore('Auth', () => {
         twoFactorAuthDialogVisible,
         isLoggedIn,
         cachedConfig,
+        enableCustomEndpoint,
 
         clearCookiesTryLogin,
         resendEmail2fa,

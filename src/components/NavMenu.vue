@@ -57,9 +57,8 @@
     ];
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
-    const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress, updateProgressText } =
-        storeToRefs(VRCXUpdaterStore);
-    const { showVRCXUpdateDialog } = VRCXUpdaterStore;
+    const { pendingVRCXUpdate, pendingVRCXInstall, updateInProgress, updateProgress } = storeToRefs(VRCXUpdaterStore);
+    const { showVRCXUpdateDialog, updateProgressText } = VRCXUpdaterStore;
     const uiStore = useUiStore();
     const { menuActiveIndex, notifiedMenus } = storeToRefs(uiStore);
     const { selectMenu } = uiStore;

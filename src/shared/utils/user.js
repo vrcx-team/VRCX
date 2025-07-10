@@ -71,7 +71,7 @@ function removeEmojis(text) {
  * @param {boolean} pendingOffline
  * @returns
  */
-function userStatusClass(user, pendingOffline) {
+function userStatusClass(user, pendingOffline = false) {
     const userStore = useUserStore();
     const style = {};
     if (typeof user === 'undefined') {
@@ -175,7 +175,12 @@ function statusClass(status) {
  * @param {boolean} isUserDialogIcon - is use for user dialog icon
  * @returns {string} - img url
  */
-function userImage(user, isIcon, resolution = '128', isUserDialogIcon = false) {
+function userImage(
+    user,
+    isIcon = false,
+    resolution = '128',
+    isUserDialogIcon = false
+) {
     const appAppearanceSettingsStore = useAppearanceSettingsStore();
     const { displayVRCPlusIconsAsAvatar } = storeToRefs(
         appAppearanceSettingsStore

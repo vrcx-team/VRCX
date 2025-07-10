@@ -69,7 +69,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     });
     const avatarHistory = state.avatarHistory;
     const avatarHistoryArray = computed({
-        get: () => state.avatarHistory,
+        get: () => state.avatarHistoryArray,
         set: (value) => {
             state.avatarHistoryArray = value;
         }

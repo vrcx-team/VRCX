@@ -122,7 +122,7 @@ export const useWorldStore = defineStore('World', () => {
      * @param {string} tag
      * @param {string} shortName
      */
-    function showWorldDialog(tag, shortName) {
+    function showWorldDialog(tag, shortName = null) {
         const D = state.worldDialog;
         const L = parseLocation(tag);
         if (L.worldId === '') {

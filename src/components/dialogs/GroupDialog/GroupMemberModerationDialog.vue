@@ -928,15 +928,14 @@
 
     async function initializePageSize() {
         try {
-            const appearanceSettingsStore = useAppearanceSettingsStore();
-            const { tablePageSize } = storeToRefs(appearanceSettingsStore);
+            const { tablePageSize } = storeToRefs(useAppearanceSettingsStore());
 
-            groupMemberModerationTable.pageSize = tablePageSize;
-            groupBansModerationTable.pageSize = tablePageSize;
-            groupLogsModerationTable.pageSize = tablePageSize;
-            groupInvitesModerationTable.pageSize = tablePageSize;
-            groupJoinRequestsModerationTable.pageSize = tablePageSize;
-            groupBlockedModerationTable.pageSize = tablePageSize;
+            groupMemberModerationTable.pageSize = tablePageSize.value;
+            groupBansModerationTable.pageSize = tablePageSize.value;
+            groupLogsModerationTable.pageSize = tablePageSize.value;
+            groupInvitesModerationTable.pageSize = tablePageSize.value;
+            groupJoinRequestsModerationTable.pageSize = tablePageSize.value;
+            groupBlockedModerationTable.pageSize = tablePageSize.value;
         } catch (error) {
             console.error('Failed to initialize table page size:', error);
         }

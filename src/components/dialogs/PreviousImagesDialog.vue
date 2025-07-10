@@ -33,7 +33,7 @@
     const { t } = useI18n();
 
     const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-    const showFullscreenImageDialog = useGalleryStore();
+    const { showFullscreenImageDialog } = useGalleryStore();
 
     function closeDialog() {
         previousImagesDialogVisible.value = false;

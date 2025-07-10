@@ -432,7 +432,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     /**
-     * @param {boolean} videoId
+     * @param {string} videoId
      */
     async function lookupYouTubeVideo(videoId) {
         if (!state.youTubeApi) {
