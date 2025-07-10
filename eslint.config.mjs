@@ -49,6 +49,7 @@ export default defineConfig([
         rules: {
             'no-unused-vars': 'warn',
             'no-case-declarations': 'off',
+            'no-control-regex': 'warn',
 
             'vue/no-mutating-props': 'warn',
             'vue/multi-word-component-names': 'off',

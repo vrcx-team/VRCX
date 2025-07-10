@@ -20,7 +20,6 @@
             <el-input
                 v-for="(link, index) in bioDialog.bioLinks"
                 :key="index"
-                v-model="bioDialog.bioLinks[index]"
                 :value="link"
                 size="small"
                 style="margin-top: 5px">

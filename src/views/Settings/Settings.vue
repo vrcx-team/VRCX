@@ -1936,7 +1936,7 @@
     const { showLaunchOptions } = useLaunchStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { enablePrimaryPasswordChange } = useAuthStore();
-    const { saveOpenVROption, updateVRLastLocation, updateOpenVR } = useVrStore();
+    const { saveOpenVROption, updateVRLastLocation, updateOpenVR, updateVRConfigVars } = useVrStore();
     const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
 
     const {

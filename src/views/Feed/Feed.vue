@@ -175,13 +175,7 @@
                         </template>
                         <template v-else-if="scope.row.type === 'Bio'">
                             <pre
-                                style="
-                                    font-family: inherit;
-                                    font-size: 12px;
-                                    white-space: pre-wrap;
-                                    line-height: 25px;
-                                    line-height: 22px;
-                                "
+                                style="font-family: inherit; font-size: 12px; white-space: pre-wrap; line-height: 22px"
                                 v-html="formatDifference(scope.row.previousBio, scope.row.bio)"></pre>
                         </template>
                     </div>

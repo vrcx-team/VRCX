@@ -68,14 +68,15 @@
                     </div>
                 </div>
             </template>
-            <friend-item
-                v-for="friend in vipFriendsByGroupStatus"
-                v-else
-                :key="friend.id"
-                :friend="friend"
-                @click="showUserDialog(friend.id)"
-                @confirm-delete-friend="confirmDeleteFriend">
-            </friend-item>
+            <template v-else>
+                <friend-item
+                    v-for="friend in vipFriendsByGroupStatus"
+                    :key="friend.id"
+                    :friend="friend"
+                    @click="showUserDialog(friend.id)"
+                    @confirm-delete-friend="confirmDeleteFriend">
+                </friend-item>
+            </template>
         </div>
 
         <template v-if="isSidebarGroupByInstance && friendsInSameInstance.length">

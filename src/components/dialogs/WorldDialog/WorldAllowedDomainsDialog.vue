@@ -10,7 +10,6 @@
                 v-for="(domain, index) in urlList"
                 :key="index"
                 v-model="urlList[index]"
-                :value="domain"
                 size="small"
                 style="margin-top: 5px">
                 <el-button slot="append" icon="el-icon-delete" @click="urlList.splice(index, 1)"></el-button>

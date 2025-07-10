@@ -25,12 +25,9 @@
                 <!--                el-button(type="default" size="small" @click="deleteWorldImage" icon="el-icon-delete") Delete Latest Image-->
             </el-button-group>
             <br />
-            <div
-                v-for="image in previousImagesTable"
-                v-if="image.file"
-                :key="image.version"
-                style="display: inline-block">
+            <div v-for="image in previousImagesTable" :key="image.version" style="display: inline-block">
                 <div
+                    v-if="image.file"
                     class="x-change-image-item"
                     style="cursor: pointer"
                     :class="{ 'current-image': compareCurrentImage(image) }"

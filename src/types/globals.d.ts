@@ -394,18 +394,6 @@ declare global {
             data?: any;
         }): Promise<{ status: number; data: string }>;
     };
-
-    // // simple node.js process type definitions
-    // const process: {
-    //     env: Record<string, string | undefined>;
-    //     platform: string;
-    //     version: string;
-    //     versions: Record<string, string>;
-    //     argv: string[];
-    //     cwd(): string;
-    //     exit(code?: number): never;
-    //     nextTick(callback: (...args: any[]) => void): void;
-    // };
 }
 
 export {};

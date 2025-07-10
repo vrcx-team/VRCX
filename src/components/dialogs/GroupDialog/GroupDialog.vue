@@ -493,13 +493,14 @@
                                             <span>{{ t('dialog.group.posts.visibility') }}</span>
                                             <br />
                                             <template v-for="roleId in groupDialog.announcement.roleIds">
+                                                <template v-for="role in groupDialog.ref.roles"
+                                                    ><span
+                                                        v-if="role.id === roleId"
+                                                        :key="roleId + role.id"
+                                                        v-text="role.name"
+                                                /></template>
                                                 <span
-                                                    v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                    v-if="role.id === roleId"
-                                                    :key="rIndex"
-                                                    v-text="role.name" />
-                                                <span
-                                                    :key="rIndex"
+                                                    :key="roleId"
                                                     v-if="
                                                         groupDialog.announcement.roleIds.indexOf(roleId) <
                                                         groupDialog.announcement.roleIds.length - 1
@@ -698,7 +699,7 @@
                                                         <br />
                                                         <template v-for="(permission, pIndex) in role.permissions">
                                                             <span :key="pIndex">{{ permission }}</span>
-                                                            <br />
+                                                            <br :key="pIndex + permission" />
                                                         </template>
                                                     </template>
                                                     <span
@@ -775,13 +776,15 @@
                                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
                                                 <br />
                                                 <template v-for="roleId in post.roleIds">
-                                                    <span
-                                                        v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                        v-if="role.id === roleId"
-                                                        :key="rIndex"
-                                                        v-text="role.name" />
-                                                    <span v-if="post.roleIds.indexOf(roleId) < post.roleIds.length - 1"
-                                                        >,&nbsp;</span
+                                                    <template v-for="role in groupDialog.ref.roles"
+                                                        ><span
+                                                            v-if="role.id === roleId"
+                                                            :key="role.id + roleId"
+                                                            v-text="role.name" />
+                                                    </template>
+                                                    <template
+                                                        v-if="post.roleIds.indexOf(roleId) < post.roleIds.length - 1"
+                                                        ><span :key="roleId">,&nbsp;</span></template
                                                     >
                                                 </template>
                                             </template>
@@ -983,13 +986,13 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-for="roleId in user.roleIds">
-                                            <span
-                                                v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                v-if="role.id === roleId"
-                                                :key="rIndex"
-                                                v-text="role.name" />
-                                            <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                >,&nbsp;</span
+                                            <template v-for="role in groupDialog.ref.roles"
+                                                ><span
+                                                    v-if="role.id === roleId"
+                                                    :key="role.id + roleId"
+                                                    v-text="role.name" /></template
+                                            ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
+                                                ><span :key="roleId">,&nbsp;</span></template
                                             >
                                         </template>
                                     </span>
@@ -1047,19 +1050,18 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-for="roleId in user.roleIds">
-                                            <span
-                                                v-for="(role, rIndex) in groupDialog.ref.roles"
-                                                v-if="role.id === roleId"
-                                                :key="rIndex"
-                                                v-text="role.name" />
-                                            <span v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                >,&nbsp;</span
+                                            <template v-for="role in groupDialog.ref.roles"
+                                                ><span
+                                                    v-if="role.id === roleId"
+                                                    :key="roleId + role"
+                                                    v-text="role.name" /></template
+                                            ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
+                                                ><span :key="roleId">&nbsp;</span></template
                                             >
                                         </template>
                                     </span>
                                 </div>
                             </li>
-                            <!--FIXME: div in ul-->
                             <div
                                 v-if="!isGroupMembersDone"
                                 v-loading="isGroupMembersLoading"

@@ -147,12 +147,11 @@
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
                                 <template slot-scope="scope">
                                     <template v-for="(roleId, index) in scope.row.roleIds">
-                                        <span
-                                            v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
-                                            v-if="role?.id === roleId"
-                                            :key="rIndex"
-                                            >{{ role.name
-                                            }}<span v-if="index < scope.row.roleIds.length - 1">, </span></span
+                                        <template v-for="(role, rIndex) in groupMemberModeration.groupRef.roles">
+                                            <span v-if="role?.id === roleId" :key="roleId + rIndex"
+                                                >{{ role.name
+                                                }}<span v-if="index < scope.row.roleIds.length - 1">, </span></span
+                                            ></template
                                         >
                                     </template>
                                 </template>

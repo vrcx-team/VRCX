@@ -257,7 +257,11 @@
 
                         <template v-if="scope.row.responses">
                             <template v-for="response in scope.row.responses">
-                                <el-tooltip placement="top" :content="response.text" :disabled="hideTooltips">
+                                <el-tooltip
+                                    placement="top"
+                                    :content="response.text"
+                                    :disabled="hideTooltips"
+                                    :key="response.text">
                                     <el-button
                                         v-if="response.icon === 'check'"
                                         type="text"
