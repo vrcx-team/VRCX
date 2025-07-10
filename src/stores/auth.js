@@ -255,16 +255,6 @@ export const useAuthStore = defineStore('Auth', () => {
         }).show();
     }
 
-    API.$on('USER:2FA', function () {
-        AppApi.FocusWindow();
-        promptTOTP();
-    });
-
-    API.$on('USER:EMAILOTP', function () {
-        AppApi.FocusWindow();
-        promptEmailOTP();
-    });
-
     function enablePrimaryPasswordChange() {
         advancedSettingsStore.enablePrimaryPassword =
             !advancedSettingsStore.enablePrimaryPassword;
@@ -747,8 +737,8 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     /**
-     * @param {{ username: string, password: string }} params credential to login
-     * @returns {Promise<{origin: boolean, json: any, params}>}
+     * @param {{ username: string, password: string, saveCredentials: any, cipher: string }} params credential to login
+     * @returns {Promise<{origin: boolean, json: any}>}
      */
     function authLogin(params) {
         let { username, password, saveCredentials, cipher } = params;
@@ -771,22 +761,26 @@ export const useAuthStore = defineStore('Auth', () => {
         }).then((json) => {
             const args = {
                 json,
-                params,
                 origin: true
             };
-            if (
-                json.requiresTwoFactorAuth &&
-                json.requiresTwoFactorAuth.includes('emailOtp')
-            ) {
-                API.$emit('USER:EMAILOTP', args);
-            } else if (json.requiresTwoFactorAuth) {
-                API.$emit('USER:2FA', args);
-            } else {
-                userStore.applyCurrentUser(json);
-                initWebsocket();
-            }
+            handleCurrentUserUpdate(json);
             return args;
         });
+    }
+
+    function handleCurrentUserUpdate(json) {
+        if (
+            json.requiresTwoFactorAuth &&
+            json.requiresTwoFactorAuth.includes('emailOtp')
+        ) {
+            promptEmailOTP();
+        } else if (json.requiresTwoFactorAuth) {
+            promptTOTP();
+        } else {
+            updateLoopStore.nextCurrentUserRefresh = 420; // 7mins
+            userStore.applyCurrentUser(json);
+            initWebsocket();
+        }
     }
 
     /**
@@ -885,6 +879,7 @@ export const useAuthStore = defineStore('Auth', () => {
         login,
         handleAutoLogin,
         handleLogoutEvent,
+        handleCurrentUserUpdate,
         loginComplete
     };
 });

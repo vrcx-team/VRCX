@@ -7,7 +7,6 @@ const API = {};
 API.debug = false;
 API.debugWebSocket = false;
 API.debugUserDiff = false;
-API.debugCurrentUserDiff = false;
 API.debugPhotonLogging = false;
 API.debugGameLog = false;
 API.debugWebRequests = false;

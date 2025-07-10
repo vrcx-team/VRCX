@@ -1712,63 +1712,7 @@ export const useUserStore = defineStore('User', () => {
             const args = {
                 json
             };
-            if (
-                json.requiresTwoFactorAuth &&
-                json.requiresTwoFactorAuth.includes('emailOtp')
-            ) {
-                API.$emit('USER:EMAILOTP', args);
-            } else if (json.requiresTwoFactorAuth) {
-                API.$emit('USER:2FA', args);
-            } else {
-                if (API.debugCurrentUserDiff) {
-                    const ref = args.json;
-                    const $ref = state.currentUser;
-                    const props = {};
-                    for (const prop in $ref) {
-                        if ($ref[prop] !== Object($ref[prop])) {
-                            props[prop] = true;
-                        }
-                    }
-                    for (const prop in ref) {
-                        if (
-                            Array.isArray(ref[prop]) &&
-                            Array.isArray($ref[prop])
-                        ) {
-                            if (!arraysMatch(ref[prop], $ref[prop])) {
-                                props[prop] = true;
-                            }
-                        } else if (ref[prop] !== Object(ref[prop])) {
-                            props[prop] = true;
-                        }
-                    }
-                    let has = false;
-                    for (const prop in props) {
-                        const asis = $ref[prop];
-                        const tobe = ref[prop];
-                        if (asis === tobe) {
-                            delete props[prop];
-                        } else {
-                            if (
-                                prop.startsWith('$') ||
-                                prop === 'offlineFriends' ||
-                                prop === 'onlineFriends' ||
-                                prop === 'activeFriends'
-                            ) {
-                                delete props[prop];
-                                continue;
-                            }
-                            props[prop] = [tobe, asis];
-                            has = true;
-                        }
-                    }
-                    if (has) {
-                        console.log('API.getCurrentUser diff', props);
-                    }
-                }
-                updateLoopStore.nextCurrentUserRefresh = 420; // 7mins
-                applyCurrentUser(json);
-                initWebsocket();
-            }
+            authStore.handleCurrentUserUpdate(json);
             return args;
         });
     }
