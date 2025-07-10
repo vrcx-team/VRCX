@@ -85,6 +85,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     addUserTags(params) {
+        const userStore = useUserStore();
         return request(`users/${getCurrentUserId()}/addTags`, {
             method: 'POST',
             params
@@ -93,7 +94,7 @@ const userReq = {
                 json,
                 params
             };
-            API.$emit('USER:CURRENT', args);
+            userStore.applyCurrentUser(json);
             return args;
         });
     },
@@ -103,6 +104,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     removeUserTags(params) {
+        const userStore = useUserStore();
         return request(`users/${getCurrentUserId()}/removeTags`, {
             method: 'POST',
             params
@@ -111,7 +113,7 @@ const userReq = {
                 json,
                 params
             };
-            API.$emit('USER:CURRENT', args);
+            userStore.applyCurrentUser(json);
             return args;
         });
     },
@@ -148,6 +150,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     saveCurrentUser(params) {
+        const userStore = useUserStore();
         return request(`users/${getCurrentUserId()}`, {
             method: 'PUT',
             params
@@ -156,7 +159,7 @@ const userReq = {
                 json,
                 params
             };
-            API.$emit('USER:CURRENT', args);
+            userStore.applyCurrentUser(json);
             return args;
         });
     },

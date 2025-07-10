@@ -1,5 +1,6 @@
 import { API } from '../service/eventBus';
 import { request } from '../service/request';
+import { useUserStore } from '../stores';
 
 const avatarReq = {
     /**
@@ -89,6 +90,7 @@ const avatarReq = {
      * @returns {Promise<{json: any, params}>}
      */
     selectAvatar(params) {
+        const userStore = useUserStore();
         return request(`avatars/${params.avatarId}/select`, {
             method: 'PUT',
             params
@@ -97,7 +99,7 @@ const avatarReq = {
                 json,
                 params
             };
-            API.$emit('USER:CURRENT', args);
+            userStore.applyCurrentUser(json);
             return args;
         });
     },
@@ -107,6 +109,7 @@ const avatarReq = {
      * @return { Promise<{json: any, params}> }
      */
     selectFallbackAvatar(params) {
+        const userStore = useUserStore();
         return request(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
             params
@@ -115,7 +118,7 @@ const avatarReq = {
                 json,
                 params
             };
-            API.$emit('USER:CURRENT', args);
+            userStore.applyCurrentUser(json);
             return args;
         });
     },

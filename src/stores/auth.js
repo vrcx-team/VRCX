@@ -782,7 +782,7 @@ export const useAuthStore = defineStore('Auth', () => {
             } else if (json.requiresTwoFactorAuth) {
                 API.$emit('USER:2FA', args);
             } else {
-                API.$emit('USER:CURRENT', args);
+                userStore.applyCurrentUser(json);
                 initWebsocket();
             }
             return args;

@@ -296,9 +296,9 @@ export const useFriendStore = defineStore('Friend', () => {
         { flush: 'sync' }
     );
 
-    function updateUserCurrentStatus(args) {
+    function updateUserCurrentStatus(ref) {
         if (watchState.isFriendsLoaded) {
-            refreshFriendsStatus(args.ref, args.fromGetCurrentUser);
+            refreshFriendsStatus(ref);
         }
         updateOnlineFriendCoutner();
 
@@ -416,11 +416,10 @@ export const useFriendStore = defineStore('Friend', () => {
     const pendingOfflineDelay = 180000;
 
     /**
-     * @param {Object} args
+     * @param {string} id
+     * @param {string?} stateInput
      */
-    function updateFriend(args) {
-        const { id, state: state_input, fromGetCurrentUser } = args;
-        const stateInput = state_input;
+    function updateFriend(id, stateInput) {
         const ctx = state.friends.get(id);
         if (typeof ctx === 'undefined') {
             return;
@@ -497,7 +496,6 @@ export const useFriendStore = defineStore('Friend', () => {
             }
             // from getCurrentUser only, fetch user if offline in an instance
             if (
-                fromGetCurrentUser &&
                 ctx.state !== 'online' &&
                 typeof ref !== 'undefined' &&
                 isRealInstance(ref.location)
@@ -567,7 +565,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 ctx.name = ref.displayName;
 
                 // wtf, from getCurrentUser only, fetch user if online in offline location
-                if (fromGetCurrentUser && stateInput === 'online') {
+                if (stateInput === 'online') {
                     if (API.debugFriendState) {
                         console.log(
                             `Fetching friend coming online from getCurrentUser ${ctx.name}`
@@ -730,9 +728,8 @@ export const useFriendStore = defineStore('Friend', () => {
     /**
      * aka: `$app.refreshFriends`
      * @param ref
-     * @param fromGetCurrentUser
      */
-    function refreshFriendsStatus(ref, fromGetCurrentUser) {
+    function refreshFriendsStatus(ref) {
         let id;
         const map = new Map();
         for (id of ref.friends) {
@@ -750,7 +747,7 @@ export const useFriendStore = defineStore('Friend', () => {
         for (const friend of map) {
             const [id, state_input] = friend;
             if (state.friends.has(id)) {
-                updateFriend({ id, state_input, fromGetCurrentUser });
+                updateFriend(id, state_input);
             } else {
                 addFriend(id, state_input);
             }

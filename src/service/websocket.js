@@ -425,12 +425,7 @@ function handlePipeline(args) {
             break;
 
         case 'user-update':
-            API.$emit('USER:CURRENT', {
-                json: content.user,
-                params: {
-                    userId: content.userId
-                }
-            });
+            userStore.applyCurrentUser(content.user);
             break;
 
         case 'user-location':

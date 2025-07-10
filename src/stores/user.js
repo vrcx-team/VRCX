@@ -1710,8 +1710,7 @@ export const useUserStore = defineStore('User', () => {
             method: 'GET'
         }).then((json) => {
             const args = {
-                json,
-                fromGetCurrentUser: true
+                json
             };
             if (
                 json.requiresTwoFactorAuth &&
@@ -1767,104 +1766,15 @@ export const useUserStore = defineStore('User', () => {
                     }
                 }
                 updateLoopStore.nextCurrentUserRefresh = 420; // 7mins
-                API.$emit('USER:CURRENT', args);
+                applyCurrentUser(json);
                 initWebsocket();
             }
             return args;
         });
     }
 
-    API.$on('USER:CURRENT', function (args) {
-        authStore.attemptingAutoLogin = false;
-        const { json } = args;
-        args.ref = applyCurrentUser(json);
-
-        // when isGameRunning use gameLog instead of API
-        const $location = parseLocation(locationStore.lastLocation.location);
-        const $travelingLocation = parseLocation(
-            locationStore.lastLocationDestination
-        );
-        let location = locationStore.lastLocation.location;
-        let instanceId = $location.instanceId;
-        let worldId = $location.worldId;
-        let travelingToLocation = locationStore.lastLocationDestination;
-        let travelingToWorld = $travelingLocation.worldId;
-        let travelingToInstance = $travelingLocation.instanceId;
-        if (!gameStore.isGameRunning && json.presence) {
-            if (isRealInstance(json.presence.world)) {
-                location = `${json.presence.world}:${json.presence.instance}`;
-            } else {
-                location = json.presence.world;
-            }
-            if (isRealInstance(json.presence.travelingToWorld)) {
-                travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
-            } else {
-                travelingToLocation = json.presence.travelingToWorld;
-            }
-            instanceId = json.presence.instance;
-            worldId = json.presence.world;
-            travelingToInstance = json.presence.travelingToInstance;
-            travelingToWorld = json.presence.travelingToWorld;
-        }
-        applyUser({
-            allowAvatarCopying: json.allowAvatarCopying,
-            badges: json.badges,
-            bio: json.bio,
-            bioLinks: json.bioLinks,
-            currentAvatarImageUrl: json.currentAvatarImageUrl,
-            currentAvatarTags: json.currentAvatarTags,
-            currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
-            date_joined: json.date_joined,
-            developerType: json.developerType,
-            displayName: json.displayName,
-            friendKey: json.friendKey,
-            // json.friendRequestStatus - missing from currentUser
-            id: json.id,
-            // instanceId - missing from currentUser
-            isFriend: json.isFriend,
-            last_activity: json.last_activity,
-            last_login: json.last_login,
-            last_mobile: json.last_mobile,
-            last_platform: json.last_platform,
-            // location - missing from currentUser
-            // platform - missing from currentUser
-            // note - missing from currentUser
-            profilePicOverride: json.profilePicOverride,
-            // profilePicOverrideThumbnail - missing from currentUser
-            pronouns: json.pronouns,
-            state: json.state,
-            status: json.status,
-            statusDescription: json.statusDescription,
-            tags: json.tags,
-            // travelingToInstance - missing from currentUser
-            // travelingToLocation - missing from currentUser
-            // travelingToWorld - missing from currentUser
-            userIcon: json.userIcon,
-            // worldId - missing from currentUser
-            fallbackAvatar: json.fallbackAvatar,
-
-            // Location from gameLog/presence
-            location,
-            instanceId,
-            worldId,
-            travelingToLocation,
-            travelingToInstance,
-            travelingToWorld,
-
-            // set VRCX online/offline timers
-            $online_for: state.currentUser.$online_for,
-            $offline_for: state.currentUser.$offline_for,
-            $location_at: state.currentUser.$location_at,
-            $travelingToTime: state.currentUser.$travelingToTime
-        });
-        friendStore.updateUserCurrentStatus(args);
-        friendStore.updateFriendships(args.ref);
-        if (args.ref.pastDisplayNames) {
-            state.pastDisplayNameTable.data = args.ref.pastDisplayNames;
-        }
-    });
-
     function applyCurrentUser(json) {
+        authStore.attemptingAutoLogin = false;
         let ref = state.currentUser;
         if (watchState.isLoggedIn) {
             if (json.currentAvatar !== ref.currentAvatar) {
@@ -1875,26 +1785,6 @@ export const useUserStore = defineStore('User', () => {
                 }
             }
             Object.assign(ref, json);
-            if (ref.homeLocation !== ref.$homeLocation.tag) {
-                ref.$homeLocation = parseLocation(ref.homeLocation);
-                // apply home location name to user dialog
-                if (
-                    state.userDialog.visible &&
-                    state.userDialog.id === ref.id
-                ) {
-                    getWorldName(state.currentUser.homeLocation).then(
-                        (worldName) => {
-                            state.userDialog.$homeLocationName = worldName;
-                        }
-                    );
-                }
-            }
-            ref.$isVRCPlus = ref.tags.includes('system_supporter');
-            appearanceSettingsStore.applyUserTrustLevel(ref);
-            applyUserLanguage(ref);
-            applyPresenceLocation(ref);
-            instanceStore.applyQueuedInstance(ref.queuedInstance);
-            groupStore.applyPresenceGroups(ref);
         } else {
             ref = {
                 acceptedPrivacyVersion: 0,
@@ -2002,17 +1892,112 @@ export const useUserStore = defineStore('User', () => {
             if (gameStore.isGameRunning) {
                 ref.$previousAvatarSwapTime = Date.now();
             }
-            ref.$homeLocation = parseLocation(ref.homeLocation);
-            ref.$isVRCPlus = ref.tags.includes('system_supporter');
-            appearanceSettingsStore.applyUserTrustLevel(ref);
-            applyUserLanguage(ref);
-            applyPresenceLocation(ref);
-            groupStore.applyPresenceGroups(ref);
             state.cachedUsers.clear(); // clear before running applyUser
             state.currentUser = ref;
             authStore.loginComplete();
         }
-        return ref;
+
+        ref.$isVRCPlus = ref.tags.includes('system_supporter');
+        appearanceSettingsStore.applyUserTrustLevel(ref);
+        applyUserLanguage(ref);
+        applyPresenceLocation(ref);
+        groupStore.applyPresenceGroups(ref);
+        instanceStore.applyQueuedInstance(ref.queuedInstance);
+        friendStore.updateUserCurrentStatus(ref);
+        friendStore.updateFriendships(ref);
+        if (ref.homeLocation !== ref.$homeLocation?.tag) {
+            ref.$homeLocation = parseLocation(ref.homeLocation);
+            // apply home location name to user dialog
+            if (state.userDialog.visible && state.userDialog.id === ref.id) {
+                getWorldName(state.currentUser.homeLocation).then(
+                    (worldName) => {
+                        state.userDialog.$homeLocationName = worldName;
+                    }
+                );
+            }
+        }
+        if (ref.pastDisplayNames) {
+            state.pastDisplayNameTable.data = ref.pastDisplayNames;
+        }
+
+        // when isGameRunning use gameLog instead of API
+        const $location = parseLocation(locationStore.lastLocation.location);
+        const $travelingLocation = parseLocation(
+            locationStore.lastLocationDestination
+        );
+        let location = locationStore.lastLocation.location;
+        let instanceId = $location.instanceId;
+        let worldId = $location.worldId;
+        let travelingToLocation = locationStore.lastLocationDestination;
+        let travelingToWorld = $travelingLocation.worldId;
+        let travelingToInstance = $travelingLocation.instanceId;
+        if (!gameStore.isGameRunning && json.presence) {
+            if (isRealInstance(json.presence.world)) {
+                location = `${json.presence.world}:${json.presence.instance}`;
+            } else {
+                location = json.presence.world;
+            }
+            if (isRealInstance(json.presence.travelingToWorld)) {
+                travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
+            } else {
+                travelingToLocation = json.presence.travelingToWorld;
+            }
+            instanceId = json.presence.instance;
+            worldId = json.presence.world;
+            travelingToInstance = json.presence.travelingToInstance;
+            travelingToWorld = json.presence.travelingToWorld;
+        }
+        applyUser({
+            allowAvatarCopying: json.allowAvatarCopying,
+            badges: json.badges,
+            bio: json.bio,
+            bioLinks: json.bioLinks,
+            currentAvatarImageUrl: json.currentAvatarImageUrl,
+            currentAvatarTags: json.currentAvatarTags,
+            currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
+            date_joined: json.date_joined,
+            developerType: json.developerType,
+            displayName: json.displayName,
+            friendKey: json.friendKey,
+            // json.friendRequestStatus - missing from currentUser
+            id: json.id,
+            // instanceId - missing from currentUser
+            isFriend: json.isFriend,
+            last_activity: json.last_activity,
+            last_login: json.last_login,
+            last_mobile: json.last_mobile,
+            last_platform: json.last_platform,
+            // location - missing from currentUser
+            // platform - missing from currentUser
+            // note - missing from currentUser
+            profilePicOverride: json.profilePicOverride,
+            // profilePicOverrideThumbnail - missing from currentUser
+            pronouns: json.pronouns,
+            state: json.state,
+            status: json.status,
+            statusDescription: json.statusDescription,
+            tags: json.tags,
+            // travelingToInstance - missing from currentUser
+            // travelingToLocation - missing from currentUser
+            // travelingToWorld - missing from currentUser
+            userIcon: json.userIcon,
+            // worldId - missing from currentUser
+            fallbackAvatar: json.fallbackAvatar,
+
+            // Location from gameLog/presence
+            location,
+            instanceId,
+            worldId,
+            travelingToLocation,
+            travelingToInstance,
+            travelingToWorld,
+
+            // set VRCX online/offline timers
+            $online_for: state.currentUser.$online_for,
+            $offline_for: state.currentUser.$offline_for,
+            $location_at: state.currentUser.$location_at,
+            $travelingToTime: state.currentUser.$travelingToTime
+        });
     }
 
     return {
@@ -2027,6 +2012,7 @@ export const useUserStore = defineStore('User', () => {
         showUserDialogHistory,
         customUserTags,
         cachedUsers,
+        applyCurrentUser,
         applyUser,
         showUserDialog,
         applyUserDialogLocation,
