@@ -22,7 +22,6 @@ export default defineConfig([
                 Discord: 'readonly',
                 AppApi: 'readonly',
                 AppApiVr: 'readonly',
-                SharedVariable: 'readonly',
                 WebApi: 'readonly',
                 AssetBundleManager: 'readonly',
                 WINDOWS: 'readonly',
