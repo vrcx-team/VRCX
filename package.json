@@ -36,6 +36,7 @@
         "@fontsource/noto-sans-tc": "^5.2.6",
         "@infolektuell/noto-color-emoji": "^0.2.0",
         "@prettier/plugin-pug": "^3.4.0",
+        "@types/node": "^24.0.12",
         "animate.css": "^4.1.1",
         "copy-webpack-plugin": "^13.0.0",
         "cross-env": "^7.0.3",

@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 declare global {
     const WINDOWS: boolean;
     const LINUX: boolean;
@@ -38,7 +40,7 @@ declare global {
     const LogWatcher: {
         Get(): Promise<Array<[string, string, string, ...any[]]>>;
         SetDateTill(date: string): Promise<void>;
-        GetLogLinesL(): Array<any>;
+        GetLogLines(): Array<any>;
         Reset(): Promise<void>;
     };
 
@@ -63,71 +65,77 @@ declare global {
 
     const AppApi: {
         // Basic App Functions
-        ShowDevTools(): void;
+        ShowDevTools(): Promise<void>;
         SetVR(
             active: boolean,
             hmdOverlay: boolean,
             wristOverlay: boolean,
             menuButton: boolean,
             overlayHand: number
-        ): void;
-        RefreshVR(): void;
-        RestartVR(): void;
-        SetZoom(zoomLevel: number): void;
+        ): Promise<void>;
+        RefreshVR(): Promise<void>;
+        RestartVR(): Promise<void>;
+        SetZoom(zoomLevel: number): Promise<void>;
         GetZoom(): Promise<number>;
         DesktopNotification(
             boldText: string,
             text?: string,
             image?: string
-        ): void;
-        RestartApplication(isUpgrade: boolean): void;
-        CheckForUpdateExe(): boolean;
-        ExecuteAppFunction(key: string, json: string): void;
-        ExecuteVrFeedFunction(key: string, json: string): void;
-        ExecuteVrOverlayFunction(key: string, json: string): void;
-        FocusWindow(): void;
-        ChangeTheme(value: number): void;
-        DoFunny(): void;
-        GetClipboard(): string;
-        SetStartup(enabled: boolean): void;
-        CopyImageToClipboard(path: string): void;
-        FlashWindow(): void;
-        SetUserAgent(): void;
-        IsRunningUnderWine(): boolean;
+        ): Promise<void>;
+        RestartApplication(isUpgrade: boolean): Promise<void>;
+        CheckForUpdateExe(): Promise<boolean>;
+        ExecuteAppFunction(key: string, json: string): Promise<void>;
+        ExecuteVrFeedFunction(key: string, json: string): Promise<void>;
+        ExecuteVrOverlayFunction(key: string, json: string): Promise<void>;
+        FocusWindow(): Promise<void>;
+        ChangeTheme(value: number): Promise<void>;
+        DoFunny(): Promise<void>;
+        GetClipboard(): Promise<string>;
+        SetStartup(enabled: boolean): Promise<void>;
+        CopyImageToClipboard(path: string): Promise<void>;
+        FlashWindow(): Promise<void>;
+        SetUserAgent(): Promise<void>;
+        IsRunningUnderWine(): Promise<boolean>;
 
         // Common Functions
-        MD5File(blob: string): string;
-        GetColourFromUserID(userId: string): number;
-        SignFile(blob: string): string;
-        FileLength(blob: string): string;
-        OpenLink(url: string): void;
-        GetLaunchCommand(): string;
-        IPCAnnounceStart(): void;
-        SendIpc(type: string, data: string): void;
-        CustomCssPath(): string;
-        CustomScriptPath(): string;
-        CurrentCulture(): string;
-        CurrentLanguage(): string;
-        GetVersion(): string;
-        VrcClosedGracefully(): boolean;
-        GetColourBulk(userIds: string[]): Record<string, number>;
-        SetAppLauncherSettings(enabled: boolean, killOnExit: boolean): void;
-        GetFileBase64(path: string): string | null;
+        MD5File(blob: string): Promise<string>;
+        GetColourFromUserID(userId: string): Promise<number>;
+        SignFile(blob: string): Promise<string>;
+        FileLength(blob: string): Promise<string>;
+        OpenLink(url: string): Promise<void>;
+        GetLaunchCommand(): Promise<string>;
+        IPCAnnounceStart(): Promise<void>;
+        SendIpc(type: string, data: string): Promise<void>;
+        CustomCssPath(): Promise<string>;
+        CustomScriptPath(): Promise<string>;
+        CurrentCulture(): Promise<string>;
+        CurrentLanguage(): Promise<string>;
+        GetVersion(): Promise<string>;
+        VrcClosedGracefully(): Promise<boolean>;
+        GetColourBulk(userIds: string[]): Promise<Record<string, number>>;
+        SetAppLauncherSettings(
+            enabled: boolean,
+            killOnExit: boolean
+        ): Promise<void>;
+        GetFileBase64(path: string): Promise<string | null>;
 
         // Folders
-        GetVRChatAppDataLocation(): string;
-        GetVRChatPhotosLocation(): string;
-        GetUGCPhotoLocation(path?: string): string;
-        GetVRChatScreenshotsLocation(): string;
-        GetVRChatCacheLocation(): string;
-        OpenVrcxAppDataFolder(): boolean;
-        OpenVrcAppDataFolder(): boolean;
-        OpenVrcPhotosFolder(): boolean;
-        OpenUGCPhotosFolder(ugcPath?: string): boolean;
-        OpenVrcScreenshotsFolder(): boolean;
-        OpenCrashVrcCrashDumps(): boolean;
-        OpenShortcutFolder(): void;
-        OpenFolderAndSelectItem(path: string, isFolder?: boolean): void;
+        GetVRChatAppDataLocation(): Promise<string>;
+        GetVRChatPhotosLocation(): Promise<string>;
+        GetUGCPhotoLocation(path?: string): Promise<string>;
+        GetVRChatScreenshotsLocation(): Promise<string>;
+        GetVRChatCacheLocation(): Promise<string>;
+        OpenVrcxAppDataFolder(): Promise<boolean>;
+        OpenVrcAppDataFolder(): Promise<boolean>;
+        OpenVrcPhotosFolder(): Promise<boolean>;
+        OpenUGCPhotosFolder(ugcPath?: string): Promise<boolean>;
+        OpenVrcScreenshotsFolder(): Promise<boolean>;
+        OpenCrashVrcCrashDumps(): Promise<boolean>;
+        OpenShortcutFolder(): Promise<void>;
+        OpenFolderAndSelectItem(
+            path: string,
+            isFolder?: boolean
+        ): Promise<void>;
         OpenFolderSelectorDialog(defaultPath?: string): Promise<string>;
         OpenFileSelectorDialog(
             defaultPath?: string,
@@ -136,28 +144,33 @@ declare global {
         ): Promise<string>;
 
         // Game Handler
-        OnProcessStateChanged(monitoredProcess: any): void;
-        CheckGameRunning(): void;
-        IsGameRunning(): boolean;
-        IsSteamVRRunning(): boolean;
-        QuitGame(): number;
-        StartGame(arguments: string): boolean;
-        StartGameFromPath(path: string, arguments: string): boolean;
+        OnProcessStateChanged(monitoredProcess: any): Promise<void>;
+        CheckGameRunning(): Promise<void>;
+        IsGameRunning(): Promise<boolean>;
+        IsSteamVRRunning(): Promise<boolean>;
+        QuitGame(): Promise<number>;
+        StartGame(arguments: string): Promise<boolean>;
+        StartGameFromPath(path: string, arguments: string): Promise<boolean>;
 
         // Registry
-        GetVRChatRegistryKey(key: string): any;
-        GetVRChatRegistryKeyString(key: string): string;
-        SetVRChatRegistryKey(key: string, value: any, typeInt: number): boolean;
-        GetVRChatRegistry(): Record<string, Record<string, any>>;
-        SetVRChatRegistry(json: string): void;
-        HasVRChatRegistryFolder(): boolean;
-        DeleteVRChatRegistryFolder(): void;
-        ReadVrcRegJsonFile(filepath: string): string;
+        GetVRChatRegistryKey(key: string): Promise<any>;
+        GetVRChatRegistryKeyString(key: string): Promise<string>;
+        SetVRChatRegistryKey(
+            key: string,
+            value: any,
+            typeInt: number
+        ): Promise<boolean>;
+        GetVRChatRegistry(): Promise<Record<string, Record<string, any>>>;
+        SetVRChatRegistry(json: string): Promise<void>;
+        HasVRChatRegistryFolder(): Promise<boolean>;
+        DeleteVRChatRegistryFolder(): Promise<void>;
+        ReadVrcRegJsonFile(filepath: string): Promise<string>;
+        GetVRChatRegistryJson: () => Promise<string>;
 
         // Image Functions
-        PopulateImageHosts(json: string): void;
+        PopulateImageHosts(json: string): Promise<void>;
         GetImage(url: string, fileId: string, version: string): Promise<string>;
-        ResizeImageToFitLimits(base64data: string): string;
+        ResizeImageToFitLimits(base64data: string): Promise<string>;
         CropAllPrints(ugcFolderPath: string): Promise<void>;
         CropPrintImage(path: string): Promise<boolean>;
         SavePrintToFile(
@@ -185,30 +198,36 @@ declare global {
             metadataString: string,
             worldId: string,
             changeFilename?: boolean
-        ): string;
-        GetExtraScreenshotData(path: string, carouselCache: boolean): string;
-        GetScreenshotMetadata(path: string): string;
+        ): Promise<string>;
+        GetExtraScreenshotData(
+            path: string,
+            carouselCache: boolean
+        ): Promise<string>;
+        GetScreenshotMetadata(path: string): Promise<string>;
         FindScreenshotsBySearch(
             searchQuery: string,
             searchType?: number
-        ): string;
-        GetLastScreenshot(): string;
+        ): Promise<string>;
+        GetLastScreenshot(): Promise<string>;
 
         // Moderations
         GetVRChatModerations(
             currentUserId: string
-        ): Record<string, number> | null;
-        GetVRChatUserModeration(currentUserId: string, userId: string): number;
+        ): Promise<Record<string, number> | null>;
+        GetVRChatUserModeration(
+            currentUserId: string,
+            userId: string
+        ): Promise<number>;
         SetVRChatUserModeration(
             currentUserId: string,
             userId: string,
             type: number
-        ): boolean;
+        ): Promise<boolean>;
 
         // VRC Config
-        ReadConfigFile(): string;
-        ReadConfigFileSafe(): string;
-        WriteConfigFile(json: string): void;
+        ReadConfigFile(): Promise<string>;
+        ReadConfigFileSafe(): Promise<string>;
+        WriteConfigFile(json: string): Promise<void>;
 
         // Update
         DownloadUpdate(
@@ -217,8 +236,8 @@ declare global {
             hashUrl: string,
             downloadSize: number
         ): Promise<void>;
-        CancelUpdate(): void;
-        CheckUpdateProgress(): number;
+        CancelUpdate(): Promise<void>;
+        CheckUpdateProgress(): Promise<number>;
 
         // Notifications
         XSNotification(
@@ -227,7 +246,7 @@ declare global {
             timeout: number,
             opacity: number,
             image?: string
-        ): void;
+        ): Promise<void>;
         OVRTNotification(
             hudNotification: boolean,
             wristNotification: boolean,
@@ -236,7 +255,7 @@ declare global {
             timeout: number,
             opacity: number,
             image?: string
-        ): void;
+        ): Promise<void>;
     };
 
     const AppApiVr: {
@@ -294,17 +313,17 @@ declare global {
         }): Promise<{ status: number; data: string }>;
     };
 
-    // simple node.js process type definitions
-    const process: {
-        env: Record<string, string | undefined>;
-        platform: string;
-        version: string;
-        versions: Record<string, string>;
-        argv: string[];
-        cwd(): string;
-        exit(code?: number): never;
-        nextTick(callback: (...args: any[]) => void): void;
-    };
+    // // simple node.js process type definitions
+    // const process: {
+    //     env: Record<string, string | undefined>;
+    //     platform: string;
+    //     version: string;
+    //     versions: Record<string, string>;
+    //     argv: string[];
+    //     cwd(): string;
+    //     exit(code?: number): never;
+    //     nextTick(callback: (...args: any[]) => void): void;
+    // };
 }
 
 export {};
