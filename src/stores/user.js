@@ -524,29 +524,6 @@ export const useUserStore = defineStore('User', () => {
                 ref.$location_at = player.joinTime;
                 ref.$online_for = player.joinTime;
             }
-            if (ref.location === 'traveling') {
-                ref.$location = parseLocation(ref.travelingToLocation);
-                if (
-                    !state.currentTravelers.has(ref.id) &&
-                    ref.travelingToLocation
-                ) {
-                    const travelRef = {
-                        created_at: new Date().toJSON(),
-                        ...ref
-                    };
-                    state.currentTravelers.set(ref.id, travelRef);
-                    sharedFeedStore.sharedFeed.pendingUpdate = true;
-                    sharedFeedStore.updateSharedFeed(false);
-                    onPlayerTraveling(travelRef);
-                }
-            } else {
-                ref.$location = parseLocation(ref.location);
-                if (state.currentTravelers.has(ref.id)) {
-                    state.currentTravelers.delete(ref.id);
-                    sharedFeedStore.sharedFeed.pendingUpdate = true;
-                    sharedFeedStore.updateSharedFeed(false);
-                }
-            }
             if (ref.isFriend || ref.id === state.currentUser.id) {
                 // update instancePlayerCount
                 let newCount = state.instancePlayerCount.get(ref.location);
@@ -564,9 +541,6 @@ export const useUserStore = defineStore('User', () => {
                 ref.$customTag = '';
                 ref.$customTagColour = '';
             }
-            ref.$isVRCPlus = ref.tags.includes('system_supporter');
-            appearanceSettingsStore.applyUserTrustLevel(ref);
-            applyUserLanguage(ref);
             state.cachedUsers.set(ref.id, ref);
         } else {
             const props = {};
@@ -577,30 +551,6 @@ export const useUserStore = defineStore('User', () => {
             }
             const $ref = { ...ref };
             Object.assign(ref, json);
-            ref.$isVRCPlus = ref.tags.includes('system_supporter');
-            appearanceSettingsStore.applyUserTrustLevel(ref);
-            applyUserLanguage(ref);
-            // traveling
-            if (ref.location === 'traveling') {
-                ref.$location = parseLocation(ref.travelingToLocation);
-                if (!state.currentTravelers.has(ref.id)) {
-                    const travelRef = {
-                        created_at: new Date().toJSON(),
-                        ...ref
-                    };
-                    state.currentTravelers.set(ref.id, travelRef);
-                    sharedFeedStore.sharedFeed.pendingUpdate = true;
-                    sharedFeedStore.updateSharedFeed(false);
-                    onPlayerTraveling(travelRef);
-                }
-            } else {
-                ref.$location = parseLocation(ref.location);
-                if (state.currentTravelers.has(ref.id)) {
-                    state.currentTravelers.delete(ref.id);
-                    sharedFeedStore.sharedFeed.pendingUpdate = true;
-                    sharedFeedStore.updateSharedFeed(false);
-                }
-            }
             for (const prop in ref) {
                 if (Array.isArray(ref[prop]) && Array.isArray($ref[prop])) {
                     if (!arraysMatch(ref[prop], $ref[prop])) {
@@ -624,7 +574,6 @@ export const useUserStore = defineStore('User', () => {
             if ($ref.note !== null && $ref.note !== ref.note) {
                 checkNote(ref.id, ref.note);
             }
-            // FIXME
             // if the status is offline, just ignore status and statusDescription only.
             if (has && ref.status !== 'offline' && $ref.status !== 'offline') {
                 if (props.location && props.location[0] !== 'traveling') {
@@ -640,6 +589,33 @@ export const useUserStore = defineStore('User', () => {
                         console.log('>', ref.displayName, props);
                     }
                 }
+            }
+        }
+        ref.$isVRCPlus = ref.tags.includes('system_supporter');
+        appearanceSettingsStore.applyUserTrustLevel(ref);
+        applyUserLanguage(ref);
+        // traveling
+        if (ref.location === 'traveling') {
+            ref.$location = parseLocation(ref.travelingToLocation);
+            if (
+                !state.currentTravelers.has(ref.id) &&
+                ref.travelingToLocation
+            ) {
+                const travelRef = {
+                    created_at: new Date().toJSON(),
+                    ...ref
+                };
+                state.currentTravelers.set(ref.id, travelRef);
+                sharedFeedStore.sharedFeed.pendingUpdate = true;
+                sharedFeedStore.updateSharedFeed(false);
+                onPlayerTraveling(travelRef);
+            }
+        } else {
+            ref.$location = parseLocation(ref.location);
+            if (state.currentTravelers.has(ref.id)) {
+                state.currentTravelers.delete(ref.id);
+                sharedFeedStore.sharedFeed.pendingUpdate = true;
+                sharedFeedStore.updateSharedFeed(false);
             }
         }
         if (
@@ -671,14 +647,6 @@ export const useUserStore = defineStore('User', () => {
             }
             locationStore.updateCurrentUserLocation();
         }
-        userApply(ref);
-        return ref;
-    }
-
-    /**
-     * aka: `API.$on('USER:APPLY')`
-     */
-    function userApply(ref) {
         // add user ref to playerList, friendList, photonLobby, photonLobbyCurrent
         const playerListRef = locationStore.lastLocation.playerList.get(ref.id);
         if (playerListRef) {
@@ -714,6 +682,7 @@ export const useUserStore = defineStore('User', () => {
             });
             instanceStore.getCurrentInstanceUserList();
         }
+        return ref;
     }
 
     /**
