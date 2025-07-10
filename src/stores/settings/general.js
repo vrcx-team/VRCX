@@ -176,7 +176,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         );
     }
     /**
-     * @param {string} value
+     * @param {string[]} value
      */
     function setLocalFavoriteFriendsGroups(value) {
         state.localFavoriteFriendsGroups = value;

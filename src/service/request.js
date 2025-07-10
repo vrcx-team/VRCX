@@ -259,27 +259,27 @@ export function request(endpoint, options) {
  * @param {string} [endpoint]
  */
 export function $throw(code, error, endpoint) {
-    let text = [];
+    let message = [];
     if (code > 0) {
         const status = statusCodes[code];
         if (typeof status === 'undefined') {
-            text.push(`${code}`);
+            message.push(`${code}`);
         } else {
             const codeText = t(`api.status_code.${code}`);
-            text.push(`${code} ${codeText}`);
+            message.push(`${code} ${codeText}`);
         }
     }
     if (typeof error !== 'undefined') {
-        text.push(
+        message.push(
             `${t('api.error.message.error_message')}: ${typeof error === 'string' ? error : JSON.stringify(error)}`
         );
     }
     if (typeof endpoint !== 'undefined') {
-        text.push(
+        message.push(
             `${t('api.error.message.endpoint')}: "${typeof endpoint === 'string' ? endpoint : JSON.stringify(endpoint)}"`
         );
     }
-    text = text.map((s) => escapeTag(s)).join('<br>');
+    const text = message.map((s) => escapeTag(s)).join('<br>');
     if (text.length) {
         if (API.errorNoty) {
             API.errorNoty.close();

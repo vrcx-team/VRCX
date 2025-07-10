@@ -368,7 +368,7 @@ export const useFriendStore = defineStore('Friend', () => {
     /**
      * @param {string} value
      */
-    function updateLocalFavoriteFriends(value) {
+    function updateLocalFavoriteFriends(value = undefined) {
         const favoriteStore = useFavoriteStore();
         const { cachedFavorites } = favoriteStore;
         generalSettingsStore.setLocalFavoriteFriendsGroups(
@@ -442,7 +442,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         const isVIP = state.localFavoriteFriends.has(id);
         let location = '';
-        let $location_at = '';
+        let $location_at = undefined;
         if (typeof ref !== 'undefined') {
             location = ref.location;
             $location_at = ref.$location_at;

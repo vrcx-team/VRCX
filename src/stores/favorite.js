@@ -667,7 +667,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @param {boolean} sortTop
      * @returns {Promise<void>}
      */
-    async function applyFavorite(type, objectId, sortTop) {
+    async function applyFavorite(type, objectId, sortTop = false) {
         let ref;
         const favorite = state.cachedFavoritesByObjectId.get(objectId);
         let ctx = state.favoriteObjects.get(objectId);
