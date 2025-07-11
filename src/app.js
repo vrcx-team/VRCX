@@ -7526,8 +7526,28 @@ console.log(`isLinux: ${LINUX}`);
                 this.overlaybutton,
                 this.overlayHand
             );
+
+            if (LINUX) {
+                window.electron.updateVr(
+                    true,
+                    hmdOverlay,
+                    this.overlayWrist,
+                    this.overlaybutton,
+                    this.overlayHand
+                );
+            }
         } else {
             AppApi.SetVR(false, false, false, false, 0);
+
+            if (LINUX) {
+                window.electron.updateVr(
+                    true,
+                    false,
+                    false,
+                    false,
+                    0
+                );
+            }
         }
     };
 

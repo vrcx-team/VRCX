@@ -328,7 +328,6 @@ namespace VRCX
 
             if (_hmdOverlayActive != _hmdOverlayWasActive && _hmdOverlayHandle != 0)
             {
-                Console.WriteLine($"VR - DestroyOverlay({_hmdOverlayHandle})");
                 OpenVR.Overlay.DestroyOverlay(_hmdOverlayHandle);
                 _hmdOverlayHandle = 0;
             }
@@ -337,7 +336,6 @@ namespace VRCX
 
             if (_wristOverlayActive != _wristOverlayWasActive && _wristOverlayHandle != 0)
             {
-                Console.WriteLine($"VR - DestroyOverlay({_wristOverlayHandle})");
                 OpenVR.Overlay.DestroyOverlay(_wristOverlayHandle);
                 _wristOverlayHandle = 0;
             }
@@ -535,14 +533,10 @@ namespace VRCX
 
         internal EVROverlayError ProcessDashboard(CVROverlay overlay, ref ulong dashboardHandle, bool dashboardVisible)
         {
-            //Console.WriteLine("VR - Overlay: Dashboard");
-
             var err = EVROverlayError.None;
 
             if (dashboardHandle == 0)
             {
-                Console.WriteLine("VR - Overlay: Dashboard");
-
                 err = overlay.FindOverlay("VRCX", ref dashboardHandle);
                 if (err != EVROverlayError.None)
                 {
@@ -858,8 +852,6 @@ namespace VRCX
             //if (_hmdOverlaySocket == null || !_hmdOverlaySocket.Connected) return;
             // if (_wristOverlay.IsLoading)
             //     Restart();
-            // _wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
-            //Console.WriteLine($"ExecuteVrFeedFunction: {function}");
 
             _wristFeedFunctionQueue.Enqueue(new KeyValuePair<string, string>(function, json));
         }
@@ -874,7 +866,6 @@ namespace VRCX
             //if (_hmdOverlaySocket == null || !_hmdOverlaySocket.Connected) return;
             // if (_hmdOverlay.IsLoading)
             //     Restart();
-            //  _hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
 
             _hmdFeedFunctionQueue.Enqueue(new KeyValuePair<string, string>(function, json));
         }

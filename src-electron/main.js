@@ -153,6 +153,25 @@ ipcMain.handle('app:restart', () => {
     }
 });
 
+ipcMain.handle('app:updateVr', (event, active, hmdOverlay, wristOverlay, menuButton, overlayHand) => {
+    if (!active) {
+        dispose();
+        return;
+    }
+
+    if (!hmdOverlay) {
+        destroyHmdOverlayWindow();
+    } else if (active && !hmdOverlayWindow) {
+        createHmdOverlayWindowOffscreen();
+    }
+
+    if (!wristOverlay) {
+        destroyWristOverlayWindow();
+    } else if (active && !wristOverlayWindow) {
+        createWristOverlayWindowOffscreen();
+    }
+});
+
 function tryRelaunchWithArgs(args) {
     if (
         process.platform !== 'linux' ||
@@ -337,6 +356,13 @@ function writeWristFrame(imageBuffer) {
     }
 }
 
+function destroyWristOverlayWindow() {
+    if (wristOverlayWindow && !wristOverlayWindow.isDestroyed()) {
+        wristOverlayWindow.close();
+    }
+    wristOverlayWindow = undefined;
+}
+
 let hmdOverlayWindow = undefined;
 
 function createHmdOverlayWindowOffscreen() {
@@ -363,7 +389,7 @@ function createHmdOverlayWindowOffscreen() {
             userAgent: version
         }
     });
-    hmdOverlayWindow.webContents.setFrameRate(24);
+    hmdOverlayWindow.webContents.setFrameRate(48);
 
     const indexPath = path.join(rootDir, 'build/html/vr.html');
     const fileUrl = `file://${indexPath}?2`;
@@ -390,6 +416,13 @@ function writeHmdFrame(imageBuffer) {
     } catch (err) {
         console.error('Error writing HMD frame to shared memory:', err);
     }
+}
+
+function destroyHmdOverlayWindow() {
+    if (hmdOverlayWindow && !hmdOverlayWindow.isDestroyed()) {
+        hmdOverlayWindow.close();
+    }
+    hmdOverlayWindow = undefined;
 }
 
 function createTray() {
@@ -746,16 +779,11 @@ function dispose() {
         hmdOverlayWindow.close();
     }
     
-    // Clean up shared memory files
-    try {
-        if (fs.existsSync(WRIST_SHM_PATH)) {
-            fs.unlinkSync(WRIST_SHM_PATH);
-        }
-        if (fs.existsSync(HMD_SHM_PATH)) {
-            fs.unlinkSync(HMD_SHM_PATH);
-        }
-    } catch (err) {
-        console.error('Error cleaning up shared memory files:', err);
+    if (fs.existsSync(WRIST_SHM_PATH)) {
+        fs.unlinkSync(WRIST_SHM_PATH);
+    }
+    if (fs.existsSync(HMD_SHM_PATH)) {
+        fs.unlinkSync(HMD_SHM_PATH);
     }
 }
 
