@@ -42,6 +42,20 @@ require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
 
+const WRIST_FRAME_WIDTH = 512;
+const WRIST_FRAME_HEIGHT = 512;
+const WRIST_FRAME_SIZE = WRIST_FRAME_WIDTH * WRIST_FRAME_HEIGHT * 4;
+const WRIST_SHM_PATH = '/dev/shm/vrcx_wrist_overlay';
+
+const HMD_FRAME_WIDTH = 1024;
+const HMD_FRAME_HEIGHT = 1024;
+const HMD_FRAME_SIZE = HMD_FRAME_WIDTH * HMD_FRAME_HEIGHT * 4;
+const HMD_SHM_PATH = '/dev/shm/vrcx_hmd_overlay';
+
+// Create shared memory files
+fs.writeFileSync(WRIST_SHM_PATH, Buffer.alloc(WRIST_FRAME_SIZE + 1));
+fs.writeFileSync(HMD_SHM_PATH, Buffer.alloc(HMD_FRAME_SIZE + 1));
+
 const version = getVersion();
 interopApi.getDotNetObject('ProgramElectron').PreInit(version, args);
 interopApi.getDotNetObject('VRCXStorage').Load();
@@ -266,33 +280,13 @@ function createWindow() {
     });
 }
 
-const net = require('net');
-
-const WRIST_OVERLAY_SOCKET_PATH = '/tmp/vrcx_frame1.sock';
-if (fs.existsSync(WRIST_OVERLAY_SOCKET_PATH)) {
-    fs.unlinkSync(WRIST_OVERLAY_SOCKET_PATH);
-}
-
 let wristOverlayWindow = undefined;
-
-// Create a Unix socket server to send frame data
-const wristOverlayServer = net.createServer((wristOverlaySocket) => {
-    setInterval(() => {
-        if (wristOverlayWindow && !wristOverlayWindow.isDestroyed()) {
-            wristOverlayWindow.webContents.capturePage().then(image => {
-                const buffer = image.toBitmap(); // Get raw pixels (RGBA)
-                wristOverlaySocket.write(buffer);
-            }).catch(err => console.error('Error capturing page:', err));
-        }
-    }, 1000 / 2); // 24 FPS
-});
-wristOverlayServer.listen(WRIST_OVERLAY_SOCKET_PATH);
 
 function createWristOverlayWindowOffscreen() {
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
-    const width = 512;
-    const height = 512;
+    const width = WRIST_FRAME_WIDTH;
+    const height = WRIST_FRAME_HEIGHT;
 
     wristOverlayWindow = new BrowserWindow({
         x,
@@ -310,38 +304,40 @@ function createWristOverlayWindowOffscreen() {
             userAgent: version
         }
     });
-    wristOverlayWindow.webContents.setFrameRate(2);
+    wristOverlayWindow.webContents.setFrameRate(24);
 
     const indexPath = path.join(rootDir, 'build/html/vr.html');
     const fileUrl = `file://${indexPath}?1`;
     wristOverlayWindow.loadURL(fileUrl, { userAgent: version });
+
+    // Write to shared memory at 2 FPS
+    setInterval(() => {
+        if (wristOverlayWindow && !wristOverlayWindow.isDestroyed()) {
+            wristOverlayWindow.webContents.capturePage().then(image => {
+                const buffer = image.toBitmap();
+                writeWristFrame(buffer);
+            }).catch(err => console.error('Error capturing wrist overlay page:', err));
+        }
+    }, 1000 / 2);
 }
 
-const HMD_OVERLAY_SOCKET_PATH = '/tmp/vrcx_frame2.sock';
-if (fs.existsSync(HMD_OVERLAY_SOCKET_PATH)) {
-    fs.unlinkSync(HMD_OVERLAY_SOCKET_PATH);
+function writeWristFrame(imageBuffer) {
+    const fd = fs.openSync(WRIST_SHM_PATH, 'r+');
+    const buffer = Buffer.alloc(WRIST_FRAME_SIZE + 1);
+    buffer[0] = 0; // not ready
+    imageBuffer.copy(buffer, 1, 0, WRIST_FRAME_SIZE);
+    buffer[0] = 1; // ready
+    fs.writeSync(fd, buffer);
+    fs.closeSync(fd);
 }
 
 let hmdOverlayWindow = undefined;
 
-// Create a Unix socket server to send frame data
-const hmdOverlayServer = net.createServer((hmdOverlaySocket) => {
-    setInterval(() => {
-        if (hmdOverlayWindow && !hmdOverlayWindow.isDestroyed()) {
-            hmdOverlayWindow.webContents.capturePage().then(image => {
-                const buffer = image.toBitmap(); // Get raw pixels (RGBA)
-                hmdOverlaySocket.write(buffer);
-            }).catch(err => console.error('Error capturing page:', err));
-        }
-    }, 1000 / 24); // 24 FPS
-});
-hmdOverlayServer.listen(HMD_OVERLAY_SOCKET_PATH);
-
 function createHmdOverlayWindowOffscreen() {
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
-    const width = 1024;
-    const height = 1024;
+    const width = HMD_FRAME_WIDTH;
+    const height = HMD_FRAME_HEIGHT;
 
     hmdOverlayWindow = new BrowserWindow({
         x,
@@ -364,6 +360,26 @@ function createHmdOverlayWindowOffscreen() {
     const indexPath = path.join(rootDir, 'build/html/vr.html');
     const fileUrl = `file://${indexPath}?2`;
     hmdOverlayWindow.loadURL(fileUrl, { userAgent: version });
+
+    // Write to shared memory at 24 FPS
+    setInterval(() => {
+        if (hmdOverlayWindow && !hmdOverlayWindow.isDestroyed()) {
+            hmdOverlayWindow.webContents.capturePage().then(image => {
+                const buffer = image.toBitmap();
+                writeHmdFrame(buffer);
+            }).catch(err => console.error('Error capturing HMD overlay page:', err));
+        }
+    }, 1000 / 24);
+}
+
+function writeHmdFrame(imageBuffer) {
+    const fd = fs.openSync(HMD_SHM_PATH, 'r+');
+    const buffer = Buffer.alloc(HMD_FRAME_SIZE + 1);
+    buffer[0] = 0; // not ready
+    imageBuffer.copy(buffer, 1, 0, HMD_FRAME_SIZE);
+    buffer[0] = 1; // ready
+    fs.writeSync(fd, buffer);
+    fs.closeSync(fd);
 }
 
 function createTray() {
@@ -713,25 +729,23 @@ app.whenReady().then(() => {
 });
 
 function dispose() {
-    if (wristOverlayServer) {
-        wristOverlayServer.close();
-    }
-    if (hmdOverlayServer) {
-        hmdOverlayServer.close();
-    }
-
-    if (fs.existsSync(WRIST_OVERLAY_SOCKET_PATH)) {
-        fs.unlinkSync(WRIST_OVERLAY_SOCKET_PATH);
-    }
-    if (fs.existsSync(HMD_OVERLAY_SOCKET_PATH)) {
-        fs.unlinkSync(HMD_OVERLAY_SOCKET_PATH);
-    }
-
     if (wristOverlayWindow) {
         wristOverlayWindow.close();
     }
     if (hmdOverlayWindow) {
         hmdOverlayWindow.close();
+    }
+    
+    // Clean up shared memory files
+    try {
+        if (fs.existsSync(WRIST_SHM_PATH)) {
+            fs.unlinkSync(WRIST_SHM_PATH);
+        }
+        if (fs.existsSync(HMD_SHM_PATH)) {
+            fs.unlinkSync(HMD_SHM_PATH);
+        }
+    } catch (err) {
+        console.error('Error cleaning up shared memory files:', err);
     }
 }
 

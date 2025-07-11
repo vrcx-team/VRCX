@@ -14,7 +14,7 @@ using System.Threading;
 using NLog;
 using Valve.VR;
 using System.Numerics;
-using System.Net.Sockets;
+using System.IO.MemoryMappedFiles;
 
 namespace VRCX
 {
@@ -46,8 +46,8 @@ namespace VRCX
         private bool _wristOverlayActive;
         private bool _wristOverlayWasActive;
 
-        private const string WRIST_OVERLAY_SOCKET_PATH = "/tmp/vrcx_frame1.sock";
-        private const string HMD_OVERLAY_SOCKET_PATH = "/tmp/vrcx_frame2.sock";
+        private const string WRIST_OVERLAY_SHM_PATH = "/dev/shm/vrcx_wrist_overlay";
+        private const string HMD_OVERLAY_SHM_PATH = "/dev/shm/vrcx_hmd_overlay";
         private const int WRIST_FRAME_WIDTH = 512;
         private const int WRIST_FRAME_HEIGHT = 512;
         private const int WRIST_FRAME_SIZE = WRIST_FRAME_WIDTH * WRIST_FRAME_HEIGHT * 4; // RGBA
@@ -56,11 +56,10 @@ namespace VRCX
         private const int HMD_FRAME_HEIGHT = 1024;
         private const int HMD_FRAME_SIZE = HMD_FRAME_WIDTH * HMD_FRAME_HEIGHT * 4; // RGBA
         private byte[] hmdFrameBuffer = new byte[HMD_FRAME_SIZE];
-        private bool wristFrameReady = false;
-        private bool hmdFrameReady = false;
-        private Socket _wristOverlaySocket;
-        private Socket _hmdOverlaySocket;
-        private int _bytesInBuffer = 0;
+        private MemoryMappedFile _wristOverlayMMF;
+        private MemoryMappedViewAccessor _wristOverlayAccessor;
+        private MemoryMappedFile _hmdOverlayMMF;
+        private MemoryMappedViewAccessor _hmdOverlayAccessor;
         private readonly ConcurrentQueue<KeyValuePair<string, string>> _wristFeedFunctionQueue = new ConcurrentQueue<KeyValuePair<string, string>>();
         private readonly ConcurrentQueue<KeyValuePair<string, string>> _hmdFeedFunctionQueue = new ConcurrentQueue<KeyValuePair<string, string>>();
 
@@ -83,11 +82,11 @@ namespace VRCX
         // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
         public override void Init()
         {
-            _wristOverlaySocket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
-            _wristOverlaySocket.Blocking = false; // non‐blocking receive
+            _wristOverlayMMF = MemoryMappedFile.CreateFromFile(WRIST_OVERLAY_SHM_PATH, FileMode.Open, null, WRIST_FRAME_SIZE + 1);
+            _wristOverlayAccessor = _wristOverlayMMF.CreateViewAccessor();
 
-            _hmdOverlaySocket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
-            _hmdOverlaySocket.Blocking = false; // non‐blocking receive
+            _hmdOverlayMMF = MemoryMappedFile.CreateFromFile(HMD_OVERLAY_SHM_PATH, FileMode.Open, null, HMD_FRAME_SIZE + 1);
+            _hmdOverlayAccessor = _hmdOverlayMMF.CreateViewAccessor();
 
             _thread.Start();
         }
@@ -99,6 +98,11 @@ namespace VRCX
             _thread = null;
             thread?.Interrupt();
             thread?.Join();
+
+            _wristOverlayAccessor?.Dispose();
+            _wristOverlayMMF?.Dispose();
+            _hmdOverlayAccessor?.Dispose();
+            _hmdOverlayMMF?.Dispose();
         }
 
         public override void Restart()
@@ -128,125 +132,27 @@ namespace VRCX
 
         }
 
-        private void PumpWristOverlaySocket()
-        {
-            if (_wristOverlaySocket == null) return;
-
-            if (!_wristOverlaySocket.Connected)
-            {
-                _wristOverlaySocket.Connect(new UnixDomainSocketEndPoint(WRIST_OVERLAY_SOCKET_PATH));
-            }
-
-            try
-            {
-                // Poll(0) returns immediately: is there data to read?
-                if (_wristOverlaySocket.Poll(0, SelectMode.SelectRead))
-                {
-                    // Read as many bytes as are available, up to filling the frame
-                    int toRead = Math.Min(WRIST_FRAME_SIZE - _bytesInBuffer, _wristOverlaySocket.Available);
-                    if (toRead > 0)
-                    {
-                        int n = _wristOverlaySocket.Receive(wristFrameBuffer, _bytesInBuffer, toRead, SocketFlags.None);
-                        if (n > 0)
-                        {
-                            _bytesInBuffer += n;
-                            if (_bytesInBuffer == WRIST_FRAME_SIZE)
-                            {
-                                // We have a complete frame
-                                wristFrameReady = true;
-                                _bytesInBuffer = 0; // reset for next frame
-                            }
-                        }
-                        else
-                        {
-                            // Peer closed
-                            CleanupWristOverlaySocket();
-                        }
-                    }
-                }
-            }
-            catch (SocketException se)
-            {
-                // EWOULDBLOCK (10035) is normal for non‐blocking with no data
-                if (se.SocketErrorCode != SocketError.WouldBlock)
-                    Console.WriteLine($"Socket error: {se}");
-            }
-        }
-
-        private void CleanupWristOverlaySocket()
-        {
-            try { _wristOverlaySocket?.Close(); }
-            catch { }
-            _wristOverlaySocket = null;
-        }
-
         public byte[] GetLatestWristOverlayFrame()
         {
-            if (wristFrameReady)
+            if (_wristOverlayAccessor == null) return null;
+            byte ready = _wristOverlayAccessor.ReadByte(0);
+            if (ready == 1)
             {
-                wristFrameReady = false;
+                _wristOverlayAccessor.ReadArray(1, wristFrameBuffer, 0, WRIST_FRAME_SIZE);
+                _wristOverlayAccessor.Write(0, (byte)0); // reset flag
                 return wristFrameBuffer;
             }
             return null;
         }
 
-        private void PumpHmdOverlaySocket()
-        {
-            if (_hmdOverlaySocket == null) return;
-
-            if (!_hmdOverlaySocket.Connected)
-            {
-                _hmdOverlaySocket.Connect(new UnixDomainSocketEndPoint(HMD_OVERLAY_SOCKET_PATH));
-            }
-
-            try
-            {
-                // Poll(0) returns immediately: is there data to read?
-                if (_hmdOverlaySocket.Poll(0, SelectMode.SelectRead))
-                {
-                    // Read as many bytes as are available, up to filling the frame
-                    int toRead = Math.Min(HMD_FRAME_SIZE - _bytesInBuffer, _hmdOverlaySocket.Available);
-                    if (toRead > 0)
-                    {
-                        int n = _hmdOverlaySocket.Receive(hmdFrameBuffer, _bytesInBuffer, toRead, SocketFlags.None);
-                        if (n > 0)
-                        {
-                            _bytesInBuffer += n;
-                            if (_bytesInBuffer == HMD_FRAME_SIZE)
-                            {
-                                // We have a complete frame
-                                hmdFrameReady = true;
-                                _bytesInBuffer = 0; // reset for next frame
-                            }
-                        }
-                        else
-                        {
-                            // Peer closed
-                            CleanupHmdOverlaySocket();
-                        }
-                    }
-                }
-            }
-            catch (SocketException se)
-            {
-                // EWOULDBLOCK (10035) is normal for non‐blocking with no data
-                if (se.SocketErrorCode != SocketError.WouldBlock)
-                    Console.WriteLine($"Socket error: {se}");
-            }
-        }
-
-        private void CleanupHmdOverlaySocket()
-        {
-            try { _hmdOverlaySocket?.Close(); }
-            catch { }
-            _hmdOverlaySocket = null;
-        }
-
         public byte[] GetLatestHmdOverlayFrame()
         {
-            if (hmdFrameReady)
+            if (_hmdOverlayAccessor == null) return null;
+            byte ready = _hmdOverlayAccessor.ReadByte(0);
+            if (ready == 1)
             {
-                hmdFrameReady = false;
+                _hmdOverlayAccessor.ReadArray(1, hmdFrameBuffer, 0, HMD_FRAME_SIZE);
+                _hmdOverlayAccessor.Write(0, (byte)0); // reset flag
                 return hmdFrameBuffer;
             }
             return null;
@@ -296,9 +202,6 @@ namespace VRCX
 
                 if (_active)
                 {
-                    PumpWristOverlaySocket();
-                    PumpHmdOverlaySocket();
-
                     var system = OpenVR.System;
                     if (system == null)
                     {
@@ -408,10 +311,10 @@ namespace VRCX
                 }
             }
 
-            CleanupWristOverlaySocket();
-            CleanupHmdOverlaySocket();
-            _hmdOverlayTextureWriter.Dispose();
-            _wristOverlayTextureWriter.Dispose();
+            _wristOverlayAccessor?.Dispose();
+            _wristOverlayMMF?.Dispose();
+            _hmdOverlayAccessor?.Dispose();
+            _hmdOverlayMMF?.Dispose();
             GLContext.Cleanup();
         }
 
