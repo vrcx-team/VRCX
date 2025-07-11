@@ -12,7 +12,6 @@ import { $app } from '../app';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { processBulk, request } from '../service/request';
-import { initWebsocket } from '../service/websocket';
 import { watchState } from '../service/watchState';
 import {
     arraysMatch,
@@ -48,7 +47,6 @@ import { useSearchStore } from './search';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { useGeneralSettingsStore } from './settings/general';
 import { useSharedFeedStore } from './sharedFeed';
-import { useUpdateLoopStore } from './updateLoop';
 import { useWorldStore } from './world';
 
 export const useUserStore = defineStore('User', () => {
@@ -69,55 +67,97 @@ export const useUserStore = defineStore('User', () => {
     const moderationStore = useModerationStore();
     const photonStore = usePhotonStore();
     const sharedFeedStore = useSharedFeedStore();
-    const updateLoopStore = useUpdateLoopStore();
 
     const state = reactive({
         currentUser: {
+            acceptedPrivacyVersion: 0,
+            acceptedTOSVersion: 0,
+            accountDeletionDate: null,
+            accountDeletionLog: null,
+            activeFriends: [],
             ageVerificationStatus: '',
             ageVerified: false,
             allowAvatarCopying: false,
             badges: [],
             bio: '',
             bioLinks: [],
+            currentAvatar: '',
             currentAvatarImageUrl: '',
             currentAvatarTags: [],
             currentAvatarThumbnailImageUrl: '',
             date_joined: '',
             developerType: '',
             displayName: '',
+            emailVerified: false,
+            fallbackAvatar: '',
+            friendGroupNames: [],
             friendKey: '',
-            friendRequestStatus: '',
+            friends: [],
+            googleId: '',
+            hasBirthday: false,
+            hasEmail: false,
+            hasLoggedInFromClient: false,
+            hasPendingEmail: false,
+            hideContentFilterSettings: false,
+            homeLocation: '',
             id: '',
-            instanceId: '',
+            isAdult: true,
+            isBoopingEnabled: false,
             isFriend: false,
             last_activity: '',
             last_login: '',
             last_mobile: null,
             last_platform: '',
-            location: '',
-            platform: '',
-            note: null,
+            obfuscatedEmail: '',
+            obfuscatedPendingEmail: '',
+            oculusId: '',
+            offlineFriends: [],
+            onlineFriends: [],
+            pastDisplayNames: [],
+            picoId: '',
+            presence: {
+                avatarThumbnail: '',
+                currentAvatarTags: '',
+                displayName: '',
+                groups: [],
+                id: '',
+                instance: '',
+                instanceType: '',
+                platform: '',
+                profilePicOverride: '',
+                status: '',
+                travelingToInstance: '',
+                travelingToWorld: '',
+                userIcon: '',
+                world: ''
+            },
             profilePicOverride: '',
-            profilePicOverrideThumbnail: '',
             pronouns: '',
+            queuedInstance: '',
             state: '',
             status: '',
             statusDescription: '',
+            statusFirstTime: false,
+            statusHistory: [],
+            steamDetails: {},
+            steamId: '',
             tags: [],
-            travelingToInstance: '',
-            travelingToLocation: '',
-            travelingToWorld: '',
+            twoFactorAuthEnabled: false,
+            twoFactorAuthEnabledDate: null,
+            unsubscribe: false,
+            updated_at: '',
             userIcon: '',
-            worldId: '',
-            // only in bulk request
-            fallbackAvatar: '',
+            userLanguage: '',
+            userLanguageCode: '',
+            username: '',
+            viveId: '',
             // VRCX
-            $location: {},
-            $location_at: Date.now(),
             $online_for: Date.now(),
-            $travelingToTime: Date.now(),
             $offline_for: '',
-            $active_for: Date.now(),
+            $location_at: Date.now(),
+            $travelingToTime: Date.now(),
+            $previousAvatarSwapTime: '',
+            $homeLocation: {},
             $isVRCPlus: false,
             $isModerator: false,
             $isTroll: false,
@@ -127,14 +167,8 @@ export const useUserStore = defineStore('User', () => {
             $userColour: '',
             $trustSortNum: 1,
             $languages: [],
-            $joinCount: 0,
-            $timeSpent: 0,
-            $lastSeen: '',
-            $nickName: '',
-            $previousLocation: '',
-            $customTag: '',
-            $customTagColour: '',
-            $friendNumber: 0
+            $locationTag: '',
+            $travelingToLocation: ''
         },
         currentTravelers: new Map(),
         cachedUsers: new Map(),
@@ -330,15 +364,9 @@ export const useUserStore = defineStore('User', () => {
         }
         if (args.json.state === 'online') {
             args.ref = applyUser(args.json); // GPS
-            friendStore.updateFriend({
-                id: args.json.id,
-                state: args.json.state
-            }); // online/offline
+            friendStore.updateFriend(args.json.id, args.json.state); // online/offline
         } else {
-            friendStore.updateFriend({
-                id: args.json.id,
-                state: args.json.state
-            }); // online/offline
+            friendStore.updateFriend(args.json.id, args.json.state); // online/offline
             args.ref = applyUser(args.json); // GPS
         }
         favoriteStore.applyFavorite('friend', args.ref.id);
@@ -434,6 +462,8 @@ export const useUserStore = defineStore('User', () => {
      * @returns {any}
      */
     function applyUser(json) {
+        let hasPropChanged = false;
+        const changedProps = {};
         let ref = state.cachedUsers.get(json.id);
         if (json.statusDescription) {
             json.statusDescription = replaceBioSymbols(json.statusDescription);
@@ -533,8 +563,8 @@ export const useUserStore = defineStore('User', () => {
                 newCount++;
                 state.instancePlayerCount.set(ref.location, newCount);
             }
-            if (state.customUserTags.has(json.id)) {
-                const tag = state.customUserTags.get(json.id);
+            const tag = state.customUserTags.get(json.id);
+            if (tag) {
                 ref.$customTag = tag.tag;
                 ref.$customTagColour = tag.colour;
             } else if (ref.$customTag) {
@@ -543,53 +573,44 @@ export const useUserStore = defineStore('User', () => {
             }
             state.cachedUsers.set(ref.id, ref);
         } else {
-            const props = {};
             for (const prop in ref) {
-                if (ref[prop] !== Object(ref[prop])) {
-                    props[prop] = true;
+                if (typeof json[prop] === 'undefined') {
+                    continue;
+                }
+                // Only compare primitive values
+                if (ref[prop] === null || typeof ref[prop] !== 'object') {
+                    changedProps[prop] = true;
                 }
             }
-            const $ref = { ...ref };
-            Object.assign(ref, json);
-            for (const prop in ref) {
-                if (Array.isArray(ref[prop]) && Array.isArray($ref[prop])) {
-                    if (!arraysMatch(ref[prop], $ref[prop])) {
-                        props[prop] = true;
+            for (const prop in json) {
+                if (typeof ref[prop] === 'undefined') {
+                    continue;
+                }
+                if (Array.isArray(json[prop]) && Array.isArray(ref[prop])) {
+                    if (!arraysMatch(json[prop], ref[prop])) {
+                        changedProps[prop] = true;
                     }
-                } else if (ref[prop] !== Object(ref[prop])) {
-                    props[prop] = true;
+                } else if (
+                    json[prop] === null ||
+                    typeof json[prop] !== 'object'
+                ) {
+                    changedProps[prop] = true;
                 }
             }
-            let has = false;
-            for (const prop in props) {
-                const asis = $ref[prop];
-                const tobe = ref[prop];
-                if (asis === tobe) {
-                    delete props[prop];
+            for (const prop in changedProps) {
+                const asIs = ref[prop];
+                const toBe = json[prop];
+                if (asIs === toBe) {
+                    delete changedProps[prop];
                 } else {
-                    has = true;
-                    props[prop] = [tobe, asis];
+                    hasPropChanged = true;
+                    changedProps[prop] = [toBe, asIs];
                 }
             }
-            if ($ref.note !== null && $ref.note !== ref.note) {
-                checkNote(ref.id, ref.note);
+            if (ref.note !== null && ref.note !== json.note) {
+                checkNote(json.id, json.note);
             }
-            // if the status is offline, just ignore status and statusDescription only.
-            if (has && ref.status !== 'offline' && $ref.status !== 'offline') {
-                if (props.location && props.location[0] !== 'traveling') {
-                    const ts = Date.now();
-                    props.location.push(ts - ref.$location_at);
-                    ref.$location_at = ts;
-                }
-                handleUserUpdate({ ref, props });
-                if (API.debugUserDiff) {
-                    delete props.last_login;
-                    delete props.last_activity;
-                    if (Object.keys(props).length !== 0) {
-                        console.log('>', ref.displayName, props);
-                    }
-                }
-            }
+            Object.assign(ref, json);
         }
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
         appearanceSettingsStore.applyUserTrustLevel(ref);
@@ -681,6 +702,24 @@ export const useUserStore = defineStore('User', () => {
                 }
             });
             instanceStore.getCurrentInstanceUserList();
+        }
+        if (hasPropChanged) {
+            if (
+                changedProps.location &&
+                changedProps.location[0] !== 'traveling'
+            ) {
+                const ts = Date.now();
+                changedProps.location.push(ts - ref.$location_at);
+                ref.$location_at = ts;
+            }
+            handleUserUpdate(ref, changedProps);
+            if (API.debugUserDiff) {
+                delete changedProps.last_login;
+                delete changedProps.last_activity;
+                if (Object.keys(changedProps).length !== 0) {
+                    console.log('>', ref.displayName, changedProps);
+                }
+            }
         }
         return ref;
     }
@@ -1195,14 +1234,14 @@ export const useUserStore = defineStore('User', () => {
 
     /**
      * aka: `API.$on('USER:UPDATE')`
-     * @param args
+     * @param {object} ref
+     * @param {object} props
      * @returns {Promise<void>}
      */
-    async function handleUserUpdate(args) {
+    async function handleUserUpdate(ref, props) {
         let feed;
         let newLocation;
         let previousLocation;
-        const { ref, props } = args;
         const friend = friendStore.friends.get(ref.id);
         if (typeof friend === 'undefined') {
             return;
@@ -1418,7 +1457,12 @@ export const useUserStore = defineStore('User', () => {
                 database.addAvatarToDatabase(feed);
             }
         }
-        if (props.status || props.statusDescription) {
+        // if status is offline, ignore status and statusDescription
+        if (
+            (props.status || props.statusDescription) &&
+            props.status[0] !== 'offline' &&
+            props.status[1] !== 'offline'
+        ) {
             let status = '';
             let previousStatus = '';
             let statusDescription = '';

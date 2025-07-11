@@ -315,10 +315,7 @@ function handlePipeline(args) {
                     }
                 });
             } else {
-                friendStore.updateFriend({
-                    id: content.userId,
-                    state: 'online'
-                });
+                friendStore.updateFriend(content.userId, 'online');
             }
             break;
 
@@ -344,10 +341,7 @@ function handlePipeline(args) {
                     }
                 });
             } else {
-                friendStore.updateFriend({
-                    id: content.userId,
-                    state: 'active'
-                });
+                friendStore.updateFriend(content.userId, 'active');
             }
             break;
 

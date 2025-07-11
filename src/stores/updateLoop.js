@@ -47,6 +47,13 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         }
     });
 
+    const nextCurrentUserRefresh = computed({
+        get: () => state.nextCurrentUserRefresh,
+        set: (value) => {
+            state.nextCurrentUserRefresh = value;
+        }
+    });
+
     async function updateLoop() {
         const authStore = useAuthStore();
         const userStore = useUserStore();
@@ -146,5 +153,10 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         workerTimers.setTimeout(() => updateLoop(), 1000);
     }
 
-    return { state, nextGroupInstanceRefresh, updateLoop };
+    return {
+        state,
+        nextGroupInstanceRefresh,
+        nextCurrentUserRefresh,
+        updateLoop
+    };
 });

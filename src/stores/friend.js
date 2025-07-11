@@ -365,14 +365,11 @@ export const useFriendStore = defineStore('Friend', () => {
         return '';
     }
 
-    /**
-     * @param {string} value
-     */
-    function updateLocalFavoriteFriends(value = undefined) {
+    function updateLocalFavoriteFriends() {
         const favoriteStore = useFavoriteStore();
         const { cachedFavorites } = favoriteStore;
         generalSettingsStore.setLocalFavoriteFriendsGroups(
-            value || generalSettingsStore.localFavoriteFriendsGroups
+            generalSettingsStore.localFavoriteFriendsGroups
         );
         state.localFavoriteFriends.clear();
         for (const ref of cachedFavorites.values()) {
@@ -419,7 +416,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {string} id
      * @param {string?} stateInput
      */
-    function updateFriend(id, stateInput) {
+    function updateFriend(id, stateInput = undefined) {
         const ctx = state.friends.get(id);
         if (typeof ctx === 'undefined') {
             return;
@@ -495,20 +492,18 @@ export const useFriendStore = defineStore('Friend', () => {
                 }
             }
             // from getCurrentUser only, fetch user if offline in an instance
-            if (
-                ctx.state !== 'online' &&
-                typeof ref !== 'undefined' &&
-                isRealInstance(ref.location)
-            ) {
-                if (API.debugFriendState) {
-                    console.log(
-                        `Fetching offline friend in an instance from getCurrentUser ${ctx.name}`
-                    );
-                }
-                userRequest.getUser({
-                    userId: id
-                });
-            }
+            // if (
+            //     ctx.state !== 'online' &&
+            //     typeof ref !== 'undefined' &&
+            //     isRealInstance(ref.location)
+            // ) {
+            //     console.log(
+            //         `Fetching offline friend in an instance from getCurrentUser ${ctx.name}`
+            //     );
+            //     userRequest.getUser({
+            //         userId: id
+            //     });
+            // }
         } else if (
             ctx.state === 'online' &&
             (stateInput === 'active' || stateInput === 'offline')
@@ -563,19 +558,16 @@ export const useFriendStore = defineStore('Friend', () => {
             ctx.isVIP = isVIP;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
-
                 // wtf, from getCurrentUser only, fetch user if online in offline location
-                if (stateInput === 'online') {
-                    if (API.debugFriendState) {
-                        console.log(
-                            `Fetching friend coming online from getCurrentUser ${ctx.name}`
-                        );
-                    }
-                    userRequest.getUser({
-                        userId: id
-                    });
-                    return;
-                }
+                // if (stateInput === 'online') {
+                //     console.log(
+                //         `Fetching friend coming online from getCurrentUser ${ctx.name}`
+                //     );
+                //     userRequest.getUser({
+                //         userId: id
+                //     });
+                //     return;
+                // }
             }
             updateFriendDelayedCheck(ctx, location, $location_at);
         }
@@ -694,9 +686,9 @@ export const useFriendStore = defineStore('Friend', () => {
             state.sortOfflineFriends = true;
         }
         if (ctx.state !== newState) {
+            ctx.state = newState;
             updateOnlineFriendCoutner();
         }
-        ctx.state = newState;
         if (ref?.displayName) {
             ctx.name = ref.displayName;
         }
@@ -826,7 +818,7 @@ export const useFriendStore = defineStore('Friend', () => {
 
     /**
      * aka: `API.refreshFriends`
-     * @returns {Promise<void>}
+     * @returns {Promise<*[]>}
      */
     async function refreshFriends() {
         state.isRefreshFriendsLoading = true;
@@ -844,7 +836,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
 
             state.isRefreshFriendsLoading = false;
-            // return friends;
+            return friends;
         } catch (err) {
             state.isRefreshFriendsLoading = false;
             throw err;
@@ -1354,7 +1346,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {Promise<void>}
      */
     async function initFriendLog(currentUser) {
-        refreshFriendsStatus(currentUser, true);
+        refreshFriendsStatus(currentUser);
         const sqlValues = [];
         const friends = await refreshFriends();
         for (const friend of friends) {
@@ -1409,7 +1401,7 @@ export const useFriendStore = defineStore('Friend', () => {
         for (friend of friendLogCurrentArray) {
             state.friendLog.set(friend.userId, friend);
         }
-        refreshFriendsStatus(currentUser, true);
+        refreshFriendsStatus(currentUser);
 
         await refreshFriends();
         watchState.isFriendsLoaded = true;
@@ -1434,7 +1426,7 @@ export const useFriendStore = defineStore('Friend', () => {
         const lastUpdate = await configRepository.getString(
             `VRCX_lastStoreTime_${userStore.currentUser.id}`
         );
-        if (lastUpdate == -4) {
+        if (lastUpdate === '-4') {
             // this means the backup was already applied
             return;
         }
@@ -1471,7 +1463,7 @@ export const useFriendStore = defineStore('Friend', () => {
         // }
         await configRepository.setString(
             `VRCX_lastStoreTime_${userStore.currentUser.id}`,
-            -4
+            '-4'
         );
     }
 

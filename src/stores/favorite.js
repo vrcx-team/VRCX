@@ -464,7 +464,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             args.ref = fav;
         }
         applyFavorite(args.ref.type, args.ref.favoriteId, args.sortTop);
-        friendStore.updateFriend({ id: args.ref.favoriteId });
+        friendStore.updateFriend(args.ref.favoriteId);
         const { ref } = args;
         const userDialog = userStore.userDialog;
         if (
@@ -599,7 +599,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             --ref.$groupRef.count;
         }
         applyFavorite(args.ref.type, args.ref.favoriteId);
-        friendStore.updateFriend({ id: args.ref.favoriteId });
+        friendStore.updateFriend(args.ref.favoriteId);
         const userDialog = userStore.userDialog;
         if (
             !(
