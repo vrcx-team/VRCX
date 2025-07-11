@@ -451,7 +451,7 @@
     const { refreshInviteMessageTableData } = useInviteStore();
     const { clearInviteImageUpload } = useGalleryStore();
     const { notificationTable, isNotificationsLoading } = storeToRefs(useNotificationStore());
-    const { refreshNotifications } = useNotificationStore();
+    const { refreshNotifications, handleNotificationHide } = useNotificationStore();
     const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { showFullscreenImageDialog } = useGalleryStore();
@@ -594,7 +594,7 @@
                     json,
                     params
                 };
-                API.$emit('NOTIFICATION:HIDE', args);
+                handleNotificationHide(args);
                 new Noty({
                     type: 'success',
                     text: escapeTag(args.json)
@@ -602,7 +602,7 @@
                 console.log('NOTIFICATION:RESPONSE', args);
             })
             .catch((err) => {
-                API.$emit('NOTIFICATION:HIDE', { params });
+                handleNotificationHide({ params });
                 notificationRequest.hideNotificationV2(params.notificationId);
                 throw err;
             });

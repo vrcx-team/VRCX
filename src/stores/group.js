@@ -16,11 +16,13 @@ import { replaceBioSymbols } from '../shared/utils';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useUserStore } from './user';
+import { useNotificationStore } from './notification';
 
 export const useGroupStore = defineStore('Group', () => {
     const instanceStore = useInstanceStore();
     const gameStore = useGameStore();
     const userStore = useUserStore();
+    const notificationStore = useNotificationStore();
 
     const state = reactive({
         groupDialog: {
@@ -367,7 +369,7 @@ export const useGroupStore = defineStore('Group', () => {
             message,
             created_at: new Date().toJSON()
         };
-        API.$emit('NOTIFICATION', {
+        notificationStore.handleNotification({
             json,
             params: {
                 notificationId: json.id

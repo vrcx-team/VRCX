@@ -1,6 +1,6 @@
 import { API } from '../service/eventBus';
 import { request } from '../service/request';
-import { useGroupStore } from '../stores';
+import { useGroupStore, useNotificationStore } from '../stores';
 
 function getGalleryStore() {
     return useGroupStore();
@@ -193,13 +193,13 @@ const notificationReq = {
                     json,
                     params
                 };
-                API.$emit('NOTIFICATION:ACCEPT', args);
+                useNotificationStore().handleNotificationAccept(args);
                 return args;
             })
             .catch((err) => {
                 // if friend request could not be found, delete it
                 if (err && err.message && err.message.includes('404')) {
-                    API.$emit('NOTIFICATION:HIDE', { params });
+                    useNotificationStore().handleNotificationHide({ params });
                 }
             });
     },
@@ -219,7 +219,7 @@ const notificationReq = {
                 json,
                 params
             };
-            API.$emit('NOTIFICATION:HIDE', args);
+            useNotificationStore().handleNotificationHide(args);
             return args;
         });
     },

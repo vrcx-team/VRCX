@@ -181,13 +181,13 @@ function handlePipeline(args) {
     }
     switch (type) {
         case 'notification':
-            API.$emit('NOTIFICATION', {
+            notificationStore.handleNotification({
                 json: content,
                 params: {
                     notificationId: content.id
                 }
             });
-            API.$emit('PIPELINE:NOTIFICATION', {
+            notificationStore.handlePipelineNotification({
                 json: content,
                 params: {
                     notificationId: content.id
@@ -208,12 +208,12 @@ function handlePipeline(args) {
         case 'notification-v2-delete':
             console.log('notification-v2-delete', content);
             for (var id of content.ids) {
-                API.$emit('NOTIFICATION:HIDE', {
+                notificationStore.handleNotificationHide({
                     params: {
                         notificationId: id
                     }
                 });
-                API.$emit('NOTIFICATION:SEE', {
+                notificationStore.handleNotificationSee({
                     params: {
                         notificationId: id
                     }
@@ -223,7 +223,7 @@ function handlePipeline(args) {
 
         case 'notification-v2-update':
             console.log('notification-v2-update', content);
-            API.$emit('NOTIFICATION:V2:UPDATE', {
+            notificationStore.handleNotificationV2Update({
                 json: content.updates,
                 params: {
                     notificationId: content.id
@@ -232,7 +232,7 @@ function handlePipeline(args) {
             break;
 
         case 'see-notification':
-            API.$emit('NOTIFICATION:SEE', {
+            notificationStore.handleNotificationSee({
                 params: {
                     notificationId: content
                 }
@@ -240,12 +240,12 @@ function handlePipeline(args) {
             break;
 
         case 'hide-notification':
-            API.$emit('NOTIFICATION:HIDE', {
+            notificationStore.handleNotificationHide({
                 params: {
                     notificationId: content
                 }
             });
-            API.$emit('NOTIFICATION:SEE', {
+            notificationStore.handleNotificationSee({
                 params: {
                     notificationId: content
                 }
@@ -253,12 +253,12 @@ function handlePipeline(args) {
             break;
 
         case 'response-notification':
-            API.$emit('NOTIFICATION:HIDE', {
+            notificationStore.handleNotificationHide({
                 params: {
                     notificationId: content.notificationId
                 }
             });
-            API.$emit('NOTIFICATION:SEE', {
+            notificationStore.handleNotificationSee({
                 params: {
                     notificationId: content.notificationId
                 }

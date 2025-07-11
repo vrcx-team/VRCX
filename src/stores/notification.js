@@ -128,7 +128,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         { flush: 'sync' }
     );
 
-    API.$on('NOTIFICATION', function (args) {
+    function handleNotification(args) {
         args.ref = applyNotification(args.json);
         const { ref } = args;
         const array = state.notificationTable.data;
@@ -170,36 +170,9 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         D.incomingRequest = true;
-    });
+    }
 
-    API.$on('NOTIFICATION:ACCEPT', function (args) {
-        let ref;
-        const array = state.notificationTable.data;
-        for (let i = array.length - 1; i >= 0; i--) {
-            if (array[i].id === args.params.notificationId) {
-                ref = array[i];
-                break;
-            }
-        }
-        if (typeof ref === 'undefined') {
-            return;
-        }
-        ref.$isExpired = true;
-        args.ref = ref;
-        API.$emit('NOTIFICATION:EXPIRE', {
-            ref,
-            params: {
-                notificationId: ref.id
-            }
-        });
-        API.$emit('FRIEND:ADD', {
-            params: {
-                userId: ref.senderUserId
-            }
-        });
-    });
-
-    API.$on('NOTIFICATION:HIDE', function (args) {
+    function handleNotificationHide(args) {
         let ref;
         const array = state.notificationTable.data;
         for (let i = array.length - 1; i >= 0; i--) {
@@ -227,37 +200,37 @@ export const useNotificationStore = defineStore('Notification', () => {
             ref.$isExpired = true;
             database.updateNotificationExpired(ref);
         }
-        API.$emit('NOTIFICATION:EXPIRE', {
+        handleNotificationExpire({
             ref,
             params: {
                 notificationId: ref.id
             }
         });
-    });
+    }
 
-    API.$on('NOTIFICATION:V2:UPDATE', function (args) {
+    function handleNotificationV2Update(args) {
         const notificationId = args.params.notificationId;
         const json = args.json;
         if (!json) {
             return;
         }
         json.id = notificationId;
-        API.$emit('NOTIFICATION', {
+        handleNotification({
             json,
             params: {
                 notificationId
             }
         });
         if (json.seen) {
-            API.$emit('NOTIFICATION:SEE', {
+            handleNotificationSee({
                 params: {
                     notificationId
                 }
             });
         }
-    });
+    }
 
-    API.$on('PIPELINE:NOTIFICATION', function (args) {
+    function handlePipelineNotification(args) {
         const ref = args.json;
         if (
             ref.type !== 'requestInvite' ||
@@ -328,33 +301,55 @@ export const useNotificationStore = defineStore('Notification', () => {
                         console.error(err);
                     });
             });
-    });
+    }
 
-    API.$on('NOTIFICATION:SEE', function (args) {
+    function handleNotificationSee(args) {
         const { notificationId } = args.params;
         removeFromArray(state.unseenNotifications, notificationId);
         if (state.unseenNotifications.length === 0) {
             uiStore.removeNotify('notification');
         }
-    });
+    }
 
-    API.$on('NOTIFICATION:ACCEPT', function (args) {
-        const { ref } = args;
+    function handleNotificationAccept(args) {
+        let ref;
+        const array = state.notificationTable.data;
+        for (let i = array.length - 1; i >= 0; i--) {
+            if (array[i].id === args.params.notificationId) {
+                ref = array[i];
+                break;
+            }
+        }
+        if (typeof ref === 'undefined') {
+            return;
+        }
+        ref.$isExpired = true;
+        args.ref = ref;
+        handleNotificationExpire({
+            ref,
+            params: {
+                notificationId: ref.id
+            }
+        });
+        API.$emit('FRIEND:ADD', {
+            params: {
+                userId: ref.senderUserId
+            }
+        });
+
         const D = userStore.userDialog;
-        // 얘는 @DELETE가 오고나서 ACCEPT가 옴
-        // 따라서 $isDeleted라면 ref가 undefined가 됨
         if (
             D.visible === false ||
-            typeof ref === 'undefined' ||
-            ref.type !== 'friendRequest' ||
-            ref.senderUserId !== D.id
+            typeof args.ref === 'undefined' ||
+            args.ref.type !== 'friendRequest' ||
+            args.ref.senderUserId !== D.id
         ) {
             return;
         }
         D.isFriend = true;
-    });
+    }
 
-    API.$on('NOTIFICATION:EXPIRE', function (args) {
+    function handleNotificationExpire(args) {
         const { ref } = args;
         const D = userStore.userDialog;
         if (
@@ -365,7 +360,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         D.incomingRequest = false;
-    });
+    }
 
     /**
      * aka: `API.applyNotification`
@@ -457,7 +452,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         ref.$isExpired = true;
         database.updateNotificationExpired(ref);
-        API.$emit('NOTIFICATION:EXPIRE', {
+        handleNotificationExpire({
             ref,
             params: {
                 notificationId: ref.id
@@ -483,7 +478,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             for (let i = 0; i < count; i++) {
                 const args = await notificationRequest.getNotifications(params);
                 for (const json of args.json) {
-                    API.$emit('NOTIFICATION', {
+                    handleNotification({
                         json,
                         params: {
                             notificationId: json.id
@@ -512,7 +507,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     } else if (json.title) {
                         json.message = json.title;
                     }
-                    API.$emit('NOTIFICATION', {
+                    handleNotification({
                         json,
                         params: {
                             notificationId: json.id
@@ -536,7 +531,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     await notificationRequest.getHiddenFriendRequests(params);
                 for (const json of args.json) {
                     json.type = 'ignoredFriendRequest';
-                    API.$emit('NOTIFICATION', {
+                    handleNotification({
                         json,
                         params: {
                             notificationId: json.id
@@ -2328,6 +2323,12 @@ export const useNotificationStore = defineStore('Notification', () => {
         queueGameLogNoty,
         queueFeedNoty,
         queueFriendLogNoty,
-        queueModerationNoty
+        queueModerationNoty,
+        handleNotificationAccept,
+        handleNotificationSee,
+        handlePipelineNotification,
+        handleNotificationV2Update,
+        handleNotificationHide,
+        handleNotification
     };
 });
