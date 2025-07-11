@@ -3,9 +3,6 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { createI18n } from 'vue-i18n-bridge';
 import * as localizedStrings from '../localization/localizedStrings';
-import configRepository from '../service/config';
-
-await configRepository.init();
 
 // i18n: execution order matters here
 Vue.use(VueI18n, { bridge: true });
@@ -27,9 +24,6 @@ Vue.use(i18n);
 Vue.use(ElementUI, {
     i18n: (key, value) => i18n.global.t(key, value)
 });
-
-const appLanguage = await configRepository.getString('VRCX_appLanguage', 'en');
-i18n.locale = appLanguage;
 
 const t = i18n.global.t;
 

@@ -17,7 +17,10 @@ import {
     refreshCustomScript,
     systemIsDarkMode
 } from './shared/utils';
-import './plugin';
+import { i18n } from './plugin';
+
+configRepository.init();
+i18n.locale = await configRepository.getString('VRCX_appLanguage', 'en');
 
 AppApi.SetUserAgent();
 
