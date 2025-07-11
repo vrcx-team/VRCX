@@ -4,10 +4,8 @@ import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
 import '@infolektuell/noto-color-emoji';
 
-await configRepository.init();
-
-import { PiniaVuePlugin } from 'pinia';
 import Vue from 'vue';
+import { PiniaVuePlugin } from 'pinia';
 import { DataTables } from 'vue-data-tables';
 import VueLazyload from 'vue-lazyload';
 import configRepository from './service/config';
@@ -20,12 +18,8 @@ import {
     systemIsDarkMode
 } from './shared/utils';
 import './plugin';
-import { i18n } from './plugin';
 
 AppApi.SetUserAgent();
-
-const appLanguage = await configRepository.getString('VRCX_appLanguage', 'en');
-i18n.locale = appLanguage;
 
 const initThemeMode = await configRepository.getString(
     'VRCX_ThemeMode',

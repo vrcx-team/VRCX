@@ -7,7 +7,6 @@
 import Vue from 'vue';
 import './bootstrap';
 import App from './App.vue';
-import { i18n } from './plugin';
 import { pinia } from './stores';
 
 console.log(`isLinux: ${LINUX}`);
@@ -17,7 +16,6 @@ console.log(`isLinux: ${LINUX}`);
 
 const $app = new Vue({
     pinia,
-    i18n,
     render: (h) => h(App)
 }).$mount('#root');
 
