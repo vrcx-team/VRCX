@@ -13,6 +13,8 @@ const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const https = require('https');
 
+//app.disableHardwareAcceleration();
+
 if (!isDotNetInstalled()) {
     app.whenReady().then(() => {
         dialog.showErrorBox(
@@ -297,7 +299,9 @@ function createWristOverlayWindowOffscreen() {
         autoHideMenuBar: true,
         transparent: true, 
         frame: false,
+        show: false,
         webPreferences: {
+            offscreen: true,
             preload: path.join(__dirname, 'preload.js')
         },
         webContents: {
@@ -310,25 +314,27 @@ function createWristOverlayWindowOffscreen() {
     const fileUrl = `file://${indexPath}?1`;
     wristOverlayWindow.loadURL(fileUrl, { userAgent: version });
 
-    // Write to shared memory at 2 FPS
-    setInterval(() => {
-        if (wristOverlayWindow && !wristOverlayWindow.isDestroyed()) {
-            wristOverlayWindow.webContents.capturePage().then(image => {
-                const buffer = image.toBitmap();
-                writeWristFrame(buffer);
-            }).catch(err => console.error('Error capturing wrist overlay page:', err));
-        }
-    }, 1000 / 2);
+    // Use paint event for offscreen rendering
+    wristOverlayWindow.webContents.on('paint', (event, dirty, image) => {
+        const buffer = image.toBitmap();
+        //console.log('Captured wrist frame via paint event, size:', buffer.length);
+        writeWristFrame(buffer);
+    });
 }
 
 function writeWristFrame(imageBuffer) {
-    const fd = fs.openSync(WRIST_SHM_PATH, 'r+');
-    const buffer = Buffer.alloc(WRIST_FRAME_SIZE + 1);
-    buffer[0] = 0; // not ready
-    imageBuffer.copy(buffer, 1, 0, WRIST_FRAME_SIZE);
-    buffer[0] = 1; // ready
-    fs.writeSync(fd, buffer);
-    fs.closeSync(fd);
+    try {
+        const fd = fs.openSync(WRIST_SHM_PATH, 'r+');
+        const buffer = Buffer.alloc(WRIST_FRAME_SIZE + 1);
+        buffer[0] = 0; // not ready
+        imageBuffer.copy(buffer, 1, 0, WRIST_FRAME_SIZE);
+        buffer[0] = 1; // ready
+        fs.writeSync(fd, buffer);
+        fs.closeSync(fd);
+        //console.log('Wrote wrist frame to shared memory');
+    } catch (err) {
+        console.error('Error writing wrist frame to shared memory:', err);
+    }
 }
 
 let hmdOverlayWindow = undefined;
@@ -348,7 +354,9 @@ function createHmdOverlayWindowOffscreen() {
         autoHideMenuBar: true,
         transparent: true, 
         frame: false,
+        show: false,
         webPreferences: {
+            offscreen: true,
             preload: path.join(__dirname, 'preload.js')
         },
         webContents: {
@@ -361,25 +369,27 @@ function createHmdOverlayWindowOffscreen() {
     const fileUrl = `file://${indexPath}?2`;
     hmdOverlayWindow.loadURL(fileUrl, { userAgent: version });
 
-    // Write to shared memory at 24 FPS
-    setInterval(() => {
-        if (hmdOverlayWindow && !hmdOverlayWindow.isDestroyed()) {
-            hmdOverlayWindow.webContents.capturePage().then(image => {
-                const buffer = image.toBitmap();
-                writeHmdFrame(buffer);
-            }).catch(err => console.error('Error capturing HMD overlay page:', err));
-        }
-    }, 1000 / 24);
+    // Use paint event for offscreen rendering
+    hmdOverlayWindow.webContents.on('paint', (event, dirty, image) => {
+        const buffer = image.toBitmap();
+        //console.log('Captured HMD frame via paint event, size:', buffer.length);
+        writeHmdFrame(buffer);
+    });
 }
 
 function writeHmdFrame(imageBuffer) {
-    const fd = fs.openSync(HMD_SHM_PATH, 'r+');
-    const buffer = Buffer.alloc(HMD_FRAME_SIZE + 1);
-    buffer[0] = 0; // not ready
-    imageBuffer.copy(buffer, 1, 0, HMD_FRAME_SIZE);
-    buffer[0] = 1; // ready
-    fs.writeSync(fd, buffer);
-    fs.closeSync(fd);
+    try {
+        const fd = fs.openSync(HMD_SHM_PATH, 'r+');
+        const buffer = Buffer.alloc(HMD_FRAME_SIZE + 1);
+        buffer[0] = 0; // not ready
+        imageBuffer.copy(buffer, 1, 0, HMD_FRAME_SIZE);
+        buffer[0] = 1; // ready
+        fs.writeSync(fd, buffer);
+        fs.closeSync(fd);
+        //console.log('Wrote HMD frame to shared memory');
+    } catch (err) {
+        console.error('Error writing HMD frame to shared memory:', err);
+    }
 }
 
 function createTray() {
