@@ -1893,7 +1893,7 @@
     const { isGameRunning } = storeToRefs(useGameStore());
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
-    const { handlePlayerModerationAtSend, handlePlayerModeration } = useModerationStore();
+    const { handlePlayerModerationAtSend, handlePlayerModeration, handlePlayerModerationDelete } = useModerationStore();
 
     watch(
         () => userDialog.value.loading,
@@ -2393,6 +2393,7 @@
     }
 
     async function performUserDialogCommand(command, userId) {
+        let args;
         let key;
         switch (command) {
             case 'Delete Favorite':
@@ -2427,14 +2428,14 @@
                 }
                 break;
             case 'Cancel Friend Request': {
-                const args = await friendRequest.cancelFriendRequest({
+                args = await friendRequest.cancelFriendRequest({
                     userId
                 });
                 handleCancelFriendRequest(args);
                 break;
             }
             case 'Send Friend Request': {
-                const args = await friendRequest.sendFriendRequest({
+                args = await friendRequest.sendFriendRequest({
                     userId
                 });
                 handleSendFriendRequest(args);
@@ -2447,7 +2448,7 @@
                 });
                 break;
             case 'Moderation Block': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
@@ -2455,13 +2456,14 @@
                 break;
             }
             case 'Moderation Unmute':
-                playerModerationRequest.deletePlayerModeration({
+                args = await playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
+                handlePlayerModerationDelete(args);
                 break;
             case 'Moderation Mute': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
@@ -2469,13 +2471,14 @@
                 break;
             }
             case 'Moderation Enable Avatar Interaction':
-                playerModerationRequest.deletePlayerModeration({
+                args = await playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
+                handlePlayerModerationDelete(args);
                 break;
             case 'Moderation Disable Avatar Interaction': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
@@ -2483,13 +2486,14 @@
                 break;
             }
             case 'Moderation Enable Chatbox':
-                playerModerationRequest.deletePlayerModeration({
+                args = await playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });
+                handlePlayerModerationDelete(args);
                 break;
             case 'Moderation Disable Chatbox': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });

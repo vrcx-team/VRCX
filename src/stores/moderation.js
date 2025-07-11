@@ -109,7 +109,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         });
     }
 
-    API.$on('PLAYER-MODERATION:@DELETE', function (args) {
+    function handlePlayerModerationAtDelete(args) {
         const { ref } = args;
         const D = userStore.userDialog;
         if (
@@ -139,9 +139,9 @@ export const useModerationStore = defineStore('Moderation', () => {
                 return;
             }
         }
-    });
+    }
 
-    API.$on('PLAYER-MODERATION:DELETE', function (args) {
+    function handlePlayerModerationDelete(args) {
         let { type, moderated } = args.params;
         const userId = userStore.currentUser.id;
         for (let ref of state.cachedPlayerModerations.values()) {
@@ -151,7 +151,7 @@ export const useModerationStore = defineStore('Moderation', () => {
                 ref.sourceUserId === userId
             ) {
                 state.cachedPlayerModerations.delete(ref.id);
-                API.$emit('PLAYER-MODERATION:@DELETE', {
+                handlePlayerModerationAtDelete({
                     ref,
                     params: {
                         playerModerationId: ref.id
@@ -160,7 +160,7 @@ export const useModerationStore = defineStore('Moderation', () => {
             }
         }
         state.cachedPlayerModerationsUserIds.delete(moderated);
-    });
+    }
 
     /**
      * aka: `API.applyPlayerModeration`
@@ -212,7 +212,7 @@ export const useModerationStore = defineStore('Moderation', () => {
             if (!ref.$isExpired) {
                 continue;
             }
-            API.$emit('PLAYER-MODERATION:@DELETE', {
+            handlePlayerModerationAtDelete({
                 ref,
                 params: {
                     playerModerationId: ref.id
@@ -268,6 +268,7 @@ export const useModerationStore = defineStore('Moderation', () => {
 
         refreshPlayerModerations,
         handlePlayerModerationAtSend,
-        handlePlayerModeration
+        handlePlayerModeration,
+        handlePlayerModerationDelete
     };
 });

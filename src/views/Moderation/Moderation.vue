@@ -109,7 +109,7 @@
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { isPlayerModerationsLoading, playerModerationTable } = storeToRefs(useModerationStore());
-    const { refreshPlayerModerations } = useModerationStore();
+    const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
     const { menuActiveIndex, shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
 
@@ -152,11 +152,12 @@
         configRepository.setString('VRCX_playerModerationTableFilters', JSON.stringify(filters.value[0].value));
     }
 
-    function deletePlayerModeration(row) {
-        playerModerationRequest.deletePlayerModeration({
+    async function deletePlayerModeration(row) {
+        const args = await playerModerationRequest.deletePlayerModeration({
             moderated: row.targetUserId,
             type: row.type
         });
+        handlePlayerModerationDelete(args);
     }
 
     function deletePlayerModerationPrompt(row) {
