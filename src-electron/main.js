@@ -304,7 +304,7 @@ function createWristOverlayWindowOffscreen() {
             userAgent: version
         }
     });
-    wristOverlayWindow.webContents.setFrameRate(24);
+    wristOverlayWindow.webContents.setFrameRate(2);
 
     const indexPath = path.join(rootDir, 'build/html/vr.html');
     const fileUrl = `file://${indexPath}?1`;
