@@ -298,7 +298,7 @@
     const emit = defineEmits(['lookup-user']);
 
     const { friends } = storeToRefs(useFriendStore());
-    const { getAllUserStats, confirmDeleteFriend } = useFriendStore();
+    const { getAllUserStats, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
     const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
@@ -400,7 +400,8 @@
 
     function bulkUnfriendSelection() {
         friendsListTable.data.forEach((item) => {
-            if (item.$selected) friendRequest.deleteFriend({ userId: item.id });
+            if (item.$selected)
+                friendRequest.deleteFriend({ userId: item.id }).then((args) => handleFriendDelete(args));
         });
     }
 

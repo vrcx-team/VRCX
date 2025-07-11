@@ -11,7 +11,6 @@ const VRCPlusIconsReq = {
                 json,
                 params
             };
-            API.$emit('FILES:LIST', args);
             return args;
         });
     },

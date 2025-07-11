@@ -535,7 +535,9 @@
         refreshStickerTable,
         refreshPrintTable,
         refreshEmojiTable,
-        getInventory
+        getInventory,
+        handleStickerAdd,
+        handleGalleryImageAdd
     } = useGalleryStore();
 
     const { currentUserInventory } = storeToRefs(useAdvancedSettingsStore());
@@ -584,6 +586,7 @@
         r.onload = function () {
             const base64Body = btoa(r.result);
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
+                handleGalleryImageAdd(args);
                 proxy.$message({
                     message: t('message.gallery.uploaded'),
                     type: 'success'
@@ -903,6 +906,7 @@
             };
             const base64Body = btoa(r.result);
             vrcPlusImageRequest.uploadSticker(base64Body, params).then((args) => {
+                handleStickerAdd(args);
                 proxy.$message({
                     message: t('message.sticker.uploaded'),
                     type: 'success'

@@ -20,7 +20,6 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
-            API.$emit('GALLERYIMAGE:ADD', args);
             return args;
         });
     },
@@ -36,7 +35,6 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
-            API.$emit('STICKER:ADD', args);
             return args;
         });
     },

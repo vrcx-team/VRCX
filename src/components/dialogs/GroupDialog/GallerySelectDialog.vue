@@ -61,7 +61,7 @@
     const { proxy } = getCurrentInstance();
     const { $message } = proxy;
     const { galleryTable } = storeToRefs(useGalleryStore());
-    const { refreshGalleryTable } = useGalleryStore();
+    const { refreshGalleryTable, handleGalleryImageAdd } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -113,6 +113,7 @@
         r.onload = function () {
             const base64Body = btoa(r.result);
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
+                handleGalleryImageAdd(args);
                 $message({
                     message: t('message.gallery.uploaded'),
                     type: 'success'

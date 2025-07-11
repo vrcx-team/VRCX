@@ -272,7 +272,7 @@ function handlePipeline(args) {
                     userId: content.userId
                 }
             });
-            API.$emit('FRIEND:ADD', {
+            userStore.handleFriendAdd({
                 params: {
                     userId: content.userId
                 }
@@ -280,7 +280,7 @@ function handlePipeline(args) {
             break;
 
         case 'friend-delete':
-            API.$emit('FRIEND:DELETE', {
+            friendStore.handleFriendDelete({
                 params: {
                     userId: content.userId
                 }

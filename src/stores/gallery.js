@@ -214,7 +214,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         { flush: 'sync' }
     );
 
-    API.$on('FILES:LIST', function (args) {
+    function handleFilesList(args) {
         if (args.params.tag === 'gallery') {
             state.galleryTable = args.json.reverse();
         }
@@ -229,13 +229,13 @@ export const useGalleryStore = defineStore('Gallery', () => {
             state.emojiTable = args.json.reverse();
             state.galleryDialogEmojisLoading = false;
         }
-    });
+    }
 
-    API.$on('GALLERYIMAGE:ADD', function (args) {
+    function handleGalleryImageAdd(args) {
         if (Object.keys(state.galleryTable).length !== 0) {
             state.galleryTable.unshift(args.json);
         }
-    });
+    }
 
     function showGalleryDialog() {
         state.galleryDialogVisible = true;
@@ -253,9 +253,12 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'gallery'
         };
-        vrcPlusIconRequest.getFileList(params).finally(() => {
-            state.galleryDialogGalleryLoading = false;
-        });
+        vrcPlusIconRequest
+            .getFileList(params)
+            .then((args) => handleFilesList(args))
+            .finally(() => {
+                state.galleryDialogGalleryLoading = false;
+            });
     }
 
     function refreshVRCPlusIconsTable() {
@@ -264,9 +267,12 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'icon'
         };
-        vrcPlusIconRequest.getFileList(params).finally(() => {
-            state.galleryDialogIconsLoading = false;
-        });
+        vrcPlusIconRequest
+            .getFileList(params)
+            .then((args) => handleFilesList(args))
+            .finally(() => {
+                state.galleryDialogIconsLoading = false;
+            });
     }
 
     function inviteImageUpload(e) {
@@ -312,16 +318,19 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'sticker'
         };
-        vrcPlusIconRequest.getFileList(params).finally(() => {
-            state.galleryDialogStickersLoading = false;
-        });
+        vrcPlusIconRequest
+            .getFileList(params)
+            .then((args) => handleFilesList(args))
+            .finally(() => {
+                state.galleryDialogStickersLoading = false;
+            });
     }
 
-    API.$on('STICKER:ADD', function (args) {
+    function handleStickerAdd(args) {
         if (Object.keys(state.stickerTable).length !== 0) {
             state.stickerTable.unshift(args.json);
         }
-    });
+    }
 
     async function trySaveStickerToFile(displayName, userId, inventoryId) {
         if (state.instanceStickersCache.includes(inventoryId)) {
@@ -379,11 +388,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
             state.galleryDialogPrintsLoading = false;
         }
     }
-
-    API.$on('PRINT:LIST', function (args) {
-        state.printTable = args.json;
-        state.galleryDialogPrintsLoading = false;
-    });
 
     function queueSavePrintToFile(printId) {
         if (state.printCache.includes(printId)) {
@@ -457,9 +461,12 @@ export const useGalleryStore = defineStore('Gallery', () => {
             n: 100,
             tag: 'emoji'
         };
-        vrcPlusIconRequest.getFileList(params).finally(() => {
-            state.galleryDialogEmojisLoading = false;
-        });
+        vrcPlusIconRequest
+            .getFileList(params)
+            .then((args) => handleFilesList(args))
+            .finally(() => {
+                state.galleryDialogEmojisLoading = false;
+            });
     }
 
     async function getInventory() {
@@ -669,6 +676,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
         tryDeleteOldPrints,
         checkPreviousImageAvailable,
         showFullscreenImageDialog,
-        queueCheckInstanceInventory
+        handleStickerAdd,
+        handleGalleryImageAdd,
+        handleFilesList
     };
 });

@@ -169,7 +169,7 @@
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
     import { formatDateFilter } from '../../../shared/utils';
 
-    const { showFullscreenImageDialog } = useGalleryStore();
+    const { showFullscreenImageDialog, handleGalleryImageAdd } = useGalleryStore();
     const { currentlyDroppingFile } = storeToRefs(useVrcxStore());
     const { currentUser } = storeToRefs(useUserStore());
 
@@ -294,9 +294,7 @@
                 vrcPlusImageRequest
                     .uploadGalleryImage(base64Body)
                     .then((args) => {
-                        // about uploadGalleryImage -> emit 'GALLERYIMAGE:ADD'
-                        // no need to add to the gallery logic here
-                        // because it refreshes when you open the gallery
+                        handleGalleryImageAdd(args);
                         $message({
                             message: t('message.gallery.uploaded'),
                             type: 'success'

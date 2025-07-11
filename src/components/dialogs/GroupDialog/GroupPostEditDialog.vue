@@ -128,7 +128,7 @@
     const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
-    const { showFullscreenImageDialog } = useGalleryStore();
+    const { showFullscreenImageDialog, handleFilesList } = useGalleryStore();
     const { handleGroupPost } = useGroupStore();
 
     const gallerySelectDialog = ref({
@@ -158,6 +158,7 @@
             tag: 'gallery'
         };
         const args = await vrcPlusIconRequest.getFileList(params);
+        handleFilesList(args);
         if (args.params.tag === 'gallery') {
             galleryTable.value = args.json.reverse();
         }

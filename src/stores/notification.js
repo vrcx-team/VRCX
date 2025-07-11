@@ -331,7 +331,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 notificationId: ref.id
             }
         });
-        API.$emit('FRIEND:ADD', {
+        userStore.handleFriendAdd({
             params: {
                 userId: ref.senderUserId
             }

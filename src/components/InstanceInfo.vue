@@ -62,13 +62,14 @@
     import { miscRequest } from '../api';
     import { API } from '../service/eventBus';
     import { hasGroupPermission, formatDateFilter } from '../shared/utils';
-    import { useGroupStore, useLocationStore, useUserStore } from '../stores';
+    import { useGroupStore, useLocationStore, useUserStore, useInstanceStore } from '../stores';
 
     const { t } = useI18n();
 
     const locationStore = useLocationStore();
     const userStore = useUserStore();
     const groupStore = useGroupStore();
+    const instanceStore = useInstanceStore();
 
     const props = defineProps({
         location: String,
@@ -162,7 +163,7 @@
                 const args = await miscRequest.closeInstance({ location, hardClose: false });
                 if (args.json) {
                     proxy.$message({ message: proxy.t('message.instance.closed'), type: 'success' });
-                    API.$emit('INSTANCE', { json: args.json });
+                    instanceStore.handleInstance({ json: args.json });
                 }
             }
         });

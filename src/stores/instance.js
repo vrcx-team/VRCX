@@ -153,7 +153,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         { flush: 'sync' }
     );
 
-    API.$on('INSTANCE', function (args) {
+    function handleInstance(args) {
         const { json } = args;
         if (json) {
             args.ref = applyInstance(args.json);
@@ -179,7 +179,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         ) {
             applyGroupDialogInstances();
         }
-    });
+    }
 
     async function getInstanceJoinHistory() {
         state.instanceJoinHistory = await database.getInstanceJoinHistory();
@@ -1195,6 +1195,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         showPreviousInstancesInfoDialog,
         addInstanceJoinHistory,
         getCurrentInstanceUserList,
-        getInstanceJoinHistory
+        getInstanceJoinHistory,
+        handleInstance
     };
 });

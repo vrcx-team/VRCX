@@ -1886,7 +1886,7 @@
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
     const { refreshInviteMessageTableData } = useInviteStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
-    const { getFriendRequest } = useFriendStore();
+    const { getFriendRequest, handleFriendDelete } = useFriendStore();
     const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
     const { clearInviteImageUpload, showGalleryDialog, checkPreviousImageAvailable, showFullscreenImageDialog } =
         useGalleryStore();
@@ -2504,9 +2504,10 @@
                 reportUserForHacking(userId);
                 break;
             case 'Unfriend':
-                friendRequest.deleteFriend({
+                args = await friendRequest.deleteFriend({
                     userId
                 });
+                handleFriendDelete(args);
                 break;
         }
     }

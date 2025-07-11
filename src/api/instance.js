@@ -1,7 +1,7 @@
 import { $app } from '../app';
 import { t } from '../plugin';
-import { API } from '../service/eventBus';
 import { request } from '../service/request';
+import { useInstanceStore } from '../stores';
 
 const instanceReq = {
     /**
@@ -16,7 +16,7 @@ const instanceReq = {
                 json,
                 params
             };
-            API.$emit('INSTANCE', args);
+            useInstanceStore().handleInstance(args);
             return args;
         });
     },
@@ -45,7 +45,7 @@ const instanceReq = {
                 json,
                 params
             };
-            API.$emit('INSTANCE', args);
+            useInstanceStore().handleInstance(args);
             return args;
         });
     },
@@ -87,7 +87,7 @@ const instanceReq = {
                 json,
                 params
             };
-            API.$emit('INSTANCE', args);
+            useInstanceStore().handleInstance(args);
             return args;
         });
     },

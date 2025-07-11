@@ -77,7 +77,6 @@ const friendReq = {
                 json,
                 params
             };
-            API.$emit('FRIEND:DELETE', args);
             return args;
         });
     },
@@ -95,7 +94,6 @@ const friendReq = {
                 json,
                 params
             };
-            API.$emit('FRIEND:STATUS', args);
             return args;
         });
     },

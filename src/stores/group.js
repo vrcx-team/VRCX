@@ -586,7 +586,7 @@ export const useGroupStore = defineStore('Group', () => {
                                     );
                                 }
                                 for (const json of args.json.instances) {
-                                    API.$emit('INSTANCE', {
+                                    instanceStore.handleInstance({
                                         json,
                                         params: {
                                             fetchedAt: args.json.fetchedAt
@@ -870,7 +870,7 @@ export const useGroupStore = defineStore('Group', () => {
                 // tack on fetchedAt
                 json.$fetchedAt = args.json.fetchedAt;
             }
-            API.$emit('INSTANCE', {
+            instanceStore.handleInstance({
                 json,
                 params: {
                     fetchedAt: args.json.fetchedAt

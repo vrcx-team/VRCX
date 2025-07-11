@@ -309,7 +309,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     }
 
-    API.$on('FRIEND:STATUS', function (args) {
+    function handleFriendStatus(args) {
         const D = userStore.userDialog;
         if (D.visible === false || D.id !== args.params.userId) {
             return;
@@ -318,9 +318,9 @@ export const useFriendStore = defineStore('Friend', () => {
         D.isFriend = json.isFriend;
         D.incomingRequest = json.incomingRequest;
         D.outgoingRequest = json.outgoingRequest;
-    });
+    }
 
-    API.$on('FRIEND:DELETE', function (args) {
+    function handleFriendDelete(args) {
         const D = userStore.userDialog;
         if (D.visible === false || D.id !== args.params.userId) {
             return;
@@ -328,12 +328,12 @@ export const useFriendStore = defineStore('Friend', () => {
         D.isFriend = false;
         deleteFriendship(args.params.userId);
         deleteFriend(args.params.userId);
-    });
+    }
 
-    API.$on('FRIEND:ADD', function (args) {
+    function handleFriendAdd(args) {
         addFriendship(args.params.userId);
         addFriend(args.params.userId);
-    });
+    }
 
     function userOnFriend(args) {
         updateFriendship(args.ref);
@@ -1136,6 +1136,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 userId: id
             })
             .then((args) => {
+                handleFriendStatus(args);
                 if (args.json.isFriend && !state.friendLog.has(id)) {
                     if (state.friendNumber === 0) {
                         state.friendNumber = state.friends.size;
@@ -1214,6 +1215,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 userId: id
             })
             .then((args) => {
+                handleFriendStatus(args);
                 if (!args.json.isFriend && state.friendLog.has(id)) {
                     const friendLogHistory = {
                         created_at: new Date().toJSON(),
@@ -1682,11 +1684,12 @@ export const useFriendStore = defineStore('Friend', () => {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
-            callback: (action) => {
+            callback: async (action) => {
                 if (action === 'confirm') {
-                    friendRequest.deleteFriend({
+                    const args = await friendRequest.deleteFriend({
                         userId: id
                     });
+                    handleFriendDelete(args);
                 }
             }
         });
@@ -1782,6 +1785,8 @@ export const useFriendStore = defineStore('Friend', () => {
         confirmDeleteFriend,
         saveSidebarSortOrder,
         updateFriendships,
-        updateUserCurrentStatus
+        updateUserCurrentStatus,
+        handleFriendAdd,
+        handleFriendDelete
     };
 });
