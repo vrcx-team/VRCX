@@ -1459,9 +1459,10 @@ export const useUserStore = defineStore('User', () => {
         }
         // if status is offline, ignore status and statusDescription
         if (
-            (props.status || props.statusDescription) &&
-            props.status[0] !== 'offline' &&
-            props.status[1] !== 'offline'
+            (props.status &&
+                props.status[0] !== 'offline' &&
+                props.status[1] !== 'offline') ||
+            (!props.status && props.statusDescription)
         ) {
             let status = '';
             let previousStatus = '';
