@@ -607,9 +607,6 @@ export const useUserStore = defineStore('User', () => {
                     changedProps[prop] = [toBe, asIs];
                 }
             }
-            if (ref.note !== null && ref.note !== json.note) {
-                checkNote(json.id, json.note);
-            }
             Object.assign(ref, json);
         }
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
@@ -1522,6 +1519,13 @@ export const useUserStore = defineStore('User', () => {
             };
             feedStore.addFeed(feed);
             database.addBioToDatabase(feed);
+        }
+        if (
+            props.note &&
+            props.note[0] !== null &&
+            props.note[0] !== props.note[1]
+        ) {
+            checkNote(ref.id, props.note[0]);
         }
     }
 
