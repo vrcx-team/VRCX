@@ -608,14 +608,15 @@
             });
     }
 
-    function hideNotification(row) {
+    async function hideNotification(row) {
         if (row.type === 'ignoredFriendRequest') {
-            friendRequest.deleteHiddenFriendRequest(
+            const args = await friendRequest.deleteHiddenFriendRequest(
                 {
                     notificationId: row.id
                 },
                 row.senderUserId
             );
+            useNotificationStore().handleNotificationHide(args);
         } else {
             notificationRequest.hideNotification({
                 notificationId: row.id

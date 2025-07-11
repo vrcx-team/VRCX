@@ -1,6 +1,5 @@
-import { API } from '../service/eventBus';
 import { request } from '../service/request';
-import { useUserStore } from '../stores';
+import { useFavoriteStore, useUserStore } from '../stores';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
@@ -57,7 +56,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:ADD', args);
+            useFavoriteStore().handleFavoriteAdd(args);
             return args;
         });
     },
@@ -74,7 +73,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:DELETE', args);
+            useFavoriteStore().handleFavoriteDelete(args);
             return args;
         });
     },
@@ -92,7 +91,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:GROUP:LIST', args);
             return args;
         });
     },
@@ -114,7 +112,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:GROUP:SAVE', args);
             return args;
         });
     },
@@ -138,7 +135,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:GROUP:CLEAR', args);
+            useFavoriteStore().handleFavoriteGroupClear(args);
             return args;
         });
     },
@@ -159,7 +156,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:WORLD:LIST', args);
             return args;
         });
     },
@@ -180,7 +176,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            API.$emit('FAVORITE:AVATAR:LIST', args);
             return args;
         });
     }

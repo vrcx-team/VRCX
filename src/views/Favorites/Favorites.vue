@@ -79,7 +79,8 @@
         refreshFavoriteGroups,
         clearBulkFavoriteSelection,
         bulkCopyFavoriteSelection,
-        getLocalWorldFavorites
+        getLocalWorldFavorites,
+        handleFavoriteGroup
     } = useFavoriteStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
 
@@ -153,7 +154,13 @@
                                 group: ctx.name,
                                 displayName: instance.inputValue
                             })
-                            .then(() => {
+                            .then((args) => {
+                                handleFavoriteGroup({
+                                    json: args.json,
+                                    params: {
+                                        favoriteGroupId: args.json.id
+                                    }
+                                });
                                 proxy.$message({
                                     message: t('prompt.change_favorite_group_name.message.success'),
                                     type: 'success'

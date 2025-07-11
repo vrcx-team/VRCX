@@ -1868,7 +1868,7 @@
     const { showUserDialog, applyUser, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
         useUserStore();
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
-    const { showFavoriteDialog } = useFavoriteStore();
+    const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();
     const { showAvatarDialog, lookupAvatars, showAvatarAuthorDialog } = useAvatarStore();
     const { cachedAvatars } = storeToRefs(useAvatarStore());
     const { cachedWorlds } = storeToRefs(useWorldStore());
@@ -2708,6 +2708,7 @@
             };
             try {
                 const args = await favoriteRequest.getFavoriteWorlds(params);
+                handleFavoriteWorldList(args);
                 worldLists.push([list.displayName, list.visibility, args.json]);
             } catch (err) {
                 console.error('getUserFavoriteWorlds', err);

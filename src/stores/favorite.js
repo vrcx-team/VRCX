@@ -431,7 +431,34 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         { flush: 'sync' }
     );
 
-    API.$on('FAVORITE', function (args) {
+    function handleFavoriteAdd(args) {
+        handleFavorite({
+            json: args.json,
+            params: {
+                favoriteId: args.json.id
+            },
+            sortTop: true
+        });
+
+        if (
+            args.params.type === 'avatar' &&
+            !avatarStore.cachedAvatars.has(args.params.favoriteId)
+        ) {
+            refreshFavoriteAvatars(args.params.tags);
+        }
+
+        if (
+            args.params.type === 'friend' &&
+            generalSettingsStore.localFavoriteFriendsGroups.includes(
+                'friend:' + args.params.tags
+            )
+        ) {
+            friendStore.updateLocalFavoriteFriends();
+        }
+        updateFavoriteDialog(args.params.objectId);
+    }
+
+    function handleFavorite(args) {
         const fav = applyFavoriteCached(args.json);
         if (!fav.$isDeleted) {
             args.ref = fav;
@@ -471,47 +498,13 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         ) {
             avatarDialog.isFavorite = true;
         }
-    });
+    }
 
-    API.$on('FAVORITE:@DELETE', function (args) {
-        const { ref } = args;
-        if (ref.$groupRef !== null) {
-            --ref.$groupRef.count;
-        }
-    });
-
-    API.$on('FAVORITE:ADD', function (args) {
-        API.$emit('FAVORITE', {
-            json: args.json,
-            params: {
-                favoriteId: args.json.id
-            },
-            sortTop: true
-        });
-        if (
-            args.params.type === 'avatar' &&
-            !avatarStore.cachedAvatars.has(args.params.favoriteId)
-        ) {
-            refreshFavoriteAvatars(args.params.tags);
-        }
-
-        if (
-            args.params.type === 'friend' &&
-            generalSettingsStore.localFavoriteFriendsGroups.includes(
-                'friend:' + args.params.tags
-            )
-        ) {
-            friendStore.updateLocalFavoriteFriends();
-        }
-        updateFavoriteDialog(args.params.objectId);
-    });
-
-    API.$on('FAVORITE:DELETE', function (args) {
+    function handleFavoriteDelete(args) {
         const ref = state.cachedFavoritesByObjectId.get(args.params.objectId);
         if (typeof ref === 'undefined') {
             return;
         }
-        // 애초에 $isDeleted인데 여기로 올 수 가 있나..?
         state.cachedFavoritesByObjectId.delete(args.params.objectId);
         friendStore.localFavoriteFriends.delete(args.params.objectId);
         friendStore.updateSidebarFriendsList();
@@ -520,15 +513,15 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         args.ref = ref;
         ref.$isDeleted = true;
-        API.$emit('FAVORITE:@DELETE', {
+        handleFavoriteAtDelete({
             ref,
             params: {
                 favoriteId: ref.id
             }
         });
-    });
+    }
 
-    API.$on('FAVORITE:GROUP', function (args) {
+    function handleFavoriteGroup(args) {
         const ref = applyFavoriteGroup(args.json);
         if (ref.$isDeleted) {
             return;
@@ -538,29 +531,9 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             ref.$groupRef.displayName = ref.displayName;
             ref.$groupRef.visibility = ref.visibility;
         }
-    });
+    }
 
-    API.$on('FAVORITE:GROUP:LIST', function (args) {
-        for (const json of args.json) {
-            API.$emit('FAVORITE:GROUP', {
-                json,
-                params: {
-                    favoriteGroupId: json.id
-                }
-            });
-        }
-    });
-
-    API.$on('FAVORITE:GROUP:SAVE', function (args) {
-        API.$emit('FAVORITE:GROUP', {
-            json: args.json,
-            params: {
-                favoriteGroupId: args.json.id
-            }
-        });
-    });
-
-    API.$on('FAVORITE:GROUP:CLEAR', function (args) {
+    function handleFavoriteGroupClear(args) {
         const key = `${args.params.type}:${args.params.group}`;
         for (const ref of state.cachedFavorites.values()) {
             if (ref.$isDeleted || ref.$groupKey !== key) {
@@ -570,21 +543,18 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             friendStore.localFavoriteFriends.delete(ref.favoriteId);
             friendStore.updateSidebarFriendsList();
             ref.$isDeleted = true;
-            API.$emit('FAVORITE:@DELETE', {
+            handleFavoriteAtDelete({
                 ref,
                 params: {
                     favoriteId: ref.id
                 }
             });
         }
-    });
+    }
 
-    API.$on('FAVORITE:WORLD:LIST', function (args) {
+    function handleFavoriteWorldList(args) {
         for (const json of args.json) {
             if (json.id === '???') {
-                // FIXME
-                // json.favoriteId로 따로 불러와야 하나?
-                // 근데 ???가 많으면 과다 요청이 될듯
                 continue;
             }
             API.$emit('WORLD', {
@@ -594,22 +564,21 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 }
             });
         }
-    });
+    }
 
-    API.$on('FAVORITE:AVATAR:LIST', function (args) {
+    function handleFavoriteAvatarList(args) {
         for (const json of args.json) {
             if (json.releaseStatus === 'hidden') {
-                // NOTE: 얘는 또 더미 데이터로 옴
                 continue;
             }
-            this.$emit('AVATAR', {
+            API.$emit('AVATAR', {
                 json,
                 params: {
                     avatarId: json.id
                 }
             });
         }
-    });
+    }
 
     function expireFavorites() {
         friendStore.localFavoriteFriends.clear();
@@ -624,7 +593,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         state.favoriteAvatarsSorted = [];
     }
 
-    API.$on('FAVORITE:@DELETE', function (args) {
+    function handleFavoriteAtDelete(args) {
+        const { ref } = args;
+        if (ref.$groupRef !== null) {
+            --ref.$groupRef.count;
+        }
         applyFavorite(args.ref.type, args.ref.favoriteId);
         friendStore.updateFriend({ id: args.ref.favoriteId });
         const userDialog = userStore.userDialog;
@@ -658,7 +631,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         ) {
             avatarDialog.isFavorite = false;
         }
-    });
+    }
 
     /**
      * aka: `$app.methods.applyFavorite`
@@ -850,6 +823,16 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             params: {
                 n: 50,
                 offset: 0
+            },
+            handle: (args) => {
+                for (const json of args.json) {
+                    handleFavoriteGroup({
+                        json,
+                        params: {
+                            favoriteGroupId: json.id
+                        }
+                    });
+                }
             },
             done(ok) {
                 if (ok) {
@@ -1046,7 +1029,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             },
             handle(args) {
                 for (const json of args.json) {
-                    API.$emit('FAVORITE', {
+                    handleFavorite({
                         json,
                         params: {
                             favoriteId: json.id
@@ -1160,7 +1143,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 continue;
             }
             ref.$isDeleted = true;
-            API.$emit('FAVORITE:@DELETE', {
+            handleFavoriteAtDelete({
                 ref,
                 params: {
                     favoriteId: ref.id
@@ -1173,14 +1156,15 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * aka: `API.refreshFavoriteAvatars`
      * @param tag
      */
-    function refreshFavoriteAvatars(tag) {
+    async function refreshFavoriteAvatars(tag) {
         const n = Math.floor(Math.random() * (50 + 1)) + 50;
         const params = {
             n,
             offset: 0,
             tag
         };
-        favoriteRequest.getFavoriteAvatars(params);
+        const args = await favoriteRequest.getFavoriteAvatars(params);
+        handleFavoriteAvatarList(args);
     }
 
     /**
@@ -1214,6 +1198,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                         processBulk({
                             fn,
                             N,
+                            handle: (args) => handleFavoriteAvatarList(args),
                             params: {
                                 n,
                                 offset: 0,
@@ -1226,6 +1211,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                     processBulk({
                         fn,
                         N,
+                        handle: (args) => handleFavoriteWorldList(args),
                         params: {
                             n,
                             offset: 0
@@ -2037,6 +2023,11 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         newLocalWorldFavoriteGroup,
         deleteFavoriteNoConfirm,
         showFavoriteDialog,
-        saveSortFavoritesOption
+        saveSortFavoritesOption,
+        handleFavoriteWorldList,
+        handleFavoriteGroupClear,
+        handleFavoriteGroup,
+        handleFavoriteDelete,
+        handleFavoriteAdd
     };
 });

@@ -1,6 +1,5 @@
 import { API } from '../service/eventBus';
 import { request } from '../service/request';
-import { useNotificationStore } from '../stores';
 
 const friendReq = {
     /**
@@ -111,7 +110,6 @@ const friendReq = {
                 params,
                 userId
             };
-            useNotificationStore().handleNotificationHide(args);
             return args;
         });
     }

@@ -251,7 +251,8 @@
         deleteLocalWorldFavoriteGroup,
         renameLocalWorldFavoriteGroup,
         removeLocalWorldFavorite,
-        newLocalWorldFavoriteGroup
+        newLocalWorldFavoriteGroup,
+        handleFavoriteGroup
     } = useFavoriteStore();
     const { showWorldDialog } = useWorldStore();
 
@@ -307,6 +308,12 @@
             visibility
         };
         favoriteRequest.saveFavoriteGroup(params).then((args) => {
+            handleFavoriteGroup({
+                json: args.json,
+                params: {
+                    favoriteGroupId: args.json.id
+                }
+            });
             proxy.$message({
                 message: 'Group visibility changed',
                 type: 'success'
