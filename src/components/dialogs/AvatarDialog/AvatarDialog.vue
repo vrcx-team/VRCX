@@ -378,7 +378,7 @@
                                 @change="onFileChangeAvatarGallery" />
                             <el-button
                                 v-if="avatarDialog.ref.authorId === currentUser.id"
-                                v-loading="avatarDialog.galleryLoading"
+                                :disabled="!!avatarDialog.galleryLoading"
                                 size="small"
                                 icon="el-icon-upload2"
                                 style="margin-left: 5px"
