@@ -1175,6 +1175,12 @@ export const useUserStore = defineStore('User', () => {
             params,
             handle: (args) => {
                 for (const json of args.json) {
+                    avatarStore.handleAvatar({
+                        json,
+                        params: {
+                            avatarId: json.id
+                        }
+                    });
                     const $ref = avatarStore.cachedAvatars.get(json.id);
                     if (typeof $ref !== 'undefined') {
                         map.set($ref.id, $ref);

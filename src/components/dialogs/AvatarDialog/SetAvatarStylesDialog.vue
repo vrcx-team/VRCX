@@ -66,6 +66,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { arraysMatch } from '../../../shared/utils';
     import { avatarRequest } from '../../../api';
+    import { useAvatarStore } from '../../../stores';
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
@@ -139,7 +140,13 @@
         };
         avatarRequest
             .saveAvatar(params)
-            .then(() => {
+            .then((args) => {
+                useAvatarStore().handleAvatar({
+                    json: args.user,
+                    params: {
+                        avatarId: args.user.id
+                    }
+                });
                 $message.success(t('dialog.set_avatar_styles.save_success'));
                 props.setAvatarStylesDialog.visible = false;
             })

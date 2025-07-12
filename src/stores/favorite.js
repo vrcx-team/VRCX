@@ -571,7 +571,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (json.releaseStatus === 'hidden') {
                 continue;
             }
-            API.$emit('AVATAR', {
+            avatarStore.handleAvatar({
                 json,
                 params: {
                     avatarId: json.id

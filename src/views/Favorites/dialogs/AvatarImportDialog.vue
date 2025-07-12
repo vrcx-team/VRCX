@@ -187,7 +187,7 @@
     const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
     const { addLocalAvatarFavorite, getLocalAvatarFavoriteGroupLength } = useFavoriteStore();
-    const { showAvatarDialog } = useAvatarStore();
+    const { showAvatarDialog, handleAvatar } = useAvatarStore();
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const avatarImportDialog = ref({
@@ -266,6 +266,7 @@
                     const args = await avatarRequest.getAvatar({
                         avatarId
                     });
+                    handleAvatar(args);
                     avatarImportTable.value.data.push(args.ref);
                     D.avatarIdList.add(avatarId);
                 } catch (err) {

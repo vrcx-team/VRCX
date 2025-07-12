@@ -58,7 +58,7 @@
     import { useI18n } from 'vue-i18n-bridge';
     import * as workerTimers from 'worker-timers';
     import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
-    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore } from '../../stores';
+    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
     import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
     import FavoritesFriendTab from './components/FavoritesFriendTab.vue';
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
@@ -83,6 +83,7 @@
         handleFavoriteGroup
     } = useFavoriteStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
+    const { handleAvatar } = useAvatarStore();
 
     const editFavoritesMode = ref(false);
     const refreshingLocalFavorites = ref(false);
@@ -184,9 +185,10 @@
                 break;
             }
             try {
-                await avatarRequest.getAvatar({
+                const args = await avatarRequest.getAvatar({
                     avatarId
                 });
+                handleAvatar(args);
             } catch (err) {
                 console.error(err);
             }

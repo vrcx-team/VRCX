@@ -113,7 +113,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         { flush: 'sync' }
     );
 
-    API.$on('AVATAR', function (args) {
+    function handleAvatar(args) {
         args.ref = applyAvatar(args.json);
         favoriteStore.applyFavorite('avatar', args.ref.id);
         if (favoriteStore.localAvatarFavoritesList.includes(args.ref.id)) {
@@ -143,7 +143,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             // update db cache
             database.addAvatarToCache(args.ref);
         }
-    });
+    }
 
     /**
      *
@@ -190,6 +190,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         avatarRequest
             .getAvatar({ avatarId })
             .then((args) => {
+                handleAvatar(args);
                 const { ref } = args;
                 D.ref = ref;
                 getAvatarGallery(avatarId);
@@ -341,6 +342,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
      */
     function addAvatarToHistory(avatarId) {
         avatarRequest.getAvatar({ avatarId }).then((args) => {
+            handleAvatar(args);
             const { ref } = args;
 
             database.addAvatarToCache(ref);
@@ -723,6 +725,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         lookupAvatars,
         selectAvatarWithConfirmation,
         showAvatarAuthorDialog,
-        addAvatarWearTime
+        addAvatarWearTime,
+        handleAvatar
     };
 });

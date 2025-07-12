@@ -221,9 +221,15 @@
                         tags.push(tag);
                     }
                 }
-                await avatarRequest.saveAvatar({
+                const args = await avatarRequest.saveAvatar({
                     id: ref.id,
                     tags
+                });
+                useAvatarStore().handleAvatar({
+                    json: args.user,
+                    params: {
+                        avatarId: args.user.id
+                    }
                 });
                 D.selectedCount--;
             }

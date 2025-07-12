@@ -642,10 +642,9 @@
 
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog, sortUserDialogAvatars } = useUserStore();
-    const { userDialog } = storeToRefs(useUserStore());
-    const { currentUser } = storeToRefs(useUserStore());
+    const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { avatarDialog, cachedAvatarModerations, cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
-    const { showAvatarDialog, getAvatarGallery, applyAvatarModeration } = useAvatarStore();
+    const { showAvatarDialog, getAvatarGallery, applyAvatarModeration, handleAvatar } = useAvatarStore();
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { deleteVRChatCache } = useGameStore();
@@ -870,6 +869,12 @@
                                         releaseStatus: 'public'
                                     })
                                     .then((args) => {
+                                        handleAvatar({
+                                            json: args.user,
+                                            params: {
+                                                avatarId: args.user.id
+                                            }
+                                        });
                                         $message({
                                             message: 'Avatar updated to public',
                                             type: 'success'
@@ -884,6 +889,12 @@
                                         releaseStatus: 'private'
                                     })
                                     .then((args) => {
+                                        handleAvatar({
+                                            json: args.user,
+                                            params: {
+                                                avatarId: args.user.id
+                                            }
+                                        });
                                         $message({
                                             message: 'Avatar updated to private',
                                             type: 'success'
@@ -1035,6 +1046,12 @@
                             description: instance.inputValue
                         })
                         .then((args) => {
+                            handleAvatar({
+                                json: args.user,
+                                params: {
+                                    avatarId: args.user.id
+                                }
+                            });
                             $message({
                                 message: t('prompt.change_avatar_description.message.success'),
                                 type: 'success'
@@ -1061,6 +1078,12 @@
                             name: instance.inputValue
                         })
                         .then((args) => {
+                            handleAvatar({
+                                json: args.user,
+                                params: {
+                                    avatarId: args.user.id
+                                }
+                            });
                             $message({
                                 message: t('prompt.rename_avatar.message.success'),
                                 type: 'success'

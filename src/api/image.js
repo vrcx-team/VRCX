@@ -126,7 +126,6 @@ const imageReq = {
                 json,
                 params
             };
-            API.$emit('AVATAR', args);
             return args;
         });
     },

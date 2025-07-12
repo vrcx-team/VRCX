@@ -57,6 +57,7 @@
     const $message = instance.proxy.$message;
 
     const { avatarDialog } = storeToRefs(useAvatarStore());
+    const { handleAvatar } = useAvatarStore();
     const { previousImagesTable } = storeToRefs(useGalleryStore());
 
     const props = defineProps({
@@ -315,6 +316,7 @@
             imageUrl: `${API.endpointDomain}/file/${fileId}/${fileVersion}/file`
         };
         const res = await imageRequest.setAvatarImage(parmas);
+        handleAvatar(res);
         return avatarImageSet(res);
     }
 
@@ -343,10 +345,13 @@
             id: avatarDialog.value.id,
             imageUrl: `${API.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file`
         };
-        imageRequest.setAvatarImage(parmas).finally(() => {
-            changeAvatarImageDialogLoading.value = false;
-            closeDialog();
-        });
+        imageRequest
+            .setAvatarImage(parmas)
+            .then((args) => handleAvatar(args))
+            .finally(() => {
+                changeAvatarImageDialogLoading.value = false;
+                closeDialog();
+            });
     }
 
     function compareCurrentImage(image) {
