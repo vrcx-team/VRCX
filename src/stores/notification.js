@@ -331,7 +331,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 notificationId: ref.id
             }
         });
-        userStore.handleFriendAdd({
+        friendStore.handleFriendAdd({
             params: {
                 userId: ref.senderUserId
             }

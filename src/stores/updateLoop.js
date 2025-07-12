@@ -14,6 +14,7 @@ import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useVrcxStore } from './vrcx';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
+import { useGroupStore } from './group';
 
 export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const state = reactive({
@@ -65,6 +66,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         const gameLogStore = useGameLogStore();
         const vrcxUpdaterStore = useVRCXUpdaterStore();
         const uiStore = useUiStore();
+        const groupStore = useGroupStore();
         try {
             if (watchState.isLoggedIn) {
                 if (--state.nextCurrentUserRefresh <= 0) {
@@ -82,7 +84,9 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 if (--state.nextGroupInstanceRefresh <= 0) {
                     if (watchState.isFriendsLoaded) {
                         state.nextGroupInstanceRefresh = 300; // 5min
-                        groupRequest.getUsersGroupInstances();
+                        const args =
+                            await groupRequest.getUsersGroupInstances();
+                        groupStore.handleGroupUserInstances(args);
                     }
                     AppApi.CheckGameRunning();
                 }

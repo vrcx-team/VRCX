@@ -272,7 +272,7 @@ function handlePipeline(args) {
                     userId: content.userId
                 }
             });
-            userStore.handleFriendAdd({
+            friendStore.handleFriendAdd({
                 params: {
                     userId: content.userId
                 }
