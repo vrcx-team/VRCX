@@ -3,7 +3,6 @@ import { computed, reactive, watch } from 'vue';
 import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
 import { $app } from '../app';
-import { t } from '../plugin';
 import removeConfusables, { removeWhitespace } from '../service/confusables';
 import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
@@ -15,6 +14,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useSearchStore = defineStore('Search', () => {
     const userStore = useUserStore();
@@ -24,6 +24,8 @@ export const useSearchStore = defineStore('Search', () => {
     const worldStore = useWorldStore();
     const avatarStore = useAvatarStore();
     const groupStore = useGroupStore();
+    const { t } = useI18n();
+
     const state = reactive({
         searchText: '',
         searchUserResults: [],

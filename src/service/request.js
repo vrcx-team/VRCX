@@ -13,7 +13,6 @@ import {
 import { API } from './eventBus.js';
 import webApiService from './webapi.js';
 import { watchState } from './watchState';
-import { closeWebSocket } from './websocket';
 
 API.endpointDomainVrchat = 'https://api.vrchat.cloud/api/1';
 API.websocketDomainVrchat = 'wss://pipeline.vrchat.cloud';
@@ -300,7 +299,7 @@ export function $throw(code, error, endpoint) {
 /**
  * Processes data in bulk by making paginated requests until all data is fetched or limits are reached.
  *
- * `API.bulk`の代わり
+ * `API.bulk`
  *
  * @async
  * @function processBulk

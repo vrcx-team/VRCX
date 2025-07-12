@@ -363,7 +363,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     * aka: `API.applyNotification`
+     *
      * @param {object} json
      * @returns {object}
      */
@@ -418,9 +418,6 @@ export const useNotificationStore = defineStore('Notification', () => {
         return ref;
     }
 
-    /**
-     * aka: `API.expireFriendRequestNotifications`
-     */
     function expireFriendRequestNotifications() {
         const array = state.notificationTable.data;
         for (let i = array.length - 1; i >= 0; i--) {
@@ -435,7 +432,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     * aka: `API.expireNotification`
+     *
      * @param {string} notificationId
      */
     function expireNotification(notificationId) {
@@ -477,7 +474,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     /**
-     * aka: `API.refreshNotifications`
+     *
      * @returns {Promise<void>}
      */
     async function refreshNotifications() {

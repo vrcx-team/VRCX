@@ -31,7 +31,6 @@
     import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { inviteMessagesRequest } from '../../../api';
-    import { API } from '../../../service/eventBus';
     import { useInviteStore } from '../../../stores';
 
     const { t } = useI18n();

@@ -506,7 +506,7 @@
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
     import { API } from '../../service/eventBus';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
-    import { extractFileId, getEmojiFileName, getPrintFileName, formatDateFilter } from '../../shared/utils';
+    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../shared/utils';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../stores';
 
     const { t } = useI18n();

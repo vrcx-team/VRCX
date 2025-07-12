@@ -2,10 +2,8 @@ import { defineStore } from 'pinia';
 import Vue, { computed, reactive, watch } from 'vue';
 import { instanceRequest, userRequest, worldRequest } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
 import { instanceContentSettings } from '../shared/constants';
 import {
@@ -31,6 +29,7 @@ import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();
@@ -43,6 +42,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     const userStore = useUserStore();
     const sharedFeedStore = useSharedFeedStore();
     const photonStore = usePhotonStore();
+    const { t } = useI18n();
 
     const state = reactive({
         cachedInstances: new Map(),
@@ -315,7 +315,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     /**
-     * aka: `API.applyInstance`
+     *
      * @param {object} json
      * @returns {object} ref
      */
@@ -889,7 +889,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     /**
-     * aka: `API.applyQueuedInstance`
+     *
      * @param {string} instanceId
      */
     function applyQueuedInstance(instanceId) {

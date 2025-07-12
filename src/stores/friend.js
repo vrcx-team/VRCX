@@ -3,7 +3,6 @@ import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { friendRequest, userRequest } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
@@ -11,13 +10,12 @@ import { reconnectWebSocket } from '../service/websocket';
 import { watchState } from '../service/watchState';
 import {
     compareByCreatedAtAscending,
-    migrateMemos,
     getFriendsSortFunction,
     getGroupName,
     getNameColour,
     getUserMemo,
     getWorldName,
-    isRealInstance,
+    migrateMemos,
     removeFromArray
 } from '../shared/utils';
 import { useAuthStore } from './auth';
@@ -31,6 +29,7 @@ import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useFriendStore = defineStore('Friend', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -43,6 +42,7 @@ export const useFriendStore = defineStore('Friend', () => {
     const sharedFeedStore = useSharedFeedStore();
     const updateLoopStore = useUpdateLoopStore();
     const authStore = useAuthStore();
+    const { t } = useI18n();
 
     const state = reactive({
         friends: new Map(),
@@ -348,7 +348,7 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
-     * aka: `API.getFriendRequest`
+     *
      * @param {string} userId
      * @returns {*|string}
      */
@@ -817,7 +817,7 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
-     * aka: `API.refreshFriends`
+     *
      * @returns {Promise<*[]>}
      */
     async function refreshFriends() {
@@ -930,7 +930,6 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {Promise<*>}
      */
     async function refetchBrokenFriends(friends) {
-        // API.refetchBrokenFriends
         // attempt to fix broken data from bulk friend fetch
         for (let i = 0; i < friends.length; i++) {
             const friend = friends[i];
@@ -978,8 +977,6 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {Promise<*>}
      */
     async function refreshRemainingFriends(friends) {
-        // API.refreshRemainingFriends
-        const authStore = useAuthStore();
         for (const userId of userStore.currentUser.friends) {
             if (!friends.some((x) => x.id === userId)) {
                 try {

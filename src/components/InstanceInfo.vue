@@ -60,9 +60,8 @@
     import { getCurrentInstance, reactive, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { miscRequest } from '../api';
-    import { API } from '../service/eventBus';
-    import { hasGroupPermission, formatDateFilter } from '../shared/utils';
-    import { useGroupStore, useLocationStore, useUserStore, useInstanceStore } from '../stores';
+    import { formatDateFilter, hasGroupPermission } from '../shared/utils';
+    import { useGroupStore, useInstanceStore, useLocationStore, useUserStore } from '../stores';
 
     const { t } = useI18n();
 

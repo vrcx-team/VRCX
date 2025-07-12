@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { $app } from '../app';
-import { t } from '../plugin';
 import configRepository from '../service/config';
 import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
@@ -10,9 +9,12 @@ import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useAuthStore } from './auth';
 import { useUiStore } from './ui';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const uiStore = useUiStore();
+    const { t } = useI18n();
+
     const state = reactive({
         appVersion: '',
         autoUpdateVRCX: 'Auto Download',

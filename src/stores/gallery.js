@@ -9,7 +9,6 @@ import {
     vrcPlusImageRequest
 } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
 import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
 import {
@@ -18,9 +17,12 @@ import {
     getPrintLocalDate
 } from '../shared/utils';
 import { useAdvancedSettingsStore } from './settings/advanced';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useGalleryStore = defineStore('Gallery', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
+    const { t } = useI18n();
+
     const state = reactive({
         galleryTable: [],
         // galleryDialog: {},

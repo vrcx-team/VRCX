@@ -36,7 +36,6 @@
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { instanceRequest, inviteMessagesRequest, notificationRequest } from '../../../api';
-    import { API } from '../../../service/eventBus';
     import { parseLocation } from '../../../shared/utils';
     import { useGalleryStore, useUserStore } from '../../../stores';
 

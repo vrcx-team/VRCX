@@ -268,7 +268,7 @@ export const useWorldStore = defineStore('World', () => {
     }
 
     /**
-     * aka : `API.applyWorld`
+     *
      * @param {object} json
      * @returns {object} ref
      */

@@ -15,7 +15,7 @@ import {
 } from '../stores';
 import { API } from './eventBus';
 import { request } from './request';
-import { watchState } from '../service/watchState';
+import { watchState } from './watchState';
 
 let webSocket = null;
 let lastWebSocketMessage = '';

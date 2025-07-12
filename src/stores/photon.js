@@ -3,7 +3,6 @@ import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { instanceRequest, userRequest } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
@@ -28,6 +27,7 @@ import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const usePhotonStore = defineStore('Photon', () => {
     const vrStore = useVrStore();
@@ -40,6 +40,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     const sharedFeedStore = useSharedFeedStore();
     const avatarStore = useAvatarStore();
     const favoriteStore = useFavoriteStore();
+    const { t } = useI18n();
 
     const state = reactive({
         photonLoggingEnabled: false,

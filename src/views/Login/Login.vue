@@ -155,9 +155,9 @@
     import { useI18n } from 'vue-i18n-bridge';
     import {
         useAppearanceSettingsStore,
-        useVRCXUpdaterStore,
         useAuthStore,
-        useGeneralSettingsStore
+        useGeneralSettingsStore,
+        useVRCXUpdaterStore
     } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
     import { API } from '../../service/eventBus';

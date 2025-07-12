@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { useAuthStore } from '../stores';
 
 const eventHandlers = new Map();
 const API = {};

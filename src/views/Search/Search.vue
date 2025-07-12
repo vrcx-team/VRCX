@@ -319,27 +319,25 @@
     import { useI18n } from 'vue-i18n-bridge';
     import { groupRequest, worldRequest } from '../../api';
     import {
-        convertFileUrlToImageUrl,
-        replaceBioSymbols,
         compareByCreatedAt,
         compareByName,
         compareByUpdatedAt,
+        convertFileUrlToImageUrl,
+        replaceBioSymbols,
         userImage
     } from '../../shared/utils';
     import {
-        useAppearanceSettingsStore,
         useAdvancedSettingsStore,
+        useAppearanceSettingsStore,
+        useAuthStore,
         useAvatarProviderStore,
-        useUserStore,
         useAvatarStore,
-        useWorldStore,
         useGroupStore,
-        useUiStore,
         useSearchStore,
-        useAuthStore
+        useUiStore,
+        useUserStore,
+        useWorldStore
     } from '../../stores';
-
-    import { API } from '../../service/eventBus';
 
     const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());

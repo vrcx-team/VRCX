@@ -21,7 +21,6 @@ import { useFavoriteStore } from './favorite';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUserStore } from './user';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
-import { useAuthStore } from './auth';
 
 export const useAvatarStore = defineStore('Avatar', () => {
     const favoriteStore = useFavoriteStore();
@@ -262,7 +261,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
-     * aka: `API.applyAvatarModeration`
+     *
      * @param {object} json
      * @returns {object} ref
      */
@@ -366,7 +365,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
-     * aka: `API.applyAvatar`
+     *
      * @param {object} json
      * @returns {object} ref
      */

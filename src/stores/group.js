@@ -10,7 +10,6 @@ import {
 import { $app } from '../app';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
-import { API } from '../service/eventBus';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import { replaceBioSymbols } from '../shared/utils';
 import { useGameStore } from './game';
@@ -187,7 +186,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     * aka: `API.applyGroup`
+     *
      * @param {object} json
      * @returns {object} ref
      */
@@ -438,7 +437,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     * aka `API.applyPresenceGroups`
+     *
      * @param {object} ref
      */
     function applyPresenceGroups(ref) {
@@ -508,7 +507,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     * aka: `API.getAllGroupPosts`
+     *
      * @param {{ groupId: string }} params
      * @return { Promise<{json: any, params}> }
      */
@@ -885,7 +884,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     * aka: `API.getCachedGroup`
+     *
      * @param {{ groupId: string }} params
      * @return { Promise<{json: any, params}> }
      */
@@ -912,7 +911,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     /**
-     * aka: `API.applyGroupMember`
+     *
      * @param {object} json
      * @returns {*}
      */
@@ -957,9 +956,6 @@ export const useGroupStore = defineStore('Group', () => {
         return json;
     }
 
-    /**
-     * aka: `API.applyGroupLanguage`
-     */
     function applyGroupLanguage(ref) {
         ref.$languages = [];
         const { languages } = ref;

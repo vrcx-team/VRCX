@@ -416,28 +416,27 @@
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
-    import { API } from '../../service/eventBus';
     import {
-        parseLocation,
-        convertFileUrlToImageUrl,
-        removeFromArray,
         checkCanInvite,
+        convertFileUrlToImageUrl,
         escapeTag,
-        formatDateFilter
+        formatDateFilter,
+        parseLocation,
+        removeFromArray
     } from '../../shared/utils';
     import configRepository from '../../service/config';
     import { database } from '../../service/database';
     import {
+        useAppearanceSettingsStore,
         useGalleryStore,
+        useGameStore,
+        useGroupStore,
         useInviteStore,
         useLocationStore,
-        useAppearanceSettingsStore,
-        useUserStore,
-        useWorldStore,
-        useGroupStore,
         useNotificationStore,
         useUiStore,
-        useGameStore
+        useUserStore,
+        useWorldStore
     } from '../../stores';
     import SendInviteRequestResponseDialog from './dialogs/SendInviteRequestResponseDialog.vue';
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';

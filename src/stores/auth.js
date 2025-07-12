@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
 import { authRequest } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
+import { useI18n } from 'vue-i18n-bridge';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
@@ -23,6 +23,8 @@ export const useAuthStore = defineStore('Auth', () => {
     const notificationStore = useNotificationStore();
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
+
+    const { t } = useI18n();
     const state = reactive({
         attemptingAutoLogin: false,
         autoLoginAttempts: new Set(),
@@ -467,7 +469,6 @@ export const useAuthStore = defineStore('Auth', () => {
                                     websocket: loginParmas.websocket
                                 })
                                     .catch((err2) => {
-                                        // API.logout();
                                         reject(err2);
                                     })
                                     .then(() => {

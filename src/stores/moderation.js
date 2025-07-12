@@ -2,15 +2,16 @@ import { defineStore } from 'pinia';
 import Vue, { computed, reactive, watch } from 'vue';
 import { avatarModerationRequest, playerModerationRequest } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
-import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
 import { useAvatarStore } from './avatar';
 import { useUserStore } from './user';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useModerationStore = defineStore('Moderation', () => {
     const avatarStore = useAvatarStore();
     const userStore = useUserStore();
+    const { t } = useI18n();
+
     const state = reactive({
         cachedPlayerModerations: new Map(),
         cachedPlayerModerationsUserIds: new Set(),
@@ -162,7 +163,7 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     /**
-     * aka: `API.applyPlayerModeration`
+     *
      * @param {object} json
      * @returns {object}
      */
@@ -193,9 +194,6 @@ export const useModerationStore = defineStore('Moderation', () => {
         return ref;
     }
 
-    /**
-     * aka: `API.expirePlayerModerations`
-     */
     function expirePlayerModerations() {
         state.cachedPlayerModerationsUserIds.clear();
         for (let ref of state.cachedPlayerModerations.values()) {
@@ -203,9 +201,6 @@ export const useModerationStore = defineStore('Moderation', () => {
         }
     }
 
-    /**
-     * aka: `API.deleteExpiredPlayerModerations`
-     */
     function deleteExpiredPlayerModerations() {
         for (let ref of state.cachedPlayerModerations.values()) {
             if (!ref.$isExpired) {
@@ -220,9 +215,6 @@ export const useModerationStore = defineStore('Moderation', () => {
         }
     }
 
-    /**
-     * aka: `API.refreshPlayerModerations`
-     */
     async function refreshPlayerModerations() {
         if (state.isPlayerModerationsLoading) {
             return;

@@ -22,14 +22,14 @@ import {
     compareByUpdatedAt,
     convertFileUrlToImageUrl,
     extractFileId,
+    getAllUserMemos,
     getGroupName,
     getUserMemo,
     getWorldName,
     isRealInstance,
     parseLocation,
     removeEmojis,
-    replaceBioSymbols,
-    getAllUserMemos
+    replaceBioSymbols
 } from '../shared/utils';
 import { useAuthStore } from './auth';
 import { useAvatarStore } from './avatar';
@@ -424,7 +424,7 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
-     * aka: `API.applyUserLanguage`
+     *
      * @param {object} ref
      */
     function applyUserLanguage(ref) {
@@ -449,7 +449,7 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
-     * aka: `API.applyPresenceLocation`
+     *
      * @param {object} ref
      */
     function applyPresenceLocation(ref) {
@@ -469,7 +469,7 @@ export const useUserStore = defineStore('User', () => {
 
     const robotUrl = `${API.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
     /**
-     * aka: `API.applyUser`
+     *
      * @param json
      * @returns {any}
      */

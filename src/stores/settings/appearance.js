@@ -348,7 +348,7 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         /**
-         * aka: `API.applyUserTrustLevel`
+         *
          * @param {object} ref
          */
         function applyUserTrustLevel(ref) {

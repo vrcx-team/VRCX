@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
 import { worldRequest } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
@@ -30,6 +29,7 @@ import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useVrcxStore = defineStore('Vrcx', () => {
     const gameStore = useGameStore();
@@ -48,6 +48,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const avatarProviderStore = useAvatarProviderStore();
     const gameLogStore = useGameLogStore();
     const updateLoopStore = useUpdateLoopStore();
+    const { t } = useI18n();
 
     const state = reactive({
         isRunningUnderWine: false,

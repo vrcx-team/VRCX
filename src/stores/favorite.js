@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
 import { favoriteRequest } from '../api';
 import { $app } from '../app';
-import { t } from '../plugin';
 import { database } from '../service/database';
 import { API } from '../service/eventBus';
 import { processBulk } from '../service/request';
@@ -14,6 +13,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useGeneralSettingsStore } from './settings/general';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -22,6 +22,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     const avatarStore = useAvatarStore();
     const worldStore = useWorldStore();
     const userStore = useUserStore();
+
+    const { t } = useI18n();
 
     const state = reactive({
         isFavoriteGroupLoading: false,
@@ -808,9 +810,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
     }
 
-    /**
-     * aka: `API.refreshFavoriteGroups`
-     */
     function refreshFavoriteGroups() {
         if (state.isFavoriteGroupLoading) {
             return;
@@ -844,18 +843,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         });
     }
 
-    /**
-     * aka: `API.expireFavoriteGroups`
-     */
     function expireFavoriteGroups() {
         for (const ref of state.cachedFavoriteGroups.values()) {
             ref.$isExpired = true;
         }
     }
 
-    /**
-     * aka: `API.deleteExpiredFavoriteGroups`
-     */
     function deleteExpiredFavoriteGroups() {
         for (const ref of state.cachedFavoriteGroups.values()) {
             if (ref.$isDeleted || ref.$isExpired === false) {
@@ -865,9 +858,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
     }
 
-    /**
-     * aka: `API.buildFavoriteGroups`
-     */
     function buildFavoriteGroups() {
         let group;
         let groups;
@@ -993,7 +983,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `API.refreshFavorites`
      *
      * @returns {Promise<void>}
      */
@@ -1044,7 +1033,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `API.applyFavoriteGroup`
      *
      * @param json
      * @returns {any}
@@ -1077,7 +1065,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `API.applyFavorite`
+     *
      * @param json
      * @returns {any}
      */
@@ -1128,7 +1116,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `API.deleteExpiredFavorites`
+     *
      */
     function deleteExpiredFavorites() {
         for (const ref of state.cachedFavorites.values()) {
@@ -1146,7 +1134,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `API.refreshFavoriteAvatars`
+     *
      * @param tag
      */
     async function refreshFavoriteAvatars(tag) {
@@ -1161,7 +1149,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `API.refreshFavoriteItems`
+     *
      */
     function refreshFavoriteItems() {
         const types = {
