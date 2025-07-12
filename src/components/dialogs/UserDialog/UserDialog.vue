@@ -433,6 +433,9 @@
                                     <el-dropdown-item icon="el-icon-message" command="Invite To Group">{{
                                         t('dialog.user.actions.invite_to_group')
                                     }}</el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-remove-outline" command="Ban From Group">{{
+                                        t('dialog.user.actions.ban_from_group')
+                                    }}</el-dropdown-item>
                                     <!--//- el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!API.currentUser.isBoopingEnabled") {{ t('dialog.user.actions.send_boop') }}-->
                                     <el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author" divided>{{
                                         t('dialog.user.actions.show_avatar_author')
@@ -1785,6 +1788,7 @@
             :online-friends="onlineFriends"
             :offline-friends="offlineFriends"
             :active-friends="activeFriends" />
+        <BanGroupDialog :dialog-data.sync="banGroupDialog" />
         <SocialStatusDialog
             :social-status-dialog="socialStatusDialog"
             :social-status-history-table="socialStatusHistoryTable" />
@@ -1823,6 +1827,7 @@
     import Location from '../../Location.vue';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
+    import BanGroupDialog from '../BanGroupDialog.vue';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
     import BioDialog from './BioDialog.vue';
     import LanguageDialog from './LanguageDialog.vue';
@@ -2030,6 +2035,13 @@
         userId: '',
         userIds: [],
         userObject: {}
+    });
+
+    const banGroupDialog = ref({
+        visible: false,
+        loading: false,
+        groupId: '',
+        userId: ''
     });
 
     const socialStatusDialog = ref({
@@ -2309,6 +2321,13 @@
         D.visible = true;
     }
 
+    function showBanGroupDialog(groupId, userId) {
+        const D = banGroupDialog.value;
+        D.groupId = groupId;
+        D.userId = userId;
+        D.visible = true;
+    }
+
     function userDialogCommand(command) {
         let L;
         const D = props.userDialog;
@@ -2412,6 +2431,8 @@
             showGalleryDialog();
         } else if (command === 'Invite To Group') {
             showInviteGroupDialog('', D.id);
+        } else if (command === 'Ban From Group') {
+            showBanGroupDialog('', D.id);
             // } else if (command === 'Send Boop') {
             //     this.showSendBoopDialog(D.id);
         } else if (command === 'Hide Avatar') {
