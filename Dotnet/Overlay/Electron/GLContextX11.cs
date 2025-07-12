@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-public static class GLContext
+public static class GLContextX11
 {
     [DllImport("libX11.so.6")]
     private static extern IntPtr XOpenDisplay(IntPtr display);
@@ -41,7 +41,7 @@ public static class GLContext
 
     [DllImport("libX11.so.6")]
     private static extern IntPtr XRootWindow(IntPtr display, int screen);
-    
+
     [DllImport("libX11.so.6")]
     private static extern int XStoreName(IntPtr display, IntPtr window, string window_name);
 
@@ -143,7 +143,7 @@ public static class GLContext
             // The GLX context will work without the window being visible
             XFlush(display);
 
-            Console.WriteLine("OpenGL context created successfully (invisible window)");
+            Console.WriteLine("OpenGL context created successfully (X11/GLX)");
             return true;
         }
         catch (Exception ex)

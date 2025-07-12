@@ -93,7 +93,6 @@ namespace VRCX
 
         public override void Exit()
         {
-            GLContext.Cleanup();
             var thread = _thread;
             _thread = null;
             thread?.Interrupt();
@@ -103,6 +102,8 @@ namespace VRCX
             _wristOverlayMMF?.Dispose();
             _hmdOverlayAccessor?.Dispose();
             _hmdOverlayMMF?.Dispose();
+            GLContextX11.Cleanup();
+            GLContextWayland.Cleanup();
         }
 
         public override void Restart()
@@ -115,7 +116,26 @@ namespace VRCX
 
         private void SetupTextures()
         {
-            if (!GLContext.Initialise())
+            bool contextInitialised = false;
+
+            // Check if we're running on Wayland
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY")) ||
+                Environment.GetEnvironmentVariable("XDG_SESSION_TYPE")?.ToLower() == "wayland")
+            {
+                contextInitialised = GLContextWayland.Initialise();
+            }
+            else
+            {
+                contextInitialised = GLContextX11.Initialise();
+            }
+
+            if (!contextInitialised)
+            {
+                contextInitialised = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY")) ?
+                    GLContextX11.Initialise() : GLContextWayland.Initialise();
+            }
+
+            if (!contextInitialised)
             {
                 throw new Exception("Failed to initialise OpenGL context");
             }
@@ -315,7 +335,8 @@ namespace VRCX
             _wristOverlayMMF?.Dispose();
             _hmdOverlayAccessor?.Dispose();
             _hmdOverlayMMF?.Dispose();
-            GLContext.Cleanup();
+            GLContextX11.Cleanup();
+            GLContextWayland.Cleanup();
         }
 
         public override void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
