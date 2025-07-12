@@ -114,14 +114,10 @@ function connectWebSocket(token) {
     webSocket = socket;
 }
 
-API.$on('LOGOUT', function () {
-    closeWebSocket();
-});
-
 /**
  * @returns {void}
  */
-function closeWebSocket() {
+export function closeWebSocket() {
     const socket = webSocket;
     if (socket === null) {
         return;

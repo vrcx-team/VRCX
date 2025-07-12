@@ -1171,7 +1171,6 @@
     import * as workerTimers from 'worker-timers';
     import { groupRequest } from '../../../api';
     import { $app } from '../../../app';
-    import { API } from '../../../service/eventBus';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import {
         adjustDialogZ,

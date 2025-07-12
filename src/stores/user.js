@@ -393,7 +393,19 @@ export const useUserStore = defineStore('User', () => {
         refreshUserDialogTreeData();
     });
 
-    API.$on('CONFIG', function (args) {
+    function handleConfig(args) {
+        const authStore = useAuthStore();
+        const ref = {
+            ...args.json
+        };
+        args.ref = ref;
+        authStore.cachedConfig = ref;
+        if (typeof args.ref?.whiteListedAssetUrls !== 'object') {
+            console.error('Invalid config whiteListedAssetUrls');
+        }
+        AppApi.PopulateImageHosts(
+            JSON.stringify(args.ref.whiteListedAssetUrls)
+        );
         const languages =
             args.ref?.constants?.LANGUAGE?.SPOKEN_LANGUAGE_OPTIONS;
         if (!languages) {
@@ -409,7 +421,7 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         state.languageDialog.languages = data;
-    });
+    }
 
     /**
      * aka: `API.applyUserLanguage`
@@ -1987,6 +1999,7 @@ export const useUserStore = defineStore('User', () => {
         addCustomTag,
         initUserNotes,
         getCurrentUser,
+        handleConfig,
 
         checkNote
     };

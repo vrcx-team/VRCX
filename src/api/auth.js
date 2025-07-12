@@ -1,5 +1,5 @@
-import { API } from '../service/eventBus';
 import { request } from '../service/request';
+import { useUserStore } from '../stores';
 
 const loginReq = {
     /**
@@ -60,7 +60,7 @@ const loginReq = {
             const args = {
                 json
             };
-            API.$emit('CONFIG', args);
+            useUserStore().handleConfig(args);
             return args;
         });
     }

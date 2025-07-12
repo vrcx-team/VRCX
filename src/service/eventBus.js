@@ -75,19 +75,6 @@ API.$off = function (name, handler) {
     }
 };
 
-API.$on('CONFIG', function (args) {
-    const authStore = useAuthStore();
-    const ref = {
-        ...args.json
-    };
-    args.ref = ref;
-    authStore.cachedConfig = ref;
-    if (typeof args.ref?.whiteListedAssetUrls !== 'object') {
-        console.error('Invalid config whiteListedAssetUrls');
-    }
-    AppApi.PopulateImageHosts(JSON.stringify(args.ref.whiteListedAssetUrls));
-});
-
 Vue.observable(API);
 
 window.API = API;

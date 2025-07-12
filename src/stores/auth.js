@@ -1,7 +1,7 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import { loginRequest } from '../api';
+import { authRequest } from '../api';
 import { $app } from '../app';
 import { t } from '../plugin';
 import configRepository from '../service/config';
@@ -10,7 +10,7 @@ import { API } from '../service/eventBus';
 import { request } from '../service/request';
 import security from '../service/security';
 import webApiService from '../service/webapi';
-import { initWebsocket } from '../service/websocket';
+import { closeWebSocket, initWebsocket } from '../service/websocket';
 import { watchState } from '../service/watchState';
 import { escapeTag } from '../shared/utils';
 import { useNotificationStore } from './notification';
@@ -175,7 +175,7 @@ export const useAuthStore = defineStore('Auth', () => {
         // workerTimers.setTimeout(() => location.reload(), 500);
         state.attemptingAutoLogin = false;
         state.autoLoginAttempts.clear();
-        API.$on('LOGOUT');
+        closeWebSocket();
     }
 
     /**
@@ -197,7 +197,7 @@ export const useAuthStore = defineStore('Auth', () => {
             }
             // login at startup
             state.loginForm.loading = true;
-            loginRequest
+            authRequest
                 .getConfig()
                 .catch((err) => {
                     state.loginForm.loading = false;
@@ -454,7 +454,7 @@ export const useAuthStore = defineStore('Auth', () => {
             if (advancedSettingsStore.enablePrimaryPassword) {
                 checkPrimaryPassword(loginParmas)
                     .then((pwd) => {
-                        return loginRequest
+                        return authRequest
                             .getConfig()
                             .catch((err) => {
                                 reject(err);
@@ -484,7 +484,7 @@ export const useAuthStore = defineStore('Auth', () => {
                         reject(_);
                     });
             } else {
-                loginRequest
+                authRequest
                     .getConfig()
                     .catch((err) => {
                         reject(err);
@@ -541,7 +541,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 API.endpointDomain = API.endpointDomainVrchat;
                 API.websocketDomain = API.websocketDomainVrchat;
             }
-            loginRequest
+            authRequest
                 .getConfig()
                 .catch((err) => {
                     state.loginForm.loading = false;
@@ -634,7 +634,7 @@ export const useAuthStore = defineStore('Auth', () => {
             inputErrorMessage: t('prompt.totp.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm') {
-                    loginRequest
+                    authRequest
                         .verifyTOTP({
                             code: instance.inputValue.trim()
                         })
@@ -671,7 +671,7 @@ export const useAuthStore = defineStore('Auth', () => {
             inputErrorMessage: t('prompt.otp.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm') {
-                    loginRequest
+                    authRequest
                         .verifyOTP({
                             code: instance.inputValue.trim()
                         })
@@ -712,7 +712,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputErrorMessage: t('prompt.email_otp.input_error'),
                 callback: (action, instance) => {
                     if (action === 'confirm') {
-                        loginRequest
+                        authRequest
                             .verifyEmailOTP({
                                 code: instance.inputValue.trim()
                             })

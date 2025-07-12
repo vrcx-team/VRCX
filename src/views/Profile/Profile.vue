@@ -493,7 +493,7 @@
     import { storeToRefs } from 'pinia';
     import { ref, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import { loginRequest, miscRequest, userRequest } from '../../api';
+    import { authRequest, miscRequest, userRequest } from '../../api';
     import {
         parseAvatarUrl,
         buildTreeData,
@@ -661,7 +661,7 @@
         });
     }
     async function getConfig() {
-        await loginRequest.getConfig();
+        await authRequest.getConfig();
     }
     async function refreshConfigTreeData() {
         await getConfig();
