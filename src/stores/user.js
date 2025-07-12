@@ -1249,7 +1249,7 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
-     * aka: `API.$on('USER:UPDATE')`
+     *
      * @param {object} ref
      * @param {object} props
      * @returns {Promise<void>}

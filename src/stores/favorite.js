@@ -862,13 +862,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 continue;
             }
             ref.$isDeleted = true;
-            // It doesn't exist in the codebase?
-            API.$emit('FAVORITE:GROUP:@DELETE', {
-                ref,
-                params: {
-                    favoriteGroupId: ref.id
-                }
-            });
         }
     }
 

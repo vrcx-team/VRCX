@@ -63,7 +63,6 @@ const avatarReq = {
                 json,
                 params
             };
-            API.$emit('AVATAR:SAVE', args);
             return args;
         });
     },

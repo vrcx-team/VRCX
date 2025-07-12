@@ -818,7 +818,7 @@ export const useGroupStore = defineStore('Group', () => {
         }
     }
     /**
-     * aka: `API.$on('GROUP:POST')`
+     *
      * @param {object} args
      */
     function handleGroupPost(args) {

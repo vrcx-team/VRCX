@@ -44,7 +44,6 @@ const friendReq = {
                 json,
                 params
             };
-            API.$emit('FRIEND:REQUEST', args);
             return args;
         });
     },

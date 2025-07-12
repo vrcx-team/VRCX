@@ -12,7 +12,8 @@ import {
 } from '../stores';
 import { API } from './eventBus.js';
 import webApiService from './webapi.js';
-import { watchState } from '../service/watchState';
+import { watchState } from './watchState';
+import { closeWebSocket } from './websocket';
 
 API.endpointDomainVrchat = 'https://api.vrchat.cloud/api/1';
 API.websocketDomainVrchat = 'wss://pipeline.vrchat.cloud';
@@ -187,7 +188,7 @@ export function request(endpoint, options) {
                     t('api.error.message.vpn_in_use'),
                     `403 ${t('api.error.message.login_error')}`
                 );
-                API.$emit('LOGOUT');
+                authStore.handleLogoutEvent();
                 $throw(403, endpoint);
             }
             if (

@@ -76,7 +76,6 @@ const worldReq = {
                 params,
                 option
             };
-            // API.$emit('WORLD:LIST', args);
             for (const json of args.json) {
                 API.$emit('WORLD', {
                     json,

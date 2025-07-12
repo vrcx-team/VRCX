@@ -193,7 +193,7 @@ function handlePipeline(args) {
 
         case 'notification-v2':
             console.log('notification-v2', content);
-            API.$emit('NOTIFICATION:V2', {
+            notificationStore.handleNotificationV2({
                 json: content,
                 params: {
                     notificationId: content.id

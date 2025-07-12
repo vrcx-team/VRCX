@@ -93,7 +93,6 @@ const notificationReq = {
                 params,
                 receiverUserId
             };
-            API.$emit('NOTIFICATION:INVITE:SEND', args);
             return args;
         });
     },
@@ -108,7 +107,6 @@ const notificationReq = {
                 params,
                 receiverUserId
             };
-            API.$emit('NOTIFICATION:INVITE:PHOTO:SEND', args);
             return args;
         });
     },
@@ -123,7 +121,6 @@ const notificationReq = {
                 params,
                 receiverUserId
             };
-            API.$emit('NOTIFICATION:REQUESTINVITE:SEND', args);
             return args;
         });
     },
@@ -139,7 +136,6 @@ const notificationReq = {
                 params,
                 receiverUserId
             };
-            API.$emit('NOTIFICATION:REQUESTINVITE:PHOTO:SEND', args);
             return args;
         });
     },
@@ -155,7 +151,6 @@ const notificationReq = {
                 params,
                 inviteId
             };
-            API.$emit('INVITE:RESPONSE:SEND', args);
             return args;
         });
     },
@@ -172,7 +167,6 @@ const notificationReq = {
                 params,
                 inviteId
             };
-            API.$emit('INVITE:RESPONSE:PHOTO:SEND', args);
             return args;
         });
     },

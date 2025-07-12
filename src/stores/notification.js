@@ -460,6 +460,22 @@ export const useNotificationStore = defineStore('Notification', () => {
         });
     }
 
+    function handleNotificationV2(args) {
+        const json = args.json;
+        json.created_at = json.createdAt;
+        if (json.title && json.message) {
+            json.message = `${json.title}, ${json.message}`;
+        } else if (json.title) {
+            json.message = json.title;
+        }
+        handleNotification({
+            json,
+            params: {
+                notificationId: json.id
+            }
+        });
+    }
+
     /**
      * aka: `API.refreshNotifications`
      * @returns {Promise<void>}
@@ -2329,6 +2345,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         handlePipelineNotification,
         handleNotificationV2Update,
         handleNotificationHide,
-        handleNotification
+        handleNotification,
+        handleNotificationV2
     };
 });

@@ -129,7 +129,6 @@ const miscReq = {
                 json,
                 params
             };
-            API.$emit('WORLD:PERSIST:DELETE', args);
             return args;
         });
     },

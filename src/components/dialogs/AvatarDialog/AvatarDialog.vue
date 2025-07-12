@@ -851,7 +851,6 @@
                                         targetAvatarId: D.id
                                     })
                                     .then((args) => {
-                                        // 'AVATAR-MODERATION:DELETE';
                                         cachedAvatarModerations.value.delete(args.params.targetAvatarId);
                                         const D = avatarDialog.value;
                                         if (

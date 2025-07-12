@@ -75,7 +75,6 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
-            API.$emit('PRINT:ADD', args);
             return args;
         });
     },
@@ -88,7 +87,6 @@ const vrcPlusImageReq = {
                 json,
                 params
             };
-            API.$emit('PRINT', args);
             return args;
         });
     },

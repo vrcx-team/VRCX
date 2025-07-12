@@ -155,7 +155,6 @@ export const useAuthStore = defineStore('Auth', () => {
         { flush: 'sync' }
     );
 
-    // API.$on('LOGOUT')
     async function handleLogoutEvent() {
         if (watchState.isLoggedIn) {
             new Noty({
@@ -783,9 +782,6 @@ export const useAuthStore = defineStore('Auth', () => {
         }
     }
 
-    /**
-     * aka: `API.$on('AUTOLOGIN')`
-     */
     function handleAutoLogin() {
         if (state.attemptingAutoLogin) {
             return;

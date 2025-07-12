@@ -63,7 +63,6 @@ export const useModerationStore = defineStore('Moderation', () => {
         { flush: 'sync' }
     );
 
-    // API.$on('PLAYER-MODERATION')
     function handlePlayerModeration(args) {
         args.ref = applyPlayerModeration(args.json);
         const { ref } = args;
@@ -79,7 +78,7 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     /**
-     * aka: `API.$on('PLAYER-MODERATION:@SEND')`
+     *
      * @param args
      */
     function handlePlayerModerationAtSend(args) {

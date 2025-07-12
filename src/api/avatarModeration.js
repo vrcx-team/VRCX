@@ -49,7 +49,6 @@ const avatarModerationReq = {
                 json,
                 params
             };
-            API.$emit('AVATAR-MODERATION:DELETE', args);
             return args;
         });
     }
