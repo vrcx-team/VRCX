@@ -199,9 +199,7 @@ console.log(`isLinux: ${LINUX}`);
         window.LogWatcher = InteropApi.LogWatcher;
         window.Discord = InteropApi.Discord;
         window.AssetBundleManager = InteropApi.AssetBundleManager;
-        if (LINUX) {
-            window.AppApiVrElectron = InteropApi.AppApiVrElectron;
-        }
+        window.AppApiVrElectron = InteropApi.AppApiVrElectron;
     }
 
     // #region | localization
@@ -461,6 +459,7 @@ console.log(`isLinux: ${LINUX}`);
                     this.loginForm.loading = false;
                 }
             });
+
             if (LINUX) {
                 setTimeout(() => {
                     this.updateTTSVoices();
@@ -6846,15 +6845,15 @@ console.log(`isLinux: ${LINUX}`);
             this.disableVrOverlayGpuAcceleration.toString()
         );
 
-        if (LINUX) {
+        if (WINDOWS) {
+            AppApi.SetStartup(this.isStartAtWindowsStartup);
+        } else {
             VRCXStorage.Set('VRCX_LocationX', this.locationX);
             VRCXStorage.Set('VRCX_LocationY', this.locationY);
             VRCXStorage.Set('VRCX_SizeWidth', this.sizeWidth);
             VRCXStorage.Set('VRCX_SizeHeight', this.sizeHeight);
             VRCXStorage.Set('VRCX_WindowState', this.windowState);
             VRCXStorage.Flush();
-        } else {
-            AppApi.SetStartup(this.isStartAtWindowsStartup);
         }
     };
 
@@ -7553,10 +7552,10 @@ console.log(`isLinux: ${LINUX}`);
 
     $app.methods.getTTSVoiceName = function () {
         var voices;
-        if (LINUX) {
-            voices = this.TTSvoices;
-        } else {
+        if (WINDOWS) {
             voices = speechSynthesis.getVoices();
+        } else {
+            voices = this.TTSvoices;
         }
         if (voices.length === 0) {
             return '';
@@ -7578,10 +7577,10 @@ console.log(`isLinux: ${LINUX}`);
             this.notificationTTSVoice
         );
         var voices;
-        if (LINUX) {
-            voices = this.TTSvoices;
-        } else {
+        if (WINDOWS) {
             voices = speechSynthesis.getVoices();
+        } else {
+            voices = this.TTSvoices;
         }
         if (voices.length === 0) {
             return;
@@ -12339,10 +12338,10 @@ console.log(`isLinux: ${LINUX}`);
 
         this.folderSelectorDialogVisible = true;
         var newFolder = '';
-        if (LINUX) {
-            newFolder = await window.electron.openDirectoryDialog();
-        } else {
+        if (WINDOWS) {
             newFolder = await AppApi.OpenFolderSelectorDialog(oldPath);
+        } else {
+            newFolder = await window.electron.openDirectoryDialog();
         }
 
         this.folderSelectorDialogVisible = false;

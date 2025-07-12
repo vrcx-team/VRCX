@@ -69,7 +69,7 @@ interopApi.getDotNetObject('WebApi').Init();
 interopApi.getDotNetObject('LogWatcher').Init();
 
 interopApi.getDotNetObject('IPCServer').Init();
-
+interopApi.getDotNetObject('SystemMonitorElectron').Init();
 interopApi.getDotNetObject('AppApiVrElectron').Init();
 
 ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {

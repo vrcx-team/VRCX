@@ -95,16 +95,16 @@ export default class extends baseClass {
                         (this.isRunningUnderWine || LINUX) &&
                         --this.nextGameRunningCheck <= 0
                     ) {
-                        if (LINUX) {
+                        if (WINDOWS) {
+                            this.nextGameRunningCheck = 3;
+                            AppApi.CheckGameRunning();
+                        } else {
                             this.nextGameRunningCheck = 1;
                             $app.updateIsGameRunning(
                                 await AppApi.IsGameRunning(),
                                 await AppApi.IsSteamVRRunning(),
                                 false
                             );
-                        } else {
-                            this.nextGameRunningCheck = 3;
-                            AppApi.CheckGameRunning();
                         }
                     }
                     if (--this.nextDatabaseOptimize <= 0) {

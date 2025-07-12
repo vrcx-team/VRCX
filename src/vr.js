@@ -215,11 +215,11 @@ Vue.component('marquee-text', MarqueeText);
         ) {
             this.cpuUsageEnabled = this.config.vrOverlayCpuUsage;
             this.pcUptimeEnabled = this.config.pcUptimeOnFeed;
-            if (WINDOWS) {
-                AppApiVrCef.ToggleSystemMonitor(
-                    this.cpuUsageEnabled || this.pcUptimeEnabled
-                );
-            }
+
+            var AppApiVr = WINDOWS ? AppApiVrCef : AppApiVrElectron;
+            AppApiVr.ToggleSystemMonitor(
+                this.cpuUsageEnabled || this.pcUptimeEnabled
+            );
         }
         if (this.config.notificationOpacity !== this.notificationOpacity) {
             this.notificationOpacity = this.config.notificationOpacity;
@@ -283,27 +283,17 @@ Vue.component('marquee-text', MarqueeText);
         if (document.contains(document.getElementById('vr-custom-script'))) {
             document.getElementById('vr-custom-script').remove();
         }
-        if (WINDOWS) {
-            AppApiVrCef.CustomVrScriptPath().then((customScript) => {
-                var head = document.head;
-                if (customScript) {
-                    var $vrCustomScript = document.createElement('script');
-                    $vrCustomScript.setAttribute('id', 'vr-custom-script');
-                    $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
-                    head.appendChild($vrCustomScript);
-                }
-            });
-        } else {
-            AppApiVrElectron.CustomVrScriptPath().then((customScript) => {
-                var head = document.head;
-                if (customScript) {
-                    var $vrCustomScript = document.createElement('script');
-                    $vrCustomScript.setAttribute('id', 'vr-custom-script');
-                    $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
-                    head.appendChild($vrCustomScript);
-                }
-            });
-        }
+
+        var AppApiVr = WINDOWS ? AppApiVrCef : AppApiVrElectron;
+        AppApiVr.CustomVrScriptPath().then((customScript) => {
+            var head = document.head;
+            if (customScript) {
+                var $vrCustomScript = document.createElement('script');
+                $vrCustomScript.setAttribute('id', 'vr-custom-script');
+                $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
+                head.appendChild($vrCustomScript);
+            }
+        });
     };
 
     $app.methods.setNotyOpacity = function (value) {
@@ -334,9 +324,11 @@ Vue.component('marquee-text', MarqueeText);
                 .replace(' AM', ' am')
                 .replace(' PM', ' pm')
                 .replace(',', '');
+            
+            var AppApiVr = WINDOWS ? AppApiVrCef : AppApiVrElectron;
 
-            if (WINDOWS && this.cpuUsageEnabled) {
-                var cpuUsage = await AppApiVrCef.CpuUsage();
+            if (this.cpuUsageEnabled) {
+                var cpuUsage = await AppApiVr.CpuUsage();
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
             if (this.lastLocation.date !== 0) {
@@ -354,8 +346,8 @@ Vue.component('marquee-text', MarqueeText);
                 this.onlineForTimer = '';
             }
 
-            if (WINDOWS && !this.config.hideDevicesFromFeed) {
-                AppApiVrCef.GetVRDevices().then((devices) => {
+            if (!this.config.hideDevicesFromFeed) {
+                AppApiVr.GetVRDevices().then((devices) => {
                     var deviceList = [];
                     var baseStations = 0;
                     devices.forEach((device) => {
@@ -404,19 +396,11 @@ Vue.component('marquee-text', MarqueeText);
                 this.devices = [];
             }
             if (this.config.pcUptimeOnFeed) {
-                if (WINDOWS) {
-                    AppApiVrCef.GetUptime().then((uptime) => {
-                        if (uptime) {
-                            this.pcUptime = $utils.timeToText(uptime);
-                        }
-                    });
-                } else {
-                    AppApiVrElectron.GetUptime().then((uptime) => {
-                        if (uptime) {
-                            this.pcUptime = $utils.timeToText(uptime);
-                        }
-                    });
-                }
+                AppApiVr.GetUptime().then((uptime) => {
+                    if (uptime) {
+                        this.pcUptime = $utils.timeToText(uptime);
+                    }
+                });
             } else {
                 this.pcUptime = '';
             }
@@ -731,11 +715,9 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     $app.methods.setDatetimeFormat = async function () {
-        if (WINDOWS) {
-            this.currentCulture = await AppApiVrCef.CurrentCulture();
-        } else {
-            this.currentCulture = await AppApiVrElectron.CurrentCulture();
-        }
+        var AppApiVr = WINDOWS ? AppApiVrCef : AppApiVrElectron;
+
+        this.currentCulture = await AppApiVr.CurrentCulture();
         var formatDate = function (date) {
             if (!date) {
                 return '';

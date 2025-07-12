@@ -244,7 +244,7 @@ namespace VRCX
             if (VRCXStorage.Instance.Get("VRCX_DisableVrOverlayGpuAcceleration") == "true")
                 VRCXVRInstance = new VRCXVRLegacy();
             else
-                VRCXVRInstance = new VRCXVR();
+                VRCXVRInstance = new VRCXVRCef();
             VRCXVRInstance.Init();
 
             Application.Run(new MainForm());
@@ -259,7 +259,7 @@ namespace VRCX
             WorldDBManager.Instance.Stop();
 
             Discord.Instance.Exit();
-            SystemMonitor.Instance.Exit();
+            SystemMonitorCef.Instance.Exit();
             VRCXStorage.Instance.Save();
             SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();

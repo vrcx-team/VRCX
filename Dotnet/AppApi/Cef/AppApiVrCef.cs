@@ -19,16 +19,16 @@ namespace VRCX
         {
             // Create Instance before Cef tries to bind it
         }
-        
+
         public void VrInit()
         {
-            //if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-            //    MainForm.Instance.Browser.ExecuteScriptAsync("$app.vrInit", "");
+            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
+                MainForm.Instance.Browser.ExecuteScriptAsync("$app.vrInit", "");
         }
-        
+
         public void ToggleSystemMonitor(bool enabled)
         {
-            //SystemMonitor.Instance.Start(enabled);
+            SystemMonitorCef.Instance.Start(enabled);
         }
 
         /// <summary>
@@ -37,10 +37,9 @@ namespace VRCX
         /// <returns>The current CPU usage as a percentage.</returns>
         public float CpuUsage()
         {
-            //return SystemMonitor.Instance.CpuUsage;
-            return 0;
+            return SystemMonitorCef.Instance.CpuUsage;
         }
-        
+
         /// <summary>
         /// Returns an array of arrays containing information about the connected VR devices.
         /// Each sub-array contains the type of device and its current state
@@ -57,10 +56,9 @@ namespace VRCX
         /// <returns>The number of milliseconds that the system has been running.</returns>
         public double GetUptime()
         {
-            //return SystemMonitor.Instance.UpTime;
-            return 0;
+            return SystemMonitorCef.Instance.UpTime;
         }
-        
+
         /// <summary>
         /// Returns the current language of the operating system.
         /// </summary>
@@ -69,7 +67,7 @@ namespace VRCX
         {
             return CultureInfo.CurrentCulture.ToString();
         }
-        
+
         /// <summary>
         /// Returns the file path of the custom user js file, if it exists.
         /// </summary>
@@ -81,6 +79,11 @@ namespace VRCX
             if (File.Exists(filePath))
                 output = filePath;
             return output;
+        }
+
+        public bool IsRunningUnderWine()
+        {
+            return Wine.GetIfWine();
         }
     }
 }

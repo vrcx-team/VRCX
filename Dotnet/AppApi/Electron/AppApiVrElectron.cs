@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-//using CefSharp;
 
 namespace VRCX
 {
@@ -19,13 +18,10 @@ namespace VRCX
 
         public void Init()
         {
-            // Create Instance before Cef tries to bind it
         }
 
         public void VrInit()
         {
-            //if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-            //    MainForm.Instance.Browser.ExecuteScriptAsync("$app.vrInit", "");
         }
 
         public void SetVrInit(bool value)
@@ -60,7 +56,7 @@ namespace VRCX
 
         public void ToggleSystemMonitor(bool enabled)
         {
-            //SystemMonitor.Instance.Start(enabled);
+            SystemMonitorElectron.Instance.Start(enabled);
         }
 
         /// <summary>
@@ -69,8 +65,7 @@ namespace VRCX
         /// <returns>The current CPU usage as a percentage.</returns>
         public float CpuUsage()
         {
-            //return SystemMonitor.Instance.CpuUsage;
-            return 0;
+            return SystemMonitorElectron.Instance.CpuUsage;
         }
 
         /// <summary>
@@ -89,8 +84,7 @@ namespace VRCX
         /// <returns>The number of milliseconds that the system has been running.</returns>
         public double GetUptime()
         {
-            //return SystemMonitor.Instance.UpTime;
-            return 0;
+            return SystemMonitorElectron.Instance.UpTime;
         }
 
         /// <summary>

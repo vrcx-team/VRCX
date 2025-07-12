@@ -612,7 +612,6 @@ namespace VRCX
             }
 
             return err;
-
         }
 
         internal EVROverlayError ProcessOverlay1(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible, uint overlayIndex)
