@@ -20,28 +20,28 @@ namespace VRCX
         public static string _steamUserdataPath;
         public static string _vrcPrefixPath;
         public static string _vrcAppDataPath;
-        
+
         static AppApiElectron()
         {
             const string vrchatAppid = "438100";
             _homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             _steamUserdataPath = Path.Join(_homeDirectory, ".steam/steam/userdata");
             _steamPath = Path.Join(_homeDirectory, ".local/share/Steam");
-            
+
             var flatpakSteamPath = Path.Join(_homeDirectory, ".var/app/com.valvesoftware.Steam/.local/share/Steam");
             if (!Directory.Exists(_steamPath) && Directory.Exists(flatpakSteamPath))
             {
                 logger.Info("Flatpak Steam detected.");
                 _steamPath = flatpakSteamPath;
             }
-            
+
             var legacySteamPath = Path.Join(_homeDirectory, ".steam/steam");
             if (!Directory.Exists(_steamPath) && Directory.Exists(legacySteamPath))
             {
                 logger.Info("Legacy Steam path detected.");
                 _steamPath = legacySteamPath;
             }
-            
+
             var libraryFoldersVdfPath = Path.Join(_steamPath, "config/libraryfolders.vdf");
             var vrcLibraryPath = GetLibraryWithAppId(libraryFoldersVdfPath, vrchatAppid);
             if (string.IsNullOrEmpty(vrcLibraryPath))
@@ -61,14 +61,14 @@ namespace VRCX
 
             string? libraryPath = null;
             foreach (var line in File.ReadLines(libraryFoldersVdfPath))
-            {                
+            {
                 // Assumes line will be \t\t"path"\t\t"pathToLibrary"
                 if (line.Contains("\"path\""))
                 {
                     var parts = line.Split("\t");
                     if (parts.Length < 4)
                         continue;
-                    
+
                     libraryPath = parts[4].Replace("\"", "");
                 }
 
@@ -78,12 +78,12 @@ namespace VRCX
 
             return null;
         }
-        
+
         public override string GetVRChatAppDataLocation()
         {
             return _vrcAppDataPath;
         }
-                
+
         public override string GetVRChatCacheLocation()
         {
             var defaultPath = Path.Join(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
@@ -104,7 +104,7 @@ namespace VRCX
                 var cachePath = Path.Join(cacheDir, "Cache-WindowsPlayer");
                 if (!Directory.Exists(cacheDir))
                     return defaultPath;
-                
+
                 return cachePath;
             }
             catch (Exception e)
@@ -126,7 +126,7 @@ namespace VRCX
                 var obj = JsonConvert.DeserializeObject<JObject>(json, JsonSerializerSettings);
                 if (obj["picture_output_folder"] == null)
                     return defaultPath;
-                
+
                 var photosDir = (string)obj["picture_output_folder"];
                 if (string.IsNullOrEmpty(photosDir) || !Directory.Exists(photosDir))
                     return defaultPath;
@@ -139,7 +139,7 @@ namespace VRCX
             }
             return defaultPath;
         }
-        
+
         public override string GetUGCPhotoLocation(string path = "")
         {
             if (string.IsNullOrEmpty(path))
@@ -237,7 +237,7 @@ namespace VRCX
             // TODO: get path
             return false;
         }
-        
+
         public override void OpenShortcutFolder()
         {
             var path = AutoAppLaunchManager.Instance.AppShortcutDirectory;
@@ -246,28 +246,31 @@ namespace VRCX
 
             OpenFolderAndSelectItem(path, true);
         }
-        
+
         public override void OpenFolderAndSelectItem(string path, bool isFolder = false)
         {
             if (!File.Exists(path) && !Directory.Exists(path))
                 return;
-            
-            var directoryPath = isFolder ? path : Path.GetDirectoryName(path);
+
+            string directoryPath = isFolder ? path : Path.GetDirectoryName(path);
             var commandAttempt = new Dictionary<string, string>
             {
-                { "nautilus", path },
-                { "nemo", path },
-                { "thunar", path },
+                { "nautilus", $"\"{path}\"" },
+                { "nemo", $"\"{path}\"" },
+                { "thunar", $"\"{path}\"" },
                 { "caja", $"--select \"{path}\"" },
-                { "pcmanfm-qt", directoryPath },
-                { "pcmanfm", directoryPath },
+                { "pcmanfm-qt", $"\"{directoryPath}\"" },
+                { "pcmanfm", $"\"{directoryPath}\"" },
                 { "dolphin", $"--select \"{path}\"" },
                 { "konqueror", $"--select \"{path}\"" },
-                { "xdg-open", directoryPath }
+                { "xdg-open", $"\"{directoryPath}\"" }
             };
-            
+
             foreach (var command in commandAttempt)
             {
+                if (!IsCommandAvailable(command.Key))
+                    continue;
+
                 try
                 {
                     var process = new Process
@@ -276,19 +279,45 @@ namespace VRCX
                         {
                             FileName = command.Key,
                             Arguments = command.Value,
-                            UseShellExecute = true,
-                            CreateNoWindow = true
+                            UseShellExecute = false,
+                            RedirectStandardError = true,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true,
                         }
                     };
                     process.Start();
-                    process.WaitForExit();
-                    if (process.ExitCode == 0)
-                        return;
+                    return; // Assume first successful start is enough
                 }
-                catch (Exception)
+                catch
                 {
-                    // ignore the error and try the next command
+                    // Ignore and try next
                 }
+            }
+        }
+
+        private bool IsCommandAvailable(string command)
+        {
+            try
+            {
+                var which = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "which",
+                        Arguments = command,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+                which.Start();
+                string result = which.StandardOutput.ReadToEnd();
+                which.WaitForExit();
+                return which.ExitCode == 0 && !string.IsNullOrWhiteSpace(result);
+            }
+            catch
+            {
+                return false;
             }
         }
 
