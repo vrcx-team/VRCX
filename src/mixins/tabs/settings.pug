@@ -545,7 +545,6 @@ mixin settingsTab
                             el-radio-button(label='Game Running') {{ $t('view.settings.notifications.notifications.conditions.inside_vrchat') }}
                             el-radio-button(label='Game Closed') {{ $t('view.settings.notifications.notifications.conditions.outside_vrchat') }}
                             el-radio-button(label='Always') {{ $t('view.settings.notifications.notifications.conditions.always') }}
-                    template(v-if='!isLinux')
                         simple-switch(
                             :label='$t("view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay")'
                             :value='openVR'
@@ -561,25 +560,8 @@ mixin settingsTab
                                 icon='el-icon-rank'
                                 @click='showNotificationPositionDialog'
                                 :disabled='!overlayNotifications || !openVR') {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_position') }}
-                        simple-switch(
-                            :label='$t("view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications")'
-                            :value='xsNotifications'
-                            @change='saveOpenVROption("VRCX_xsNotifications")')
-                    template(v-else)
-                        simple-switch(
-                            :label='$t("view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications")'
-                            :value='xsNotifications'
-                            @change='saveOpenVROption("VRCX_xsNotifications")')
                     simple-switch(
-                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications")'
-                        :value='ovrtHudNotifications'
-                        @change='saveOpenVROption("VRCX_ovrtHudNotifications")')
-                    simple-switch(
-                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications")'
-                        :value='ovrtWristNotifications'
-                        @change='saveOpenVROption("VRCX_ovrtWristNotifications")')
-                    simple-switch(
-                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications")'
+                        :label='$t("view.settings.notifications.notifications.steamvr_notifications.user_images")'
                         :value='imageNotifications'
                         @change='saveOpenVROption("VRCX_imageNotifications")')
                     .options-container-item
@@ -598,6 +580,24 @@ mixin settingsTab
                             icon='el-icon-time'
                             @click='promptNotificationTimeout'
                             :disabled='(!overlayNotifications || !openVR) && !xsNotifications') {{ $t('view.settings.notifications.notifications.steamvr_notifications.notification_timeout') }}
+                    template(v-if='!isLinux')
+                        simple-switch(
+                            :label='$t("view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications")'
+                            :value='xsNotifications'
+                            @change='saveOpenVROption("VRCX_xsNotifications")')
+                        simple-switch(
+                            :label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications")'
+                            :value='ovrtHudNotifications'
+                            @change='saveOpenVROption("VRCX_ovrtHudNotifications")')
+                        simple-switch(
+                            :label='$t("view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications")'
+                            :value='ovrtWristNotifications'
+                            @change='saveOpenVROption("VRCX_ovrtWristNotifications")')
+                    template(v-else)
+                        simple-switch(
+                            :label='$t("view.settings.notifications.notifications.steamvr_notifications.wlxoverlay_notifications")'
+                            :value='xsNotifications'
+                            @change='saveOpenVROption("VRCX_xsNotifications")')
                 //- Notifications | Notifications | Desktop Notifications
                 .options-container
                     span.sub-header {{ $t('view.settings.notifications.notifications.desktop_notifications.header') }}
