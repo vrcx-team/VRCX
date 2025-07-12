@@ -80,6 +80,7 @@ import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vu
 import GalleryDialog from './components/dialogs/GalleryDialog.vue';
 import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
 import InviteGroupDialog from './components/dialogs/InviteGroupDialog.vue';
+import BanGroupDialog from './components/dialogs/BanGroupDialog.vue';
 import LaunchDialog from './components/dialogs/LaunchDialog.vue';
 import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
 
@@ -310,6 +311,7 @@ console.log(`isLinux: ${LINUX}`);
             //  - group
             GroupDialog,
             InviteGroupDialog,
+            BanGroupDialog,
             //  - avatar
             AvatarDialog,
             //  - favorites

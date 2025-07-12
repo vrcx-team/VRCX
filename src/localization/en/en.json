@@ -728,6 +728,7 @@
                 "request_invite": "Request Invite",
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
+                "ban_from_group": "Ban From Group",
                 "send_boop": "Send Boop",
                 "manage_gallery_inventory_icon": "Manage VRC+ Images & Inventory",
                 "accept_friend_request": "Accept Friend Request",
@@ -1391,6 +1392,12 @@
             "groups": "Groups",
             "choose_friends_placeholder": "Choose Friends",
             "selected_users": "Selected Users"
+        },
+        "ban_from_group": {
+            "header": "Ban From Group",
+            "description": "Select a group you can ban from.",
+            "choose_group_placeholder": "Choose Group",
+            "groups": "Groups"
         },
         "note_export": {
             "header": "Note Export",
