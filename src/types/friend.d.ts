@@ -11,9 +11,9 @@ export type getFriends = (params: {
     };
 }>;
 
-type getFriendsResponseList = getFriendsResponse[] | undefined;
+type getFriendsResponseList = getFriendsResponseItem[] | undefined;
 
-interface getFriendsResponse {
+interface getFriendsResponseItem {
     bio: string;
     bioLinks: string[];
     currentAvatarImageUrl: string;

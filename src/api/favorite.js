@@ -18,13 +18,7 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{
-     * n: number,
-     * offset: number,
-     * type: string,
-     * tag: string
-     * }} params
-     * @return { Promise<{json: any, params}> }
+     * @type {import('../types/favorite').getFavorites}
      */
     getFavorites(params) {
         return request('favorites', {
@@ -141,11 +135,7 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{
-     *    n: number,
-     *    offset: number
-     * }} params
-     * @return { Promise<{json: any, params}> }
+     * @type {import('../types/favorite').getFavoriteWorlds}
      */
     getFavoriteWorlds(params) {
         return request('worlds/favorites', {
@@ -161,11 +151,7 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{
-     *    n: number,
-     *    offset: number
-     * }} params
-     * @return { Promise<{json: any, params}> }
+     * @type {import('../types/favorite').getFavoriteAvatars}
      */
     getFavoriteAvatars(params) {
         return request('avatars/favorites', {
