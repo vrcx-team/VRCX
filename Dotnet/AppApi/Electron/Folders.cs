@@ -253,20 +253,22 @@ namespace VRCX
                 return;
 
             string directoryPath = isFolder ? path : Path.GetDirectoryName(path);
-            var commandAttempts = new List<(string cmd, string args)>
+            var commandAttempt = new Dictionary<string, string>
             {
-                ("dolphin", $"--select \"{path}\""),
-                ("nemo", $"\"{path}\""),
-                ("thunar", $"\"{path}\""),
-                ("caja", $"--select \"{path}\""),
-                ("pcmanfm-qt", $"\"{directoryPath}\""),
-                ("pcmanfm", $"\"{directoryPath}\""),
-                ("xdg-open", $"\"{directoryPath}\""),
+                { "nautilus", $"\"{path}\"" },
+                { "nemo", $"\"{path}\"" },
+                { "thunar", $"\"{path}\"" },
+                { "caja", $"--select \"{path}\"" },
+                { "pcmanfm-qt", $"\"{directoryPath}\"" },
+                { "pcmanfm", $"\"{directoryPath}\"" },
+                { "dolphin", $"--select \"{path}\"" },
+                { "konqueror", $"--select \"{path}\"" },
+                { "xdg-open", $"\"{directoryPath}\"" }
             };
 
-            foreach (var (cmd, args) in commandAttempts)
+            foreach (var command in commandAttempt)
             {
-                if (!IsCommandAvailable(cmd))
+                if (!IsCommandAvailable(command.Key))
                     continue;
 
                 try
@@ -275,8 +277,8 @@ namespace VRCX
                     {
                         StartInfo = new ProcessStartInfo
                         {
-                            FileName = cmd,
-                            Arguments = args,
+                            FileName = command.Key,
+                            Arguments = command.Value,
                             UseShellExecute = false,
                             RedirectStandardError = true,
                             RedirectStandardOutput = true,
