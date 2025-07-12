@@ -23,9 +23,10 @@ const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();
 
 /**
+ * @template T
  * @param {string} endpoint
- * @param {RequestOptions} options
- * @returns {Promise<any>}
+ * @param {RequestInit & { params?: any }} [options]
+ * @returns {Promise<T>}
  */
 export function request(endpoint, options) {
     const userStore = useUserStore();

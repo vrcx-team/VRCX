@@ -12,8 +12,8 @@ function getCachedUserId(params) {
 const userReq = {
     /**
      * Fetch user from API.
-     * @param {{ userId: string }} params identifier of registered user
-     * @returns {Promise<{json: any, params}>}
+     * identifier of registered user
+     * @type {import('../types/user').getUser}
      */
     getUser(params) {
         return request(`users/${params.userId}`, {
