@@ -175,7 +175,7 @@
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());
-    const { getCachedGroup } = useGroupStore();
+    const { getCachedGroup, handleGroup } = useGroupStore();
 
     const { proxy } = getCurrentInstance();
 
@@ -225,6 +225,7 @@
         groupRequest
             .getGroup({ groupId })
             .then((args) => {
+                handleGroup(args);
                 if (hasGroupPermission(args.ref, 'group-invites-manage')) {
                     return args;
                 }

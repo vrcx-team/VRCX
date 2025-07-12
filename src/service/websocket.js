@@ -452,7 +452,9 @@ function handlePipeline(args) {
 
         case 'group-role-updated':
             const groupId = content.role.groupId;
-            groupRequest.getGroup({ groupId, includeRoles: true });
+            groupRequest
+                .getGroup({ groupId, includeRoles: true })
+                .then((args) => groupStore.handleGroup(args));
             console.log('group-role-updated', content);
 
             // content {
@@ -483,7 +485,7 @@ function handlePipeline(args) {
             ) {
                 groupStore.getGroupDialogGroup(groupId1);
             }
-            API.$emit('GROUP:MEMBER', {
+            groupStore.handleGroupMember({
                 json: member,
                 params: {
                     groupId: groupId1

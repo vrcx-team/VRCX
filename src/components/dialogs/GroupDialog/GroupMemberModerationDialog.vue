@@ -822,7 +822,7 @@
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog } = storeToRefs(useGroupStore());
-    const { applyGroupMember } = useGroupStore();
+    const { applyGroupMember, handleGroupMemberProps } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
     const instance = getCurrentInstance();
@@ -1277,7 +1277,8 @@
             }
             console.log(`Setting note ${noteToSave} for ${user.userId} ${i + 1}/${memberCount}`);
             try {
-                await groupRequest.setGroupMemberProps(user.userId, D.id, { managerNotes: noteToSave });
+                const args = await groupRequest.setGroupMemberProps(user.userId, D.id, { managerNotes: noteToSave });
+                handleGroupMemberProps(args);
             } catch (err) {
                 console.error(err);
                 $message({

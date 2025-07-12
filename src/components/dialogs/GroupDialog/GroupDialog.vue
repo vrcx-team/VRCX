@@ -1212,7 +1212,9 @@
         leaveGroupPrompt,
         setGroupVisibility,
         getCachedGroup,
-        applyGroupMember
+        applyGroupMember,
+        handleGroupMember,
+        handleGroupMemberProps
     } = useGroupStore();
 
     const { lastLocation } = storeToRefs(useLocationStore());
@@ -1331,7 +1333,7 @@
             })
             .then((args) => {
                 for (const json of args.json.results) {
-                    API.$emit('GROUP:MEMBER', {
+                    handleGroupMember({
                         json,
                         params: {
                             groupId: args.params.groupId
@@ -1481,6 +1483,7 @@
                 isSubscribedToAnnouncements: subscribe
             })
             .then((args) => {
+                handleGroupMemberProps(args);
                 $app.$message({
                     message: 'Group subscription updated',
                     type: 'success'
@@ -1677,6 +1680,14 @@
                 isGroupMembersLoading.value = false;
             })
             .then((args) => {
+                for (const json of args.json) {
+                    handleGroupMember({
+                        json,
+                        params: {
+                            groupId: args.params.groupId
+                        }
+                    });
+                }
                 for (let i = 0; i < args.json.length; i++) {
                     const member = args.json[i];
                     if (member.userId === currentUser.value.id) {

@@ -483,6 +483,7 @@ export const useGroupStore = defineStore('Group', () => {
             groupRequest
                 .getGroup({ groupId, includeRoles: true })
                 .then((args) => {
+                    handleGroup(args);
                     applyGroup(args.json); // make sure this runs before saveCurrentUserGroups
                     saveCurrentUserGroups();
                     return args;
@@ -555,6 +556,7 @@ export const useGroupStore = defineStore('Group', () => {
                 throw err;
             })
             .then((args1) => {
+                handleGroup(args1);
                 if (D.id === args1.ref.id) {
                     D.ref = args1.ref;
                     D.inGroup = args1.ref.membershipStatus === 'member';
@@ -705,6 +707,7 @@ export const useGroupStore = defineStore('Group', () => {
                 visibility
             })
             .then((args) => {
+                handleGroupMemberProps(args);
                 $app.$message({
                     message: 'Group visibility updated',
                     type: 'success'
@@ -713,7 +716,7 @@ export const useGroupStore = defineStore('Group', () => {
             });
     }
 
-    API.$on('GROUP', function (args) {
+    function handleGroup(args) {
         args.ref = applyGroup(args.json);
         const { ref } = args;
         const D = state.groupDialog;
@@ -722,9 +725,9 @@ export const useGroupStore = defineStore('Group', () => {
         }
         D.inGroup = ref.membershipStatus === 'member';
         D.ref = ref;
-    });
+    }
 
-    API.$on('GROUP:REPRESENTED', function (args) {
+    function handleGroupRepresented(args) {
         const json = args.json;
         if (!json.groupId) {
             // no group
@@ -732,20 +735,20 @@ export const useGroupStore = defineStore('Group', () => {
         }
         json.$memberId = json.id;
         json.id = json.groupId;
-        API.$emit('GROUP', {
+        handleGroup({
             json,
             params: {
                 groupId: json.groupId,
                 userId: args.params.userId
             }
         });
-    });
+    }
 
-    API.$on('GROUP:LIST', function (args) {
+    function handleGroupList(args) {
         for (const json of args.json) {
             json.$memberId = json.id;
             json.id = json.groupId;
-            API.$emit('GROUP', {
+            handleGroup({
                 json,
                 params: {
                     groupId: json.id,
@@ -753,9 +756,9 @@ export const useGroupStore = defineStore('Group', () => {
                 }
             });
         }
-    });
+    }
 
-    API.$on('GROUP:MEMBER:PROPS', function (args) {
+    function handleGroupMemberProps(args) {
         if (args.userId === userStore.currentUser.id) {
             const json = args.json;
             json.$memberId = json.id;
@@ -774,7 +777,7 @@ export const useGroupStore = defineStore('Group', () => {
             ) {
                 getCurrentUserRepresentedGroup();
             }
-            API.$emit('GROUP:MEMBER', {
+            handleGroupMember({
                 json,
                 params: {
                     groupId: json.groupId
@@ -799,9 +802,9 @@ export const useGroupStore = defineStore('Group', () => {
                 }
             }
         }
-    });
+    }
 
-    API.$on('GROUP:PERMISSIONS', function (args) {
+    function handleGroupPermissions(args) {
         if (args.params.userId !== userStore.currentUser.id) {
             return;
         }
@@ -813,8 +816,7 @@ export const useGroupStore = defineStore('Group', () => {
                 group.myMember.permissions = permissions;
             }
         }
-    });
-
+    }
     /**
      * aka: `API.$on('GROUP:POST')`
      * @param {object} args
@@ -848,22 +850,11 @@ export const useGroupStore = defineStore('Group', () => {
         updateGroupPostSearch();
     }
 
-    API.$on('GROUP:MEMBERS', function (args) {
-        for (const json of args.json) {
-            API.$emit('GROUP:MEMBER', {
-                json,
-                params: {
-                    groupId: args.params.groupId
-                }
-            });
-        }
-    });
-
-    API.$on('GROUP:MEMBER', function (args) {
+    function handleGroupMember(args) {
         args.ref = applyGroupMember(args.json);
-    });
+    }
 
-    API.$on('GROUP:USER:INSTANCES', function (args) {
+    async function handleGroupUserInstances(args) {
         state.groupInstances = [];
         for (const json of args.json.instances) {
             if (args.json.fetchedAt) {
@@ -879,7 +870,10 @@ export const useGroupStore = defineStore('Group', () => {
             const ref = state.cachedGroups.get(json.ownerId);
             if (typeof ref === 'undefined') {
                 if (watchState.isFriendsLoaded) {
-                    groupRequest.getGroup({ groupId: json.ownerId });
+                    const args = await groupRequest.getGroup({
+                        groupId: json.ownerId
+                    });
+                    handleGroup(args);
                 }
                 return;
             }
@@ -888,7 +882,7 @@ export const useGroupStore = defineStore('Group', () => {
                 instance: instanceStore.applyInstance(json)
             });
         }
-    });
+    }
 
     /**
      * aka: `API.getCachedGroup`
@@ -899,7 +893,13 @@ export const useGroupStore = defineStore('Group', () => {
         return new Promise((resolve, reject) => {
             const ref = state.cachedGroups.get(params.groupId);
             if (typeof ref === 'undefined') {
-                groupRequest.getGroup(params).catch(reject).then(resolve);
+                groupRequest
+                    .getGroup(params)
+                    .catch(reject)
+                    .then((args) => {
+                        handleGroup(args);
+                        resolve(args);
+                    });
             } else {
                 resolve({
                     cache: true,
@@ -936,7 +936,7 @@ export const useGroupStore = defineStore('Group', () => {
         if (json?.userId === userStore.currentUser.id) {
             ref = state.cachedGroups.get(json.groupId);
             if (typeof ref !== 'undefined') {
-                API.$emit('GROUP', {
+                handleGroup({
                     json: {
                         ...ref,
                         memberVisibility: json.visibility,
@@ -1019,6 +1019,7 @@ export const useGroupStore = defineStore('Group', () => {
                         groupId,
                         includeRoles: true
                     });
+                    handleGroup(args);
                     const ref = applyGroup(args.json);
                     state.currentUserGroups.set(groupId, ref);
                 } catch (err) {
@@ -1037,6 +1038,7 @@ export const useGroupStore = defineStore('Group', () => {
         const args = await groupRequest.getGroups({
             userId: userStore.currentUser.id
         });
+        handleGroupList(args);
         state.currentUserGroups.clear();
         for (const group of args.json) {
             const ref = applyGroup(group);
@@ -1044,9 +1046,10 @@ export const useGroupStore = defineStore('Group', () => {
                 state.currentUserGroups.set(group.id, ref);
             }
         }
-        await groupRequest.getGroupPermissions({
+        const args1 = await groupRequest.getGroupPermissions({
             userId: userStore.currentUser.id
         });
+        handleGroupPermissions(args1);
         saveCurrentUserGroups();
     }
 
@@ -1056,6 +1059,7 @@ export const useGroupStore = defineStore('Group', () => {
                 userId: userStore.currentUser.id
             })
             .then((args) => {
+                handleGroupRepresented(args);
                 userStore.userDialog.representedGroup = args.json;
                 return args;
             });
@@ -1093,6 +1097,13 @@ export const useGroupStore = defineStore('Group', () => {
         getCachedGroup,
         applyGroupMember,
         loadCurrentUserGroups,
-        handleGroupPost
+        handleGroupPost,
+        handleGroupUserInstances,
+        handleGroupMember,
+        handleGroupPermissions,
+        handleGroupMemberProps,
+        handleGroupList,
+        handleGroupRepresented,
+        handleGroup
     };
 });

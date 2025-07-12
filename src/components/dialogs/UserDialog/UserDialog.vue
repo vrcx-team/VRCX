@@ -1880,7 +1880,8 @@
         updateInGameGroupOrder,
         leaveGroup,
         leaveGroupPrompt,
-        setGroupVisibility
+        setGroupVisibility,
+        handleGroupList
     } = useGroupStore();
     const { currentUserGroups, inviteGroupDialog, inGameGroupOrder } = storeToRefs(useGroupStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -2530,6 +2531,7 @@
             remainingGroups: []
         };
         const args = await groupRequest.getGroups({ userId });
+        handleGroupList(args);
         if (userId !== userDialog.value.id) {
             userDialog.value.isGroupsLoading = false;
             return;

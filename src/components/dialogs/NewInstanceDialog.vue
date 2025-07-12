@@ -487,6 +487,7 @@
 
     const { friends, vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, cachedGroups } = storeToRefs(useGroupStore());
+    const { handleGroupPermissions } = useGroupStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showLaunchDialog } = useLaunchStore();
     const { createNewInstance } = useInstanceStore();
@@ -570,7 +571,7 @@
             });
     }
 
-    function initNewInstanceDialog(tag) {
+    async function initNewInstanceDialog(tag) {
         if (!isRealInstance(tag)) {
             return;
         }
@@ -591,7 +592,8 @@
         D.strict = false;
         D.shortName = '';
         D.secureOrShortName = '';
-        groupRequest.getGroupPermissions({ userId: currentUser.value.id });
+        const args = await groupRequest.getGroupPermissions({ userId: currentUser.value.id });
+        handleGroupPermissions(args);
         buildInstance();
         buildLegacyInstance();
         updateNewInstanceDialog();

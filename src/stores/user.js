@@ -944,6 +944,7 @@ export const useUserStore = defineStore('User', () => {
                         groupRequest
                             .getRepresentedGroup({ userId })
                             .then((args1) => {
+                                groupStore.handleGroupRepresented(args1);
                                 D.representedGroup = args1.json;
                                 D.representedGroup.$thumbnailUrl =
                                     convertFileUrlToImageUrl(

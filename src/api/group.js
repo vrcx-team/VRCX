@@ -1,4 +1,3 @@
-import { API } from '../service/eventBus';
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
 
@@ -70,7 +69,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP', args);
             return args;
         });
     },
@@ -86,7 +84,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP:REPRESENTED', args);
             return args;
         });
     },
@@ -102,7 +99,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP:LIST', args);
             return args;
         });
     },
@@ -118,7 +114,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP:JOIN', args);
             return args;
         });
     },
@@ -173,7 +168,6 @@ const groupReq = {
                 groupId,
                 params
             };
-            API.$emit('GROUP:MEMBER:PROPS', args);
             return args;
         });
     },
@@ -229,7 +223,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP:PERMISSIONS', args);
             return args;
         });
     },
@@ -250,7 +243,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP:POSTS', args);
             return args;
         });
     },
@@ -313,7 +305,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP:MEMBERS', args);
             return args;
         });
     },
@@ -391,7 +382,6 @@ const groupReq = {
                 json,
                 params
             };
-            API.$emit('GROUP:INVITE', args);
             return args;
         });
     },
@@ -628,7 +618,6 @@ const groupReq = {
             const args = {
                 json
             };
-            API.$emit('GROUP:USER:INSTANCES', args);
             return args;
         });
     },

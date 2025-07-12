@@ -351,7 +351,7 @@
     const { cachedAvatars } = storeToRefs(useAvatarStore());
     const { cachedWorlds } = storeToRefs(useWorldStore());
     const { showWorldDialog } = useWorldStore();
-    const { showGroupDialog } = useGroupStore();
+    const { showGroupDialog, handleGroup } = useGroupStore();
     const { cachedGroups } = storeToRefs(useGroupStore());
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
@@ -669,7 +669,7 @@
             })
             .then((args) => {
                 for (const json of args.json) {
-                    API.$emit('GROUP', {
+                    handleGroup({
                         json,
                         params: {
                             groupId: json.id
