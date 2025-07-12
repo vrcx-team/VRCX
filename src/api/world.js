@@ -12,6 +12,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getWorld(params) {
+        const worldStore = getWorldStore();
         return request(`worlds/${params.worldId}`, {
             method: 'GET'
         }).then((json) => {
@@ -19,7 +20,7 @@ const worldReq = {
                 json,
                 params
             };
-            API.$emit('WORLD', args);
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     },
@@ -63,6 +64,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params, option}>}
      */
     getWorlds(params, option) {
+        const worldStore = getWorldStore();
         let endpoint = 'worlds';
         if (typeof option !== 'undefined') {
             endpoint = `worlds/${option}`;
@@ -77,12 +79,7 @@ const worldReq = {
                 option
             };
             for (const json of args.json) {
-                API.$emit('WORLD', {
-                    json,
-                    params: {
-                        worldId: json.id
-                    }
-                });
+                worldStore.applyWorld(json);
             }
             return args;
         });
@@ -108,6 +105,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     saveWorld(params) {
+        const worldStore = getWorldStore();
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
@@ -116,12 +114,7 @@ const worldReq = {
                 json,
                 params
             };
-            API.$emit('WORLD', {
-                json,
-                params: {
-                    worldId: json.id
-                }
-            });
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     },
@@ -131,6 +124,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     publishWorld(params) {
+        const worldStore = getWorldStore();
         return request(`worlds/${params.worldId}/publish`, {
             method: 'PUT',
             params
@@ -139,12 +133,7 @@ const worldReq = {
                 json,
                 params
             };
-            API.$emit('WORLD', {
-                json,
-                params: {
-                    worldId: json.id
-                }
-            });
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     },
@@ -154,6 +143,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     unpublishWorld(params) {
+        const worldStore = getWorldStore();
         return request(`worlds/${params.worldId}/publish`, {
             method: 'DELETE',
             params
@@ -162,12 +152,7 @@ const worldReq = {
                 json,
                 params
             };
-            API.$emit('WORLD', {
-                json,
-                params: {
-                    worldId: json.id
-                }
-            });
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     }

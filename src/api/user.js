@@ -29,7 +29,7 @@ const userReq = {
                 json,
                 params
             };
-            userStore.applyUser(args.json);
+            args.ref = userStore.applyUser(json);
             return args;
         });
     },

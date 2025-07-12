@@ -77,47 +77,6 @@ export const useWorldStore = defineStore('World', () => {
         { flush: 'sync' }
     );
 
-    API.$on('WORLD', function (args) {
-        args.ref = applyWorld(args.json);
-        favoriteStore.applyFavorite('world', args.ref.id);
-        const userDialog = userStore.userDialog;
-        if (
-            userDialog.visible &&
-            userDialog.$location.worldId === args.ref.id
-        ) {
-            userStore.applyUserDialogLocation();
-        }
-        const { ref } = args;
-        const D = state.worldDialog;
-        if (D.visible && D.id === ref.id) {
-            D.ref = ref;
-            D.avatarScalingDisabled = ref.tags?.includes(
-                'feature_avatar_scaling_disabled'
-            );
-            D.focusViewDisabled = ref.tags?.includes(
-                'feature_focus_view_disabled'
-            );
-            instanceStore.applyWorldDialogInstances();
-            for (const room of D.rooms) {
-                if (isRealInstance(room.tag)) {
-                    instanceRequest.getInstance({
-                        worldId: D.id,
-                        instanceId: room.id
-                    });
-                }
-            }
-            if (D.bundleSizes.length === 0) {
-                getBundleDateSize(ref).then((bundleSizes) => {
-                    D.bundleSizes = bundleSizes;
-                });
-            }
-        }
-        if (favoriteStore.localWorldFavoritesList.includes(args.ref.id)) {
-            // update db cache
-            database.addWorldToCache(args.ref);
-        }
-    });
-
     /**
      * aka: `$app.methods.showWorldDialog`
      * @param {string} tag
@@ -273,6 +232,8 @@ export const useWorldStore = defineStore('World', () => {
      * @returns {object} ref
      */
     function applyWorld(json) {
+        json.name = replaceBioSymbols(json.name);
+        json.description = replaceBioSymbols(json.description);
         let ref = state.cachedWorlds.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
@@ -321,8 +282,39 @@ export const useWorldStore = defineStore('World', () => {
             Object.assign(ref, json);
         }
         ref.$isLabs = ref.tags.includes('system_labs');
-        ref.name = replaceBioSymbols(ref.name);
-        ref.description = replaceBioSymbols(ref.description);
+        favoriteStore.applyFavorite('world', ref.id);
+        const userDialog = userStore.userDialog;
+        if (userDialog.visible && userDialog.$location.worldId === ref.id) {
+            userStore.applyUserDialogLocation();
+        }
+        const worldDialog = state.worldDialog;
+        if (worldDialog.visible && worldDialog.id === ref.id) {
+            worldDialog.ref = ref;
+            worldDialog.avatarScalingDisabled = ref.tags?.includes(
+                'feature_avatar_scaling_disabled'
+            );
+            worldDialog.focusViewDisabled = ref.tags?.includes(
+                'feature_focus_view_disabled'
+            );
+            instanceStore.applyWorldDialogInstances();
+            for (const room of worldDialog.rooms) {
+                if (isRealInstance(room.tag)) {
+                    instanceRequest.getInstance({
+                        worldId: worldDialog.id,
+                        instanceId: room.id
+                    });
+                }
+            }
+            if (worldDialog.bundleSizes.length === 0) {
+                getBundleDateSize(ref).then((bundleSizes) => {
+                    worldDialog.bundleSizes = bundleSizes;
+                });
+            }
+        }
+        if (favoriteStore.localWorldFavoritesList.includes(ref.id)) {
+            // update db cache
+            database.addWorldToCache(ref);
+        }
         return ref;
     }
 

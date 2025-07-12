@@ -559,12 +559,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (json.id === '???') {
                 continue;
             }
-            API.$emit('WORLD', {
-                json,
-                params: {
-                    worldId: json.id
-                }
-            });
+            worldStore.applyWorld(json);
         }
     }
 

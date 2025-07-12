@@ -247,6 +247,7 @@ const imageReq = {
     },
 
     setWorldImage(params) {
+        const worldStore = useWorldStore();
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
@@ -255,7 +256,7 @@ const imageReq = {
                 json,
                 params
             };
-            API.$emit('WORLD', args);
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     },

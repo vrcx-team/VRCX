@@ -370,6 +370,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @returns {object} ref
      */
     function applyAvatar(json) {
+        json.name = replaceBioSymbols(json.name);
+        json.description = replaceBioSymbols(json.description);
         let ref = state.cachedAvatars.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
@@ -416,8 +418,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
             listing.displayName = replaceBioSymbols(listing.displayName);
             listing.description = replaceBioSymbols(listing.description);
         }
-        ref.name = replaceBioSymbols(ref.name);
-        ref.description = replaceBioSymbols(ref.description);
         return ref;
     }
 
