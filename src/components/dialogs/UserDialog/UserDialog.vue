@@ -2338,7 +2338,7 @@
     }
 
     function handleSendFriendRequest(args) {
-        const ref = cachedUsers.get(args.params.userId);
+        const ref = cachedUsers.value.get(args.params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -2363,7 +2363,7 @@
     }
 
     function handleCancelFriendRequest(args) {
-        const ref = cachedUsers.get(args.params.userId);
+        const ref = cachedUsers.value.get(args.params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -2797,7 +2797,7 @@
                 userRequest.getUser({ userId: targetUserId });
             }
         }
-        const ref = cachedUsers.get(targetUserId);
+        const ref = cachedUsers.value.get(targetUserId);
         if (typeof ref !== 'undefined') {
             applyUser({
                 id: targetUserId,
