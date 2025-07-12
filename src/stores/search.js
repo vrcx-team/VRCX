@@ -106,12 +106,7 @@ export const useSearchStore = defineStore('Search', () => {
                     console.error('getUsers gave us garbage', json);
                     continue;
                 }
-                API.$emit('USER', {
-                    json,
-                    params: {
-                        userId: json.id
-                    }
-                });
+                userStore.applyUser(json);
             }
 
             const map = new Map();

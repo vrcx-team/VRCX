@@ -335,15 +335,15 @@ export const useFriendStore = defineStore('Friend', () => {
         addFriend(args.params.userId);
     }
 
-    function userOnFriend(args) {
-        updateFriendship(args.ref);
+    function userOnFriend(ref) {
+        updateFriendship(ref);
         if (
             watchState.isFriendsLoaded &&
-            args.json.isFriend &&
-            !state.friendLog.has(args.ref.id) &&
-            args.json.id !== userStore.currentUser.id
+            ref.isFriend &&
+            !state.friendLog.has(ref.id) &&
+            ref.id !== userStore.currentUser.id
         ) {
-            addFriendship(args.ref.id);
+            addFriendship(ref.id);
         }
     }
 

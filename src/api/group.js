@@ -56,7 +56,7 @@ const groupReq = {
         });
     },
     /**
-     * @param {{ groupId: string }} params
+     * @param {{ groupId: string, includeRoles?: boolean }} params
      */
     getGroup(params) {
         return request(`groups/${params.groupId}`, {

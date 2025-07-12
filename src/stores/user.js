@@ -357,42 +357,6 @@ export const useUserStore = defineStore('User', () => {
         { flush: 'sync' }
     );
 
-    API.$on('USER', function (args) {
-        if (!args?.json?.id) {
-            console.error('API.$on(USER) invalid args', args);
-            return;
-        }
-        if (args.json.state === 'online') {
-            args.ref = applyUser(args.json); // GPS
-            friendStore.updateFriend(args.json.id, args.json.state); // online/offline
-        } else {
-            friendStore.updateFriend(args.json.id, args.json.state); // online/offline
-            args.ref = applyUser(args.json); // GPS
-        }
-        favoriteStore.applyFavorite('friend', args.ref.id);
-        friendStore.userOnFriend(args);
-        const { ref } = args;
-        const D = state.userDialog;
-        if (D.visible === false || D.id !== ref.id) {
-            return;
-        }
-        D.ref = ref;
-        D.note = String(ref.note || '');
-        D.noteSaving = false;
-        D.incomingRequest = false;
-        D.outgoingRequest = false;
-        if (D.ref.friendRequestStatus === 'incoming') {
-            D.incomingRequest = true;
-        } else if (D.ref.friendRequestStatus === 'outgoing') {
-            D.outgoingRequest = true;
-        }
-        // refresh user dialog JSON tab
-        if (!state.userDialog.visible || state.userDialog.id !== args.ref.id) {
-            return;
-        }
-        refreshUserDialogTreeData();
-    });
-
     function handleConfig(args) {
         const authStore = useAuthStore();
         const ref = {
@@ -585,6 +549,10 @@ export const useUserStore = defineStore('User', () => {
             }
             state.cachedUsers.set(ref.id, ref);
         } else {
+            if (json.state !== 'online') {
+                // offline event before GPS to offline location
+                friendStore.updateFriend(ref.id, json.state);
+            }
             for (const prop in ref) {
                 if (typeof json[prop] === 'undefined') {
                     continue;
@@ -711,6 +679,26 @@ export const useUserStore = defineStore('User', () => {
                 }
             });
             instanceStore.getCurrentInstanceUserList();
+        }
+        if (ref.state === 'online') {
+            friendStore.updateFriend(ref.id, ref.state); // online/offline
+        }
+        favoriteStore.applyFavorite('friend', ref.id);
+        friendStore.userOnFriend(ref);
+        const D = state.userDialog;
+        if (D.visible && D.id === ref.id) {
+            D.ref = ref;
+            D.note = String(ref.note || '');
+            D.noteSaving = false;
+            D.incomingRequest = false;
+            D.outgoingRequest = false;
+            if (D.ref.friendRequestStatus === 'incoming') {
+                D.incomingRequest = true;
+            } else if (D.ref.friendRequestStatus === 'outgoing') {
+                D.outgoingRequest = true;
+            }
+            // refresh user dialog JSON tab
+            refreshUserDialogTreeData();
         }
         if (hasPropChanged) {
             if (

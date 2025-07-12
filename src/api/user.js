@@ -16,6 +16,7 @@ const userReq = {
      * @type {import('../types/user').getUser}
      */
     getUser(params) {
+        const userStore = useUserStore();
         return request(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
@@ -28,7 +29,7 @@ const userReq = {
                 json,
                 params
             };
-            API.$emit('USER', args);
+            userStore.applyUser(args.json);
             return args;
         });
     },

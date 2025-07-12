@@ -262,12 +262,7 @@ function handlePipeline(args) {
             break;
 
         case 'friend-add':
-            API.$emit('USER', {
-                json: content.user,
-                params: {
-                    userId: content.userId
-                }
-            });
+            userStore.applyUser(content.user);
             friendStore.handleFriendAdd({
                 params: {
                     userId: content.userId
@@ -291,84 +286,69 @@ function handlePipeline(args) {
                 content.travelingToLocation
             );
             if (content?.user?.id) {
-                API.$emit('USER', {
-                    json: {
-                        id: content.userId,
-                        platform: content.platform,
-                        state: 'online',
+                const onlineJson = {
+                    id: content.userId,
+                    platform: content.platform,
+                    state: 'online',
 
-                        location: content.location,
-                        worldId: content.worldId,
-                        instanceId: $location.instanceId,
-                        travelingToLocation: content.travelingToLocation,
-                        travelingToWorld: $travelingToLocation.worldId,
-                        travelingToInstance: $travelingToLocation.instanceId,
+                    location: content.location,
+                    worldId: content.worldId,
+                    instanceId: $location.instanceId,
+                    travelingToLocation: content.travelingToLocation,
+                    travelingToWorld: $travelingToLocation.worldId,
+                    travelingToInstance: $travelingToLocation.instanceId,
 
-                        ...content.user
-                    },
-                    params: {
-                        userId: content.userId
-                    }
-                });
+                    ...content.user
+                };
+                userStore.applyUser(onlineJson);
             } else {
+                console.error('friend-online missing user id', content);
                 friendStore.updateFriend(content.userId, 'online');
             }
             break;
 
         case 'friend-active':
             if (content?.user?.id) {
-                API.$emit('USER', {
-                    json: {
-                        id: content.userId,
-                        platform: content.platform,
-                        state: 'active',
-
-                        location: 'offline',
-                        worldId: 'offline',
-                        instanceId: 'offline',
-                        travelingToLocation: 'offline',
-                        travelingToWorld: 'offline',
-                        travelingToInstance: 'offline',
-
-                        ...content.user
-                    },
-                    params: {
-                        userId: content.userId
-                    }
-                });
-            } else {
-                friendStore.updateFriend(content.userId, 'active');
-            }
-            break;
-
-        case 'friend-offline':
-            // more JANK, hell yeah
-            API.$emit('USER', {
-                json: {
+                const activeJson = {
                     id: content.userId,
                     platform: content.platform,
-                    state: 'offline',
+                    state: 'active',
 
                     location: 'offline',
                     worldId: 'offline',
                     instanceId: 'offline',
                     travelingToLocation: 'offline',
                     travelingToWorld: 'offline',
-                    travelingToInstance: 'offline'
-                },
-                params: {
-                    userId: content.userId
-                }
-            });
+                    travelingToInstance: 'offline',
+
+                    ...content.user
+                };
+                userStore.applyUser(activeJson);
+            } else {
+                console.error('friend-active missing user id', content);
+                friendStore.updateFriend(content.userId, 'active');
+            }
+            break;
+
+        case 'friend-offline':
+            // more JANK, hell yeah
+            const offlineJson = {
+                id: content.userId,
+                platform: content.platform,
+                state: 'offline',
+
+                location: 'offline',
+                worldId: 'offline',
+                instanceId: 'offline',
+                travelingToLocation: 'offline',
+                travelingToWorld: 'offline',
+                travelingToInstance: 'offline'
+            };
+            userStore.applyUser(offlineJson);
             break;
 
         case 'friend-update':
-            API.$emit('USER', {
-                json: content.user,
-                params: {
-                    userId: content.userId
-                }
-            });
+            userStore.applyUser(content.user);
             break;
 
         case 'friend-location':
@@ -377,41 +357,31 @@ function handlePipeline(args) {
                 content.travelingToLocation
             );
             if (!content?.user?.id) {
-                const ref = userStore.get(content.userId);
-                if (typeof ref !== 'undefined') {
-                    API.$emit('USER', {
-                        json: {
-                            ...ref,
-                            location: content.location,
-                            worldId: content.worldId,
-                            instanceId: $location1.instanceId,
-                            travelingToLocation: content.travelingToLocation,
-                            travelingToWorld: $travelingToLocation1.worldId,
-                            travelingToInstance:
-                                $travelingToLocation1.instanceId
-                        },
-                        params: {
-                            userId: content.userId
-                        }
-                    });
-                }
-                break;
-            }
-            API.$emit('USER', {
-                json: {
+                console.error('friend-location missing user id', content);
+                const jankLocationJson = {
+                    id: content.userId,
                     location: content.location,
                     worldId: content.worldId,
                     instanceId: $location1.instanceId,
                     travelingToLocation: content.travelingToLocation,
                     travelingToWorld: $travelingToLocation1.worldId,
-                    travelingToInstance: $travelingToLocation1.instanceId,
-                    ...content.user,
-                    state: 'online' // JANK
-                },
-                params: {
-                    userId: content.userId
-                }
-            });
+                    travelingToInstance: $travelingToLocation1.instanceId
+                };
+                userStore.applyUser(jankLocationJson);
+                break;
+            }
+            const locationJson = {
+                location: content.location,
+                worldId: content.worldId,
+                instanceId: $location1.instanceId,
+                travelingToLocation: content.travelingToLocation,
+                travelingToWorld: $travelingToLocation1.worldId,
+                travelingToInstance: $travelingToLocation1.instanceId,
+                ...content.user,
+                state: 'online' // JANK
+            };
+            userStore.applyUser(locationJson);
+
             break;
 
         case 'user-update':

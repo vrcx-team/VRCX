@@ -1,5 +1,6 @@
 import { API } from '../service/eventBus';
 import { request } from '../service/request';
+import { useUserStore } from '../stores/user';
 
 const friendReq = {
     /**
@@ -7,6 +8,7 @@ const friendReq = {
      * @type {import('../types/friend').getFriends}
      */
     getFriends(params) {
+        const userStore = useUserStore();
         return request('auth/user/friends', {
             method: 'GET',
             params
@@ -20,12 +22,7 @@ const friendReq = {
                     console.error('/friends gave us garbage', user);
                     continue;
                 }
-                API.$emit('USER', {
-                    json: user,
-                    params: {
-                        userId: json.id
-                    }
-                });
+                userStore.applyUser(user);
             }
             return args;
         });
