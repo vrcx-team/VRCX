@@ -155,7 +155,7 @@ const userReq = {
             method: 'PUT',
             params
         }).then((json) => {
-            var args = {
+            const args = {
                 json,
                 params
             };

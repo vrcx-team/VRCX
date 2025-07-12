@@ -1,9 +1,9 @@
 export type getUser = (params: { userId: string }) => Promise<{
-    json: VRChatUser;
+    json: getUserResponse;
     params: { userId: string };
 }>;
 
-export interface VRChatUser {
+interface getUserResponse {
     ageVerificationStatus: string;
     ageVerified: boolean;
     allowAvatarCopying: boolean;

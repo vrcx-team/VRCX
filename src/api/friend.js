@@ -4,8 +4,7 @@ import { request } from '../service/request';
 const friendReq = {
     /**
      * Fetch friends of current user.
-     * @param {{ n: number, offset: number, offline: boolean }} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/friend').getFriends}
      */
     getFriends(params) {
         return request('auth/user/friends', {
