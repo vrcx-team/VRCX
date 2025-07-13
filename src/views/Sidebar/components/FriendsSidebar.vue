@@ -330,7 +330,7 @@
             return '';
         }
         for (const friend of friendsArr) {
-            if (friend.ref?.location !== 'traveling') {
+            if (isRealInstance(friend.ref?.location)) {
                 return friend.ref.location;
             }
         }
