@@ -1,4 +1,3 @@
-cd ../
-call npm ci
+cd ../../
 call npm run prod
 pause
