@@ -420,7 +420,7 @@ function handlePipeline(args) {
             const groupId = content.role.groupId;
             groupRequest
                 .getGroup({ groupId, includeRoles: true })
-                .then((args) => groupStore.handleGroup(args));
+                .then((args) => groupStore.applyGroup(args.json));
             console.log('group-role-updated', content);
 
             // content {

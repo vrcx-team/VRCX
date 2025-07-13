@@ -153,9 +153,10 @@ export const useGroupStore = defineStore('Group', () => {
         D.galleries = {};
         D.members = [];
         D.memberFilter = groupDialogFilterOptions.everyone;
-        getCachedGroup({
-            groupId
-        })
+        groupRequest
+            .getCachedGroup({
+                groupId
+            })
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
@@ -183,149 +184,6 @@ export const useGroupStore = defineStore('Group', () => {
                     getGroupDialogGroup(groupId);
                 }
             });
-    }
-
-    /**
-     *
-     * @param {object} json
-     * @returns {object} ref
-     */
-    function applyGroup(json) {
-        let ref = state.cachedGroups.get(json.id);
-        json.rules = replaceBioSymbols(json.rules);
-        json.name = replaceBioSymbols(json.name);
-        json.description = replaceBioSymbols(json.description);
-        if (typeof ref === 'undefined') {
-            ref = {
-                id: '',
-                name: '',
-                shortCode: '',
-                description: '',
-                bannerId: '',
-                bannerUrl: '',
-                createdAt: '',
-                discriminator: '',
-                galleries: [],
-                iconId: '',
-                iconUrl: '',
-                isVerified: false,
-                joinState: '',
-                languages: [],
-                links: [],
-                memberCount: 0,
-                memberCountSyncedAt: '',
-                membershipStatus: '',
-                onlineMemberCount: 0,
-                ownerId: '',
-                privacy: '',
-                rules: null,
-                tags: [],
-                // in group
-                initialRoleIds: [],
-                myMember: {
-                    bannedAt: null,
-                    groupId: '',
-                    has2FA: false,
-                    id: '',
-                    isRepresenting: false,
-                    isSubscribedToAnnouncements: false,
-                    joinedAt: '',
-                    managerNotes: '',
-                    membershipStatus: '',
-                    permissions: [],
-                    roleIds: [],
-                    userId: '',
-                    visibility: '',
-                    _created_at: '',
-                    _id: '',
-                    _updated_at: ''
-                },
-                updatedAt: '',
-                // includeRoles: true
-                roles: [],
-                // group list
-                $memberId: '',
-                groupId: '',
-                isRepresenting: false,
-                memberVisibility: false,
-                mutualGroup: false,
-                // VRCX
-                $languages: [],
-                ...json
-            };
-            state.cachedGroups.set(ref.id, ref);
-        } else {
-            if (state.currentUserGroups.has(ref.id)) {
-                // compare group props
-                if (
-                    ref.ownerId &&
-                    json.ownerId &&
-                    ref.ownerId !== json.ownerId
-                ) {
-                    // owner changed
-                    groupOwnerChange(json, ref.ownerId, json.ownerId);
-                }
-                if (ref.name && json.name && ref.name !== json.name) {
-                    // name changed
-                    groupChange(
-                        json,
-                        `Name changed from ${ref.name} to ${json.name}`
-                    );
-                }
-                if (ref.myMember?.roleIds && json.myMember?.roleIds) {
-                    const oldRoleIds = ref.myMember.roleIds;
-                    const newRoleIds = json.myMember.roleIds;
-                    if (
-                        oldRoleIds.length !== newRoleIds.length ||
-                        !oldRoleIds.every(
-                            (value, index) => value === newRoleIds[index]
-                        )
-                    ) {
-                        // roleIds changed
-                        groupRoleChange(
-                            json,
-                            ref.roles,
-                            json.roles,
-                            oldRoleIds,
-                            newRoleIds
-                        );
-                    }
-                }
-            }
-            if (json.myMember) {
-                if (typeof json.myMember.roleIds === 'undefined') {
-                    // keep roleIds
-                    json.myMember.roleIds = ref.myMember.roleIds;
-                }
-                if (typeof json.myMember.isRepresenting !== 'undefined') {
-                    json.myMember.isRepresenting = ref.myMember.isRepresenting;
-                }
-                Object.assign(ref.myMember, json.myMember);
-            }
-            Object.assign(ref, json);
-        }
-        // update myMember without fetching member
-        if (typeof json.memberVisibility !== 'undefined') {
-            ref.myMember.visibility = json.memberVisibility;
-        }
-        if (typeof json.isRepresenting !== 'undefined') {
-            ref.myMember.isRepresenting = json.isRepresenting;
-        }
-        if (typeof json.membershipStatus !== 'undefined') {
-            ref.myMember.membershipStatus = json.membershipStatus;
-        }
-        if (typeof json.roleIds !== 'undefined') {
-            ref.myMember.roleIds = json.roleIds;
-        }
-        ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
-        applyGroupLanguage(ref);
-
-        const currentUserGroupRef = state.currentUserGroups.get(ref.id);
-        if (currentUserGroupRef && currentUserGroupRef !== ref) {
-            state.currentUserGroups.set(ref.id, ref);
-        }
-
-        return ref;
     }
 
     /**
@@ -482,8 +340,7 @@ export const useGroupStore = defineStore('Group', () => {
             groupRequest
                 .getGroup({ groupId, includeRoles: true })
                 .then((args) => {
-                    handleGroup(args);
-                    applyGroup(args.json); // make sure this runs before saveCurrentUserGroups
+                    applyGroup(args.json);
                     saveCurrentUserGroups();
                     return args;
                 });
@@ -500,7 +357,7 @@ export const useGroupStore = defineStore('Group', () => {
         }
         if (state.currentUserGroups.has(groupId)) {
             state.currentUserGroups.delete(groupId);
-            getCachedGroup({ groupId }).then((args) => {
+            groupRequest.getCachedGroup({ groupId }).then((args) => {
                 groupChange(args.ref, 'Left group');
             });
         }
@@ -554,12 +411,12 @@ export const useGroupStore = defineStore('Group', () => {
             .catch((err) => {
                 throw err;
             })
-            .then((args1) => {
-                handleGroup(args1);
-                if (D.id === args1.ref.id) {
-                    D.ref = args1.ref;
-                    D.inGroup = args1.ref.membershipStatus === 'member';
-                    for (const role of args1.ref.roles) {
+            .then((args) => {
+                const ref = applyGroup(args.json);
+                if (D.id === ref.id) {
+                    D.ref = ref;
+                    D.inGroup = ref.membershipStatus === 'member';
+                    for (const role of ref.roles) {
                         if (
                             D.ref &&
                             D.ref.myMember &&
@@ -607,7 +464,7 @@ export const useGroupStore = defineStore('Group', () => {
                     }
                 }
                 $app.$nextTick(() => (D.isGetGroupDialogGroupLoading = false));
-                return args1;
+                return args;
             });
     }
 
@@ -710,15 +567,158 @@ export const useGroupStore = defineStore('Group', () => {
             });
     }
 
-    function handleGroup(args) {
-        args.ref = applyGroup(args.json);
-        const { ref } = args;
-        const D = state.groupDialog;
-        if (D.visible === false || D.id !== ref.id) {
-            return;
+    /**
+     *
+     * @param {object} json
+     * @returns {object} ref
+     */
+    function applyGroup(json) {
+        let ref = state.cachedGroups.get(json.id);
+        if (json.rules) {
+            json.rules = replaceBioSymbols(json.rules);
         }
-        D.inGroup = ref.membershipStatus === 'member';
-        D.ref = ref;
+        if (json.name) {
+            json.name = replaceBioSymbols(json.name);
+        }
+        if (json.description) {
+            json.description = replaceBioSymbols(json.description);
+        }
+        if (typeof ref === 'undefined') {
+            ref = {
+                id: '',
+                name: '',
+                shortCode: '',
+                description: '',
+                bannerId: '',
+                bannerUrl: '',
+                createdAt: '',
+                discriminator: '',
+                galleries: [],
+                iconId: '',
+                iconUrl: '',
+                isVerified: false,
+                joinState: '',
+                languages: [],
+                links: [],
+                memberCount: 0,
+                memberCountSyncedAt: '',
+                membershipStatus: '',
+                onlineMemberCount: 0,
+                ownerId: '',
+                privacy: '',
+                rules: null,
+                tags: [],
+                // in group
+                initialRoleIds: [],
+                myMember: {
+                    bannedAt: null,
+                    groupId: '',
+                    has2FA: false,
+                    id: '',
+                    isRepresenting: false,
+                    isSubscribedToAnnouncements: false,
+                    joinedAt: '',
+                    managerNotes: '',
+                    membershipStatus: '',
+                    permissions: [],
+                    roleIds: [],
+                    userId: '',
+                    visibility: '',
+                    _created_at: '',
+                    _id: '',
+                    _updated_at: ''
+                },
+                updatedAt: '',
+                // includeRoles: true
+                roles: [],
+                // group list
+                $memberId: '',
+                groupId: '',
+                isRepresenting: false,
+                memberVisibility: false,
+                mutualGroup: false,
+                // VRCX
+                $languages: [],
+                ...json
+            };
+            state.cachedGroups.set(ref.id, ref);
+        } else {
+            if (state.currentUserGroups.has(ref.id)) {
+                // compare group props
+                if (
+                    ref.ownerId &&
+                    json.ownerId &&
+                    ref.ownerId !== json.ownerId
+                ) {
+                    // owner changed
+                    groupOwnerChange(json, ref.ownerId, json.ownerId);
+                }
+                if (ref.name && json.name && ref.name !== json.name) {
+                    // name changed
+                    groupChange(
+                        json,
+                        `Name changed from ${ref.name} to ${json.name}`
+                    );
+                }
+                if (ref.myMember?.roleIds && json.myMember?.roleIds) {
+                    const oldRoleIds = ref.myMember.roleIds;
+                    const newRoleIds = json.myMember.roleIds;
+                    if (
+                        oldRoleIds.length !== newRoleIds.length ||
+                        !oldRoleIds.every(
+                            (value, index) => value === newRoleIds[index]
+                        )
+                    ) {
+                        // roleIds changed
+                        groupRoleChange(
+                            json,
+                            ref.roles,
+                            json.roles,
+                            oldRoleIds,
+                            newRoleIds
+                        );
+                    }
+                }
+            }
+            if (json.myMember) {
+                if (typeof json.myMember.roleIds === 'undefined') {
+                    // keep roleIds
+                    json.myMember.roleIds = ref.myMember.roleIds;
+                }
+                if (typeof json.myMember.isRepresenting !== 'undefined') {
+                    json.myMember.isRepresenting = ref.myMember.isRepresenting;
+                }
+                Object.assign(ref.myMember, json.myMember);
+            }
+            Object.assign(ref, json);
+        }
+        // update myMember without fetching member
+        if (typeof json.memberVisibility !== 'undefined') {
+            ref.myMember.visibility = json.memberVisibility;
+        }
+        if (typeof json.isRepresenting !== 'undefined') {
+            ref.myMember.isRepresenting = json.isRepresenting;
+        }
+        if (typeof json.membershipStatus !== 'undefined') {
+            ref.myMember.membershipStatus = json.membershipStatus;
+        }
+        if (typeof json.roleIds !== 'undefined') {
+            ref.myMember.roleIds = json.roleIds;
+        }
+        ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
+        applyGroupLanguage(ref);
+
+        const currentUserGroupRef = state.currentUserGroups.get(ref.id);
+        if (currentUserGroupRef) {
+            state.currentUserGroups.set(ref.id, ref);
+        }
+
+        const D = state.groupDialog;
+        if (D.visible && D.id === ref.id) {
+            D.inGroup = ref.membershipStatus === 'member';
+            D.ref = ref;
+        }
+        return ref;
     }
 
     function handleGroupRepresented(args) {
@@ -729,26 +729,14 @@ export const useGroupStore = defineStore('Group', () => {
         }
         json.$memberId = json.id;
         json.id = json.groupId;
-        handleGroup({
-            json,
-            params: {
-                groupId: json.groupId,
-                userId: args.params.userId
-            }
-        });
+        applyGroup(json);
     }
 
     function handleGroupList(args) {
         for (const json of args.json) {
             json.$memberId = json.id;
             json.id = json.groupId;
-            handleGroup({
-                json,
-                params: {
-                    groupId: json.id,
-                    userId: args.params.userId
-                }
-            });
+            applyGroup(json);
         }
     }
 
@@ -862,7 +850,7 @@ export const useGroupStore = defineStore('Group', () => {
                     const args = await groupRequest.getGroup({
                         groupId: json.ownerId
                     });
-                    handleGroup(args);
+                    applyGroup(args.json);
                 }
                 return;
             }
@@ -871,33 +859,6 @@ export const useGroupStore = defineStore('Group', () => {
                 instance: instanceStore.applyInstance(json)
             });
         }
-    }
-
-    /**
-     *
-     * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
-     */
-    function getCachedGroup(params) {
-        return new Promise((resolve, reject) => {
-            const ref = state.cachedGroups.get(params.groupId);
-            if (typeof ref === 'undefined') {
-                groupRequest
-                    .getGroup(params)
-                    .catch(reject)
-                    .then((args) => {
-                        handleGroup(args);
-                        resolve(args);
-                    });
-            } else {
-                resolve({
-                    cache: true,
-                    json: ref,
-                    params,
-                    ref
-                });
-            }
-        });
     }
 
     /**
@@ -925,21 +886,17 @@ export const useGroupStore = defineStore('Group', () => {
         if (json?.userId === userStore.currentUser.id) {
             ref = state.cachedGroups.get(json.groupId);
             if (typeof ref !== 'undefined') {
-                handleGroup({
-                    json: {
-                        ...ref,
-                        memberVisibility: json.visibility,
-                        isRepresenting: json.isRepresenting,
-                        isSubscribedToAnnouncements:
-                            json.isSubscribedToAnnouncements,
-                        joinedAt: json.joinedAt,
-                        roleIds: json.roleIds,
-                        membershipStatus: json.membershipStatus
-                    },
-                    params: {
-                        groupId: json.groupId
-                    }
-                });
+                const newJson = {
+                    id: json.groupId,
+                    memberVisibility: json.visibility,
+                    isRepresenting: json.isRepresenting,
+                    isSubscribedToAnnouncements:
+                        json.isSubscribedToAnnouncements,
+                    joinedAt: json.joinedAt,
+                    roleIds: json.roleIds,
+                    membershipStatus: json.membershipStatus
+                };
+                applyGroup(newJson);
             }
         }
 
@@ -1005,7 +962,6 @@ export const useGroupStore = defineStore('Group', () => {
                         groupId,
                         includeRoles: true
                     });
-                    handleGroup(args);
                     const ref = applyGroup(args.json);
                     state.currentUserGroups.set(groupId, ref);
                 } catch (err) {
@@ -1080,7 +1036,6 @@ export const useGroupStore = defineStore('Group', () => {
         leaveGroupPrompt,
         updateGroupPostSearch,
         setGroupVisibility,
-        getCachedGroup,
         applyGroupMember,
         loadCurrentUserGroups,
         handleGroupPost,
@@ -1089,7 +1044,6 @@ export const useGroupStore = defineStore('Group', () => {
         handleGroupPermissions,
         handleGroupMemberProps,
         handleGroupList,
-        handleGroupRepresented,
-        handleGroup
+        handleGroupRepresented
     };
 });

@@ -1,10 +1,5 @@
-import { API } from '../service/eventBus';
 import { request } from '../service/request';
 import { useWorldStore } from '../stores';
-
-function getWorldStore() {
-    return useWorldStore();
-}
 
 const worldReq = {
     /**
@@ -12,7 +7,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getWorld(params) {
-        const worldStore = getWorldStore();
+        const worldStore = useWorldStore();
         return request(`worlds/${params.worldId}`, {
             method: 'GET'
         }).then((json) => {
@@ -30,10 +25,17 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getCachedWorld(params) {
+        const worldStore = useWorldStore();
         return new Promise((resolve, reject) => {
-            const ref = getWorldStore().cachedWorlds.get(params.worldId);
+            const ref = worldStore.cachedWorlds.get(params.worldId);
             if (typeof ref === 'undefined') {
-                worldReq.getWorld(params).catch(reject).then(resolve);
+                worldReq
+                    .getWorld(params)
+                    .catch(reject)
+                    .then((args) => {
+                        args.ref = worldStore.applyWorld(args.json);
+                        resolve(args);
+                    });
             } else {
                 resolve({
                     cache: true,
@@ -64,7 +66,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params, option}>}
      */
     getWorlds(params, option) {
-        const worldStore = getWorldStore();
+        const worldStore = useWorldStore();
         let endpoint = 'worlds';
         if (typeof option !== 'undefined') {
             endpoint = `worlds/${option}`;
@@ -105,7 +107,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     saveWorld(params) {
-        const worldStore = getWorldStore();
+        const worldStore = useWorldStore();
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
@@ -124,7 +126,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     publishWorld(params) {
-        const worldStore = getWorldStore();
+        const worldStore = useWorldStore();
         return request(`worlds/${params.worldId}/publish`, {
             method: 'PUT',
             params
@@ -143,7 +145,7 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     unpublishWorld(params) {
-        const worldStore = getWorldStore();
+        const worldStore = useWorldStore();
         return request(`worlds/${params.worldId}/publish`, {
             method: 'DELETE',
             params

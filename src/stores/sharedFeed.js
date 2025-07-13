@@ -158,7 +158,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                                     groupId: ref.$location.groupId
                                 })
                                 .then((args) => {
-                                    groupStore.handleGroup(args);
+                                    args.ref = groupStore.applyGroup(args.json);
                                     workerTimers.setTimeout(() => {
                                         // delay to allow for group cache to update
                                         state.sharedFeed.pendingUpdate = true;

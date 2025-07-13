@@ -1,12 +1,8 @@
-import { API } from '../service/eventBus';
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
-}
-function getCachedUserId(params) {
-    return useUserStore().cachedUsers.get(params.userId);
 }
 
 const userReq = {
@@ -40,10 +36,17 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getCachedUser(params) {
+        const userStore = useUserStore();
         return new Promise((resolve, reject) => {
-            const ref = getCachedUserId(params);
+            const ref = userStore.cachedUsers.get(params.userId);
             if (typeof ref === 'undefined') {
-                userReq.getUser(params).catch(reject).then(resolve);
+                userReq
+                    .getUser(params)
+                    .catch(reject)
+                    .then((args) => {
+                        args.ref = userStore.applyUser(args.json);
+                        resolve(args);
+                    });
             } else {
                 resolve({
                     cache: true,

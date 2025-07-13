@@ -4,7 +4,6 @@ import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
 import { $app } from '../app';
 import removeConfusables, { removeWhitespace } from '../service/confusables';
-import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
 import { compareByName, localeIncludes } from '../shared/utils';
 import { useAvatarStore } from './avatar';

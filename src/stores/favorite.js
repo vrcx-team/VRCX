@@ -3,7 +3,6 @@ import { computed, reactive, watch } from 'vue';
 import { favoriteRequest } from '../api';
 import { $app } from '../app';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
 import { processBulk } from '../service/request';
 import { watchState } from '../service/watchState';
 import { compareByName, removeFromArray } from '../shared/utils';

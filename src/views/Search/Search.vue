@@ -349,7 +349,7 @@
     const { cachedAvatars } = storeToRefs(useAvatarStore());
     const { cachedWorlds } = storeToRefs(useWorldStore());
     const { showWorldDialog } = useWorldStore();
-    const { showGroupDialog, handleGroup } = useGroupStore();
+    const { showGroupDialog, applyGroup } = useGroupStore();
     const { cachedGroups } = storeToRefs(useGroupStore());
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
@@ -666,20 +666,10 @@
                 isSearchGroupLoading.value = false;
             })
             .then((args) => {
-                for (const json of args.json) {
-                    handleGroup({
-                        json,
-                        params: {
-                            groupId: json.id
-                        }
-                    });
-                }
                 const map = new Map();
                 for (const json of args.json) {
-                    const ref = cachedGroups.value.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        map.set(ref.id, ref);
-                    }
+                    const ref = applyGroup(json);
+                    map.set(ref.id, ref);
                 }
                 searchGroupResults.value = Array.from(map.values());
                 return args;

@@ -175,7 +175,7 @@
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());
-    const { getCachedGroup, handleGroup } = useGroupStore();
+    const { applyGroup } = useGroupStore();
 
     const { proxy } = getCurrentInstance();
 
@@ -196,9 +196,10 @@
         nextTick(() => adjustDialogZ(inviteGroupDialogRef.value.$el));
         const D = inviteGroupDialog.value;
         if (D.groupId) {
-            getCachedGroup({
-                groupId: D.groupId
-            })
+            groupRequest
+                .getCachedGroup({
+                    groupId: D.groupId
+                })
                 .then((args) => {
                     D.groupName = args.ref.name;
                 })
@@ -225,8 +226,8 @@
         groupRequest
             .getGroup({ groupId })
             .then((args) => {
-                handleGroup(args);
-                if (hasGroupPermission(args.ref, 'group-invites-manage')) {
+                const ref = applyGroup(args.json);
+                if (hasGroupPermission(ref, 'group-invites-manage')) {
                     return args;
                 }
                 // not allowed to invite

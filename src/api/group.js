@@ -1,5 +1,5 @@
 import { request } from '../service/request';
-import { useUserStore } from '../stores';
+import { useUserStore, useGroupStore } from '../stores';
 
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
@@ -70,6 +70,33 @@ const groupReq = {
                 params
             };
             return args;
+        });
+    },
+    /**
+     *
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
+    getCachedGroup(params) {
+        const groupStore = useGroupStore();
+        return new Promise((resolve, reject) => {
+            const ref = groupStore.cachedGroups.get(params.groupId);
+            if (typeof ref === 'undefined') {
+                groupReq
+                    .getGroup(params)
+                    .catch(reject)
+                    .then((args) => {
+                        args.ref = groupStore.applyGroup(args.json);
+                        resolve(args);
+                    });
+            } else {
+                resolve({
+                    cache: true,
+                    json: ref,
+                    params,
+                    ref
+                });
+            }
         });
     },
     /**

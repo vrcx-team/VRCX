@@ -1,4 +1,3 @@
-import { API } from '../service/eventBus';
 import { request } from '../service/request';
 import { useUserStore } from '../stores/user';
 

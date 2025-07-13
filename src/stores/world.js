@@ -3,7 +3,6 @@ import { computed, reactive, watch } from 'vue';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
 import { $app } from '../app';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
 import {
     checkVRChatCache,

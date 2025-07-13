@@ -1210,7 +1210,6 @@
         showGroupDialog,
         leaveGroupPrompt,
         setGroupVisibility,
-        getCachedGroup,
         applyGroupMember,
         handleGroupMember,
         handleGroupMemberProps
@@ -1543,7 +1542,7 @@
 
         D.groupRef = {};
         D.auditLogTypes = [];
-        getCachedGroup({ groupId }).then((args) => {
+        groupRequest.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
             if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
                 groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
@@ -1623,7 +1622,7 @@
                 selectedImageUrl: post.imageUrl
             };
         }
-        getCachedGroup({ groupId }).then((args) => {
+        groupRequest.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
         });
         D.visible = true;
