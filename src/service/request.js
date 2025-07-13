@@ -137,7 +137,7 @@ export function request(endpoint, options) {
             }
             if (response.status === 504 || response.status === 502) {
                 // ignore expected API errors
-                $throw(response.status, response.data || '', endpoint);
+                return { status: 200, data: [] };
             }
             $throw(
                 response.status,
