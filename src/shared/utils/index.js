@@ -1,6 +1,7 @@
 export * from './base/array';
 export * from './base/devtool';
 export * from './base/format';
+export * from './base/date';
 export * from './base/string';
 export * from './base/ui';
 export * from './avatar';
