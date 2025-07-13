@@ -9,6 +9,7 @@ const instanceReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getInstance(params) {
+        const instanceStore = useInstanceStore();
         return request(`instances/${params.worldId}:${params.instanceId}`, {
             method: 'GET'
         }).then((json) => {
@@ -16,7 +17,7 @@ const instanceReq = {
                 json,
                 params
             };
-            useInstanceStore().handleInstance(args);
+            args.ref = instanceStore.applyInstance(json);
             return args;
         });
     },
@@ -37,6 +38,7 @@ const instanceReq = {
      * @returns {Promise<{json: any, params}>}
      */
     createInstance(params) {
+        const instanceStore = useInstanceStore();
         return request('instances', {
             method: 'POST',
             params
@@ -45,7 +47,7 @@ const instanceReq = {
                 json,
                 params
             };
-            useInstanceStore().handleInstance(args);
+            args.ref = instanceStore.applyInstance(json);
             return args;
         });
     },
@@ -80,6 +82,7 @@ const instanceReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getInstanceFromShortName(params) {
+        const instanceStore = useInstanceStore();
         return request(`instances/s/${params.shortName}`, {
             method: 'GET'
         }).then((json) => {
@@ -87,7 +90,7 @@ const instanceReq = {
                 json,
                 params
             };
-            useInstanceStore().handleInstance(args);
+            args.ref = instanceStore.applyInstance(json);
             return args;
         });
     },

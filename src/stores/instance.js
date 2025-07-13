@@ -153,34 +153,6 @@ export const useInstanceStore = defineStore('Instance', () => {
         { flush: 'sync' }
     );
 
-    function handleInstance(args) {
-        const { json } = args;
-        if (json) {
-            args.ref = applyInstance(args.json);
-        }
-        if (!args.json?.id) {
-            return;
-        }
-        if (
-            userStore.userDialog.visible &&
-            userStore.userDialog.ref.$location.tag === args.json.id
-        ) {
-            userStore.applyUserDialogLocation();
-        }
-        if (
-            worldStore.worldDialog.visible &&
-            worldStore.worldDialog.id === args.json.worldId
-        ) {
-            applyWorldDialogInstances();
-        }
-        if (
-            groupStore.groupDialog.visible &&
-            groupStore.groupDialog.id === args.json.ownerId
-        ) {
-            applyGroupDialogInstances();
-        }
-    }
-
     async function getInstanceJoinHistory() {
         state.instanceJoinHistory = await database.getInstanceJoinHistory();
     }
@@ -320,6 +292,12 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @returns {object} ref
      */
     function applyInstance(json) {
+        if (!json?.id) {
+            return null;
+        }
+        if (!json.$fetchedAt) {
+            json.$fetchedAt = new Date().toJSON();
+        }
         let ref = state.cachedInstances.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
@@ -374,18 +352,15 @@ export const useInstanceStore = defineStore('Instance', () => {
             Object.assign(ref, json);
         }
         ref.$location = parseLocation(ref.location);
-        if (json.world?.id) {
+        if (ref.world?.id) {
             worldRequest
                 .getCachedWorld({
-                    worldId: json.world.id
+                    worldId: ref.world.id
                 })
                 .then((args) => {
                     ref.world = args.ref;
                     return args;
                 });
-        }
-        if (!json.$fetchedAt) {
-            ref.$fetchedAt = new Date().toJSON();
         }
         ref.$disabledContentSettings = [];
         if (json.contentSettings && Object.keys(json.contentSettings).length) {
@@ -398,6 +373,24 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
                 ref.$disabledContentSettings.push(setting);
             }
+        }
+        if (
+            userStore.userDialog.visible &&
+            userStore.userDialog.ref.$location.tag === ref.id
+        ) {
+            userStore.applyUserDialogLocation();
+        }
+        if (
+            worldStore.worldDialog.visible &&
+            worldStore.worldDialog.id === ref.worldId
+        ) {
+            applyWorldDialogInstances();
+        }
+        if (
+            groupStore.groupDialog.visible &&
+            groupStore.groupDialog.id === ref.ownerId
+        ) {
+            applyGroupDialogInstances();
         }
         return ref;
     }
@@ -1195,7 +1188,6 @@ export const useInstanceStore = defineStore('Instance', () => {
         showPreviousInstancesInfoDialog,
         addInstanceJoinHistory,
         getCurrentInstanceUserList,
-        getInstanceJoinHistory,
-        handleInstance
+        getInstanceJoinHistory
     };
 });

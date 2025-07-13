@@ -587,12 +587,7 @@ export const useGroupStore = defineStore('Group', () => {
                                     );
                                 }
                                 for (const json of args.json.instances) {
-                                    instanceStore.handleInstance({
-                                        json,
-                                        params: {
-                                            fetchedAt: args.json.fetchedAt
-                                        }
-                                    });
+                                    instanceStore.applyInstance(json);
                                     worldRequest
                                         .getCachedWorld({
                                             worldId: json.world.id
@@ -860,12 +855,7 @@ export const useGroupStore = defineStore('Group', () => {
                 // tack on fetchedAt
                 json.$fetchedAt = args.json.fetchedAt;
             }
-            instanceStore.handleInstance({
-                json,
-                params: {
-                    fetchedAt: args.json.fetchedAt
-                }
-            });
+            instanceStore.applyInstance(json);
             const ref = state.cachedGroups.get(json.ownerId);
             if (typeof ref === 'undefined') {
                 if (watchState.isFriendsLoaded) {

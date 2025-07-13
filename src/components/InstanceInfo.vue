@@ -161,8 +161,8 @@
                 if (action !== 'confirm') return;
                 const args = await miscRequest.closeInstance({ location, hardClose: false });
                 if (args.json) {
-                    proxy.$message({ message: proxy.t('message.instance.closed'), type: 'success' });
-                    instanceStore.handleInstance({ json: args.json });
+                    proxy.$message({ message: t('message.instance.closed'), type: 'success' });
+                    instanceStore.applyInstance(args.json);
                 }
             }
         });
