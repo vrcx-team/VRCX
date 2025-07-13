@@ -112,10 +112,60 @@ export const useAvatarStore = defineStore('Avatar', () => {
         { flush: 'sync' }
     );
 
-    function handleAvatar(args) {
-        args.ref = applyAvatar(args.json);
-        favoriteStore.applyFavorite('avatar', args.ref.id);
-        if (favoriteStore.localAvatarFavoritesList.includes(args.ref.id)) {
+    /**
+    / * @param {object} json
+    / * @returns {object} ref
+    */
+    function applyAvatar(json) {
+        json.name = replaceBioSymbols(json.name);
+        json.description = replaceBioSymbols(json.description);
+        let ref = state.cachedAvatars.get(json.id);
+        if (typeof ref === 'undefined') {
+            ref = {
+                acknowledgements: '',
+                authorId: '',
+                authorName: '',
+                created_at: '',
+                description: '',
+                featured: false,
+                highestPrice: null,
+                id: '',
+                imageUrl: '',
+                lock: false,
+                lowestPrice: null,
+                name: '',
+                productId: null,
+                publishedListings: [],
+                releaseStatus: '',
+                searchable: false,
+                styles: [],
+                tags: [],
+                thumbnailImageUrl: '',
+                unityPackageUrl: '',
+                unityPackageUrlObject: {},
+                unityPackages: [],
+                updated_at: '',
+                version: 0,
+                ...json
+            };
+            state.cachedAvatars.set(ref.id, ref);
+        } else {
+            const { unityPackages } = ref;
+            Object.assign(ref, json);
+            if (
+                json.unityPackages?.length > 0 &&
+                unityPackages.length > 0 &&
+                !json.unityPackages[0].assetUrl
+            ) {
+                ref.unityPackages = unityPackages;
+            }
+        }
+        for (const listing of ref.publishedListings) {
+            listing.displayName = replaceBioSymbols(listing.displayName);
+            listing.description = replaceBioSymbols(listing.description);
+        }
+        favoriteStore.applyFavorite('avatar', ref.id);
+        if (favoriteStore.localAvatarFavoritesList.includes(ref.id)) {
             for (
                 let i = 0;
                 i < favoriteStore.localAvatarFavoriteGroups.length;
@@ -132,16 +182,16 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 ) {
                     const ref =
                         favoriteStore.localAvatarFavorites[groupName][j];
-                    if (ref.id === args.ref.id) {
-                        favoriteStore.localAvatarFavorites[groupName][j] =
-                            args.ref;
+                    if (ref.id === ref.id) {
+                        favoriteStore.localAvatarFavorites[groupName][j] = ref;
                     }
                 }
             }
 
             // update db cache
-            database.addAvatarToCache(args.ref);
+            database.addAvatarToCache(ref);
         }
+        return ref;
     }
 
     /**
@@ -189,8 +239,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         avatarRequest
             .getAvatar({ avatarId })
             .then((args) => {
-                handleAvatar(args);
-                const { ref } = args;
+                const ref = applyAvatar(args.json);
                 D.ref = ref;
                 getAvatarGallery(avatarId);
                 updateVRChatAvatarCache();
@@ -198,12 +247,12 @@ export const useAvatarStore = defineStore('Avatar', () => {
                     D.isQuestFallback = true;
                 }
                 const { isPC, isQuest, isIos } = getAvailablePlatforms(
-                    args.ref.unityPackages
+                    ref.unityPackages
                 );
                 D.isPC = isPC;
                 D.isQuest = isQuest;
                 D.isIos = isIos;
-                D.platformInfo = getPlatformInfo(args.ref.unityPackages);
+                D.platformInfo = getPlatformInfo(ref.unityPackages);
                 for (let i = ref.unityPackages.length - 1; i > -1; i--) {
                     const unityPackage = ref.unityPackages[i];
                     if (unityPackage.variant === 'impostor') {
@@ -230,7 +279,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     /**
      * aka: `$app.methods.getAvatarGallery`
      * @param {string} avatarId
-     * @returns {Promise<[]>}
+     * @returns {Promise<string[]>}
      */
     async function getAvatarGallery(avatarId) {
         const D = state.avatarDialog;
@@ -324,15 +373,15 @@ export const useAvatarStore = defineStore('Avatar', () => {
         const historyArray = await database.getAvatarHistory(
             userStore.currentUser.id
         );
-        state.avatarHistoryArray = historyArray;
         for (let i = 0; i < historyArray.length; i++) {
             const avatar = historyArray[i];
             if (avatar.authorId === userStore.currentUser.id) {
                 continue;
             }
-            state.avatarHistory.add(avatar.id);
             applyAvatar(avatar);
+            state.avatarHistory.add(avatar.id);
         }
+        state.avatarHistoryArray = historyArray;
     }
 
     /**
@@ -341,8 +390,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
      */
     function addAvatarToHistory(avatarId) {
         avatarRequest.getAvatar({ avatarId }).then((args) => {
-            handleAvatar(args);
-            const { ref } = args;
+            const ref = applyAvatar(args.json);
 
             database.addAvatarToCache(ref);
             database.addAvatarToHistory(ref.id);
@@ -362,63 +410,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
             state.avatarHistory.delete(ref.id);
             state.avatarHistory.add(ref.id);
         });
-    }
-
-    /**
-     *
-     * @param {object} json
-     * @returns {object} ref
-     */
-    function applyAvatar(json) {
-        json.name = replaceBioSymbols(json.name);
-        json.description = replaceBioSymbols(json.description);
-        let ref = state.cachedAvatars.get(json.id);
-        if (typeof ref === 'undefined') {
-            ref = {
-                acknowledgements: '',
-                authorId: '',
-                authorName: '',
-                created_at: '',
-                description: '',
-                featured: false,
-                highestPrice: null,
-                id: '',
-                imageUrl: '',
-                lock: false,
-                lowestPrice: null,
-                name: '',
-                productId: null,
-                publishedListings: [],
-                releaseStatus: '',
-                searchable: false,
-                styles: [],
-                tags: [],
-                thumbnailImageUrl: '',
-                unityPackageUrl: '',
-                unityPackageUrlObject: {},
-                unityPackages: [],
-                updated_at: '',
-                version: 0,
-                ...json
-            };
-            state.cachedAvatars.set(ref.id, ref);
-        } else {
-            const { unityPackages } = ref;
-            Object.assign(ref, json);
-            if (
-                json.unityPackages?.length > 0 &&
-                unityPackages.length > 0 &&
-                !json.unityPackages[0].assetUrl
-            ) {
-                ref.unityPackages = unityPackages;
-            }
-        }
-        // eslint-disable-next-line no-unsafe-optional-chaining
-        for (const listing of ref?.publishedListings) {
-            listing.displayName = replaceBioSymbols(listing.displayName);
-            listing.description = replaceBioSymbols(listing.description);
-        }
-        return ref;
     }
 
     function clearAvatarHistory() {
@@ -724,7 +715,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
         lookupAvatars,
         selectAvatarWithConfirmation,
         showAvatarAuthorDialog,
-        addAvatarWearTime,
-        handleAvatar
+        addAvatarWearTime
     };
 });

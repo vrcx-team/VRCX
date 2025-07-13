@@ -83,7 +83,7 @@
         handleFavoriteGroup
     } = useFavoriteStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
-    const { handleAvatar } = useAvatarStore();
+    const { applyAvatar } = useAvatarStore();
 
     const editFavoritesMode = ref(false);
     const refreshingLocalFavorites = ref(false);
@@ -188,7 +188,7 @@
                 const args = await avatarRequest.getAvatar({
                     avatarId
                 });
-                handleAvatar(args);
+                applyAvatar(args.json);
             } catch (err) {
                 console.error(err);
             }

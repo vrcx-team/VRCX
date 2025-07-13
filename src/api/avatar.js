@@ -50,7 +50,7 @@ const avatarReq = {
         });
     },
     /**
-     * @param {{ id: string, releaseStatus: 'public' | 'private' }} params
+     * @param {{ id: string, releaseStatus?: 'public' | 'private', name?: string, description?: string }} params
      * @returns {Promise<{json: any, params}>}
      */
     saveAvatar(params) {
@@ -153,7 +153,7 @@ const avatarReq = {
     },
 
     /**
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{json: any}>}
      */
     getAvailableAvatarStyles() {
         return request('avatarStyles', {
@@ -167,7 +167,7 @@ const avatarReq = {
     },
 
     /**
-     * @param {{ avatarId: string }} params
+     * @param {{ avatarId: string }} avatarId
      * @returns {Promise<{json: any, params}>}
      */
     getAvatarGallery(avatarId) {

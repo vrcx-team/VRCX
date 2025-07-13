@@ -24,7 +24,7 @@
     const { t } = useI18n();
 
     const { cachedAvatars } = storeToRefs(useAvatarStore());
-    const { handleAvatar } = useAvatarStore();
+    const { applyAvatar } = useAvatarStore();
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -79,16 +79,8 @@
             params,
             handle: (args) => {
                 for (const json of args.json) {
-                    handleAvatar({
-                        json,
-                        params: {
-                            avatarId: json.id
-                        }
-                    });
-                    const $ref = cachedAvatars.value.get(json.id);
-                    if (typeof $ref !== 'undefined') {
-                        map.set($ref.id, $ref);
-                    }
+                    const ref = applyAvatar(json);
+                    map.set(ref.id, ref);
                 }
             },
             done: () => {

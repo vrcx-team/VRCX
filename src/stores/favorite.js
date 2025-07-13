@@ -568,12 +568,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
             if (json.releaseStatus === 'hidden') {
                 continue;
             }
-            avatarStore.handleAvatar({
-                json,
-                params: {
-                    avatarId: json.id
-                }
-            });
+            avatarStore.applyAvatar(json);
         }
     }
 

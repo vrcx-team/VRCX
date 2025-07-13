@@ -57,8 +57,8 @@
     const $message = instance.proxy.$message;
 
     const { avatarDialog } = storeToRefs(useAvatarStore());
-    const { handleAvatar } = useAvatarStore();
     const { previousImagesTable } = storeToRefs(useGalleryStore());
+    const { applyAvatar } = useAvatarStore();
 
     const props = defineProps({
         changeAvatarImageDialogVisible: {
@@ -316,11 +316,11 @@
             imageUrl: `${API.endpointDomain}/file/${fileId}/${fileVersion}/file`
         };
         const res = await imageRequest.setAvatarImage(parmas);
-        handleAvatar(res);
         return avatarImageSet(res);
     }
 
     async function avatarImageSet(args) {
+        applyAvatar(args.json);
         changeAvatarImageDialogLoading.value = false;
         if (args.json.imageUrl === args.params.imageUrl) {
             $message({
@@ -347,7 +347,7 @@
         };
         imageRequest
             .setAvatarImage(parmas)
-            .then((args) => handleAvatar(args))
+            .then((args) => applyAvatar(args.json))
             .finally(() => {
                 changeAvatarImageDialogLoading.value = false;
                 closeDialog();

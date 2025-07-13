@@ -72,6 +72,8 @@
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
 
+    const { applyAvatar } = useAvatarStore();
+
     const props = defineProps({
         setAvatarStylesDialog: {
             type: Object,
@@ -141,12 +143,7 @@
         avatarRequest
             .saveAvatar(params)
             .then((args) => {
-                useAvatarStore().handleAvatar({
-                    json: args.user,
-                    params: {
-                        avatarId: args.user.id
-                    }
-                });
+                applyAvatar(args.json);
                 $message.success(t('dialog.set_avatar_styles.save_success'));
                 props.setAvatarStylesDialog.visible = false;
             })

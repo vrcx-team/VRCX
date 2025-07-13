@@ -99,8 +99,7 @@
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
 
-    const avatarStore = useAvatarStore();
-    const { showAvatarDialog } = avatarStore;
+    const { showAvatarDialog, applyAvatar } = useAvatarStore();
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
@@ -225,12 +224,7 @@
                     id: ref.id,
                     tags
                 });
-                useAvatarStore().handleAvatar({
-                    json: args.user,
-                    params: {
-                        avatarId: args.user.id
-                    }
-                });
+                applyAvatar(args.json);
                 D.selectedCount--;
             }
         } catch (err) {
