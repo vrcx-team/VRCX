@@ -629,7 +629,7 @@ export const useUserStore = defineStore('User', () => {
                 badgeName: 'Supporter',
                 badgeDescription: 'Supports VRChat through VRC+',
                 badgeImageUrl:
-                    'https://assets.vrchat.com/badges/fa/bdgai_8c9cf371-ffd2-4177-9894-1093e2e34bf7.png',
+                    'https://assets.vrchat.com/badges/fa/bdgai_583f6b13-91ab-4e1b-974e-ab91600b06cb.png',
                 hidden: true,
                 showcased: false
             });
