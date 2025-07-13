@@ -232,8 +232,12 @@ export const useWorldStore = defineStore('World', () => {
      * @returns {object} ref
      */
     function applyWorld(json) {
-        json.name = replaceBioSymbols(json.name);
-        json.description = replaceBioSymbols(json.description);
+        if (json.name) {
+            json.name = replaceBioSymbols(json.name);
+        }
+        if (json.description) {
+            json.description = replaceBioSymbols(json.description);
+        }
         let ref = state.cachedWorlds.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {

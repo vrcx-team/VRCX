@@ -441,10 +441,16 @@ export const useUserStore = defineStore('User', () => {
         let hasPropChanged = false;
         const changedProps = {};
         let ref = state.cachedUsers.get(json.id);
-        json.statusDescription = replaceBioSymbols(json.statusDescription);
-        json.statusDescription = removeEmojis(json.statusDescription);
-        json.bio = replaceBioSymbols(json.bio);
-        json.note = replaceBioSymbols(json.note);
+        if (json.statusDescription) {
+            json.statusDescription = replaceBioSymbols(json.statusDescription);
+            json.statusDescription = removeEmojis(json.statusDescription);
+        }
+        if (json.bio) {
+            json.bio = replaceBioSymbols(json.bio);
+        }
+        if (json.note) {
+            json.note = replaceBioSymbols(json.note);
+        }
         if (json.currentAvatarImageUrl === robotUrl) {
             delete json.currentAvatarImageUrl;
             delete json.currentAvatarThumbnailImageUrl;
