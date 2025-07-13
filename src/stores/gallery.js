@@ -680,6 +680,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         showFullscreenImageDialog,
         handleStickerAdd,
         handleGalleryImageAdd,
-        handleFilesList
+        handleFilesList,
+        queueCheckInstanceInventory
     };
 });

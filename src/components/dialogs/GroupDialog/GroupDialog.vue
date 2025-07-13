@@ -1788,7 +1788,7 @@
                 workerTimers.setTimeout(resolve, 1000);
             });
             isGroupMembersLoading.value = false;
-            await this.loadMoreGroupMembers();
+            await loadMoreGroupMembers();
         }
     }
 
