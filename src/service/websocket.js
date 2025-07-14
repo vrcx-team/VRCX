@@ -26,14 +26,18 @@ export function initWebsocket() {
     }
     return request('auth', {
         method: 'GET'
-    }).then((json) => {
-        const args = {
-            json
-        };
-        if (args.json.ok) {
-            connectWebSocket(args.json.token);
-        }
-    });
+    })
+        .then((json) => {
+            const args = {
+                json
+            };
+            if (args.json.ok) {
+                connectWebSocket(args.json.token);
+            }
+        })
+        .catch((err) => {
+            console.error('WebSocket init error:', err);
+        });
 }
 
 /**
