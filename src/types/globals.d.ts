@@ -6,7 +6,6 @@ declare global {
 
     interface Window {
         $app: any;
-        API: API;
         AppApi: AppApi;
         WebApi: WebApi;
         VRCXStorage: VRCXStorage;

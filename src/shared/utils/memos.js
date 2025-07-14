@@ -6,11 +6,11 @@ import { useFriendStore } from '../../stores';
  * @returns {Promise<void>}
  */
 async function migrateMemos() {
-    var json = JSON.parse(await VRCXStorage.GetAll());
-    for (var line in json) {
+    const json = JSON.parse(await VRCXStorage.GetAll());
+    for (const line in json) {
         if (line.substring(0, 8) === 'memo_usr') {
-            var userId = line.substring(5);
-            var memo = json[line];
+            const userId = line.substring(5);
+            const memo = json[line];
             if (memo) {
                 await saveUserMemo(userId, memo);
                 VRCXStorage.Remove(`memo_${userId}`);
@@ -54,11 +54,11 @@ async function saveUserMemo(id, memo) {
     } else {
         await database.deleteUserMemo(id);
     }
-    var ref = friends.value.get(id);
+    const ref = friends.value.get(id);
     if (ref) {
         ref.memo = String(memo || '');
         if (memo) {
-            var array = memo.split('\n');
+            const array = memo.split('\n');
             ref.$nickName = array[0];
         } else {
             ref.$nickName = '';
@@ -72,14 +72,14 @@ async function saveUserMemo(id, memo) {
 async function getAllUserMemos() {
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
-    var memos = await database.getAllUserMemos();
+    const memos = await database.getAllUserMemos();
     memos.forEach((memo) => {
-        var ref = friends.value.get(memo.userId);
+        const ref = friends.value.get(memo.userId);
         if (typeof ref !== 'undefined') {
             ref.memo = memo.memo;
             ref.$nickName = '';
             if (memo.memo) {
-                var array = memo.memo.split('\n');
+                const array = memo.memo.split('\n');
                 ref.$nickName = array[0];
             }
         }

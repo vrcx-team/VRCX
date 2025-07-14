@@ -664,7 +664,7 @@ const groupReq = {
             method: 'GET',
             params
         }).then((json) => {
-            var args = {
+            const args = {
                 json,
                 params
             };

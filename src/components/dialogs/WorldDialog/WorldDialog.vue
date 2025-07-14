@@ -1250,9 +1250,9 @@
                 if (action === 'confirm' && instance.inputValue !== world.ref.previewYoutubeId) {
                     if (instance.inputValue.length > 11) {
                         try {
-                            var url = new URL(instance.inputValue);
-                            var id1 = url.pathname;
-                            var id2 = url.searchParams.get('v');
+                            const url = new URL(instance.inputValue);
+                            const id1 = url.pathname;
+                            const id2 = url.searchParams.get('v');
                             if (id1 && id1.length === 12) {
                                 instance.inputValue = id1.substring(1, 12);
                             }

@@ -762,7 +762,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 );
                 break;
             case 'Online':
-                var locationName = '';
+                let locationName = '';
                 if (noty.worldName) {
                     locationName = ` to ${displayLocation(
                         noty.location,
@@ -2238,7 +2238,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             noty.isFriend = friendStore.friends.has(noty.userId);
             noty.isFavorite = friendStore.localFavoriteFriends.has(noty.userId);
         } else if (noty.displayName) {
-            for (var ref of userStore.cachedUsers.values()) {
+            for (const ref of userStore.cachedUsers.values()) {
                 if (ref.displayName === noty.displayName) {
                     noty.isFriend = friendStore.friends.has(ref.id);
                     noty.isFavorite = friendStore.localFavoriteFriends.has(
