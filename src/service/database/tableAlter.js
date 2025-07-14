@@ -65,14 +65,22 @@ const tableAlter = {
     },
 
     async updateTableForAvatarHistory() {
+        var tables = [];
         await sqliteService.execute((dbRow) => {
-            const columnExists = dbRow.some((row) => row.name === 'time');
-            if (!columnExists) {
-                sqliteService.executeNonQuery(
-                    `ALTER TABLE ${dbVars.userPrefix}_avatar_history ADD time INTEGER DEFAULT 0`
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_avatar_history'`);
+        for (var tableName of tables) {
+            try {
+                await sqliteService.executeNonQuery(
+                    `ALTER TABLE ${tableName} ADD time INTEGER DEFAULT 0`
                 );
+            } catch (e) {
+                e = e.toString();
+                if (e.indexOf('duplicate column name') === -1) {
+                    console.error(e);
+                }
             }
-        }, `PRAGMA table_info(${dbVars.userPrefix}_avatar_history);`);
+        }
     }
 };
 

@@ -17,12 +17,14 @@ import { useNotificationStore } from './notification';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
+import { useVrcxStore } from './vrcx';
 
 export const useAuthStore = defineStore('Auth', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const notificationStore = useNotificationStore();
     const userStore = useUserStore();
     const updateLoopStore = useUpdateLoopStore();
+    const vrcxStore = useVrcxStore();
 
     const { t } = useI18n();
     const state = reactive({
@@ -135,6 +137,13 @@ export const useAuthStore = defineStore('Auth', () => {
         get: () => state.enableCustomEndpoint,
         set: (value) => {
             state.enableCustomEndpoint = value;
+        }
+    });
+
+    const attemptingAutoLogin = computed({
+        get: () => state.attemptingAutoLogin,
+        set: (value) => {
+            state.attemptingAutoLogin = value;
         }
     });
 
@@ -859,6 +868,7 @@ export const useAuthStore = defineStore('Auth', () => {
         await database.initUserTables(userStore.currentUser.id);
         watchState.isLoggedIn = true;
         AppApi.CheckGameRunning(); // restore state from hot-reload
+        vrcxStore.updateDatabaseVersion();
     }
 
     return {
@@ -869,6 +879,7 @@ export const useAuthStore = defineStore('Auth', () => {
         twoFactorAuthDialogVisible,
         cachedConfig,
         enableCustomEndpoint,
+        attemptingAutoLogin,
 
         clearCookiesTryLogin,
         resendEmail2fa,
