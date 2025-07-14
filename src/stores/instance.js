@@ -230,18 +230,36 @@ export const useInstanceStore = defineStore('Instance', () => {
                         );
                     state.currentInstanceWorld.focusViewDisabled =
                         args.ref?.tags.includes('feature_focus_view_disabled');
-                    checkVRChatCache(args.ref).then((cacheInfo) => {
-                        if (cacheInfo.Item1 > 0) {
-                            state.currentInstanceWorld.inCache = true;
-                            state.currentInstanceWorld.cacheSize = `${(
-                                cacheInfo.Item1 / 1048576
-                            ).toFixed(2)} MB`;
-                        }
-                    });
-                    getBundleDateSize(args.ref).then((bundleSizes) => {
-                        state.currentInstanceWorld.bundleSizes = bundleSizes;
-                    });
+                    checkVRChatCache(args.ref)
+                        .then((cacheInfo) => {
+                            if (cacheInfo.Item1 > 0) {
+                                state.currentInstanceWorld.inCache = true;
+                                state.currentInstanceWorld.cacheSize = `${(
+                                    cacheInfo.Item1 / 1048576
+                                ).toFixed(2)} MB`;
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(
+                                'Error checking VRChat cache:',
+                                error
+                            );
+                        });
+                    getBundleDateSize(args.ref)
+                        .then((bundleSizes) => {
+                            state.currentInstanceWorld.bundleSizes =
+                                bundleSizes;
+                        })
+                        .catch((error) => {
+                            console.error(
+                                'Error fetching bundle sizes:',
+                                error
+                            );
+                        });
                     return args;
+                })
+                .catch((error) => {
+                    console.error('Error fetching world data:', error);
                 });
         } else {
             worldRequest
@@ -280,6 +298,12 @@ export const useInstanceStore = defineStore('Instance', () => {
                         })
                         .then((args) => {
                             state.currentInstanceWorld.instance = args.ref;
+                        })
+                        .catch((error) => {
+                            console.error(
+                                'Error fetching instance data:',
+                                error
+                            );
                         });
                 }
             }
@@ -632,6 +656,9 @@ export const useInstanceStore = defineStore('Instance', () => {
                         .then((args) => {
                             Vue.set(L, 'user', args.ref);
                             return args;
+                        })
+                        .catch((error) => {
+                            console.error('Error fetching user:', error);
                         });
                 } else {
                     L.user = ref;
@@ -917,6 +944,12 @@ export const useInstanceStore = defineStore('Instance', () => {
                                 args.json?.queueSize
                             );
                         }
+                    })
+                    .catch((error) => {
+                        console.error(
+                            'Error fetching instance data for queue:',
+                            error
+                        );
                     });
             }
             instanceQueueUpdate(instanceId, 0, 0);

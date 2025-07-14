@@ -258,6 +258,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
         vrcPlusIconRequest
             .getFileList(params)
             .then((args) => handleFilesList(args))
+            .catch((error) => {
+                console.error('Error fetching gallery files:', error);
+            })
             .finally(() => {
                 state.galleryDialogGalleryLoading = false;
             });
@@ -272,6 +275,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
         vrcPlusIconRequest
             .getFileList(params)
             .then((args) => handleFilesList(args))
+            .catch((error) => {
+                console.error('Error fetching VRC Plus icons:', error);
+            })
             .finally(() => {
                 state.galleryDialogIconsLoading = false;
             });
@@ -323,6 +329,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
         vrcPlusIconRequest
             .getFileList(params)
             .then((args) => handleFilesList(args))
+            .catch((error) => {
+                console.error('Error fetching stickers:', error);
+            })
             .finally(() => {
                 state.galleryDialogStickersLoading = false;
             });
@@ -466,6 +475,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
         vrcPlusIconRequest
             .getFileList(params)
             .then((args) => handleFilesList(args))
+            .catch((error) => {
+                console.error('Error fetching emojis:', error);
+            })
             .finally(() => {
                 state.galleryDialogEmojisLoading = false;
             });
