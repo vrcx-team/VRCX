@@ -447,8 +447,16 @@ export const useAvatarStore = defineStore('Avatar', () => {
         if (state.cachedAvatarNames.has(fileId)) {
             return state.cachedAvatarNames.get(fileId);
         }
-        const args = await imageRequest.getAvatarImages({ fileId });
-        return storeAvatarImage(args, state.cachedAvatarNames);
+        try {
+            const args = await imageRequest.getAvatarImages({ fileId });
+            return storeAvatarImage(args, state.cachedAvatarNames);
+        } catch (error) {
+            console.error('Failed to get avatar images:', error);
+            return {
+                ownerId: '',
+                vatarName: '-'
+            };
+        }
     }
 
     async function lookupAvatars(type, search) {
