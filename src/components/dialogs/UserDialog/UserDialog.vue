@@ -2948,7 +2948,7 @@
     // Leave (remove user from) all selected groups
     function bulkLeaveGroups() {
         for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
-            leaveGroupPrompt(groupId);
+            leaveGroup(groupId);
         }
     }
 
