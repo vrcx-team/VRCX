@@ -247,6 +247,9 @@ export const useModerationStore = defineStore('Moderation', () => {
                     }
                 }
                 deleteExpiredPlayerModerations();
+            })
+            .catch((error) => {
+                console.error('Failed to load player/avatar moderations:', error);
             });
     }
 

@@ -562,9 +562,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
                     method: 'HEAD',
                     redirect: 'follow'
                 }).catch((error) => {
-                    console.log(error);
+                    console.error('Failed to check image availability:', error);
+                    return null;
                 });
-                if (response.status === 200) {
+                if (response && response.status === 200) {
                     state.previousImagesTable.push(image);
                 }
             }

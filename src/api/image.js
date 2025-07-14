@@ -4,17 +4,21 @@ import { useAvatarStore, useWorldStore } from '../stores';
 const imageReq = {
     async uploadAvatarFailCleanup(id) {
         const avatarStore = useAvatarStore();
-        const json = await request(`file/${id}`, {
-            method: 'GET'
-        });
-        const fileId = json.id;
-        const fileVersion = json.versions[json.versions.length - 1].version;
-        request(`file/${fileId}/${fileVersion}/signature/finish`, {
-            method: 'PUT'
-        });
-        request(`file/${fileId}/${fileVersion}/file/finish`, {
-            method: 'PUT'
-        });
+        try {
+            const json = await request(`file/${id}`, {
+                method: 'GET'
+            });
+            const fileId = json.id;
+            const fileVersion = json.versions[json.versions.length - 1].version;
+            request(`file/${fileId}/${fileVersion}/signature/finish`, {
+                method: 'PUT'
+            }).catch(err => console.error('Failed to finish signature:', err));
+            request(`file/${fileId}/${fileVersion}/file/finish`, {
+                method: 'PUT'
+            }).catch(err => console.error('Failed to finish file:', err));
+        } catch (error) {
+            console.error('Failed to cleanup avatar upload:', error);
+        }
         avatarStore.avatarDialog.loading = false;
     },
 
@@ -131,17 +135,21 @@ const imageReq = {
 
     async uploadWorldFailCleanup(id) {
         const worldStore = useWorldStore();
-        const json = await request(`file/${id}`, {
-            method: 'GET'
-        });
-        const fileId = json.id;
-        const fileVersion = json.versions[json.versions.length - 1].version;
-        request(`file/${fileId}/${fileVersion}/signature/finish`, {
-            method: 'PUT'
-        });
-        request(`file/${fileId}/${fileVersion}/file/finish`, {
-            method: 'PUT'
-        });
+        try {
+            const json = await request(`file/${id}`, {
+                method: 'GET'
+            });
+            const fileId = json.id;
+            const fileVersion = json.versions[json.versions.length - 1].version;
+            request(`file/${fileId}/${fileVersion}/signature/finish`, {
+                method: 'PUT'
+            }).catch(err => console.error('Failed to finish signature:', err));
+            request(`file/${fileId}/${fileVersion}/file/finish`, {
+                method: 'PUT'
+            }).catch(err => console.error('Failed to finish file:', err));
+        } catch (error) {
+            console.error('Failed to cleanup world upload:', error);
+        }
         worldStore.worldDialog.loading = false;
     },
 

@@ -55,9 +55,14 @@
             groupName.value = props.grouphint;
         } else if (locObj.groupId) {
             groupName.value = locObj.groupId;
-            getGroupName(locObj.groupId).then((name) => {
-                groupName.value = name;
-            });
+            getGroupName(locObj.groupId)
+                .then((name) => {
+                    groupName.value = name;
+                })
+                .catch((error) => {
+                    console.error('Failed to get group name:', error);
+                    groupName.value = '';
+                });
         } else {
             groupName.value = '';
         }
