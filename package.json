@@ -10,7 +10,7 @@
         "localization": "node ./src/localization/localizationHelperCLI.js",
         "prod": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode production",
         "prod-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode production",
-        "build-electron": "node ./src-electron/patch-package-version.js && electron-builder --publish never",
+        "build-electron": "node ./src-electron/download-dotnet-runtime.js && node ./src-electron/patch-package-version.js && electron-builder --publish never",
         "postbuild-electron": "node ./src-electron/patch-node-api-dotnet.js && node ./src-electron/rename-builds.js",
         "start-electron": "electron ."
     },
@@ -91,7 +91,8 @@
             "node_modules/node-api-dotnet/**/*",
             "node_modules/node-api-dotnet/net9.0/**/*",
             "build/Electron/*",
-            "build/Electron/**"
+            "build/Electron/**",
+            "build/Electron/dotnet-runtime/**/*"
         ],
         "extraResources": [
             {
@@ -109,6 +110,10 @@
             {
                 "from": "node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll",
                 "to": "app.asar.unpacked/node_modules/node-api-dotnet/net9.0/Microsoft.JavaScript.NodeApi.DotNetHost.dll"
+            },
+            {
+                "from": "build/Electron/dotnet-runtime/",
+                "to": "dotnet-runtime/"
             }
         ],
         "directories": {
