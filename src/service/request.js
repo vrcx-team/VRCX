@@ -103,14 +103,14 @@ export function request(endpoint, options) {
             }
             if (!response.data) {
                 if (AppGlobal.debugWebRequests) {
-                    console.log(init, response, 'no data');
+                    console.log(init, 'no data', response);
                 }
                 return response;
             }
             try {
                 response.data = JSON.parse(response.data);
                 if (AppGlobal.debugWebRequests) {
-                    console.log(init, response.data, 'parsed data');
+                    console.log(init, 'parsed data', response.data);
                 }
                 return response;
             } catch (e) {

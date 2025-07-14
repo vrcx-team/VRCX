@@ -519,6 +519,7 @@ export const useUserStore = defineStore('User', () => {
                 $customTag: '',
                 $customTagColour: '',
                 $friendNumber: 0,
+                $lastFetch: Date.now(),
                 //
                 ...json
             };
@@ -549,6 +550,7 @@ export const useUserStore = defineStore('User', () => {
             }
             state.cachedUsers.set(ref.id, ref);
         } else {
+            json.$lastFetch = Date.now();
             if (json.state !== 'online') {
                 // offline event before GPS to offline location
                 friendStore.updateFriend(ref.id, json.state);
@@ -847,7 +849,10 @@ export const useUserStore = defineStore('User', () => {
                         }
                         applyUserDialogLocation(true);
 
-                        if (args.cache) {
+                        if (
+                            args.cache &&
+                            args.ref.$lastFetch < Date.now() - 10000 // 10 seconds
+                        ) {
                             userRequest.getUser(args.params);
                         }
                         let inCurrentWorld = false;

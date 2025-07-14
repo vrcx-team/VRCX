@@ -16,7 +16,8 @@ import {
     getUserMemo,
     getWorldName,
     migrateMemos,
-    removeFromArray
+    removeFromArray,
+    isRealInstance
 } from '../shared/utils';
 import { useAuthStore } from './auth';
 import { useFavoriteStore } from './favorite';
@@ -491,19 +492,20 @@ export const useFriendStore = defineStore('Friend', () => {
                     state.sortOfflineFriends = true;
                 }
             }
-            // from getCurrentUser only, fetch user if offline in an instance
-            // if (
-            //     ctx.state !== 'online' &&
-            //     typeof ref !== 'undefined' &&
-            //     isRealInstance(ref.location)
-            // ) {
-            //     console.log(
-            //         `Fetching offline friend in an instance from getCurrentUser ${ctx.name}`
-            //     );
-            //     userRequest.getUser({
-            //         userId: id
-            //     });
-            // }
+            // wtf, fetch user if offline in an instance
+            if (
+                ctx.state !== 'online' &&
+                typeof ref !== 'undefined' &&
+                isRealInstance(ref.location) &&
+                ref.$lastFetch < Date.now() - 10000 // 10 seconds
+            ) {
+                console.log(
+                    `Fetching offline friend in an instance ${ctx.name}`
+                );
+                userRequest.getUser({
+                    userId: id
+                });
+            }
         } else if (
             ctx.state === 'online' &&
             (stateInput === 'active' || stateInput === 'offline')
@@ -558,16 +560,19 @@ export const useFriendStore = defineStore('Friend', () => {
             ctx.isVIP = isVIP;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
-                // wtf, from getCurrentUser only, fetch user if online in offline location
-                // if (stateInput === 'online') {
-                //     console.log(
-                //         `Fetching friend coming online from getCurrentUser ${ctx.name}`
-                //     );
-                //     userRequest.getUser({
-                //         userId: id
-                //     });
-                //     return;
-                // }
+                // wtf, try fetch user if online in offline location
+                if (
+                    stateInput === 'online' &&
+                    ref.$lastFetch < Date.now() - 10000 // 10 seconds
+                ) {
+                    console.log(
+                        `Fetching friend coming online in offline location ${ctx.name}`
+                    );
+                    userRequest.getUser({
+                        userId: id
+                    });
+                    return;
+                }
             }
             updateFriendDelayedCheck(ctx, location, $location_at);
         }
