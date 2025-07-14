@@ -56,7 +56,7 @@ const groupReq = {
         });
     },
     /**
-     * @param {{ groupId: string, includeRoles?: boolean }} params
+     * @type {import('../types/group').getGroup}
      */
     getGroup(params) {
         return request(`groups/${params.groupId}`, {

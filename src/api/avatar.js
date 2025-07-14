@@ -3,8 +3,7 @@ import { useUserStore } from '../stores';
 
 const avatarReq = {
     /**
-     * @param {{ avatarId: string }} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/avatar').getAvatar}
      */
     getAvatar(params) {
         return request(`avatars/${params.avatarId}`, {

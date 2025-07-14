@@ -5,8 +5,7 @@ import { useInstanceStore } from '../stores';
 
 const instanceReq = {
     /**
-     * @param {{worldId: string, instanceId: string}} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/instance').getInstance}
      */
     getInstance(params) {
         const instanceStore = useInstanceStore();
