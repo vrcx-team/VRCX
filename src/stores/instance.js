@@ -422,7 +422,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      *
      * @param {string} worldId
-     * @param {string} options
+     * @param {any} options
      * @returns {Promise<{json: *, params}|null>}
      */
     async function createNewInstance(worldId = '', options) {
@@ -1000,8 +1000,8 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      *
      * @param {string} instanceId
-     * @param {string} position
-     * @param {string} queueSize
+     * @param {number} position
+     * @param {number} queueSize
      * @returns {Promise<void>}
      */
     async function instanceQueueUpdate(instanceId, position, queueSize) {

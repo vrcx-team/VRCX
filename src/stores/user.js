@@ -118,6 +118,7 @@ export const useUserStore = defineStore('User', () => {
             presence: {
                 avatarThumbnail: '',
                 currentAvatarTags: '',
+                debugflag: '',
                 displayName: '',
                 groups: [],
                 id: '',
@@ -132,6 +133,7 @@ export const useUserStore = defineStore('User', () => {
                 world: ''
             },
             profilePicOverride: '',
+            profilePicOverrideThumbnail: '',
             pronouns: '',
             queuedInstance: '',
             state: '',
@@ -153,10 +155,10 @@ export const useUserStore = defineStore('User', () => {
             viveId: '',
             // VRCX
             $online_for: Date.now(),
-            $offline_for: '',
+            $offline_for: null,
             $location_at: Date.now(),
             $travelingToTime: Date.now(),
-            $previousAvatarSwapTime: '',
+            $previousAvatarSwapTime: null,
             $homeLocation: {},
             $isVRCPlus: false,
             $isModerator: false,
@@ -434,8 +436,8 @@ export const useUserStore = defineStore('User', () => {
     const robotUrl = `${AppGlobal.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
     /**
      *
-     * @param json
-     * @returns {any}
+     * @param {import('../types/user').getUserResponse} json
+     * @returns {import('../types/user').vrcxUser}
      */
     function applyUser(json) {
         let hasPropChanged = false;
@@ -500,7 +502,7 @@ export const useUserStore = defineStore('User', () => {
                 $location_at: Date.now(),
                 $online_for: Date.now(),
                 $travelingToTime: Date.now(),
-                $offline_for: '',
+                $offline_for: null,
                 $active_for: Date.now(),
                 $isVRCPlus: false,
                 $isModerator: false,
@@ -550,7 +552,7 @@ export const useUserStore = defineStore('User', () => {
             }
             state.cachedUsers.set(ref.id, ref);
         } else {
-            json.$lastFetch = Date.now();
+            json.$lastFetch = Date.now(); // todo: make this not suck
             if (json.state !== 'online') {
                 // offline event before GPS to offline location
                 friendStore.updateFriend(ref.id, json.state);
@@ -1021,7 +1023,6 @@ export const useUserStore = defineStore('User', () => {
                     })
                     .then((args) => {
                         Vue.set(L, 'user', args.ref);
-                        return args;
                     });
             } else {
                 L.user = ref;
@@ -1234,7 +1235,6 @@ export const useUserStore = defineStore('User', () => {
     }
 
     /**
-     *
      * @param {object} ref
      * @param {object} props
      * @returns {Promise<void>}
@@ -1739,6 +1739,10 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
+    /**
+     * @param {import('../types/user').getCurrentUserResponse} json
+     * @returns {import('../types/user').getCurrentUserResponse}
+     */
     function applyCurrentUser(json) {
         authStore.attemptingAutoLogin = false;
         let ref = state.currentUser;
@@ -1801,6 +1805,7 @@ export const useUserStore = defineStore('User', () => {
                 presence: {
                     avatarThumbnail: '',
                     currentAvatarTags: '',
+                    debugflag: '',
                     displayName: '',
                     groups: [],
                     id: '',
@@ -1816,6 +1821,7 @@ export const useUserStore = defineStore('User', () => {
                     ...json.presence
                 },
                 profilePicOverride: '',
+                profilePicOverrideThumbnail: '',
                 pronouns: '',
                 queuedInstance: '',
                 state: '',
@@ -1837,10 +1843,10 @@ export const useUserStore = defineStore('User', () => {
                 viveId: '',
                 // VRCX
                 $online_for: Date.now(),
-                $offline_for: '',
+                $offline_for: null,
                 $location_at: Date.now(),
                 $travelingToTime: Date.now(),
-                $previousAvatarSwapTime: '',
+                $previousAvatarSwapTime: null,
                 $homeLocation: {},
                 $isVRCPlus: false,
                 $isModerator: false,
@@ -1913,7 +1919,9 @@ export const useUserStore = defineStore('User', () => {
             travelingToInstance = json.presence.travelingToInstance;
             travelingToWorld = json.presence.travelingToWorld;
         }
-        applyUser({
+        const userRef = applyUser({
+            ageVerificationStatus: json.ageVerificationStatus,
+            ageVerified: json.ageVerified,
             allowAvatarCopying: json.allowAvatarCopying,
             badges: json.badges,
             bio: json.bio,
@@ -1934,10 +1942,10 @@ export const useUserStore = defineStore('User', () => {
             last_mobile: json.last_mobile,
             last_platform: json.last_platform,
             // location - missing from currentUser
-            // platform - missing from currentUser
             // note - missing from currentUser
+            platform: json.presence.platform,
             profilePicOverride: json.profilePicOverride,
-            // profilePicOverrideThumbnail - missing from currentUser
+            profilePicOverrideThumbnail: json.profilePicOverrideThumbnail,
             pronouns: json.pronouns,
             state: json.state,
             status: json.status,
@@ -1948,7 +1956,7 @@ export const useUserStore = defineStore('User', () => {
             // travelingToWorld - missing from currentUser
             userIcon: json.userIcon,
             // worldId - missing from currentUser
-            fallbackAvatar: json.fallbackAvatar,
+            // fallbackAvatar - gone from user
 
             // Location from gameLog/presence
             location,
@@ -1956,14 +1964,20 @@ export const useUserStore = defineStore('User', () => {
             worldId,
             travelingToLocation,
             travelingToInstance,
-            travelingToWorld,
+            travelingToWorld
 
-            // set VRCX online/offline timers
-            $online_for: state.currentUser.$online_for,
-            $offline_for: state.currentUser.$offline_for,
-            $location_at: state.currentUser.$location_at,
-            $travelingToTime: state.currentUser.$travelingToTime
+            // $online_for: state.currentUser.$online_for,
+            // $offline_for: state.currentUser.$offline_for,
+            // $location_at: state.currentUser.$location_at,
+            // $travelingToTime: state.currentUser.$travelingToTime
         });
+        // set VRCX online/offline timers
+        userRef.$online_for = state.currentUser.$online_for;
+        userRef.$offline_for = state.currentUser.$offline_for;
+        userRef.$location_at = state.currentUser.$location_at;
+        userRef.$travelingToTime = state.currentUser.$travelingToTime;
+
+        return ref;
     }
 
     return {

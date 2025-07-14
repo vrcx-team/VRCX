@@ -23,17 +23,16 @@ const userReq = {
             }
             const args = {
                 json,
-                params
+                params,
+                ref: userStore.applyUser(json)
             };
-            args.ref = userStore.applyUser(json);
             return args;
         });
     },
 
     /**
      * Fetch user from cache if they're in it. Otherwise, calls API.
-     * @param {{ userId: string }} params identifier of registered user
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/user').getUser}
      */
     getCachedUser(params) {
         const userStore = useUserStore();
@@ -150,8 +149,7 @@ const userReq = {
 
     /**
      * Updates current user's status.
-     * @param params {SaveCurrentUserParameters} new status to be set
-     * @returns {Promise<{json: any, params}>}
+     *  @type {import('../types/user').getCurrentUser}
      */
     saveCurrentUser(params) {
         const userStore = useUserStore();
@@ -161,9 +159,9 @@ const userReq = {
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: userStore.applyCurrentUser(json)
             };
-            userStore.applyCurrentUser(json);
             return args;
         });
     },
