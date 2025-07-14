@@ -1404,10 +1404,10 @@
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
                             <el-button size="small" icon="el-icon-folder" @click="openVrcxAppDataFolder()"
-                                >AppData (VRCX)</el-button
+                                >VRCX Data</el-button
                             >
                             <el-button size="small" icon="el-icon-folder" @click="openVrcAppDataFolder()"
-                                >AppData</el-button
+                                >VRChat Data</el-button
                             >
                             <el-button size="small" icon="el-icon-folder" @click="openCrashVrcCrashDumps()"
                                 >Crash Dumps</el-button
