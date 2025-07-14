@@ -240,7 +240,7 @@
         const sameInstanceFriendId = new Set();
         for (const item of friendsInSameInstance.value) {
             for (const friend of item) {
-                if (isRealInstance(friend.ref?.$location.tag)) {
+                if (isRealInstance(friend.ref?.$location.tag) || lastLocation.value.friendList.has(friend.id)) {
                     sameInstanceFriendId.add(friend.id);
                 }
             }
