@@ -75,13 +75,22 @@ export const useAuthStore = defineStore('Auth', () => {
                 configRepository.getString('lastUserLoggedIn'),
                 configRepository.getBool('VRCX_enableCustomEndpoint', false)
             ]);
-        state.loginForm = {
-            ...state.loginForm,
-            savedCredentials: savedCredentials
-                ? JSON.parse(savedCredentials)
-                : {},
-            lastUserLoggedIn
-        };
+        try {
+            state.loginForm = {
+                ...state.loginForm,
+                savedCredentials: savedCredentials
+                    ? JSON.parse(savedCredentials)
+                    : {},
+                lastUserLoggedIn
+            };
+        } catch (error) {
+            console.error('Failed to parse savedCredentials:', error);
+            state.loginForm = {
+                ...state.loginForm,
+                savedCredentials: {},
+                lastUserLoggedIn
+            };
+        }
         state.enableCustomEndpoint = enableCustomEndpoint;
     }
 

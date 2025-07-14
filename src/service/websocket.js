@@ -94,8 +94,9 @@ function connectWebSocket(token) {
                 return;
             }
             lastWebSocketMessage = data;
-            const json = JSON.parse(data);
+            let json;
             try {
+                json = JSON.parse(data);
                 json.content = JSON.parse(json.content);
             } catch {
                 // ignore parse error

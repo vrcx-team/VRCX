@@ -20,26 +20,31 @@ import {
 import { i18n } from './plugin';
 
 configRepository.init();
-i18n.locale = await configRepository.getString('VRCX_appLanguage', 'en');
 
 AppApi.SetUserAgent();
 
-const initThemeMode = await configRepository.getString(
-    'VRCX_ThemeMode',
-    'system'
-);
+try {
+    i18n.locale = await configRepository.getString('VRCX_appLanguage', 'en');
 
-let isDarkMode;
+    const initThemeMode = await configRepository.getString(
+        'VRCX_ThemeMode',
+        'system'
+    );
 
-if (initThemeMode === 'light') {
-    isDarkMode = false;
-} else if (initThemeMode === 'system') {
-    isDarkMode = systemIsDarkMode();
-} else {
-    isDarkMode = true;
+    let isDarkMode;
+
+    if (initThemeMode === 'light') {
+        isDarkMode = false;
+    } else if (initThemeMode === 'system') {
+        isDarkMode = systemIsDarkMode();
+    } else {
+        isDarkMode = true;
+    }
+    changeAppDarkStyle(isDarkMode);
+    changeAppThemeStyle(initThemeMode);
+} catch (error) {
+    console.error('Error initializing locale and theme:', error);
 }
-changeAppDarkStyle(isDarkMode);
-changeAppThemeStyle(initThemeMode);
 
 refreshCustomCss();
 refreshCustomScript();

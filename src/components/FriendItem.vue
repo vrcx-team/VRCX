@@ -74,10 +74,10 @@
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
     const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
 
-    const isFriendTraveling = computed(() => props.friend.ref.location === 'traveling');
+    const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');
     const isFriendActiveOrOffline = computed(() => props.friend.state === 'active' || props.friend.state === 'offline');
     const epoch = computed(() =>
-        isFriendTraveling.value ? props.friend.ref.$travelingToTime : props.friend.ref.$location_at
+        isFriendTraveling.value ? props.friend.ref?.$travelingToTime : props.friend.ref?.$location_at
     );
 </script>
 
