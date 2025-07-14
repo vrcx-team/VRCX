@@ -21,14 +21,12 @@
                     </span>
                     <template v-else-if="isGroupByInstance">
                         <i v-if="isFriendTraveling" class="el-icon el-icon-loading"></i>
-                        <timer
+                        <Timer
                             class="extra"
                             :epoch="epoch"
-                            :style="
-                                isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined
-                            "></timer>
+                            :style="isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined" />
                     </template>
-                    <location
+                    <Location
                         v-else
                         class="extra"
                         :location="friend.ref.location"
@@ -37,7 +35,7 @@
                 </template>
             </div>
         </template>
-        <template v-else-if="!friend.ref && !API.isRefreshFriendsLoading">
+        <template v-else-if="!friend.ref && !isRefreshFriendsLoading">
             <span>{{ friend.name || friend.id }}</span>
             <el-button
                 ttype="text"
@@ -62,38 +60,25 @@
     </div>
 </template>
 
-<script>
-    import Location from './Location.vue';
+<script setup>
+    import { storeToRefs } from 'pinia';
+    import { computed } from 'vue';
+    import { userImage, userStatusClass } from '../shared/utils';
+    import { useAppearanceSettingsStore, useFriendStore } from '../stores';
 
-    export default {
-        name: 'FriendItem',
-        components: {
-            Location
-        },
-        inject: ['API', 'userImage', 'userStatusClass'],
-        props: {
-            friend: {
-                type: Object,
-                required: true
-            },
-            hideNicknames: {
-                type: Boolean,
-                default: false
-            },
-            isGroupByInstance: Boolean
-        },
-        computed: {
-            isFriendTraveling() {
-                return this.friend.ref.location === 'traveling';
-            },
-            isFriendActiveOrOffline() {
-                return this.friend.state === 'active' || this.friend.state === 'offline';
-            },
-            epoch() {
-                return this.isFriendTraveling ? this.friend.ref.$travelingToTime : this.friend.ref.$location_at;
-            }
-        }
-    };
+    const props = defineProps({
+        friend: { type: Object, required: true },
+        isGroupByInstance: Boolean
+    });
+
+    const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
+    const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
+
+    const isFriendTraveling = computed(() => props.friend.ref.location === 'traveling');
+    const isFriendActiveOrOffline = computed(() => props.friend.state === 'active' || props.friend.state === 'offline');
+    const epoch = computed(() =>
+        isFriendTraveling.value ? props.friend.ref.$travelingToTime : props.friend.ref.$location_at
+    );
 </script>
 
 <style scoped>

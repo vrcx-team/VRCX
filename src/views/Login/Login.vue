@@ -28,7 +28,7 @@
                         ref="loginFormRef"
                         :model="loginForm"
                         :rules="loginForm.rules"
-                        @submit.native.prevent="login()">
+                        @submit.native.prevent="handleLogin()">
                         <el-form-item :label="t('view.login.field.username')" prop="username" required>
                             <el-input
                                 v-model="loginForm.username"
@@ -66,7 +66,7 @@
                             <el-input
                                 v-model="loginForm.endpoint"
                                 name="endpoint"
-                                :placeholder="API.endpointDomainVrchat"
+                                :placeholder="AppGlobal.endpointDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item
@@ -77,7 +77,7 @@
                             <el-input
                                 v-model="loginForm.websocket"
                                 name="websocket"
-                                :placeholder="API.websocketDomainVrchat"
+                                :placeholder="AppGlobal.websocketDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item style="margin-top: 15px">
@@ -149,77 +149,38 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'LoginPage'
-    };
-</script>
-
 <script setup>
-    import { inject, onBeforeUnmount, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { onBeforeUnmount, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
+    import {
+        useAppearanceSettingsStore,
+        useAuthStore,
+        useGeneralSettingsStore,
+        useVRCXUpdaterStore
+    } from '../../stores';
+    import { openExternalLink, userImage } from '../../shared/utils';
+    import { AppGlobal } from '../../service/appConfig';
+
+    const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
+    const { toggleCustomEndpoint, relogin, deleteSavedLogin, login } = useAuthStore();
+    const { promptProxySettings } = useGeneralSettingsStore();
+
     const { t } = useI18n();
-
-    const API = inject('API');
-    const openExternalLink = inject('openExternalLink');
-    const userImage = inject('userImage');
-
-    defineProps({
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        },
-        loginForm: {
-            type: Object,
-            default: () => ({})
-        },
-        enableCustomEndpoint: {
-            type: Boolean,
-            default: false
-        }
-    });
-
-    const emit = defineEmits([
-        'showVRCXUpdateDialog',
-        'promptProxySettings',
-        'toggleCustomEndpoint',
-        'deleteSavedLogin',
-        'relogin',
-        'login'
-    ]);
 
     const loginFormRef = ref(null);
 
-    function showVRCXUpdateDialog() {
-        emit('showVRCXUpdateDialog');
-    }
-
-    function promptProxySettings() {
-        emit('promptProxySettings');
-    }
-
-    function toggleCustomEndpoint(...args) {
-        emit('toggleCustomEndpoint', args);
-    }
-
-    function deleteSavedLogin(userId) {
-        emit('deleteSavedLogin', userId);
-    }
-
-    function relogin(user) {
-        emit('relogin', user);
-    }
-
-    function login() {
+    function handleLogin() {
         if (loginFormRef.value) {
             loginFormRef.value.validate((valid) => {
-                valid && emit('login');
+                valid && login();
             });
         }
     }
 
     onBeforeUnmount(() => {
-        // Because v-if actually it is not required
         if (loginFormRef.value) {
             loginFormRef.value.resetFields();
         }

@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        ref="worldDialog"
+        ref="worldDialogRef"
         class="x-dialog x-world-dialog"
         :visible.sync="isDialogVisible"
         :show-close="false"
@@ -24,8 +24,7 @@
                         <div>
                             <i
                                 v-show="
-                                    API.currentUser.$homeLocation &&
-                                    API.currentUser.$homeLocation.worldId === worldDialog.id
+                                    currentUser.$homeLocation && currentUser.$homeLocation.worldId === worldDialog.id
                                 "
                                 class="el-icon-s-home"
                                 style="margin-right: 5px" />
@@ -45,7 +44,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.world.tags.labs') }}
+                                {{ t('dialog.world.tags.labs') }}
                             </el-tag>
                             <el-tag
                                 v-else-if="worldDialog.ref.releaseStatus === 'public'"
@@ -53,7 +52,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.world.tags.public') }}
+                                {{ t('dialog.world.tags.public') }}
                             </el-tag>
                             <el-tag
                                 v-else
@@ -61,7 +60,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.world.tags.private') }}
+                                {{ t('dialog.world.tags.private') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.isPC"
@@ -114,7 +113,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
+                                {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.focusViewDisabled"
@@ -122,7 +121,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.world.tags.focus_view_disabled') }}
+                                {{ t('dialog.world.tags.focus_view_disabled') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.ref.unityPackageUrl"
@@ -130,7 +129,7 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ $t('dialog.world.tags.future_proofing') }}
+                                {{ t('dialog.world.tags.future_proofing') }}
                             </el-tag>
                             <el-tag
                                 v-if="worldDialog.inCache"
@@ -139,9 +138,9 @@
                                 effect="plain"
                                 size="mini"
                                 style="margin-right: 5px; margin-top: 5px"
-                                @click="openFolder(worldDialog.cachePath)">
+                                @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
-                                | {{ $t('dialog.world.tags.cache') }}
+                                | {{ t('dialog.world.tags.cache') }}
                             </el-tag>
                         </div>
                         <div>
@@ -153,19 +152,19 @@
                                     size="mini"
                                     style="margin-right: 5px; margin-top: 5px">
                                     <template v-if="tag === 'content_horror'">
-                                        {{ $t('dialog.world.tags.content_horror') }}
+                                        {{ t('dialog.world.tags.content_horror') }}
                                     </template>
                                     <template v-else-if="tag === 'content_gore'">
-                                        {{ $t('dialog.world.tags.content_gore') }}
+                                        {{ t('dialog.world.tags.content_gore') }}
                                     </template>
                                     <template v-else-if="tag === 'content_violence'">
-                                        {{ $t('dialog.world.tags.content_violence') }}
+                                        {{ t('dialog.world.tags.content_violence') }}
                                     </template>
                                     <template v-else-if="tag === 'content_adult'">
-                                        {{ $t('dialog.world.tags.content_adult') }}
+                                        {{ t('dialog.world.tags.content_adult') }}
                                     </template>
                                     <template v-else-if="tag === 'content_sex'">
-                                        {{ $t('dialog.world.tags.content_sex') }}
+                                        {{ t('dialog.world.tags.content_sex') }}
                                     </template>
                                     <template v-else>
                                         {{ tag.replace('content_', '') }}
@@ -185,20 +184,20 @@
                         <el-tooltip
                             v-if="worldDialog.inCache"
                             placement="top"
-                            :content="$t('dialog.world.actions.delete_cache_tooltip')"
+                            :content="t('dialog.world.actions.delete_cache_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
                                 icon="el-icon-delete"
                                 circle
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
-                                @click="deleteWorldFromCache(worldDialog.ref)" />
+                                @click="deleteVRChatCache(worldDialog.ref)" />
                         </el-tooltip>
                         <el-tooltip
                             placement="top"
-                            :content="$t('dialog.world.actions.favorites_tooltip')"
+                            :content="t('dialog.world.actions.favorites_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
-                                type="default"
+                                :type="worldDialog.isFavorite ? 'warning' : 'default'"
                                 :icon="worldDialog.isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'"
                                 circle
                                 style="margin-left: 5px"
@@ -212,74 +211,74 @@
                             <el-button type="default" icon="el-icon-more" circle />
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item icon="el-icon-refresh" command="Refresh">
-                                    {{ $t('dialog.world.actions.refresh') }}
+                                    {{ t('dialog.world.actions.refresh') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-share" command="Share">
-                                    {{ $t('dialog.world.actions.share') }}
+                                    {{ t('dialog.world.actions.share') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-s-flag" command="New Instance" divided>
-                                    {{ $t('dialog.world.actions.new_instance') }}
+                                    {{ t('dialog.world.actions.new_instance') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-message" command="New Instance and Self Invite">
-                                    {{ $t('dialog.world.actions.new_instance_and_self_invite') }}
+                                    {{ t('dialog.world.actions.new_instance_and_self_invite') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item
                                     v-if="
-                                        API.currentUser.$homeLocation &&
-                                        API.currentUser.$homeLocation.worldId === worldDialog.id
+                                        currentUser.$homeLocation &&
+                                        currentUser.$homeLocation.worldId === worldDialog.id
                                     "
                                     icon="el-icon-magic-stick"
                                     command="Reset Home"
                                     divided>
-                                    {{ $t('dialog.world.actions.reset_home') }}
+                                    {{ t('dialog.world.actions.reset_home') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item v-else icon="el-icon-s-home" command="Make Home" divided>
-                                    {{ $t('dialog.world.actions.make_home') }}
+                                    {{ t('dialog.world.actions.make_home') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-tickets" command="Previous Instances">
-                                    {{ $t('dialog.world.actions.show_previous_instances') }}
+                                    {{ t('dialog.world.actions.show_previous_instances') }}
                                 </el-dropdown-item>
-                                <template v-if="API.currentUser.id !== worldDialog.ref.authorId">
+                                <template v-if="currentUser.id !== worldDialog.ref.authorId">
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Previous Images">
-                                        {{ $t('dialog.world.actions.show_previous_images') }}
+                                        {{ t('dialog.world.actions.show_previous_images') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         :disabled="!worldDialog.hasPersistData"
                                         icon="el-icon-upload"
                                         command="Delete Persistent Data">
-                                        {{ $t('dialog.world.actions.delete_persistent_data') }}
+                                        {{ t('dialog.world.actions.delete_persistent_data') }}
                                     </el-dropdown-item>
                                 </template>
                                 <template v-else>
                                     <el-dropdown-item icon="el-icon-edit" command="Rename">
-                                        {{ $t('dialog.world.actions.rename') }}
+                                        {{ t('dialog.world.actions.rename') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Description">
-                                        {{ $t('dialog.world.actions.change_description') }}
+                                        {{ t('dialog.world.actions.change_description') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Capacity">
-                                        {{ $t('dialog.world.actions.change_capacity') }}
+                                        {{ t('dialog.world.actions.change_capacity') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Recommended Capacity">
-                                        {{ $t('dialog.world.actions.change_recommended_capacity') }}
+                                        {{ t('dialog.world.actions.change_recommended_capacity') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change YouTube Preview">
-                                        {{ $t('dialog.world.actions.change_preview') }}
+                                        {{ t('dialog.world.actions.change_preview') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Tags">
-                                        {{ $t('dialog.world.actions.change_warnings_settings_tags') }}
+                                        {{ t('dialog.world.actions.change_warnings_settings_tags') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-edit" command="Change Allowed Domains">
-                                        {{ $t('dialog.world.actions.change_allowed_video_player_domains') }}
+                                        {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Change Image">
-                                        {{ $t('dialog.world.actions.change_image') }}
+                                        {{ t('dialog.world.actions.change_image') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="worldDialog.ref.unityPackageUrl"
                                         icon="el-icon-download"
                                         command="Download Unity Package">
-                                        {{ $t('dialog.world.actions.download_package') }}
+                                        {{ t('dialog.world.actions.download_package') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="
@@ -289,19 +288,19 @@
                                         icon="el-icon-view"
                                         command="Unpublish"
                                         divided>
-                                        {{ $t('dialog.world.actions.unpublish') }}
+                                        {{ t('dialog.world.actions.unpublish') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item v-else icon="el-icon-view" command="Publish" divided>
-                                        {{ $t('dialog.world.actions.publish_to_labs') }}
+                                        {{ t('dialog.world.actions.publish_to_labs') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         :disabled="!worldDialog.hasPersistData"
                                         icon="el-icon-upload"
                                         command="Delete Persistent Data">
-                                        {{ $t('dialog.world.actions.delete_persistent_data') }}
+                                        {{ t('dialog.world.actions.delete_persistent_data') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-delete" command="Delete" style="color: #f56c6c">
-                                        {{ $t('dialog.world.actions.delete') }}
+                                        {{ t('dialog.world.actions.delete') }}
                                     </el-dropdown-item>
                                 </template>
                             </el-dropdown-menu>
@@ -310,19 +309,19 @@
                 </div>
             </div>
             <el-tabs>
-                <el-tab-pane :label="$t('dialog.world.instances.header')">
+                <el-tab-pane :label="t('dialog.world.instances.header')">
                     <div class="">
                         <i class="el-icon-user" />
-                        {{ $t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
+                        {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
                         <i class="el-icon-user-solid" style="margin-left: 10px" />
                         {{
-                            $t('dialog.world.instances.private_count', {
+                            t('dialog.world.instances.private_count', {
                                 count: worldDialog.ref.privateOccupants
                             })
                         }}
                         <i class="el-icon-check" style="margin-left: 10px" />
                         {{
-                            $t('dialog.world.instances.capacity_count', {
+                            t('dialog.world.instances.capacity_count', {
                                 count: worldDialog.ref.recommendedCapacity,
                                 max: worldDialog.ref.capacity
                             })
@@ -332,27 +331,23 @@
                         <template
                             v-if="isAgeGatedInstancesVisible || !(room.ageGate || room.location?.includes('~ageGate'))">
                             <div style="margin: 5px 0">
-                                <location-world
+                                <LocationWorld
                                     :locationobject="room.$location"
-                                    :currentuserid="API.currentUser.id"
-                                    :worlddialogshortname="worldDialog.$location.shortName"
-                                    @show-launch-dialog="showLaunchDialog" />
-                                <launch
-                                    :location="room.tag"
-                                    style="margin-left: 5px"
-                                    @show-launch-dialog="showLaunchDialog" />
+                                    :currentuserid="currentUser.id"
+                                    :worlddialogshortname="worldDialog.$location.shortName" />
+                                <Launch :location="room.tag" style="margin-left: 5px" />
                                 <el-tooltip
                                     placement="top"
-                                    :content="$t('dialog.world.instances.self_invite_tooltip')"
+                                    :content="t('dialog.world.instances.self_invite_tooltip')"
                                     :disabled="hideTooltips">
-                                    <invite-yourself
+                                    <InviteYourself
                                         :location="room.$location.tag"
                                         :shortname="room.$location.shortName"
                                         style="margin-left: 5px" />
                                 </el-tooltip>
                                 <el-tooltip
                                     placement="top"
-                                    :content="$t('dialog.world.instances.refresh_instance_info')"
+                                    :content="t('dialog.world.instances.refresh_instance_info')"
                                     :disabled="hideTooltips">
                                     <el-button
                                         size="mini"
@@ -364,7 +359,7 @@
                                 <el-tooltip
                                     v-if="instanceJoinHistory.get(room.$location.tag)"
                                     placement="top"
-                                    :content="$t('dialog.previous_instances.info')"
+                                    :content="t('dialog.previous_instances.info')"
                                     :disabled="hideTooltips">
                                     <el-button
                                         size="mini"
@@ -374,12 +369,11 @@
                                         circle
                                         @click="showPreviousInstancesInfoDialog(room.location)" />
                                 </el-tooltip>
-                                <last-join :location="room.$location.tag" :currentlocation="lastLocation.location" />
-                                <instance-info
+                                <LastJoin :location="room.$location.tag" :currentlocation="lastLocation.location" />
+                                <InstanceInfo
                                     :location="room.tag"
                                     :instance="room.ref"
-                                    :friendcount="room.friendCount"
-                                    :updateelement="updateInstanceInfo" />
+                                    :friendcount="room.friendCount" />
                                 <div
                                     v-if="room.$location.userId || room.users.length"
                                     class="x-friend-list"
@@ -398,7 +392,7 @@
                                                     :style="{ color: room.$location.user.$userColour }"
                                                     v-text="room.$location.user.displayName" />
                                                 <span class="extra">
-                                                    {{ $t('dialog.world.instances.instance_creator') }}
+                                                    {{ t('dialog.world.instances.instance_creator') }}
                                                 </span>
                                             </div>
                                         </template>
@@ -419,10 +413,10 @@
                                                 v-text="user.displayName" />
                                             <span v-if="user.location === 'traveling'" class="extra">
                                                 <i class="el-icon-loading" style="margin-right: 5px" />
-                                                <timer :epoch="user.$travelingToTime" />
+                                                <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
-                                                <timer :epoch="user.$location_at" />
+                                                <Timer :epoch="user.$location_at" />
                                             </span>
                                         </div>
                                     </div>
@@ -431,12 +425,12 @@
                         </template>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="$t('dialog.world.info.header')" lazy>
+                <el-tab-pane :label="t('dialog.world.info.header')" lazy>
                     <div class="x-friend-list" style="max-height: none">
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.memo') }}
+                                    {{ t('dialog.world.info.memo') }}
                                 </span>
                                 <el-input
                                     v-model="memo"
@@ -444,7 +438,7 @@
                                     type="textarea"
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
-                                    :placeholder="$t('dialog.world.info.memo_placeholder')"
+                                    :placeholder="t('dialog.world.info.memo_placeholder')"
                                     size="mini"
                                     resize="none"
                                     @change="onWorldMemoChange" />
@@ -454,14 +448,14 @@
                             <div class="x-friend-item" style="width: 100%; cursor: default">
                                 <div class="detail">
                                     <span class="name">
-                                        {{ $t('dialog.world.info.id') }}
+                                        {{ t('dialog.world.info.id') }}
                                     </span>
                                     <span class="extra" style="display: inline">
                                         {{ worldDialog.id }}
                                     </span>
                                     <el-tooltip
                                         placement="top"
-                                        :content="$t('dialog.world.info.id_tooltip')"
+                                        :content="t('dialog.world.info.id_tooltip')"
                                         :disabled="hideTooltips">
                                         <el-dropdown
                                             trigger="click"
@@ -470,14 +464,14 @@
                                             @click.native.stop>
                                             <el-button type="default" icon="el-icon-s-order" size="mini" circle />
                                             <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item @click.native="copyWorldId(worldDialog.id)">
-                                                    {{ $t('dialog.world.info.copy_id') }}
+                                                <el-dropdown-item @click.native="copyWorldId()">
+                                                    {{ t('dialog.world.info.copy_id') }}
                                                 </el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyWorldUrl(worldDialog.id)">
-                                                    {{ $t('dialog.world.info.copy_url') }}
+                                                <el-dropdown-item @click.native="copyWorldUrl()">
+                                                    {{ t('dialog.world.info.copy_url') }}
                                                 </el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyWorldName(worldDialog.ref.name)">
-                                                    {{ $t('dialog.world.info.copy_name') }}
+                                                <el-dropdown-item @click.native="copyWorldName()">
+                                                    {{ t('dialog.world.info.copy_name') }}
                                                 </el-dropdown-item>
                                             </el-dropdown-menu>
                                         </el-dropdown>
@@ -494,7 +488,7 @@
                             ">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.youtube_preview') }}
+                                    {{ t('dialog.world.info.youtube_preview') }}
                                 </span>
                                 <span class="extra">
                                     https://www.youtube.com/watch?v={{ worldDialog.ref.previewYoutubeId }}
@@ -504,7 +498,7 @@
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.author_tags') }}
+                                    {{ t('dialog.world.info.author_tags') }}
                                 </span>
                                 <span
                                     v-if="
@@ -519,20 +513,20 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.players') }}
+                                    {{ t('dialog.world.info.players') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.occupants | commaNumber }}
+                                    {{ commaNumber(worldDialog.ref.occupants) }}
                                 </span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.favorites') }}
+                                    {{ t('dialog.world.info.favorites') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.favorites | commaNumber
+                                    {{ commaNumber(worldDialog.ref.favorites)
                                     }}<span
                                         v-if="worldDialog.ref?.favorites > 0 && worldDialog.ref?.visits > 0"
                                         class="extra">
@@ -544,21 +538,21 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.visits') }}
+                                    {{ t('dialog.world.info.visits') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.visits | commaNumber }}
+                                    {{ commaNumber(worldDialog.ref.visits) }}
                                 </span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.capacity') }}
+                                    {{ t('dialog.world.info.capacity') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.recommendedCapacity | commaNumber }} ({{
-                                        worldDialog.ref.capacity | commaNumber
+                                    {{ commaNumber(worldDialog.ref.recommendedCapacity) }} ({{
+                                        commaNumber(worldDialog.ref.capacity)
                                     }})
                                 </span>
                             </div>
@@ -566,23 +560,23 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.created_at') }}
+                                    {{ t('dialog.world.info.created_at') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.created_at | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.created_at, 'long') }}
                                 </span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.last_updated') }}
+                                    {{ t('dialog.world.info.last_updated') }}
                                 </span>
                                 <span v-if="worldDialog.lastUpdated" class="extra">
-                                    {{ worldDialog.lastUpdated | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.lastUpdated, 'long') }}
                                 </span>
                                 <span v-else class="extra">
-                                    {{ worldDialog.ref.updated_at | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.updated_at, 'long') }}
                                 </span>
                             </div>
                         </div>
@@ -592,10 +586,10 @@
                             style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.labs_publication_date') }}
+                                    {{ t('dialog.world.info.labs_publication_date') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.labsPublicationDate | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.labsPublicationDate, 'long') }}
                                 </span>
                             </div>
                         </div>
@@ -605,26 +599,26 @@
                             style="cursor: default">
                             <div class="detail">
                                 <span class="name" style="display: inline">
-                                    {{ $t('dialog.world.info.publication_date') }}
+                                    {{ t('dialog.world.info.publication_date') }}
                                 </span>
                                 <el-tooltip v-if="isTimeInLabVisible" placement="top" style="margin-left: 5px">
                                     <template slot="content">
                                         <span>
-                                            {{ $t('dialog.world.info.time_in_labs') }}
+                                            {{ t('dialog.world.info.time_in_labs') }}
                                             {{ timeInLab }}
                                         </span>
                                     </template>
                                     <i class="el-icon-arrow-down" />
                                 </el-tooltip>
                                 <span class="extra">
-                                    {{ worldDialog.ref.publicationDate | formatDate('long') }}
+                                    {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
                                 </span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.version') }}
+                                    {{ t('dialog.world.info.version') }}
                                 </span>
                                 <span class="extra" v-text="worldDialog.ref.version" />
                             </div>
@@ -632,20 +626,20 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.heat') }}
+                                    {{ t('dialog.world.info.heat') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
+                                    {{ commaNumber(worldDialog.ref.heat) }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
                                 </span>
                             </div>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.popularity') }}
+                                    {{ t('dialog.world.info.popularity') }}
                                 </span>
                                 <span class="extra">
-                                    {{ worldDialog.ref.popularity | commaNumber }}
+                                    {{ commaNumber(worldDialog.ref.popularity) }}
                                     {{ '💖'.repeat(worldDialog.ref.popularity) }}
                                 </span>
                             </div>
@@ -653,7 +647,7 @@
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.platform') }}
+                                    {{ t('dialog.world.info.platform') }}
                                 </span>
                                 <span class="extra" style="white-space: normal">{{ worldDialogPlatform }}</span>
                             </div>
@@ -661,31 +655,31 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">
-                                    {{ $t('dialog.world.info.last_visited') }}
+                                    {{ t('dialog.world.info.last_visited') }}
                                     <el-tooltip
                                         v-if="!hideTooltips"
                                         placement="top"
                                         style="margin-left: 5px"
-                                        :content="$t('dialog.world.info.accuracy_notice')"
+                                        :content="t('dialog.world.info.accuracy_notice')"
                                         ><i class="el-icon-warning"></i
                                     ></el-tooltip>
                                 </span>
-                                <span class="extra">{{ worldDialog.lastVisit | formatDate('long') }}</span>
+                                <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
                             </div>
                         </div>
                         <el-tooltip
                             :disabled="hideTooltips"
                             placement="top"
-                            :content="$t('dialog.user.info.open_previouse_instance')">
+                            :content="t('dialog.user.info.open_previouse_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
-                                        {{ $t('dialog.world.info.visit_count') }}
+                                        {{ t('dialog.world.info.visit_count') }}
                                         <el-tooltip
                                             v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
-                                            :content="$t('dialog.world.info.accuracy_notice')"
+                                            :content="t('dialog.world.info.accuracy_notice')"
                                             ><i class="el-icon-warning"></i
                                         ></el-tooltip>
                                     </span>
@@ -698,12 +692,12 @@
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name"
-                                    >{{ $t('dialog.world.info.time_spent') }}
+                                    >{{ t('dialog.world.info.time_spent') }}
                                     <el-tooltip
                                         v-if="!hideTooltips"
                                         placement="top"
                                         style="margin-left: 5px"
-                                        :content="$t('dialog.world.info.accuracy_notice')">
+                                        :content="t('dialog.world.info.accuracy_notice')">
                                         <i class="el-icon-warning"></i>
                                     </el-tooltip>
                                 </span>
@@ -714,7 +708,7 @@
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="$t('dialog.world.json.header')" style="max-height: 50vh" lazy>
+                <el-tab-pane :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
                         size="mini"
@@ -747,41 +741,52 @@
             :old-tags="worldDialog.ref?.tags"
             :world-id="worldDialog.id"
             :is-world-dialog-visible="worldDialog.visible" />
-        <PreviousInstancesWorldDialog
-            :previous-instances-world-dialog.sync="previousInstancesWorldDialog"
-            :shift-held="shiftHeld" />
+        <PreviousInstancesWorldDialog :previous-instances-world-dialog.sync="previousInstancesWorldDialog" />
         <NewInstanceDialog
             :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
-            :create-new-instance="createNewInstance"
-            :offline-friends="offlineFriends"
-            :active-friends="activeFriends"
-            :online-friends="onlineFriends"
-            :vip-friends="vipFriends"
-            :invite-message-table="inviteMessageTable"
-            :upload-image="uploadImage"
             :last-location="lastLocation" />
         <ChangeWorldImageDialog
             :change-world-image-dialog-visible.sync="changeWorldImageDialogVisible"
-            :previous-images-table="previousImagesTable"
             :previous-images-file-id="previousImagesFileId"
             :world-dialog="worldDialog"
             @refresh="displayPreviousImages" />
-        <PreviousImagesDialog
-            :previous-images-dialog-visible.sync="previousImagesDialogVisible"
-            :previous-images-table="previousImagesTable" />
+        <PreviousImagesDialog />
     </safe-dialog>
 </template>
 
-<script>
+<script setup>
+    import { computed, ref, watch, nextTick, getCurrentInstance } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n-bridge';
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
-    import utils from '../../../classes/utils';
-    import { refreshInstancePlayerCount as _refreshInstancePlayerCount } from '../../../composables/instance/utils';
+    import { database } from '../../../service/database.js';
     import {
-        downloadAndSaveJson as _downloadAndSaveJson,
+        adjustDialogZ,
+        buildTreeData,
+        downloadAndSaveJson,
         extractFileId,
-        replaceVrcPackageUrl as _replaceVrcPackageUrl
-    } from '../../../composables/shared/utils';
-    import database from '../../../service/database.js';
+        openExternalLink,
+        refreshInstancePlayerCount,
+        replaceVrcPackageUrl,
+        timeToText,
+        userImage,
+        userStatusClass,
+        openFolderGeneric,
+        deleteVRChatCache,
+        commaNumber,
+        formatDateFilter
+    } from '../../../shared/utils';
+    import {
+        useAppearanceSettingsStore,
+        useFavoriteStore,
+        useGalleryStore,
+        useGameStore,
+        useInstanceStore,
+        useInviteStore,
+        useLocationStore,
+        useUserStore,
+        useWorldStore
+    } from '../../../stores';
     import NewInstanceDialog from '../NewInstanceDialog.vue';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
     import PreviousInstancesWorldDialog from '../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
@@ -789,441 +794,576 @@
     import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
     import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
 
-    export default {
-        name: 'WorldDialog',
-        components: {
-            PreviousImagesDialog,
-            SetWorldTagsDialog,
-            WorldAllowedDomainsDialog,
-            PreviousInstancesWorldDialog,
-            NewInstanceDialog,
-            ChangeWorldImageDialog
-        },
-        inject: [
-            'API',
-            'showUserDialog',
-            'userStatusClass',
-            'userImage',
-            'adjustDialogZ',
-            'showPreviousInstancesInfoDialog',
-            'showLaunchDialog',
-            'showFullscreenImageDialog',
-            'showWorldDialog',
-            'showFavoriteDialog',
-            'openExternalLink',
-            'openFolderGeneric',
-            'deleteVRChatCache'
-        ],
-        props: {
-            worldDialog: Object,
-            hideTooltips: Boolean,
-            shiftHeld: Boolean,
-            isGameRunning: Boolean,
-            lastLocation: Object,
-            instanceJoinHistory: Map,
-            isAgeGatedInstancesVisible: Boolean,
+    const { proxy } = getCurrentInstance();
 
-            createNewInstance: Function,
-            offlineFriends: Array,
-            activeFriends: Array,
-            onlineFriends: Array,
-            vipFriends: Array,
-            inviteMessageTable: Object,
-            uploadImage: String,
+    const { hideTooltips, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
+    const { showUserDialog } = useUserStore();
+    const { currentUser, userDialog } = storeToRefs(useUserStore());
+    const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());
+    const { showWorldDialog } = useWorldStore();
+    const { lastLocation } = storeToRefs(useLocationStore());
+    const { newInstanceSelfInvite } = useInviteStore();
+    const { showFavoriteDialog } = useFavoriteStore();
+    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { instanceJoinHistory } = storeToRefs(useInstanceStore());
+    const { isGameRunning } = storeToRefs(useGameStore());
+    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
+    const { checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
+    const { t } = useI18n();
 
-            // TODO: Remove
-            updateInstanceInfo: Number
-        },
-        data() {
-            return {
-                treeData: [],
-                worldAllowedDomainsDialog: {
-                    visible: false,
-                    worldId: '',
-                    urlList: []
-                },
-                isSetWorldTagsDialogVisible: false,
-                previousInstancesWorldDialog: {
-                    visible: false,
-                    openFlg: false,
-                    worldRef: {}
-                },
-                newInstanceDialogLocationTag: '',
-                changeWorldImageDialogVisible: false,
-                previousImagesFileId: '',
-                previousImagesDialogVisible: false,
-                previousImagesTable: []
-            };
-        },
-        computed: {
-            isDialogVisible: {
-                get() {
-                    return this.worldDialog.visible;
-                },
-                set(value) {
-                    this.$emit('update:world-dialog', { ...this.worldDialog, visible: value });
-                }
-            },
-            memo: {
-                get() {
-                    return this.worldDialog.memo;
-                },
-                set(value) {
-                    this.$emit('update:world-dialog', { ...this.worldDialog, memo: value });
-                }
-            },
-            isTimeInLabVisible() {
-                return (
-                    this.worldDialog.ref.publicationDate &&
-                    this.worldDialog.ref.publicationDate !== 'none' &&
-                    this.worldDialog.ref.labsPublicationDate &&
-                    this.worldDialog.ref.labsPublicationDate !== 'none'
-                );
-            },
-            timeInLab() {
-                return utils.timeToText(
-                    new Date(this.worldDialog.ref?.publicationDate) -
-                        new Date(this.worldDialog.ref?.labsPublicationDate)
-                );
-            },
-            favoriteRate() {
-                return (
-                    Math.round(
-                        (((this.worldDialog.ref?.favorites - this.worldDialog.ref?.visits) /
-                            this.worldDialog.ref?.visits) *
-                            100 +
-                            100) *
-                            100
-                    ) / 100
-                );
-            },
-            worldTags() {
-                return this.worldDialog.ref?.tags
-                    .filter((tag) => tag.startsWith('author_tag'))
-                    .map((tag) => tag.replace('author_tag_', ''))
-                    .join(', ');
-            },
-            timeSpent() {
-                return utils.timeToText(this.worldDialog.timeSpent);
-            },
-            worldDialogPlatform() {
-                const { ref } = this.worldDialog;
-                const platforms = [];
-                if (ref.unityPackages) {
-                    for (const unityPackage of ref.unityPackages) {
-                        let platform = 'PC';
-                        if (unityPackage.platform === 'standalonewindows') {
-                            platform = 'PC';
-                        } else if (unityPackage.platform === 'android') {
-                            platform = 'Android';
-                        } else if (unityPackage.platform) {
-                            ({ platform } = unityPackage);
-                        }
-                        platforms.unshift(`${platform}/${unityPackage.unityVersion}`);
-                    }
-                }
-                return platforms.join(', ');
-            }
-        },
-        watch: {
-            'worldDialog.loading'(value) {
-                if (value) {
-                    this.$nextTick(() => this.adjustDialogZ(this.$refs.worldDialog.$el));
-                }
-            }
-        },
-        methods: {
-            displayPreviousImages(command) {
-                this.previousImagesFileId = '';
-                this.previousImagesTable = [];
-                const { imageUrl } = this.worldDialog.ref;
+    const treeData = ref([]);
+    const worldAllowedDomainsDialog = ref({
+        visible: false,
+        worldId: '',
+        urlList: []
+    });
+    const isSetWorldTagsDialogVisible = ref(false);
+    const previousInstancesWorldDialog = ref({
+        visible: false,
+        openFlg: false,
+        worldRef: {}
+    });
+    const newInstanceDialogLocationTag = ref('');
+    const changeWorldImageDialogVisible = ref(false);
+    const previousImagesFileId = ref('');
 
-                const fileId = extractFileId(imageUrl);
-                if (!fileId) {
-                    return;
+    const isDialogVisible = computed({
+        get() {
+            return worldDialog.value.visible;
+        },
+        set(value) {
+            worldDialog.value.visible = value;
+        }
+    });
+
+    const memo = computed({
+        get() {
+            return worldDialog.value.memo;
+        },
+        set(value) {
+            worldDialog.value.memo = value;
+        }
+    });
+
+    const isTimeInLabVisible = computed(() => {
+        return (
+            worldDialog.value.ref.publicationDate &&
+            worldDialog.value.ref.publicationDate !== 'none' &&
+            worldDialog.value.ref.labsPublicationDate &&
+            worldDialog.value.ref.labsPublicationDate !== 'none'
+        );
+    });
+
+    const timeInLab = computed(() => {
+        return timeToText(
+            new Date(worldDialog.value.ref.publicationDate) - new Date(worldDialog.value.ref.labsPublicationDate)
+        );
+    });
+
+    const favoriteRate = computed(() => {
+        return (
+            Math.round(
+                (((worldDialog.value.ref?.favorites - worldDialog.value.ref?.visits) / worldDialog.value.ref?.visits) *
+                    100 +
+                    100) *
+                    100
+            ) / 100
+        );
+    });
+
+    const worldTags = computed(() => {
+        return worldDialog.value.ref?.tags
+            .filter((tag) => tag.startsWith('author_tag'))
+            .map((tag) => tag.replace('author_tag_', ''))
+            .join(', ');
+    });
+
+    const timeSpent = computed(() => {
+        return timeToText(worldDialog.value.timeSpent);
+    });
+
+    const worldDialogPlatform = computed(() => {
+        const { ref } = worldDialog.value;
+        const platforms = [];
+        if (ref.unityPackages) {
+            for (const unityPackage of ref.unityPackages) {
+                let platform = 'PC';
+                if (unityPackage.platform === 'standalonewindows') {
+                    platform = 'PC';
+                } else if (unityPackage.platform === 'android') {
+                    platform = 'Android';
+                } else if (unityPackage.platform) {
+                    ({ platform } = unityPackage);
                 }
-                const params = {
-                    fileId
-                };
-                if (command === 'Display') {
-                    this.previousImagesDialogVisible = true;
-                }
-                if (command === 'Change') {
-                    this.changeWorldImageDialogVisible = true;
-                }
-                imageRequest.getWorldImages(params).then((args) => {
-                    this.previousImagesFileId = args.json.id;
-                    const images = [];
-                    args.json.versions.forEach((item) => {
-                        if (!item.deleted) {
-                            images.unshift(item);
-                        }
-                    });
-                    this.checkPreviousImageAvailable(images);
-                });
-            },
-            async checkPreviousImageAvailable(images) {
-                this.previousImagesTable = [];
-                for (const image of images) {
-                    if (image.file && image.file.url) {
-                        const response = await fetch(image.file.url, {
-                            method: 'HEAD',
-                            redirect: 'follow'
-                        }).catch((error) => {
-                            console.log(error);
-                        });
-                        if (response.status === 200) {
-                            this.previousImagesTable.push(image);
-                        }
-                    }
-                }
-            },
-            showNewInstanceDialog(tag) {
-                // trigger watcher
-                this.newInstanceDialogLocationTag = '';
-                this.$nextTick(() => (this.newInstanceDialogLocationTag = tag));
-            },
-            openFolder(path) {
-                this.openFolderGeneric(path);
-            },
-            deleteWorldFromCache(world) {
-                this.deleteVRChatCache(world);
-            },
-            worldDialogCommand(command) {
-                const D = this.worldDialog;
-                if (D.visible === false) {
-                    return;
-                }
-                switch (command) {
-                    case 'Delete Favorite':
-                    case 'Make Home':
-                    case 'Reset Home':
-                    case 'Publish':
-                    case 'Unpublish':
-                    case 'Delete Persistent Data':
-                    case 'Delete':
-                        this.$confirm(`Continue? ${command}`, 'Confirm', {
-                            confirmButtonText: 'Confirm',
-                            cancelButtonText: 'Cancel',
-                            type: 'info',
-                            callback: (action) => {
-                                if (action !== 'confirm') {
-                                    return;
-                                }
-                                switch (command) {
-                                    case 'Delete Favorite':
-                                        favoriteRequest.deleteFavorite({
-                                            objectId: D.id
-                                        });
-                                        break;
-                                    case 'Make Home':
-                                        userRequest
-                                            .saveCurrentUser({
-                                                homeLocation: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'Home world updated',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Reset Home':
-                                        userRequest
-                                            .saveCurrentUser({
-                                                homeLocation: ''
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'Home world has been reset',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Publish':
-                                        worldRequest
-                                            .publishWorld({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'World has been published',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Unpublish':
-                                        worldRequest
-                                            .unpublishWorld({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'World has been unpublished',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Delete Persistent Data':
-                                        miscRequest
-                                            .deleteWorldPersistData({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'Persistent data has been deleted',
-                                                    type: 'success'
-                                                });
-                                                return args;
-                                            });
-                                        break;
-                                    case 'Delete':
-                                        worldRequest
-                                            .deleteWorld({
-                                                worldId: D.id
-                                            })
-                                            .then((args) => {
-                                                this.$message({
-                                                    message: 'World has been deleted',
-                                                    type: 'success'
-                                                });
-                                                D.visible = false;
-                                                return args;
-                                            });
-                                        break;
-                                }
-                            }
-                        });
-                        break;
-                    case 'Previous Instances':
-                        this.showPreviousInstancesWorldDialog(D.ref);
-                        break;
-                    case 'Share':
-                        this.copyWorldUrl();
-                        break;
-                    case 'Change Allowed Domains':
-                        this.showWorldAllowedDomainsDialog();
-                        break;
-                    case 'Change Tags':
-                        this.isSetWorldTagsDialogVisible = true;
-                        break;
-                    case 'Download Unity Package':
-                        this.openExternalLink(this.replaceVrcPackageUrl(this.worldDialog.ref.unityPackageUrl));
-                        break;
-                    case 'Change Image':
-                        this.displayPreviousImages('Change');
-                        break;
-                    case 'Previous Images':
-                        this.displayPreviousImages('Display');
-                        break;
-                    case 'Refresh':
-                        this.showWorldDialog(D.id);
-                        break;
-                    case 'New Instance':
-                        this.showNewInstanceDialog(D.$location.tag);
-                        break;
-                    case 'Add Favorite':
-                        this.showFavoriteDialog('world', D.id);
-                        break;
-                    default:
-                        this.$emit('worldDialogCommand', command);
-                        break;
-                }
-            },
-            replaceVrcPackageUrl(url) {
-                _replaceVrcPackageUrl(url);
-            },
-            refreshInstancePlayerCount(tag) {
-                _refreshInstancePlayerCount(tag);
-            },
-            onWorldMemoChange() {
-                const worldId = this.worldDialog.id;
-                const memo = this.worldDialog.memo;
-                if (memo) {
-                    database.setWorldMemo({
-                        worldId,
-                        editedAt: new Date().toJSON(),
-                        memo
-                    });
-                } else {
-                    database.deleteWorldMemo(worldId);
-                }
-            },
-            showPreviousInstancesWorldDialog(worldRef) {
-                const D = this.previousInstancesWorldDialog;
-                D.worldRef = worldRef;
-                D.visible = true;
-                // trigger watcher
-                D.openFlg = true;
-                this.$nextTick(() => (D.openFlg = false));
-            },
-            refreshWorldDialogTreeData() {
-                this.treeData = utils.buildTreeData(this.worldDialog.ref);
-            },
-            downloadAndSaveJson(fileName, data) {
-                _downloadAndSaveJson(fileName, data);
-            },
-            copyWorldId() {
-                navigator.clipboard
-                    .writeText(this.worldDialog.id)
-                    .then(() => {
-                        this.$message({
-                            message: 'World ID copied to clipboard',
-                            type: 'success'
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('copy failed:', err);
-                        this.$message({
-                            message: 'Copy failed',
-                            type: 'error'
-                        });
-                    });
-            },
-            copyWorldUrl() {
-                navigator.clipboard
-                    .writeText(`https://vrchat.com/home/world/${this.worldDialog.id}`)
-                    .then(() => {
-                        this.$message({
-                            message: 'World URL copied to clipboard',
-                            type: 'success'
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('copy failed:', err);
-                        this.$message({
-                            message: 'Copy failed',
-                            type: 'error'
-                        });
-                    });
-            },
-            copyWorldName() {
-                navigator.clipboard
-                    .writeText(this.worldDialog.ref.name)
-                    .then(() => {
-                        this.$message({
-                            message: 'World name copied to clipboard',
-                            type: 'success'
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('copy failed:', err);
-                        this.$message({
-                            message: 'Copy failed',
-                            type: 'error'
-                        });
-                    });
-            },
-            showWorldAllowedDomainsDialog() {
-                const D = this.worldAllowedDomainsDialog;
-                D.worldId = this.worldDialog.id;
-                D.urlList = this.worldDialog.ref?.urlList ?? [];
-                D.visible = true;
+                platforms.unshift(`${platform}/${unityPackage.unityVersion}`);
             }
         }
-    };
+        return platforms.join(', ');
+    });
+
+    const worldDialogRef = ref(null);
+
+    watch(
+        () => worldDialog.value.loading,
+        (newVal) => {
+            if (newVal) {
+                nextTick(() => {
+                    if (worldDialogRef.value?.$el) {
+                        adjustDialogZ(worldDialogRef.value.$el);
+                    }
+                });
+            }
+        }
+    );
+
+    function displayPreviousImages(command) {
+        previousImagesFileId.value = '';
+        previousImagesTable.value = [];
+        const { imageUrl } = worldDialog.value.ref;
+
+        const fileId = extractFileId(imageUrl);
+        if (!fileId) {
+            return;
+        }
+        const params = {
+            fileId
+        };
+        if (command === 'Display') {
+            previousImagesDialogVisible.value = true;
+        }
+        if (command === 'Change') {
+            changeWorldImageDialogVisible.value = true;
+        }
+        imageRequest.getWorldImages(params).then((args) => {
+            previousImagesFileId.value = args.json.id;
+            const images = [];
+            args.json.versions.forEach((item) => {
+                if (!item.deleted) {
+                    images.unshift(item);
+                }
+            });
+            checkPreviousImageAvailable(images);
+        });
+    }
+
+    function showNewInstanceDialog(tag) {
+        // trigger watcher
+        newInstanceDialogLocationTag.value = '';
+        nextTick(() => (newInstanceDialogLocationTag.value = tag));
+    }
+
+    function worldDialogCommand(command) {
+        const D = worldDialog.value;
+        if (D.visible === false) {
+            return;
+        }
+        switch (command) {
+            case 'Delete Favorite':
+            case 'Make Home':
+            case 'Reset Home':
+            case 'Publish':
+            case 'Unpublish':
+            case 'Delete Persistent Data':
+            case 'Delete':
+                proxy.$confirm(`Continue? ${command}`, 'Confirm', {
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    type: 'info',
+                    callback: (action) => {
+                        if (action !== 'confirm') {
+                            return;
+                        }
+                        switch (command) {
+                            case 'Delete Favorite':
+                                favoriteRequest.deleteFavorite({
+                                    objectId: D.id
+                                });
+                                break;
+                            case 'Make Home':
+                                userRequest
+                                    .saveCurrentUser({
+                                        homeLocation: D.id
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'Home world updated',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Reset Home':
+                                userRequest
+                                    .saveCurrentUser({
+                                        homeLocation: ''
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'Home world has been reset',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Publish':
+                                worldRequest
+                                    .publishWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'World has been published',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Unpublish':
+                                worldRequest
+                                    .unpublishWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        proxy.$message({
+                                            message: 'World has been unpublished',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Delete Persistent Data':
+                                miscRequest
+                                    .deleteWorldPersistData({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
+                                            worldDialog.value.hasPersistData = false;
+                                        }
+                                        proxy.$message({
+                                            message: 'Persistent data has been deleted',
+                                            type: 'success'
+                                        });
+                                        return args;
+                                    });
+                                break;
+                            case 'Delete':
+                                worldRequest
+                                    .deleteWorld({
+                                        worldId: D.id
+                                    })
+                                    .then((args) => {
+                                        const { json } = args;
+                                        cachedWorlds.value.delete(json.id);
+                                        if (worldDialog.value.ref.authorId === json.authorId) {
+                                            const map = new Map();
+                                            for (const ref of cachedWorlds.value.values()) {
+                                                if (ref.authorId === json.authorId) {
+                                                    map.set(ref.id, ref);
+                                                }
+                                            }
+                                            const array = Array.from(map.values());
+                                            userDialog.value.worlds = array;
+                                        }
+                                        proxy.$message({
+                                            message: 'World has been deleted',
+                                            type: 'success'
+                                        });
+                                        D.visible = false;
+                                        return args;
+                                    });
+                                break;
+                        }
+                    }
+                });
+                break;
+            case 'Previous Instances':
+                showPreviousInstancesWorldDialog(D.ref);
+                break;
+            case 'Share':
+                copyWorldUrl();
+                break;
+            case 'Change Allowed Domains':
+                showWorldAllowedDomainsDialog();
+                break;
+            case 'Change Tags':
+                isSetWorldTagsDialogVisible.value = true;
+                break;
+            case 'Download Unity Package':
+                openExternalLink(replaceVrcPackageUrl(worldDialog.value.ref.unityPackageUrl));
+                break;
+            case 'Change Image':
+                displayPreviousImages('Change');
+                break;
+            case 'Previous Images':
+                displayPreviousImages('Display');
+                break;
+            case 'Refresh':
+                showWorldDialog(D.id);
+                break;
+            case 'New Instance':
+                showNewInstanceDialog(D.$location.tag);
+                break;
+            case 'Add Favorite':
+                showFavoriteDialog('world', D.id);
+                break;
+            case 'New Instance and Self Invite':
+                newInstanceSelfInvite(D.id);
+                break;
+            case 'Rename':
+                promptRenameWorld(D);
+                break;
+            case 'Change Description':
+                promptChangeWorldDescription(D);
+                break;
+            case 'Change Capacity':
+                promptChangeWorldCapacity(D);
+                break;
+            case 'Change Recommended Capacity':
+                promptChangeWorldRecommendedCapacity(D);
+                break;
+            case 'Change YouTube Preview':
+                promptChangeWorldYouTubePreview(D);
+                break;
+            default:
+                break;
+        }
+    }
+
+    function promptRenameWorld(world) {
+        proxy.$prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.rename_world.ok'),
+            cancelButtonText: t('prompt.rename_world.cancel'),
+            inputValue: world.ref.name,
+            inputErrorMessage: t('prompt.rename_world.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.name) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            name: instance.inputValue
+                        })
+                        .then((args) => {
+                            proxy.$message({
+                                message: t('prompt.rename_world.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            }
+        });
+    }
+    function promptChangeWorldDescription(world) {
+        proxy.$prompt(t('prompt.change_world_description.description'), t('prompt.change_world_description.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.change_world_description.ok'),
+            cancelButtonText: t('prompt.change_world_description.cancel'),
+            inputValue: world.ref.description,
+            inputErrorMessage: t('prompt.change_world_description.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.description) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            description: instance.inputValue
+                        })
+                        .then((args) => {
+                            proxy.$message({
+                                message: t('prompt.change_world_description.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            }
+        });
+    }
+
+    function promptChangeWorldCapacity(world) {
+        proxy.$prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.change_world_capacity.ok'),
+            cancelButtonText: t('prompt.change_world_capacity.cancel'),
+            inputValue: world.ref.capacity,
+            inputPattern: /\d+$/,
+            inputErrorMessage: t('prompt.change_world_capacity.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.capacity) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            capacity: instance.inputValue
+                        })
+                        .then((args) => {
+                            proxy.$message({
+                                message: t('prompt.change_world_capacity.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            }
+        });
+    }
+
+    function promptChangeWorldRecommendedCapacity(world) {
+        proxy.$prompt(
+            t('prompt.change_world_recommended_capacity.description'),
+            t('prompt.change_world_recommended_capacity.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.change_world_capacity.ok'),
+                cancelButtonText: t('prompt.change_world_capacity.cancel'),
+                inputValue: world.ref.recommendedCapacity,
+                inputPattern: /\d+$/,
+                inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue !== world.ref.recommendedCapacity) {
+                        worldRequest
+                            .saveWorld({
+                                id: world.id,
+                                recommendedCapacity: instance.inputValue
+                            })
+                            .then((args) => {
+                                proxy.$message({
+                                    message: t('prompt.change_world_recommended_capacity.message.success'),
+                                    type: 'success'
+                                });
+                                return args;
+                            });
+                    }
+                }
+            }
+        );
+    }
+
+    function promptChangeWorldYouTubePreview(world) {
+        proxy.$prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
+            distinguishCancelAndClose: true,
+            confirmButtonText: t('prompt.change_world_preview.ok'),
+            cancelButtonText: t('prompt.change_world_preview.cancel'),
+            inputValue: world.ref.previewYoutubeId,
+            inputErrorMessage: t('prompt.change_world_preview.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue !== world.ref.previewYoutubeId) {
+                    if (instance.inputValue.length > 11) {
+                        try {
+                            var url = new URL(instance.inputValue);
+                            var id1 = url.pathname;
+                            var id2 = url.searchParams.get('v');
+                            if (id1 && id1.length === 12) {
+                                instance.inputValue = id1.substring(1, 12);
+                            }
+                            if (id2 && id2.length === 11) {
+                                instance.inputValue = id2;
+                            }
+                        } catch {
+                            proxy.$message({
+                                message: t('prompt.change_world_preview.message.error'),
+                                type: 'error'
+                            });
+                            return;
+                        }
+                    }
+                    if (instance.inputValue !== world.ref.previewYoutubeId) {
+                        worldRequest
+                            .saveWorld({
+                                id: world.id,
+                                previewYoutubeId: instance.inputValue
+                            })
+                            .then((args) => {
+                                proxy.$message({
+                                    message: t('prompt.change_world_preview.message.success'),
+                                    type: 'success'
+                                });
+                                return args;
+                            });
+                    }
+                }
+            }
+        });
+    }
+    function onWorldMemoChange() {
+        const worldId = worldDialog.value.id;
+        const memo = worldDialog.value.memo;
+        if (memo) {
+            database.setWorldMemo({
+                worldId,
+                editedAt: new Date().toJSON(),
+                memo
+            });
+        } else {
+            database.deleteWorldMemo(worldId);
+        }
+    }
+    function showPreviousInstancesWorldDialog(worldRef) {
+        const D = previousInstancesWorldDialog.value;
+        D.worldRef = worldRef;
+        D.visible = true;
+        // trigger watcher
+        D.openFlg = true;
+        nextTick(() => (D.openFlg = false));
+    }
+    function refreshWorldDialogTreeData() {
+        treeData.value = buildTreeData(worldDialog.value.ref);
+    }
+    function copyWorldId() {
+        navigator.clipboard
+            .writeText(worldDialog.value.id)
+            .then(() => {
+                proxy.$message({
+                    message: 'World ID copied to clipboard',
+                    type: 'success'
+                });
+            })
+            .catch((err) => {
+                console.error('copy failed:', err);
+                proxy.$message({
+                    message: 'Copy failed',
+                    type: 'error'
+                });
+            });
+    }
+    function copyWorldUrl() {
+        navigator.clipboard
+            .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
+            .then(() => {
+                proxy.$message({
+                    message: 'World URL copied to clipboard',
+                    type: 'success'
+                });
+            })
+            .catch((err) => {
+                console.error('copy failed:', err);
+                proxy.$message({
+                    message: 'Copy failed',
+                    type: 'error'
+                });
+            });
+    }
+    function copyWorldName() {
+        navigator.clipboard
+            .writeText(worldDialog.value.ref.name)
+            .then(() => {
+                proxy.$message({
+                    message: 'World name copied to clipboard',
+                    type: 'success'
+                });
+            })
+            .catch((err) => {
+                console.error('copy failed:', err);
+                proxy.$message({
+                    message: 'Copy failed',
+                    type: 'error'
+                });
+            });
+    }
+    function showWorldAllowedDomainsDialog() {
+        const D = worldAllowedDomainsDialog.value;
+        D.worldId = worldDialog.value.id;
+        D.urlList = worldDialog.value.ref?.urlList ?? [];
+        D.visible = true;
+    }
 </script>

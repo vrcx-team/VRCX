@@ -6,7 +6,7 @@
         width="800px"
         append-to-body
         @close="cancelSendInviteResponse">
-        <template v-if="API.currentUser.$isVRCPlus">
+        <template v-if="currentUser.$isVRCPlus">
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
@@ -45,33 +45,38 @@
             <el-button type="small" @click="cancelSendInviteResponse">{{
                 t('dialog.invite_response_message.cancel')
             }}</el-button>
-            <el-button type="small" @click="API.refreshInviteMessageTableData('response')">{{
+            <el-button type="small" @click="refreshInviteMessageTableData('response')">{{
                 t('dialog.invite_response_message.refresh')
             }}</el-button>
         </template>
         <EditAndSendInviteResponseDialog
             :edit-and-send-invite-response-dialog.sync="editAndSendInviteResponseDialog"
-            :upload-image="uploadImage"
             :send-invite-response-dialog.sync="sendInviteResponseDialog"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteResponseConfirmDialog
             :send-invite-response-dialog.sync="sendInviteResponseDialog"
-            :upload-image="uploadImage"
             :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
             @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
 </template>
 
 <script setup>
-    import { inject, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
+    import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
     import EditAndSendInviteResponseDialog from './EditAndSendInviteResponseDialog.vue';
     import SendInviteResponseConfirmDialog from './SendInviteResponseConfirmDialog.vue';
 
     const { t } = useI18n();
 
-    const API = inject('API');
-    const inviteImageUpload = inject('inviteImageUpload');
+    const inviteStore = useInviteStore();
+    const { refreshInviteMessageTableData } = inviteStore;
+    const { inviteResponseMessageTable } = storeToRefs(inviteStore);
+    const galleryStore = useGalleryStore();
+    const { inviteImageUpload } = galleryStore;
+    const { currentUser } = storeToRefs(useUserStore());
+
     const props = defineProps({
         sendInviteResponseDialog: {
             type: Object,
@@ -80,13 +85,6 @@
         sendInviteResponseDialogVisible: {
             type: Boolean,
             default: false
-        },
-        inviteResponseMessageTable: {
-            type: Object,
-            default: () => ({})
-        },
-        uploadImage: {
-            type: String
         }
     });
 
@@ -116,7 +114,6 @@
             visible: true
         };
     }
-
     function showSendInviteResponseConfirmDialog(row) {
         props.sendInviteResponseDialog.messageSlot = row;
         sendInviteResponseConfirmDialog.value.visible = true;

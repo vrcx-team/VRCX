@@ -8,6 +8,9 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
+@use "./assets/scss/flags.scss";
+@use "./assets/scss/animated-emoji.scss";
+
 @import '~animate.css/animate.min.css';
 @import '~noty/lib/noty.css';
 @import '~element-ui/lib/theme-chalk/index.css';
@@ -299,6 +302,7 @@ hr.x-vertical-divider {
     flex-direction: column;
     background: #f8f8f8;
     padding: 5px;
+    order: 99;
 }
 
 .el-popper.x-quick-search {

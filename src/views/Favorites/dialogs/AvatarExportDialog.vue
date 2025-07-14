@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog :visible.sync="isDialogVisible" :title="$t('dialog.avatar_export.header')" width="650px">
+    <safe-dialog :visible.sync="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
@@ -26,7 +26,7 @@
                 <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectAvatarExportGroup(null)">
                     All Favorites
                 </el-dropdown-item>
-                <template v-for="groupAPI in API.favoriteAvatarGroups">
+                <template v-for="groupAPI in favoriteAvatarGroups">
                     <el-dropdown-item
                         :key="groupAPI.name"
                         style="display: block; margin: 10px 0"
@@ -79,145 +79,152 @@
     </safe-dialog>
 </template>
 
-<script>
-    export default {
-        name: 'AvatarExportDialog',
-        inject: ['API'],
-        props: {
-            avatarExportDialogVisible: Boolean,
-            favoriteAvatars: Array,
-            localAvatarFavoriteGroups: Array,
-            localAvatarFavorites: Object,
-            localAvatarFavoritesList: Array
-        },
-        data() {
-            return {
-                avatarExportContent: '',
-                avatarExportFavoriteGroup: null,
-                avatarExportLocalFavoriteGroup: null,
-                exportSelectedOptions: ['ID', 'Name'],
-                exportSelectOptions: [
-                    { label: 'ID', value: 'id' },
-                    { label: 'Name', value: 'name' },
-                    { label: 'Author ID', value: 'authorId' },
-                    { label: 'Author Name', value: 'authorName' },
-                    { label: 'Thumbnail', value: 'thumbnailImageUrl' }
-                ]
-            };
-        },
-        computed: {
-            isDialogVisible: {
-                get() {
-                    return this.avatarExportDialogVisible;
-                },
-                set(value) {
-                    this.$emit('update:avatar-export-dialog-visible', value);
-                }
-            }
-        },
-        watch: {
-            avatarExportDialogVisible(visible) {
-                if (visible) {
-                    this.showAvatarExportDialog();
-                }
-            }
-        },
-        methods: {
-            showAvatarExportDialog() {
-                this.avatarExportFavoriteGroup = null;
-                this.avatarExportLocalFavoriteGroup = null;
-                this.updateAvatarExportDialog();
-            },
-            handleCopyAvatarExportData(event) {
-                if (event.target.tagName === 'TEXTAREA') {
-                    event.target.select();
-                }
-                navigator.clipboard
-                    .writeText(this.avatarExportContent)
-                    .then(() => {
-                        this.$message({
-                            message: 'Copied successfully!',
-                            type: 'success',
-                            duration: 2000
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('Copy failed:', err);
-                        this.$message.error('Copy failed!');
-                    });
-            },
-            updateAvatarExportDialog() {
-                const formatter = function (str) {
-                    if (/[\x00-\x1f,"]/.test(str) === true) {
-                        return `"${str.replace(/"/g, '""')}"`;
-                    }
-                    return str;
-                };
-                const propsForQuery = this.exportSelectOptions
-                    .filter((option) => this.exportSelectedOptions.includes(option.label))
-                    .map((option) => option.value);
+<script setup>
+    import { ref, computed, watch, getCurrentInstance } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
+    import { storeToRefs } from 'pinia';
+    import { useAvatarStore, useFavoriteStore } from '../../../stores';
 
-                function resText(ref) {
-                    let resArr = [];
-                    propsForQuery.forEach((e) => {
-                        resArr.push(formatter(ref?.[e]));
-                    });
-                    return resArr.join(',');
-                }
+    const { t } = useI18n();
+    const { proxy } = getCurrentInstance();
 
-                const lines = [this.exportSelectedOptions.join(',')];
+    const props = defineProps({
+        avatarExportDialogVisible: {
+            type: Boolean,
+            required: true
+        }
+    });
 
-                if (this.avatarExportFavoriteGroup) {
-                    this.API.favoriteAvatarGroups.forEach((group) => {
-                        if (!this.avatarExportFavoriteGroup || this.avatarExportFavoriteGroup === group) {
-                            this.favoriteAvatars.forEach((ref) => {
-                                if (group.key === ref.groupKey) {
-                                    lines.push(resText(ref.ref));
-                                }
-                            });
-                        }
-                    });
-                } else if (this.avatarExportLocalFavoriteGroup) {
-                    const favoriteGroup = this.localAvatarFavorites[this.avatarExportLocalFavoriteGroup];
-                    if (!favoriteGroup) {
-                        return;
-                    }
-                    for (let i = 0; i < favoriteGroup.length; ++i) {
-                        const ref = favoriteGroup[i];
-                        lines.push(resText(ref));
-                    }
-                } else {
-                    // export all
-                    this.favoriteAvatars.forEach((ref) => {
-                        lines.push(resText(ref.ref));
-                    });
-                    for (let i = 0; i < this.localAvatarFavoritesList.length; ++i) {
-                        const avatarId = this.localAvatarFavoritesList[i];
-                        const ref = this.API.cachedAvatars.get(avatarId);
-                        if (typeof ref !== 'undefined') {
-                            lines.push(resText(ref));
-                        }
-                    }
-                }
-                this.avatarExportContent = lines.join('\n');
-            },
-            selectAvatarExportGroup(group) {
-                this.avatarExportFavoriteGroup = group;
-                this.avatarExportLocalFavoriteGroup = null;
-                this.updateAvatarExportDialog();
-            },
-            selectAvatarExportLocalGroup(group) {
-                this.avatarExportLocalFavoriteGroup = group;
-                this.avatarExportFavoriteGroup = null;
-                this.updateAvatarExportDialog();
-            },
-            getLocalAvatarFavoriteGroupLength(group) {
-                const favoriteGroup = this.localAvatarFavorites[group];
-                if (!favoriteGroup) {
-                    return 0;
-                }
-                return favoriteGroup.length;
+    const emit = defineEmits(['update:avatarExportDialogVisible']);
+
+    const favoriteStore = useFavoriteStore();
+    const {
+        favoriteAvatars,
+        favoriteAvatarGroups,
+        localAvatarFavorites,
+        localAvatarFavoritesList,
+        localAvatarFavoriteGroups
+    } = storeToRefs(favoriteStore);
+    const { getLocalAvatarFavoriteGroupLength } = favoriteStore;
+    const avatarStore = useAvatarStore();
+    const { cachedAvatars } = storeToRefs(avatarStore);
+
+    const avatarExportContent = ref('');
+    const avatarExportFavoriteGroup = ref(null);
+    const avatarExportLocalFavoriteGroup = ref(null);
+    const exportSelectedOptions = ref(['ID', 'Name']);
+    const exportSelectOptions = ref([
+        { label: 'ID', value: 'id' },
+        { label: 'Name', value: 'name' },
+        { label: 'Author ID', value: 'authorId' },
+        { label: 'Author Name', value: 'authorName' },
+        { label: 'Thumbnail', value: 'thumbnailImageUrl' }
+    ]);
+
+    const isDialogVisible = computed({
+        get() {
+            return props.avatarExportDialogVisible;
+        },
+        set(value) {
+            emit('update:avatarExportDialogVisible', value);
+        }
+    });
+
+    watch(
+        () => props.avatarExportDialogVisible,
+        (value) => {
+            if (value) {
+                showAvatarExportDialog();
             }
         }
-    };
+    );
+
+    function showAvatarExportDialog() {
+        avatarExportFavoriteGroup.value = null;
+        avatarExportLocalFavoriteGroup.value = null;
+        updateAvatarExportDialog();
+    }
+    function handleCopyAvatarExportData(event) {
+        if (event.target.tagName === 'TEXTAREA') {
+            event.target.select();
+        }
+        navigator.clipboard
+            .writeText(avatarExportContent.value)
+            .then(() => {
+                proxy.$message({
+                    message: 'Copied successfully!',
+                    type: 'success',
+                    duration: 2000
+                });
+            })
+            .catch((err) => {
+                console.error('Copy failed:', err);
+                proxy.$message.error('Copy failed!');
+            });
+    }
+    function updateAvatarExportDialog() {
+        const formatter = function (str) {
+            if (/[\x00-\x1f,"]/.test(str) === true) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+        const propsForQuery = exportSelectOptions.value
+            .filter((option) => exportSelectedOptions.value.includes(option.label))
+            .map((option) => option.value);
+
+        function resText(ref) {
+            let resArr = [];
+            propsForQuery.forEach((e) => {
+                resArr.push(formatter(ref?.[e]));
+            });
+            return resArr.join(',');
+        }
+
+        const lines = [exportSelectedOptions.value.join(',')];
+
+        if (avatarExportFavoriteGroup.value) {
+            favoriteAvatarGroups.value.forEach((group) => {
+                if (!avatarExportFavoriteGroup.value || avatarExportFavoriteGroup.value === group) {
+                    favoriteAvatars.value.forEach((ref) => {
+                        if (group.key === ref.groupKey) {
+                            lines.push(resText(ref.ref));
+                        }
+                    });
+                }
+            });
+        } else if (avatarExportLocalFavoriteGroup.value) {
+            const favoriteGroup = localAvatarFavorites.value[avatarExportLocalFavoriteGroup.value];
+            if (!favoriteGroup) {
+                return;
+            }
+            for (let i = 0; i < favoriteGroup.length; ++i) {
+                const ref = favoriteGroup[i];
+                lines.push(resText(ref));
+            }
+        } else {
+            // export all
+            favoriteAvatars.value.forEach((ref) => {
+                lines.push(resText(ref.ref));
+            });
+            for (let i = 0; i < localAvatarFavoritesList.value.length; ++i) {
+                const avatarId = localAvatarFavoritesList.value[i];
+                const ref = cachedAvatars.value.get(avatarId);
+                if (typeof ref !== 'undefined') {
+                    lines.push(resText(ref));
+                }
+            }
+        }
+        avatarExportContent.value = lines.join('\n');
+    }
+    function selectAvatarExportGroup(group) {
+        avatarExportFavoriteGroup.value = group;
+        avatarExportLocalFavoriteGroup.value = null;
+        updateAvatarExportDialog();
+    }
+    function selectAvatarExportLocalGroup(group) {
+        avatarExportLocalFavoriteGroup.value = group;
+        avatarExportFavoriteGroup.value = null;
+        updateAvatarExportDialog();
+    }
 </script>

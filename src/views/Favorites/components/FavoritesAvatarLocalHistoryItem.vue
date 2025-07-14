@@ -8,16 +8,16 @@
                 <span class="name" v-text="favorite.name"></span>
                 <span class="extra" v-text="favorite.authorName"></span>
             </div>
-            <el-tooltip placement="left" :content="$t('view.favorite.select_avatar_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')" :disabled="hideTooltips">
                 <el-button
-                    :disabled="API.currentUser.currentAvatar === favorite.id"
+                    :disabled="currentUser.currentAvatar === favorite.id"
                     size="mini"
                     icon="el-icon-check"
                     circle
                     style="margin-left: 5px"
                     @click.stop="selectAvatarWithConfirmation"></el-button>
             </el-tooltip>
-            <template v-if="API.cachedFavoritesByObjectId.has(favorite.id)">
+            <template v-if="cachedFavoritesByObjectId.has(favorite.id)">
                 <el-tooltip placement="right" content="Unfavorite" :disabled="hideTooltips">
                     <el-button
                         type="default"
@@ -43,26 +43,28 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'FavoritesAvatarLocalHistoryItem',
-        inject: ['API', 'showFavoriteDialog'],
-        props: {
-            favorite: {
-                type: Object,
-                required: true
-            },
-            hideTooltips: Boolean
-        },
-        computed: {
-            smallThumbnail() {
-                return this.favorite.thumbnailImageUrl.replace('256', '128') || this.favorite.thumbnailImageUrl;
-            }
-        },
-        methods: {
-            selectAvatarWithConfirmation() {
-                this.$emit('select-avatar-with-confirmation', this.favorite.id);
-            }
+<script setup>
+    import { storeToRefs } from 'pinia';
+    import { computed } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
+    import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
+
+    const { t } = useI18n();
+
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { cachedFavoritesByObjectId } = storeToRefs(useFavoriteStore());
+    const { showFavoriteDialog } = useFavoriteStore();
+    const { selectAvatarWithConfirmation } = useAvatarStore();
+    const { currentUser } = storeToRefs(useUserStore());
+
+    const props = defineProps({
+        favorite: {
+            type: Object,
+            required: true
         }
-    };
+    });
+
+    const smallThumbnail = computed(() => {
+        return props.favorite.thumbnailImageUrl.replace('256', '128') || props.favorite.thumbnailImageUrl;
+    });
 </script>

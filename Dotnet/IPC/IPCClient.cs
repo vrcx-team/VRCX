@@ -90,7 +90,7 @@ namespace VRCX
 
 #if !LINUX
                         if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                            MainForm.Instance.Browser.ExecuteScriptAsync("$app.ipcEvent", packet);
+                            MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.vrcx.ipcEvent", packet);
 #endif
                     }
 

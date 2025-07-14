@@ -538,10 +538,6 @@
                         "header": "VRChat終了時にキャッシュを自動で管理する",
                         "description": "旧バージョンのキャッシュを自動削除"
                     },
-                    "local_world_persistence": {
-                        "header": "ローカルでのワールド永続化",
-                        "description": "Webサーバーをローカルでホストする (再起動が必要です)"
-                    },
                     "save_instance_prints_to_file": {
                         "header": "インスタンス内にあるプリントを、ローカルファイルに保存",
                         "header_tooltip": "「--enable-sdk-log-levels」オプションをつけて、VRChatを起動する必要があります。",

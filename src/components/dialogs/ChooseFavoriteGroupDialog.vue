@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog ref="favoriteDialog" :visible.sync="isVisible" :title="$t('dialog.favorite.header')" width="300px">
+    <safe-dialog ref="favoriteDialogRef" :visible.sync="isVisible" :title="t('dialog.favorite.header')" width="300px">
         <div v-loading="loading">
-            <span style="display: block; text-align: center">{{ $t('dialog.favorite.vrchat_favorites') }}</span>
+            <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
                 <el-button
                     style="display: block; width: 100%; margin: 10px 0"
@@ -22,7 +22,7 @@
             </template>
         </div>
         <div v-if="favoriteDialog.type === 'world'" style="margin-top: 20px">
-            <span style="display: block; text-align: center">{{ $t('dialog.favorite.local_favorites') }}</span>
+            <span style="display: block; text-align: center">{{ t('dialog.favorite.local_favorites') }}</span>
             <template v-for="group in localWorldFavoriteGroups">
                 <el-button
                     v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)"
@@ -42,7 +42,7 @@
             </template>
         </div>
         <div v-if="favoriteDialog.type === 'avatar'" style="margin-top: 20px">
-            <span style="display: block; text-align: center">{{ $t('dialog.favorite.local_avatar_favorites') }}</span>
+            <span style="display: block; text-align: center">{{ t('dialog.favorite.local_avatar_favorites') }}</span>
             <template v-for="group in localAvatarFavoriteGroups">
                 <el-button
                     v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)"
@@ -65,122 +65,88 @@
     </safe-dialog>
 </template>
 
-<script>
-    import { favoriteRequest } from '../../api';
+<script setup>
     import Noty from 'noty';
+    import { storeToRefs } from 'pinia';
+    import { computed, nextTick, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
+    import { favoriteRequest } from '../../api';
+    import { adjustDialogZ } from '../../shared/utils';
+    import { useFavoriteStore, useUserStore } from '../../stores';
 
-    export default {
-        name: 'ChooseFavoriteGroupDialog',
-        inject: ['API', 'adjustDialogZ'],
-        props: {
-            favoriteDialog: {
-                type: Object,
-                default: () => ({
-                    visible: false,
-                    type: '',
-                    objectId: '',
-                    currentGroup: {}
-                })
-            },
-            localWorldFavoriteGroups: {
-                type: Array,
-                default: () => []
-            },
-            localAvatarFavoriteGroups: {
-                type: Array,
-                default: () => []
-            },
-            hasLocalWorldFavorite: {
-                type: Function,
-                default: () => () => false
-            },
-            getLocalWorldFavoriteGroupLength: {
-                type: Function,
-                default: () => () => 0
-            },
-            hasLocalAvatarFavorite: {
-                type: Function,
-                default: () => () => false
-            },
-            getLocalAvatarFavoriteGroupLength: {
-                type: Function,
-                default: () => () => 0
-            }
-        },
-        data() {
-            return {
-                groups: [],
-                loading: false
-            };
-        },
-        computed: {
-            isVisible: {
-                get() {
-                    return this.favoriteDialog.visible;
-                },
-                set(value) {
-                    this.$emit('update:favorite-dialog', { ...this.favoriteDialog, visible: value });
-                }
-            },
-            isLocalUserVrcplusSupporter() {
-                return this.API.currentUser.$isVRCPlus;
-            }
-        },
-        watch: {
-            'favoriteDialog.visible'(value) {
-                if (value) {
-                    this.initFavoriteDialog();
-                    this.$nextTick(() => {
-                        this.adjustDialogZ(this.$refs.favoriteDialog.$el);
-                    });
-                }
-            }
-        },
-        methods: {
-            initFavoriteDialog() {
-                if (this.favoriteDialog.type === 'friend') {
-                    this.groups = this.API.favoriteFriendGroups;
-                } else if (this.favoriteDialog.type === 'world') {
-                    this.groups = this.API.favoriteWorldGroups;
-                } else if (this.favoriteDialog.type === 'avatar') {
-                    this.groups = this.API.favoriteAvatarGroups;
-                }
-            },
-            addFavorite(group) {
-                const D = this.favoriteDialog;
-                this.loading = true;
-                favoriteRequest
-                    .addFavorite({
-                        type: D.type,
-                        favoriteId: D.objectId,
-                        tags: group.name
-                    })
-                    .then(() => {
-                        this.isVisible = false;
-                        new Noty({
-                            type: 'success',
-                            text: 'Favorite added'
-                        }).show();
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    });
-            },
-            addLocalWorldFavorite(...args) {
-                this.$emit('addLocalWorldFavorite', ...args);
-            },
-            removeLocalWorldFavorite(...args) {
-                this.$emit('removeLocalWorldFavorite', ...args);
-            },
-            addLocalAvatarFavorite(...args) {
-                this.$emit('addLocalAvatarFavorite', ...args);
-            },
-            removeLocalAvatarFavorite(...args) {
-                this.$emit('removeLocalAvatarFavorite', ...args);
-            },
-            deleteFavoriteNoConfirm(...args) {
-                this.$emit('deleteFavoriteNoConfirm', ...args);
+    const { t } = useI18n();
+
+    const favoriteStore = useFavoriteStore();
+    const {
+        favoriteFriendGroups,
+        favoriteAvatarGroups,
+        favoriteWorldGroups,
+        localAvatarFavoriteGroups,
+        favoriteDialog,
+        localWorldFavoriteGroups
+    } = storeToRefs(favoriteStore);
+    const {
+        getLocalWorldFavoriteGroupLength,
+        addLocalWorldFavorite,
+        hasLocalWorldFavorite,
+        hasLocalAvatarFavorite,
+        addLocalAvatarFavorite,
+        getLocalAvatarFavoriteGroupLength,
+        removeLocalAvatarFavorite,
+        removeLocalWorldFavorite,
+        deleteFavoriteNoConfirm
+    } = favoriteStore;
+    const { currentUser } = storeToRefs(useUserStore());
+
+    const favoriteDialogRef = ref(null);
+    const groups = ref([]);
+    const loading = ref(false);
+
+    const isVisible = computed({
+        get: () => favoriteDialog.value.visible,
+        set: (v) => {
+            favoriteDialog.value.visible = v;
+        }
+    });
+
+    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
+
+    watch(
+        () => favoriteDialog.value.visible,
+        async (value) => {
+            if (value) {
+                initFavoriteDialog();
+                await nextTick();
+                adjustDialogZ(favoriteDialogRef.value.$el);
             }
         }
-    };
+    );
+
+    function initFavoriteDialog() {
+        if (favoriteDialog.value.type === 'friend') {
+            groups.value = favoriteFriendGroups.value;
+        } else if (favoriteDialog.value.type === 'world') {
+            groups.value = favoriteWorldGroups.value;
+        } else if (favoriteDialog.value.type === 'avatar') {
+            groups.value = favoriteAvatarGroups.value;
+        }
+    }
+
+    function addFavorite(group) {
+        const D = favoriteDialog.value;
+        loading.value = true;
+        favoriteRequest
+            .addFavorite({
+                type: D.type,
+                favoriteId: D.objectId,
+                tags: group.name
+            })
+            .then(() => {
+                isVisible.value = false;
+                new Noty({ type: 'success', text: 'favorite added!' }).show();
+            })
+            .finally(() => {
+                loading.value = false;
+            });
+    }
 </script>

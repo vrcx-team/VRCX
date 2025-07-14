@@ -2,27 +2,27 @@
     <div v-show="menuActiveIndex === 'friendList'" class="x-container">
         <div style="padding: 0 10px 0 10px">
             <div style="display: flex; align-items: center; justify-content: space-between">
-                <span class="header">{{ $t('view.friend_list.header') }}</span>
-                <div style="font-size: 13px">
+                <span class="header">{{ t('view.friend_list.header') }}</span>
+                <div style="font-size: 13px; display: flex; align-items: center">
                     <div v-if="friendsListBulkUnfriendMode" style="display: inline-block; margin-right: 10px">
                         <el-button size="small" @click="showBulkUnfriendSelectionConfirm">
-                            {{ $t('view.friend_list.bulk_unfriend_selection') }}
+                            {{ t('view.friend_list.bulk_unfriend_selection') }}
                         </el-button>
                         <!-- el-button(size="small" @click="showBulkUnfriendAllConfirm" style="margin-right:5px") Bulk Unfriend All-->
                     </div>
-                    <div style="display: inline-block; margin-right: 10px">
-                        <span class="name">{{ $t('view.friend_list.bulk_unfriend') }}</span>
+                    <div style="display: flex; align-items: center; margin-right: 10px">
+                        <span class="name">{{ t('view.friend_list.bulk_unfriend') }}</span>
                         <el-switch
                             v-model="friendsListBulkUnfriendMode"
                             style="margin-left: 5px"
                             @change="toggleFriendsListBulkUnfriendMode"></el-switch>
                     </div>
-                    <span>{{ $t('view.friend_list.load') }}</span>
+                    <span>{{ t('view.friend_list.load') }}</span>
                     <template v-if="friendsListLoading">
                         <span style="margin-left: 5px" v-text="friendsListLoadingProgress"></span>
                         <el-tooltip
                             placement="top"
-                            :content="$t('view.friend_list.cancel_tooltip')"
+                            :content="t('view.friend_list.cancel_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
                                 size="mini"
@@ -35,7 +35,7 @@
                     <template v-else>
                         <el-tooltip
                             placement="top"
-                            :content="$t('view.friend_list.load_tooltip')"
+                            :content="t('view.friend_list.load_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
                                 size="mini"
@@ -52,7 +52,7 @@
                 <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                     <el-tooltip
                         placement="bottom"
-                        :content="$t('view.friend_list.favorites_only_tooltip')"
+                        :content="t('view.friend_list.favorites_only_tooltip')"
                         :disabled="hideTooltips">
                         <el-switch
                             v-model="friendsListSearchFilterVIP"
@@ -61,11 +61,10 @@
                     </el-tooltip>
                 </div>
                 <el-input
-                    :value="friendsListSearch"
-                    :placeholder="$t('view.friend_list.search_placeholder')"
+                    v-model="friendsListSearch"
+                    :placeholder="t('view.friend_list.search_placeholder')"
                     clearable
                     style="flex: 1"
-                    @input="$emit('update:friends-list-search', $event)"
                     @change="friendsListSearchChange"></el-input>
                 <el-select
                     v-model="friendsListSearchFilters"
@@ -73,7 +72,7 @@
                     clearable
                     collapse-tags
                     style="flex: none; width: 200px; margin: 0 10px"
-                    :placeholder="$t('view.friend_list.filter_placeholder')"
+                    :placeholder="t('view.friend_list.filter_placeholder')"
                     @change="friendsListSearchChange">
                     <el-option
                         v-for="type in ['Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Note', 'Memo']"
@@ -81,7 +80,7 @@
                         :label="type"
                         :value="type"></el-option>
                 </el-select>
-                <el-tooltip placement="top" :content="$t('view.friend_list.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.friend_list.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
                         icon="el-icon-refresh"
@@ -109,12 +108,12 @@
                         </el-button>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('table.friendList.no')" width="70" prop="$friendNumber" sortable="custom">
+                <el-table-column :label="t('table.friendList.no')" width="70" prop="$friendNumber" sortable="custom">
                     <template slot-scope="scope">
                         <span>{{ scope.row.$friendNumber ? scope.row.$friendNumber : '' }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('table.friendList.avatar')" width="70" prop="photo">
+                <el-table-column :label="t('table.friendList.avatar')" width="70" prop="photo">
                     <template slot-scope="scope">
                         <el-popover placement="right" height="500px" trigger="hover">
                             <img slot="reference" v-lazy="userImage(scope.row, true)" class="friends-list-avatar" />
@@ -127,7 +126,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.displayName')"
+                    :label="t('table.friendList.displayName')"
                     min-width="140"
                     prop="displayName"
                     sortable
@@ -138,11 +137,7 @@
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column
-                    :label="$t('table.friendList.rank')"
-                    width="110"
-                    prop="$trustSortNum"
-                    sortable="custom">
+                <el-table-column :label="t('table.friendList.rank')" width="110" prop="$trustSortNum" sortable="custom">
                     <template slot-scope="scope">
                         <span
                             v-if="randomUserColours"
@@ -157,7 +152,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.status')"
+                    :label="t('table.friendList.status')"
                     min-width="180"
                     prop="status"
                     sortable
@@ -172,7 +167,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.language')"
+                    :label="t('table.friendList.language')"
                     width="110"
                     prop="$languages"
                     sortable
@@ -189,7 +184,7 @@
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('table.friendList.bioLink')" width="100" prop="bioLinks">
+                <el-table-column :label="t('table.friendList.bioLink')" width="100" prop="bioLinks">
                     <template slot-scope="scope">
                         <el-tooltip v-for="(link, index) in scope.row.bioLinks" v-if="link" :key="index">
                             <template slot="content">
@@ -209,52 +204,52 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.joinCount')"
+                    :label="t('table.friendList.joinCount')"
                     width="120"
                     prop="$joinCount"
                     sortable></el-table-column>
-                <el-table-column :label="$t('table.friendList.timeTogether')" width="140" prop="$timeSpent" sortable>
+                <el-table-column :label="t('table.friendList.timeTogether')" width="140" prop="$timeSpent" sortable>
                     <template slot-scope="scope">
                         <span v-if="scope.row.$timeSpent">{{ timeToText(scope.row.$timeSpent) }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.lastSeen')"
+                    :label="t('table.friendList.lastSeen')"
                     width="170"
                     prop="$lastSeen"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.$lastSeen | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.$lastSeen, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.lastActivity')"
+                    :label="t('table.friendList.lastActivity')"
                     width="170"
                     prop="last_activity"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_activity')">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.last_activity | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.last_activity, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.lastLogin')"
+                    :label="t('table.friendList.lastLogin')"
                     width="170"
                     prop="last_login"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.last_login | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.last_login, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    :label="$t('table.friendList.dateJoined')"
+                    :label="t('table.friendList.dateJoined')"
                     width="120"
                     prop="date_joined"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')"></el-table-column>
-                <el-table-column :label="$t('table.friendList.unfriend')" width="100" align="center">
+                <el-table-column :label="t('table.friendList.unfriend')" width="100" align="center">
                     <template slot-scope="scope">
                         <el-button
                             type="text"
@@ -269,251 +264,185 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
     import { friendRequest, userRequest } from '../../api';
-    import utils from '../../classes/utils';
-    import { languageClass as _languageClass } from '../../composables/user/utils';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
-    import { getFaviconUrl as _getFaviconUrl } from '../../composables/shared/utils';
+    import {
+        getFaviconUrl,
+        languageClass,
+        localeIncludes,
+        openExternalLink,
+        sortStatus,
+        statusClass,
+        timeToText,
+        userImage,
+        userImageFull,
+        formatDateFilter
+    } from '../../shared/utils';
+    import {
+        useAppearanceSettingsStore,
+        useFriendStore,
+        useGalleryStore,
+        useSearchStore,
+        useUiStore,
+        useUserStore
+    } from '../../stores';
 
-    export default {
-        name: 'FriendListTab',
-        inject: [
-            'userImage',
-            'userImageFull',
-            'showFullscreenImageDialog',
-            'showUserDialog',
-            'statusClass',
-            'openExternalLink'
-        ],
-        props: {
-            friends: {
-                type: Map,
-                required: true
-            },
-            hideTooltips: Boolean,
-            randomUserColours: Boolean,
-            sortStatus: Function,
-            confirmDeleteFriend: Function,
-            friendsListSearch: String,
-            menuActiveIndex: String,
-            stringComparer: Intl.Collator
-        },
-        data() {
-            return {
-                friendsListSearchFilters: [],
-                friendsListTable: {
-                    data: [],
-                    tableProps: {
-                        stripe: true,
-                        size: 'mini',
-                        defaultSort: {
-                            prop: '$friendNumber',
-                            order: 'descending'
-                        }
-                    },
-                    pageSize: 100,
-                    paginationProps: {
-                        small: true,
-                        layout: 'sizes,prev,pager,next,total',
-                        pageSizes: [50, 100, 250, 500]
-                    }
-                },
-                friendsListBulkUnfriendMode: false,
-                friendsListLoading: false,
-                friendsListLoadingProgress: '',
-                friendsListSearchFilterVIP: false,
-                // TODO
-                friendsListBulkUnfriendForceUpdate: 0
-            };
-        },
-        watch: {
-            menuActiveIndex() {
-                if (this.menuActiveIndex === 'friendList') {
-                    requestAnimationFrame(() => {
-                        this.friendsListSearchChange();
-                    });
+    const { t } = useI18n();
+
+    const { proxy } = getCurrentInstance();
+    const $confirm = proxy.$confirm;
+    const emit = defineEmits(['lookup-user']);
+
+    const { friends } = storeToRefs(useFriendStore());
+    const { getAllUserStats, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
+    const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { showUserDialog } = useUserStore();
+    const { menuActiveIndex } = storeToRefs(useUiStore());
+    const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
+    const { showFullscreenImageDialog } = useGalleryStore();
+
+    const friendsListSearchFilters = ref([]);
+    const friendsListTable = reactive({
+        data: [],
+        tableProps: { stripe: true, size: 'mini', defaultSort: { prop: '$friendNumber', order: 'descending' } },
+        pageSize: 100,
+        paginationProps: { small: true, layout: 'sizes,prev,pager,next,total', pageSizes: [50, 100, 250, 500] }
+    });
+    const friendsListBulkUnfriendMode = ref(false);
+    const friendsListLoading = ref(false);
+    const friendsListLoadingProgress = ref('');
+    const friendsListSearchFilterVIP = ref(false);
+    const friendsListBulkUnfriendForceUpdate = ref(0);
+
+    watch(menuActiveIndex, (val) => {
+        if (val === 'friendList') nextTick(friendsListSearchChange);
+    });
+
+    function friendsListSearchChange() {
+        friendsListLoading.value = true;
+        let query = '';
+        let cleanedQuery = '';
+        friendsListTable.data = [];
+        let filters = friendsListSearchFilters.value.length
+            ? [...friendsListSearchFilters.value]
+            : ['Display Name', 'Rank', 'Status', 'Bio', 'Note', 'Memo'];
+        const results = [];
+        if (friendsListSearch.value) {
+            query = friendsListSearch.value;
+            cleanedQuery = removeWhitespace(query);
+        }
+        for (const ctx of friends.value.values()) {
+            if (!ctx.ref) continue;
+            ctx.ref.$selected = ctx.ref.$selected ?? false;
+            if (friendsListSearchFilterVIP.value && !ctx.isVIP) continue;
+            if (query) {
+                let match = false;
+                if (!match && filters.includes('Display Name') && ctx.ref.displayName) {
+                    match =
+                        localeIncludes(ctx.ref.displayName, cleanedQuery, stringComparer.value) ||
+                        localeIncludes(removeConfusables(ctx.ref.displayName), cleanedQuery, stringComparer.value);
                 }
+                if (!match && filters.includes('Memo') && ctx.memo) {
+                    match = localeIncludes(ctx.memo, query, stringComparer.value);
+                }
+                if (!match && filters.includes('Note') && ctx.ref.note) {
+                    match = localeIncludes(ctx.ref.note, query, stringComparer.value);
+                }
+                if (!match && filters.includes('Bio') && ctx.ref.bio) {
+                    match = localeIncludes(ctx.ref.bio, query, stringComparer.value);
+                }
+                if (!match && filters.includes('Status') && ctx.ref.statusDescription) {
+                    match = localeIncludes(ctx.ref.statusDescription, query, stringComparer.value);
+                }
+                if (!match && filters.includes('Rank')) {
+                    match = String(ctx.ref.$trustLevel).toUpperCase().includes(query.toUpperCase());
+                }
+                if (!match) continue;
             }
-        },
-        methods: {
-            languageClass(key) {
-                return _languageClass(key);
-            },
-            friendsListSearchChange() {
-                this.friendsListLoading = true;
-                let query = '';
-                let cleanedQuery = '';
-                this.friendsListTable.data = [];
-                let filters = [...this.friendsListSearchFilters];
-                if (filters.length === 0) {
-                    filters = ['Display Name', 'Rank', 'Status', 'Bio', 'Note', 'Memo'];
-                }
-                const results = [];
-                if (this.friendsListSearch) {
-                    query = this.friendsListSearch;
-                    cleanedQuery = removeWhitespace(query);
-                }
+            results.push(ctx.ref);
+        }
+        getAllUserStats();
+        nextTick(() => {
+            friendsListTable.data = results;
+            friendsListLoading.value = false;
+        });
+    }
 
-                for (const ctx of this.friends.values()) {
-                    if (typeof ctx.ref === 'undefined') {
-                        continue;
-                    }
-                    if (typeof ctx.ref.$selected === 'undefined') {
-                        ctx.ref.$selected = false;
-                    }
-                    if (this.friendsListSearchFilterVIP && !ctx.isVIP) {
-                        continue;
-                    }
-                    if (query && filters) {
-                        let match = false;
-                        if (!match && filters.includes('Display Name') && ctx.ref.displayName) {
-                            match =
-                                utils.localeIncludes(ctx.ref.displayName, cleanedQuery, this.stringComparer) ||
-                                utils.localeIncludes(
-                                    removeConfusables(ctx.ref.displayName),
-                                    cleanedQuery,
-                                    this.stringComparer
-                                );
-                        }
-                        if (!match && filters.includes('Memo') && ctx.memo) {
-                            match = utils.localeIncludes(ctx.memo, query, this.stringComparer);
-                        }
-                        if (!match && filters.includes('Note') && ctx.ref.note) {
-                            match = utils.localeIncludes(ctx.ref.note, query, this.stringComparer);
-                        }
-                        if (!match && filters.includes('Bio') && ctx.ref.bio) {
-                            match = utils.localeIncludes(ctx.ref.bio, query, this.stringComparer);
-                        }
-                        if (!match && filters.includes('Status') && ctx.ref.statusDescription) {
-                            match = utils.localeIncludes(ctx.ref.statusDescription, query, this.stringComparer);
-                        }
-                        if (!match && filters.includes('Rank')) {
-                            match = String(ctx.ref.$trustLevel).toUpperCase().includes(query.toUpperCase());
-                        }
-                        if (!match) {
-                            continue;
-                        }
-                    }
-                    results.push(ctx.ref);
-                }
-                this.$emit('get-all-user-stats');
-                requestAnimationFrame(() => {
-                    this.friendsListTable.data = results;
-                    this.friendsListLoading = false;
-                });
-            },
-            toggleFriendsListBulkUnfriendMode() {
-                if (!this.friendsListBulkUnfriendMode) {
-                    this.friendsListTable.data.forEach((ref) => {
-                        ref.$selected = false;
-                    });
-                }
-            },
-            showBulkUnfriendSelectionConfirm() {
-                const pendingUnfriendList = this.friendsListTable.data.reduce((acc, ctx) => {
-                    if (ctx.$selected) {
-                        acc.push(ctx.displayName);
-                    }
-                    return acc;
-                }, []);
-                const elementsTicked = pendingUnfriendList.length;
-                if (elementsTicked === 0) {
-                    return;
-                }
-                this.$confirm(
-                    `Are you sure you want to delete ${elementsTicked} friends?
+    function toggleFriendsListBulkUnfriendMode() {
+        if (!friendsListBulkUnfriendMode.value) {
+            friendsListTable.data.forEach((item) => (item.$selected = false));
+        }
+    }
+
+    function showBulkUnfriendSelectionConfirm() {
+        const pending = friendsListTable.data.filter((item) => item.$selected).map((item) => item.displayName);
+        if (!pending.length) return;
+        $confirm(
+            `Are you sure you want to delete ${pending.length} friends?
             This can negatively affect your trust rank,
             This action cannot be undone.`,
-                    `Delete ${elementsTicked} friends?`,
-                    {
-                        confirmButtonText: 'Confirm',
-                        cancelButtonText: 'Cancel',
-                        type: 'info',
-                        showInput: true,
-                        inputType: 'textarea',
-                        inputValue: pendingUnfriendList.join('\r\n'),
-                        callback: (action) => {
-                            if (action === 'confirm') {
-                                this.bulkUnfriendSelection();
-                            }
-                        }
-                    }
-                );
-            },
+            `Delete ${pending.length} friends?`,
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info',
+                showInput: true,
+                inputType: 'textarea',
+                inputValue: pending.join('\r\n'),
+                callback: (action) => action === 'confirm' && bulkUnfriendSelection()
+            }
+        );
+    }
 
-            bulkUnfriendSelection() {
-                for (const ctx of this.friendsListTable.data) {
-                    if (ctx.$selected) {
-                        friendRequest.deleteFriend({
-                            userId: ctx.id
-                        });
-                    }
-                }
-            },
-            async friendsListLoadUsers() {
-                this.friendsListLoading = true;
-                let i = 0;
-                const toFetch = [];
-                for (const ctx of this.friends.values()) {
-                    if (ctx.ref && !ctx.ref.date_joined) {
-                        toFetch.push(ctx.id);
-                    }
-                }
-                const length = toFetch.length;
-                for (const userId of toFetch) {
-                    if (!this.friendsListLoading) {
-                        this.friendsListLoadingProgress = '';
-                        return;
-                    }
-                    i++;
-                    this.friendsListLoadingProgress = `${i}/${length}`;
-                    try {
-                        await userRequest.getUser({
-                            userId
-                        });
-                    } catch (err) {
-                        console.error(err);
-                    }
-                }
-                this.friendsListLoadingProgress = '';
-                this.friendsListLoading = false;
-            },
-            selectFriendsListRow(val) {
-                if (val === null) {
-                    return;
-                }
-                if (!val.id) {
-                    this.$emit('lookup-user', val);
-                    return;
-                }
-                this.showUserDialog(val.id);
-            },
-            sortAlphabetically(a, b, field) {
-                if (!a[field] || !b[field]) {
-                    return 0;
-                }
-                return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
-            },
-            sortLanguages(a, b) {
-                const sortedA = [];
-                const sortedB = [];
-                a.$languages.forEach((item) => {
-                    sortedA.push(item.value);
-                });
-                b.$languages.forEach((item) => {
-                    sortedB.push(item.value);
-                });
-                sortedA.sort();
-                sortedB.sort();
-                return JSON.stringify(sortedA).localeCompare(JSON.stringify(sortedB));
-            },
-            timeToText(val) {
-                return utils.timeToText(val);
-            },
-            getFaviconUrl(link) {
-                return _getFaviconUrl(link);
+    function bulkUnfriendSelection() {
+        friendsListTable.data.forEach((item) => {
+            if (item.$selected)
+                friendRequest.deleteFriend({ userId: item.id }).then((args) => handleFriendDelete(args));
+        });
+    }
+
+    async function friendsListLoadUsers() {
+        friendsListLoading.value = true;
+        let i = 0;
+        const toFetch = Array.from(friends.value.values())
+            .filter((ctx) => ctx.ref && !ctx.ref.date_joined)
+            .map((ctx) => ctx.id);
+        const total = toFetch.length;
+        for (const userId of toFetch) {
+            if (!friendsListLoading.value) {
+                friendsListLoadingProgress.value = '';
+                return;
+            }
+            i++;
+            friendsListLoadingProgress.value = `${i}/${total}`;
+            try {
+                await userRequest.getUser({ userId });
+            } catch (err) {
+                console.error(err);
             }
         }
-    };
+        friendsListLoadingProgress.value = '';
+        friendsListLoading.value = false;
+    }
+
+    function selectFriendsListRow(val) {
+        if (!val) return;
+        if (!val.id) emit('lookup-user', val);
+        else showUserDialog(val.id);
+    }
+
+    function sortAlphabetically(a, b, field) {
+        if (!a[field] || !b[field]) return 0;
+        return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
+    }
+
+    function sortLanguages(a, b) {
+        const as = a.$languages.map((i) => i.value).sort();
+        const bs = b.$languages.map((i) => i.value).sort();
+        return JSON.stringify(as).localeCompare(JSON.stringify(bs));
+    }
 </script>

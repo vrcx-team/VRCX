@@ -1,6 +1,13 @@
+import { request } from '../service/request';
+import { useUserStore } from '../stores';
+
+function getCurrentUserId() {
+    return useUserStore().currentUser.id;
+}
+
 const miscReq = {
     getBundles(fileId) {
-        return window.API.call(`file/${fileId}`, {
+        return request(`file/${fileId}`, {
             method: 'GET'
         }).then((json) => {
             const args = {
@@ -11,7 +18,7 @@ const miscReq = {
     },
 
     saveNote(params) {
-        return window.API.call('userNotes', {
+        return request('userNotes', {
             method: 'POST',
             params
         }).then((json) => {
@@ -19,7 +26,6 @@ const miscReq = {
                 json,
                 params
             };
-            // window.API.$emit('NOTE', args);
             return args;
         });
     },
@@ -34,7 +40,7 @@ const miscReq = {
      * @return { Promise<{json: any, params}> }
      */
     reportUser(params) {
-        return window.API.call(`feedback/${params.userId}/user`, {
+        return request(`feedback/${params.userId}/user`, {
             method: 'POST',
             params: {
                 contentType: params.contentType,
@@ -46,7 +52,6 @@ const miscReq = {
                 json,
                 params
             };
-            // window.API.$emit('FEEDBACK:REPORT:USER', args);
             return args;
         });
     },
@@ -59,7 +64,7 @@ const miscReq = {
      * @return { Promise<{json: any, params}> }
      */
     getFileAnalysis(params) {
-        return window.API.call(
+        return request(
             `analysis/${params.fileId}/${params.version}/${params.variant}`,
             {
                 method: 'GET'
@@ -69,19 +74,17 @@ const miscReq = {
                 json,
                 params
             };
-            // window.API.$emit('FILE:ANALYSIS', args);
             return args;
         });
     },
 
     getVRChatCredits() {
-        return window.API.call(`user/${window.API.currentUser.id}/balance`, {
+        return request(`user/${getCurrentUserId()}/balance`, {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json
             };
-            // window.API.$emit('VRCCREDITS', args);
             return args;
         });
     },
@@ -94,7 +97,7 @@ const miscReq = {
      * @returns {Promise<{json: any, params}>}
      */
     closeInstance(params) {
-        return window.API.call(`instances/${params.location}`, {
+        return request(`instances/${params.location}`, {
             method: 'DELETE',
             params: {
                 hardClose: params.hardClose ?? false
@@ -104,7 +107,6 @@ const miscReq = {
                 json,
                 params
             };
-            window.API.$emit('INSTANCE:CLOSE', args);
             return args;
         });
     },
@@ -116,8 +118,8 @@ const miscReq = {
      * @returns {Promise<{json: any, params}>}
      */
     deleteWorldPersistData(params) {
-        return window.API.call(
-            `users/${window.API.currentUser.id}/${params.worldId}/persist`,
+        return request(
+            `users/${getCurrentUserId()}/${params.worldId}/persist`,
             {
                 method: 'DELETE'
             }
@@ -126,7 +128,6 @@ const miscReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLD:PERSIST:DELETE', args);
             return args;
         });
     },
@@ -138,8 +139,8 @@ const miscReq = {
      * @returns {Promise<{json: any, params}>}
      */
     hasWorldPersistData(params) {
-        return window.API.call(
-            `users/${window.API.currentUser.id}/${params.worldId}/persist/exists`,
+        return request(
+            `users/${getCurrentUserId()}/${params.worldId}/persist/exists`,
             {
                 method: 'GET'
             }
@@ -148,47 +149,41 @@ const miscReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLD:PERSIST:HAS', args);
             return args;
         });
     },
 
     updateBadge(params) {
-        return window.API.call(
-            `users/${window.API.currentUser.id}/badges/${params.badgeId}`,
-            {
-                method: 'PUT',
-                params: {
-                    userId: window.API.currentUser.id,
-                    badgeId: params.badgeId,
-                    hidden: params.hidden,
-                    showcased: params.showcased
-                }
+        return request(`users/${getCurrentUserId()}/badges/${params.badgeId}`, {
+            method: 'PUT',
+            params: {
+                userId: getCurrentUserId(),
+                badgeId: params.badgeId,
+                hidden: params.hidden,
+                showcased: params.showcased
             }
-        ).then((json) => {
+        }).then((json) => {
             const args = {
                 json,
                 params
             };
-            // window.API.$emit('BADGE:UPDATE', args);
             return args;
         });
     },
 
     getVisits() {
-        return window.API.call('visits', {
+        return request('visits', {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json
             };
-            // window.API.$emit('VISITS', args);
             return args;
         });
     },
 
     deleteFile(fileId) {
-        return window.API.call(`file/${fileId}`, {
+        return request(`file/${fileId}`, {
             method: 'DELETE'
         }).then((json) => {
             const args = {
@@ -207,7 +202,7 @@ const miscReq = {
     //  * @returns {Promise<{json: any, params}>}
     //  */
     // sendBoop(params) {
-    //     return window.API.call(`users/${params.userId}/boop`, {
+    //     return request(`users/${params.userId}/boop`, {
     //         method: 'POST',
     //         params
     //     }).then((json) => {

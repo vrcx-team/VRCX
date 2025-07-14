@@ -8,6 +8,7 @@ using NLog;
 using NLog.Targets;
 using System;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
@@ -99,14 +100,12 @@ namespace VRCX
                     // Layout with padding between the level/logger and message so that the message always starts at the same column
                     Layout =
                         "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
-                    ArchiveFileName = Path.Join(AppDataDirectory, "logs", "VRCX.{#}.log"),
-                    ArchiveNumbering = ArchiveNumberingMode.DateAndSequence,
+                    ArchiveSuffixFormat = "{0:000}",
                     ArchiveEvery = FileArchivePeriod.Day,
                     MaxArchiveFiles = 4,
                     MaxArchiveDays = 7,
                     ArchiveAboveSize = 10000000,
                     ArchiveOldFileOnStartup = true,
-                    ConcurrentWrites = true,
                     KeepFileOpen = true,
                     AutoFlush = true,
                     Encoding = System.Text.Encoding.UTF8
@@ -118,12 +117,13 @@ namespace VRCX
                     Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
                     DetectConsoleAvailable = true
                 };
-                builder.ForLogger("VRCX").FilterMinLevel(LogLevel.Info).WriteTo(consoleTarget);
+                builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(consoleTarget);
             });
         }
 
 #if !LINUX
         [STAThread]
+        [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
         private static void Main()
         {
             if (Wine.GetIfWine())
@@ -150,7 +150,7 @@ namespace VRCX
                 {
                     case DialogResult.Yes:
                         logger.Fatal("Handled Exception, user selected auto install of vc_redist.");
-                        Update.DownloadInstallRedist();
+                        Update.DownloadInstallRedist().GetAwaiter().GetResult();
                         MessageBox.Show(
                             "vc_redist has finished installing, if the issue persists upon next restart, please reinstall VRCX From GitHub,\nVRCX Will now restart.",
                             "vc_redist installation complete", MessageBoxButtons.OK);
@@ -210,6 +210,7 @@ namespace VRCX
             }
         }
 
+        [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
         private static void Run()
         {
             var args = Environment.GetCommandLineArgs();
@@ -236,7 +237,6 @@ namespace VRCX
             AppApiVr.Instance.Init();
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
-            WorldDBManager.Instance.Init();
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
             AutoAppLaunchManager.Instance.Init();
@@ -258,7 +258,6 @@ namespace VRCX
             AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
-            WorldDBManager.Instance.Stop();
 
             Discord.Instance.Exit();
             SystemMonitor.Instance.Exit();

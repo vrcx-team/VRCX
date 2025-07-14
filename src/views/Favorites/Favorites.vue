@@ -2,317 +2,222 @@
     <div v-show="menuActiveIndex === 'favorite'" class="x-container">
         <div style="font-size: 13px; position: absolute; display: flex; right: 0; z-index: 1; margin-right: 15px">
             <div v-if="editFavoritesMode" style="display: inline-block; margin-right: 10px">
-                <el-button size="small" @click="clearBulkFavoriteSelection">{{ $t('view.favorite.clear') }}</el-button>
-                <el-button size="small" @click="bulkCopyFavoriteSelection">{{ $t('view.favorite.copy') }}</el-button>
+                <el-button size="small" @click="clearBulkFavoriteSelection">{{ t('view.favorite.clear') }}</el-button>
+                <el-button size="small" @click="bulkCopyFavoriteSelection">{{ t('view.favorite.copy') }}</el-button>
                 <el-button size="small" @click="showBulkUnfavoriteSelectionConfirm">{{
-                    $t('view.favorite.bulk_unfavorite')
+                    t('view.favorite.bulk_unfavorite')
                 }}</el-button>
             </div>
             <div style="display: flex; align-items: center; margin-right: 10px">
-                <span class="name">{{ $t('view.favorite.edit_mode') }}</span>
+                <span class="name">{{ t('view.favorite.edit_mode') }}</span>
                 <el-switch v-model="editFavoritesMode" style="margin-left: 5px"></el-switch>
             </div>
-            <el-tooltip placement="bottom" :content="$t('view.favorite.refresh_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
-                    :loading="API.isFavoriteLoading"
-                    @click="
-                        API.refreshFavorites();
-                        getLocalWorldFavorites();
-                    "
+                    :loading="isFavoriteLoading"
                     size="small"
                     icon="el-icon-refresh"
-                    circle></el-button>
+                    circle
+                    @click="
+                        refreshFavorites();
+                        getLocalWorldFavorites();
+                    "></el-button>
             </el-tooltip>
         </div>
-        <el-tabs v-model="currentTabName" v-loading="API.isFavoriteLoading" type="card" style="height: 100%">
-            <el-tab-pane name="friend" :label="$t('view.favorite.friends.header')" lazy>
+        <el-tabs v-model="currentTabName" v-loading="isFavoriteLoading" type="card" style="height: 100%">
+            <el-tab-pane name="friend" :label="t('view.favorite.friends.header')">
                 <FavoritesFriendTab
-                    :favorite-friends="favoriteFriends"
-                    :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
-                    :grouped-by-group-key-favorite-friends="groupedByGroupKeyFavoriteFriends"
                     :edit-favorites-mode="editFavoritesMode"
-                    @show-friend-import-dialog="showFriendImportDialog"
-                    @save-sort-favorites-option="saveSortFavoritesOption"
                     @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
-            <el-tab-pane name="world" :label="$t('view.favorite.worlds.header')" lazy>
+            <el-tab-pane name="world" :label="t('view.favorite.worlds.header')" lazy>
                 <FavoritesWorldTab
-                    @show-world-import-dialog="showWorldImportDialog"
-                    @save-sort-favorites-option="saveSortFavoritesOption"
-                    @change-favorite-group-name="changeFavoriteGroupName"
-                    @new-instance-self-invite="newInstanceSelfInvite"
-                    @refresh-local-world-favorite="refreshLocalWorldFavorites"
-                    @delete-local-world-favorite-group="deleteLocalWorldFavoriteGroup"
-                    @remove-local-world-favorite="removeLocalWorldFavorite"
-                    @rename-local-world-favorite-group="renameLocalWorldFavoriteGroup"
-                    @new-local-world-favorite-group="newLocalWorldFavoriteGroup"
-                    :sort-favorites.sync="isSortByTime"
                     :hide-tooltips="hideTooltips"
-                    :favorite-worlds="favoriteWorlds"
                     :edit-favorites-mode="editFavoritesMode"
-                    :shift-held="shiftHeld"
                     :refresh-local-world-favorites="refreshLocalWorldFavorites"
-                    :local-world-favorite-groups="localWorldFavoriteGroups"
-                    :local-world-favorites="localWorldFavorites"
-                    :local-world-favorites-list="localWorldFavoritesList" />
-            </el-tab-pane>
-            <el-tab-pane name="avatar" :label="$t('view.favorite.avatars.header')" lazy>
-                <FavoritesAvatarTab
-                    :sort-favorites.sync="isSortByTime"
-                    :hide-tooltips="hideTooltips"
-                    :shift-held="shiftHeld"
-                    :edit-favorites-mode="editFavoritesMode"
-                    :avatar-history-array="avatarHistoryArray"
-                    :refreshing-local-favorites="refreshingLocalFavorites"
-                    :local-avatar-favorite-groups="localAvatarFavoriteGroups"
-                    :local-avatar-favorites="localAvatarFavorites"
-                    :favorite-avatars="favoriteAvatars"
-                    :local-avatar-favorites-list="localAvatarFavoritesList"
-                    @show-avatar-import-dialog="showAvatarImportDialog"
-                    @save-sort-favorites-option="saveSortFavoritesOption"
                     @change-favorite-group-name="changeFavoriteGroupName"
-                    @remove-local-avatar-favorite="removeLocalAvatarFavorite"
-                    @select-avatar-with-confirmation="selectAvatarWithConfirmation"
-                    @prompt-clear-avatar-history="promptClearAvatarHistory"
-                    @prompt-new-local-avatar-favorite-group="promptNewLocalAvatarFavoriteGroup"
-                    @refresh-local-avatar-favorites="refreshLocalAvatarFavorites"
-                    @prompt-local-avatar-favorite-group-rename="promptLocalAvatarFavoriteGroupRename"
-                    @prompt-local-avatar-favorite-group-delete="promptLocalAvatarFavoriteGroupDelete" />
+                    @refresh-local-world-favorite="refreshLocalWorldFavorites" />
+            </el-tab-pane>
+            <el-tab-pane name="avatar" :label="t('view.favorite.avatars.header')" lazy>
+                <FavoritesAvatarTab
+                    :hide-tooltips="hideTooltips"
+                    :edit-favorites-mode="editFavoritesMode"
+                    :refreshing-local-favorites="refreshingLocalFavorites"
+                    @change-favorite-group-name="changeFavoriteGroupName"
+                    @refresh-local-avatar-favorites="refreshLocalAvatarFavorites" />
             </el-tab-pane>
         </el-tabs>
     </div>
 </template>
 
-<script>
+<script setup>
+    import { ref, getCurrentInstance } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n-bridge';
+    import * as workerTimers from 'worker-timers';
+    import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
+    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
+    import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
     import FavoritesFriendTab from './components/FavoritesFriendTab.vue';
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
-    import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
-    import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
-    import * as workerTimers from 'worker-timers';
 
-    export default {
-        name: 'FavoritesTab',
-        components: {
-            FavoritesFriendTab,
-            FavoritesWorldTab,
-            FavoritesAvatarTab
-        },
-        inject: ['API'],
-        props: {
-            menuActiveIndex: String,
-            hideTooltips: Boolean,
-            shiftHeld: Boolean,
-            favoriteFriends: Array,
-            sortFavorites: Boolean,
-            groupedByGroupKeyFavoriteFriends: Object,
-            favoriteWorlds: Array,
-            localWorldFavoriteGroups: Array,
-            localWorldFavorites: Object,
-            avatarHistoryArray: Array,
-            localAvatarFavoriteGroups: Array,
-            localAvatarFavorites: Object,
-            favoriteAvatars: Array,
-            localAvatarFavoritesList: Array,
-            localWorldFavoritesList: Array
-        },
-        data() {
-            return {
-                editFavoritesMode: false,
-                refreshingLocalFavorites: false,
-                currentTabName: 'friend'
-            };
-        },
-        computed: {
-            isSortByTime: {
-                get() {
-                    return this.sortFavorites;
-                },
-                set(value) {
-                    this.$emit('update:sort-favorites', value);
-                }
-            }
-        },
-        methods: {
-            showBulkUnfavoriteSelectionConfirm() {
-                const elementsTicked = [];
-                // check favorites type
-                for (const ctx of this.favoriteFriends) {
-                    if (ctx.$selected) {
-                        elementsTicked.push(ctx.id);
-                    }
-                }
-                for (const ctx of this.favoriteWorlds) {
-                    if (ctx.$selected) {
-                        elementsTicked.push(ctx.id);
-                    }
-                }
-                for (const ctx of this.favoriteAvatars) {
-                    if (ctx.$selected) {
-                        elementsTicked.push(ctx.id);
-                    }
-                }
-                if (elementsTicked.length === 0) {
-                    return;
-                }
-                this.$confirm(
-                    `Are you sure you want to unfavorite ${elementsTicked.length} favorites?
-            This action cannot be undone.`,
-                    `Delete ${elementsTicked.length} favorites?`,
-                    {
-                        confirmButtonText: 'Confirm',
-                        cancelButtonText: 'Cancel',
-                        type: 'info',
-                        callback: (action) => {
-                            if (action === 'confirm') {
-                                this.bulkUnfavoriteSelection(elementsTicked);
-                            }
-                        }
-                    }
-                );
-            },
+    const { t } = useI18n();
+    const { proxy } = getCurrentInstance();
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const {
+        favoriteFriends,
+        favoriteWorlds,
+        favoriteAvatars,
+        isFavoriteLoading,
+        localAvatarFavoritesList,
+        localWorldFavoritesList
+    } = storeToRefs(useFavoriteStore());
+    const {
+        refreshFavorites,
+        refreshFavoriteGroups,
+        clearBulkFavoriteSelection,
+        bulkCopyFavoriteSelection,
+        getLocalWorldFavorites,
+        handleFavoriteGroup
+    } = useFavoriteStore();
+    const { menuActiveIndex } = storeToRefs(useUiStore());
+    const { applyAvatar } = useAvatarStore();
 
-            bulkUnfavoriteSelection(elementsTicked) {
-                for (const id of elementsTicked) {
-                    favoriteRequest.deleteFavorite({
-                        objectId: id
-                    });
-                }
-                this.editFavoritesMode = false;
-            },
-            changeFavoriteGroupName(ctx) {
-                this.$prompt(
-                    $t('prompt.change_favorite_group_name.description'),
-                    $t('prompt.change_favorite_group_name.header'),
-                    {
-                        distinguishCancelAndClose: true,
-                        cancelButtonText: $t('prompt.change_favorite_group_name.cancel'),
-                        confirmButtonText: $t('prompt.change_favorite_group_name.change'),
-                        inputPlaceholder: $t('prompt.change_favorite_group_name.input_placeholder'),
-                        inputValue: ctx.displayName,
-                        inputPattern: /\S+/,
-                        inputErrorMessage: $t('prompt.change_favorite_group_name.input_error'),
-                        callback: (action, instance) => {
-                            if (action === 'confirm') {
-                                favoriteRequest
-                                    .saveFavoriteGroup({
-                                        type: ctx.type,
-                                        group: ctx.name,
-                                        displayName: instance.inputValue
-                                    })
-                                    .then(() => {
-                                        this.$message({
-                                            message: $t('prompt.change_favorite_group_name.message.success'),
-                                            type: 'success'
-                                        });
-                                        // load new group name
-                                        this.API.refreshFavoriteGroups();
-                                    });
-                            }
-                        }
-                    }
-                );
-            },
+    const editFavoritesMode = ref(false);
+    const refreshingLocalFavorites = ref(false);
+    const currentTabName = ref('friend');
 
-            async refreshLocalAvatarFavorites() {
-                if (this.refreshingLocalFavorites) {
-                    return;
-                }
-                this.refreshingLocalFavorites = true;
-                for (const avatarId of this.localAvatarFavoritesList) {
-                    if (!this.refreshingLocalFavorites) {
-                        break;
-                    }
-                    try {
-                        await avatarRequest.getAvatar({
-                            avatarId
-                        });
-                    } catch (err) {
-                        console.error(err);
-                    }
-                    await new Promise((resolve) => {
-                        workerTimers.setTimeout(resolve, 1000);
-                    });
-                }
-                this.refreshingLocalFavorites = false;
-            },
-            async refreshLocalWorldFavorites() {
-                if (this.refreshingLocalFavorites) {
-                    return;
-                }
-                this.refreshingLocalFavorites = true;
-                for (const worldId of this.localWorldFavoritesList) {
-                    if (!this.refreshingLocalFavorites) {
-                        break;
-                    }
-                    try {
-                        await worldRequest.getWorld({
-                            worldId
-                        });
-                    } catch (err) {
-                        console.error(err);
-                    }
-                    await new Promise((resolve) => {
-                        workerTimers.setTimeout(resolve, 1000);
-                    });
-                }
-                this.refreshingLocalFavorites = false;
-            },
-            clearBulkFavoriteSelection() {
-                this.$emit('clear-bulk-favorite-selection');
-            },
-            bulkCopyFavoriteSelection() {
-                this.$emit('bulk-copy-favorite-selection', this.currentTabName);
-            },
-            getLocalWorldFavorites() {
-                this.$emit('get-local-world-favorites');
-            },
-            showFriendImportDialog() {
-                this.$emit('show-friend-import-dialog');
-            },
-            saveSortFavoritesOption() {
-                this.$emit('save-sort-favorites-option');
-            },
-            showWorldImportDialog() {
-                this.$emit('show-world-import-dialog');
-            },
-            newInstanceSelfInvite(worldId) {
-                this.$emit('new-instance-self-invite', worldId);
-            },
-            deleteLocalWorldFavoriteGroup(group) {
-                this.$emit('delete-local-world-favorite-group', group);
-            },
-            removeLocalWorldFavorite(worldId, group) {
-                this.$emit('remove-local-world-favorite', worldId, group);
-            },
-            showAvatarImportDialog() {
-                this.$emit('show-avatar-import-dialog');
-            },
-            removeLocalAvatarFavorite(avatarId, group) {
-                this.$emit('remove-local-avatar-favorite', avatarId, group);
-            },
-            selectAvatarWithConfirmation(id) {
-                this.$emit('select-avatar-with-confirmation', id);
-            },
-            promptClearAvatarHistory() {
-                this.$emit('prompt-clear-avatar-history');
-            },
-            promptNewLocalAvatarFavoriteGroup() {
-                this.$emit('prompt-new-local-avatar-favorite-group');
-            },
-            promptLocalAvatarFavoriteGroupRename(group) {
-                this.$emit('prompt-local-avatar-favorite-group-rename', group);
-            },
-            promptLocalAvatarFavoriteGroupDelete(group) {
-                this.$emit('prompt-local-avatar-favorite-group-delete', group);
-            },
-            renameLocalWorldFavoriteGroup(inputValue, group) {
-                this.$emit('rename-local-world-favorite-group', inputValue, group);
-            },
-            newLocalWorldFavoriteGroup(inputValue) {
-                this.$emit('new-local-world-favorite-group', inputValue);
+    function showBulkUnfavoriteSelectionConfirm() {
+        const elementsTicked = [];
+        // check favorites type
+        for (const ctx of favoriteFriends.value) {
+            if (ctx.$selected) {
+                elementsTicked.push(ctx.id);
             }
         }
-    };
+        for (const ctx of favoriteWorlds.value) {
+            if (ctx.$selected) {
+                elementsTicked.push(ctx.id);
+            }
+        }
+        for (const ctx of favoriteAvatars.value) {
+            if (ctx.$selected) {
+                elementsTicked.push(ctx.id);
+            }
+        }
+        if (elementsTicked.length === 0) {
+            return;
+        }
+        proxy.$confirm(
+            `Are you sure you want to unfavorite ${elementsTicked.length} favorites?
+            This action cannot be undone.`,
+            `Delete ${elementsTicked.length} favorites?`,
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info',
+                callback: (action) => {
+                    if (action === 'confirm') {
+                        bulkUnfavoriteSelection(elementsTicked);
+                    }
+                }
+            }
+        );
+    }
+
+    function bulkUnfavoriteSelection(elementsTicked) {
+        for (const id of elementsTicked) {
+            favoriteRequest.deleteFavorite({
+                objectId: id
+            });
+        }
+        editFavoritesMode.value = false;
+    }
+    function changeFavoriteGroupName(ctx) {
+        proxy.$prompt(
+            t('prompt.change_favorite_group_name.description'),
+            t('prompt.change_favorite_group_name.header'),
+            {
+                distinguishCancelAndClose: true,
+                cancelButtonText: t('prompt.change_favorite_group_name.cancel'),
+                confirmButtonText: t('prompt.change_favorite_group_name.change'),
+                inputPlaceholder: t('prompt.change_favorite_group_name.input_placeholder'),
+                inputValue: ctx.displayName,
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.change_favorite_group_name.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm') {
+                        favoriteRequest
+                            .saveFavoriteGroup({
+                                type: ctx.type,
+                                group: ctx.name,
+                                displayName: instance.inputValue
+                            })
+                            .then((args) => {
+                                handleFavoriteGroup({
+                                    json: args.json,
+                                    params: {
+                                        favoriteGroupId: args.json.id
+                                    }
+                                });
+                                proxy.$message({
+                                    message: t('prompt.change_favorite_group_name.message.success'),
+                                    type: 'success'
+                                });
+                                // load new group name
+                                refreshFavoriteGroups();
+                            });
+                    }
+                }
+            }
+        );
+    }
+
+    async function refreshLocalAvatarFavorites() {
+        if (refreshingLocalFavorites.value) {
+            return;
+        }
+        refreshingLocalFavorites.value = true;
+        for (const avatarId of localAvatarFavoritesList.value) {
+            if (!refreshingLocalFavorites.value) {
+                break;
+            }
+            try {
+                const args = await avatarRequest.getAvatar({
+                    avatarId
+                });
+                applyAvatar(args.json);
+            } catch (err) {
+                console.error(err);
+            }
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+        }
+        refreshingLocalFavorites.value = false;
+    }
+    async function refreshLocalWorldFavorites() {
+        if (refreshingLocalFavorites.value) {
+            return;
+        }
+        refreshingLocalFavorites.value = true;
+        for (const worldId of localWorldFavoritesList.value) {
+            if (!refreshingLocalFavorites.value) {
+                break;
+            }
+            try {
+                await worldRequest.getWorld({
+                    worldId
+                });
+            } catch (err) {
+                console.error(err);
+            }
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+        }
+        refreshingLocalFavorites.value = false;
+    }
 </script>

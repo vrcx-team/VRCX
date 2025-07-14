@@ -13,7 +13,7 @@
                     icon="el-icon-delete"
                     circle
                     style="flex: none; margin-left: 10px"
-                    @click="clearSearch"></el-button>
+                    @click="handleClearSearch"></el-button>
             </el-tooltip>
         </div>
         <el-tabs ref="searchTabRef" type="card" style="margin-top: 15px" @tab-click="searchText = ''">
@@ -55,14 +55,14 @@
                         :disabled="!searchUserParams.offset"
                         icon="el-icon-back"
                         size="small"
-                        @click="moreSearchUser(-1)"
+                        @click="handleMoreSearchUser(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
                     >
                     <el-button
                         :disabled="searchUserResults.length < 10"
                         icon="el-icon-right"
                         size="small"
-                        @click="moreSearchUser(1)"
+                        @click="handleMoreSearchUser(1)"
                         >{{ t('view.search.next_page') }}</el-button
                     >
                 </el-button-group>
@@ -81,7 +81,7 @@
                     ></el-button>
                     <el-dropdown-menu v-slot="dropdown">
                         <el-dropdown-item
-                            v-for="row in API.cachedConfig.dynamicWorldRows"
+                            v-for="row in cachedConfig.dynamicWorldRows"
                             :key="row.index"
                             :command="row"
                             v-text="row.name"></el-dropdown-item>
@@ -313,78 +313,50 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'SearchTab'
-    };
-</script>
-
 <script setup>
-    import { inject, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { groupRequest, worldRequest } from '../../api';
-    import utils from '../../classes/utils';
-    import { convertFileUrlToImageUrl } from '../../composables/shared/utils';
+    import {
+        compareByCreatedAt,
+        compareByName,
+        compareByUpdatedAt,
+        convertFileUrlToImageUrl,
+        replaceBioSymbols,
+        userImage
+    } from '../../shared/utils';
+    import {
+        useAdvancedSettingsStore,
+        useAppearanceSettingsStore,
+        useAuthStore,
+        useAvatarProviderStore,
+        useAvatarStore,
+        useGroupStore,
+        useSearchStore,
+        useUiStore,
+        useUserStore,
+        useWorldStore
+    } from '../../stores';
+
+    const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
+    const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider } = storeToRefs(useAvatarProviderStore());
+    const { setAvatarProvider } = useAvatarProviderStore();
+    const { userDialog } = storeToRefs(useUserStore());
+    const { showUserDialog, refreshUserDialogAvatars } = useUserStore();
+    const { showAvatarDialog, lookupAvatars } = useAvatarStore();
+    const { cachedAvatars } = storeToRefs(useAvatarStore());
+    const { cachedWorlds } = storeToRefs(useWorldStore());
+    const { showWorldDialog } = useWorldStore();
+    const { showGroupDialog, applyGroup } = useGroupStore();
+    const { cachedGroups } = storeToRefs(useGroupStore());
+    const { menuActiveIndex } = storeToRefs(useUiStore());
+    const { searchText, searchUserResults } = storeToRefs(useSearchStore());
+    const { clearSearch, moreSearchUser } = useSearchStore();
+    const { cachedConfig } = storeToRefs(useAuthStore());
 
     const { t } = useI18n();
-
-    const API = inject('API');
-    const showUserDialog = inject('showUserDialog');
-    const userImage = inject('userImage');
-    const showWorldDialog = inject('showWorldDialog');
-    const showAvatarDialog = inject('showAvatarDialog');
-    const showGroupDialog = inject('showGroupDialog');
-
-    const props = defineProps({
-        menuActiveIndex: {
-            type: String,
-            default: ''
-        },
-        searchText: {
-            type: String,
-            default: ''
-        },
-        searchUserResults: {
-            type: Array,
-            default: () => []
-        },
-        randomUserColours: {
-            type: Boolean,
-            default: false
-        },
-        avatarRemoteDatabaseProviderList: {
-            type: Array,
-            default: () => []
-        },
-        avatarRemoteDatabaseProvider: {
-            type: String,
-            default: ''
-        },
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        },
-        userDialog: {
-            type: Object,
-            default: () => ({})
-        },
-        lookupAvatars: {
-            type: Function,
-            default: () => () => {}
-        },
-        avatarRemoteDatabase: {
-            type: Boolean,
-            default: false
-        }
-    });
-
-    const emit = defineEmits([
-        'clearSearch',
-        'setAvatarProvider',
-        'refreshUserDialogAvatars',
-        'moreSearchUser',
-        'update:searchText'
-    ]);
 
     const searchTabRef = ref(null);
 
@@ -416,7 +388,7 @@
         return convertFileUrlToImageUrl(url);
     }
 
-    function clearSearch() {
+    function handleClearSearch() {
         searchUserParams.value = {};
         searchWorldParams.value = {};
         searchWorldResults.value = [];
@@ -425,11 +397,11 @@
         searchAvatarPageNum.value = 0;
         searchGroupParams.value = {};
         searchGroupResults.value = [];
-        emit('clearSearch');
+        clearSearch();
     }
 
     function updateSearchText(text) {
-        emit('update:searchText', text);
+        searchText.value = text;
     }
 
     function search() {
@@ -453,16 +425,19 @@
         searchUserParams.value = {
             n: 10,
             offset: 0,
-            search: props.searchText,
+            search: searchText.value,
             customFields: searchUserByBio.value ? 'bio' : 'displayName',
             sort: searchUserSortByLastLoggedIn.value ? 'last_login' : 'relevance'
         };
-        await moreSearchUser();
+        await handleMoreSearchUser();
     }
 
-    async function moreSearchUser(go = null) {
-        emit('moreSearchUser', go, searchUserParams.value);
+    async function handleMoreSearchUser(go = null) {
+        isSearchUserLoading.value = true;
+        await moreSearchUser(go, searchUserParams.value);
+        isSearchUserLoading.value = false;
     }
+
     function searchWorld(ref) {
         searchWorldOption.value = '';
         const params = {
@@ -508,7 +483,7 @@
                 break;
             default:
                 params.sort = 'relevance';
-                params.search = utils.replaceBioSymbols(props.searchText);
+                params.search = replaceBioSymbols(searchText.value);
                 break;
         }
         params.order = ref.sortOrder || 'descending';
@@ -548,7 +523,7 @@
             .then((args) => {
                 const map = new Map();
                 for (const json of args.json) {
-                    const ref = API.cachedWorlds.get(json.id);
+                    const ref = cachedWorlds.value.get(json.id);
                     if (typeof ref !== 'undefined') {
                         map.set(ref.id, ref);
                     }
@@ -556,13 +531,6 @@
                 searchWorldResults.value = Array.from(map.values());
                 return args;
             });
-    }
-
-    function setAvatarProvider(provider) {
-        emit('setAvatarProvider', provider);
-    }
-    function refreshUserDialogAvatars(fileId) {
-        emit('refreshUserDialogAvatars', fileId);
     }
 
     async function searchAvatar() {
@@ -581,10 +549,10 @@
             searchAvatarSort.value = 'name';
         }
         const avatars = new Map();
-        const query = props.searchText;
+        const query = searchText.value;
         const queryUpper = query.toUpperCase();
         if (!query) {
-            for (ref of API.cachedAvatars.values()) {
+            for (ref of cachedAvatars.value.values()) {
                 switch (searchAvatarFilter.value) {
                     case 'all':
                         avatars.set(ref.id, ref);
@@ -604,7 +572,7 @@
             isSearchAvatarLoading.value = false;
         } else {
             if (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'local') {
-                for (ref of API.cachedAvatars.values()) {
+                for (ref of cachedAvatars.value.values()) {
                     let match = ref.name.toUpperCase().includes(queryUpper);
                     if (!match && ref.description) {
                         match = ref.description.toUpperCase().includes(queryUpper);
@@ -633,10 +601,10 @@
             }
             if (
                 (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'remote') &&
-                props.avatarRemoteDatabase &&
+                avatarRemoteDatabase.value &&
                 query.length >= 3
             ) {
-                const data = await props.lookupAvatars('search', query);
+                const data = await lookupAvatars('search', query);
                 if (data && typeof data === 'object') {
                     data.forEach((avatar) => {
                         avatars.set(avatar.id, avatar);
@@ -649,13 +617,13 @@
         if (searchAvatarFilterRemote.value === 'local') {
             switch (searchAvatarSort.value) {
                 case 'updated':
-                    avatarsArray.sort(utils.compareByUpdatedAt);
+                    avatarsArray.sort(compareByUpdatedAt);
                     break;
                 case 'created':
-                    avatarsArray.sort(utils.compareByCreatedAt);
+                    avatarsArray.sort(compareByCreatedAt);
                     break;
                 case 'name':
-                    avatarsArray.sort(utils.compareByName);
+                    avatarsArray.sort(compareByName);
                     break;
             }
         }
@@ -679,7 +647,7 @@
         searchGroupParams.value = {
             n: 10,
             offset: 0,
-            query: utils.replaceBioSymbols(props.searchText)
+            query: replaceBioSymbols(searchText.value)
         };
         await moreSearchGroup();
     }
@@ -698,22 +666,10 @@
                 isSearchGroupLoading.value = false;
             })
             .then((args) => {
-                // API.$on('GROUP:SEARCH', function (args) {
-                for (const json of args.json) {
-                    API.$emit('GROUP', {
-                        json,
-                        params: {
-                            groupId: json.id
-                        }
-                    });
-                }
-                // });
                 const map = new Map();
                 for (const json of args.json) {
-                    const ref = API.cachedGroups.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        map.set(ref.id, ref);
-                    }
+                    const ref = applyGroup(json);
+                    map.set(ref.id, ref);
                 }
                 searchGroupResults.value = Array.from(map.values());
                 return args;

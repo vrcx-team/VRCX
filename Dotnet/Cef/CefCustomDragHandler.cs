@@ -24,9 +24,10 @@ namespace VRCX
                     dragData.Dispose();
                     return true;
                 }
+                
+                if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
+                    MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.vrcx.dragEnterCef", file);
 
-                // forgive me father for i have sinned once again
-                Program.AppApiInstance.ExecuteAppFunction("dragEnterCef", file);
                 dragData.Dispose();
                 return false;
             }

@@ -20,7 +20,6 @@
             <el-input
                 v-for="(link, index) in bioDialog.bioLinks"
                 :key="index"
-                v-model="bioDialog.bioLinks[index]"
                 :value="link"
                 size="small"
                 style="margin-top: 5px">
@@ -52,7 +51,7 @@
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { userRequest } from '../../../api';
-    import { getFaviconUrl } from '../../../composables/shared/utils';
+    import { getFaviconUrl } from '../../../shared/utils';
 
     const { t } = useI18n();
     const { $message } = getCurrentInstance().proxy;

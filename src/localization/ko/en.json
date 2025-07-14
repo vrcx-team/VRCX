@@ -428,10 +428,6 @@
                         "header": "VRChat을 종료할 때 캐시 관리",
                         "description": "오래된 버전 캐시 삭제하기"
                     },
-                    "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
-                    },
                     "remote_database": {
                         "header": "원격 아바타 데이터베이스",
                         "enable": "사용",

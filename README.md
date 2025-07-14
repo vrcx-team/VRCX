@@ -5,7 +5,6 @@
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
-[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | **English** | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
@@ -34,10 +33,6 @@ Beta/nightly build available [here](https://vrcx.app/github/nightly) or in-app `
 - :electric_plug: Automatically launch apps when you start VRChat
   - You can configure VRCX to launch other apps when you start VRChat.
   - For example, you could have VRCX launch an OSC app or a voice changer app when VRChat opens up.
-- :floppy_disk: World Persistence
-  - For worlds that support the feature, VRCX can save world settings, save states, inventories, and other data!
-  - **Note**: To use this feature, you must have "Allow Untrusted URLs" enabled in your VRChat settings.
-  - For Developers: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: Search for avatars, users, worlds, and groups
 - :earth_americas: Build a local, unrestricted world favorites list
 - :camera: Store world data in the pictures you take in-game, so you can remember that one world you took those cool pictures in like... 6 months ago!
@@ -47,7 +42,7 @@ Beta/nightly build available [here](https://vrcx.app/github/nightly) or in-app `
 - :tv: See the links to videos and that are playing in the world you're in, as well as various other logged data.
 - :bar_chart: Improved Discord Rich Presence
   - You can optionally display more information about your current instance in Discord.
-  - World integration for popular worlds like PyPyDance, LSMedia, Movies&Chill and VRDancing.
+  - World integration for popular worlds like Popcorn Palace, PyPyDance, VRDancing and LSMedia.
   - This includes the world thumbnail, name, instance ID, and player count, depending on your settings and whether the lobby is private. You can also add a join button for public lobbies!
 - :crystal_ball: VR Overlay with configurable live feed of all supported events/notifications
 - :outbox_tray: Upload avatar/world images without Unity

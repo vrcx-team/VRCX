@@ -551,10 +551,6 @@
                         "header": "Automatically Manage Cache When Closing VRChat",
                         "description": "Auto delete old versions from cache"
                     },
-                    "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
-                    },
                     "save_instance_prints_to_file": {
                         "header": "Save Instance Prints To File",
                         "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
@@ -711,7 +707,9 @@
             "pronouns": "Pronouns",
             "tags": {
                 "friend_no": "Friend {number}",
-                "vrchat_team": "VRChat Team"
+                "vrchat_team": "VRChat Team",
+                "18_plus_verified": "18+ Verified",
+                "age_verified": "Age Verified"
             },
             "badges": {
                 "assigned": "Assigned",

@@ -1,28 +1,28 @@
 <template>
-    <div v-if="menuActiveIndex === 'profile'" class="x-container">
+    <div v-show="menuActiveIndex === 'profile'" class="x-container">
         <div class="options-container" style="margin-top: 0">
             <span class="header">{{ t('view.profile.profile.header') }}</span>
             <div class="x-friend-list" style="margin-top: 10px">
-                <div class="x-friend-item" @click="showUserDialog(API.currentUser.id)">
+                <div class="x-friend-item" @click="showUserDialog(currentUser.id)">
                     <div class="avatar">
-                        <img v-lazy="userImage(API.currentUser, true)" />
+                        <img v-lazy="userImage(currentUser, true)" />
                     </div>
                     <div class="detail">
-                        <span class="name" v-text="API.currentUser.displayName"></span>
-                        <span class="extra" v-text="API.currentUser.username"></span>
+                        <span class="name" v-text="currentUser.displayName"></span>
+                        <span class="extra" v-text="currentUser.username"></span>
                     </div>
                 </div>
                 <div class="x-friend-item" style="cursor: default">
                     <div class="detail">
                         <span class="name">{{ t('view.profile.profile.last_activity') }}</span>
-                        <span class="extra">{{ API.currentUser.last_activity | formatDate('long') }}</span>
+                        <span class="extra">{{ formatDateFilter(currentUser.last_activity, 'long') }}</span>
                     </div>
                 </div>
                 <div class="x-friend-item" style="cursor: default">
                     <div class="detail">
                         <span class="name">{{ t('view.profile.profile.two_factor') }}</span>
                         <span class="extra">{{
-                            API.currentUser.twoFactorAuthEnabled
+                            currentUser.twoFactorAuthEnabled
                                 ? t('view.profile.profile.two_factor_enabled')
                                 : t('view.profile.profile.two_factor_disabled')
                         }}</span>
@@ -101,12 +101,12 @@
                         icon="el-icon-refresh"
                         circle
                         style="margin-left: 5px"
-                        @click="API.getConfig()"></el-button>
+                        @click="getConfig"></el-button>
                 </el-tooltip>
             </div>
             <div class="x-friend-list" style="margin-top: 10px">
                 <div
-                    v-for="(link, item) in API.cachedConfig.downloadUrls"
+                    v-for="(link, item) in cachedConfig.downloadUrls"
                     :key="item"
                     class="x-friend-item"
                     placement="top">
@@ -150,7 +150,7 @@
                         style="margin-left: 5px"
                         @click="
                             inviteMessageTable.visible = true;
-                            refreshInviteMessageTable('message');
+                            refreshInviteMessageTableData('message');
                         "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
@@ -204,7 +204,7 @@
                         style="margin-left: 5px"
                         @click="
                             inviteResponseMessageTable.visible = true;
-                            refreshInviteMessageTable('response');
+                            refreshInviteMessageTableData('response');
                         "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
@@ -261,7 +261,7 @@
                         style="margin-left: 5px"
                         @click="
                             inviteRequestMessageTable.visible = true;
-                            refreshInviteMessageTable('request');
+                            refreshInviteMessageTableData('request');
                         "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
@@ -318,7 +318,7 @@
                         style="margin-left: 5px"
                         @click="
                             inviteRequestResponseMessageTable.visible = true;
-                            refreshInviteMessageTable('requestResponse');
+                            refreshInviteMessageTableData('requestResponse');
                         "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
@@ -371,7 +371,7 @@
                     prop="updated_at"
                     sortable="custom">
                     <template #default="scope">
-                        <span>{{ scope.row.updated_at | formatDate('long') }}</span>
+                        <span>{{ formatDateFilter(scope.row.updated_at, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -489,91 +489,55 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'ProfileTab'
-    };
-</script>
-
 <script setup>
-    import { inject, ref, getCurrentInstance } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { ref, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import { inviteMessagesRequest, miscRequest, userRequest } from '../../api';
-    import utils from '../../classes/utils';
-    import { parseAvatarUrl } from '../../composables/avatar/utils';
+    import { authRequest, miscRequest, userRequest } from '../../api';
+    import {
+        parseAvatarUrl,
+        buildTreeData,
+        openExternalLink,
+        userImage,
+        parseUserUrl,
+        formatDateFilter
+    } from '../../shared/utils';
+    import { useAuthStore } from '../../stores';
     import DiscordNamesDialog from './dialogs/DiscordNamesDialog.vue';
     import ExportFriendsListDialog from './dialogs/ExportFriendsListDialog.vue';
     import ExportAvatarsListDialog from './dialogs/ExportAvatarsListDialog.vue';
+    import {
+        useAppearanceSettingsStore,
+        useSearchStore,
+        useFriendStore,
+        useUserStore,
+        useAvatarStore,
+        useInviteStore,
+        useGalleryStore,
+        useUiStore
+    } from '../../stores';
+
+    const { friends } = storeToRefs(useFriendStore());
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { pastDisplayNameTable, currentUser } = storeToRefs(useUserStore());
+    const { showUserDialog, lookupUser, getCurrentUser } = useUserStore();
+    const { showAvatarDialog } = useAvatarStore();
+    const { showEditInviteMessageDialog, refreshInviteMessageTableData } = useInviteStore();
+    const {
+        inviteMessageTable,
+        inviteResponseMessageTable,
+        inviteRequestMessageTable,
+        inviteRequestResponseMessageTable
+    } = storeToRefs(useInviteStore());
+    const { showGalleryDialog } = useGalleryStore();
+    const { menuActiveIndex } = storeToRefs(useUiStore());
+    const { directAccessWorld } = useSearchStore();
+    const { logout } = useAuthStore();
+    const { cachedConfig } = storeToRefs(useAuthStore());
 
     const { t } = useI18n();
 
     const { $prompt, $message } = getCurrentInstance().proxy;
-
-    const API = inject('API');
-    const userImage = inject('userImage');
-    const showUserDialog = inject('showUserDialog');
-    const showAvatarDialog = inject('showAvatarDialog');
-    const showGalleryDialog = inject('showGalleryDialog');
-    const openExternalLink = inject('openExternalLink');
-
-    const props = defineProps({
-        menuActiveIndex: {
-            type: String,
-            default: 'profile'
-        },
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        },
-        inviteMessageTable: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                data: []
-            })
-        },
-        inviteResponseMessageTable: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                data: []
-            })
-        },
-        inviteRequestMessageTable: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                data: []
-            })
-        },
-        inviteRequestResponseMessageTable: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                data: []
-            })
-        },
-        pastDisplayNameTable: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                data: []
-            })
-        },
-        friends: {
-            type: Map,
-            default: () => new Map()
-        },
-        directAccessWorld: {
-            type: Function,
-            default: () => {}
-        },
-        parseUserUrl: {
-            type: Function,
-            default: () => {}
-        }
-    });
-    const emit = defineEmits(['logout', 'lookupUser', 'showEditInviteMessageDialog']);
 
     const vrchatCredit = ref(null);
     const configTreeData = ref([]);
@@ -588,17 +552,12 @@
 
     function getVisits() {
         miscRequest.getVisits().then((args) => {
-            // API.$on('VISITS')
             visits.value = args.json;
         });
     }
 
     function getVRChatCredits() {
-        // API.$on('VRCCREDITS')
         miscRequest.getVRChatCredits().then((args) => (vrchatCredit.value = args.json?.balance));
-    }
-    function logout() {
-        emit('logout');
     }
 
     function showDiscordNamesDialog() {
@@ -621,7 +580,7 @@
             inputErrorMessage: t('prompt.direct_access_username.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
-                    emit('lookupUser', {
+                    lookupUser({
                         displayName: instance.inputValue
                     });
                 }
@@ -639,7 +598,7 @@
                 if (action === 'confirm' && instance.inputValue) {
                     const testUrl = instance.inputValue.substring(0, 15);
                     if (testUrl === 'https://vrchat.') {
-                        const userId = this.parseUserUrl(instance.inputValue);
+                        const userId = parseUserUrl(instance.inputValue);
                         if (userId) {
                             showUserDialog(userId);
                         } else {
@@ -664,7 +623,7 @@
             inputErrorMessage: t('prompt.direct_access_world_id.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
-                    if (!props.directAccessWorld(instance.inputValue)) {
+                    if (!directAccessWorld(instance.inputValue)) {
                         $message({
                             message: t('prompt.direct_access_world_id.message.error'),
                             type: 'error'
@@ -685,7 +644,7 @@
                 if (action === 'confirm' && instance.inputValue) {
                     const testUrl = instance.inputValue.substring(0, 15);
                     if (testUrl === 'https://vrchat.') {
-                        const avatarId = props.parseAvatarUrl(instance.inputValue);
+                        const avatarId = parseAvatarUrl(instance.inputValue);
                         if (avatarId) {
                             showAvatarDialog(avatarId);
                         } else {
@@ -701,25 +660,21 @@
             }
         });
     }
-    function showEditInviteMessageDialog(messageType, inviteMessage) {
-        emit('showEditInviteMessageDialog', messageType, inviteMessage);
-    }
-    function refreshInviteMessageTable(messageType) {
-        inviteMessagesRequest.refreshInviteMessageTableData(messageType);
+    async function getConfig() {
+        await authRequest.getConfig();
     }
     async function refreshConfigTreeData() {
-        await API.getConfig();
-        configTreeData.value = utils.buildTreeData(API.cachedConfig);
+        await getConfig();
+        configTreeData.value = buildTreeData(cachedConfig.value);
     }
     async function refreshCurrentUserTreeData() {
-        await API.getCurrentUser();
-        currentUserTreeData.value = utils.buildTreeData(API.currentUser);
+        await getCurrentUser();
+        currentUserTreeData.value = buildTreeData(currentUser.value);
     }
     function getCurrentUserFeedback() {
-        userRequest.getUserFeedback({ userId: API.currentUser.id }).then((args) => {
-            // API.$on('USER:FEEDBACK')
-            if (args.params.userId === API.currentUser.id) {
-                currentUserFeedbackData.value = utils.buildTreeData(args.json);
+        userRequest.getUserFeedback({ userId: currentUser.value.id }).then((args) => {
+            if (args.params.userId === currentUser.value.id) {
+                currentUserFeedbackData.value = buildTreeData(args.json);
             }
         });
     }

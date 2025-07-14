@@ -2,7 +2,7 @@
  * VRCX Dark-Vanilla theme by MintLily
  * https://github.com/MintLily/Dark-Vanilla
  */
-@import 'theme.dark';
+@use 'theme.dark';
 :root {
     --ThemeName: 'Dark Vanilla';
     --ThemeVersion: 'v1.7';

@@ -428,10 +428,6 @@
                         "header": "Automatically Manage Cache When Closing VRChat",
                         "description": "Auto delete old versions from cache"
                     },
-                    "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
-                    },
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",

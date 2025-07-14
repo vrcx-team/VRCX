@@ -32,17 +32,20 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance, inject } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { instanceRequest, inviteMessagesRequest, notificationRequest } from '../../../api';
-    import { parseLocation } from '../../../composables/instance/utils';
+    import { parseLocation } from '../../../shared/utils';
+    import { useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
 
-    const API = inject('API');
-    const clearInviteImageUpload = inject('clearInviteImageUpload');
+    const { uploadImage } = storeToRefs(useGalleryStore());
+    const { clearInviteImageUpload } = useGalleryStore();
+    const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
         editAndSendInviteDialog: {
@@ -57,9 +60,6 @@
             type: Object,
             required: false,
             default: () => ({})
-        },
-        uploadImage: {
-            type: String
         }
     });
 
@@ -85,7 +85,6 @@
                     throw err;
                 })
                 .then((args) => {
-                    API.$emit(`INVITE:${messageType.toUpperCase()}`, args);
                     if (args.json[slot].message === I.messageSlot.message) {
                         $message({
                             message: "VRChat API didn't update message, try again",
@@ -103,7 +102,7 @@
             const inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     const receiverUserId = J.userIds.shift();
-                    if (receiverUserId === API.currentUser.id) {
+                    if (receiverUserId === currentUser.value.id) {
                         // can't invite self!?
                         const L = parseLocation(J.worldId);
                         instanceRequest
@@ -112,7 +111,7 @@
                                 worldId: L.worldId
                             })
                             .finally(inviteLoop);
-                    } else if (props.uploadImage) {
+                    } else if (uploadImage.value) {
                         notificationRequest
                             .sendInvitePhoto(
                                 {
@@ -149,7 +148,7 @@
             inviteLoop();
         } else if (messageType === 'invite') {
             I.params.messageSlot = slot;
-            if (props.uploadImage) {
+            if (uploadImage.value) {
                 notificationRequest
                     .sendInvitePhoto(I.params, I.userId)
                     .catch((err) => {
@@ -178,7 +177,7 @@
             }
         } else if (messageType === 'request') {
             I.params.requestSlot = slot;
-            if (props.uploadImage) {
+            if (uploadImage.value) {
                 notificationRequest
                     .sendRequestInvitePhoto(I.params, I.userId)
                     .catch((err) => {

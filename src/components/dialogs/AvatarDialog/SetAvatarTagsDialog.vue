@@ -94,12 +94,12 @@
 </template>
 
 <script setup>
-    import { inject, watch, getCurrentInstance } from 'vue';
-
+    import { getCurrentInstance, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { avatarRequest } from '../../../api';
+    import { useAvatarStore } from '../../../stores';
 
-    const showAvatarDialog = inject('showAvatarDialog');
+    const { showAvatarDialog, applyAvatar } = useAvatarStore();
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
@@ -220,10 +220,11 @@
                         tags.push(tag);
                     }
                 }
-                await avatarRequest.saveAvatar({
+                const args = await avatarRequest.saveAvatar({
                     id: ref.id,
                     tags
                 });
+                applyAvatar(args.json);
                 D.selectedCount--;
             }
         } catch (err) {
@@ -270,15 +271,6 @@
             }
         }
     }
-
-    // useless
-    // $app.data.avatarContentTags = [
-    //     'content_horror',
-    //     'content_gore',
-    //     'content_violence',
-    //     'content_adult',
-    //     'content_sex'
-    // ];
 </script>
 
 <style scoped></style>

@@ -10,12 +10,12 @@
                         class="name"
                         :style="{ color: favorite.ref.$userColour }"
                         v-text="favorite.ref.displayName"></span>
-                    <location
+                    <Location
                         class="extra"
                         v-if="favorite.ref.location !== 'offline'"
                         :location="favorite.ref.location"
                         :traveling="favorite.ref.travelingToLocation"
-                        :link="false"></location>
+                        :link="false" />
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <template v-if="editFavoritesMode">
@@ -27,7 +27,7 @@
                             <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
-                            <template v-for="groupAPI in API.favoriteFriendGroups">
+                            <template v-for="groupAPI in favoriteFriendGroups">
                                 <el-dropdown-item
                                     v-if="groupAPI.name !== group.name"
                                     :key="groupAPI.name"
@@ -82,63 +82,36 @@
     </div>
 </template>
 
-<script>
-    import Location from '../../../components/Location.vue';
+<script setup>
+    import { storeToRefs } from 'pinia';
     import { favoriteRequest } from '../../../api';
-    export default {
-        components: { Location },
-        inject: ['showUserDialog', 'userImage', 'userStatusClass', 'API', 'showFavoriteDialog'],
-        props: {
-            favorite: {
-                type: Object,
-                required: true
-            },
-            hideTooltips: {
-                type: Boolean,
-                default: false
-            },
-            shiftHeld: {
-                type: Boolean,
-                default: false
-            },
-            group: {
-                type: Object,
-                required: true
-            },
-            editFavoritesMode: Boolean
-        },
-        methods: {
-            moveFavorite(ref, group, type) {
-                favoriteRequest
-                    .deleteFavorite({
-                        objectId: ref.id
-                    })
-                    .then(() => {
-                        favoriteRequest.addFavorite({
-                            type,
-                            favoriteId: ref.id,
-                            tags: group.name
-                        });
-                    });
-            },
-            deleteFavorite(objectId) {
-                favoriteRequest.deleteFavorite({
-                    objectId
-                });
-                // FIXME: 메시지 수정
-                // this.$confirm('Continue? Delete Favorite', 'Confirm', {
-                //     confirmButtonText: 'Confirm',
-                //     cancelButtonText: 'Cancel',
-                //     type: 'info',
-                //     callback: (action) => {
-                //         if (action === 'confirm') {
-                //             API.deleteFavorite({
-                //                 objectId
-                //             });
-                //         }
-                //     }
-                // });
-            }
-        }
-    };
+    import { userImage, userStatusClass } from '../../../shared/utils';
+    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore } from '../../../stores';
+
+    defineProps({
+        favorite: { type: Object, required: true },
+        group: { type: Object, required: true },
+        editFavoritesMode: Boolean
+    });
+
+    defineEmits(['click']);
+
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
+    const { showFavoriteDialog } = useFavoriteStore();
+    const { shiftHeld } = storeToRefs(useUiStore());
+
+    function moveFavorite(ref, group, type) {
+        favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {
+            favoriteRequest.addFavorite({
+                type,
+                favoriteId: ref.id,
+                tags: group.name
+            });
+        });
+    }
+
+    function deleteFavorite(objectId) {
+        favoriteRequest.deleteFavorite({ objectId });
+    }
 </script>

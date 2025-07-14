@@ -30,23 +30,22 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance, inject } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { inviteMessagesRequest, notificationRequest } from '../../../api';
+    import { useGalleryStore } from '../../../stores';
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
-
-    const API = inject('API');
+    const galleryStore = useGalleryStore();
+    const { uploadImage } = storeToRefs(galleryStore);
 
     const props = defineProps({
         editAndSendInviteResponseDialog: {
             type: Object,
             required: true
-        },
-        uploadImage: {
-            type: String
         },
         sendInviteResponseDialog: {
             type: Object,
@@ -76,7 +75,6 @@
                     throw err;
                 })
                 .then((args) => {
-                    API.$emit(`INVITE:${messageType.toUpperCase()}`, args);
                     if (args.json[slot].message === I.messageSlot.message) {
                         $message({
                             message: "VRChat API didn't update message, try again",
@@ -93,7 +91,7 @@
             responseSlot: slot,
             rsvp: true
         };
-        if (props.uploadImage) {
+        if (uploadImage.value) {
             notificationRequest
                 .sendInviteResponsePhoto(params, I.invite.id)
                 .catch((err) => {

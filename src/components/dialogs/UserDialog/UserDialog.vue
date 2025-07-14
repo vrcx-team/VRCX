@@ -9,7 +9,10 @@
         <div v-loading="userDialog.loading">
             <div style="display: flex">
                 <el-popover
-                    v-if="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
+                    v-if="
+                        !userDialog.loading &&
+                        (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
+                    "
                     placement="right"
                     width="500px"
                     trigger="click">
@@ -24,7 +27,7 @@
                         style="height: 400px"
                         @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)" />
                 </el-popover>
-                <el-popover v-else placement="right" width="500px" trigger="click">
+                <el-popover v-else-if="!userDialog.loading" placement="right" width="500px" trigger="click">
                     <img
                         slot="reference"
                         class="x-link"
@@ -85,7 +88,7 @@
                                     style="margin-left: 5px; margin-right: 5px; cursor: pointer"
                                     v-text="userDialog.ref.displayName"></span>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
-                                    userDialog.ref.displayName | textToHex
+                                    textToHex(userDialog.ref.displayName)
                                 }}</span>
                             </el-popover>
                             <el-tooltip
@@ -107,7 +110,7 @@
                                     :class="languageClass(item.key)"
                                     style="display: inline-block; margin-right: 5px"></span>
                             </el-tooltip>
-                            <template v-if="userDialog.ref.id === API.currentUser.id">
+                            <template v-if="userDialog.ref.id === currentUser.id">
                                 <br />
                                 <el-popover placement="top" trigger="click">
                                     <span
@@ -119,14 +122,14 @@
                                             font-size: 12px;
                                             cursor: pointer;
                                         "
-                                        v-text="API.currentUser.username"></span>
+                                        v-text="currentUser.username"></span>
                                     <span style="display: block; text-align: center; font-family: monospace">{{
-                                        API.currentUser.username | textToHex
+                                        textToHex(currentUser.username)
                                     }}</span>
                                 </el-popover>
                             </template>
                         </div>
-                        <div style="margin-top: 5px">
+                        <div style="margin-top: 5px" v-show="!userDialog.loading">
                             <el-tag
                                 type="info"
                                 effect="plain"
@@ -212,13 +215,18 @@
                                 {{ userDialog.ref.last_platform }}
                             </el-tag>
                             <el-tag
-                                v-if="userDialog.ref.ageVerified || userDialog.ref.ageVerificationStatus !== 'hidden'"
+                                v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                                 type="info"
                                 effect="plain"
                                 size="mini"
                                 class="x-tag-age-verification"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ userDialog.ref.ageVerificationStatus }}
+                                <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
+                                    {{ t('dialog.user.tags.18_plus_verified') }}
+                                </template>
+                                <template v-else>
+                                    {{ t('dialog.user.tags.age_verified') }}
+                                </template>
                             </el-tag>
                             <el-tag
                                 v-if="userDialog.ref.$customTag"
@@ -233,7 +241,11 @@
                                 style="margin-right: 5px; margin-top: 5px"
                                 v-text="userDialog.ref.$customTag"></el-tag>
                             <br />
-                            <el-tooltip v-for="badge in userDialog.ref.badges" :key="badge.badgeId" placement="top">
+                            <el-tooltip
+                                v-show="!userDialog.loading"
+                                v-for="badge in userDialog.ref.badges"
+                                :key="badge.badgeId"
+                                placement="top">
                                 <template #content>
                                     <span>{{ badge.badgeName }}</span>
                                     <span v-if="badge.hidden">&nbsp;(Hidden)</span>
@@ -269,9 +281,9 @@
                                             class="x-grey"
                                             style="font-family: monospace; font-size: 12px">
                                             {{ t('dialog.user.badges.assigned') }}:
-                                            {{ badge.assignedAt | formatDate('long') }}
+                                            {{ formatDateFilter(badge.assignedAt, 'long') }}
                                         </span>
-                                        <template v-if="userDialog.id === API.currentUser.id">
+                                        <template v-if="userDialog.id === currentUser.id">
                                             <br />
                                             <el-checkbox
                                                 v-model="badge.hidden"
@@ -320,8 +332,7 @@
                     <div style="flex: none">
                         <template
                             v-if="
-                                (API.currentUser.id !== userDialog.ref.id && userDialog.isFriend) ||
-                                userDialog.isFavorite
+                                (currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite
                             ">
                             <el-tooltip
                                 v-if="userDialog.isFavorite"
@@ -365,7 +376,7 @@
                                 <el-dropdown-item icon="el-icon-share" command="Share">{{
                                     t('dialog.user.actions.share')
                                 }}</el-dropdown-item>
-                                <template v-if="userDialog.ref.id === API.currentUser.id">
+                                <template v-if="userDialog.ref.id === currentUser.id">
                                     <el-dropdown-item icon="el-icon-picture-outline" command="Manage Gallery" divided>{{
                                         t('dialog.user.actions.manage_gallery_inventory_icon')
                                     }}</el-dropdown-item>
@@ -433,7 +444,7 @@
                                     <el-dropdown-item icon="el-icon-message" command="Invite To Group">{{
                                         t('dialog.user.actions.invite_to_group')
                                     }}</el-dropdown-item>
-                                    <!--//- el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!API.currentUser.isBoopingEnabled") {{ t('dialog.user.actions.send_boop') }}-->
+                                    <!--//- el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!currentUser.isBoopingEnabled") {{ t('dialog.user.actions.send_boop') }}-->
                                     <el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author" divided>{{
                                         t('dialog.user.actions.show_avatar_author')
                                     }}</el-dropdown-item>
@@ -537,7 +548,7 @@
 
             <el-tabs ref="userDialogTabsRef" @tab-click="userDialogTabClick">
                 <el-tab-pane :label="t('dialog.user.info.header')">
-                    <template v-if="isFriendOnline(userDialog.friend) || API.currentUser.id === userDialog.id">
+                    <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                         <div
                             v-if="userDialog.ref.location"
                             style="
@@ -549,17 +560,15 @@
                             ">
                             <div style="flex: none">
                                 <template v-if="isRealInstance(userDialog.$location.tag)">
-                                    <launch
-                                        :location="userDialog.$location.tag"
-                                        @show-launch-dialog="showLaunchDialog" />
+                                    <Launch :location="userDialog.$location.tag" />
                                     <el-tooltip
                                         placement="top"
                                         :content="t('dialog.user.info.self_invite_tooltip')"
                                         :disabled="hideTooltips">
-                                        <invite-yourself
+                                        <InviteYourself
                                             :location="userDialog.$location.tag"
                                             :shortname="userDialog.$location.shortName"
-                                            style="margin-left: 5px"></invite-yourself>
+                                            style="margin-left: 5px" />
                                     </el-tooltip>
                                     <el-tooltip
                                         placement="top"
@@ -572,19 +581,18 @@
                                             circle
                                             @click="refreshInstancePlayerCount(userDialog.$location.tag)"></el-button>
                                     </el-tooltip>
-                                    <last-join
+                                    <LastJoin
                                         :location="userDialog.$location.tag"
-                                        :currentlocation="lastLocation.location"></last-join>
-                                    <instance-info
+                                        :currentlocation="lastLocation.location" />
+                                    <InstanceInfo
                                         :location="userDialog.$location.tag"
                                         :instance="userDialog.instance.ref"
-                                        :friendcount="userDialog.instance.friendCount"
-                                        :updateelement="updateInstanceInfo"></instance-info>
+                                        :friendcount="userDialog.instance.friendCount" />
                                 </template>
-                                <location
+                                <Location
                                     :location="userDialog.ref.location"
                                     :traveling="userDialog.ref.travelingToLocation"
-                                    style="display: block; margin-top: 5px"></location>
+                                    style="display: block; margin-top: 5px" />
                             </div>
                             <div class="x-friend-list" style="flex: 1; margin-top: 10px; max-height: 150px">
                                 <div
@@ -620,10 +628,10 @@
                                             v-text="user.displayName"></span>
                                         <span v-if="user.location === 'traveling'" class="extra">
                                             <i class="el-icon-loading" style="margin-right: 5px"></i>
-                                            <timer :epoch="user.$travelingToTime"></timer>
+                                            <Timer :epoch="user.$travelingToTime" />
                                         </span>
                                         <span v-else class="extra">
-                                            <timer :epoch="user.$location_at"></timer>
+                                            <Timer :epoch="user.$location_at" />
                                         </span>
                                     </div>
                                 </div>
@@ -685,7 +693,7 @@
                             <div class="detail">
                                 <span
                                     v-if="
-                                        userDialog.id !== API.currentUser.id &&
+                                        userDialog.id !== currentUser.id &&
                                         userDialog.ref.profilePicOverride &&
                                         userDialog.ref.currentAvatarImageUrl
                                     "
@@ -694,11 +702,11 @@
                                 </span>
                                 <span v-else class="name">{{ t('dialog.user.info.avatar_info') }}</span>
                                 <div class="extra">
-                                    <avatar-info
+                                    <AvatarInfo
                                         :imageurl="userDialog.ref.currentAvatarImageUrl"
                                         :userid="userDialog.id"
                                         :avatartags="userDialog.ref.currentAvatarTags"
-                                        style="display: inline-block"></avatar-info>
+                                        style="display: inline-block" />
                                     <el-tooltip
                                         v-if="
                                             userDialog.ref.profilePicOverride &&
@@ -785,7 +793,7 @@
                                     "
                                     >{{ userDialog.ref.bio || '-' }}</pre
                                 >
-                                <div v-if="userDialog.id === API.currentUser.id" style="float: right">
+                                <div v-if="userDialog.id === currentUser.id" style="float: right">
                                     <el-button
                                         type="text"
                                         icon="el-icon-edit"
@@ -813,7 +821,7 @@
                                 </div>
                             </div>
                         </div>
-                        <template v-if="API.currentUser.id !== userDialog.id">
+                        <template v-if="currentUser.id !== userDialog.id">
                             <div class="x-friend-item" style="cursor: default">
                                 <div class="detail">
                                     <span class="name">
@@ -826,7 +834,7 @@
                                             <i class="el-icon-warning"></i>
                                         </el-tooltip>
                                     </span>
-                                    <span class="extra">{{ userDialog.lastSeen | formatDate('long') }}</span>
+                                    <span class="extra">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
                                 </div>
                             </div>
                             <el-tooltip
@@ -869,7 +877,7 @@
                         </template>
                         <template v-else>
                             <el-tooltip
-                                :disabled="hideTooltips || API.currentUser.id !== userDialog.id"
+                                :disabled="hideTooltips || currentUser.id !== userDialog.id"
                                 placement="top"
                                 :content="t('dialog.user.info.open_previouse_instance')">
                                 <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
@@ -891,9 +899,9 @@
                             </el-tooltip>
                         </template>
                         <div class="x-friend-item" style="cursor: default">
-                            <el-tooltip :placement="API.currentUser.id !== userDialog.id ? 'bottom' : 'top'">
+                            <el-tooltip :placement="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
                                 <template #content>
-                                    <span>{{ userOnlineForTimestamp(userDialog) | formatDate('short') }}</span>
+                                    <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
                                 </template>
                                 <div class="detail">
                                     <span
@@ -923,16 +931,16 @@
                             </el-tooltip>
                         </div>
                         <div class="x-friend-item" style="cursor: default">
-                            <el-tooltip :placement="API.currentUser.id !== userDialog.id ? 'bottom' : 'top'">
+                            <el-tooltip :placement="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
                                 <template #content>
                                     <span
                                         >{{ t('dialog.user.info.last_login') }}
-                                        {{ userDialog.ref.last_login | formatDate('long') }}</span
+                                        {{ formatDateFilter(userDialog.ref.last_login, 'long') }}</span
                                     >
                                     <br />
                                     <span
                                         >{{ t('dialog.user.info.last_activity') }}
-                                        {{ userDialog.ref.last_activity | formatDate('long') }}</span
+                                        {{ formatDateFilter(userDialog.ref.last_activity, 'long') }}</span
                                     >
                                 </template>
                                 <div class="detail">
@@ -950,12 +958,13 @@
                                 <span class="extra" v-text="userDialog.ref.date_joined"></span>
                             </div>
                         </div>
-                        <div v-if="API.currentUser.id !== userDialog.id" class="x-friend-item" style="cursor: default">
+                        <div v-if="currentUser.id !== userDialog.id" class="x-friend-item" style="cursor: default">
                             <el-tooltip placement="top" :disabled="!userDialog.dateFriendedInfo.length">
                                 <template v-if="userDialog.dateFriendedInfo.length" #content>
                                     <template v-for="ref in userDialog.dateFriendedInfo">
-                                        <span>{{ ref.type }}: {{ ref.created_at | formatDate('long') }}</span
-                                        ><br />
+                                        <span :key="ref.userId"
+                                            >{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
+                                        ><br :key="ref.userId + 'br'" />
                                     </template>
                                 </template>
                                 <div class="detail">
@@ -979,20 +988,17 @@
                                             <i class="el-icon-warning"></i>
                                         </el-tooltip>
                                     </span>
-                                    <span class="extra">{{ userDialog.dateFriended | formatDate('long') }}</span>
+                                    <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
                                 </div>
                             </el-tooltip>
                         </div>
-                        <template v-if="API.currentUser.id === userDialog.id">
+                        <template v-if="currentUser.id === userDialog.id">
                             <div class="x-friend-item" @click="toggleAvatarCopying">
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.user.info.avatar_cloning') }}</span>
-                                    <span
-                                        v-if="API.currentUser.allowAvatarCopying"
-                                        class="extra"
-                                        style="color: #67c23a"
-                                        >{{ t('dialog.user.info.avatar_cloning_allow') }}</span
-                                    >
+                                    <span v-if="currentUser.allowAvatarCopying" class="extra" style="color: #67c23a">{{
+                                        t('dialog.user.info.avatar_cloning_allow')
+                                    }}</span>
                                     <span v-else class="extra" style="color: #f56c6c">{{
                                         t('dialog.user.info.avatar_cloning_deny')
                                     }}</span>
@@ -1001,7 +1007,7 @@
                             <!--//- .x-friend-item(@click="toggleAllowBooping")-->
                             <!--//-     .detail-->
                             <!--//-         span.name {{ t('dialog.user.info.booping') }}-->
-                            <!--//-         span.extra(v-if="API.currentUser.isBoopingEnabled" style="color:#67C23A") {{ t('dialog.user.info.avatar_cloning_allow') }}-->
+                            <!--//-         span.extra(v-if="currentUser.isBoopingEnabled" style="color:#67C23A") {{ t('dialog.user.info.avatar_cloning_allow') }}-->
                             <!--//-         span.extra(v-else style="color:#F56C6C") {{ t('dialog.user.info.avatar_cloning_deny') }}-->
                         </template>
                         <template v-else>
@@ -1021,10 +1027,10 @@
                             </div>
                         </template>
                         <div
-                            v-if="userDialog.ref.id === API.currentUser.id && API.currentUser.homeLocation"
+                            v-if="userDialog.ref.id === currentUser.id && currentUser.homeLocation"
                             class="x-friend-item"
                             style="width: 100%"
-                            @click="showWorldDialog(API.currentUser.homeLocation)">
+                            @click="showWorldDialog(currentUser.homeLocation)">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.user.info.home_location') }}</span>
                                 <span class="extra">
@@ -1119,7 +1125,7 @@
                                             :key="key"
                                             :disabled="
                                                 item === userDialogGroupSortingOptions.inGame &&
-                                                userDialog.id !== API.currentUser.id
+                                                userDialog.id !== currentUser.id
                                             "
                                             @click.native="setUserDialogGroupSorting(item)"
                                             >{{ t(item.name) }}
@@ -1136,7 +1142,7 @@
                                 {{ t('dialog.user.groups.exit_edit_mode') }}
                             </el-button>
                             <el-button
-                                v-else-if="API.currentUser.id === userDialog.id"
+                                v-else-if="currentUser.id === userDialog.id"
                                 size="small"
                                 icon="el-icon-edit"
                                 style="margin-right: 5px; height: 29px; padding: 7px 15px"
@@ -1346,7 +1352,7 @@
                                 }}</span>
                                 <span style="color: #909399; font-size: 12px; margin-left: 5px"
                                     >{{ userGroups.ownGroups.length }}/{{
-                                        API.cachedConfig?.constants?.GROUPS?.MAX_OWNED
+                                        cachedConfig?.constants?.GROUPS?.MAX_OWNED
                                     }}</span
                                 >
                                 <div
@@ -1432,13 +1438,13 @@
                                 }}</span>
                                 <span style="color: #909399; font-size: 12px; margin-left: 5px">
                                     {{ userGroups.remainingGroups.length }}
-                                    <template v-if="API.currentUser.id === userDialog.id">
+                                    <template v-if="currentUser.id === userDialog.id">
                                         /
-                                        <template v-if="API.currentUser.$isVRCPlus">
-                                            {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
+                                        <template v-if="currentUser.$isVRCPlus">
+                                            {{ cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
                                         </template>
                                         <template v-else>
-                                            {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED }}
+                                            {{ cachedConfig?.constants?.GROUPS?.MAX_JOINED }}
                                         </template>
                                     </template>
                                 </span>
@@ -1506,7 +1512,7 @@
                                 @click.native.stop>
                                 <el-button size="mini">
                                     <span
-                                        >{{ userDialog.worldSorting.name }}
+                                        >{{ t(userDialog.worldSorting.name) }}
                                         <i class="el-icon-arrow-down el-icon--right"></i
                                     ></span>
                                 </el-button>
@@ -1515,7 +1521,7 @@
                                         v-for="(item, key) in userDialogWorldSortingOptions"
                                         :key="key"
                                         @click.native="setUserDialogWorldSorting(item)"
-                                        v-text="item.name">
+                                        v-text="t(item.name)">
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -1528,7 +1534,7 @@
                                 @click.native.stop>
                                 <el-button size="mini">
                                     <span
-                                        >{{ userDialog.worldOrder.name }}
+                                        >{{ t(userDialog.worldOrder.name) }}
                                         <i class="el-icon-arrow-down el-icon--right"></i
                                     ></span>
                                 </el-button>
@@ -1537,7 +1543,7 @@
                                         v-for="(item, key) in userDialogWorldOrderOptions"
                                         :key="key"
                                         @click.native="setUserDialogWorldOrder(item)"
-                                        v-text="item.name">
+                                        v-text="t(item.name)">
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -1591,7 +1597,7 @@
                                     </i>
                                     <span style="font-weight: bold; font-size: 14px" v-text="list[0]"></span>
                                     <span style="color: #909399; font-size: 10px; margin-left: 5px"
-                                        >{{ list[2].length }}/{{ API.favoriteLimits.maxFavoritesPerGroup.world }}</span
+                                        >{{ list[2].length }}/{{ favoriteLimits.maxFavoritesPerGroup.world }}</span
                                     >
                                 </span>
                                 <div
@@ -1625,7 +1631,7 @@
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <el-button
-                                v-if="userDialog.ref.id === API.currentUser.id"
+                                v-if="userDialog.ref.id === currentUser.id"
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
                                 size="mini"
@@ -1647,7 +1653,7 @@
                             }}</span>
                         </div>
                         <div>
-                            <template v-if="userDialog.ref.id === API.currentUser.id">
+                            <template v-if="userDialog.ref.id === currentUser.id">
                                 <span style="margin-right: 5px">{{ t('dialog.user.avatars.sort_by') }}</span>
                                 <el-dropdown
                                     trigger="click"
@@ -1763,64 +1769,84 @@
         </div>
         <SendInviteDialog
             :send-invite-dialog-visible.sync="sendInviteDialogVisible"
-            :invite-message-table="inviteMessageTable"
             :send-invite-dialog="sendInviteDialog"
-            :upload-image="uploadImage"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteRequestDialog
             :send-invite-request-dialog-visible.sync="sendInviteRequestDialogVisible"
-            :invite-request-message-table="inviteRequestMessageTable"
             :send-invite-dialog="sendInviteDialog"
-            :upload-image="uploadImage"
             @closeInviteDialog="closeInviteDialog" />
-        <PreviousInstancesUserDialog
-            :previous-instances-user-dialog.sync="previousInstancesUserDialog"
-            :shift-held="shiftHeld" />
-        <PreviousImagesDialog
-            :previous-images-dialog-visible.sync="previousImagesDialogVisible"
-            :previous-images-table="previousImagesTable" />
-        <InviteGroupDialog
-            :dialog-data.sync="inviteGroupDialog"
-            :vip-friends="vipFriends"
-            :online-friends="onlineFriends"
-            :offline-friends="offlineFriends"
-            :active-friends="activeFriends" />
+        <PreviousInstancesUserDialog :previous-instances-user-dialog.sync="previousInstancesUserDialog" />
+        <PreviousImagesDialog />
+        <InviteGroupDialog />
         <SocialStatusDialog
             :social-status-dialog="socialStatusDialog"
             :social-status-history-table="socialStatusHistoryTable" />
-        <LanguageDialog :language-dialog="languageDialog" />
+        <LanguageDialog />
         <BioDialog :bio-dialog="bioDialog" />
         <PronounsDialog :pronouns-dialog="pronounsDialog" />
     </safe-dialog>
 </template>
 
 <script setup>
-    import { computed, getCurrentInstance, inject, nextTick, ref, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { computed, getCurrentInstance, nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import {
         favoriteRequest,
         friendRequest,
         groupRequest,
         imageRequest,
-        inviteMessagesRequest,
         miscRequest,
         notificationRequest,
         playerModerationRequest,
         userRequest,
         worldRequest
     } from '../../../api';
-    import utils from '../../../classes/utils';
-    import { isRealInstance, parseLocation, refreshInstancePlayerCount } from '../../../composables/instance/utils';
+    import { database } from '../../../service/database';
+    import { processBulk, request } from '../../../service/request';
+    import { userDialogGroupSortingOptions } from '../../../shared/constants';
+    import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import {
+        adjustDialogZ,
+        checkCanInvite,
+        compareByMemberCount,
+        compareByName,
         copyToClipboard,
         downloadAndSaveJson,
         extractFileId,
-        getFaviconUrl
-    } from '../../../composables/shared/utils';
-    import { userDialogGroupSortingOptions } from '../../../composables/user/constants/userDialogGroupSortingOptions';
-    import { isFriendOnline, languageClass, userOnlineForTimestamp } from '../../../composables/user/utils';
-    import database from '../../../service/database';
-    import Location from '../../Location.vue';
+        getFaviconUrl,
+        isFriendOnline,
+        isRealInstance,
+        languageClass,
+        openExternalLink,
+        parseLocation,
+        refreshInstancePlayerCount,
+        replaceBioSymbols,
+        saveUserMemo,
+        timeToText,
+        userImage,
+        userOnlineFor,
+        userOnlineForTimestamp,
+        userStatusClass,
+        textToHex,
+        formatDateFilter
+    } from '../../../shared/utils';
+    import {
+        useAdvancedSettingsStore,
+        useAppearanceSettingsStore,
+        useAuthStore,
+        useAvatarStore,
+        useFavoriteStore,
+        useFriendStore,
+        useGalleryStore,
+        useGameStore,
+        useGroupStore,
+        useInviteStore,
+        useLocationStore,
+        useModerationStore,
+        useUserStore,
+        useWorldStore
+    } from '../../../stores';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
@@ -1836,148 +1862,46 @@
     const { proxy } = getCurrentInstance();
     const { $message, $confirm } = proxy;
 
-    const API = inject('API');
-    const showFullscreenImageDialog = inject('showFullscreenImageDialog');
-    const clearInviteImageUpload = inject('clearInviteImageUpload');
-
-    const userImage = inject('userImage');
-    const showLaunchDialog = inject('showLaunchDialog');
-    const showUserDialog = inject('showUserDialog');
-    const showGroupDialog = inject('showGroupDialog');
-    const openExternalLink = inject('openExternalLink');
-    const showWorldDialog = inject('showWorldDialog');
-    const showAvatarDialog = inject('showAvatarDialog');
-    const showFavoriteDialog = inject('showFavoriteDialog');
-    const adjustDialogZ = inject('adjustDialogZ');
-    const userStatusClass = inject('userStatusClass');
-
-    const props = defineProps({
-        userDialog: {
-            type: Object,
-            default: () => ({})
-        },
-        languageDialog: {
-            type: Object,
-            required: true
-        },
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        },
-        lastLocation: {
-            type: Object,
-            default: () => ({})
-        },
-        lastLocationDestination: {
-            type: String,
-            default: ''
-        },
-        isGameRunning: {
-            type: Boolean,
-            default: false
-        },
-        checkCanInvite: {
-            type: Function,
-            default: () => {}
-        },
-        updateInstanceInfo: {
-            type: Number,
-            default: () => {}
-        },
-        hideUserNotes: {
-            type: Boolean,
-            default: false
-        },
-        hideUserMemos: {
-            type: Boolean,
-            default: false
-        },
-        userOnlineFor: {
-            type: Function,
-            default: () => {}
-        },
-        userDialogWorldSortingOptions: {
-            type: Object,
-            default: () => ({})
-        },
-        userDialogWorldOrderOptions: {
-            type: Object,
-            default: () => ({})
-        },
-        avatarRemoteDatabase: {
-            type: Boolean,
-            default: false
-        },
-        friendLogTable: {
-            type: Object,
-            default: () => ({})
-        },
-        lookupAvatars: {
-            type: Function,
-            default: () => {}
-        },
-        updateInGameGroupOrder: {
-            type: Function,
-            default: () => {}
-        },
-        // SendInviteDialog
-        inviteMessageTable: {
-            type: Object,
-            default: () => ({})
-        },
-        uploadImage: {
-            type: String
-        },
-        inviteRequestMessageTable: {
-            type: Object,
-            default: () => ({})
-        },
-        inGameGroupOrder: {
-            type: Array,
-            default: () => []
-        },
-        shiftHeld: {
-            type: Boolean,
-            default: false
-        },
-        vipFriends: {
-            type: Array,
-            default: () => []
-        },
-        onlineFriends: {
-            type: Array,
-            default: () => []
-        },
-        offlineFriends: {
-            type: Array,
-            default: () => []
-        },
-        activeFriends: {
-            type: Array,
-            default: () => []
-        }
-    });
-
-    const emit = defineEmits([
-        'sortUserDialogAvatars',
-        'logout',
-        'showAvatarAuthorDialog',
-        'showGalleryDialog',
-        'saveCurrentUserGroups',
-        'refreshUserDialogAvatars',
-        'refreshUserDialogTreeData',
-        'saveUserMemo',
-        'setGroupVisibility',
-        'leaveGroup',
-        'leaveGroupPrompt'
-    ]);
+    const { hideTooltips, hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
+    const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
+    const { userDialog, languageDialog, currentUser, cachedUsers } = storeToRefs(useUserStore());
+    const { showUserDialog, applyUser, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
+        useUserStore();
+    const { favoriteLimits } = storeToRefs(useFavoriteStore());
+    const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();
+    const { showAvatarDialog, lookupAvatars, showAvatarAuthorDialog } = useAvatarStore();
+    const { cachedAvatars } = storeToRefs(useAvatarStore());
+    const { cachedWorlds } = storeToRefs(useWorldStore());
+    const { showWorldDialog } = useWorldStore();
+    const {
+        showGroupDialog,
+        applyGroup,
+        saveCurrentUserGroups,
+        updateInGameGroupOrder,
+        leaveGroup,
+        leaveGroupPrompt,
+        setGroupVisibility,
+        handleGroupList
+    } = useGroupStore();
+    const { currentUserGroups, inviteGroupDialog, inGameGroupOrder } = storeToRefs(useGroupStore());
+    const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
+    const { refreshInviteMessageTableData } = useInviteStore();
+    const { friendLogTable } = storeToRefs(useFriendStore());
+    const { getFriendRequest, handleFriendDelete } = useFriendStore();
+    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
+    const { clearInviteImageUpload, showGalleryDialog, checkPreviousImageAvailable, showFullscreenImageDialog } =
+        useGalleryStore();
+    const { isGameRunning } = storeToRefs(useGameStore());
+    const { logout } = useAuthStore();
+    const { cachedConfig } = storeToRefs(useAuthStore());
+    const { handlePlayerModerationAtSend, handlePlayerModeration, handlePlayerModerationDelete } = useModerationStore();
 
     watch(
-        () => props.userDialog.loading,
+        () => userDialog.value.loading,
         () => {
-            if (props.userDialog.visible) {
+            if (userDialog.value.visible) {
                 nextTick(() => adjustDialogZ(userDialogRef.value.$el));
-                !props.userDialog.loading && toggleLastActiveTab(props.userDialog.id);
+                !userDialog.value.loading && toggleLastActiveTab(userDialog.value.id);
             }
         }
     );
@@ -2019,19 +1943,6 @@
         userRef: {}
     });
 
-    const previousImagesDialogVisible = ref(false);
-    const previousImagesTable = ref([]);
-
-    const inviteGroupDialog = ref({
-        visible: false,
-        loading: false,
-        groupId: '',
-        groupName: '',
-        userId: '',
-        userIds: [],
-        userObject: {}
-    });
-
     const socialStatusDialog = ref({
         visible: false,
         loading: false,
@@ -2061,7 +1972,7 @@
     });
 
     const userDialogAvatars = computed(() => {
-        const { avatars, avatarReleaseStatus } = props.userDialog;
+        const { avatars, avatarReleaseStatus } = userDialog.value;
         if (avatarReleaseStatus === 'public' || avatarReleaseStatus === 'private') {
             return avatars.filter((avatar) => avatar.releaseStatus === avatarReleaseStatus);
         }
@@ -2082,7 +1993,7 @@
 
     function cleanNote(note) {
         // remove newlines because they aren't supported
-        props.userDialog.note = note.replace(/[\r\n]/g, '');
+        userDialog.value.note = note.replace(/[\r\n]/g, '');
     }
 
     function toggleLastActiveTab(userId) {
@@ -2111,7 +2022,7 @@
             userDialogLastActiveTab.value = t('dialog.user.avatars.header');
             setUserDialogAvatars(userId);
             userDialogLastAvatar.value = userId;
-            if (userId === API.currentUser.id) {
+            if (userId === currentUser.value.id) {
                 refreshUserDialogAvatars();
             }
             setUserDialogAvatarsRemote(userId);
@@ -2123,21 +2034,18 @@
 
     function showPronounsDialog() {
         const D = pronounsDialog.value;
-        D.pronouns = API.currentUser.pronouns;
+        D.pronouns = currentUser.value.pronouns;
         D.visible = true;
     }
 
     function showLanguageDialog() {
-        const D = props.languageDialog;
+        const D = languageDialog.value;
         D.visible = true;
     }
 
     function showSocialStatusDialog() {
-        // this.$nextTick(() =>
-        //     $app.adjustDialogZ(this.$refs.socialStatusDialog.$el)
-        // );
         const D = socialStatusDialog.value;
-        const { statusHistory } = API.currentUser;
+        const { statusHistory } = currentUser.value;
         const statusHistoryArray = [];
         for (let i = 0; i < statusHistory.length; ++i) {
             const addStatus = {
@@ -2147,15 +2055,15 @@
             statusHistoryArray.push(addStatus);
         }
         socialStatusHistoryTable.value.data = statusHistoryArray;
-        D.status = API.currentUser.status;
-        D.statusDescription = API.currentUser.statusDescription;
+        D.status = currentUser.value.status;
+        D.statusDescription = currentUser.value.statusDescription;
         D.visible = true;
     }
 
     async function setUserDialogAvatarsRemote(userId) {
-        if (props.avatarRemoteDatabase && userId !== API.currentUser.id) {
-            props.userDialog.isAvatarsLoading = true;
-            const data = await props.lookupAvatars('authorId', userId);
+        if (avatarRemoteDatabase.value && userId !== currentUser.value.id) {
+            userDialog.value.isAvatarsLoading = true;
+            const data = await lookupAvatars('authorId', userId);
             const avatars = new Set();
             userDialogAvatars.value.forEach((avatar) => {
                 avatars.add(avatar.id, avatar);
@@ -2164,18 +2072,18 @@
                 data.forEach((avatar) => {
                     if (avatar.id && !avatars.has(avatar.id)) {
                         if (avatar.authorId === userId) {
-                            props.userDialog.avatars.push(avatar);
+                            userDialog.value.avatars.push(avatar);
                         } else {
                             console.error(`Avatar authorId mismatch for ${avatar.id} - ${avatar.name}`);
                         }
                     }
                 });
             }
-            props.userDialog.avatarSorting = 'name';
-            props.userDialog.avatarReleaseStatus = 'all';
-            props.userDialog.isAvatarsLoading = false;
+            userDialog.value.avatarSorting = 'name';
+            userDialog.value.avatarReleaseStatus = 'all';
+            userDialog.value.isAvatarsLoading = false;
         }
-        sortUserDialogAvatars(props.userDialog.avatars);
+        sortUserDialogAvatars(userDialog.value.avatars);
     }
 
     async function toggleBadgeVisibility(badge) {
@@ -2203,7 +2111,6 @@
     }
 
     function handleBadgeUpdate(args) {
-        // API.$on('BADGE:UPDATE')
         if (args.json) {
             $message({
                 message: t('message.badge.updated'),
@@ -2213,8 +2120,8 @@
     }
 
     function setPlayerModeration(userId, type) {
-        const D = props.userDialog;
-        AppApi.SetVRChatUserModeration(API.currentUser.id, userId, type).then((result) => {
+        const D = userDialog.value;
+        AppApi.SetVRChatUserModeration(currentUser.value.id, userId, type).then((result) => {
             if (result) {
                 if (type === 4) {
                     D.isShowAvatar = false;
@@ -2241,7 +2148,7 @@
             userId,
             messageSlot: {}
         };
-        inviteMessagesRequest.refreshInviteMessageTableData('message');
+        refreshInviteMessageTableData('message');
         clearInviteImageUpload();
         sendInviteDialogVisible.value = true;
     }
@@ -2252,31 +2159,14 @@
             userId,
             messageSlot: {}
         };
-        inviteMessagesRequest.refreshInviteMessageTableData('request');
+        refreshInviteMessageTableData('request');
         clearInviteImageUpload();
         sendInviteRequestDialogVisible.value = true;
     }
 
-    async function checkPreviousImageAvailable(images) {
-        previousImagesTable.value = [];
-        for (const image of images) {
-            if (image.file && image.file.url) {
-                const response = await fetch(image.file.url, {
-                    method: 'HEAD',
-                    redirect: 'follow'
-                }).catch((error) => {
-                    console.log(error);
-                });
-                if (response.status === 200) {
-                    previousImagesTable.value.push(image);
-                }
-            }
-        }
-    }
-
     function displayPreviousImages() {
         previousImagesTable.value = [];
-        const imageUrl = props.userDialog.ref.currentAvatarImageUrl;
+        const imageUrl = userDialog.value.ref.currentAvatarImageUrl;
 
         const fileId = extractFileId(imageUrl);
         if (!fileId) {
@@ -2299,19 +2189,14 @@
     }
 
     function showInviteGroupDialog(groupId, userId) {
-        const D = inviteGroupDialog.value;
-        D.userIds = '';
-        D.groups = [];
-        D.groupId = groupId;
-        D.groupName = groupId;
-        D.userId = userId;
-        D.userObject = {};
-        D.visible = true;
+        inviteGroupDialog.value.groupId = groupId;
+        inviteGroupDialog.value.userId = userId;
+        inviteGroupDialog.value.visible = true;
     }
 
     function userDialogCommand(command) {
         let L;
-        const D = props.userDialog;
+        const D = userDialog.value;
         if (D.visible === false) {
             return;
         }
@@ -2344,7 +2229,7 @@
                     return args;
                 });
         } else if (command === 'Invite Message') {
-            L = parseLocation(props.lastLocation.location);
+            L = parseLocation(lastLocation.value.location);
             worldRequest
                 .getCachedWorld({
                     worldId: L.worldId
@@ -2352,8 +2237,8 @@
                 .then((args) => {
                     showSendInviteDialog(
                         {
-                            instanceId: props.lastLocation.location,
-                            worldId: props.lastLocation.location,
+                            instanceId: lastLocation.value.location,
+                            worldId: lastLocation.value.location,
                             worldName: args.ref.name
                         },
                         D.id
@@ -2367,9 +2252,9 @@
                 D.id
             );
         } else if (command === 'Invite') {
-            let currentLocation = props.lastLocation.location;
-            if (props.lastLocation.location === 'traveling') {
-                currentLocation = props.lastLocationDestination;
+            let currentLocation = lastLocation.value.location;
+            if (lastLocation.value.location === 'traveling') {
+                currentLocation = lastLocationDestination.value;
             }
             L = parseLocation(currentLocation);
             worldRequest
@@ -2453,8 +2338,7 @@
     }
 
     function handleSendFriendRequest(args) {
-        // API.$on('FRIEND:REQUEST')
-        const ref = API.cachedUsers.get(args.params.userId);
+        const ref = cachedUsers.value.get(args.params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -2464,11 +2348,10 @@
             userId: ref.id,
             displayName: ref.displayName
         };
-        props.friendLogTable.data.push(friendLogHistory);
+        friendLogTable.value.data.push(friendLogHistory);
         database.addFriendLogHistory(friendLogHistory);
 
-        // API.$on('FRIEND:REQUEST')
-        const D = props.userDialog;
+        const D = userDialog.value;
         if (D.visible === false || D.id !== args.params.userId) {
             return;
         }
@@ -2480,8 +2363,7 @@
     }
 
     function handleCancelFriendRequest(args) {
-        // API.$on('FRIEND:REQUEST:CANCEL')
-        const ref = API.cachedUsers.get(args.params.userId);
+        const ref = cachedUsers.value.get(args.params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -2491,11 +2373,9 @@
             userId: ref.id,
             displayName: ref.displayName
         };
-        props.friendLogTable.data.push(friendLogHistory);
+        friendLogTable.value.data.push(friendLogHistory);
         database.addFriendLogHistory(friendLogHistory);
-
-        // API.$on('FRIEND:REQUEST:CANCEL')
-        const D = props.userDialog;
+        const D = userDialog.value;
         if (D.visible === false || D.id !== args.params.userId) {
             return;
         }
@@ -2503,18 +2383,18 @@
     }
 
     function handleSendPlayerModeration(args) {
-        // API.$on('PLAYER-MODERATION:SEND')
         const ref = {
             json: args.json,
             params: {
                 playerModerationId: args.json.id
             }
         };
-        API.$emit('PLAYER-MODERATION', ref);
-        API.$emit('PLAYER-MODERATION:@SEND', ref);
+        handlePlayerModeration();
+        handlePlayerModerationAtSend(ref);
     }
 
     async function performUserDialogCommand(command, userId) {
+        let args;
         let key;
         switch (command) {
             case 'Delete Favorite':
@@ -2523,7 +2403,7 @@
                 });
                 break;
             case 'Accept Friend Request':
-                key = API.getFriendRequest(userId);
+                key = getFriendRequest(userId);
                 if (key === '') {
                     const args = await friendRequest.sendFriendRequest({
                         userId
@@ -2536,7 +2416,7 @@
                 }
                 break;
             case 'Decline Friend Request':
-                key = API.getFriendRequest(userId);
+                key = getFriendRequest(userId);
                 if (key === '') {
                     const args = await friendRequest.cancelFriendRequest({
                         userId
@@ -2549,14 +2429,14 @@
                 }
                 break;
             case 'Cancel Friend Request': {
-                const args = await friendRequest.cancelFriendRequest({
+                args = await friendRequest.cancelFriendRequest({
                     userId
                 });
                 handleCancelFriendRequest(args);
                 break;
             }
             case 'Send Friend Request': {
-                const args = await friendRequest.sendFriendRequest({
+                args = await friendRequest.sendFriendRequest({
                     userId
                 });
                 handleSendFriendRequest(args);
@@ -2569,7 +2449,7 @@
                 });
                 break;
             case 'Moderation Block': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
@@ -2577,13 +2457,14 @@
                 break;
             }
             case 'Moderation Unmute':
-                playerModerationRequest.deletePlayerModeration({
+                args = await playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
+                handlePlayerModerationDelete(args);
                 break;
             case 'Moderation Mute': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'mute'
                 });
@@ -2591,13 +2472,14 @@
                 break;
             }
             case 'Moderation Enable Avatar Interaction':
-                playerModerationRequest.deletePlayerModeration({
+                args = await playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
+                handlePlayerModerationDelete(args);
                 break;
             case 'Moderation Disable Avatar Interaction': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
                 });
@@ -2605,13 +2487,14 @@
                 break;
             }
             case 'Moderation Enable Chatbox':
-                playerModerationRequest.deletePlayerModeration({
+                args = await playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });
+                handlePlayerModerationDelete(args);
                 break;
             case 'Moderation Disable Chatbox': {
-                const args = await playerModerationRequest.sendPlayerModeration({
+                args = await playerModerationRequest.sendPlayerModeration({
                     moderated: userId,
                     type: 'muteChat'
                 });
@@ -2622,9 +2505,10 @@
                 reportUserForHacking(userId);
                 break;
             case 'Unfriend':
-                friendRequest.deleteFriend({
+                args = await friendRequest.deleteFriend({
                     userId
                 });
+                handleFriendDelete(args);
                 break;
         }
     }
@@ -2639,7 +2523,7 @@
     }
 
     async function getUserGroups(userId) {
-        props.userDialog.isGroupsLoading = true;
+        userDialog.value.isGroupsLoading = true;
         userGroups.value = {
             groups: [],
             ownGroups: [],
@@ -2647,17 +2531,18 @@
             remainingGroups: []
         };
         const args = await groupRequest.getGroups({ userId });
-        if (userId !== props.userDialog.id) {
-            props.userDialog.isGroupsLoading = false;
+        handleGroupList(args);
+        if (userId !== userDialog.value.id) {
+            userDialog.value.isGroupsLoading = false;
             return;
         }
-        if (userId === API.currentUser.id) {
+        if (userId === currentUser.value.id) {
             // update current user groups
-            API.currentUserGroups.clear();
+            currentUserGroups.value.clear();
             args.json.forEach((group) => {
-                const ref = API.applyGroup(group);
-                if (!API.currentUserGroups.has(group.id)) {
-                    API.currentUserGroups.set(group.id, ref);
+                const ref = applyGroup(group);
+                if (!currentUserGroups.value.has(group.id)) {
+                    currentUserGroups.value.set(group.id, ref);
                 }
             });
 
@@ -2673,7 +2558,7 @@
             if (group.ownerId === userId) {
                 userGroups.value.ownGroups.unshift(group);
             }
-            if (userId === API.currentUser.id) {
+            if (userId === currentUser.value.id) {
                 // skip mutual groups for current user
                 if (group.ownerId !== userId) {
                     userGroups.value.remainingGroups.unshift(group);
@@ -2687,25 +2572,18 @@
                 userGroups.value.remainingGroups.unshift(group);
             }
         }
-        if (userId === API.currentUser.id) {
-            props.userDialog.groupSorting = userDialogGroupSortingOptions.inGame;
-        } else if (props.userDialog.groupSorting === userDialogGroupSortingOptions.inGame) {
-            props.userDialog.groupSorting = userDialogGroupSortingOptions.alphabetical;
+        if (userId === currentUser.value.id) {
+            userDialog.value.groupSorting = userDialogGroupSortingOptions.inGame;
+        } else if (userDialog.value.groupSorting === userDialogGroupSortingOptions.inGame) {
+            userDialog.value.groupSorting = userDialogGroupSortingOptions.alphabetical;
         }
         await sortCurrentUserGroups();
-        props.userDialog.isGroupsLoading = false;
-    }
-
-    function compareByMemberCount(a, b) {
-        if (typeof a.memberCount !== 'number' || typeof b.memberCount !== 'number') {
-            return 0;
-        }
-        return a.memberCount - b.memberCount;
+        userDialog.value.isGroupsLoading = false;
     }
 
     function sortGroupsByInGame(a, b) {
-        const aIndex = props.inGameGroupOrder.indexOf(a?.id);
-        const bIndex = props.inGameGroupOrder.indexOf(b?.id);
+        const aIndex = inGameGroupOrder.value.indexOf(a?.id);
+        const bIndex = inGameGroupOrder.value.indexOf(b?.id);
         if (aIndex === -1 && bIndex === -1) {
             return 0;
         }
@@ -2719,19 +2597,19 @@
     }
 
     async function sortCurrentUserGroups() {
-        const D = props.userDialog;
+        const D = userDialog.value;
         let sortMethod = function () {};
 
         switch (D.groupSorting.value) {
             case 'alphabetical':
-                sortMethod = utils.compareByName;
+                sortMethod = compareByName;
                 break;
             case 'members':
                 sortMethod = compareByMemberCount;
                 break;
             case 'inGame':
                 sortMethod = sortGroupsByInGame;
-                await props.updateInGameGroupOrder();
+                await updateInGameGroupOrder();
                 break;
         }
 
@@ -2745,26 +2623,26 @@
         userDialogAvatars.value.forEach((avatar) => {
             avatars.add(avatar.id, avatar);
         });
-        for (const ref of API.cachedAvatars.values()) {
+        for (const ref of cachedAvatars.value.values()) {
             if (ref.authorId === userId && !avatars.has(ref.id)) {
-                props.userDialog.avatars.push(ref);
+                userDialog.value.avatars.push(ref);
             }
         }
-        sortUserDialogAvatars(props.userDialog.avatars);
+        sortUserDialogAvatars(userDialog.value.avatars);
     }
 
     function setUserDialogWorlds(userId) {
         const worlds = [];
-        for (const ref of API.cachedWorlds.values()) {
+        for (const ref of cachedWorlds.value.values()) {
             if (ref.authorId === userId) {
                 worlds.push(ref);
             }
         }
-        props.userDialog.worlds = worlds;
+        userDialog.value.worlds = worlds;
     }
 
     function refreshUserDialogWorlds() {
-        const D = props.userDialog;
+        const D = userDialog.value;
         if (D.isWorldsLoading) {
             return;
         }
@@ -2772,29 +2650,29 @@
         const params = {
             n: 50,
             offset: 0,
-            sort: props.userDialog.worldSorting.value,
-            order: props.userDialog.worldOrder.value,
+            sort: userDialog.value.worldSorting.value,
+            order: userDialog.value.worldOrder.value,
             // user: 'friends',
             userId: D.id,
             releaseStatus: 'public'
         };
-        if (params.userId === API.currentUser.id) {
+        if (params.userId === currentUser.value.id) {
             params.user = 'me';
             params.releaseStatus = 'all';
         }
         const map = new Map();
-        for (const ref of API.cachedWorlds.values()) {
-            if (ref.authorId === D.id && (ref.authorId === API.currentUser.id || ref.releaseStatus === 'public')) {
-                API.cachedWorlds.delete(ref.id);
+        for (const ref of cachedWorlds.value.values()) {
+            if (ref.authorId === D.id && (ref.authorId === currentUser.value.id || ref.releaseStatus === 'public')) {
+                cachedWorlds.value.delete(ref.id);
             }
         }
-        API.bulk({
+        processBulk({
             fn: worldRequest.getWorlds,
             N: -1,
             params,
             handle: (args) => {
                 for (const json of args.json) {
-                    const $ref = API.cachedWorlds.get(json.id);
+                    const $ref = cachedWorlds.value.get(json.id);
                     if (typeof $ref !== 'undefined') {
                         map.set($ref.id, $ref);
                     }
@@ -2810,7 +2688,7 @@
     }
 
     async function getUserFavoriteWorlds(userId) {
-        props.userDialog.isFavoriteWorldsLoading = true;
+        userDialog.value.isFavoriteWorldsLoading = true;
         if (favoriteWorldsRef.value) {
             favoriteWorldsRef.value.currentName = '0'; // select first tab
         }
@@ -2820,7 +2698,7 @@
             ownerId: userId,
             n: 100
         };
-        const json = await API.call('favorite/groups', {
+        const json = await request('favorite/groups', {
             method: 'GET',
             params
         });
@@ -2837,17 +2715,18 @@
             };
             try {
                 const args = await favoriteRequest.getFavoriteWorlds(params);
+                handleFavoriteWorldList(args);
                 worldLists.push([list.displayName, list.visibility, args.json]);
             } catch (err) {
                 console.error('getUserFavoriteWorlds', err);
             }
         }
         userFavoriteWorlds.value = worldLists;
-        props.userDialog.isFavoriteWorldsLoading = false;
+        userDialog.value.isFavoriteWorldsLoading = false;
     }
 
     function userDialogTabClick(obj) {
-        const userId = props.userDialog.id;
+        const userId = userDialog.value.id;
         if (userDialogLastActiveTab.value === obj.label) {
             return;
         }
@@ -2860,7 +2739,7 @@
             setUserDialogAvatars(userId);
             if (userDialogLastAvatar.value !== userId) {
                 userDialogLastAvatar.value = userId;
-                if (userId === API.currentUser.id) {
+                if (userId === currentUser.value.id) {
                     refreshUserDialogAvatars();
                 } else {
                     setUserDialogAvatarsRemote(userId);
@@ -2890,8 +2769,8 @@
     }
 
     async function addNote(userId, note) {
-        if (props.userDialog.id === userId) {
-            props.userDialog.noteSaving = true;
+        if (userDialog.value.id === userId) {
+            userDialog.value.noteSaving = true;
         }
         const args = await miscRequest.saveNote({
             targetUserId: userId,
@@ -2901,27 +2780,26 @@
     }
 
     function handleNoteChange(args) {
-        // API.$on('NOTE')
         let _note = '';
         let targetUserId = '';
         if (typeof args.json !== 'undefined') {
-            _note = utils.replaceBioSymbols(args.json.note);
+            _note = replaceBioSymbols(args.json.note);
         }
         if (typeof args.params !== 'undefined') {
             targetUserId = args.params.targetUserId;
         }
-        if (targetUserId === props.userDialog.id) {
+        if (targetUserId === userDialog.value.id) {
             if (_note === args.params.note) {
-                props.userDialog.noteSaving = false;
-                props.userDialog.note = _note;
+                userDialog.value.noteSaving = false;
+                userDialog.value.note = _note;
             } else {
                 // response is cached sadge :<
                 userRequest.getUser({ userId: targetUserId });
             }
         }
-        const ref = API.cachedUsers.get(targetUserId);
+        const ref = cachedUsers.value.get(targetUserId);
         if (typeof ref !== 'undefined') {
-            API.applyUser({
+            applyUser({
                 id: targetUserId,
                 note: _note
             });
@@ -2929,8 +2807,8 @@
     }
 
     async function deleteNote(userId) {
-        if (props.userDialog.id === userId) {
-            props.userDialog.noteSaving = true;
+        if (userDialog.value.id === userId) {
+            userDialog.value.noteSaving = true;
         }
         const args = await miscRequest.saveNote({
             targetUserId: userId,
@@ -2940,14 +2818,14 @@
     }
 
     function onUserMemoChange() {
-        const D = props.userDialog;
+        const D = userDialog.value;
         saveUserMemo(D.id, D.memo);
     }
 
     function showBioDialog() {
         const D = bioDialog.value;
-        D.bio = API.currentUser.bio;
-        D.bioLinks = API.currentUser.bioLinks.slice();
+        D.bio = currentUser.value.bio;
+        D.bioLinks = currentUser.value.bioLinks.slice();
         D.visible = true;
     }
 
@@ -2960,13 +2838,9 @@
         nextTick(() => (D.openFlg = false));
     }
 
-    function timeToText(args) {
-        return utils.timeToText(args);
-    }
-
     function toggleAvatarCopying() {
         userRequest.saveCurrentUser({
-            allowAvatarCopying: !API.currentUser.allowAvatarCopying
+            allowAvatarCopying: !currentUser.value.allowAvatarCopying
         });
         //     .then((args) => {
         //     return args;
@@ -3009,8 +2883,8 @@
     }
 
     async function setUserDialogGroupSorting(sortOrder) {
-        const D = props.userDialog;
-        if (D.groupSorting === sortOrder) {
+        const D = userDialog.value;
+        if (D.groupSorting.value === sortOrder.value) {
             return;
         }
         D.groupSorting = sortOrder;
@@ -3026,8 +2900,8 @@
     }
 
     async function editModeCurrentUserGroups() {
-        await props.updateInGameGroupOrder();
-        userDialogGroupEditGroups.value = Array.from(API.currentUserGroups.values());
+        await updateInGameGroupOrder();
+        userDialogGroupEditGroups.value = Array.from(currentUserGroups.value.values());
         userDialogGroupEditGroups.value.sort(sortGroupsByInGame);
         userDialogGroupEditMode.value = true;
     }
@@ -3036,8 +2910,8 @@
         userDialogGroupEditGroups.value.sort(sortGroupsByInGame);
         try {
             await AppApi.SetVRChatRegistryKey(
-                `VRC_GROUP_ORDER_${API.currentUser.id}`,
-                JSON.stringify(props.inGameGroupOrder),
+                `VRC_GROUP_ORDER_${currentUser.value.id}`,
+                JSON.stringify(inGameGroupOrder.value),
                 3
             );
         } catch (err) {
@@ -3074,7 +2948,7 @@
     // Leave (remove user from) all selected groups
     function bulkLeaveGroups() {
         for (const groupId of userDialogGroupEditSelectedGroupIds.value) {
-            leaveGroup(groupId);
+            leaveGroupPrompt(groupId);
         }
     }
 
@@ -3089,44 +2963,44 @@
     }
 
     function moveGroupUp(groupId) {
-        const index = props.inGameGroupOrder.indexOf(groupId);
+        const index = inGameGroupOrder.value.indexOf(groupId);
         if (index > 0) {
-            props.inGameGroupOrder.splice(index, 1);
-            props.inGameGroupOrder.splice(index - 1, 0, groupId);
+            inGameGroupOrder.value.splice(index, 1);
+            inGameGroupOrder.value.splice(index - 1, 0, groupId);
             saveInGameGroupOrder();
         }
     }
 
     function moveGroupDown(groupId) {
-        const index = props.inGameGroupOrder.indexOf(groupId);
-        if (index < props.inGameGroupOrder.length - 1) {
-            props.inGameGroupOrder.splice(index, 1);
-            props.inGameGroupOrder.splice(index + 1, 0, groupId);
+        const index = inGameGroupOrder.value.indexOf(groupId);
+        if (index < inGameGroupOrder.value.length - 1) {
+            inGameGroupOrder.value.splice(index, 1);
+            inGameGroupOrder.value.splice(index + 1, 0, groupId);
             saveInGameGroupOrder();
         }
     }
 
     function moveGroupTop(groupId) {
-        const index = props.inGameGroupOrder.indexOf(groupId);
+        const index = inGameGroupOrder.value.indexOf(groupId);
         if (index > 0) {
-            props.inGameGroupOrder.splice(index, 1);
-            props.inGameGroupOrder.unshift(groupId);
+            inGameGroupOrder.value.splice(index, 1);
+            inGameGroupOrder.value.unshift(groupId);
             saveInGameGroupOrder();
         }
     }
 
     function moveGroupBottom(groupId) {
-        const index = props.inGameGroupOrder.indexOf(groupId);
-        if (index < props.inGameGroupOrder.length - 1) {
-            props.inGameGroupOrder.splice(index, 1);
-            props.inGameGroupOrder.push(groupId);
+        const index = inGameGroupOrder.value.indexOf(groupId);
+        if (index < inGameGroupOrder.value.length - 1) {
+            inGameGroupOrder.value.splice(index, 1);
+            inGameGroupOrder.value.push(groupId);
             saveInGameGroupOrder();
         }
     }
 
     async function setUserDialogWorldSorting(sortOrder) {
-        const D = props.userDialog;
-        if (D.worldSorting === sortOrder) {
+        const D = userDialog.value;
+        if (D.worldSorting.value === sortOrder.value) {
             return;
         }
         D.worldSorting = sortOrder;
@@ -3134,8 +3008,8 @@
     }
 
     async function setUserDialogWorldOrder(order) {
-        const D = props.userDialog;
-        if (D.worldOrder === order) {
+        const D = userDialog.value;
+        if (D.worldOrder.value === order.value) {
             return;
         }
         D.worldOrder = order;
@@ -3143,44 +3017,11 @@
     }
 
     function changeUserDialogAvatarSorting(sortOption) {
-        const D = props.userDialog;
+        const D = userDialog.value;
         D.avatarSorting = sortOption;
         sortUserDialogAvatars(D.avatars);
     }
 
-    function refreshUserDialogTreeData() {
-        emit('refreshUserDialogTreeData');
-    }
-    function setGroupVisibility(groupId, visibility) {
-        emit('setGroupVisibility', groupId, visibility);
-    }
-    function refreshUserDialogAvatars() {
-        emit('refreshUserDialogAvatars');
-    }
-    function leaveGroup(id) {
-        emit('leaveGroup', id);
-    }
-    function leaveGroupPrompt(id) {
-        emit('leaveGroupPrompt', id);
-    }
-    function sortUserDialogAvatars(avatars) {
-        emit('sortUserDialogAvatars', avatars);
-    }
-    function logout() {
-        emit('logout');
-    }
-    function showAvatarAuthorDialog(userId, authorId, currentAvatarImageUrl) {
-        emit('showAvatarAuthorDialog', userId, authorId, currentAvatarImageUrl);
-    }
-    function showGalleryDialog() {
-        emit('showGalleryDialog');
-    }
-    function saveCurrentUserGroups() {
-        emit('saveCurrentUserGroups');
-    }
-    function saveUserMemo(userId, memo) {
-        emit('saveUserMemo', userId, memo);
-    }
     function closeInviteDialog() {
         clearInviteImageUpload();
     }
