@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198, paralleltree",
+    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp",
     "nav_tooltip": {
         "feed": "フィード",
         "game_log": "ゲームログ",
@@ -515,6 +515,16 @@
                     "show_images": "ワールド画像を表示"
                 }
             },
+            "pictures": {
+                "pictures": {
+                    "header": "写真",
+                    "open_folder": "フォルダを開く",
+                    "vrc_photos": "VRChatの写真",
+                    "steam_screenshots": "Steamのスクリーンショット",
+                    "auto_delete_old_prints": "古いプリントを自動削除",
+                    "auto_delete_prints_from_vrc": "プリント上限に達したときVRCから古いプリントを削除"
+                }
+            },
             "advanced": {
                 "advanced": {
                     "header": "詳細設定",
@@ -550,6 +560,10 @@
                     "save_instance_stickers_to_file": {
                         "header": "インスタンス内にあるスタンプをローカルファイルに保存",
                         "description": "貼られたスタンプを、VRChatの画像フォルダに保存する"
+                    },
+                    "save_instance_emoji_to_file": {
+                        "header": "インスタンス内の絵文字をローカルファイルに保存",
+                        "description": "出された絵文字をVRChatの画像フォルダに保存する"
                     },
                     "remote_database": {
                         "header": "リモートアバターデータベース",
@@ -843,6 +857,7 @@
                 "private": "プライベート",
                 "avatar_scaling_disabled": "アバタースケーリング 使用不可",
                 "focus_view_disabled": "フォーカスビュー 使用不可",
+                "stickers_disabled": "ステッカー使用不可",
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ",
@@ -868,7 +883,7 @@
                 "change_capacity": "最大人数を変更",
                 "change_recommended_capacity": "推奨人数を変更",
                 "change_preview": "YouTube プレビュー動画を変更",
-                "change_tags": "タグを変更",
+                "change_warnings_settings_tags": "コンテンツ警告・設定・タグを変更",
                 "change_image": "画像を変更",
                 "change_allowed_video_player_domains": "許可されたビデオプレーヤードメインを変更する",
                 "download_package": "Unity Packageをダウンロード",
@@ -955,6 +970,7 @@
                 "rename": "名前を変更",
                 "change_description": "説明を変更",
                 "change_content_tags": "コンテンツタグを変更",
+                "change_styles_author_tags": "スタイルと作者タグを変更",
                 "change_image": "画像を変更",
                 "download_package": "Unity Packageをダウンロード",
                 "delete": "削除",
@@ -1010,6 +1026,9 @@
                 "unsubscribe": "お知らせの受信を停止",
                 "subscribe": "お知らせを受信可能に設定",
                 "invite_to_group": "グループに招待",
+                "manage_selected": "選択したグループを管理",
+                "select_all": "全て選択",
+                "deselect_all": "選択解除",
                 "visibility_everyone": "表示範囲: 全員",
                 "visibility_friends": "表示範囲: フレンドのみ",
                 "visibility_hidden": "表示範囲: 自分のみ",
@@ -1145,6 +1164,7 @@
             "content_pedestals": "ペデスタル",
             "content_prints": "プリント",
             "content_drones": "ドローン",
+            "content_items": "アイテム",
             "world_id": "ワールドID",
             "instance_id": "インスタンスID",
             "instance_id_placeholder": "ランダム",
@@ -1211,6 +1231,7 @@
             "header": "ワールドのタグを設定",
             "avatar_scaling_disabled": "アバタースケーリングを無効化",
             "focus_view_disabled": "フォーカスビューを無効化",
+            "stickers_disabled": "ステッカー使用不可",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "author_tags": "タグ (コンマ区切り)",
             "content_tags": "コンテンツ タグ (コンマ区切り)",
@@ -1234,6 +1255,16 @@
             "custom_tags_placeholder": "カスタムタグ",
             "select_all": "全て選択",
             "select_none": "選択解除",
+            "cancel": "キャンセル",
+            "save": "保存"
+        },
+        "set_avatar_styles": {
+            "header": "アバタースタイルを設定",
+            "primary_style": "メインスタイル",
+            "secondary_style": "サブスタイル",
+            "select_style": "スタイルを選択",
+            "save_success": "アバタースタイルを変更しました",
+            "save_failed": "アバタースタイルの変更に失敗しました",
             "cancel": "キャンセル",
             "save": "保存"
         },
@@ -1421,6 +1452,7 @@
             "emojis": "絵文字",
             "stickers": "ステッカー",
             "prints": "プリント",
+            "inventory": "インベントリ",
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去",
@@ -1429,6 +1461,7 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "フレーム数:",
             "emoji_loop_pingpong": "Loop PingPong",
+            "consume_bundle": "バンドルを消費",
             "flipbook_info": "アニメーション絵文字として使用する1024x1024pxのPNGスプライトシート画像を選択 (最大 64FPS)",
             "note": "ノート",
             "crop_print_border": "Crop Print Border"
@@ -1584,7 +1617,7 @@
             "failed_install": "更新のインストールに失敗しました",
             "checking_hash": "ハッシュ値の検証中..."
         },
-        "api_headler": {
+        "api_handler": {
             "avatar_private_or_deleted": "アバターは非公開または削除されています"
         },
         "badge": {
@@ -1616,6 +1649,15 @@
         "gallery": {
             "uploaded": "ギャラリー画像がアップロードされました",
             "failed": "ギャラリー画像のアップロードに失敗しました"
+        },
+        "avatar_gallery": {
+            "uploaded": "アバターギャラリー画像がアップロードされました",
+            "failed": "アバターギャラリー画像のアップロードに失敗しました",
+            "deleted": "アバターギャラリー画像が削除されました",
+            "not_found": "アバターギャラリーファイルIDが見つかりません",
+            "already_first": "すでに最初の画像です",
+            "already_last": "すでに最後の画像です",
+            "reordered": "アバターギャラリー画像の並び替えに成功しました"
         },
         "world": {
             "image_changed": "ワールド画像が変更されました",
@@ -1885,6 +1927,7 @@
             "rank": "トラストランク",
             "language": "言語",
             "bioLink": "自己紹介リンク",
+            "note": "ノート",
             "date": "日付",
             "user": "ユーザー",
             "type": "種類",
