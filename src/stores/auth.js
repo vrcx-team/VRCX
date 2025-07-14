@@ -6,7 +6,7 @@ import { $app } from '../app';
 import { useI18n } from 'vue-i18n-bridge';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
+import { AppGlobal } from '../service/appConfig';
 import { request } from '../service/request';
 import security from '../service/security';
 import webApiService from '../service/webapi';
@@ -193,8 +193,8 @@ export const useAuthStore = defineStore('Auth', () => {
                     state.loginForm.lastUserLoggedIn
                 ];
             if (user?.loginParmas?.endpoint) {
-                API.endpointDomain = user.loginParmas.endpoint;
-                API.websocketDomain = user.loginParmas.websocket;
+                AppGlobal.endpointDomain = user.loginParmas.endpoint;
+                AppGlobal.websocketDomain = user.loginParmas.websocket;
             }
             // login at startup
             state.loginForm.loading = true;
@@ -444,11 +444,11 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         state.loginForm.lastUserLoggedIn = user.user.id; // for resend email 2fa
         if (loginParmas.endpoint) {
-            API.endpointDomain = loginParmas.endpoint;
-            API.websocketDomain = loginParmas.websocket;
+            AppGlobal.endpointDomain = loginParmas.endpoint;
+            AppGlobal.websocketDomain = loginParmas.websocket;
         } else {
-            API.endpointDomain = API.endpointDomainVrchat;
-            API.websocketDomain = API.websocketDomainVrchat;
+            AppGlobal.endpointDomain = AppGlobal.endpointDomainVrchat;
+            AppGlobal.websocketDomain = AppGlobal.websocketDomainVrchat;
         }
         return new Promise((resolve, reject) => {
             state.loginForm.loading = true;
@@ -535,11 +535,11 @@ export const useAuthStore = defineStore('Auth', () => {
         if (!state.loginForm.loading) {
             state.loginForm.loading = true;
             if (state.loginForm.endpoint) {
-                API.endpointDomain = state.loginForm.endpoint;
-                API.websocketDomain = state.loginForm.websocket;
+                AppGlobal.endpointDomain = state.loginForm.endpoint;
+                AppGlobal.websocketDomain = state.loginForm.websocket;
             } else {
-                API.endpointDomain = API.endpointDomainVrchat;
-                API.websocketDomain = API.websocketDomainVrchat;
+                AppGlobal.endpointDomain = AppGlobal.endpointDomainVrchat;
+                AppGlobal.websocketDomain = AppGlobal.websocketDomainVrchat;
             }
             authRequest
                 .getConfig()
@@ -816,20 +816,20 @@ export const useAuthStore = defineStore('Auth', () => {
         state.autoLoginAttempts.add(new Date().getTime());
         relogin(user)
             .then(() => {
-                if (API.errorNoty) {
-                    API.errorNoty.close();
+                if (AppGlobal.errorNoty) {
+                    AppGlobal.errorNoty.close();
                 }
-                API.errorNoty = new Noty({
+                AppGlobal.errorNoty = new Noty({
                     type: 'success',
                     text: 'Automatically logged in.'
                 }).show();
                 console.log('Automatically logged in.');
             })
             .catch((err) => {
-                if (API.errorNoty) {
-                    API.errorNoty.close();
+                if (AppGlobal.errorNoty) {
+                    AppGlobal.errorNoty.close();
                 }
-                API.errorNoty = new Noty({
+                AppGlobal.errorNoty = new Noty({
                     type: 'error',
                     text: 'Failed to login automatically.'
                 }).show();
@@ -837,7 +837,7 @@ export const useAuthStore = defineStore('Auth', () => {
             })
             .finally(() => {
                 if (!navigator.onLine) {
-                    API.errorNoty = new Noty({
+                    AppGlobal.errorNoty = new Noty({
                         type: 'error',
                         text: `You're offline.`
                     }).show();

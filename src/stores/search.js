@@ -92,7 +92,6 @@ export const useSearchStore = defineStore('Search', () => {
     }
 
     async function moreSearchUser(go, params) {
-        // var params = this.searchUserParams;
         if (go) {
             params.offset += params.n * go;
             if (params.offset < 0) {

@@ -44,7 +44,7 @@
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { imageRequest } from '../../../api';
-    import { API } from '../../../service/eventBus';
+    import { AppGlobal } from '../../../service/appConfig';
     import { $throw } from '../../../service/request';
     import { extractFileId } from '../../../shared/utils';
     import { useGalleryStore, useWorldStore } from '../../../stores';
@@ -306,7 +306,7 @@
         const { fileId, fileVersion } = args.params;
         const parmas = {
             id: worldImage.value.worldId,
-            imageUrl: `${API.endpointDomain}/file/${fileId}/${fileVersion}/file`
+            imageUrl: `${AppGlobal.endpointDomain}/file/${fileId}/${fileVersion}/file`
         };
         const res = await imageRequest.setWorldImage(parmas);
         return worldImageSet(res);
@@ -331,7 +331,7 @@
         changeWorldImageDialogLoading.value = true;
         const parmas = {
             id: worldDialog.value.id,
-            imageUrl: `${API.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file`
+            imageUrl: `${AppGlobal.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file`
         };
         imageRequest
             .setWorldImage(parmas)
@@ -344,8 +344,7 @@
 
     function compareCurrentImage(image) {
         if (
-            `${API.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file` ===
-            // FIXME: old:avatarDialog -> new:worldDialog, is this correct?
+            `${AppGlobal.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file` ===
             worldDialog.value.ref.imageUrl
         ) {
             return true;

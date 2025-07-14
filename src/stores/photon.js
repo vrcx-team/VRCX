@@ -5,7 +5,7 @@ import { instanceRequest, userRequest } from '../api';
 import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
+import { AppGlobal } from '../service/appConfig';
 import { photonEventType } from '../shared/constants';
 import {
     checkVRChatCache,
@@ -1284,7 +1284,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         const datetime = json.dt;
         const eventData = json.VRCEventData;
         const senderId = eventData.Sender;
-        if (API.debugPhotonLogging) {
+        if (AppGlobal.debugPhotonLogging) {
             console.log('VrcEvent:', json);
         }
         if (eventData.EventName === '_SendOnSpawn') {
@@ -1346,7 +1346,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                     '$1:'
                 )}`;
             }
-            if (API.debugPhotonLogging) {
+            if (AppGlobal.debugPhotonLogging) {
                 const displayName = getDisplayNameFromPhotonId(senderId);
                 const feed = `RPC ${displayName} ${
                     photonEventType[eventData.EventType]

@@ -5,7 +5,7 @@ import { friendRequest, userRequest } from '../api';
 import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
+import { AppGlobal } from '../service/appConfig';
 import { reconnectWebSocket } from '../service/websocket';
 import { watchState } from '../service/watchState';
 import {
@@ -429,7 +429,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         }
         if (stateInput === 'online') {
-            if (API.debugFriendState && ctx.pendingOffline) {
+            if (AppGlobal.debugFriendState && ctx.pendingOffline) {
                 const time = (Date.now() - ctx.pendingOfflineTime) / 1000;
                 console.log(`${ctx.name} pendingOfflineCancelTime ${time}`);
             }
@@ -519,12 +519,12 @@ export const useFriendStore = defineStore('Friend', () => {
             }
             // prevent status flapping
             if (ctx.pendingOffline) {
-                if (API.debugFriendState) {
+                if (AppGlobal.debugFriendState) {
                     console.log(ctx.name, 'pendingOfflineAlreadyWaiting');
                 }
                 return;
             }
-            if (API.debugFriendState) {
+            if (AppGlobal.debugFriendState) {
                 console.log(ctx.name, 'pendingOfflineBegin');
             }
             ctx.pendingOffline = true;
@@ -532,7 +532,7 @@ export const useFriendStore = defineStore('Friend', () => {
             // wait 2minutes then check if user came back online
             workerTimers.setTimeout(() => {
                 if (!ctx.pendingOffline) {
-                    if (API.debugFriendState) {
+                    if (AppGlobal.debugFriendState) {
                         console.log(ctx.name, 'pendingOfflineAlreadyCancelled');
                     }
                     return;
@@ -540,7 +540,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 ctx.pendingOffline = false;
                 ctx.pendingOfflineTime = '';
                 if (ctx.pendingState === ctx.state) {
-                    if (API.debugFriendState) {
+                    if (AppGlobal.debugFriendState) {
                         console.log(
                             ctx.name,
                             'pendingOfflineCancelledStateMatched'
@@ -548,7 +548,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     }
                     return;
                 }
-                if (API.debugFriendState) {
+                if (AppGlobal.debugFriendState) {
                     console.log(ctx.name, 'pendingOfflineEnd');
                 }
                 updateFriendDelayedCheck(ctx, location, $location_at);
@@ -584,7 +584,7 @@ export const useFriendStore = defineStore('Friend', () => {
         let worldName;
         const id = ctx.id;
         const newState = ctx.pendingState;
-        if (API.debugFriendState) {
+        if (AppGlobal.debugFriendState) {
             console.log(
                 `${ctx.name} updateFriendState ${ctx.state} -> ${newState}`
             );
@@ -943,7 +943,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 }
                 const ref = state.friends.get(friend.id);
                 if (ref?.state !== state_input) {
-                    if (API.debugFriendState) {
+                    if (AppGlobal.debugFriendState) {
                         console.log(
                             `Refetching friend state it does not match ${friend.displayName} from ${ref?.state} to ${state_input}`,
                             friend
@@ -954,7 +954,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     });
                     friends[i] = args.json;
                 } else if (friend.location === 'traveling') {
-                    if (API.debugFriendState) {
+                    if (AppGlobal.debugFriendState) {
                         console.log(
                             'Refetching traveling friend',
                             friend.displayName
@@ -1701,7 +1701,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 await initFriendLog(userStore.currentUser);
             }
         } catch (err) {
-            if (!API.dontLogMeOut) {
+            if (!AppGlobal.dontLogMeOut) {
                 $app.$message({
                     message: t('message.friend.load_failed'),
                     type: 'error'

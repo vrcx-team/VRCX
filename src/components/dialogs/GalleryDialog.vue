@@ -504,7 +504,7 @@
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
-    import { API } from '../../service/eventBus';
+    import { AppGlobal } from '../../service/appConfig';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
     import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../shared/utils';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../stores';
@@ -612,7 +612,7 @@
         }
         let profilePicOverride = '';
         if (fileId) {
-            profilePicOverride = `${API.endpointDomain}/file/${fileId}/1`;
+            profilePicOverride = `${AppGlobal.endpointDomain}/file/${fileId}/1`;
         }
         if (profilePicOverride === currentUser.value.profilePicOverride) {
             return;
@@ -712,7 +712,7 @@
         }
         let userIcon = '';
         if (fileId) {
-            userIcon = `${API.endpointDomain}/file/${fileId}/1`;
+            userIcon = `${AppGlobal.endpointDomain}/file/${fileId}/1`;
         }
         if (userIcon === currentUser.value.userIcon) {
             return;

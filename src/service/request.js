@@ -10,14 +10,9 @@ import {
     useUpdateLoopStore,
     useUserStore
 } from '../stores';
-import { API } from './eventBus.js';
+import { AppGlobal } from './appConfig.js';
 import webApiService from './webapi.js';
 import { watchState } from './watchState';
-
-API.endpointDomainVrchat = 'https://api.vrchat.cloud/api/1';
-API.websocketDomainVrchat = 'wss://pipeline.vrchat.cloud';
-API.endpointDomain = 'https://api.vrchat.cloud/api/1';
-API.websocketDomain = 'wss://pipeline.vrchat.cloud';
 
 const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();
@@ -43,7 +38,7 @@ export function request(endpoint, options) {
     }
     let req;
     const init = {
-        url: `${API.endpointDomain}/${endpoint}`,
+        url: `${AppGlobal.endpointDomain}/${endpoint}`,
         method: 'GET',
         ...options
     };
@@ -107,14 +102,14 @@ export function request(endpoint, options) {
                 throw `API request blocked while logged out: ${endpoint}`;
             }
             if (!response.data) {
-                if (API.debugWebRequests) {
+                if (AppGlobal.debugWebRequests) {
                     console.log(init, response, 'no data');
                 }
                 return response;
             }
             try {
                 response.data = JSON.parse(response.data);
-                if (API.debugWebRequests) {
+                if (AppGlobal.debugWebRequests) {
                     console.log(init, response.data, 'parsed data');
                 }
                 return response;
@@ -282,14 +277,14 @@ export function $throw(code, error, endpoint) {
     }
     const text = message.map((s) => escapeTag(s)).join('<br>');
     if (text.length) {
-        if (API.errorNoty) {
-            API.errorNoty.close();
+        if (AppGlobal.errorNoty) {
+            AppGlobal.errorNoty.close();
         }
-        API.errorNoty = new Noty({
+        AppGlobal.errorNoty = new Noty({
             type: 'error',
             text
         });
-        API.errorNoty.show();
+        AppGlobal.errorNoty.show();
     }
     const e = new Error(text);
     e.status = code;
@@ -299,8 +294,6 @@ export function $throw(code, error, endpoint) {
 
 /**
  * Processes data in bulk by making paginated requests until all data is fetched or limits are reached.
- *
- * `API.bulk`
  *
  * @async
  * @function processBulk
@@ -382,46 +375,3 @@ export async function processBulk(options) {
         }
     }
 }
-
-API.$bulk = function (options, args) {
-    if ('handle' in options) {
-        options.handle.call(this, args, options);
-    }
-    if (
-        args.json.length > 0 &&
-        ((options.params.offset += args.json.length),
-        options.N > 0
-            ? options.N > options.params.offset
-            : options.N < 0
-              ? args.json.length
-              : options.params.n === args.json.length)
-    ) {
-        API.bulk(options);
-    } else if ('done' in options) {
-        options.done.call(this, true, options);
-    }
-    return args;
-};
-
-API.bulk = function (options) {
-    if (typeof options.fn === 'function') {
-        options
-            .fn(options.params)
-            .catch((err) => {
-                if ('done' in options) {
-                    options.done.call(this, false, options);
-                }
-                throw err;
-            })
-            .then((args) => API.$bulk(options, args));
-    } else {
-        this[options.fn](options.params)
-            .catch((err) => {
-                if ('done' in options) {
-                    options.done.call(this, false, options);
-                }
-                throw err;
-            })
-            .then((args) => API.$bulk(options, args));
-    }
-};

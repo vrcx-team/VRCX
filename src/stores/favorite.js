@@ -924,12 +924,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 }
             }
         }
-        // assign the rest
-        // FIXME
-        // The order (cachedFavoriteGroups) is very important. It should be
-        // processed in the order in which the server responded. But since we
-        // used Map(), the order would be a mess. So we need something to solve
-        // this.
+
         for (ref of state.cachedFavoriteGroups.values()) {
             if (ref.$isDeleted || assigns.has(ref.id)) {
                 continue;

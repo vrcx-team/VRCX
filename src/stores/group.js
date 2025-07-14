@@ -305,7 +305,7 @@ export const useGroupStore = defineStore('Group', () => {
         }
         const groups = ref.presence?.groups;
         if (!groups) {
-            console.error('API.applyPresenceGroups: invalid groups', ref);
+            console.error('applyPresenceGroups: invalid groups', ref);
             return;
         }
         if (groups.length === 0) {

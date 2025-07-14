@@ -4,7 +4,7 @@ import { computed, reactive, watch } from 'vue';
 import { avatarRequest, imageRequest } from '../api';
 import { $app } from '../app';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
+import { AppGlobal } from '../service/appConfig';
 import webApiService from '../service/webapi';
 import { watchState } from '../service/watchState';
 import {
@@ -466,7 +466,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                     }
                 });
                 const json = JSON.parse(response.data);
-                if (API.debugWebRequests) {
+                if (AppGlobal.debugWebRequests) {
                     console.log(json, response);
                 }
                 if (response.status === 200 && typeof json === 'object') {
@@ -546,7 +546,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 }
             });
             const json = JSON.parse(response.data);
-            if (API.debugWebRequests) {
+            if (AppGlobal.debugWebRequests) {
                 console.log(json, response);
             }
             if (response.status === 200 && typeof json === 'object') {

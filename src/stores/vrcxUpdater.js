@@ -3,13 +3,13 @@ import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { $app } from '../app';
 import configRepository from '../service/config';
-import { API } from '../service/eventBus';
 import { watchState } from '../service/watchState';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useAuthStore } from './auth';
 import { useUiStore } from './ui';
 import { useI18n } from 'vue-i18n-bridge';
+import { AppGlobal } from '../service/appConfig';
 
 export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const uiStore = useUiStore();
@@ -214,7 +214,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         state.pendingVRCXUpdate = false;
         const json = JSON.parse(response.data);
-        if (API.debugWebRequests) {
+        if (AppGlobal.debugWebRequests) {
             console.log(json, response);
         }
         if (json === Object(json) && json.name && json.published_at) {
@@ -312,7 +312,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             state.checkingForVRCXUpdate = false;
         }
         const json = JSON.parse(response.data);
-        if (API.debugWebRequests) {
+        if (AppGlobal.debugWebRequests) {
             console.log(json, response);
         }
         const releases = [];

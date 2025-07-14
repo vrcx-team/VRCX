@@ -4,7 +4,7 @@ import { worldRequest } from '../api';
 import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { API } from '../service/eventBus';
+import { AppGlobal } from '../service/appConfig';
 import { failedGetRequests } from '../service/request';
 import { watchState } from '../service/watchState';
 import {
@@ -215,10 +215,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     function showConsole() {
         AppApi.ShowDevTools();
         if (
-            API.debug ||
-            API.debugWebRequests ||
-            API.debugWebSocket ||
-            API.debugUserDiff
+            AppGlobal.debug ||
+            AppGlobal.debugWebRequests ||
+            AppGlobal.debugWebSocket ||
+            AppGlobal.debugUserDiff
         ) {
             return;
         }
@@ -455,7 +455,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (API.debugPhotonLogging) {
+                if (AppGlobal.debugPhotonLogging) {
                     console.log(
                         'OnEvent',
                         data.OnEventData.Code,
@@ -470,7 +470,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (API.debugPhotonLogging) {
+                if (AppGlobal.debugPhotonLogging) {
                     console.log(
                         'OnOperationResponse',
                         data.OnOperationResponseData.OperationCode,
@@ -488,7 +488,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (API.debugPhotonLogging) {
+                if (AppGlobal.debugPhotonLogging) {
                     console.log(
                         'OnOperationRequest',
                         data.OnOperationRequestData.OperationCode,
@@ -512,7 +512,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 photonStore.photonLastEvent7List = Date.parse(data.dt);
                 break;
             case 'VrcxMessage':
-                if (API.debugPhotonLogging) {
+                if (AppGlobal.debugPhotonLogging) {
                     console.log('VrcxMessage:', data);
                 }
                 eventVrcxMessage(data);

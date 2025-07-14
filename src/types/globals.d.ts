@@ -53,6 +53,21 @@ declare global {
             ) => void;
             restartApp: () => Promise<void>;
         };
+        __APP_GLOBALS__: {
+            debug: boolean;
+            debugWebSocket: boolean;
+            debugUserDiff: boolean;
+            debugPhotonLogging: boolean;
+            debugGameLog: boolean;
+            debugWebRequests: boolean;
+            debugFriendState: boolean;
+            errorNoty: any;
+            dontLogMeOut: boolean;
+            endpointDomain: string;
+            endpointDomainVrchat: string;
+            websocketDomain: string;
+            websocketDomainVrchat: string;
+        };
     }
 
     declare const API: {

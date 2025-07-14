@@ -12,7 +12,7 @@ async function migrateMemos() {
             var userId = line.substring(5);
             var memo = json[line];
             if (memo) {
-                await this.saveUserMemo(userId, memo);
+                await saveUserMemo(userId, memo);
                 VRCXStorage.Remove(`memo_${userId}`);
             }
         }

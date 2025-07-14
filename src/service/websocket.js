@@ -13,7 +13,7 @@ import {
     useUiStore,
     useUserStore
 } from '../stores';
-import { API } from './eventBus';
+import { AppGlobal } from './appConfig';
 import { request } from './request';
 import { watchState } from './watchState';
 
@@ -45,9 +45,9 @@ function connectWebSocket(token) {
     if (webSocket !== null) {
         return;
     }
-    const socket = new WebSocket(`${API.websocketDomain}/?auth=${token}`);
+    const socket = new WebSocket(`${AppGlobal.websocketDomain}/?auth=${token}`);
     socket.onopen = () => {
-        if (API.debugWebSocket) {
+        if (AppGlobal.debugWebSocket) {
             console.log('WebSocket connected');
         }
     };
@@ -60,7 +60,7 @@ function connectWebSocket(token) {
         } catch (err) {
             console.error('Error closing WebSocket:', err);
         }
-        if (API.debugWebSocket) {
+        if (AppGlobal.debugWebSocket) {
             console.log('WebSocket closed');
         }
         workerTimers.setTimeout(() => {
@@ -74,10 +74,10 @@ function connectWebSocket(token) {
         }, 5000);
     };
     socket.onerror = () => {
-        if (API.errorNoty) {
-            API.errorNoty.close();
+        if (AppGlobal.errorNoty) {
+            AppGlobal.errorNoty.close();
         }
-        API.errorNoty = new Noty({
+        AppGlobal.errorNoty = new Noty({
             type: 'error',
             text: 'WebSocket Error'
         }).show();
@@ -99,7 +99,7 @@ function connectWebSocket(token) {
             handlePipeline({
                 json
             });
-            if (API.debugWebSocket && json.content) {
+            if (AppGlobal.debugWebSocket && json.content) {
                 let displayName = '';
                 const user = userStore.cachedUsers.get(json.content.userId);
                 if (user) {
@@ -158,10 +158,10 @@ function handlePipeline(args) {
     const { type, content, err } = args.json;
     if (typeof err !== 'undefined') {
         console.error('PIPELINE: error', args);
-        if (API.errorNoty) {
-            API.errorNoty.close();
+        if (AppGlobal.errorNoty) {
+            AppGlobal.errorNoty.close();
         }
-        API.errorNoty = new Noty({
+        AppGlobal.errorNoty = new Noty({
             type: 'error',
             text: escapeTag(`WebSocket Error: ${err}`)
         }).show();

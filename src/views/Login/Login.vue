@@ -66,7 +66,7 @@
                             <el-input
                                 v-model="loginForm.endpoint"
                                 name="endpoint"
-                                :placeholder="API.endpointDomainVrchat"
+                                :placeholder="AppGlobal.endpointDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item
@@ -77,7 +77,7 @@
                             <el-input
                                 v-model="loginForm.websocket"
                                 name="websocket"
-                                :placeholder="API.websocketDomainVrchat"
+                                :placeholder="AppGlobal.websocketDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item style="margin-top: 15px">
@@ -160,7 +160,7 @@
         useVRCXUpdaterStore
     } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
-    import { API } from '../../service/eventBus';
+    import { AppGlobal } from '../../service/appConfig';
 
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
