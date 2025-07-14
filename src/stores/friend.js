@@ -1001,13 +1001,9 @@ export const useFriendStore = defineStore('Friend', () => {
     async function refreshFriendsList() {
         // If we just got user less then 2 min before code call, don't call it again
         if (updateLoopStore.nextCurrentUserRefresh < 300) {
-            await userStore.getCurrentUser().catch((err) => {
-                console.error(err);
-            });
+            await userStore.getCurrentUser();
         }
-        await refreshFriends().catch((err) => {
-            console.error(err);
-        });
+        await refreshFriends();
         reconnectWebSocket();
     }
 
