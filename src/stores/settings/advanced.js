@@ -531,10 +531,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
         state.folderSelectorDialogVisible = true;
         let newFolder = '';
-        if (LINUX) {
-            newFolder = await window.electron.openDirectoryDialog();
+        if (WINDOWS) {
+            newFolder = await AppApi.OpenFolderSelectorDialog(oldPath);  
         } else {
-            newFolder = await AppApi.OpenFolderSelectorDialog(oldPath);
+            newFolder = await window.electron.openDirectoryDialog();
         }
 
         state.folderSelectorDialogVisible = false;

@@ -796,7 +796,7 @@
                             }}</el-radio-button>
                         </el-radio-group>
                     </div>
-                    <template v-if="!isLinux">
+                    <template>
                         <simple-switch
                             :label="
                                 t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')
@@ -831,6 +831,41 @@
                                 }}</el-button
                             >
                         </div>
+                        <div class="options-container-item">
+                            <span class="name" style="vertical-align: top; padding-top: 10px">{{
+                                t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
+                            }}</span>
+                            <el-slider
+                                :value="notificationOpacity"
+                                @input="setNotificationOpacity"
+                                :show-tooltip="false"
+                                :min="0"
+                                :max="100"
+                                show-input
+                                style="display: inline-block; width: 300px" />
+                        </div>
+                        <div class="options-container-item">
+                            <el-button
+                                size="small"
+                                icon="el-icon-time"
+                                :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
+                                @click="promptNotificationTimeout"
+                                >{{
+                                    t(
+                                        'view.settings.notifications.notifications.steamvr_notifications.notification_timeout'
+                                    )
+                                }}</el-button
+                            >
+                        </div>
+                        <simple-switch
+                            :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
+                            :value="imageNotifications"
+                            @change="
+                                setImageNotifications();
+                                saveOpenVROption();
+                            " />
+                    </template>
+                    <template v-if="!isLinux"> 
                         <simple-switch
                             :label="
                                 t(
@@ -856,61 +891,30 @@
                                 saveOpenVROption();
                             " />
                     </template>
-                    <simple-switch
-                        :label="
-                            t(
-                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
-                            )
-                        "
-                        :value="ovrtHudNotifications"
-                        @change="
-                            setOvrtHudNotifications();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="
-                            t(
-                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
-                            )
-                        "
-                        :value="ovrtWristNotifications"
-                        @change="
-                            setOvrtWristNotifications();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
-                        :value="imageNotifications"
-                        @change="
-                            setImageNotifications();
-                            saveOpenVROption();
-                        " />
-                    <div class="options-container-item">
-                        <span class="name" style="vertical-align: top; padding-top: 10px">{{
-                            t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
-                        }}</span>
-                        <el-slider
-                            :value="notificationOpacity"
-                            @input="setNotificationOpacity"
-                            :show-tooltip="false"
-                            :min="0"
-                            :max="100"
-                            show-input
-                            style="display: inline-block; width: 300px" />
-                    </div>
-                    <div class="options-container-item">
-                        <el-button
-                            size="small"
-                            icon="el-icon-time"
-                            :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
-                            @click="promptNotificationTimeout"
-                            >{{
+                    <template v-if="!isLinux"> 
+                        <simple-switch
+                            :label="
                                 t(
-                                    'view.settings.notifications.notifications.steamvr_notifications.notification_timeout'
+                                    'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
                                 )
-                            }}</el-button
-                        >
-                    </div>
+                            "
+                            :value="ovrtHudNotifications"
+                            @change="
+                                setOvrtHudNotifications();
+                                saveOpenVROption();
+                            " />
+                        <simple-switch
+                            :label="
+                                t(
+                                    'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
+                                )
+                            "
+                            :value="ovrtWristNotifications"
+                            @change="
+                                setOvrtWristNotifications();
+                                saveOpenVROption();
+                            " />
+                    </template>
                 </div>
                 <!--//- Notifications | Notifications | Desktop Notifications-->
                 <div class="options-container">
@@ -1047,7 +1051,7 @@
             </el-tab-pane>
 
             <!--//- Wrist Overlay Tab-->
-            <el-tab-pane v-if="!isLinux" lazy :label="t('view.settings.category.wrist_overlay')">
+            <el-tab-pane lazy :label="t('view.settings.category.wrist_overlay')">
                 <!--//- Wrist Overlay | SteamVR Wrist Overlay-->
                 <div class="options-container" style="margin-top: 0">
                     <span class="header">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}</span>

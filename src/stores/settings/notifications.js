@@ -362,10 +362,10 @@ export const useNotificationsSettingsStore = defineStore(
 
         function getTTSVoiceName() {
             let voices;
-            if (LINUX) {
-                voices = state.TTSvoices;
-            } else {
+            if (WINDOWS) {
                 voices = speechSynthesis.getVoices();
+            } else {
+                voices = state.TTSvoices;
             }
             if (voices.length === 0) {
                 return '';
@@ -379,10 +379,10 @@ export const useNotificationsSettingsStore = defineStore(
         async function changeTTSVoice(index) {
             setNotificationTTSVoice(index);
             let voices;
-            if (LINUX) {
-                voices = state.TTSvoices;
-            } else {
+            if (WINDOWS) {
                 voices = speechSynthesis.getVoices();
+            } else {
+                voices = state.TTSvoices;
             }
             if (voices.length === 0) {
                 return;

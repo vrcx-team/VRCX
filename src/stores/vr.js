@@ -48,6 +48,13 @@ export const useVrStore = defineStore('Vr', () => {
         sharedFeedStore.updateSharedFeed(true);
         friendStore.onlineFriendCount = 0; // force an update
         friendStore.updateOnlineFriendCoutner();
+        if (LINUX) {
+            AppApiVrElectron.SetVrInit(false);
+
+            setTimeout(() => {
+                vrInit();
+            }, 5000);
+        }
     }
 
     async function saveOpenVROption() {
@@ -148,8 +155,28 @@ export const useVrStore = defineStore('Vr', () => {
                 wristOverlaySettingsStore.overlaybutton,
                 wristOverlaySettingsStore.overlayHand
             );
+
+            if (LINUX) {
+                window.electron.updateVr(
+                    true,
+                    hmdOverlay,
+                    wristOverlaySettingsStore.overlayWrist,
+                    wristOverlaySettingsStore.overlaybutton,
+                    wristOverlaySettingsStore.overlayHand
+                );
+            }
         } else {
             AppApi.SetVR(false, false, false, false, 0);
+
+            if (LINUX) {
+                window.electron.updateVr(
+                    true,
+                    false,
+                    false,
+                    false,
+                    0
+                );
+            }
         }
     }
 

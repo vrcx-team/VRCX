@@ -20,4 +20,7 @@ if (WINDOWS) {
     window.LogWatcher = InteropApi.LogWatcher;
     window.Discord = InteropApi.Discord;
     window.AssetBundleManager = InteropApi.AssetBundleManager;
+    if (LINUX) {
+        window.AppApiVrElectron = InteropApi.AppApiVrElectron;
+    }
 }
