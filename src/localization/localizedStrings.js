@@ -37,6 +37,9 @@ import elements_zh_CN from 'element-ui/lib/locale/lang/zh-CN';
 import zh_TW from './zh-TW/en.json' assert { type: 'JSON' };
 import elements_zh_TW from 'element-ui/lib/locale/lang/zh-TW';
 
+import th from './th/en.json' assert { type: 'JSON' };
+import elements_th from 'element-ui/lib/locale/lang/th';
+
 const localized_en = { ...en, ...elements_en };
 const localized_es = { ...es, ...elements_es };
 const localized_fr = { ...fr, ...elements_fr };
@@ -50,6 +53,7 @@ const localized_ru = { ...ru_RU, ...elements_ru };
 const localized_vi = { ...vi, ...elements_vi };
 const localized_zh_CN = { ...zh_CN, ...elements_zh_CN };
 const localized_zh_TW = { ...zh_TW, ...elements_zh_TW };
+const localized_th = { ...th, ...elements_th };
 
 export {
     localized_en as en,
@@ -64,5 +68,6 @@ export {
     localized_ru as ru_RU,
     localized_vi as vi,
     localized_zh_CN as zh_CN,
-    localized_zh_TW as zh_TW
+    localized_zh_TW as zh_TW,
+    localized_th as th
 };

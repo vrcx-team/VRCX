@@ -7,7 +7,7 @@
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
-| [English](./README.md) | [Français](./README.fr.md) | **日本語** | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
+| [English](./README.md) | [Français](./README.fr.md) | **日本語** | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md) | [ภาษาไทย](./README.th.md)
 
 VRCX は VRChat クライアント (デスクトップ & VR) や Web サイト以上に様々な情報を提供し、より便利に VRChat をプレイできるようにするコンパニオンアプリケーションです。
 

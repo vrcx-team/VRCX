@@ -7,7 +7,7 @@
 [![Статус GitHub Workflow](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX приглашение в Discord](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
-| [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | **Русский** | [Español](./README.es.md) | [Polski](./README.pl.md)
+| [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | **Русский** | [Español](./README.es.md) | [Polski](./README.pl.md) | [ภาษาไทย](./README.th.md)
 
 VRCX является ассистентом/компаньоном приложением для VRChat, который предоставляет информацию о VRChat и помогает вам быстрее выполнять различные действия, связанные с VRChat в удобной форме, чем полагаться на простой VRChat клиент (настольный компьютер или VR), или только веб-сайт. Кроме того, в нем реализованы и другие удобные функции, о которых пойдет речь ниже.
 
