@@ -34,7 +34,7 @@
                 <el-option :label="t('dialog.user.status.busy')" value="busy">
                     <i class="x-user-status busy"></i> {{ t('dialog.user.status.busy') }}
                 </el-option>
-                <el-option v-if="API.currentUser.$isModerator" :label="t('dialog.user.status.offline')" value="offline">
+                <el-option v-if="currentUser.$isModerator" :label="t('dialog.user.status.offline')" value="offline">
                     <i class="x-user-status offline"></i> {{ t('dialog.user.status.offline') }}
                 </el-option>
             </el-select>
@@ -44,6 +44,7 @@
                 :placeholder="t('dialog.social_status.status_placeholder')"
                 maxlength="32"
                 show-word-limit
+                clearable
                 style="display: block; margin-top: 10px"></el-input>
         </div>
 
@@ -56,13 +57,16 @@
 </template>
 
 <script setup>
-    import { inject, getCurrentInstance } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { userRequest } from '../../../api';
+    import { useUserStore } from '../../../stores';
 
     const { t } = useI18n();
     const { $message } = getCurrentInstance().proxy;
-    const API = inject('API');
+
+    const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
         socialStatusDialog: {

@@ -5,4 +5,6 @@ obj1/
 .idea/
 *.log
 *.DotSettings.user
+.vs/
 Installer/version_define.nsh
+bun.lock

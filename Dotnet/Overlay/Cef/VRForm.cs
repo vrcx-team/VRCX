@@ -26,6 +26,7 @@ namespace VRCX
             )
             {
                 DragHandler = new CefNoopDragHandler(),
+                RequestHandler = new CustomRequestHandler(),
                 BrowserSettings =
                 {
                     DefaultEncoding = "UTF-8",

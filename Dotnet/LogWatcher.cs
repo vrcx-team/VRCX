@@ -297,7 +297,7 @@ namespace VRCX
                     m_LogQueue.Enqueue(logLine);
 #else
                     if (MainForm.Instance != null && MainForm.Instance.Browser != null)
-                        MainForm.Instance.Browser.ExecuteScriptAsync("$app.addGameLogEvent", logLine);
+                        MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.gameLog.addGameLogEvent", logLine);
 #endif
                 }
 
@@ -729,10 +729,9 @@ namespace VRCX
                 return false;
 
             var data = line.Substring(offset + 13);
-
-#if !LINUX
-            WorldDBManager.Instance.ProcessLogWorldDataRequest(data);
-#endif
+            
+            // PWI, deprecated
+            logger.Info("VRCX-World data: {0}", data);
             return true;
         }
 

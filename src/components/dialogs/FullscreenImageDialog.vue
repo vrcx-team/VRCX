@@ -1,11 +1,5 @@
 <template>
-    <safe-dialog
-        ref="fullscreenImageDialog"
-        class="x-dialog"
-        :visible.sync="fullscreenImageDialog.visible"
-        append-to-body
-        top="1vh"
-        width="97vw">
+    <safe-dialog class="x-dialog" :visible.sync="fullscreenImageDialog.visible" append-to-body top="1vh" width="97vw">
         <div>
             <div style="margin: 0 0 5px 5px">
                 <el-button
@@ -29,21 +23,16 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance } from 'vue';
-    import utils from '../../classes/utils';
-    import { copyToClipboard, extractFileId } from '../../composables/shared/utils';
-    import webApiService from '../../service/webapi';
     import Noty from 'noty';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance } from 'vue';
+    import { copyToClipboard, escapeTag, extractFileId } from '../../shared/utils';
+    import { useGalleryStore } from '../../stores';
 
     const { proxy } = getCurrentInstance();
     const { $message } = proxy;
 
-    defineProps({
-        fullscreenImageDialog: {
-            type: Object,
-            default: () => ({})
-        }
-    });
+    const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
 
     function copyImageUrl(imageUrl) {
         copyToClipboard(imageUrl, 'ImageUrl copied to clipboard');
@@ -84,7 +73,7 @@
         } catch {
             new Noty({
                 type: 'error',
-                text: utils.escapeTag(`Failed to download image. ${url}`)
+                text: escapeTag(`Failed to download image. ${url}`)
             }).show();
         }
     }

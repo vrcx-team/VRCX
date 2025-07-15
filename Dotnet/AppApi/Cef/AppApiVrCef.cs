@@ -23,7 +23,7 @@ namespace VRCX
         public void VrInit()
         {
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("$app.vrInit", "");
+                MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.vr.vrInit", "");
         }
 
         public void ToggleSystemMonitor(bool enabled)

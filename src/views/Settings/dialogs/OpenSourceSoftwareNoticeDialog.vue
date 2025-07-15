@@ -20,7 +20,7 @@
 
 <script setup>
     import { useI18n } from 'vue-i18n-bridge';
-    import { openSourceSoftwareLicenses } from '../../../composables/setting/constants/openSourceSoftwareLicenses';
+    import { openSourceSoftwareLicenses } from '../../../shared/constants';
 
     const { t } = useI18n();
 

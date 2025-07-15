@@ -26,26 +26,16 @@
 </template>
 
 <script setup>
-    import { inject } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
+    import { useGalleryStore } from '../../stores';
+
     const { t } = useI18n();
 
-    const showFullscreenImageDialog = inject('showFullscreenImageDialog');
-
-    defineProps({
-        previousImagesDialogVisible: {
-            type: Boolean,
-            required: true
-        },
-        previousImagesTable: {
-            type: Array,
-            required: true
-        }
-    });
-
-    const emit = defineEmits(['update:previousImagesDialogVisible']);
+    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
+    const { showFullscreenImageDialog } = useGalleryStore();
 
     function closeDialog() {
-        emit('update:previousImagesDialogVisible', false);
+        previousImagesDialogVisible.value = false;
     }
 </script>

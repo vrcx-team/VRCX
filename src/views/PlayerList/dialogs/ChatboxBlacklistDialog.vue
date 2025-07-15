@@ -43,18 +43,19 @@
 </template>
 
 <script setup>
+    import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../../service/config';
+    import { usePhotonStore } from '../../../stores';
+
     const { t } = useI18n();
+
+    const { chatboxUserBlacklist } = storeToRefs(usePhotonStore());
 
     defineProps({
         chatboxBlacklistDialog: {
             type: Object,
-            required: true
-        },
-        chatboxUserBlacklist: {
-            type: Map,
             required: true
         }
     });

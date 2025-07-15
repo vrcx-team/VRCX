@@ -4,6 +4,7 @@
         class="x-dialog"
         :visible.sync="VRCXUpdateDialog.visible"
         :title="t('dialog.vrcx_updater.header')"
+        append-to-body
         width="400px">
         <div v-loading="checkingForVRCXUpdate" style="margin-top: 15px">
             <template v-if="updateInProgress">
@@ -17,11 +18,10 @@
                     <span>{{ t('dialog.vrcx_updater.ready_for_update') }}</span>
                 </div>
                 <el-select
-                    v-model="currentBranch"
+                    v-model="branch"
                     style="display: inline-block; width: 150px; margin-right: 15px"
                     @change="loadBranchVersions">
-                    <el-option v-for="branch in branches" :key="branch.name" :label="branch.name" :value="branch.name">
-                    </el-option>
+                    <el-option v-for="b in branches" :key="b.name" :label="b.name" :value="b.name"> </el-option>
                 </el-select>
                 <el-select v-model="VRCXUpdateDialog.release" style="display: inline-block; width: 150px">
                     <el-option
@@ -63,72 +63,32 @@
 </template>
 
 <script setup>
-    import { ref, computed, inject, watch, nextTick } from 'vue';
-
+    import { storeToRefs } from 'pinia';
+    import { nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
+    import { branches } from '../../shared/constants';
+    import { adjustDialogZ } from '../../shared/utils';
+    import { useVRCXUpdaterStore } from '../../stores';
+
+    const VRCXUpdaterStore = useVRCXUpdaterStore();
+
+    const {
+        appVersion,
+        branch,
+        checkingForVRCXUpdate,
+        VRCXUpdateDialog,
+        pendingVRCXInstall,
+        updateInProgress,
+        updateProgress
+    } = storeToRefs(VRCXUpdaterStore);
+    const { installVRCXUpdate, loadBranchVersions, restartVRCX, updateProgressText, cancelUpdate } = VRCXUpdaterStore;
 
     const { t } = useI18n();
-    const adjustDialogZ = inject('adjustDialogZ');
-
-    const props = defineProps({
-        // eslint-disable-next-line vue/prop-name-casing
-        VRCXUpdateDialog: {
-            type: Object,
-            required: true
-        },
-        appVersion: {
-            type: String,
-            required: true
-        },
-        checkingForVRCXUpdate: {
-            type: Boolean,
-            default: false
-        },
-        updateInProgress: {
-            type: Boolean,
-            default: false
-        },
-        updateProgress: {
-            type: Number,
-            default: 0
-        },
-        updateProgressText: {
-            type: Function,
-            default: () => ''
-        },
-        pendingVRCXInstall: {
-            type: String,
-            default: ''
-        },
-        branch: {
-            type: String,
-            default: ''
-        },
-        branches: {
-            type: Object,
-            default: () => {}
-        }
-    });
 
     const VRCXUpdateDialogRef = ref(null);
 
-    const emit = defineEmits([
-        'loadBranchVersions',
-        'cancelUpdate',
-        'installVRCXUpdate',
-        'restartVRCX',
-        'update:branch'
-    ]);
-
-    const currentBranch = computed({
-        get: () => props.branch,
-        set: (value) => {
-            emit('update:branch', value);
-        }
-    });
-
     watch(
-        () => props.VRCXUpdateDialog,
+        () => VRCXUpdateDialog,
         (newVal) => {
             if (newVal.visible) {
                 nextTick(() => {
@@ -137,20 +97,4 @@
             }
         }
     );
-
-    function loadBranchVersions(event) {
-        emit('loadBranchVersions', event);
-    }
-
-    function cancelUpdate() {
-        emit('cancelUpdate');
-    }
-
-    function installVRCXUpdate() {
-        emit('installVRCXUpdate');
-    }
-
-    function restartVRCX(isUpgrade) {
-        emit('restartVRCX', isUpgrade);
-    }
 </script>

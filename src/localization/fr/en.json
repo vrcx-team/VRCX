@@ -502,10 +502,6 @@
                         "header": "Gérer automatiquement le cache lors de la fermeture de VRChat",
                         "description": "Suppression automatique des anciennes versions du cache"
                     },
-                    "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
-                    },
                     "remote_database": {
                         "header": "Base de données d'avatars",
                         "enable": "Activé",

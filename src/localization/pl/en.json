@@ -428,10 +428,6 @@
                         "header": "Automatycznie zarządzaj pamięcią podręczną podczas zamykania VRChat",
                         "description": "Automatyczne usuwaj stare wersje z pamięci podręcznej"
                     },
-                    "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Serwer localhost (wymaga restartu)"
-                    },
                     "remote_database": {
                         "header": "Zewnętrzna baza danych awatarów",
                         "enable": "Włącz",

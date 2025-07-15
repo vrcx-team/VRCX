@@ -14,6 +14,14 @@ const fs = require('fs');
 const https = require('https');
 
 //app.disableHardwareAcceleration();
+// Include bundled .NET runtime
+const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
+const bundledDotnet = path.join(bundledDotNetPath, 'bin', 'dotnet');
+
+if (fs.existsSync(bundledDotnet)) {
+    process.env.DOTNET_ROOT = bundledDotNetPath;
+    process.env.PATH = `${path.dirname(bundledDotnet)}:${process.env.PATH}`;
+}
 
 if (!isDotNetInstalled()) {
     app.whenReady().then(() => {
@@ -26,7 +34,7 @@ if (!isDotNetInstalled()) {
     return;
 }
 
-// get launch arguments
+// Get launch arguments
 let appImagePath = process.env.APPIMAGE;
 const args = process.argv.slice(1);
 const noInstall = args.includes('--no-install');
@@ -690,6 +698,14 @@ function isDotNetInstalled() {
         // Assume .NET is already installed on macOS
         return true;
     }
+    
+    // Check for bundled .NET runtime
+    if (fs.existsSync(bundledDotnet)) {
+        console.log('Using bundled .NET runtime at:', bundledDotNetPath);
+        return true;
+    }
+    
+    // Fallback to system .NET runtime
     const result = spawnSync('dotnet', ['--list-runtimes'], {
         encoding: 'utf-8'
     });

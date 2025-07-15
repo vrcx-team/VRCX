@@ -4,14 +4,17 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using System;
 using DiscordRPC;
 using System.Text;
 using System.Threading;
+using NLog;
 
 namespace VRCX
 {
     public class Discord
     {
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         public static readonly Discord Instance;
         private readonly ReaderWriterLockSlim m_Lock;
         private readonly RichPresence m_Presence;
@@ -54,8 +57,9 @@ namespace VRCX
                 {
                     Update();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.Error(ex, "Error updating Discord Rich Presence {Error}", ex.Message);
                 }
             }
         }
@@ -132,7 +136,7 @@ namespace VRCX
             }
         }
 
-        public void SetAssets(string largeKey, string largeText, string smallKey, string smallText, string partyId, int partySize, int partyMax, string buttonText, string buttonUrl, string appId)
+        public void SetAssets(string largeKey, string largeText, string smallKey, string smallText, string partyId, int partySize, int partyMax, string buttonText, string buttonUrl, string appId, int activityType = 0)
         {
             m_Lock.EnterWriteLock();
             try
@@ -153,6 +157,7 @@ namespace VRCX
                     m_Presence.Party.ID = partyId;
                     m_Presence.Party.Size = partySize;
                     m_Presence.Party.Max = partyMax;
+                    m_Presence.Type = (ActivityType)activityType;
                     Button[] buttons = [];
                     if (!string.IsNullOrEmpty(buttonUrl))
                     {
@@ -206,6 +211,10 @@ namespace VRCX
                         m_Presence.Timestamps.EndUnixMilliseconds = _endUnixMilliseconds;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error setting timestamps in Discord Rich Presence {Error}", ex.Message);
             }
             finally
             {

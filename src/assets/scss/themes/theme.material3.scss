@@ -2,7 +2,7 @@
  * VRCX Material-You-like theme by Kamiya
  * https://github.com/kamiya10/VRCX-theme
  */
-@import 'theme.dark';
+@use 'theme.dark';
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&family=Roboto&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
@@ -653,6 +653,8 @@ input[type='number'],
     border-left: 1px solid rgb(var(--md-sys-color-surface-variant));
     */
     padding: 8px 10px;
+    display: flex;
+    align-items: center;
 }
 /* ---------- Switch ---------- */
 
@@ -1083,8 +1085,8 @@ input[type='number'],
     border-radius: 8px;
     height: 28px;
     padding: 0 12px;
-    margin-top: 8px !important;
-    margin-right: 8px !important;
+//     margin-top: 8px !important;
+//     margin-right: 8px !important;
     color: rgb(var(--md-sys-color-on-surface-variant));
     font-family: var(--md-sys-typescale-label-large-font);
     line-height: 28px;
@@ -1380,7 +1382,7 @@ img.x-link.el-popover__reference {
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog:not([aria-label*='Notification Position']):not(
         [aria-label*='Launch']
-    ):not([aria-label*='VRCX Updater']) {
+    ):not([aria-label*='VRCX Updater']):not([aria-label*='Social Status']) {
     max-width: 1125px !important;
     width: 1125px !important;
 }
@@ -2008,6 +2010,7 @@ i.x-user-status {
 .el-collapse-item .el-tag--mini {
     background-color: transparent;
     border: transparent;
+    padding-top: 6px;
 }
 .simple-switch {
     justify-content: space-between;
@@ -2071,4 +2074,12 @@ i.x-user-status {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+.el-dialog[aria-label='Launch'] .el-form .el-form-item__content {
+    display: flex;
+    align-items: center;
+}
+.el-dialog[aria-label='Launch'] .el-form > .el-form-item:nth-child(2) .el-form-item__label {
+    display: flex;
+    align-items: center;
 }

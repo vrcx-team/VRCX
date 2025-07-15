@@ -9,129 +9,140 @@ const { EsbuildPlugin } = require('esbuild-loader');
 const scssBasePath = './src/assets/scss/';
 const themeBasePath = `${scssBasePath}themes/`;
 
-module.exports = {
-    entry: {
-        vendor: [
-            'element-ui',
-            'noty',
-            'vue',
-            'vue-data-tables',
-            'vue-lazyload',
-            'dayjs'
-        ],
-        app: {
-            import: ['./src/app.js', './src/app.scss'],
-            dependOn: 'vendor'
+module.exports = (env, argv) => {
+    const isProduction = argv.mode === 'production';
+    return {
+        entry: {
+            vendor: [
+                'element-ui',
+                'noty',
+                'vue',
+                'vue-i18n',
+                'worker-timers',
+                `${scssBasePath}emoji.font.scss`
+            ],
+            app: {
+                import: ['./src/app.js', './src/app.scss'],
+                dependOn: 'vendor'
+            },
+            vr: {
+                import: ['./src/vr.js', './src/vr.scss'],
+                dependOn: 'vendor'
+            },
+            'theme.dark': `${themeBasePath}theme.dark.scss`,
+            'theme.darkvanillaold': `${themeBasePath}theme.darkvanillaold.scss`,
+            'theme.darkvanilla': `${themeBasePath}theme.darkvanilla.scss`,
+            'theme.pink': `${themeBasePath}theme.pink.scss`,
+            'theme.material3': `${themeBasePath}theme.material3.scss`
         },
-        'theme.dark': `${themeBasePath}theme.dark.scss`,
-        'theme.darkvanillaold': `${themeBasePath}theme.darkvanillaold.scss`,
-        'theme.darkvanilla': `${themeBasePath}theme.darkvanilla.scss`,
-        'theme.pink': `${themeBasePath}theme.pink.scss`,
-        'theme.material3': `${themeBasePath}theme.material3.scss`,
-        flags: `${scssBasePath}flags.scss`,
-        'animated-emoji': `${scssBasePath}animated-emoji.scss`,
-        'emoji.font': `${scssBasePath}emoji.font.scss`,
-        vr: {
-            import: ['./src/vr.js', './src/vr.scss'],
-            dependOn: 'vendor'
-        }
-    },
-    output: {
-        path: path.resolve(__dirname, 'build/html'),
-        filename: '[name].js',
-        library: {
-            type: 'window'
-        }
-    },
-    module: {
-        rules: [
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            },
-            {
-                test: /\.[jt]sx?$/,
-                exclude: /node_modules/,
-                loader: 'esbuild-loader',
-                options: {
-                    loader: 'js',
-                    target: 'esnext',
-                    legalComments: 'inline'
-                }
-            },
-            {
-                test: /\.pug$/,
-                use: [{ loader: 'raw-loader' }, { loader: 'pug-plain-loader' }]
-            },
-            {
-                test: /\.s?css$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
-            },
-            {
-                test: /\.(eot|png|svg|ttf|woff)/,
-                type: 'asset',
-                generator: {
-                    filename: 'assets/[name][ext]'
-                }
-            }
-        ]
-    },
-    resolve: {
-        extensions: ['.js', '.css', '.scss'],
-        alias: {
-            vue: 'vue/dist/vue.esm.js'
-        }
-    },
-    performance: {
-        hints: false
-    },
-    devtool: 'inline-source-map',
-    target: ['web', 'es2020'],
-    stats: {
-        preset: 'errors-only',
-        builtAt: true,
-        timings: true
-    },
-    plugins: [
-        new webpack.DefinePlugin({
-            LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
-            WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows')
-        }),
-        new VueLoaderPlugin(),
-        new MiniCssExtractPlugin({
-            filename: '[name].css'
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: './src/static/index.html',
-            inject: false,
-            minify: false
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'vr.html',
-            template: './src/static/vr.html',
-            inject: false,
-            minify: false
-        }),
-        new CopyPlugin({
-            patterns: [
-                // assets
+        output: {
+            path: path.resolve(__dirname, 'build/html'),
+            filename: '[name].js',
+            clean: true
+        },
+        module: {
+            rules: [
                 {
-                    from: './images/',
-                    to: './images/'
+                    test: /\.vue$/,
+                    loader: 'vue-loader'
+                },
+                {
+                    test: /\.js$/,
+                    exclude: [/node_modules/],
+                    resourceQuery: { not: /vue/ },
+                    loader: 'esbuild-loader',
+                    options: {
+                        target: 'es2022'
+                    }
+                },
+                {
+                    test: /\.pug$/,
+                    use: ['raw-loader', 'pug-plain-loader']
+                },
+                {
+                    test: /\.s?css$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        'css-loader',
+                        'sass-loader'
+                    ]
+                },
+                {
+                    test: /\.(eot|png|svg|ttf|woff)/,
+                    type: 'asset',
+                    generator: {
+                        filename: 'assets/[name][ext]'
+                    }
                 }
             ]
-        }),
-        new webpack.ProgressPlugin({})
-    ],
-    optimization: {
-        minimizer: [
-            new EsbuildPlugin({
-                target: 'es2020'
-            })
-        ]
-    },
-    watchOptions: {
-        ignored: /node_modules/
-    }
+        },
+        devServer: {
+            port: 9000
+        },
+        resolve: {
+            extensions: ['.js', '.vue', '.css', '.scss'],
+            alias: {
+                vue: 'vue/dist/vue.esm.js'
+            }
+        },
+        performance: {
+            hints: false
+        },
+        devtool: 'inline-source-map',
+        target: ['web', 'es2022'],
+        stats: {
+            preset: 'errors-warnings',
+            timings: true
+        },
+        plugins: [
+            new webpack.DefinePlugin({
+                LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
+                WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows'),
+                __VUE_I18N_LEGACY_API__: JSON.stringify(false),
+                __VUE_I18N_FULL_INSTALL__: JSON.stringify(false),
+                __INTLIFY_DROP_MESSAGE_COMPILER__: JSON.stringify(true)
+            }),
+            new VueLoaderPlugin(),
+            new MiniCssExtractPlugin({
+                filename: '[name].css'
+            }),
+            new HtmlWebpackPlugin({
+                filename: 'index.html',
+                template: './src/static/index.html',
+                inject: true,
+                chunks: ['vendor', 'app']
+            }),
+            new HtmlWebpackPlugin({
+                filename: 'vr.html',
+                template: './src/static/vr.html',
+                inject: true,
+                chunks: ['vendor', 'vr']
+            }),
+            new CopyPlugin({
+                patterns: [
+                    {
+                        from: './images/',
+                        to: './images/'
+                    }
+                ]
+            }),
+            new webpack.ProgressPlugin({})
+        ],
+        optimization: {
+            minimizer: isProduction
+                ? [
+                      new EsbuildPlugin({
+                          css: true,
+                          sourcemap: true
+                      })
+                  ]
+                : [],
+            splitChunks: {
+                chunks: 'all'
+            }
+        },
+        watchOptions: {
+            ignored: /node_modules/
+        }
+    };
 };

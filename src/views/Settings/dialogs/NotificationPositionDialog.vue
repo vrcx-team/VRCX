@@ -46,27 +46,25 @@
 </template>
 
 <script setup>
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
+    import { useNotificationsSettingsStore } from '../../../stores';
+
     const { t } = useI18n();
+    const notificationsSettingsStore = useNotificationsSettingsStore();
+    const { notificationPosition } = storeToRefs(notificationsSettingsStore);
+    const { changeNotificationPosition } = notificationsSettingsStore;
 
     defineProps({
         isNotificationPositionDialogVisible: {
             type: Boolean,
             default: false
-        },
-        notificationPosition: {
-            type: String,
-            default: 'topRight'
         }
     });
 
-    const emit = defineEmits(['update:isNotificationPositionDialogVisible', 'changeNotificationPosition']);
+    const emit = defineEmits(['update:isNotificationPositionDialogVisible']);
 
     function closeDialog() {
         emit('update:isNotificationPositionDialogVisible', false);
-    }
-
-    function changeNotificationPosition(value) {
-        emit('changeNotificationPosition', value);
     }
 </script>

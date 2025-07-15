@@ -1,29 +1,27 @@
-// #region | API: Favorite
+import { request } from '../service/request';
+import { useFavoriteStore, useUserStore } from '../stores';
+
+function getCurrentUserId() {
+    return useUserStore().currentUser.id;
+}
 
 const favoriteReq = {
     getFavoriteLimits() {
-        return window.API.call('auth/user/favoritelimits', {
+        return request('auth/user/favoritelimits', {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json
             };
-            window.API.$emit('FAVORITE:LIMITS', args);
             return args;
         });
     },
 
     /**
-     * @param {{
-     * n: number,
-     * offset: number,
-     * type: string,
-     * tag: string
-     * }} params
-     * @return { Promise<{json: any, params}> }
+     * @type {import('../types/favorite').getFavorites}
      */
     getFavorites(params) {
-        return window.API.call('favorites', {
+        return request('favorites', {
             method: 'GET',
             params
         }).then((json) => {
@@ -31,7 +29,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:LIST', args);
             return args;
         });
     },
@@ -45,7 +42,7 @@ const favoriteReq = {
      * @return { Promise<{json: any, params}> }
      */
     addFavorite(params) {
-        return window.API.call('favorites', {
+        return request('favorites', {
             method: 'POST',
             params
         }).then((json) => {
@@ -53,7 +50,7 @@ const favoriteReq = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:ADD', args);
+            useFavoriteStore().handleFavoriteAdd(args);
             return args;
         });
     },
@@ -63,14 +60,14 @@ const favoriteReq = {
      * @return { Promise<{json: any, params}> }
      */
     deleteFavorite(params) {
-        return window.API.call(`favorites/${params.objectId}`, {
+        return request(`favorites/${params.objectId}`, {
             method: 'DELETE'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:DELETE', args);
+            useFavoriteStore().handleFavoriteDelete(args);
             return args;
         });
     },
@@ -80,7 +77,7 @@ const favoriteReq = {
      * @return { Promise<{json: any, params}> }
      */
     getFavoriteGroups(params) {
-        return window.API.call('favorite/groups', {
+        return request('favorite/groups', {
             method: 'GET',
             params
         }).then((json) => {
@@ -88,7 +85,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:GROUP:LIST', args);
             return args;
         });
     },
@@ -99,8 +95,8 @@ const favoriteReq = {
      * @return { Promise<{json: any, params}> }
      */
     saveFavoriteGroup(params) {
-        return window.API.call(
-            `favorite/group/${params.type}/${params.group}/${window.API.currentUser.id}`,
+        return request(
+            `favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`,
             {
                 method: 'PUT',
                 params
@@ -110,7 +106,6 @@ const favoriteReq = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:GROUP:SAVE', args);
             return args;
         });
     },
@@ -123,8 +118,8 @@ const favoriteReq = {
      * @return { Promise<{json: any, params}> }
      */
     clearFavoriteGroup(params) {
-        return window.API.call(
-            `favorite/group/${params.type}/${params.group}/${window.API.currentUser.id}`,
+        return request(
+            `favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`,
             {
                 method: 'DELETE',
                 params
@@ -134,20 +129,16 @@ const favoriteReq = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:GROUP:CLEAR', args);
+            useFavoriteStore().handleFavoriteGroupClear(args);
             return args;
         });
     },
 
     /**
-     * @param {{
-     *    n: number,
-     *    offset: number
-     * }} params
-     * @return { Promise<{json: any, params}> }
+     * @type {import('../types/favorite').getFavoriteWorlds}
      */
     getFavoriteWorlds(params) {
-        return window.API.call('worlds/favorites', {
+        return request('worlds/favorites', {
             method: 'GET',
             params
         }).then((json) => {
@@ -155,20 +146,15 @@ const favoriteReq = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:WORLD:LIST', args);
             return args;
         });
     },
 
     /**
-     * @param {{
-     *    n: number,
-     *    offset: number
-     * }} params
-     * @return { Promise<{json: any, params}> }
+     * @type {import('../types/favorite').getFavoriteAvatars}
      */
     getFavoriteAvatars(params) {
-        return window.API.call('avatars/favorites', {
+        return request('avatars/favorites', {
             method: 'GET',
             params
         }).then((json) => {
@@ -176,12 +162,9 @@ const favoriteReq = {
                 json,
                 params
             };
-            window.API.$emit('FAVORITE:AVATAR:LIST', args);
             return args;
         });
     }
 };
-
-// #endregion
 
 export default favoriteReq;

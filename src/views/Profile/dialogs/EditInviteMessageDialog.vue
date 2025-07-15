@@ -27,29 +27,23 @@
 </template>
 
 <script setup>
-    import { ref, watch, inject, getCurrentInstance } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { inviteMessagesRequest } from '../../../api';
+    import { useInviteStore } from '../../../stores';
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
-    const API = inject('API');
 
-    const props = defineProps({
-        editInviteMessageDialog: {
-            type: Object,
-            default: () => ({
-                visible: false,
-                newMessage: ''
-            })
-        }
-    });
+    const inviteStore = useInviteStore();
+    const { editInviteMessageDialog } = storeToRefs(inviteStore);
 
     const message = ref('');
 
     watch(
-        () => props.editInviteMessageDialog,
+        () => editInviteMessageDialog.value,
         (newVal) => {
             if (newVal && newVal.visible) {
                 message.value = newVal.newMessage;
@@ -58,10 +52,8 @@
         { deep: true }
     );
 
-    const emit = defineEmits(['update:editInviteMessageDialog']);
-
     function saveEditInviteMessage() {
-        const D = props.editInviteMessageDialog;
+        const D = editInviteMessageDialog.value;
         D.visible = false;
         if (D.inviteMessage.message !== message.value) {
             const slot = D.inviteMessage.slot;
@@ -75,7 +67,6 @@
                     throw err;
                 })
                 .then((args) => {
-                    API.$emit(`INVITE:${messageType.toUpperCase()}`, args);
                     if (args.json[slot].message === D.inviteMessage.message) {
                         $message({
                             message: "VRChat API didn't update message, try again",
@@ -91,6 +82,6 @@
     }
 
     function closeDialog() {
-        emit('update:editInviteMessageDialog', { ...props.editInviteMessageDialog, visible: false });
+        editInviteMessageDialog.value.visible = false;
     }
 </script>

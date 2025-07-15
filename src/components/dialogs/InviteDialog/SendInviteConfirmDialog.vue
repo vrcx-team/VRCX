@@ -22,18 +22,21 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance, inject } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { instanceRequest, notificationRequest } from '../../../api';
-    import { parseLocation } from '../../../composables/instance/utils';
+    import { parseLocation } from '../../../shared/utils';
+    import { useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
 
-    const API = inject('API');
-    const clearInviteImageUpload = inject('clearInviteImageUpload');
+    const { uploadImage } = storeToRefs(useGalleryStore());
+    const { clearInviteImageUpload } = useGalleryStore();
+    const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
         visible: {
@@ -48,9 +51,6 @@
             type: Object,
             required: false,
             default: () => ({})
-        },
-        uploadImage: {
-            type: String
         }
     });
 
@@ -69,7 +69,7 @@
             const inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     const receiverUserId = J.userIds.shift();
-                    if (receiverUserId === API.currentUser.id) {
+                    if (receiverUserId === currentUser.value.id) {
                         // can't invite self!?
                         const L = parseLocation(J.worldId);
                         instanceRequest
@@ -78,7 +78,7 @@
                                 worldId: L.worldId
                             })
                             .finally(inviteLoop);
-                    } else if (props.uploadImage) {
+                    } else if (uploadImage.value) {
                         notificationRequest
                             .sendInvitePhoto(
                                 {
@@ -115,7 +115,7 @@
             inviteLoop();
         } else if (messageType === 'invite') {
             D.params.messageSlot = slot;
-            if (props.uploadImage) {
+            if (uploadImage.value) {
                 notificationRequest
                     .sendInvitePhoto(D.params, D.userId)
                     .catch((err) => {
@@ -144,7 +144,7 @@
             }
         } else if (messageType === 'request') {
             D.params.requestSlot = slot;
-            if (props.uploadImage) {
+            if (uploadImage.value) {
                 notificationRequest
                     .sendRequestInvitePhoto(D.params, D.userId)
                     .catch((err) => {

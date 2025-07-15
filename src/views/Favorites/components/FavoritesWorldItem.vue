@@ -6,11 +6,11 @@
                     <img v-lazy="smallThumbnail" />
                 </div>
                 <div class="detail">
-                    <span class="name">{{ localFavFakeRef.name }}</span>
-                    <span v-if="localFavFakeRef.occupants" class="extra"
+                    <span class="name" v-once>{{ localFavFakeRef.name }}</span>
+                    <span v-if="localFavFakeRef.occupants" class="extra" v-once
                         >{{ localFavFakeRef.authorName }} ({{ localFavFakeRef.occupants }})</span
                     >
-                    <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
+                    <span v-else class="extra" v-once>{{ localFavFakeRef.authorName }}</span>
                 </div>
                 <template v-if="editFavoritesMode">
                     <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
@@ -21,7 +21,7 @@
                             <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
-                            <template v-for="groupAPI in API.favoriteWorldGroups">
+                            <template v-for="groupAPI in favoriteWorldGroups">
                                 <el-dropdown-item
                                     v-if="isLocalFavorite || groupAPI.name !== group.name"
                                     :key="groupAPI.name"
@@ -59,7 +59,7 @@
                             size="mini"
                             icon="el-icon-message"
                             style="margin-left: 5px"
-                            @click.stop="$emit('new-instance-self-invite', favorite.id)"
+                            @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
                     </el-tooltip>
                     <el-tooltip
@@ -109,7 +109,7 @@
             <template v-else>
                 <div class="avatar"></div>
                 <div class="detail">
-                    <span>{{ favorite.name || favorite.id }}</span>
+                    <span v-once>{{ favorite.name || favorite.id }}</span>
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
@@ -128,104 +128,82 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { storeToRefs } from 'pinia';
+    import { computed, getCurrentInstance } from 'vue';
     import { favoriteRequest } from '../../../api';
+    import { useAppearanceSettingsStore, useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
 
-    export default {
-        name: 'FavoritesWorldItem',
-        inject: ['API', 'showFavoriteDialog'],
-        props: {
-            group: [Object, String],
-            favorite: Object,
-            editFavoritesMode: Boolean,
-            hideTooltips: Boolean,
-            shiftHeld: Boolean,
-            isLocalFavorite: { type: Boolean, required: false }
-        },
-        computed: {
-            isSelected: {
-                get() {
-                    return this.favorite.$selected;
-                },
-                set(value) {
-                    this.$emit('handle-select', value);
-                }
-            },
-            localFavFakeRef() {
-                // local favorite no "ref" property
-                return this.isLocalFavorite ? this.favorite : this.favorite.ref;
-            },
-            smallThumbnail() {
-                return (
-                    this.localFavFakeRef.thumbnailImageUrl.replace('256', '128') ||
-                    this.localFavFakeRef.thumbnailImageUrl
-                );
-            }
-        },
-        methods: {
-            handleDropdownItemClick(groupAPI) {
-                if (this.isLocalFavorite) {
-                    this.addFavoriteWorld(this.localFavFakeRef, groupAPI, true);
-                } else {
-                    this.moveFavorite(this.localFavFakeRef, groupAPI, 'world');
-                }
-            },
-            handleDeleteFavorite() {
-                if (this.isLocalFavorite) {
-                    this.$emit('remove-local-world-favorite', this.favorite.id, this.group);
-                } else {
-                    this.deleteFavorite(this.favorite.id);
-                }
-            },
-            moveFavorite(ref, group, type) {
-                favoriteRequest
-                    .deleteFavorite({
-                        objectId: ref.id
-                    })
-                    .then(() => {
-                        favoriteRequest.addFavorite({
-                            type,
-                            favoriteId: ref.id,
-                            tags: group.name
-                        });
-                    });
-            },
-            deleteFavorite(objectId) {
-                favoriteRequest.deleteFavorite({
-                    objectId
-                });
-                // FIXME: 메시지 수정
-                // this.$confirm('Continue? Delete Favorite', 'Confirm', {
-                //     confirmButtonText: 'Confirm',
-                //     cancelButtonText: 'Cancel',
-                //     type: 'info',
-                //     callback: (action) => {
-                //         if (action === 'confirm') {
-                //             API.deleteFavorite({
-                //                 objectId
-                //             });
-                //         }
-                //     }
-                // });
-            },
-            addFavoriteWorld(ref, group, message) {
-                // wait API splitting PR Merged
-                return favoriteRequest
-                    .addFavorite({
-                        type: 'world',
-                        favoriteId: ref.id,
-                        tags: group.name
-                    })
-                    .then((args) => {
-                        if (message) {
-                            this.$message({
-                                message: 'World added to favorites',
-                                type: 'success'
-                            });
-                        }
-                        return args;
-                    });
-            }
+    const props = defineProps({
+        group: [Object, String],
+        favorite: Object,
+        editFavoritesMode: Boolean,
+        isLocalFavorite: { type: Boolean, default: false }
+    });
+
+    const emit = defineEmits(['handle-select', 'remove-local-world-favorite', 'click']);
+    const { proxy } = getCurrentInstance();
+
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
+    const { showFavoriteDialog } = useFavoriteStore();
+    const { newInstanceSelfInvite } = useInviteStore();
+    const { shiftHeld } = storeToRefs(useUiStore());
+
+    const isSelected = computed({
+        get: () => props.favorite.$selected,
+        set: (value) => emit('handle-select', value)
+    });
+
+    const localFavFakeRef = computed(() => (props.isLocalFavorite ? props.favorite : props.favorite.ref));
+
+    const smallThumbnail = computed(() => {
+        const url = localFavFakeRef.value.thumbnailImageUrl.replace('256', '128');
+        return url || localFavFakeRef.value.thumbnailImageUrl;
+    });
+
+    function handleDropdownItemClick(groupAPI) {
+        if (props.isLocalFavorite) {
+            addFavoriteWorld(localFavFakeRef.value, groupAPI, true);
+        } else {
+            moveFavorite(localFavFakeRef.value, groupAPI, 'world');
         }
-    };
+    }
+
+    function handleDeleteFavorite() {
+        if (props.isLocalFavorite) {
+            emit('remove-local-world-favorite', props.favorite.id, props.group);
+        } else {
+            deleteFavorite(props.favorite.id);
+        }
+    }
+
+    function moveFavorite(refObj, group, type) {
+        favoriteRequest.deleteFavorite({ objectId: refObj.id }).then(() => {
+            favoriteRequest.addFavorite({
+                type,
+                favoriteId: refObj.id,
+                tags: group.name
+            });
+        });
+    }
+
+    function deleteFavorite(objectId) {
+        favoriteRequest.deleteFavorite({ objectId });
+    }
+
+    function addFavoriteWorld(refObj, group, message) {
+        return favoriteRequest
+            .addFavorite({
+                type: 'world',
+                favoriteId: refObj.id,
+                tags: group.name
+            })
+            .then((args) => {
+                if (message) {
+                    proxy.$message({ message: 'World added to favorites', type: 'success' });
+                }
+                return args;
+            });
+    }
 </script>

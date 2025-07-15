@@ -60,6 +60,7 @@
                         :type="item.type ? item.type : 'text'"
                         :min="item.min"
                         :max="item.max"
+                        @input="refreshDialogValues"
                         style="flex: 1; margin-top: 5px"
                         ><el-button
                             v-if="item.folderBrowser"
@@ -186,50 +187,24 @@
 </template>
 
 <script setup>
-    import { computed, getCurrentInstance, inject, ref, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { computed, getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import {
-        VRChatCameraResolutions,
-        VRChatScreenshotResolutions
-    } from '../../../composables/setting/constants/vrchatResolutions';
-    import { getVRChatResolution } from '../../../composables/setting/utils';
+    import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
+    import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
+    import { useAdvancedSettingsStore, useAppearanceSettingsStore, useGameStore } from '../../../stores';
+
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { VRChatUsedCacheSize, VRChatTotalCacheSize, VRChatCacheSizeLoading } = storeToRefs(useGameStore());
+    const { sweepVRChatCache, getVRChatCacheSize } = useGameStore();
+    const { folderSelectorDialog } = useAdvancedSettingsStore();
+    const { isVRChatConfigDialogVisible } = storeToRefs(useAdvancedSettingsStore());
 
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const $confirm = instance.proxy.$confirm;
     const $message = instance.proxy.$message;
-
-    const openExternalLink = inject('openExternalLink');
-
-    const props = defineProps({
-        isVRChatConfigDialogVisible: {
-            type: Boolean,
-            required: true
-        },
-        VRChatUsedCacheSize: {
-            type: [String, Number],
-            required: true
-        },
-        VRChatTotalCacheSize: {
-            type: [String, Number],
-            required: true
-        },
-        VRChatCacheSizeLoading: {
-            type: Boolean,
-            required: true
-        },
-        folderSelectorDialog: {
-            type: Function,
-            required: true
-        },
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        }
-    });
-
-    const emit = defineEmits(['update:isVRChatConfigDialogVisible', 'getVRChatCacheSize', 'sweepVRChatCache']);
 
     const VRChatConfigFile = ref({});
     // it's a object
@@ -281,7 +256,7 @@
     const loading = ref(false);
 
     watch(
-        () => props.isVRChatConfigDialogVisible,
+        () => isVRChatConfigDialogVisible.value,
         async (newValue) => {
             if (newValue) {
                 loading.value = true;
@@ -292,12 +267,8 @@
     );
 
     const totalCacheSize = computed(() => {
-        return VRChatConfigFile.value.cache_size || props.VRChatTotalCacheSize;
+        return VRChatConfigFile.value.cache_size || VRChatTotalCacheSize.value;
     });
-
-    function getVRChatCacheSize() {
-        emit('getVRChatCacheSize');
-    }
 
     function showDeleteAllVRChatCacheConfirm() {
         $confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
@@ -317,15 +288,12 @@
         getVRChatCacheSize();
     }
 
-    function sweepVRChatCache() {
-        emit('sweepVRChatCache');
-    }
-
     async function openConfigFolderBrowser(value) {
         const oldPath = VRChatConfigFile.value[value];
-        const newPath = await props.folderSelectorDialog(oldPath);
+        const newPath = await folderSelectorDialog(oldPath);
         if (newPath) {
             VRChatConfigFile.value[value] = newPath;
+            refreshDialogValues();
         }
     }
 
@@ -420,6 +388,6 @@
     }
 
     function closeDialog() {
-        emit('update:isVRChatConfigDialogVisible', false);
+        isVRChatConfigDialogVisible.value = false;
     }
 </script>

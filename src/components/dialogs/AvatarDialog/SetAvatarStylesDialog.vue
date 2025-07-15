@@ -64,12 +64,15 @@
     import { watch, getCurrentInstance } from 'vue';
 
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../../classes/utils';
+    import { arraysMatch } from '../../../shared/utils';
     import { avatarRequest } from '../../../api';
+    import { useAvatarStore } from '../../../stores';
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
+
+    const { applyAvatar } = useAvatarStore();
 
     const props = defineProps({
         setAvatarStylesDialog: {
@@ -125,7 +128,7 @@
         if (
             props.setAvatarStylesDialog.initialPrimaryStyle === props.setAvatarStylesDialog.primaryStyle &&
             props.setAvatarStylesDialog.initialSecondaryStyle === props.setAvatarStylesDialog.secondaryStyle &&
-            utils.arraysMatch(props.setAvatarStylesDialog.initialTags, tags)
+            arraysMatch(props.setAvatarStylesDialog.initialTags, tags)
         ) {
             props.setAvatarStylesDialog.visible = false;
             return;
@@ -139,7 +142,8 @@
         };
         avatarRequest
             .saveAvatar(params)
-            .then(() => {
+            .then((args) => {
+                applyAvatar(args.json);
                 $message.success(t('dialog.set_avatar_styles.save_success'));
                 props.setAvatarStylesDialog.visible = false;
             })

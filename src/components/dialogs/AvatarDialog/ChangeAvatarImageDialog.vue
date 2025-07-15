@@ -42,31 +42,28 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance, inject, ref } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { imageRequest } from '../../../api';
-    import { extractFileId } from '../../../composables/shared/utils';
-    import webApiService from '../../../service/webapi';
+    import { AppGlobal } from '../../../service/appConfig';
+    import { $throw } from '../../../service/request';
+    import { extractFileId } from '../../../shared/utils';
+    import { useAvatarStore, useGalleryStore } from '../../../stores';
 
     const { t } = useI18n();
 
     const instance = getCurrentInstance();
     const $message = instance.proxy.$message;
 
-    const API = inject('API');
+    const { avatarDialog } = storeToRefs(useAvatarStore());
+    const { previousImagesTable } = storeToRefs(useGalleryStore());
+    const { applyAvatar } = useAvatarStore();
 
     const props = defineProps({
         changeAvatarImageDialogVisible: {
             type: Boolean,
             default: false
-        },
-        previousImagesTable: {
-            type: Array,
-            default: () => []
-        },
-        avatarDialog: {
-            type: Object,
-            default: () => ({})
         },
         previousImagesFileId: {
             type: String,
@@ -121,7 +118,7 @@
             }
         };
         const files = e.target.files || e.dataTransfer.files;
-        if (!files.length || !props.avatarDialog.visible || props.avatarDialog.loading) {
+        if (!files.length || !avatarDialog.value.visible || avatarDialog.value.loading) {
             clearFile();
             return;
         }
@@ -156,8 +153,8 @@
                 const signatureMd5 = await genMd5(base64SignatureFile);
                 const signatureSizeInBytes = parseInt(await genLength(base64SignatureFile), 10);
 
-                const avatarId = props.avatarDialog.id;
-                const { imageUrl } = props.avatarDialog.ref;
+                const avatarId = avatarDialog.value.id;
+                const { imageUrl } = avatarDialog.value.ref;
 
                 const fileId = extractFileId(imageUrl);
                 if (!fileId) {
@@ -206,7 +203,6 @@
     }
 
     async function avatarImageInit(args) {
-        // API.$on('AVATARIMAGE:INIT')
         const fileId = args.json.id;
         const fileVersion = args.json.versions[args.json.versions.length - 1].version;
         const params = {
@@ -218,7 +214,6 @@
     }
 
     async function avatarImageFileStart(args) {
-        // API.$on('AVATARIMAGE:FILESTART')
         const { url } = args.json;
         const { fileId, fileVersion } = args.params;
         const params = {
@@ -242,7 +237,7 @@
 
         if (json.status !== 200) {
             changeAvatarImageDialogLoading.value = false;
-            API.$throw('Avatar image upload failed', json, params.url);
+            $throw('Avatar image upload failed', json, params.url);
         }
         const args = {
             json,
@@ -252,7 +247,6 @@
     }
 
     async function avatarImageFileAWS(args) {
-        // API.$on('AVATARIMAGE:FILEAWS')
         const { fileId, fileVersion } = args.params;
         const params = {
             fileId,
@@ -263,7 +257,6 @@
     }
 
     async function avatarImageFileFinish(args) {
-        // API.$on('AVATARIMAGE:FILEFINISH')
         const { fileId, fileVersion } = args.params;
         const params = {
             fileId,
@@ -274,7 +267,6 @@
     }
 
     async function avatarImageSigStart(args) {
-        // API.$on('AVATARIMAGE:SIGSTART')
         const { url } = args.json;
         const { fileId, fileVersion } = args.params;
         const params = {
@@ -298,7 +290,7 @@
 
         if (json.status !== 200) {
             changeAvatarImageDialogLoading.value = false;
-            API.$throw('Avatar image upload failed', json, params.url);
+            $throw('Avatar image upload failed', json, params.url);
         }
         const args = {
             json,
@@ -308,7 +300,6 @@
     }
 
     async function avatarImageSigAWS(args) {
-        // API.$on('AVATARIMAGE:SIGAWS')
         const { fileId, fileVersion } = args.params;
         const params = {
             fileId,
@@ -319,18 +310,17 @@
     }
 
     async function avatarImageSigFinish(args) {
-        // API.$on('AVATARIMAGE:SIGFINISH')
         const { fileId, fileVersion } = args.params;
         const parmas = {
             id: avatarImage.value.avatarId,
-            imageUrl: `${API.endpointDomain}/file/${fileId}/${fileVersion}/file`
+            imageUrl: `${AppGlobal.endpointDomain}/file/${fileId}/${fileVersion}/file`
         };
         const res = await imageRequest.setAvatarImage(parmas);
         return avatarImageSet(res);
     }
 
     async function avatarImageSet(args) {
-        // API.$on('AVATARIMAGE:SET')
+        applyAvatar(args.json);
         changeAvatarImageDialogLoading.value = false;
         if (args.json.imageUrl === args.params.imageUrl) {
             $message({
@@ -339,7 +329,7 @@
             });
             refresh();
         } else {
-            API.$throw(0, 'Avatar image change failed', args.params.imageUrl);
+            $throw(0, 'Avatar image change failed', args.params.imageUrl);
         }
     }
 
@@ -352,42 +342,22 @@
     function setAvatarImage(image) {
         changeAvatarImageDialogLoading.value = true;
         const parmas = {
-            id: props.avatarDialog.id,
-            imageUrl: `${API.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file`
+            id: avatarDialog.value.id,
+            imageUrl: `${AppGlobal.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file`
         };
-        imageRequest.setAvatarImage(parmas).finally(() => {
-            changeAvatarImageDialogLoading.value = false;
-            closeDialog();
-        });
+        imageRequest
+            .setAvatarImage(parmas)
+            .then((args) => applyAvatar(args.json))
+            .finally(() => {
+                changeAvatarImageDialogLoading.value = false;
+                closeDialog();
+            });
     }
 
     function compareCurrentImage(image) {
         return (
-            `${API.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file` ===
-            props.avatarDialog.ref.imageUrl
+            `${AppGlobal.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file` ===
+            avatarDialog.value.ref.imageUrl
         );
     }
-
-    // $app.methods.deleteAvatarImage = function () {
-    //     this.changeAvatarImageDialogLoading = true;
-    //     var parmas = {
-    //         fileId: this.previousImagesFileId,
-    //         version: this.previousImagesTable[0].version
-    //     };
-    //     vrcPlusIconRequest
-    //         .deleteFileVersion(parmas)
-    //         .then((args) => {
-    //             this.previousImagesFileId = args.json.id;
-    //             var images = [];
-    //             args.json.versions.forEach((item) => {
-    //                 if (!item.deleted) {
-    //                     images.unshift(item);
-    //                 }
-    //             });
-    //             this.checkPreviousImageAvailable(images);
-    //         })
-    //         .finally(() => {
-    //             this.changeAvatarImageDialogLoading = false;
-    //         });
-    // };
 </script>

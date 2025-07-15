@@ -539,10 +539,6 @@
                         "header": "缓存自动清理",
                         "description": "退出游戏时自动从缓存中删除过期数据"
                     },
-                    "local_world_persistence": {
-                        "header": "世界数据持久化",
-                        "description": "启用世界数据持久化存储功能（需要重启）"
-                    },
                     "save_instance_prints_to_file": {
                         "header": "“拍立得”照片保存选项",
                         "header_tooltip": "需要使用 \"--enable-sdk-log-levels\" 启动选项启动VRChat",

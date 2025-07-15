@@ -20,12 +20,13 @@
 </template>
 
 <script setup>
-    import { ref, watch, inject } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-
-    const API = inject('API');
+    import { useUserStore } from '../../../stores';
 
     const { t } = useI18n();
+    const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
         discordNamesDialogVisible: {
@@ -52,7 +53,7 @@
     const discordNamesContent = ref('');
 
     function showDiscordNamesContent() {
-        const { friends } = API.currentUser;
+        const { friends } = currentUser.value;
         if (Array.isArray(friends) === false) {
             return;
         }

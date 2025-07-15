@@ -1,4 +1,5 @@
-// #region | API: World
+import { request } from '../service/request';
+import { useWorldStore } from '../stores';
 
 const worldReq = {
     /**
@@ -6,14 +7,15 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getWorld(params) {
-        return window.API.call(`worlds/${params.worldId}`, {
+        const worldStore = useWorldStore();
+        return request(`worlds/${params.worldId}`, {
             method: 'GET'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('WORLD', args);
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     },
@@ -23,10 +25,17 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getCachedWorld(params) {
+        const worldStore = useWorldStore();
         return new Promise((resolve, reject) => {
-            const ref = window.API.cachedWorlds.get(params.worldId);
+            const ref = worldStore.cachedWorlds.get(params.worldId);
             if (typeof ref === 'undefined') {
-                worldReq.getWorld(params).catch(reject).then(resolve);
+                worldReq
+                    .getWorld(params)
+                    .catch(reject)
+                    .then((args) => {
+                        args.ref = worldStore.applyWorld(args.json);
+                        resolve(args);
+                    });
             } else {
                 resolve({
                     cache: true,
@@ -57,11 +66,12 @@ const worldReq = {
      * @returns {Promise<{json: any, params, option}>}
      */
     getWorlds(params, option) {
+        const worldStore = useWorldStore();
         let endpoint = 'worlds';
         if (typeof option !== 'undefined') {
             endpoint = `worlds/${option}`;
         }
-        return window.API.call(endpoint, {
+        return request(endpoint, {
             method: 'GET',
             params
         }).then((json) => {
@@ -70,7 +80,9 @@ const worldReq = {
                 params,
                 option
             };
-            window.API.$emit('WORLD:LIST', args);
+            for (const json of args.json) {
+                worldStore.applyWorld(json);
+            }
             return args;
         });
     },
@@ -79,14 +91,13 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     deleteWorld(params) {
-        return window.API.call(`worlds/${params.worldId}`, {
+        return request(`worlds/${params.worldId}`, {
             method: 'DELETE'
         }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('WORLD:DELETE', args);
             return args;
         });
     },
@@ -96,7 +107,8 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     saveWorld(params) {
-        return window.API.call(`worlds/${params.id}`, {
+        const worldStore = useWorldStore();
+        return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
         }).then((json) => {
@@ -104,7 +116,7 @@ const worldReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLD:SAVE', args);
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     },
@@ -114,7 +126,8 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     publishWorld(params) {
-        return window.API.call(`worlds/${params.worldId}/publish`, {
+        const worldStore = useWorldStore();
+        return request(`worlds/${params.worldId}/publish`, {
             method: 'PUT',
             params
         }).then((json) => {
@@ -122,7 +135,7 @@ const worldReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLD:SAVE', args);
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     },
@@ -132,7 +145,8 @@ const worldReq = {
      * @returns {Promise<{json: any, params}>}
      */
     unpublishWorld(params) {
-        return window.API.call(`worlds/${params.worldId}/publish`, {
+        const worldStore = useWorldStore();
+        return request(`worlds/${params.worldId}/publish`, {
             method: 'DELETE',
             params
         }).then((json) => {
@@ -140,12 +154,10 @@ const worldReq = {
                 json,
                 params
             };
-            window.API.$emit('WORLD:SAVE', args);
+            args.ref = worldStore.applyWorld(json);
             return args;
         });
     }
 };
-
-// #endregion
 
 export default worldReq;

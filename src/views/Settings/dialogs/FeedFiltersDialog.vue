@@ -28,7 +28,7 @@
                 </el-radio-group>
             </div>
 
-            <template v-if="props.photonLoggingEnabled">
+            <template v-if="photonLoggingEnabled">
                 <br />
                 <div class="toggle-item">
                     <span class="toggle-name">Photon Event Logging</span>
@@ -59,38 +59,25 @@
 </template>
 
 <script setup>
+    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import configRepository from '../../../service/config';
-    import { feedFiltersOptions } from '../../../composables/setting/constants/feedFiltersOptions';
+    import { feedFiltersOptions, sharedFeedFiltersDefaults } from '../../../shared/constants';
+    import { useNotificationsSettingsStore, usePhotonStore, useSharedFeedStore } from '../../../stores';
 
     const { t } = useI18n();
 
+    const { photonLoggingEnabled } = storeToRefs(usePhotonStore());
     const { notyFeedFiltersOptions, wristFeedFiltersOptions, photonFeedFiltersOptions } = feedFiltersOptions();
+    const { sharedFeedFilters } = storeToRefs(useNotificationsSettingsStore());
+    const { updateSharedFeed } = useSharedFeedStore();
 
     const props = defineProps({
         feedFiltersDialogMode: {
             type: String,
             required: true,
             default: ''
-        },
-        photonLoggingEnabled: {
-            type: Boolean,
-            default: false
-        },
-        sharedFeedFilters: {
-            type: Object,
-            default: () => ({
-                noty: {},
-                wrist: {}
-            })
-        },
-        sharedFeedFiltersDefaults: {
-            type: Object,
-            default: () => ({
-                noty: {},
-                wrist: {}
-            })
         }
     });
 
@@ -100,8 +87,8 @@
 
     const currentSharedFeedFilters = computed(() => {
         return props.feedFiltersDialogMode === 'noty'
-            ? props.sharedFeedFilters['noty']
-            : props.sharedFeedFilters['wrist'];
+            ? sharedFeedFilters.value['noty']
+            : sharedFeedFilters.value['wrist'];
     });
 
     const dialogTitle = computed(() => {
@@ -116,23 +103,23 @@
         return props.feedFiltersDialogMode === 'noty' ? resetNotyFeedFilters : resetWristFeedFilters;
     });
 
-    const emit = defineEmits(['update:feedFiltersDialogMode', 'updateSharedFeed']);
+    const emit = defineEmits(['update:feedFiltersDialogMode']);
 
     function saveSharedFeedFilters() {
-        configRepository.setString('sharedFeedFilters', JSON.stringify(props.sharedFeedFilters));
-        emit('updateSharedFeed', true);
+        configRepository.setString('sharedFeedFilters', JSON.stringify(sharedFeedFilters.value));
+        updateSharedFeed(true);
     }
 
     function resetNotyFeedFilters() {
-        props.sharedFeedFilters.noty = {
-            ...props.sharedFeedFiltersDefaults.noty
+        sharedFeedFilters.value.noty = {
+            ...sharedFeedFiltersDefaults.noty
         };
         saveSharedFeedFilters();
     }
 
     async function resetWristFeedFilters() {
-        props.sharedFeedFilters.wrist = {
-            ...props.sharedFeedFiltersDefaults.wrist
+        sharedFeedFilters.value.wrist = {
+            ...sharedFeedFiltersDefaults.wrist
         };
         saveSharedFeedFilters();
     }

@@ -2,45 +2,44 @@
     <safe-dialog
         ref="previousInstancesWorldDialog"
         :visible.sync="isVisible"
-        :title="$t('dialog.previous_instances.header')"
+        :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <span style="font-size: 14px" v-text="previousInstancesWorldDialog.worldRef.name"></span>
             <el-input
                 v-model="previousInstancesWorldDialogTable.filters[0].value"
-                :placeholder="$t('dialog.previous_instances.search_placeholder')"
+                :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="display: block; width: 150px"></el-input>
         </div>
         <data-tables v-loading="loading" v-bind="previousInstancesWorldDialogTable" style="margin-top: 10px">
-            <el-table-column :label="$t('table.previous_instances.date')" prop="created_at" sortable width="170">
+            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                    <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.instance_name')" prop="name">
+            <el-table-column :label="t('table.previous_instances.instance_name')" prop="name">
                 <template slot-scope="scope">
-                    <location-world
+                    <LocationWorld
                         :locationobject="scope.row.$location"
                         :grouphint="scope.row.groupName"
-                        :currentuserid="API.currentUser.id"
-                        @show-launch-dialog="showLaunchDialog"></location-world>
+                        :currentuserid="currentUser.id" />
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.instance_creator')" prop="location">
+            <el-table-column :label="t('table.previous_instances.instance_creator')" prop="location">
                 <template slot-scope="scope">
-                    <display-name
+                    <DisplayName
                         :userid="scope.row.$location.userId"
                         :location="scope.row.$location.tag"
-                        :force-update-key="previousInstancesWorldDialog.forceUpdate"></display-name>
+                        :force-update-key="previousInstancesWorldDialog.forceUpdate" />
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.time')" prop="time" width="100" sortable>
+            <el-table-column :label="t('table.previous_instances.time')" prop="time" width="100" sortable>
                 <template slot-scope="scope">
                     <span v-text="scope.row.timer"></span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.action')" width="90" align="right">
+            <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
                 <template slot-scope="scope">
                     <el-button
                         type="text"
@@ -66,111 +65,106 @@
     </safe-dialog>
 </template>
 
-<script>
-    import utils from '../../../classes/utils';
-    import { parseLocation } from '../../../composables/instance/utils';
-    import database from '../../../service/database';
+<script setup>
+    import { storeToRefs } from 'pinia';
+    import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
+    import { database } from '../../../service/database';
+    import {
+        adjustDialogZ,
+        compareByCreatedAt,
+        parseLocation,
+        removeFromArray,
+        timeToText,
+        formatDateFilter
+    } from '../../../shared/utils';
+    import { useInstanceStore, useUiStore, useUserStore } from '../../../stores';
 
-    export default {
-        name: 'PreviousInstancesWorldDialog',
-        inject: ['API', 'showLaunchDialog', 'showPreviousInstancesInfoDialog', 'adjustDialogZ'],
-        props: {
-            previousInstancesWorldDialog: {
-                type: Object,
-                required: true
-            },
-            shiftHeld: Boolean
+    const { proxy } = getCurrentInstance();
+    const { t } = useI18n();
+
+    const props = defineProps({
+        previousInstancesWorldDialog: {
+            type: Object,
+            required: true
+        }
+    });
+    const emit = defineEmits(['update:previous-instances-world-dialog']);
+
+    const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { shiftHeld } = storeToRefs(useUiStore());
+    const { currentUser } = storeToRefs(useUserStore());
+
+    const previousInstancesWorldDialogTable = reactive({
+        data: [],
+        filters: [{ prop: 'groupName', value: '' }],
+        tableProps: {
+            stripe: true,
+            size: 'mini',
+            defaultSort: { prop: 'created_at', order: 'descending' }
         },
-        data() {
-            return {
-                previousInstancesWorldDialogTable: {
-                    data: [],
-                    filters: [
-                        {
-                            prop: 'groupName',
-                            value: ''
-                        }
-                    ],
-                    tableProps: {
-                        stripe: true,
-                        size: 'mini',
-                        defaultSort: {
-                            prop: 'created_at',
-                            order: 'descending'
-                        }
-                    },
-                    pageSize: 10,
-                    paginationProps: {
-                        small: true,
-                        layout: 'sizes,prev,pager,next,total',
-                        pageSizes: [10, 25, 50, 100]
-                    }
-                },
-                loading: false
-            };
-        },
-        computed: {
-            isVisible: {
-                get() {
-                    return this.previousInstancesWorldDialog.visible;
-                },
-                set(value) {
-                    this.$emit('update:previous-instances-world-dialog', {
-                        ...this.previousInstancesWorldDialog,
-                        visible: value
-                    });
+        pageSize: 10,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 25, 50, 100]
+        }
+    });
+    const loading = ref(false);
+
+    const isVisible = computed({
+        get: () => props.previousInstancesWorldDialog.visible,
+        set: (value) => {
+            emit('update:previous-instances-world-dialog', {
+                ...props.previousInstancesWorldDialog,
+                visible: value
+            });
+        }
+    });
+
+    function refreshPreviousInstancesWorldTable() {
+        loading.value = true;
+        const D = props.previousInstancesWorldDialog;
+        database.getPreviousInstancesByWorldId(D.worldRef).then((data) => {
+            const array = [];
+            for (const ref of data.values()) {
+                ref.$location = parseLocation(ref.location);
+                ref.timer = ref.time > 0 ? timeToText(ref.time) : '';
+                array.push(ref);
+            }
+            array.sort(compareByCreatedAt);
+            previousInstancesWorldDialogTable.data = array;
+            loading.value = false;
+        });
+    }
+
+    function deleteGameLogWorldInstance(row) {
+        database.deleteGameLogInstanceByInstanceId({ location: row.location });
+        removeFromArray(previousInstancesWorldDialogTable.data, row);
+    }
+
+    function deleteGameLogWorldInstancePrompt(row) {
+        proxy.$confirm('Continue? Delete GameLog Instance', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    deleteGameLogWorldInstance(row);
                 }
             }
-        },
-        watch: {
-            'previousInstancesWorldDialog.openFlg'() {
-                if (this.previousInstancesWorldDialog.visible) {
-                    this.$nextTick(() => {
-                        this.adjustDialogZ(this.$refs.previousInstancesWorldDialog.$el);
-                    });
-                    this.refreshPreviousInstancesWorldTable();
-                }
-            }
-        },
-        methods: {
-            refreshPreviousInstancesWorldTable() {
-                this.loading = true;
-                const D = this.previousInstancesWorldDialog;
-                database.getpreviousInstancesByWorldId(D.worldRef).then((data) => {
-                    const array = [];
-                    for (const ref of data.values()) {
-                        ref.$location = parseLocation(ref.location);
-                        if (ref.time > 0) {
-                            ref.timer = utils.timeToText(ref.time);
-                        } else {
-                            ref.timer = '';
-                        }
-                        array.push(ref);
-                    }
-                    array.sort(utils.compareByCreatedAt);
-                    this.previousInstancesWorldDialogTable.data = array;
-                    this.loading = false;
-                });
-            },
-            deleteGameLogWorldInstance(row) {
-                database.deleteGameLogInstanceByInstanceId({
-                    location: row.location
-                });
-                utils.removeFromArray(this.previousInstancesWorldDialogTable.data, row);
-            },
+        });
+    }
 
-            deleteGameLogWorldInstancePrompt(row) {
-                this.$confirm('Continue? Delete GameLog Instance', 'Confirm', {
-                    confirmButtonText: 'Confirm',
-                    cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
-                        if (action === 'confirm') {
-                            this.deleteGameLogWorldInstance(row);
-                        }
-                    }
+    watch(
+        () => props.previousInstancesWorldDialog.openFlg,
+        () => {
+            if (props.previousInstancesWorldDialog.visible) {
+                nextTick(() => {
+                    adjustDialogZ(proxy.$refs.previousInstancesWorldDialog.$el);
                 });
+                refreshPreviousInstancesWorldTable();
             }
         }
-    };
+    );
 </script>

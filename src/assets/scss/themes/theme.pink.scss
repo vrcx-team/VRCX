@@ -2,7 +2,7 @@
  * VRCX Pink theme by Kamiya
  * https://github.com/kamiya10/VRCX-theme
  */
-@import 'theme.dark';
+@use 'theme.dark';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 :root {
     --theme: #dfa2a2;
@@ -70,7 +70,7 @@ textarea {
 .el-textarea .el-input__count,
 .el-textarea__inner,
 .x-menu-container {
-    background-color: var(--lighter-bg);
+    background-color: var(--lighter-bg) !important;
 }
 .el-color-picker__panel {
     border-color: var(--lighter-bg);

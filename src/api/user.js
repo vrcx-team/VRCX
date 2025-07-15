@@ -1,13 +1,19 @@
-// #region | API: User
+import { request } from '../service/request';
+import { useUserStore } from '../stores';
+
+function getCurrentUserId() {
+    return useUserStore().currentUser.id;
+}
 
 const userReq = {
     /**
      * Fetch user from API.
-     * @param {{ userId: string }} params identifier of registered user
-     * @returns {Promise<{json: any, params}>}
+     * identifier of registered user
+     * @type {import('../types/user').getUser}
      */
     getUser(params) {
-        return window.API.call(`users/${params.userId}`, {
+        const userStore = useUserStore();
+        return request(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
             if (!json) {
@@ -17,23 +23,29 @@ const userReq = {
             }
             const args = {
                 json,
-                params
+                params,
+                ref: userStore.applyUser(json)
             };
-            window.API.$emit('USER', args);
             return args;
         });
     },
 
     /**
      * Fetch user from cache if they're in it. Otherwise, calls API.
-     * @param {{ userId: string }} params identifier of registered user
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/user').getUser}
      */
     getCachedUser(params) {
+        const userStore = useUserStore();
         return new Promise((resolve, reject) => {
-            const ref = window.API.cachedUsers.get(params.userId);
+            const ref = userStore.cachedUsers.get(params.userId);
             if (typeof ref === 'undefined') {
-                userReq.getUser(params).catch(reject).then(resolve);
+                userReq
+                    .getUser(params)
+                    .catch(reject)
+                    .then((args) => {
+                        args.ref = userStore.applyUser(args.json);
+                        resolve(args);
+                    });
             } else {
                 resolve({
                     cache: true,
@@ -59,7 +71,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getUsers(params) {
-        return window.API.call('users', {
+        return request('users', {
             method: 'GET',
             params
         }).then((json) => {
@@ -67,7 +79,6 @@ const userReq = {
                 json,
                 params
             };
-            window.API.$emit('USER:LIST', args);
             return args;
         });
     },
@@ -77,7 +88,8 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     addUserTags(params) {
-        return window.API.call(`users/${window.API.currentUser.id}/addTags`, {
+        const userStore = useUserStore();
+        return request(`users/${getCurrentUserId()}/addTags`, {
             method: 'POST',
             params
         }).then((json) => {
@@ -85,7 +97,7 @@ const userReq = {
                 json,
                 params
             };
-            window.API.$emit('USER:CURRENT:SAVE', args);
+            userStore.applyCurrentUser(json);
             return args;
         });
     },
@@ -95,18 +107,16 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     removeUserTags(params) {
-        return window.API.call(
-            `users/${window.API.currentUser.id}/removeTags`,
-            {
-                method: 'POST',
-                params
-            }
-        ).then((json) => {
+        const userStore = useUserStore();
+        return request(`users/${getCurrentUserId()}/removeTags`, {
+            method: 'POST',
+            params
+        }).then((json) => {
             const args = {
                 json,
                 params
             };
-            window.API.$emit('USER:CURRENT:SAVE', args);
+            userStore.applyCurrentUser(json);
             return args;
         });
     },
@@ -116,7 +126,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getUserFeedback(params) {
-        return window.API.call(`users/${params.userId}/feedback`, {
+        return request(`users/${params.userId}/feedback`, {
             method: 'GET',
             params: {
                 n: 100
@@ -126,7 +136,6 @@ const userReq = {
                 json,
                 params
             };
-            // window.API.$emit('USER:FEEDBACK', args);
             return args;
         });
     },
@@ -140,19 +149,19 @@ const userReq = {
 
     /**
      * Updates current user's status.
-     * @param params {SaveCurrentUserParameters} new status to be set
-     * @returns {Promise<{json: any, params}>}
+     *  @type {import('../types/user').getCurrentUser}
      */
     saveCurrentUser(params) {
-        return window.API.call(`users/${window.API.currentUser.id}`, {
+        const userStore = useUserStore();
+        return request(`users/${getCurrentUserId()}`, {
             method: 'PUT',
             params
         }).then((json) => {
-            var args = {
+            const args = {
                 json,
-                params
+                params,
+                ref: userStore.applyCurrentUser(json)
             };
-            window.API.$emit('USER:CURRENT:SAVE', args);
             return args;
         });
     },
@@ -162,7 +171,7 @@ const userReq = {
      * @returns {Promise<{json: any, params}>}
      */
     getUserNotes(params) {
-        return window.API.call(`userNotes`, {
+        return request(`userNotes`, {
             method: 'GET',
             params
         }).then((json) => {
@@ -170,11 +179,9 @@ const userReq = {
                 json,
                 params
             };
-            // window.API.$emit('USER:NOTES', args);
             return args;
         });
     }
 };
-// #endregion
 
 export default userReq;

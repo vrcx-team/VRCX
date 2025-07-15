@@ -13,7 +13,7 @@
                 v-model="feedTable.filter"
                 multiple
                 clearable
-                style="flex: 1; height: 40px"
+                style="flex: 1"
                 :placeholder="t('view.feed.filter_placeholder')"
                 @change="feedTableLookup">
                 <el-option
@@ -26,7 +26,7 @@
                 v-model="feedTable.search"
                 :placeholder="t('view.feed.search_placeholder')"
                 clearable
-                style="flex: none; width: 150px; margin: 0 10px"
+                style="flex: none; width: 150px; margin-left: 10px"
                 @keyup.native.13="feedTableLookup"
                 @change="feedTableLookup"></el-input>
         </div>
@@ -36,10 +36,10 @@
                 <template #default="scope">
                     <div style="position: relative; font-size: 14px">
                         <template v-if="scope.row.type === 'GPS'">
-                            <location
+                            <Location
                                 v-if="scope.row.previousLocation"
                                 :location="scope.row.previousLocation"
-                                style="display: inline-block"></location>
+                                style="display: inline-block" />
                             <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
                                 timeToText(scope.row.time)
                             }}</el-tag>
@@ -47,29 +47,29 @@
                             <span style="margin-right: 5px">
                                 <i class="el-icon-right"></i>
                             </span>
-                            <location
+                            <Location
                                 v-if="scope.row.location"
                                 :location="scope.row.location"
                                 :hint="scope.row.worldName"
-                                :grouphint="scope.row.groupName"></location>
+                                :grouphint="scope.row.groupName" />
                         </template>
                         <template v-else-if="scope.row.type === 'Offline'">
                             <template v-if="scope.row.location">
-                                <location
+                                <Location
                                     :location="scope.row.location"
                                     :hint="scope.row.worldName"
-                                    :grouphint="scope.row.groupName"></location>
+                                    :grouphint="scope.row.groupName" />
                                 <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
                                     timeToText(scope.row.time)
                                 }}</el-tag>
                             </template>
                         </template>
                         <template v-else-if="scope.row.type === 'Online'">
-                            <location
+                            <Location
                                 v-if="scope.row.location"
                                 :location="scope.row.location"
                                 :hint="scope.row.worldName"
-                                :grouphint="scope.row.groupName"></location>
+                                :grouphint="scope.row.groupName" />
                         </template>
                         <template v-else-if="scope.row.type === 'Avatar'">
                             <div style="display: flex; align-items: center">
@@ -83,12 +83,12 @@
                                                 class="x-link"
                                                 style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
                                             <br />
-                                            <avatar-info
+                                            <AvatarInfo
                                                 :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
                                                 :userid="scope.row.userId"
                                                 :hintownerid="scope.row.previousOwnerId"
                                                 :hintavatarname="scope.row.previousAvatarName"
-                                                :avatartags="scope.row.previousCurrentAvatarTags"></avatar-info>
+                                                :avatartags="scope.row.previousCurrentAvatarTags" />
                                         </template>
                                     </div>
                                     <img
@@ -110,12 +110,12 @@
                                                 class="x-link"
                                                 style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
                                             <br />
-                                            <avatar-info
+                                            <AvatarInfo
                                                 :imageurl="scope.row.currentAvatarThumbnailImageUrl"
                                                 :userid="scope.row.userId"
                                                 :hintownerid="scope.row.ownerId"
                                                 :hintavatarname="scope.row.avatarName"
-                                                :avatartags="scope.row.currentAvatarTags"></avatar-info>
+                                                :avatartags="scope.row.currentAvatarTags" />
                                         </template>
                                     </div>
                                     <img
@@ -175,13 +175,7 @@
                         </template>
                         <template v-else-if="scope.row.type === 'Bio'">
                             <pre
-                                style="
-                                    font-family: inherit;
-                                    font-size: 12px;
-                                    white-space: pre-wrap;
-                                    line-height: 25px;
-                                    line-height: 22px;
-                                "
+                                style="font-family: inherit; font-size: 12px; white-space: pre-wrap; line-height: 22px"
                                 v-html="formatDifference(scope.row.previousBio, scope.row.bio)"></pre>
                         </template>
                     </div>
@@ -192,9 +186,9 @@
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
-                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -218,18 +212,18 @@
             <el-table-column :label="t('table.feed.detail')">
                 <template #default="scope">
                     <template v-if="scope.row.type === 'GPS'">
-                        <location
+                        <Location
                             v-if="scope.row.location"
                             :location="scope.row.location"
                             :hint="scope.row.worldName"
-                            :grouphint="scope.row.groupName"></location>
+                            :grouphint="scope.row.groupName" />
                     </template>
                     <template v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'">
-                        <location
+                        <Location
                             v-if="scope.row.location"
                             :location="scope.row.location"
                             :hint="scope.row.worldName"
-                            :grouphint="scope.row.groupName"></location>
+                            :grouphint="scope.row.groupName" />
                     </template>
                     <template v-else-if="scope.row.type === 'Status'">
                         <template v-if="scope.row.statusDescription === scope.row.previousStatusDescription">
@@ -299,12 +293,12 @@
                         </template>
                     </template>
                     <template v-else-if="scope.row.type === 'Avatar'">
-                        <avatar-info
+                        <AvatarInfo
                             :imageurl="scope.row.currentAvatarImageUrl"
                             :userid="scope.row.userId"
                             :hintownerid="scope.row.ownerId"
                             :hintavatarname="scope.row.avatarName"
-                            :avatartags="scope.row.currentAvatarTags"></avatar-info>
+                            :avatartags="scope.row.currentAvatarTags" />
                     </template>
                     <template v-else-if="scope.row.type === 'Bio'">
                         <span v-text="scope.row.bio"></span>
@@ -315,40 +309,20 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'FeedTab'
-    };
-</script>
-
 <script setup>
-    import { inject } from 'vue';
+    import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../classes/utils';
-    import Location from '../../components/Location.vue';
+    import { useGalleryStore, useAppearanceSettingsStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
+    import { timeToText, statusClass, formatDateFilter } from '../../shared/utils';
+
+    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { showUserDialog } = useUserStore();
+    const { feedTable } = storeToRefs(useFeedStore());
+    const { feedTableLookup } = useFeedStore();
+    const { menuActiveIndex } = storeToRefs(useUiStore());
+    const { showFullscreenImageDialog } = useGalleryStore();
 
     const { t } = useI18n();
-
-    const showFullscreenImageDialog = inject('showFullscreenImageDialog');
-    const statusClass = inject('statusClass');
-    const showUserDialog = inject('showUserDialog');
-
-    defineProps({
-        menuActiveIndex: {
-            type: String,
-            default: 'feed'
-        },
-        hideTooltips: {
-            type: Boolean,
-            default: false
-        },
-        feedTable: {
-            type: Object,
-            default: () => ({})
-        }
-    });
-
-    const emit = defineEmits(['feedTableLookup']);
 
     /**
      * Function that format the differences between two strings with HTML tags
@@ -463,13 +437,5 @@
             .join(' ')
             .replace(/<br>[ ]+<br>/g, '<br><br>')
             .replace(/<br> /g, '<br>');
-    }
-
-    function feedTableLookup() {
-        emit('feedTableLookup');
-    }
-
-    function timeToText(time) {
-        return utils.timeToText(time);
     }
 </script>

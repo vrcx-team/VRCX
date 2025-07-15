@@ -34,9 +34,9 @@
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
-                            <span>{{ scope.row.created_at | formatDate('long') }}</span>
+                            <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                         </template>
-                        <span>{{ scope.row.created_at | formatDate('short') }}</span>
+                        <span>{{ formatDateFilter(scope.row.created_at, 'short') }}</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -87,42 +87,39 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'FriendLogTab'
-    };
-</script>
-
 <script setup>
-    import { getCurrentInstance, inject } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { getCurrentInstance, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
-    import utils from '../../classes/utils';
     import configRepository from '../../service/config';
-    import database from '../../service/database';
+    import { database } from '../../service/database';
+    import { removeFromArray, formatDateFilter } from '../../shared/utils';
+    import { useAppearanceSettingsStore, useUiStore, useFriendStore, useUserStore } from '../../stores';
+
+    const { hideUnfriends } = storeToRefs(useAppearanceSettingsStore());
+    const { showUserDialog } = useUserStore();
+    const { friendLogTable } = storeToRefs(useFriendStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
+    const { menuActiveIndex } = storeToRefs(useUiStore());
+
+    watch(
+        () => hideUnfriends.value,
+        (newValue) => {
+            if (newValue) {
+                friendLogTable.value.filters[2].value = newValue;
+            }
+        },
+        { immediate: true }
+    );
 
     const { t } = useI18n();
     const { proxy } = getCurrentInstance();
-    const { $confirm } = proxy;
-
-    const showUserDialog = inject('showUserDialog');
-
-    const props = defineProps({
-        menuActiveIndex: {
-            type: String,
-            default: ''
-        },
-        friendLogTable: {
-            type: Object,
-            default: () => ({})
-        },
-        shiftHeld: { type: Boolean, default: false }
-    });
 
     function saveTableFilters() {
-        configRepository.setString('VRCX_friendLogTableFilters', JSON.stringify(props.friendLogTable.filters[0].value));
+        configRepository.setString('VRCX_friendLogTableFilters', JSON.stringify(friendLogTable.value.filters[0].value));
     }
     function deleteFriendLogPrompt(row) {
-        $confirm('Continue? Delete Log', 'Confirm', {
+        proxy.$confirm('Continue? Delete Log', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -134,7 +131,7 @@
         });
     }
     function deleteFriendLog(row) {
-        utils.removeFromArray(props.friendLogTable.data, row);
+        removeFromArray(friendLogTable.value.data, row);
         database.deleteFriendLogHistory(row.rowId);
     }
 </script>
