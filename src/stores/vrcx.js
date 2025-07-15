@@ -30,6 +30,7 @@ import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
 import { useI18n } from 'vue-i18n-bridge';
+import Noty from 'noty';
 
 export const useVrcxStore = defineStore('Vrcx', () => {
     const gameStore = useGameStore();
@@ -617,7 +618,14 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     // Makes sure the window is focused
                     shouldFocusWindow = true;
                 } else {
-                    $app.selectAvatarWithoutConfirmation(avatarId);
+                    avatarStore
+                        .selectAvatarWithoutConfirmation(avatarId)
+                        .then(() => {
+                            new Noty({
+                                type: 'success',
+                                text: 'Avatar changed via launch command'
+                            }).show();
+                        });
                     shouldFocusWindow = false;
                 }
                 break;

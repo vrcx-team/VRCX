@@ -56,7 +56,7 @@
                             icon="el-icon-check"
                             circle
                             style="margin-left: 5px"
-                            @click.stop="selectAvatarWithConfirmation"></el-button>
+                            @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
                     </el-tooltip>
                     <el-tooltip
                         placement="right"
@@ -90,7 +90,7 @@
                             circle
                             style="margin-left: 5px"
                             icon="el-icon-check"
-                            @click.stop="selectAvatarWithConfirmation" />
+                            @click.stop="selectAvatarWithConfirmation(favorite.id)" />
                     </el-tooltip>
                 </template>
                 <el-tooltip

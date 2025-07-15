@@ -141,13 +141,6 @@ const userReq = {
     },
 
     /**
-     * @typedef {{
-     *     status: 'active' | 'offline' | 'busy' | 'ask me' | 'join me',
-     *     statusDescription: string
-     * }} SaveCurrentUserParameters
-     */
-
-    /**
      * Updates current user's status.
      *  @type {import('../types/user').getCurrentUser}
      */

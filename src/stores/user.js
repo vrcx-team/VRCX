@@ -1943,7 +1943,7 @@ export const useUserStore = defineStore('User', () => {
             last_platform: json.last_platform,
             // location - missing from currentUser
             // note - missing from currentUser
-            platform: json.presence.platform,
+            // platform - not always present
             profilePicOverride: json.profilePicOverride,
             profilePicOverrideThumbnail: json.profilePicOverrideThumbnail,
             pronouns: json.pronouns,
@@ -1976,6 +1976,9 @@ export const useUserStore = defineStore('User', () => {
         userRef.$offline_for = state.currentUser.$offline_for;
         userRef.$location_at = state.currentUser.$location_at;
         userRef.$travelingToTime = state.currentUser.$travelingToTime;
+        if (json.presence?.platform) {
+            userRef.platform = json.presence.platform;
+        }
 
         return ref;
     }

@@ -263,7 +263,7 @@
                                 circle
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
                                 style="margin-left: 5px"
-                                @click="selectAvatar(avatarDialog.id)"></el-button>
+                                @click="selectAvatarWithoutConfirmation(avatarDialog.id)"></el-button>
                         </el-tooltip>
                         <el-dropdown
                             trigger="click"
@@ -644,7 +644,8 @@
     const { showUserDialog, sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { avatarDialog, cachedAvatarModerations, cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
-    const { showAvatarDialog, getAvatarGallery, applyAvatarModeration, applyAvatar } = useAvatarStore();
+    const { showAvatarDialog, getAvatarGallery, applyAvatarModeration, applyAvatar, selectAvatarWithoutConfirmation } =
+        useAvatarStore();
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { deleteVRChatCache } = useGameStore();
@@ -1004,20 +1005,6 @@
             });
             checkPreviousImageAvailable(images);
         });
-    }
-
-    function selectAvatar(id) {
-        avatarRequest
-            .selectAvatar({
-                avatarId: id
-            })
-            .then((args) => {
-                $message({
-                    message: 'Avatar changed',
-                    type: 'success'
-                });
-                return args;
-            });
     }
 
     function promptChangeAvatarDescription(avatar) {

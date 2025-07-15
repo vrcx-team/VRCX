@@ -610,16 +610,15 @@ export const useAvatarStore = defineStore('Avatar', () => {
             });
             return;
         }
-        avatarRequest
+        return avatarRequest
             .selectAvatar({
                 avatarId: id
             })
-            .then((args) => {
-                new Noty({
-                    type: 'success',
-                    text: 'Avatar changed via launch command'
-                }).show();
-                return args;
+            .then(() => {
+                $app.$message({
+                    message: 'Avatar changed',
+                    type: 'success'
+                });
             });
     }
 
@@ -722,6 +721,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         getAvatarName,
         lookupAvatars,
         selectAvatarWithConfirmation,
+        selectAvatarWithoutConfirmation,
         showAvatarAuthorDialog,
         addAvatarWearTime
     };
