@@ -517,7 +517,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     }
 
     async function tryDeleteOldPrints() {
-        if (!advancedSettingsStore.deleteOldPrints) {
+        if (!advancedSettingsStore.autoDeleteOldPrints) {
             return;
         }
         await refreshPrintTable();

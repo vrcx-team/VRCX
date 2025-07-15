@@ -781,7 +781,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         console.error(err);
                     }
                 }
-                if (advancedSettingsStore.saveInstanceEmoji) {
+                if (advancedSettingsStore.saveInstancePrints) {
                     try {
                         let printId = '';
                         const url1 = new URL(gameLog.url);
