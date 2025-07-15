@@ -8,7 +8,6 @@ namespace VRCX
     {
         // AppApi
         public abstract void ShowDevTools();
-        public abstract void DeleteAllCookies();
         public abstract void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand);
         public abstract void RefreshVR();
         public abstract void RestartVR();
@@ -21,7 +20,6 @@ namespace VRCX
         public abstract void ExecuteAppFunction(string function, string json);
         public abstract void ExecuteVrFeedFunction(string function, string json);
         public abstract void ExecuteVrOverlayFunction(string function, string json);
-        public abstract string GetLaunchCommand();
         public abstract void FocusWindow();
         public abstract void ChangeTheme(int value);
         public abstract void DoFunny();

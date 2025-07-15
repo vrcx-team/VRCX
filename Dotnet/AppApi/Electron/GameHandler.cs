@@ -50,7 +50,7 @@ namespace VRCX
             var processes = Process.GetProcesses();
             foreach (var process in processes)
             {
-                if (process.ProcessName == "vrmonitor" || process.ProcessName == "monado-service")
+                if (process.ProcessName == "vrmonitor" || process.ProcessName == "monado-service" || process.ProcessName.EndsWith("wivrn-server"))
                 {
                     isSteamVRRunning = true;
                     break;
@@ -72,6 +72,26 @@ namespace VRCX
         {
             try
             {
+                var process = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "steam",
+                    Arguments = $"-applaunch 438100 {arguments}",
+                    UseShellExecute = false,
+                });
+                if (process?.ExitCode == 0)
+                {
+                    process.Close();
+                    return true;
+                }
+                process?.Close();
+            }
+            catch (Exception e)
+            {
+                logger.Error($"Failed to start VRChat: {e.Message}, attempting to start via Steam path.");
+            }
+            
+            try
+            {
                 var steamPath = _steamPath;
                 if (string.IsNullOrEmpty(steamPath))
                 {
@@ -79,7 +99,7 @@ namespace VRCX
                     return false;
                 }
 
-                var steamExecutable = Path.Combine(steamPath, "steam.sh");
+                var steamExecutable = Path.Join(steamPath, "steam.sh");
                 if (!File.Exists(steamExecutable))
                 {
                     logger.Error("Steam executable not found.");
@@ -104,20 +124,8 @@ namespace VRCX
 
         public override bool StartGameFromPath(string path, string arguments)
         {
-            if (!path.EndsWith(".exe"))
-                path = Path.Combine(path, "launch.exe");
-
-            if (!path.EndsWith("launch.exe") || !File.Exists(path))
-                return false;
-
-            Process.Start(new ProcessStartInfo
-            {
-                WorkingDirectory = Path.GetDirectoryName(path),
-                FileName = path,
-                UseShellExecute = false,
-                Arguments = arguments
-            })?.Close();
-            return true;
+            // This method is not used
+            return false;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using CefSharp;
 using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
@@ -19,12 +20,13 @@ namespace VRCX
 
         internal void Init()
         {
-            var userDataDir = Path.Combine(Program.AppDataDirectory, "userdata");
+            var userDataDir = Path.Join(Program.AppDataDirectory, "userdata");
             var cefSettings = new CefSettings
             {
                 RootCachePath = userDataDir,
-                CachePath = Path.Combine(userDataDir, "cache"),
-                LogSeverity = LogSeverity.Disable,
+                CachePath = Path.Join(userDataDir, "cache"),
+                LogSeverity = Program.LaunchDebug ? LogSeverity.Verbose : LogSeverity.Error,
+                LogFile = Path.Join(Program.AppDataDirectory, "logs", "cef.log"),
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,
                 UserAgent = Program.Version,
@@ -37,7 +39,7 @@ namespace VRCX
                 SchemeName = "file",
                 DomainName = "vrcx",
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(
-                    Path.Combine(Program.BaseDirectory, "html"),
+                    Path.Join(Program.BaseDirectory, "html"),
                     "file",
                     defaultPage: "index.html"
                 ),
@@ -72,6 +74,28 @@ namespace VRCX
                 logger.Info("Debug mode enabled");
                 cefSettings.RemoteDebuggingPort = 8089;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
+
+                var extensionsPath = Path.Join(Program.AppDataDirectory, "extensions");
+                Directory.CreateDirectory(extensionsPath);
+                
+                // extract Vue Devtools
+                var vueDevtoolsCrxPath = Path.Join(Program.BaseDirectory, @"..\..\build-tools\Vue-js-devtools.crx");
+                if (File.Exists(vueDevtoolsCrxPath))
+                {
+                    var vueDevtoolsPath = Path.Join(extensionsPath, "Vue-js-devtools");
+                    if (!Directory.Exists(vueDevtoolsPath))
+                    {
+                        Directory.CreateDirectory(vueDevtoolsPath);
+                        ZipFile.ExtractToDirectory(vueDevtoolsCrxPath, vueDevtoolsPath);
+                    }
+                }
+                
+                // load extensions
+                var folders = Directory.GetDirectories(extensionsPath);
+                foreach (var folder in folders)
+                {
+                    cefSettings.CefCommandLineArgs.Add("load-extension", folder);
+                }
             }
             
             CefSharpSettings.ShutdownOnExit = false;

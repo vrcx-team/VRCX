@@ -1,12 +1,12 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using CefSharp;
@@ -15,6 +15,7 @@ using NLog;
 
 namespace VRCX
 {
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
     public partial class MainForm : WinformBase
     {
         public static MainForm Instance;
@@ -26,20 +27,7 @@ namespace VRCX
         private int LastLocationY;
         private int LastSizeWidth;
         private int LastSizeHeight;
-
-        private FormWindowState _LastWindowStateToRestore = FormWindowState.Normal;
-        private FormWindowState LastWindowStateToRestore
-        {
-            get => _LastWindowStateToRestore;
-            set
-            {
-                // Used to restore window state after minimized
-                if (FormWindowState.Minimized != value)
-                {
-                    _LastWindowStateToRestore = value;
-                }
-            }
-        }
+        private FormWindowState LastWindowStateToRestore = FormWindowState.Normal;
 
         public MainForm()
         {
@@ -63,30 +51,40 @@ namespace VRCX
                 logger.Error(ex);
             }
 
-            Browser = new ChromiumWebBrowser("file://vrcx/index.html")
+            Browser = new ChromiumWebBrowser(Program.LaunchDebug ? "http://localhost:9000/index.html" : "file://vrcx/index.html")
             {
                 DragHandler = new CustomDragHandler(),
                 MenuHandler = new CustomMenuHandler(),
                 DownloadHandler = new CustomDownloadHandler(),
+                RequestHandler = new CustomRequestHandler(),
                 BrowserSettings =
                 {
                     DefaultEncoding = "UTF-8",
                 },
                 Dock = DockStyle.Fill
             };
-
-            Browser.IsBrowserInitializedChanged += (A, B) =>
+            Browser.IsBrowserInitializedChanged += (_, _) =>
             {
                 if (Program.LaunchDebug)
                     Browser.ShowDevTools();
             };
-
-            JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
-            Browser.ConsoleMessage += (_, args) =>
+            Browser.AddressChanged += (_, addressChangedEventArgs) =>
             {
-                logger.Debug(args.Message + " (" + args.Source + ":" + args.Line + ")");
+                logger.Debug("Address changed: " + addressChangedEventArgs.Address);
+            };
+            Browser.LoadingStateChanged += (_, loadingFailedEventArgs) =>
+            {
+                if (loadingFailedEventArgs.IsLoading)
+                    logger.Debug("Loading page");
+                else
+                    logger.Debug("Loaded page: " + loadingFailedEventArgs.Browser.MainFrame.Url);
+            };
+            Browser.ConsoleMessage += (_, consoleMessageEventArgs) =>
+            {
+                logger.Debug(consoleMessageEventArgs.Message + " (" + consoleMessageEventArgs.Source + ":" + consoleMessageEventArgs.Line + ")");
             };
 
+            JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
             Controls.Add(Browser);
         }
 
@@ -119,25 +117,28 @@ namespace VRCX
             try
             {
                 var state = WindowState;
-                if (int.TryParse(VRCXStorage.Instance.Get("VRCX_WindowState"), out int v))
+                var startAsMinimized = VRCXStorage.Instance.Get("VRCX_StartAsMinimizedState") == "true";
+                var closeToTray = VRCXStorage.Instance.Get("VRCX_CloseToTray") == "true";
+                if (int.TryParse(VRCXStorage.Instance.Get("VRCX_WindowState"), out var value))
                 {
-                    state = (FormWindowState)v;
+                    state = (FormWindowState)value;
                 }
                 if (state == FormWindowState.Minimized)
                 {
                     state = FormWindowState.Normal;
                 }
-                if ("true".Equals(VRCXStorage.Instance.Get("VRCX_StartAsMinimizedState")))
+                // Apply WindowState twice to maximize before minimize
+                WindowState = state;
+                LastWindowStateToRestore = state;
+
+                if (StartupArgs.LaunchArguments.IsStartup && startAsMinimized)
                 {
+                    if (closeToTray)
+                    {
+                        BeginInvoke(Hide);
+                        return;
+                    }
                     state = FormWindowState.Minimized;
-                }
-                if ("true".Equals(VRCXStorage.Instance.Get("VRCX_StartAsMinimizedState")) &&
-                    "true".Equals(VRCXStorage.Instance.Get("VRCX_CloseToTray")))
-                {
-                    BeginInvoke(Hide);
-                }
-                else
-                {
                     WindowState = state;
                 }
             }
@@ -146,20 +147,17 @@ namespace VRCX
                 logger.Error(ex);
             }
 
-            LastWindowStateToRestore = WindowState;
-
-            // 가끔 화면 위치가 안맞음.. 이걸로 해결 될지는 모르겠음
             Browser.Invalidate();
         }
 
         private void MainForm_Resize(object sender, System.EventArgs e)
         {
-            LastWindowStateToRestore = WindowState;
+            if (WindowState != FormWindowState.Minimized)
+                LastWindowStateToRestore = WindowState;
 
             if (WindowState != FormWindowState.Normal)
-            {
                 return;
-            }
+            
             LastSizeWidth = Size.Width;
             LastSizeHeight = Size.Height;
 
@@ -200,7 +198,7 @@ namespace VRCX
             VRCXStorage.Instance.Set("VRCX_LocationY", LastLocationY.ToString());
             VRCXStorage.Instance.Set("VRCX_SizeWidth", LastSizeWidth.ToString());
             VRCXStorage.Instance.Set("VRCX_SizeHeight", LastSizeHeight.ToString());
-            VRCXStorage.Instance.Set("VRCX_WindowState", ((int)WindowState).ToString());
+            VRCXStorage.Instance.Set("VRCX_WindowState", ((int)LastWindowStateToRestore).ToString());
             VRCXStorage.Instance.Flush();
         }
 

@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -28,7 +28,7 @@ namespace VRCX
 
         public string GetAssetId(string id, string variant = "")
         {
-            using(var sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
                 byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(id + variant));
                 StringBuilder idHex = new StringBuilder(hash.Length * 2);
@@ -53,16 +53,17 @@ namespace VRCX
             {
                 versionHex += b.ToString("X2");
             }
-            
-            return versionHex.PadLeft(32, '0');
+
+            return versionHex.PadLeft(32, '0').ToLowerInvariant();
         }
-        
+
         public (int, int) ReverseHexToDecimal(string hexString)
         {
             if (hexString.Length != 32)
                 return (0, 0); // it's cooked
-            
-            try {
+
+            try
+            {
                 var variantVersionHexString = hexString.Substring(0, 8); // 0..8
                 var versionHexString = hexString.Substring(24, 8); // 24..32
                 var versionBytes = new byte[4];
@@ -102,16 +103,16 @@ namespace VRCX
         {
             var cachePath = GetVRChatCacheLocation();
             var idHash = GetAssetId(id, variant);
-            var topDir = Path.Combine(cachePath, idHash);
+            var topDir = Path.Join(cachePath, idHash);
             var versionLocation = GetAssetVersion(version, variantVersion);
             if (!Directory.Exists(topDir))
-                return Path.Combine(topDir, versionLocation);
-            var versionSearchPattern = string.Concat("*", versionLocation.AsSpan(8));
+                return Path.Join(topDir, versionLocation);
+            var versionSearchPattern = string.Concat("*", versionLocation.AsSpan(16));
             var dirs = Directory.GetDirectories(topDir, versionSearchPattern);
             if (dirs.Length > 0)
                 return dirs.OrderByDescending(dir => ReverseHexToDecimal(Path.GetFileName(dir)).Item2).First();
-            
-            return Path.Combine(topDir, versionLocation);
+
+            return Path.Join(topDir, versionLocation);
         }
 
         /// <summary>
@@ -129,8 +130,8 @@ namespace VRCX
             var fullLocation = GetVRChatCacheFullLocation(id, version);
             if (!Directory.Exists(fullLocation))
                 fullLocation = GetVRChatCacheFullLocation(id, version, variant, variantVersion);
-            
-            var fileLocation = Path.Combine(fullLocation, "__data");
+
+            var fileLocation = Path.Join(fullLocation, "__data");
             var cachePath = string.Empty;
             if (File.Exists(fileLocation))
             {
@@ -138,7 +139,7 @@ namespace VRCX
                 FileInfo data = new FileInfo(fileLocation);
                 fileSize = data.Length;
             }
-            if (File.Exists(Path.Combine(fullLocation, "__lock")))
+            if (File.Exists(Path.Join(fullLocation, "__lock")))
             {
                 isLocked = true;
             }
@@ -157,7 +158,7 @@ namespace VRCX
             var path = GetVRChatCacheFullLocation(id, version);
             if (Directory.Exists(path))
                 Directory.Delete(path, true);
-            
+
             path = GetVRChatCacheFullLocation(id, version, variant, variantVersion);
             if (Directory.Exists(path))
                 Directory.Delete(path, true);
@@ -204,9 +205,9 @@ namespace VRCX
                     if (index == versionDirectories.Length - 1)
                         continue; // skip last version
 
-                    if (File.Exists(Path.Combine(versionDirectory.FullName, "__lock")))
+                    if (File.Exists(Path.Join(versionDirectory.FullName, "__lock")))
                         continue; // skip locked version
-                    
+
                     versionDirectory.Delete(true);
                     output.Add($"{cacheDirectory.Name}\\{versionDirectory.Name}");
                 }

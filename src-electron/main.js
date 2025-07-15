@@ -9,19 +9,40 @@ const {
     dialog,
     Notification
 } = require('electron');
+const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const https = require('https');
 
+// Include bundled .NET runtime
+const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
+const bundledDotnet = path.join(bundledDotNetPath, 'bin', 'dotnet');
+
+if (fs.existsSync(bundledDotnet)) {
+    process.env.DOTNET_ROOT = bundledDotNetPath;
+    process.env.PATH = `${path.dirname(bundledDotnet)}:${process.env.PATH}`;
+}
+
 if (!isDotNetInstalled()) {
-    dialog.showErrorBox('VRCX', 'Please install .NET 8.0 Runtime to run VRCX.');
-    app.quit();
+    app.whenReady().then(() => {
+        dialog.showErrorBox(
+            'VRCX',
+            'Please install .NET 9.0 Runtime "dotnet-runtime-9.0" to run VRCX.'
+        );
+        app.quit();
+    });
     return;
 }
 
-// get launch arguments
+// Get launch arguments
+let appImagePath = process.env.APPIMAGE;
 const args = process.argv.slice(1);
-const noInstall = args.some((val) => val === '--no-install');
+const noInstall = args.includes('--no-install');
+const x11 = args.includes('--x11');
+const noDesktop = args.includes('--no-desktop');
+const startup = args.includes('--startup');
 
+const homePath = getHomePath();
+tryRelaunchWithArgs(args);
 tryCopyFromWinePrefix();
 
 const rootDir = app.getAppPath();
@@ -31,7 +52,7 @@ const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
 
 const version = getVersion();
-interopApi.getDotNetObject('ProgramElectron').PreInit(version);
+interopApi.getDotNetObject('ProgramElectron').PreInit(version, args);
 interopApi.getDotNetObject('VRCXStorage').Load();
 interopApi.getDotNetObject('ProgramElectron').Init();
 interopApi.getDotNetObject('SQLiteLegacy').Init();
@@ -47,8 +68,9 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
 let mainWindow = undefined;
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
+const hasAskedToMoveAppImage =
+    VRCXStorage.Get('VRCX_HasAskedToMoveAppImage') === 'true';
 let isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
-let appImagePath = process.env.APPIMAGE;
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -102,10 +124,15 @@ ipcMain.handle('notification:showNotification', (event, title, body, icon) => {
 
 ipcMain.handle('app:restart', () => {
     if (process.platform === 'linux') {
-        const options = { args: process.argv.slice(1) };
+        const options = {
+            execPath: process.execPath,
+            args: process.argv.slice(1)
+        };
         if (appImagePath) {
             options.execPath = appImagePath;
-            options.args.unshift('--appimage-extract-and-run');
+            if (!x11 && !options.args.includes('--appimage-extract-and-run')) {
+                options.args.unshift('--appimage-extract-and-run');
+            }
         }
         app.relaunch(options);
         app.exit(0);
@@ -114,6 +141,36 @@ ipcMain.handle('app:restart', () => {
         app.quit();
     }
 });
+
+function tryRelaunchWithArgs(args) {
+    if (
+        process.platform !== 'linux' ||
+        x11 ||
+        args.includes('--ozone-platform-hint=auto')
+    ) {
+        return;
+    }
+
+    const fullArgs = ['--ozone-platform-hint=auto', ...args];
+
+    let execPath = process.execPath;
+
+    if (appImagePath) {
+        execPath = appImagePath;
+        fullArgs.unshift('--appimage-extract-and-run');
+    }
+
+    console.log('Relaunching with args:', fullArgs);
+
+    const child = spawn(execPath, fullArgs, {
+        detached: true,
+        stdio: 'inherit'
+    });
+
+    child.unref();
+
+    app.exit(0);
+}
 
 function createWindow() {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
@@ -140,7 +197,7 @@ function createWindow() {
     const indexPath = path.join(rootDir, 'build/html/index.html');
     mainWindow.loadFile(indexPath, { userAgent: version });
 
-    // add proxy config
+    // add proxy config, doesn't work, thanks electron
     // const proxy = VRCXStorage.Get('VRCX_Proxy');
     // if (proxy) {
     //     session.setProxy(
@@ -254,160 +311,159 @@ function createTray() {
     });
 }
 
-/*
-async function installVRCXappImageLauncher() {
-    const iconUrl =
-    'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-
-    let targetIconName;
-    const desktopFiles = fs.readdirSync(
-        path.join(app.getPath('home'), '.local/share/applications')
-    );
-    for (const file of desktopFiles) {
-        if (file.includes('appimagekit_') && file.includes('VRCX')) {
-            console.log('AppImageLauncher shortcut found:', file);
-            targetIconName = file.replace('.desktop', '.png');
-            targetIconName = targetIconName.replace('-', '_');
-            try {
-            } catch (err) {
-                console.error('Error deleting shortcut:', err);
-                return;
-            }
-        }
-    }
-
-    const iconPath = '~/.local/share/icons/' + targetIconName;
-    const expandedPath = iconPath.replace('~', process.env.HOME);
-    const targetIconPath = path.join(expandedPath);    
-    await downloadIcon(iconUrl, targetIconPath);
-}
-*/
-
 async function installVRCX() {
+    console.log('Home path:', homePath);
     console.log('AppImage path:', appImagePath);
     if (!appImagePath) {
         console.error('AppImage path is not available!');
         return;
     }
     if (noInstall) {
+        interopApi.getDotNetObject('Update').Init(appImagePath);
         console.log('Skipping installation.');
         return;
     }
 
-    /*
-    let appImageLauncherInstalled = false;
-    if (fs.existsSync('/usr/bin/AppImageLauncher')) {
-        appImageLauncherInstalled = true;
-    }
-    */
-
-    if (
-        appImagePath.startsWith(path.join(app.getPath('home'), 'Applications'))
-    ) {
-        /*
-        if (appImageLauncherInstalled) {
-            installVRCXappImageLauncher();
-        }
-        */
-        interopApi.getDotNetObject('Update').Init(appImagePath);
-        console.log('VRCX is already installed.');
-        return;
-    }
-
-    let currentName = path.basename(appImagePath);
-    let newName = 'VRCX.AppImage';
-    if (currentName !== newName) {
-        const newPath = path.join(path.dirname(appImagePath), newName);
+    // rename AppImage to VRCX.AppImage
+    const currentName = path.basename(appImagePath);
+    const expectedName = 'VRCX.AppImage';
+    if (currentName !== expectedName) {
+        const newPath = path.join(path.dirname(appImagePath), expectedName);
         try {
+            // remove existing VRCX.AppImage
+            if (fs.existsSync(newPath)) {
+                fs.unlinkSync(newPath);
+            }
             fs.renameSync(appImagePath, newPath);
             console.log('AppImage renamed to:', newPath);
             appImagePath = newPath;
         } catch (err) {
-            console.error('Error renaming AppImage:', err);
-            dialog.showErrorBox('VRCX', 'Failed to rename AppImage.');
+            console.error(`Error renaming AppImage ${newPath}`, err);
+            dialog.showErrorBox('VRCX', `Failed to rename AppImage ${newPath}`);
             return;
         }
     }
 
-    if (
-        process.env.APPIMAGE.startsWith(
-            path.join(app.getPath('home'), 'Applications')
-        ) &&
-        path.basename(process.env.APPIMAGE) === 'VRCX.AppImage'
-    ) {
-        interopApi.getDotNetObject('Update').Init(appImagePath);
-        console.log('VRCX is already installed.');
-        return;
-    }
-
-    const targetPath = path.join(app.getPath('home'), 'Applications');
-    console.log('Target Path:', targetPath);
-
-    // Create target directory if it doesn't exist
-    if (!fs.existsSync(targetPath)) {
-        fs.mkdirSync(targetPath);
-    }
-
-    const targetAppImagePath = path.join(targetPath, 'VRCX.AppImage');
-
-    // Move the AppImage to the target directory
-    try {
-        if (fs.existsSync(targetAppImagePath)) {
-            fs.unlinkSync(targetAppImagePath);
+    // ask to move AppImage to ~/Applications
+    const appImageHomePath = `${homePath}/Applications/VRCX.AppImage`;
+    if (!hasAskedToMoveAppImage && appImagePath !== appImageHomePath) {
+        const result = dialog.showMessageBoxSync(mainWindow, {
+            type: 'question',
+            title: 'VRCX',
+            message: 'Do you want to install VRCX?',
+            detail: 'VRCX will be moved to your ~/Applications folder.',
+            buttons: ['No', 'Yes']
+        });
+        if (result === 0) {
+            console.log('Cancel AppImage move to ~/Applications');
+            // don't ask again
+            VRCXStorage.Set('VRCX_HasAskedToMoveAppImage', 'true');
+            VRCXStorage.Save();
         }
-        fs.renameSync(appImagePath, targetAppImagePath);
-        appImagePath = targetAppImagePath;
-        console.log('AppImage moved to:', targetAppImagePath);
-    } catch (err) {
-        console.error('Error moving AppImage:', err);
-        dialog.showErrorBox('VRCX', 'Failed to move AppImage.');
+        if (result === 1) {
+            console.log('Moving AppImage to ~/Applications');
+            try {
+                const applicationsPath = path.join(homePath, 'Applications');
+                // create ~/Applications if it doesn't exist
+                if (!fs.existsSync(applicationsPath)) {
+                    fs.mkdirSync(applicationsPath);
+                }
+                // remove existing VRCX.AppImage
+                if (fs.existsSync(appImageHomePath)) {
+                    fs.unlinkSync(appImageHomePath);
+                }
+                fs.renameSync(appImagePath, appImageHomePath);
+                appImagePath = appImageHomePath;
+                console.log('AppImage moved to:', appImageHomePath);
+            } catch (err) {
+                console.error(`Error moving AppImage ${appImageHomePath}`, err);
+                dialog.showErrorBox(
+                    'VRCX',
+                    `Failed to move AppImage ${appImageHomePath}`
+                );
+                return;
+            }
+        }
+    }
+
+    // inform .NET side about AppImage path
+    interopApi.getDotNetObject('Update').Init(appImagePath);
+
+    await createDesktopFile();
+}
+
+async function createDesktopFile() {
+    if (noDesktop) {
+        console.log('Skipping desktop file creation.');
         return;
     }
 
     // Download the icon and save it to the target directory
-    const iconUrl =
-        'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
-    const iconPath = path.join(
-        app.getPath('home'),
-        '.local/share/icons/VRCX.png'
-    );
-    await downloadIcon(iconUrl, iconPath)
-        .then(() => {
-            console.log('Icon downloaded and saved to:', iconPath);
-            const desktopFile = `[Desktop Entry]
-Name=VRCX
-Comment=Friendship management tool for VRChat
-Exec=${appImagePath}
-Icon=VRCX
-Type=Application
-Categories=Network;InstantMessaging;Game;
-Terminal=false
-StartupWMClass=VRCX
-`;
+    const iconPath = path.join(homePath, '.local/share/icons/VRCX.png');
+    if (!fs.existsSync(iconPath)) {
+        const iconUrl =
+            'https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png';
+        await downloadIcon(iconUrl, iconPath)
+            .then(() => {
+                console.log('Icon downloaded and saved to:', iconPath);
+            })
+            .catch((err) => {
+                console.error('Error downloading icon:', err);
+                dialog.showErrorBox('VRCX', 'Failed to download the icon.');
+            });
+    }
 
-            const desktopFilePath = path.join(
-                app.getPath('home'),
-                '.local/share/applications/VRCX.desktop'
+    // Create the desktop file
+    const desktopFilePath = path.join(
+        homePath,
+        '.local/share/applications/VRCX.desktop'
+    );
+
+    const dotDesktop = {
+        Name: 'VRCX',
+        Version: version,
+        Comment: 'Friendship management tool for VRChat',
+        Exec: `${appImagePath} --ozone-platform-hint=auto %U`,
+        Icon: 'VRCX',
+        Type: 'Application',
+        Categories: 'Network;InstantMessaging;Game;',
+        Terminal: 'false',
+        StartupWMClass: 'VRCX',
+        MimeType: 'x-scheme-handler/vrcx;'
+    };
+    const desktopFile =
+        '[Desktop Entry]\n' +
+        Object.entries(dotDesktop)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('\n');
+    try {
+        // create/update the desktop file when needed
+        let existingDesktopFile = '';
+        if (fs.existsSync(desktopFilePath)) {
+            existingDesktopFile = fs.readFileSync(desktopFilePath, 'utf8');
+        }
+        if (existingDesktopFile !== desktopFile) {
+            fs.writeFileSync(desktopFilePath, desktopFile);
+            console.log('Desktop file created at:', desktopFilePath);
+
+            const result = spawnSync(
+                'xdg-mime',
+                ['default', 'VRCX.desktop', 'x-scheme-handler/vrcx'],
+                {
+                    encoding: 'utf-8'
+                }
             );
-            try {
-                fs.writeFileSync(desktopFilePath, desktopFile);
-                console.log('Desktop file created at:', desktopFilePath);
-            } catch (err) {
-                console.error('Error creating desktop file:', err);
-                dialog.showErrorBox('VRCX', 'Failed to create desktop entry.');
-                return;
+            if (result.error) {
+                console.error('Error setting MIME type:', result.error);
+            } else {
+                console.log('MIME type set x-scheme-handler/vrcx');
             }
-        })
-        .catch((err) => {
-            console.error('Error downloading icon:', err);
-            dialog.showErrorBox('VRCX', 'Failed to download the icon.');
-        });
-    dialog.showMessageBox({
-        type: 'info',
-        title: 'VRCX',
-        message: 'VRCX has been installed successfully.',
-        detail: 'You can now find VRCX in your ~/Applications folder.'
-    });
+        }
+    } catch (err) {
+        console.error('Error creating desktop file:', err);
+        dialog.showErrorBox('VRCX', 'Failed to create desktop entry.');
+        return;
+    }
 }
 
 function downloadIcon(url, targetPath) {
@@ -445,25 +501,53 @@ function getVRCXPath() {
     return '';
 }
 
-function getVersion() {
-    let version = 'VRCX (Linux) Build';
+function getHomePath() {
+    const relativeHomePath = path.join(app.getPath('home'));
     try {
-        version = `VRCX (Linux) ${fs.readFileSync(path.join(rootDir, 'Version'), 'utf8').trim()}`;
+        const absoluteHomePath = fs.realpathSync(relativeHomePath);
+        return absoluteHomePath;
+    } catch (err) {
+        return relativeHomePath;
+    }
+}
+
+function getVersion() {
+    try {
+        var versionFile = fs
+            .readFileSync(path.join(rootDir, 'Version'), 'utf8')
+            .trim();
+
+        // look for trailing git hash "-22bcd96" to indicate nightly build
+        var version = versionFile.split('-');
+        console.log('Version:', versionFile);
+        if (version.length > 0 && version[version.length - 1].length == 7) {
+            return `VRCX (Linux) Nightly ${versionFile}`;
+        } else {
+            return `VRCX (Linux) ${versionFile}`;
+        }
     } catch (err) {
         console.error('Error reading Version:', err);
+        return 'VRCX (Linux) Nightly Build';
     }
-    return version;
 }
 
 function isDotNetInstalled() {
-    const result = require('child_process').spawnSync(
-        'dotnet',
-        ['--list-runtimes'],
-        {
-            encoding: 'utf-8'
-        }
-    );
-    return result.stdout?.includes('.NETCore.App 8.0');
+    if (process.platform === 'darwin') {
+        // Assume .NET is already installed on macOS
+        return true;
+    }
+    
+    // Check for bundled .NET runtime
+    if (fs.existsSync(bundledDotnet)) {
+        console.log('Using bundled .NET runtime at:', bundledDotNetPath);
+        return true;
+    }
+    
+    // Fallback to system .NET runtime
+    const result = spawnSync('dotnet', ['--list-runtimes'], {
+        encoding: 'utf-8'
+    });
+    return result.stdout?.includes('.NETCore.App 9.0');
 }
 
 function tryCopyFromWinePrefix() {
@@ -472,7 +556,7 @@ function tryCopyFromWinePrefix() {
             // try copy from old wine path
             const userName = process.env.USER || process.env.USERNAME;
             const oldPath = path.join(
-                app.getPath('home'),
+                homePath,
                 '.local/share/vrcx/drive_c/users',
                 userName,
                 'AppData/Roaming/VRCX'
@@ -501,7 +585,7 @@ function tryCopyFromWinePrefix() {
 }
 
 function applyWindowState() {
-    if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true') {
+    if (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true' && startup) {
         if (isCloseToTray) {
             mainWindow.hide();
             return;

@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -14,7 +14,7 @@ namespace VRCX
 {
     public static class WinApi
     {
-        private static List<(List<string>, string, string)> CpuErrorMessages = new List<(List<string>, string, string)>() 
+        private static List<(List<string>, string, string)> CpuErrorMessages = new List<(List<string>, string, string)>()
         {
             (["Intel", "Core", "-13"], "VRCX has detected that you're using a 13th or 14th generation Intel CPU.\nThese CPUs are known to have issues which can lead to crashes.\nThis crash was unlikely caused by VRCX itself, therefore limited support can be offered.\nWould you like to open a link with more information?", "https://alderongames.com/intel-crashes"),
             (["Intel", "Core", "-14"], "VRCX has detected that you're using a 13th or 14th generation Intel CPU.\nThese CPUs are known to have issues which can lead to crashes.\nThis crash was unlikely caused by VRCX itself, therefore limited support can be offered.\nWould you like to open a link with more information?", "https://alderongames.com/intel-crashes"),
@@ -76,13 +76,13 @@ namespace VRCX
                 // Fun fact, If a program uses STILL_ACTIVE (259) as an exit code, GetExitCodeProcess will return 259, since it returns... the exit code. This would break this function.
                 exited = exitCode != 259;
             }
-            finally 
+            finally
             {
                 // Imagine closing process handles.
                 WinApi.CloseHandle(hProcess);
             }
-            
-            
+
+
             return exited;
         }
 

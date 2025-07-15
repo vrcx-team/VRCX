@@ -30,7 +30,7 @@ namespace VRCX
 
             if (Wine.GetIfWine())
             {
-                var wineTmpPath = Path.Combine(Program.AppDataDirectory, "wine.tmp");
+                var wineTmpPath = Path.Join(Program.AppDataDirectory, "wine.tmp");
                 if (File.Exists(wineTmpPath))
                 {
                     var wineTmp = File.ReadAllText(wineTmpPath);
@@ -47,7 +47,7 @@ namespace VRCX
 
             // TODO: fix this throwing an exception for being called before the browser is ready. somehow it gets past the checks
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("$app.updateIsGameRunning", isGameRunning, isSteamVRRunning, isHmdAfk);
+                MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.game.updateIsGameRunning", isGameRunning, isSteamVRRunning, isHmdAfk);
         }
         
         public override bool IsGameRunning()
@@ -122,7 +122,7 @@ namespace VRCX
         public override bool StartGameFromPath(string path, string arguments)
         {
             if (!path.EndsWith(".exe"))
-                path = Path.Combine(path, "launch.exe");
+                path = Path.Join(path, "launch.exe");
 
             if (!path.EndsWith("launch.exe") || !File.Exists(path))
                 return false;

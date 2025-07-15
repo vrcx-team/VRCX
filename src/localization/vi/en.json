@@ -428,10 +428,6 @@
                         "header": "Tự động quản lý cache khi đóng VRChat",
                         "description": "Tự động xóa phiên bản cũ trong cache"
                     },
-                    "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
-                    },
                     "remote_database": {
                         "header": "Dữa liệu avatar từ xa",
                         "enable": "Bật",
@@ -808,6 +804,7 @@
                 "last_updated": "Lần cập nhật cuối",
                 "version": "Phiên bản",
                 "platform": "Nền tảng",
+                "time_spent": "Thời gian đã ở",
                 "memo": "Ghi nhớ",
                 "memo_placeholder": "Bấm để tạo ghi nhớ"
             },

@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -25,7 +25,7 @@ namespace VRCX
         private DeviceMultithread _deviceMultithread;
         private Query _query;
         private Texture2D _renderTarget;
-        
+
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public OffScreenBrowser(string address, int width, int height)
@@ -37,18 +37,18 @@ namespace VRCX
             windowInfo.SharedTextureEnabled = true;
             windowInfo.Width = width;
             windowInfo.Height = height;
-            
+
             var browserSettings = new BrowserSettings()
             {
                 DefaultEncoding = "UTF-8",
                 WindowlessFrameRate = 60
             };
-            
+
             CreateBrowser(windowInfo, browserSettings);
 
             Size = new System.Drawing.Size(width, height);
             RenderHandler = this;
-            
+
             JavascriptBindings.ApplyVrJavascriptBindings(JavascriptObjectRepository);
         }
 
@@ -56,13 +56,13 @@ namespace VRCX
         {
             _device = device;
             _device1 = _device.QueryInterface<Device1>();
-            
+
             _deviceMultithread?.Dispose();
             _deviceMultithread = _device.QueryInterfaceOrNull<DeviceMultithread>();
             _deviceMultithread?.SetMultithreadProtected(true);
 
             _renderTarget = renderTarget;
-            
+
             _query?.Dispose();
             _query = new Query(_device, new QueryDescription
             {

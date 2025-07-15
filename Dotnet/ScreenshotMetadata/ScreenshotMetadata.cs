@@ -57,7 +57,7 @@ namespace VRCX
         /// Any error that occurred while parsing the file. This being true implies nothing else is set.
         /// </summary>
         [JsonIgnore]
-        internal string Error;
+        internal string? Error;
 
         [JsonIgnore]
         internal string JSON;
@@ -107,7 +107,7 @@ namespace VRCX
             /// <summary>
             /// The display name of the user.
             /// </summary>
-            public string DisplayName { get; set; }
+            public string? DisplayName { get; set; }
         }
 
         public class WorldDetail
@@ -120,7 +120,7 @@ namespace VRCX
             /// <summary>
             /// The name of the world.
             /// </summary>
-            public string Name { get; set; }
+            public string? Name { get; set; }
 
             /// <summary>
             /// The full ID of the game instance.

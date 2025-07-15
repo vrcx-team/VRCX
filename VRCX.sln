@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRCX-Electron", "Dotnet\VRCX-Electron.csproj", "{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBMerger", "DBMerger\DBMerger.csproj", "{9BE1DD2F-CABC-4CF9-A53E-C62923760887}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -26,6 +28,10 @@ Global
 		{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}.Debug|x64.Build.0 = Debug|x64
 		{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}.Release|x64.ActiveCfg = Release|x64
 		{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}.Release|x64.Build.0 = Release|x64
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Debug|x64.Build.0 = Debug|Any CPU
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.ActiveCfg = Release|Any CPU
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

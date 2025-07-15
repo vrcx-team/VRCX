@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "ESNext",
+        "allowJs": true,
+        "checkJs": true,
+        "jsx": "preserve",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "forceConsistentCasingInFileNames": true,
+        "lib": ["esnext", "dom", "dom.iterable"]
+    },
+    "include": ["src/**/*", "src-electron/**/*"],
+    "exclude": ["node_modules", "build"]
+}

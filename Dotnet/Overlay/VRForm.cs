@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019 pypy. All rights reserved.
+﻿// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -22,10 +22,11 @@ namespace VRCX
             InitializeComponent();
 
             _browser1 = new ChromiumWebBrowser(
-                Path.Combine(Program.BaseDirectory, "html/vr.html?1")
+                Path.Join(Program.BaseDirectory, "html/vr.html?1")
             )
             {
                 DragHandler = new CefNoopDragHandler(),
+                RequestHandler = new CustomRequestHandler(),
                 BrowserSettings =
                 {
                     DefaultEncoding = "UTF-8",
@@ -34,7 +35,7 @@ namespace VRCX
             };
 
             _browser2 = new ChromiumWebBrowser(
-                Path.Combine(Program.BaseDirectory, "html/vr.html?2")
+                Path.Join(Program.BaseDirectory, "html/vr.html?2")
             )
             {
                 DragHandler = new CefNoopDragHandler(),

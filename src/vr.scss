@@ -1,14 +1,15 @@
 @charset "utf-8";
 
 //
-// Copyright(c) 2019-2021 pypy and individual contributors.
+// Copyright(c) 2019-2025 pypy and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@import '~normalize.css/normalize.css';
+@use "./assets/scss/flags.scss";
+
 @import '~animate.css/animate.min.css';
 @import '~noty/lib/noty.css';
 @import '~element-ui/lib/theme-chalk/index.css';
@@ -185,6 +186,7 @@ button {
         #000 0px 0px 3px,
         #000 0px 0px 3px,
         #000 0px 0px 3px;
+    overflow: hidden;
 }
 
 .x-app {
@@ -334,17 +336,17 @@ i.x-user-status.online {
 
 i.x-user-status.joinme {
     background: #409eff;
-    mask-image: url(masks/joinme.svg);
+    mask-image: url(assets/images/masks/joinme.svg);
 }
 
 i.x-user-status.askme {
     background: #ff9500;
-    mask-image: url(masks/askme.svg);
+    mask-image: url(assets/images/masks/askme.svg);
 }
 
 i.x-user-status.busy {
     background: #ff2c2c;
-    mask-image: url(masks/busy.svg);
+    mask-image: url(assets/images/masks/busy.svg);
 }
 
 .spin {

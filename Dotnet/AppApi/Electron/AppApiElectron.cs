@@ -10,10 +10,6 @@ namespace VRCX
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         
-        public override void DeleteAllCookies()
-        {
-        }
-        
         public override void ShowDevTools()
         {
         }
@@ -62,11 +58,6 @@ namespace VRCX
 
         public override void ExecuteVrOverlayFunction(string function, string json)
         {
-        }
-        
-        public override string GetLaunchCommand()
-        {
-            return string.Empty;
         }
         
         public override void FocusWindow()

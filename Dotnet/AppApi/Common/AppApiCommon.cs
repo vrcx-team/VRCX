@@ -6,6 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using librsync.net;
+using Newtonsoft.Json;
 using NLog;
 
 namespace VRCX
@@ -14,11 +15,19 @@ namespace VRCX
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly MD5 _hasher = MD5.Create();
-        
+
         public void Init()
         {
         }
         
+        public JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
+        {
+            Error = delegate(object _, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+            {
+                args.ErrorContext.Handled = true;
+            }
+        };
+
         public string MD5File(string blob)
         {
             var fileData = Convert.FromBase64CharArray(blob.ToCharArray(), 0, blob.Length);
@@ -26,13 +35,13 @@ namespace VRCX
             var md5Hash = md5.ComputeHash(fileData);
             return Convert.ToBase64String(md5Hash);
         }
-        
+
         public int GetColourFromUserID(string userId)
         {
             var hash = _hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));
             return (hash[3] << 8) | hash[4];
         }
-        
+
         public string SignFile(string blob)
         {
             var fileData = Convert.FromBase64String(blob);
@@ -42,13 +51,13 @@ namespace VRCX
             var sigBytes = memoryStream.ToArray();
             return Convert.ToBase64String(sigBytes);
         }
-        
+
         public string FileLength(string blob)
         {
             var fileData = Convert.FromBase64String(blob);
             return fileData.Length.ToString();
         }
-        
+
         public void OpenLink(string url)
         {
             if (url.StartsWith("http://") ||
@@ -61,6 +70,13 @@ namespace VRCX
             }
         }
         
+        public string GetLaunchCommand()
+        {
+            var command = StartupArgs.LaunchArguments.LaunchCommand;
+            StartupArgs.LaunchArguments.LaunchCommand = string.Empty;
+            return command;
+        }
+
         public void IPCAnnounceStart()
         {
             IPCServer.Send(new IPCPacket
@@ -69,7 +85,7 @@ namespace VRCX
                 MsgType = "VRCXLaunch"
             });
         }
-        
+
         public void SendIpc(string type, string data)
         {
             IPCServer.Send(new IPCPacket
@@ -79,12 +95,11 @@ namespace VRCX
                 Data = data
             });
         }
-        
+
         public string CustomCssPath()
         {
             var output = string.Empty;
-            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX",
-                "custom.css");
+            var filePath = Path.Join(Program.AppDataDirectory, "custom.css");
             if (File.Exists(filePath))
                 output = filePath;
             return output;
@@ -93,8 +108,7 @@ namespace VRCX
         public string CustomScriptPath()
         {
             var output = string.Empty;
-            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX",
-                "custom.js");
+            var filePath = Path.Join(Program.AppDataDirectory, "custom.js");
             if (File.Exists(filePath))
                 output = filePath;
             return output;
@@ -102,7 +116,11 @@ namespace VRCX
 
         public string CurrentCulture()
         {
-            return CultureInfo.CurrentCulture.ToString();
+            var culture = CultureInfo.CurrentCulture.ToString();
+            if (string.IsNullOrEmpty(culture))
+                culture = "en-US";
+
+            return culture;
         }
 
         public string CurrentLanguage()
@@ -130,13 +148,13 @@ namespace VRCX
 
             return output;
         }
-        
+
         public void SetAppLauncherSettings(bool enabled, bool killOnExit)
         {
             AutoAppLaunchManager.Instance.Enabled = enabled;
             AutoAppLaunchManager.Instance.KillChildrenOnExit = killOnExit;
         }
-        
+
         public string GetFileBase64(string path)
         {
             if (File.Exists(path))

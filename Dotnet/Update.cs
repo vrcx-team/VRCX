@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2025 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -23,10 +23,10 @@ namespace VRCX
     public class Update
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        private static readonly string VrcxSetupExecutable = Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe");
-        private static readonly string UpdateExecutable = Path.Combine(Program.AppDataDirectory, "update.exe");
-        private static readonly string TempDownload = Path.Combine(Program.AppDataDirectory, "tempDownload");
-        private static readonly string HashLocation = Path.Combine(Program.AppDataDirectory, "sha256sum.txt");
+        private static readonly string VrcxSetupExecutable = Path.Join(Program.AppDataDirectory, "VRCX_Setup.exe");
+        private static readonly string UpdateExecutable = Path.Join(Program.AppDataDirectory, "update.exe");
+        private static readonly string TempDownload = Path.Join(Program.AppDataDirectory, "tempDownload");
+        private static readonly string HashLocation = Path.Join(Program.AppDataDirectory, "sha256sum.txt");
         private static readonly HttpClient httpClient;
         private static CancellationToken _cancellationToken;
         public static int UpdateProgress;
@@ -38,7 +38,7 @@ namespace VRCX
             var httpClientHandler = new HttpClientHandler();
             if (WebApi.ProxySet)
                 httpClientHandler.Proxy = WebApi.Proxy;
-            
+
             httpClient = new HttpClient(httpClientHandler);
             httpClient.DefaultRequestHeaders.Add("User-Agent", Program.Version);
         }
@@ -47,7 +47,7 @@ namespace VRCX
         {
             if (string.IsNullOrEmpty(appImagePath))
                 return;
-            
+
             AppImagePath = appImagePath;
             AppImagePathOld = appImagePath + ".old";
             logger.Info($"AppImagePath: {AppImagePath}");
@@ -57,14 +57,14 @@ namespace VRCX
         {
             if (Process.GetProcessesByName("VRCX_Setup").Length > 0)
                 Environment.Exit(0);
-            
+
             if (File.Exists(HashLocation))
                 File.Delete(HashLocation);
             if (File.Exists(TempDownload))
                 File.Delete(TempDownload);
             if (File.Exists(VrcxSetupExecutable))
                 File.Delete(VrcxSetupExecutable);
-            
+
             if (File.Exists(UpdateExecutable))
                 InstallUpdate();
         }
@@ -76,7 +76,7 @@ namespace VRCX
             if (Wine.GetIfWine())
                 setupArguments += "/SKIP_SHORTCUT=true";
 #endif
-            
+
             try
             {
                 if (File.Exists(VrcxSetupExecutable))
@@ -104,7 +104,7 @@ namespace VRCX
 #endif
             }
         }
-        
+
         public static async Task DownloadInstallRedist()
         {
             try
@@ -138,9 +138,9 @@ namespace VRCX
                 throw new Exception($"Failed to download the file. Status code: {response.StatusCode}");
 
             var fileName = GetFileNameFromContentDisposition(response);
-            var tempPath = Path.Combine(Path.GetTempPath(), "VRCX");
+            var tempPath = Path.Join(Path.GetTempPath(), "VRCX");
             Directory.CreateDirectory(tempPath);
-            var filePath = Path.Combine(tempPath, fileName);
+            var filePath = Path.Join(tempPath, fileName);
             await using var fileStream = File.Create(filePath);
             await response.Content.CopyToAsync(fileStream, cancellationToken);
             return filePath;
@@ -178,11 +178,11 @@ namespace VRCX
                 File.Delete(TempDownload);
             if (File.Exists(HashLocation))
                 File.Delete(HashLocation);
-            
+
             var hashesPath = await DownloadFile(hashUrl, _cancellationToken);
             if (!string.IsNullOrEmpty(hashesPath))
                 File.Move(hashesPath, HashLocation);
-            
+
             await using var destination = File.OpenWrite(TempDownload);
             using (var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, _cancellationToken))
             await using (var download = await response.Content.ReadAsStreamAsync(_cancellationToken))
@@ -216,7 +216,7 @@ namespace VRCX
                 }
             }
             destination.Close();
-            
+
             var data = new FileInfo(TempDownload);
             if (data.Length != downloadSize)
             {
