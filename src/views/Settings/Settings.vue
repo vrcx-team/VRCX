@@ -77,32 +77,31 @@
                 <!--//- General | Application-->
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.general.application.header') }}</span>
-                    <template v-if="!isLinux">
-                        <simple-switch
-                            :label="t('view.settings.general.application.startup')"
-                            :value="isStartAtWindowsStartup"
-                            @change="setIsStartAtWindowsStartup" />
-                        <simple-switch
-                            :label="t('view.settings.general.application.minimized')"
-                            :value="isStartAsMinimizedState"
-                            @change="setIsStartAsMinimizedState" />
-                        <simple-switch
-                            :label="t('view.settings.general.application.tray')"
-                            :value="isCloseToTray"
-                            @change="setIsCloseToTray" />
-                    </template>
-                    <template v-if="!isLinux">
-                        <simple-switch
-                            :label="t('view.settings.general.application.disable_gpu_acceleration')"
-                            :value="disableGpuAcceleration"
-                            :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
-                            @change="setDisableGpuAcceleration" />
-                        <simple-switch
-                            :label="t('view.settings.general.application.disable_vr_overlay_gpu_acceleration')"
-                            :value="disableVrOverlayGpuAcceleration"
-                            :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
-                            @change="setDisableVrOverlayGpuAcceleration" />
-                    </template>
+                    <simple-switch
+                        v-if="!isLinux"
+                        :label="t('view.settings.general.application.startup')"
+                        :value="isStartAtWindowsStartup"
+                        @change="setIsStartAtWindowsStartup" />
+                    <simple-switch
+                        :label="t('view.settings.general.application.minimized')"
+                        :value="isStartAsMinimizedState"
+                        @change="setIsStartAsMinimizedState" />
+                    <simple-switch
+                        :label="t('view.settings.general.application.tray')"
+                        :value="isCloseToTray"
+                        @change="setIsCloseToTray" />>
+                    <simple-switch
+                        v-if="!isLinux"
+                        :label="t('view.settings.general.application.disable_gpu_acceleration')"
+                        :value="disableGpuAcceleration"
+                        :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
+                        @change="setDisableGpuAcceleration" />
+                    <simple-switch
+                        v-if="!isLinux"
+                        :label="t('view.settings.general.application.disable_vr_overlay_gpu_acceleration')"
+                        :value="disableVrOverlayGpuAcceleration"
+                        :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
+                        @change="setDisableVrOverlayGpuAcceleration" />
                     <div class="options-container-item">
                         <el-button size="small" icon="el-icon-connection" @click="promptProxySettings">{{
                             t('view.settings.general.application.proxy')
@@ -833,7 +832,9 @@
                         </div>
                         <div class="options-container-item">
                             <span class="name" style="vertical-align: top; padding-top: 10px">{{
-                                t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
+                                t(
+                                    'view.settings.notifications.notifications.steamvr_notifications.notification_opacity'
+                                )
                             }}</span>
                             <el-slider
                                 :value="notificationOpacity"
@@ -865,7 +866,7 @@
                                 saveOpenVROption();
                             " />
                     </template>
-                    <template v-if="!isLinux"> 
+                    <template v-if="!isLinux">
                         <simple-switch
                             :label="
                                 t(
@@ -891,7 +892,7 @@
                                 saveOpenVROption();
                             " />
                     </template>
-                    <template v-if="!isLinux"> 
+                    <template v-if="!isLinux">
                         <simple-switch
                             :label="
                                 t(
@@ -1440,19 +1441,15 @@
                             saveOpenVROption();
                         "></simple-switch>
                     <!--//- Advanced | VRChat Quit Fix-->
-                    <template v-if="!isLinux">
-                        <span class="sub-header">{{
-                            t('view.settings.advanced.advanced.vrchat_quit_fix.header')
-                        }}</span>
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
-                            :value="vrcQuitFix"
-                            :long-label="true"
-                            @change="
-                                setVrcQuitFix();
-                                saveOpenVROption();
-                            " />
-                    </template>
+                    <span class="sub-header">{{ t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}</span>
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
+                        :value="vrcQuitFix"
+                        :long-label="true"
+                        @change="
+                            setVrcQuitFix();
+                            saveOpenVROption();
+                        " />
                     <!--//- Advanced | Auto Cache Management-->
                     <span class="sub-header">{{
                         t('view.settings.advanced.advanced.auto_cache_management.header')
@@ -1532,7 +1529,7 @@
                     </div>
                 </div>
                 <!--//- Advanced | Video Progress Pie-->
-                <div v-if="!isLinux" class="options-container">
+                <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.video_progress_pie.header') }}</span>
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.video_progress_pie.enable')"

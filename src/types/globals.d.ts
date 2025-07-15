@@ -7,6 +7,7 @@ declare global {
     interface Window {
         $app: any;
         AppApi: AppApi;
+        AppApiVr: AppApiVr;
         WebApi: WebApi;
         VRCXStorage: VRCXStorage;
         SQLite: SQLite;
@@ -51,6 +52,13 @@ declare global {
                 Function: (event: any, state: { windowState: any }) => void
             ) => void;
             restartApp: () => Promise<void>;
+            updateVr: (
+                active: bool,
+                hmdOverlay: bool,
+                wristOverlay: bool,
+                menuButton: bool,
+                overlayHand: int
+            ) => Promise<void>;
         };
         __APP_GLOBALS__: {
             debug: boolean;
@@ -141,7 +149,10 @@ declare global {
     };
 
     const Discord: {
-        SetTimestamps(startTimestamp: number, endTimestamp: number): void;
+        SetTimestamps(
+            startTimestamp: number,
+            endTimestamp: number
+        ): Promise<void>;
         SetAssets(
             bigIcon: string,
             bigIconText: string,
@@ -154,8 +165,8 @@ declare global {
             buttonUrl: string,
             appId: string,
             activityType: number
-        ): void;
-        SetText(details: string, state: string): void;
+        ): Promise<void>;
+        SetText(details: string, state: string): Promise<void>;
         SetActive(active: boolean): Promise<boolean>;
     };
 
@@ -355,21 +366,23 @@ declare global {
     };
 
     const AppApiVr: {
-        Init(): void;
-        VrInit(): void;
-        ToggleSystemMonitor(enabled: boolean): void;
-        CpuUsage(): number;
-        GetVRDevices(): string[][];
-        GetUptime(): number;
-        CurrentCulture(): string;
-        CustomVrScriptPath(): string;
-        IsRunningUnderWine(): boolean;
+        Init(): Promise<void>;
+        VrInit(): Promise<void>;
+        ToggleSystemMonitor(enabled: boolean): Promise<void>;
+        CpuUsage(): Promise<number>;
+        GetVRDevices(): Promise<string[][]>;
+        GetUptime(): Promise<number>;
+        CurrentCulture(): Promise<string>;
+        CustomVrScriptPath(): Promise<string>;
+        IsRunningUnderWine(): Promise<boolean>;
+        GetExecuteVrFeedFunctionQueue(): Promise<Map<string, string>>;
+        GetExecuteVrOverlayFunctionQueue(): Promise<Map<string, string>>;
     };
 
     const WebApi: {
-        ClearCookies(): void;
-        GetCookies(): string;
-        SetCookies(cookie: string): void;
+        ClearCookies(): Promise<void>;
+        GetCookies(): Promise<string>;
+        SetCookies(cookie: string): Promise<void>;
         Execute(options: any): Promise<{ Item1: number; Item2: string }>;
         ExecuteJson(requestJson: string): Promise<string>;
     };
@@ -399,9 +412,9 @@ declare global {
     };
 
     const webApiService: {
-        clearCookies(): void;
-        getCookies(): string;
-        setCookies(cookie: string): void;
+        clearCookies(): Promise<void>;
+        getCookies(): Promise<string>;
+        setCookies(cookie: string): Promise<void>;
         execute(options: {
             url: string;
             method: string;

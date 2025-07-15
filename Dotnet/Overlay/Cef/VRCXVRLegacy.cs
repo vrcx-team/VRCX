@@ -5,6 +5,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -761,6 +762,11 @@ namespace VRCX
 
             return err;
         }
+        
+        public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
+        {
+            throw new NotImplementedException();
+        }
 
         public override void ExecuteVrFeedFunction(string function, string json)
         {
@@ -768,6 +774,11 @@ namespace VRCX
             if (_wristOverlay.IsLoading)
                 Restart();
             _wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
+        }
+        
+        public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
+        {
+            throw new NotImplementedException();
         }
 
         public override void ExecuteVrOverlayFunction(string function, string json)

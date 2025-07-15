@@ -1,32 +1,30 @@
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using CefSharp;
 
 namespace VRCX
 {
-    public class AppApiVrCef
+    public class AppApiVrCef : AppApiVr
     {
-        public static readonly AppApiVrCef Instance;
-
         static AppApiVrCef()
         {
             Instance = new AppApiVrCef();
         }
 
-        public void Init()
+        public override void Init()
         {
             // Create Instance before Cef tries to bind it
         }
 
-        public void VrInit()
+        public override void VrInit()
         {
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                 MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.vr.vrInit", "");
         }
 
-        public void ToggleSystemMonitor(bool enabled)
+        public override void ToggleSystemMonitor(bool enabled)
         {
             SystemMonitorCef.Instance.Start(enabled);
         }
@@ -35,7 +33,7 @@ namespace VRCX
         /// Returns the current CPU usage as a percentage.
         /// </summary>
         /// <returns>The current CPU usage as a percentage.</returns>
-        public float CpuUsage()
+        public override float CpuUsage()
         {
             return SystemMonitorCef.Instance.CpuUsage;
         }
@@ -45,7 +43,7 @@ namespace VRCX
         /// Each sub-array contains the type of device and its current state
         /// </summary>
         /// <returns>An array of arrays containing information about the connected VR devices.</returns>
-        public string[][] GetVRDevices()
+        public override string[][] GetVRDevices()
         {
             return Program.VRCXVRInstance.GetDevices();
         }
@@ -54,7 +52,7 @@ namespace VRCX
         /// Returns the number of milliseconds that the system has been running.
         /// </summary>
         /// <returns>The number of milliseconds that the system has been running.</returns>
-        public double GetUptime()
+        public override double GetUptime()
         {
             return SystemMonitorCef.Instance.UpTime;
         }
@@ -63,7 +61,7 @@ namespace VRCX
         /// Returns the current language of the operating system.
         /// </summary>
         /// <returns>The current language of the operating system.</returns>
-        public string CurrentCulture()
+        public override string CurrentCulture()
         {
             return CultureInfo.CurrentCulture.ToString();
         }
@@ -72,7 +70,7 @@ namespace VRCX
         /// Returns the file path of the custom user js file, if it exists.
         /// </summary>
         /// <returns>The file path of the custom user js file, or an empty string if it doesn't exist.</returns>
-        public string CustomVrScriptPath()
+        public override string CustomVrScriptPath()
         {
             var output = string.Empty;
             var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
@@ -81,9 +79,19 @@ namespace VRCX
             return output;
         }
 
-        public bool IsRunningUnderWine()
+        public override bool IsRunningUnderWine()
         {
             return Wine.GetIfWine();
+        }
+        
+        public override List<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
+        {
+            throw new NotImplementedException("GetExecuteVrFeedFunctionQueue is not implemented in AppApiVrCef.");
+        }
+
+        public override List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
+        {
+            throw new NotImplementedException("GetExecuteVrOverlayFunctionQueue is not implemented in AppApiVrCef.");
         }
     }
 }

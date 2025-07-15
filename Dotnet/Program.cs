@@ -26,6 +26,7 @@ namespace VRCX
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public static VRCXVRInterface VRCXVRInstance { get; private set; }
         public static AppApi AppApiInstance { get; private set; }
+        public static AppApiVr AppApiVrInstance { get; private set; }
 
         private static void SetProgramDirectories()
         {
@@ -232,7 +233,8 @@ namespace VRCX
             SQLiteLegacy.Instance.Init();
             AppApiInstance = new AppApiCef();
 
-            AppApiVrCef.Instance.Init();
+            AppApiVrInstance = new AppApiVrCef();
+            AppApiVrInstance.Init();
             ProcessMonitor.Instance.Init();
             Discord.Instance.Init();
             WebApi.Instance.Init();

@@ -19,7 +19,7 @@ namespace VRCX
         public static void ApplyVrJavascriptBindings(IJavascriptObjectRepository repository)
         {
             repository.NameConverter = null;
-            repository.Register("AppApiVrCef", AppApiVrCef.Instance);
+            repository.Register("AppApiVr", AppApiVr.Instance);
         }
     }
 }
