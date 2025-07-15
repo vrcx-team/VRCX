@@ -12,7 +12,7 @@ public abstract partial class AppApiVr
     public abstract string[][] GetVRDevices();
     public abstract double GetUptime();
     public abstract string CurrentCulture();
-    public abstract string CustomVrScriptPath();
+    public abstract string CustomVrScript();
     public abstract bool IsRunningUnderWine();
     public abstract List<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue();
     public abstract List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue();

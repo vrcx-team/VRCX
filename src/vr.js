@@ -276,12 +276,13 @@ Vue.component('marquee-text', MarqueeText);
         if (document.contains(document.getElementById('vr-custom-script'))) {
             document.getElementById('vr-custom-script').remove();
         }
-        const customScript = AppApiVr.CustomVrScriptPath();
+        const customScript = await AppApiVr.CustomVrScript();
         if (customScript) {
             const head = document.head;
             const $vrCustomScript = document.createElement('script');
             $vrCustomScript.setAttribute('id', 'vr-custom-script');
-            $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
+            $vrCustomScript.type = 'text/javascript';
+            $vrCustomScript.textContent = customScript;
             head.appendChild($vrCustomScript);
         }
     };

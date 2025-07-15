@@ -213,8 +213,8 @@ declare global {
         GetLaunchCommand(): Promise<string>;
         IPCAnnounceStart(): Promise<void>;
         SendIpc(type: string, data: string): Promise<void>;
-        CustomCssPath(): Promise<string>;
-        CustomScriptPath(): Promise<string>;
+        CustomCss(): Promise<string>;
+        CustomScript(): Promise<string>;
         CurrentCulture(): Promise<string>;
         CurrentLanguage(): Promise<string>;
         GetVersion(): Promise<string>;
@@ -373,7 +373,7 @@ declare global {
         GetVRDevices(): Promise<string[][]>;
         GetUptime(): Promise<number>;
         CurrentCulture(): Promise<string>;
-        CustomVrScriptPath(): Promise<string>;
+        CustomVrScript(): Promise<string>;
         IsRunningUnderWine(): Promise<boolean>;
         GetExecuteVrFeedFunctionQueue(): Promise<Map<string, string>>;
         GetExecuteVrOverlayFunctionQueue(): Promise<Map<string, string>>;

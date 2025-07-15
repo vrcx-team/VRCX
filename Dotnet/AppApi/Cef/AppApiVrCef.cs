@@ -65,18 +65,14 @@ namespace VRCX
         {
             return CultureInfo.CurrentCulture.ToString();
         }
-
-        /// <summary>
-        /// Returns the file path of the custom user js file, if it exists.
-        /// </summary>
-        /// <returns>The file path of the custom user js file, or an empty string if it doesn't exist.</returns>
-        public override string CustomVrScriptPath()
+        
+        public override string CustomVrScript()
         {
-            var output = string.Empty;
             var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
             if (File.Exists(filePath))
-                output = filePath;
-            return output;
+                return File.ReadAllText(filePath);
+            
+            return string.Empty;
         }
 
         public override bool IsRunningUnderWine()
