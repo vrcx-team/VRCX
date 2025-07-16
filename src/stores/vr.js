@@ -155,15 +155,16 @@ export const useVrStore = defineStore('Vr', () => {
                 overlayHand: wristOverlaySettingsStore.overlayHand
             };
         }
-        if (WINDOWS) {
-            AppApi.SetVR(
-                newState.active,
-                newState.hmdOverlay,
-                newState.wristOverlay,
-                newState.menuButton,
-                newState.overlayHand
-            );
-        } else {
+
+        AppApi.SetVR(
+            newState.active,
+            newState.hmdOverlay,
+            newState.wristOverlay,
+            newState.menuButton,
+            newState.overlayHand
+        );
+
+        if (LINUX) {
             window.electron.updateVr(
                 newState.active,
                 newState.hmdOverlay,
