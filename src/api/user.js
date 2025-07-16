@@ -1,6 +1,9 @@
 import { request } from '../service/request';
 import { useUserStore } from '../stores';
 
+/**
+ * @returns {string}
+ */
 function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
@@ -9,7 +12,7 @@ const userReq = {
     /**
      * Fetch user from API.
      * identifier of registered user
-     * @type {import('../types/user').getUser}
+     * @type {import('../types/api/user').GetUser}
      */
     getUser(params) {
         const userStore = useUserStore();
@@ -32,7 +35,7 @@ const userReq = {
 
     /**
      * Fetch user from cache if they're in it. Otherwise, calls API.
-     * @type {import('../types/user').getUser}
+     * @type {import('../types/api/user').GetCachedUser}
      */
     getCachedUser(params) {
         const userStore = useUserStore();
@@ -58,17 +61,7 @@ const userReq = {
     },
 
     /**
-     * @typedef {object} GetUsersParameters
-     * @property {number} n
-     * @property {number} offset
-     * @property {string} search
-     * @property {'nuisanceFactor' | 'created' | '_created_at' | 'last_login'} sort
-     * @property {'ascending' | 'descending'} order
-     */
-    /**
-     * Fetch multiple users from API.
-     * @param params {GetUsersParameters} filtering and sorting parameters
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/api/user').GetUsers}
      */
     getUsers(params) {
         return request('users', {
@@ -84,8 +77,8 @@ const userReq = {
     },
 
     /**
-     * @param params {string[]}
-     * @returns {Promise<{json: any, params}>}
+     * @param {string[]} params User tags to add
+     * @returns {Promise<{json: any, params: string[]}>}
      */
     addUserTags(params) {
         const userStore = useUserStore();
@@ -103,8 +96,8 @@ const userReq = {
     },
 
     /**
-     * @param params {string[]}
-     * @returns {Promise<{json: any, params}>}
+     * @param {string[]} params User tags to remove
+     * @returns {Promise<{json: any, params: string[]}>}
      */
     removeUserTags(params) {
         const userStore = useUserStore();
@@ -122,8 +115,8 @@ const userReq = {
     },
 
     /**
-     * @param params {{ userId: string }}
-     * @returns {Promise<{json: any, params}>}
+     * @param {{ userId: string }} params
+     * @returns {Promise<{json: any, params: { userId: string }}>}
      */
     getUserFeedback(params) {
         return request(`users/${params.userId}/feedback`, {
@@ -142,7 +135,7 @@ const userReq = {
 
     /**
      * Updates current user's status.
-     *  @type {import('../types/user').getCurrentUser}
+     * @type {import('../types/api/user').GetCurrentUser}
      */
     saveCurrentUser(params) {
         const userStore = useUserStore();
@@ -160,8 +153,8 @@ const userReq = {
     },
 
     /**
-     * @param params {{ offset: number, n: number }}
-     * @returns {Promise<{json: any, params}>}
+     * @param {{ offset: number, n: number }} params
+     * @returns {Promise<{json: any, params: { offset: number, n: number }}>}
      */
     getUserNotes(params) {
         return request(`userNotes`, {

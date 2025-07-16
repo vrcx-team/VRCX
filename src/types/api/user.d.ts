@@ -1,4 +1,4 @@
-// API functions
+// Exported API functions
 export type GetUser = (params: { userId: string }) => Promise<{
     cache?: boolean;
     json: GetUserResponse;
@@ -12,7 +12,30 @@ export type GetCurrentUser = (params: any) => Promise<{
     params: GetCurrentUserResponse;
 }>;
 
-// Extended user objects
+export type GetCachedUser = (params: { userId: string }) => Promise<{
+    cache?: boolean;
+    json: GetUserResponse;
+    ref: VrcxUser;
+    params: { userId: string };
+}>;
+
+export type GetUsers = (params: {
+    n: number;
+    offset: number;
+    search?: string;
+    sort?: 'nuisanceFactor' | 'created' | '_created_at' | 'last_login';
+    order?: 'ascending' | 'descending';
+}) => Promise<{
+    json: UserSearchResponse;
+    params: any;
+}>;
+
+export type AddUserTags = (params: string[]) => Promise<{
+    json: GetCurrentUserResponse;
+    params: string[];
+}>;
+
+// Exported interfaces
 export interface VrcxUser extends GetUserResponse {
     $location: {};
     $location_at: number;
@@ -60,7 +83,29 @@ export interface VrcxCurrentUser extends GetCurrentUserResponse {
     $travelingToLocation?: string;
 }
 
-// API response types
+// Type aliases
+type UserSearchResponse = UserSearchResponseItem[];
+
+// Internal response types
+interface UserSearchResponseItem {
+    bio: string;
+    bioLinks: string[];
+    currentAvatarImageUrl: string;
+    currentAvatarTags: any[];
+    currentAvatarThumbnailImageUrl: string;
+    developerType: string;
+    displayName: string;
+    id: string;
+    isFriend: boolean;
+    last_platform: string;
+    profilePicOverride: string;
+    pronouns?: string;
+    status: string;
+    statusDescription: string;
+    tags: string[];
+    userIcon: string;
+}
+
 interface GetUserResponse {
     ageVerificationStatus: string;
     ageVerified: boolean;

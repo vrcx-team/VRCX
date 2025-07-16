@@ -53,6 +53,9 @@ const loginReq = {
         });
     },
 
+    /**
+     * @returns {Promise<{json: any}>}
+     */
     getConfig() {
         return request('config', {
             method: 'GET'

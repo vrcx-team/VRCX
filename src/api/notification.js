@@ -1,6 +1,9 @@
 import { request } from '../service/request';
 import { useGroupStore, useNotificationStore } from '../stores';
 
+/**
+ * @returns {any}
+ */
 function getGalleryStore() {
     return useGroupStore();
 }
@@ -35,6 +38,10 @@ const notificationReq = {
         });
     },
 
+    /**
+     * @param {{n?: number, offset?: number}} params
+     * @returns {Promise<{json: any, params: any}>}
+     */
     getHiddenFriendRequests(params) {
         return request('auth/user/notifications', {
             method: 'GET',
@@ -52,6 +59,10 @@ const notificationReq = {
         });
     },
 
+    /**
+     * @param {{n?: number, offset?: number, type?: string}} params
+     * @returns {Promise<{json: any, params: any}>}
+     */
     getNotificationsV2(params) {
         return request('notifications', {
             method: 'GET',

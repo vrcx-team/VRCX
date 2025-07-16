@@ -5,7 +5,7 @@ import { useInstanceStore } from '../stores';
 
 const instanceReq = {
     /**
-     * @type {import('../types/instance').getInstance}
+     * @type {import('../types/api/instance').GetInstance}
      */
     getInstance(params) {
         const instanceStore = useInstanceStore();
@@ -22,19 +22,7 @@ const instanceReq = {
     },
 
     /**
-     * CreateInstanceParameter
-     * @typedef {Object} CreateInstanceParameter
-     * @property {string} worldId
-     * @property {string} type
-     * @property {string} region
-     * @property {string} ownerId
-     * @property {string[]} roleIds
-     * @property {string} groupAccessType
-     * @property {boolean} queueEnabled
-     */
-    /**
-     * @param {CreateInstanceParameter} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/api/instance').CreateInstance}
      */
     createInstance(params) {
         const instanceStore = useInstanceStore();
@@ -52,7 +40,7 @@ const instanceReq = {
     },
 
     /**
-     * @type {import('../types/instance').getInstanceShortName}
+     * @type {import('../types/api/instance').GetInstanceShortName}
      */
     getInstanceShortName(instance) {
         const params = {};

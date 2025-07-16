@@ -92,6 +92,11 @@ const friendReq = {
         });
     },
 
+    /**
+     * @param {any} params
+     * @param {string} userId
+     * @returns {Promise<{json: any, params: any, userId: string}>}
+     */
     deleteHiddenFriendRequest(params, userId) {
         return request(`user/${userId}/friendRequest`, {
             method: 'DELETE',

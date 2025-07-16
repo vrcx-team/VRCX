@@ -3,7 +3,7 @@ import { useUserStore } from '../stores';
 
 const avatarReq = {
     /**
-     * @type {import('../types/avatar').getAvatar}
+     * @type {import('../types/api/avatar').GetAvatar}
      */
     getAvatar(params) {
         return request(`avatars/${params.avatarId}`, {
@@ -18,22 +18,7 @@ const avatarReq = {
     },
 
     /**
-     * @typedef {{
-     *     n: number,
-     *     offset: number,
-     *     search: string,
-     *     userId: string,
-     *     user: 'me' | 'friends'
-     *     sort: 'created' | 'updated' | 'order' | '_created_at' | '_updated_at',
-     *     order: 'ascending' | 'descending',
-     *     releaseStatus: 'public' | 'private' | 'hidden' | 'all',
-     *     featured: boolean
-     * }} GetAvatarsParameter
-     */
-    /**
-     *
-     * @param {GetAvatarsParameter} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/api/avatar').GetAvatars}
      */
     getAvatars(params) {
         return request('avatars', {

@@ -1,40 +1,31 @@
-import { UnityPackage } from '../common';
+import { BaseAvatar } from '../common';
 
-// API functions
+// Exported API functions
 export type GetAvatar = (params: { avatarId: string }) => Promise<{
     json: GetAvatarResponse;
     params: { avatarId: string };
 }>;
 
-// API response types
-interface GetAvatarResponse {
-    acknowledgements: string | null;
-    authorId: string;
-    authorName: string;
-    created_at: string;
-    description: string;
-    featured: boolean;
-    id: string;
-    imageUrl: string;
-    name: string;
-    pendingUpload: boolean;
+export type GetAvatars = (params: {
+    n: number;
+    offset: number;
+    search?: string;
+    userId?: string;
+    user?: 'me' | 'friends';
+    sort?: 'created' | 'updated' | 'order' | '_created_at' | '_updated_at';
+    order?: 'ascending' | 'descending';
+    releaseStatus?: 'public' | 'private' | 'hidden' | 'all';
+    featured?: boolean;
+}) => Promise<{
+    json: any;
+    params: any;
+}>;
+
+// Internal response types
+interface GetAvatarResponse extends BaseAvatar {
+    // Avatar-specific additional fields
     performance: {
         standalonewindows: string;
         'standalonewindows-sort': number;
     };
-    releaseStatus: string;
-    searchable: boolean;
-    styles: {
-        primary: string | null;
-        secondary: string | null;
-    };
-    tags: string[];
-    thumbnailImageUrl: string;
-    unityPackageUrl: string;
-    unityPackageUrlObject: {
-        unityPackageUrl: string;
-    };
-    unityPackages: UnityPackage[];
-    updated_at: string;
-    version: number;
 }

@@ -1,12 +1,25 @@
-import { UnityPackage } from '../common';
+import { BaseWorld } from '../common';
 
-// API functions
+// Exported API functions
 export type GetInstance = (params: {
     worldId: string;
     instanceId: string;
 }) => Promise<{
     json: GetInstanceResponse;
     params: { worldId: string; instanceId: string };
+}>;
+
+export type CreateInstance = (params: {
+    worldId: string;
+    type: string;
+    region: string;
+    ownerId: string;
+    roleIds: string[];
+    groupAccessType: string;
+    queueEnabled: boolean;
+}) => Promise<{
+    json: any;
+    params: any;
 }>;
 
 export type GetInstanceShortName = (instance: {
@@ -19,7 +32,7 @@ export type GetInstanceShortName = (instance: {
     params?: { shortName: string };
 }>;
 
-// API response types
+// Internal response types
 interface GetInstanceResponse {
     active: boolean;
     ageGate: boolean;
@@ -59,31 +72,8 @@ interface GetInstanceResponse {
     tags: string[];
     type: string;
     userCount: number;
-    world: {
-        authorId: string;
-        authorName: string;
-        capacity: number;
-        created_at: string;
+    world: BaseWorld & {
         defaultContentSettings: Record<string, any>;
-        description: string;
-        favorites: number;
-        featured: boolean;
-        heat: number;
-        id: string;
-        imageUrl: string;
-        labsPublicationDate: string;
-        name: string;
-        organization: string;
-        popularity: number;
-        previewYoutubeId: string | null;
-        publicationDate: string;
-        recommendedCapacity: number;
-        releaseStatus: string;
-        tags: string[];
-        thumbnailImageUrl: string;
-        udonProducts: any[];
-        unityPackages: UnityPackage[];
-        updated_at: string;
         urlList: any[];
         version: number;
         visits: number;

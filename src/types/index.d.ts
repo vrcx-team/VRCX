@@ -6,6 +6,8 @@ export * from './api/world';
 export * from './api/instance';
 export * from './api/group';
 export * from './api/favorite';
+export * from './api/auth';
+export * from './api/notification';
 
 // Common Types
 export * from './common';

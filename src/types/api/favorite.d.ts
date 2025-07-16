@@ -1,4 +1,4 @@
-import { UnityPackage } from '../common';
+import { BaseAvatar, BaseWorld } from '../common';
 
 // API functions
 export type GetFavorites = (params: { n: number; offset: number }) => Promise<{
@@ -49,60 +49,24 @@ interface GetFavoritesResponseItem {
     type: string;
 }
 
-interface GetFavoriteAvatarsResponseItem {
-    acknowledgements?: null | string;
-    authorId: string;
-    authorName: string;
-    created_at: string;
-    description: string;
+interface GetFavoriteAvatarsResponseItem extends BaseAvatar {
+    // Favorite avatar specific fields
     favoriteGroup: string;
     favoriteId: string;
-    featured: boolean;
-    id: string;
-    imageUrl: string;
-    name: string;
-    performance: {
-        [platform: string]: string | number;
-    };
-    releaseStatus: string;
-    searchable: boolean;
     styles: {
         primary: null;
         secondary: null;
     };
-    tags: any[];
-    thumbnailImageUrl: string;
-    unityPackageUrl: string;
     unityPackageUrlObject: Record<string, any>;
-    unityPackages: UnityPackage[];
-    updated_at: string;
-    version: number;
 }
 
-interface GetFavoriteWorldsResponseItem {
-    id: string;
-    name: string;
-    authorId: string;
-    authorName: string;
-    description: string;
-    capacity: number;
-    recommendedCapacity?: number;
+interface GetFavoriteWorldsResponseItem extends BaseWorld {
+    // Favorite world specific fields
     occupants?: number;
-    favorites: number;
     visits: number;
-    heat: number;
-    popularity: number;
-    created_at: string;
-    updated_at: string;
-    publicationDate?: string;
-    releaseStatus: string;
     version: number;
-    tags: string[];
-    imageUrl: string;
-    thumbnailImageUrl: string;
     urlList: string[];
     defaultContentSettings: Record<string, any>;
-    unityPackages: UnityPackage[];
     [key: string]: any;
 }
 

@@ -1,4 +1,4 @@
-// API functions
+// Exported API functions
 export type GetFriends = (params: {
     n: number;
     offline: boolean;
@@ -12,10 +12,46 @@ export type GetFriends = (params: {
     };
 }>;
 
-// Type aliases
-export type GetFriendsResponseList = GetFriendsResponseItem[] | undefined;
+export type SendFriendRequest = (params: { userId: string }) => Promise<{
+    json: any;
+    params: { userId: string };
+}>;
 
-// API response types
+export type CancelFriendRequest = (params: { userId: string }) => Promise<{
+    json: any;
+    params: { userId: string };
+}>;
+
+export type DeleteFriend = (params: { userId: string }) => Promise<{
+    json: any;
+    params: { userId: string };
+}>;
+
+export type GetFriendStatus = (params: { userId: string }) => Promise<{
+    json: FriendStatusResponse;
+    params: { userId: string };
+}>;
+
+export type DeleteHiddenFriendRequest = (
+    params: any,
+    userId: string
+) => Promise<{
+    json: any;
+    params: any;
+    userId: string;
+}>;
+
+// Exported interfaces
+export interface FriendStatusResponse {
+    isFriend: boolean;
+    outgoingRequest: boolean;
+    incomingRequest: boolean;
+}
+
+// Type aliases
+type GetFriendsResponseList = GetFriendsResponseItem[] | undefined;
+
+// Internal response types
 interface GetFriendsResponseItem {
     bio: string;
     bioLinks: string[];
