@@ -1,12 +1,14 @@
-export type getGroup = (params: {
+// API functions
+export type GetGroup = (params: {
     groupId: string;
     includeRoles?: boolean;
 }) => Promise<{
-    json: getGroupResponse;
+    json: GetGroupResponse;
     params: { groupId: string; includeRoles?: boolean };
 }>;
 
-interface Group {
+// API response types
+interface GetGroupResponse {
     badges: any[];
     bannerId: string;
     bannerUrl: string;

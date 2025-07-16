@@ -1,9 +1,10 @@
-export type getFriends = (params: {
+// API functions
+export type GetFriends = (params: {
     n: number;
     offline: boolean;
     offset: number;
 }) => Promise<{
-    json: getFriendsResponseList;
+    json: GetFriendsResponseList;
     params: {
         n: number;
         offline: boolean;
@@ -11,9 +12,11 @@ export type getFriends = (params: {
     };
 }>;
 
-type getFriendsResponseList = getFriendsResponseItem[] | undefined;
+// Type aliases
+export type GetFriendsResponseList = GetFriendsResponseItem[] | undefined;
 
-interface getFriendsResponseItem {
+// API response types
+interface GetFriendsResponseItem {
     bio: string;
     bioLinks: string[];
     currentAvatarImageUrl: string;

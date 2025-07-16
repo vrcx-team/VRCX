@@ -1,31 +1,34 @@
-export type getFavorites = (params: { n: number; offset: number }) => Promise<{
-    json: getFavoritesResponseList;
+import { UnityPackage } from '../common';
+
+// API functions
+export type GetFavorites = (params: { n: number; offset: number }) => Promise<{
+    json: GetFavoritesResponseList;
     params: { n: number; offset: number };
 }>;
 
-export type getFavoriteAvatars = (params: {
+export type GetFavoriteAvatars = (params: {
     n: number;
     offset: number;
     tag: string;
 }) => Promise<{
-    json: getFavoriteAvatarsResponseList;
+    json: GetFavoriteAvatarsResponseList;
     params: { n: number; offset: number; tag: string };
 }>;
 
-export type getFavoriteWorlds = (params: {
+export type GetFavoriteWorlds = (params: {
     n: number;
     offset: number;
 }) => Promise<{
-    json: getFavoriteWorldsResponseList;
+    json: GetFavoriteWorldsResponseList;
     params: { n: number; offset: number };
 }>;
 
-export type addFavorite = (params: {
+export type AddFavorite = (params: {
     type: string;
     favoriteId: string;
     tags: string;
 }) => Promise<{
-    json: addFavoriteResponse;
+    json: AddFavoriteResponse;
     params: {
         type: string;
         favoriteId: string;
@@ -33,41 +36,20 @@ export type addFavorite = (params: {
     };
 }>;
 
-interface getFavoritesResponseItem {
+// Type aliases
+export type GetFavoritesResponseList = GetFavoritesResponseItem[] | undefined;
+export type GetFavoriteAvatarsResponseList = GetFavoriteAvatarsResponseItem[];
+export type GetFavoriteWorldsResponseList = GetFavoriteWorldsResponseItem[];
+
+// API response types
+interface GetFavoritesResponseItem {
     favoriteId: string;
     id: string;
     tags: string[];
     type: string;
 }
 
-type getFavoritesResponseList = getFavoritesResponseItem[] | undefined;
-
-interface UnityPackage {
-    assetVersion: number;
-    created_at: string;
-    id: string;
-    performanceRating?: string;
-    platform: string;
-    scanStatus?: string;
-    unityVersion: string;
-    variant: string;
-    impostorizerVersion?: string;
-    assetUrl: string;
-    unitySortNumber?: number;
-    worldSignature?: string;
-    [key: string]: any;
-}
-
-interface Performance {
-    [platform: string]: string | number;
-}
-
-interface Styles {
-    primary: null;
-    secondary: null;
-}
-
-interface getFavoriteAvatarsResponseItem {
+interface GetFavoriteAvatarsResponseItem {
     acknowledgements?: null | string;
     authorId: string;
     authorName: string;
@@ -79,10 +61,15 @@ interface getFavoriteAvatarsResponseItem {
     id: string;
     imageUrl: string;
     name: string;
-    performance: Performance;
+    performance: {
+        [platform: string]: string | number;
+    };
     releaseStatus: string;
     searchable: boolean;
-    styles: Styles;
+    styles: {
+        primary: null;
+        secondary: null;
+    };
     tags: any[];
     thumbnailImageUrl: string;
     unityPackageUrl: string;
@@ -92,9 +79,7 @@ interface getFavoriteAvatarsResponseItem {
     version: number;
 }
 
-type getFavoriteAvatarsResponseList = getFavoriteAvatarsResponseItem[];
-
-interface getFavoriteWorldsResponseItem {
+interface GetFavoriteWorldsResponseItem {
     id: string;
     name: string;
     authorId: string;
@@ -121,9 +106,7 @@ interface getFavoriteWorldsResponseItem {
     [key: string]: any;
 }
 
-type getFavoriteWorldsResponseList = getFavoriteWorldsResponseItem[];
-
-interface addFavoriteResponse {
+interface AddFavoriteResponse {
     favoriteId: string;
     id: string;
     type: 'world' | 'friend' | 'avatar';

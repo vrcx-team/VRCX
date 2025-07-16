@@ -15,7 +15,7 @@ declare global {
         Discord: Discord;
         AssetBundleManager: AssetBundleManager;
         webApiService: webApiService;
-        request: {};
+        request: any;
         configRepository: any;
         datebase: any;
         gameLogService: any;
@@ -62,21 +62,23 @@ declare global {
                 overlayHand: int
             ) => Promise<void>;
         };
-        __APP_GLOBALS__: {
-            debug: boolean;
-            debugWebSocket: boolean;
-            debugUserDiff: boolean;
-            debugPhotonLogging: boolean;
-            debugGameLog: boolean;
-            debugWebRequests: boolean;
-            debugFriendState: boolean;
-            errorNoty: any;
-            dontLogMeOut: boolean;
-            endpointDomain: string;
-            endpointDomainVrchat: string;
-            websocketDomain: string;
-            websocketDomainVrchat: string;
-        };
+        __APP_GLOBALS__: AppGlobals;
+    }
+
+    interface AppGlobals {
+        debug: boolean;
+        debugWebSocket: boolean;
+        debugUserDiff: boolean;
+        debugPhotonLogging: boolean;
+        debugGameLog: boolean;
+        debugWebRequests: boolean;
+        debugFriendState: boolean;
+        errorNoty: any;
+        dontLogMeOut: boolean;
+        endpointDomain: string;
+        endpointDomainVrchat: string;
+        websocketDomain: string;
+        websocketDomainVrchat: string;
     }
 
     const CefSharp: {

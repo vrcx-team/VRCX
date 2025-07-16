@@ -1,11 +1,19 @@
-export type getUser = (params: { userId: string }) => Promise<{
+// API functions
+export type GetUser = (params: { userId: string }) => Promise<{
     cache?: boolean;
-    json: getUserResponse;
-    ref: vrcxUser;
+    json: GetUserResponse;
+    ref: VrcxUser;
     params: { userId: string };
 }>;
 
-export interface vrcxUser extends getUserResponse {
+export type GetCurrentUser = (params: any) => Promise<{
+    json: GetCurrentUserResponse;
+    ref: VrcxCurrentUser;
+    params: GetCurrentUserResponse;
+}>;
+
+// Extended user objects
+export interface VrcxUser extends GetUserResponse {
     $location: {};
     $location_at: number;
     $online_for: number;
@@ -32,7 +40,28 @@ export interface vrcxUser extends getUserResponse {
     $lastFetch: number;
 }
 
-interface getUserResponse {
+export interface VrcxCurrentUser extends GetCurrentUserResponse {
+    $online_for?: number;
+    $offline_for?: number | null;
+    $location_at?: number;
+    $travelingToTime?: number;
+    $previousAvatarSwapTime?: number | null;
+    $homeLocation?: {};
+    $isVRCPlus?: boolean;
+    $isModerator?: boolean;
+    $isTroll?: boolean;
+    $isProbableTroll?: boolean;
+    $trustLevel?: string;
+    $trustClass?: string;
+    $userColour?: string;
+    $trustSortNum?: number;
+    $languages?: string[];
+    $locationTag?: string;
+    $travelingToLocation?: string;
+}
+
+// API response types
+interface GetUserResponse {
     ageVerificationStatus: string;
     ageVerified: boolean;
     allowAvatarCopying: boolean;
@@ -77,33 +106,7 @@ interface getUserResponse {
     worldId?: string;
 }
 
-export type getCurrentUser = (any) => Promise<{
-    json: getCurrentUserResponse;
-    ref: vrcxCurrentUser;
-    params: getCurrentUserResponse;
-}>;
-
-export interface vrcxCurrentUser extends getCurrentUserResponse {
-    $online_for?: number;
-    $offline_for?: number | null;
-    $location_at?: number;
-    $travelingToTime?: number;
-    $previousAvatarSwapTime?: number | null;
-    $homeLocation?: {};
-    $isVRCPlus?: boolean;
-    $isModerator?: boolean;
-    $isTroll?: boolean;
-    $isProbableTroll?: boolean;
-    $trustLevel?: string;
-    $trustClass?: string;
-    $userColour?: string;
-    $trustSortNum?: number;
-    $languages?: string[];
-    $locationTag?: string;
-    $travelingToLocation?: string;
-}
-
-interface getCurrentUserResponse extends getUserResponse {
+interface GetCurrentUserResponse extends GetUserResponse {
     acceptedPrivacyVersion: number;
     acceptedTOSVersion: number;
     accountDeletionDate: string | null;

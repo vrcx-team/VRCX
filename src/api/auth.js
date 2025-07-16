@@ -4,7 +4,7 @@ import { useUserStore } from '../stores';
 const loginReq = {
     /**
      * @param {{ code: string }} params One-time password
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{json: any, params: { code: string }}>}
      */
     verifyOTP(params) {
         return request('auth/twofactorauth/otp/verify', {
@@ -21,7 +21,7 @@ const loginReq = {
 
     /**
      * @param {{ code: string }} params One-time token
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{json: any, params: { code: string }}>}
      */
     verifyTOTP(params) {
         return request('auth/twofactorauth/totp/verify', {
@@ -38,7 +38,7 @@ const loginReq = {
 
     /**
      * @param {{ code: string }} params One-time token
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{json: any, params: { code: string }}>}
      */
     verifyEmailOTP(params) {
         return request('auth/twofactorauth/emailotp/verify', {

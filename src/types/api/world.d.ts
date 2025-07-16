@@ -1,9 +1,13 @@
-export type getWorld = (params: { worldId: string }) => Promise<{
-    json: getWorldResponse;
+import { UnityPackage } from '../common';
+
+// API functions
+export type GetWorld = (params: { worldId: string }) => Promise<{
+    json: GetWorldResponse;
     params: { worldId: string };
 }>;
 
-interface getWorldResponse {
+// API response types
+interface GetWorldResponse {
     authorId: string;
     authorName: string;
     capacity: number;
@@ -35,17 +39,4 @@ interface getWorldResponse {
     urlList: any[];
     version: number;
     visits: number;
-}
-
-interface UnityPackage {
-    assetUrl: string;
-    assetUrlObject: Record<string, unknown>;
-    assetVersion: number;
-    created_at: string;
-    id: string;
-    platform: string;
-    pluginUrl: string;
-    pluginUrlObject: Record<string, unknown>;
-    unitySortNumber: number;
-    unityVersion: string;
 }
