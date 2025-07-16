@@ -49,7 +49,7 @@ const avatarReq = {
         });
     },
     /**
-     * @param {{ id: string, releaseStatus?: 'public' | 'private', name?: string, description?: string }} params
+     * @param {{ id: string, releaseStatus?: 'public' | 'private', name?: string, description?: string,tags?: string[] }} params
      * @returns {Promise<{json: any, params}>}
      */
     saveAvatar(params) {

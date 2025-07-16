@@ -34,12 +34,7 @@ const favoriteReq = {
     },
 
     /**
-     * @param {{
-     *    type: string,
-     *    favoriteId: string (objectId),
-     *    tags: string
-     * }} params
-     * @return { Promise<{json: any, params}> }
+     * @type {import('../types/favorite').addFavorite}
      */
     addFavorite(params) {
         return request('favorites', {

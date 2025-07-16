@@ -52,8 +52,7 @@ const instanceReq = {
     },
 
     /**
-     * @param {{ worldId: string, instanceId: string, shortName: string }} instance
-     * @returns {Promise<{instance, json: T, params: {}}>}
+     * @type {import('../types/instance').getInstanceShortName}
      */
     getInstanceShortName(instance) {
         const params = {};

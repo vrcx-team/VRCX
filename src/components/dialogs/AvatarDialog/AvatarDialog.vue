@@ -274,7 +274,7 @@
                                 :type="avatarDialog.isBlocked ? 'danger' : 'default'"
                                 icon="el-icon-more"
                                 circle></el-button>
-                            <el-dropdown-menu v-slot="dropdown">
+                            <el-dropdown-menu>
                                 <el-dropdown-item icon="el-icon-refresh" command="Refresh">{{
                                     t('dialog.avatar.actions.refresh')
                                 }}</el-dropdown-item>
@@ -481,7 +481,7 @@
                                                 icon="el-icon-s-order"
                                                 size="mini"
                                                 circle></el-button>
-                                            <el-dropdown-menu v-slot="dropdown">
+                                            <el-dropdown-menu>
                                                 <el-dropdown-item @click.native="copyAvatarId(avatarDialog.id)">{{
                                                     t('dialog.avatar.info.copy_id')
                                                 }}</el-dropdown-item>
@@ -793,7 +793,7 @@
                 showSetAvatarTagsDialog(D.id);
                 break;
             case 'Change Styles and Author Tags':
-                showSetAvatarStylesDialog(D.id);
+                showSetAvatarStylesDialog();
                 break;
             case 'Download Unity Package':
                 openExternalLink(replaceVrcPackageUrl(avatarDialog.value.ref.unityPackageUrl));
@@ -1126,8 +1126,8 @@
             });
             return;
         }
-        miscRequest.getFileAnalysis({ fileId, version, variant, avatarId }).then((args) => {
-            if (!avatarDialog.value.visible || avatarDialog.value.id !== args.params.avatarId) {
+        miscRequest.getFileAnalysis({ fileId, version, variant }).then((args) => {
+            if (!avatarDialog.value.visible || avatarDialog.value.id !== avatarId) {
                 return;
             }
             const ref = args.json;
@@ -1242,8 +1242,9 @@
 
     function onFileChangeAvatarGallery(e) {
         const clearFile = function () {
-            if (document.querySelector('#AvatarGalleryUploadButton')) {
-                document.querySelector('#AvatarGalleryUploadButton').value = '';
+            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#AvatarGalleryUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -1270,16 +1271,16 @@
         const r = new FileReader();
         r.onload = function () {
             avatarDialog.value.galleryLoading = true;
-            const base64Body = btoa(r.result);
+            const base64Body = btoa(r.result.toString());
             avatarRequest
                 .uploadAvatarGalleryImage(base64Body, avatarDialog.value.id)
-                .then((args) => {
+                .then(async (args) => {
                     $message({
                         message: t('message.avatar_gallery.uploaded'),
                         type: 'success'
                     });
                     console.log(args);
-                    avatarDialog.value.galleryImages = getAvatarGallery(avatarDialog.value.id);
+                    avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
                     return args;
                 })
                 .finally(() => {
@@ -1323,12 +1324,12 @@
         } else {
             moveArrayItem(fileIds, index, index + 1);
         }
-        avatarRequest.setAvatarGalleryOrder(fileIds).then((args) => {
+        avatarRequest.setAvatarGalleryOrder(fileIds).then(async (args) => {
             $message({
                 message: t('message.avatar_gallery.reordered'),
                 type: 'success'
             });
-            avatarDialog.value.galleryImages = getAvatarGallery(avatarDialog.value.id);
+            avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
             return args;
         });
     }

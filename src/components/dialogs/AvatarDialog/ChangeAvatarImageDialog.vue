@@ -113,8 +113,9 @@
 
     function onFileChangeAvatarImage(e) {
         const clearFile = function () {
-            if (document.querySelector('#AvatarImageUploadButton')) {
-                document.querySelector('#AvatarImageUploadButton').value = '';
+            const fileInput = /** @type{HTMLInputElement} */ (document.querySelector('#AvatarImageUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -145,10 +146,10 @@
         const r = new FileReader();
         r.onload = async function (file) {
             try {
-                const base64File = await resizeImageToFitLimits(btoa(r.result));
+                const base64File = await resizeImageToFitLimits(btoa(r.result.toString()));
                 // 10MB
                 const fileMd5 = await genMd5(base64File);
-                const fileSizeInBytes = parseInt(file.total, 10);
+                const fileSizeInBytes = parseInt(file.total.toString(), 10);
                 const base64SignatureFile = await genSig(base64File);
                 const signatureMd5 = await genMd5(base64SignatureFile);
                 const signatureSizeInBytes = parseInt(await genLength(base64SignatureFile), 10);
@@ -237,7 +238,7 @@
 
         if (json.status !== 200) {
             changeAvatarImageDialogLoading.value = false;
-            $throw('Avatar image upload failed', json, params.url);
+            $throw(json.status, 'Avatar image upload failed', params.url);
         }
         const args = {
             json,
@@ -290,7 +291,7 @@
 
         if (json.status !== 200) {
             changeAvatarImageDialogLoading.value = false;
-            $throw('Avatar image upload failed', json, params.url);
+            $throw(json.status, 'Avatar image upload failed', params.url);
         }
         const args = {
             json,

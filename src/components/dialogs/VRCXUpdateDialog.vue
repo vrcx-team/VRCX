@@ -90,7 +90,7 @@
     watch(
         () => VRCXUpdateDialog,
         (newVal) => {
-            if (newVal.visible) {
+            if (newVal.value.visible) {
                 nextTick(() => {
                     adjustDialogZ(VRCXUpdateDialogRef.value.$el);
                 });

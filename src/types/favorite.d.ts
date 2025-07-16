@@ -3,15 +3,6 @@ export type getFavorites = (params: { n: number; offset: number }) => Promise<{
     params: { n: number; offset: number };
 }>;
 
-interface getFavoritesResponseItem {
-    favoriteId: string;
-    id: string;
-    tags: string[];
-    type: 'world' | 'friend' | 'avatar';
-}
-
-type getFavoritesResponseList = getFavoritesResponseItem[] | undefined;
-
 export type getFavoriteAvatars = (params: {
     n: number;
     offset: number;
@@ -20,6 +11,36 @@ export type getFavoriteAvatars = (params: {
     json: getFavoriteAvatarsResponseList;
     params: { n: number; offset: number; tag: string };
 }>;
+
+export type getFavoriteWorlds = (params: {
+    n: number;
+    offset: number;
+}) => Promise<{
+    json: getFavoriteWorldsResponseList;
+    params: { n: number; offset: number };
+}>;
+
+export type addFavorite = (params: {
+    type: string;
+    favoriteId: string;
+    tags: string;
+}) => Promise<{
+    json: addFavoriteResponse;
+    params: {
+        type: string;
+        favoriteId: string;
+        tags: string;
+    };
+}>;
+
+interface getFavoritesResponseItem {
+    favoriteId: string;
+    id: string;
+    tags: string[];
+    type: string;
+}
+
+type getFavoritesResponseList = getFavoritesResponseItem[] | undefined;
 
 interface UnityPackage {
     assetVersion: number;
@@ -46,7 +67,7 @@ interface Styles {
     secondary: null;
 }
 
-interface AvatarFavoriteItem {
+interface getFavoriteAvatarsResponseItem {
     acknowledgements?: null | string;
     authorId: string;
     authorName: string;
@@ -72,14 +93,6 @@ interface AvatarFavoriteItem {
 }
 
 type getFavoriteAvatarsResponseList = getFavoriteAvatarsResponseItem[];
-
-export type getFavoriteWorlds = (params: {
-    n: number;
-    offset: number;
-}) => Promise<{
-    json: getFavoriteWorldsResponseList;
-    params: { n: number; offset: number };
-}>;
 
 interface getFavoriteWorldsResponseItem {
     id: string;
@@ -109,3 +122,10 @@ interface getFavoriteWorldsResponseItem {
 }
 
 type getFavoriteWorldsResponseList = getFavoriteWorldsResponseItem[];
+
+interface addFavoriteResponse {
+    favoriteId: string;
+    id: string;
+    type: 'world' | 'friend' | 'avatar';
+    tags: string[];
+}

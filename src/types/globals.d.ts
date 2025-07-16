@@ -79,37 +79,6 @@ declare global {
         };
     }
 
-    declare const API: {
-        // HTTP request methods
-        $bulk: (options: any, args?: any) => Promise<any>;
-        bulk: (options: any) => Promise<any>;
-
-        // Event system
-        $emit: (event: string, ...args: any[]) => void;
-        $off: (event: string, handler?: Function) => void;
-        $on: (event: string, handler: Function) => void;
-
-        // Debug functions
-        debug: boolean | ((message: any) => void);
-        debugCurrentUserDiff: boolean | ((data: any) => void);
-        debugFriendState: boolean | ((data: any) => void);
-        debugGameLog: boolean | ((data: any) => void);
-        debugPhotonLogging: boolean | ((data: any) => void);
-        debugUserDiff: boolean | ((data: any) => void);
-        debugWebRequests: boolean | ((data: any) => void);
-        debugWebSocket: boolean | ((data: any) => void);
-
-        // Configuration
-        dontLogMeOut: boolean;
-        endpointDomain: string;
-        endpointDomainVrchat: string;
-        websocketDomain: string;
-        websocketDomainVrchat: string;
-
-        // Error handling
-        errorNoty: (error: any) => void;
-    };
-
     const CefSharp: {
         PostMessage: (message: any) => void;
         BindObjectAsync: (...args: string[]) => Promise<any>;
@@ -419,10 +388,36 @@ declare global {
         setCookies(cookie: string): Promise<void>;
         execute(options: {
             url: string;
-            method: string;
+            method?: string;
+            uploadFilePUT?: boolean;
+            fileData?: string;
+            fileMIME?: string;
             headers?: Record<string, string>;
             data?: any;
         }): Promise<{ status: number; data: string }>;
+    };
+
+    const electron: {
+        openFileDialog: () => Promise<string>;
+        openDirectoryDialog: () => Promise<string>;
+        desktopNotification: (
+            displayName: string,
+            body?: string,
+            image?: string
+        ) => Promise<void>;
+        onWindowPositionChanged: (
+            Function: (event: any, position: { x: number; y: number }) => void
+        ) => void;
+        onWindowSizeChanged: (
+            Function: (
+                event: any,
+                size: { width: number; height: number }
+            ) => void
+        ) => void;
+        onWindowStateChange: (
+            Function: (event: any, state: { windowState: any }) => void
+        ) => void;
+        restartApp: () => Promise<void>;
     };
 }
 

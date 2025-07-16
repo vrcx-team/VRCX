@@ -557,8 +557,9 @@
 
     function onFileChangeGallery(e) {
         const clearFile = function () {
-            if (document.querySelector('#GalleryUploadButton')) {
-                document.querySelector('#GalleryUploadButton').value = '';
+            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#GalleryUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -584,7 +585,7 @@
         }
         const r = new FileReader();
         r.onload = function () {
-            const base64Body = btoa(r.result);
+            const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
                 handleGalleryImageAdd(args);
                 proxy.$message({
@@ -655,8 +656,9 @@
 
     function onFileChangeVRCPlusIcon(e) {
         const clearFile = function () {
-            if (document.querySelector('#VRCPlusIconUploadButton')) {
-                document.querySelector('#VRCPlusIconUploadButton').value = '';
+            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#VRCPlusIconUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -682,7 +684,7 @@
         }
         const r = new FileReader();
         r.onload = function () {
-            const base64Body = btoa(r.result);
+            const base64Body = btoa(r.result.toString());
             vrcPlusIconRequest.uploadVRCPlusIcon(base64Body).then((args) => {
                 if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
                     VRCPlusIconsTable.value.unshift(args.json);
@@ -777,8 +779,9 @@
 
     function onFileChangeEmoji(e) {
         const clearFile = function () {
-            if (document.querySelector('#EmojiUploadButton')) {
-                document.querySelector('#EmojiUploadButton').value = '';
+            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#EmojiUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -818,10 +821,10 @@
             if (emojiAnimLoopPingPong.value) {
                 params.loopStyle = 'pingpong';
             }
-            const base64Body = btoa(r.result);
+            const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadEmoji(base64Body, params).then((args) => {
-                if (Object.keys(emojiTable).length !== 0) {
-                    emojiTable.unshift(args.json);
+                if (Object.keys(emojiTable.value).length !== 0) {
+                    emojiTable.value.unshift(args.json);
                 }
                 proxy.$message({
                     message: t('message.emoji.uploaded'),
@@ -873,8 +876,9 @@
 
     function onFileChangeSticker(e) {
         const clearFile = function () {
-            if (document.querySelector('#StickerUploadButton')) {
-                document.querySelector('#StickerUploadButton').value = '';
+            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#StickerUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -904,7 +908,7 @@
                 tag: 'sticker',
                 maskTag: 'square'
             };
-            const base64Body = btoa(r.result);
+            const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadSticker(base64Body, params).then((args) => {
                 handleStickerAdd(args);
                 proxy.$message({
@@ -939,8 +943,9 @@
 
     function onFileChangePrint(e) {
         const clearFile = function () {
-            if (document.querySelector('#PrintUploadButton')) {
-                document.querySelector('#PrintUploadButton').value = '';
+            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#PrintUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -975,7 +980,7 @@
                 // worldId: '',
                 timestamp
             };
-            const base64Body = btoa(r.result);
+            const base64Body = btoa(r.result.toString());
             const cropWhiteBorder = printCropBorder.value;
             vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params).then((args) => {
                 proxy.$message({

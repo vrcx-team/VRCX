@@ -6,6 +6,16 @@ export type getInstance = (params: {
     params: { worldId: string; instanceId: string };
 }>;
 
+export type getInstanceShortName = (instance: {
+    worldId: string;
+    instanceId: string;
+    shortName?: string;
+}) => Promise<{
+    json: getInstanceShortNameResponse;
+    instance: { worldId: string; instanceId: string };
+    params?: { shortName: string };
+}>;
+
 interface getInstanceResponse {
     active: boolean;
     ageGate: boolean;
@@ -90,4 +100,9 @@ interface WorldUnityPackage {
     unitySortNumber: number;
     unityVersion: string;
     worldSignature: string;
+}
+
+interface getInstanceShortNameResponse {
+    secureName: string;
+    shortName: string;
 }

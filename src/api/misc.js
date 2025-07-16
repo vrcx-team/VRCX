@@ -59,7 +59,8 @@ const miscReq = {
     /**
      * @param {{
      *       fileId: string,
-     *       version: number
+     *       version: number,
+     *       variant: string
      * }} params
      * @return { Promise<{json: any, params}> }
      */

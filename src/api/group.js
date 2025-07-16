@@ -75,7 +75,7 @@ const groupReq = {
     /**
      *
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @return { Promise<{json: any, ref: any, cache?: boolean, params}> }
      */
     getCachedGroup(params) {
         const groupStore = useGroupStore();

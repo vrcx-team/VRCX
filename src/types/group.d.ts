@@ -1,9 +1,9 @@
 export type getGroup = (params: {
     groupId: string;
-    includeRoles: boolean;
+    includeRoles?: boolean;
 }) => Promise<{
     json: getGroupResponse;
-    params: { groupId: string; includeRoles: boolean };
+    params: { groupId: string; includeRoles?: boolean };
 }>;
 
 interface Group {

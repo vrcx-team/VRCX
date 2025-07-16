@@ -84,8 +84,9 @@
 
     function onFileChangeGallery(e) {
         const clearFile = function () {
-            if (document.querySelector('#GalleryUploadButton')) {
-                document.querySelector('#GalleryUploadButton').value = '';
+            const fileInput = /** @type{HTMLInputElement} */ (document.querySelector('#GalleryUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -111,7 +112,7 @@
         }
         const r = new FileReader();
         r.onload = function () {
-            const base64Body = btoa(r.result);
+            const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
                 handleGalleryImageAdd(args);
                 $message({

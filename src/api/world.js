@@ -3,8 +3,7 @@ import { useWorldStore } from '../stores';
 
 const worldReq = {
     /**
-     * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/world').getWorld}
      */
     getWorld(params) {
         const worldStore = useWorldStore();
@@ -22,7 +21,7 @@ const worldReq = {
 
     /**
      * @param {{worldId: string}} params
-     * @returns {Promise<{json: any, params}>}
+     * @returns {Promise<{json: any, ref: any, cache?: boolean, params}>}
      */
     getCachedWorld(params) {
         const worldStore = useWorldStore();
