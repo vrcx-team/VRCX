@@ -33,7 +33,8 @@ if (!isDotNetInstalled()) {
     });
 }
 
-let isDispose = false;
+let isOverlayActive = false;
+let appIsQuitting = false;
 
 // Get launch arguments
 let appImagePath = process.env.APPIMAGE;
@@ -170,17 +171,16 @@ ipcMain.handle(
     'app:updateVr',
     (event, active, hmdOverlay, wristOverlay, menuButton, overlayHand) => {
         if (!active) {
-            dispose();
+            disposeOverlay();
             return;
         }
+        isOverlayActive = true;
 
-    if (isDispose) return;
-
-    if (!hmdOverlay) {
-        destroyHmdOverlayWindow();
-    } else if (active && !hmdOverlayWindow) {
-        createHmdOverlayWindowOffscreen();
-    }
+        if (!hmdOverlay) {
+            destroyHmdOverlayWindow();
+        } else if (active && !hmdOverlayWindow) {
+            createHmdOverlayWindowOffscreen();
+        }
 
         if (!wristOverlay) {
             destroyWristOverlayWindow();
@@ -385,7 +385,7 @@ function createHmdOverlayWindowOffscreen() {
     if (!fs.existsSync(HMD_SHM_PATH)) {
         createHmdOverlayWindowShm();
     }
-    
+
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = HMD_FRAME_WIDTH;
@@ -799,7 +799,11 @@ app.whenReady().then(() => {
     });
 });
 
-function dispose() {
+function disposeOverlay() {
+    if (!isOverlayActive) {
+        return;
+    }
+    isOverlayActive = false;
     if (wristOverlayWindow) {
         wristOverlayWindow.close();
         wristOverlayWindow = undefined;
@@ -818,17 +822,13 @@ function dispose() {
 }
 
 app.on('before-quit', function () {
-    isDispose = true;
-
-    dispose();
+    disposeOverlay();
 
     mainWindow.webContents.send('windowClosed');
 });
 
 app.on('window-all-closed', function () {
-    isDispose = true;
-
-    dispose();
+    disposeOverlay();
 
     if (process.platform !== 'darwin') {
         app.quit();
