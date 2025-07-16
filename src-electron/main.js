@@ -31,7 +31,6 @@ if (!isDotNetInstalled()) {
         );
         app.quit();
     });
-    return;
 }
 
 let isDispose = false;
@@ -167,11 +166,13 @@ ipcMain.handle('app:restart', () => {
     }
 });
 
-ipcMain.handle('app:updateVr', (event, active, hmdOverlay, wristOverlay, menuButton, overlayHand) => {
-    if (!active) {
-        dispose();
-        return;
-    }
+ipcMain.handle(
+    'app:updateVr',
+    (event, active, hmdOverlay, wristOverlay, menuButton, overlayHand) => {
+        if (!active) {
+            dispose();
+            return;
+        }
 
     if (isDispose) return;
 
@@ -181,12 +182,13 @@ ipcMain.handle('app:updateVr', (event, active, hmdOverlay, wristOverlay, menuBut
         createHmdOverlayWindowOffscreen();
     }
 
-    if (!wristOverlay) {
-        destroyWristOverlayWindow();
-    } else if (active && !wristOverlayWindow) {
-        createWristOverlayWindowOffscreen();
+        if (!wristOverlay) {
+            destroyWristOverlayWindow();
+        } else if (active && !wristOverlayWindow) {
+            createWristOverlayWindowOffscreen();
+        }
     }
-});
+);
 
 function tryRelaunchWithArgs(args) {
     if (
@@ -234,14 +236,11 @@ function createWindow() {
         autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
-        },
-        webContents: {
-            userAgent: version
         }
     });
     applyWindowState();
     const indexPath = path.join(rootDir, 'build/html/index.html');
-    mainWindow.loadFile(indexPath, { userAgent: version });
+    mainWindow.loadFile(indexPath);
 
     // add proxy config, doesn't work, thanks electron
     // const proxy = VRCXStorage.Get('VRCX_Proxy');
@@ -280,7 +279,7 @@ function createWindow() {
 
     mainWindow.on('close', (event) => {
         isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
-        if (isCloseToTray && !app.isQuitting) {
+        if (isCloseToTray && !appIsQuitting) {
             event.preventDefault();
             mainWindow.hide();
         }
@@ -336,15 +335,12 @@ function createWristOverlayWindowOffscreen() {
         height,
         icon: path.join(rootDir, 'VRCX.png'),
         autoHideMenuBar: true,
-        transparent: true, 
+        transparent: true,
         frame: false,
         show: false,
         webPreferences: {
             offscreen: true,
             preload: path.join(__dirname, 'preload.js')
-        },
-        webContents: {
-            userAgent: version
         }
     });
     wristOverlayWindow.webContents.setFrameRate(2);
@@ -402,15 +398,12 @@ function createHmdOverlayWindowOffscreen() {
         height,
         icon: path.join(rootDir, 'VRCX.png'),
         autoHideMenuBar: true,
-        transparent: true, 
+        transparent: true,
         frame: false,
         show: false,
         webPreferences: {
             offscreen: true,
             preload: path.join(__dirname, 'preload.js')
-        },
-        webContents: {
-            userAgent: version
         }
     });
     hmdOverlayWindow.webContents.setFrameRate(48);
@@ -474,7 +467,7 @@ function createTray() {
             label: 'Quit VRCX',
             type: 'normal',
             click: function () {
-                app.isQuitting = true;
+                appIsQuitting = true;
                 app.quit();
             }
         }
@@ -685,18 +678,19 @@ function getHomePath() {
         const absoluteHomePath = fs.realpathSync(relativeHomePath);
         return absoluteHomePath;
     } catch (err) {
+        console.error('Error resolving absolute home path:', err);
         return relativeHomePath;
     }
 }
 
 function getVersion() {
     try {
-        var versionFile = fs
+        const versionFile = fs
             .readFileSync(path.join(rootDir, 'Version'), 'utf8')
             .trim();
 
         // look for trailing git hash "-22bcd96" to indicate nightly build
-        var version = versionFile.split('-');
+        const version = versionFile.split('-');
         console.log('Version:', versionFile);
         if (version.length > 0 && version[version.length - 1].length == 7) {
             return `VRCX (Linux) Nightly ${versionFile}`;
@@ -714,13 +708,13 @@ function isDotNetInstalled() {
         // Assume .NET is already installed on macOS
         return true;
     }
-    
+
     // Check for bundled .NET runtime
     if (fs.existsSync(bundledDotnet)) {
         console.log('Using bundled .NET runtime at:', bundledDotNetPath);
         return true;
     }
-    
+
     // Fallback to system .NET runtime
     const result = spawnSync('dotnet', ['--list-runtimes'], {
         encoding: 'utf-8'
@@ -796,10 +790,12 @@ app.whenReady().then(() => {
 
     createTray();
 
-    installVRCX();  
+    installVRCX();
 
     app.on('activate', function () {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow();
+        }
     });
 });
 
@@ -812,7 +808,7 @@ function dispose() {
         hmdOverlayWindow.close();
         hmdOverlayWindow = undefined;
     }
-    
+
     if (fs.existsSync(WRIST_SHM_PATH)) {
         fs.unlinkSync(WRIST_SHM_PATH);
     }
@@ -834,5 +830,7 @@ app.on('window-all-closed', function () {
 
     dispose();
 
-    if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
