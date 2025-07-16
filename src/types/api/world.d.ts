@@ -46,6 +46,27 @@ export type GetWorlds = (
     option?: string;
 }>;
 
+export type SaveWorld = (params: {
+    id: string;
+    name?: string;
+    description?: string;
+    capacity?: number;
+    recommendedCapacity?: number;
+    previewYoutubeId?: string;
+    urlList?: string[];
+    tags?: string[];
+}) => Promise<{
+    json: SaveWorldResponse;
+    params: {
+        id: string;
+        name?: string;
+        description?: string;
+        capacity?: number;
+        recommendedCapacity?: number;
+        previewYoutubeId?: string;
+    };
+}>;
+
 // Type aliases
 type WorldSearchResponse = WorldSearchResponseItem[];
 
@@ -64,6 +85,23 @@ interface GetWorldResponse extends BaseWorld {
     publicOccupants: number;
     defaultContentSettings: Record<string, unknown>;
     urlList: any[];
+    version: number;
+    visits: number;
+}
+
+interface SaveWorldResponse extends BaseWorld {
+    description: string;
+    featured: boolean;
+    pendingUpload: boolean;
+    tags: string[];
+    thumbnailImageUrl: string;
+    imageUrl: string;
+    name: string;
+    authorId: string;
+    authorName: string;
+    id: string;
+    updated_at: string;
+    urlList: string[];
     version: number;
     visits: number;
 }

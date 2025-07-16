@@ -723,10 +723,10 @@
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)"></el-button>
                     <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
-                        <template slot-scope="scope">
+                        <template #default="{ data }">
                             <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
-                                <span v-if="!scope.data.children" v-text="scope.data.value"></span>
+                                <span style="font-weight: bold; margin-right: 5px" v-text="data.key"></span>
+                                <span v-if="!data.children" v-text="data.value"></span>
                             </span>
                         </template>
                     </el-tree>
@@ -856,7 +856,8 @@
 
     const timeInLab = computed(() => {
         return timeToText(
-            new Date(worldDialog.value.ref.publicationDate) - new Date(worldDialog.value.ref.labsPublicationDate)
+            new Date(worldDialog.value.ref.publicationDate).getTime() -
+                new Date(worldDialog.value.ref.labsPublicationDate).getTime()
         );
     });
 
@@ -1194,7 +1195,7 @@
                     worldRequest
                         .saveWorld({
                             id: world.id,
-                            capacity: instance.inputValue
+                            capacity: Number(instance.inputValue)
                         })
                         .then((args) => {
                             proxy.$message({
@@ -1224,7 +1225,7 @@
                         worldRequest
                             .saveWorld({
                                 id: world.id,
-                                recommendedCapacity: instance.inputValue
+                                recommendedCapacity: Number(instance.inputValue)
                             })
                             .then((args) => {
                                 proxy.$message({

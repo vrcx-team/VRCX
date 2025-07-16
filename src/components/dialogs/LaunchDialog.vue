@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-    import { ref, computed, nextTick, watch, getCurrentInstance, onMounted } from 'vue';
+    import { ref, computed, nextTick, watch, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n-bridge';
     import { instanceRequest, worldRequest } from '../../api';

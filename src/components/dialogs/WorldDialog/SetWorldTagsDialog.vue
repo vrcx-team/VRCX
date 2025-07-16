@@ -73,7 +73,7 @@
         </el-checkbox>
         <template #footer>
             <div style="display: flex">
-                <el-button size="small" @click="setWorldTagsDialog.visible = false">
+                <el-button size="small" @click="isVisible = false">
                     {{ t('dialog.set_world_tags.cancel') }}
                 </el-button>
                 <el-button type="primary" size="small" @click="saveSetWorldTagsDialog">
@@ -168,13 +168,13 @@
         const authorTags = [];
         const contentTags = [];
         props.oldTags.forEach((tag) => {
-            if (tag.startsWith('author_tag_')) {
-                authorTags.unshift(tag.substring(11));
+            if (String(tag).startsWith('author_tag_')) {
+                authorTags.unshift(String(tag).substring(11));
             }
-            if (tag.startsWith('content_')) {
-                contentTags.unshift(tag.substring(8));
+            if (String(tag).startsWith('content_')) {
+                contentTags.unshift(String(tag).substring(8));
             }
-            switch (tag) {
+            switch (String(tag)) {
                 case 'content_horror':
                     D.contentHorror = true;
                     break;

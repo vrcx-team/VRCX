@@ -86,7 +86,7 @@
         capacity: 0,
         queueSize: 0,
         queueEnabled: false,
-        platforms: [],
+        platforms: {},
         userList: [],
         gameServerVersion: '',
         canCloseInstance: false,

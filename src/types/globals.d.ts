@@ -398,29 +398,6 @@ declare global {
             data?: any;
         }): Promise<{ status: number; data: string }>;
     };
-
-    const electron: {
-        openFileDialog: () => Promise<string>;
-        openDirectoryDialog: () => Promise<string>;
-        desktopNotification: (
-            displayName: string,
-            body?: string,
-            image?: string
-        ) => Promise<void>;
-        onWindowPositionChanged: (
-            Function: (event: any, position: { x: number; y: number }) => void
-        ) => void;
-        onWindowSizeChanged: (
-            Function: (
-                event: any,
-                size: { width: number; height: number }
-            ) => void
-        ) => void;
-        onWindowStateChange: (
-            Function: (event: any, state: { windowState: any }) => void
-        ) => void;
-        restartApp: () => Promise<void>;
-    };
 }
 
 export {};

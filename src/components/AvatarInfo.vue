@@ -60,7 +60,7 @@
         }
 
         if (Array.isArray(props.avatartags)) {
-            avatarTags.value = props.avatartags.map((tag) => tag.replace('content_', '')).join(', ');
+            avatarTags.value = props.avatartags.map((tag) => String(tag).replace('content_', '')).join(', ');
         }
     };
 

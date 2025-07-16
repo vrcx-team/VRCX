@@ -87,8 +87,7 @@ const worldReq = {
     },
 
     /**
-     * @param {{id: string}} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/api/world').SaveWorld}
      */
     saveWorld(params) {
         const worldStore = useWorldStore();

@@ -101,23 +101,25 @@
                             <el-option-group :label="t('dialog.new_instance.group_placeholder')">
                                 <el-option
                                     v-for="group in currentUserGroups.values()"
-                                    v-if="
-                                        group &&
-                                        (hasGroupPermission(group, 'group-instance-public-create') ||
-                                            hasGroupPermission(group, 'group-instance-plus-create') ||
-                                            hasGroupPermission(group, 'group-instance-open-create'))
-                                    "
                                     :key="group.id"
                                     :label="group.name"
                                     :value="group.id"
                                     class="x-friend-item"
                                     style="height: auto; width: 478px">
-                                    <div class="avatar">
-                                        <img v-lazy="group.iconUrl" />
-                                    </div>
-                                    <div class="detail">
-                                        <span class="name" v-text="group.name"></span>
-                                    </div>
+                                    <template
+                                        v-if="
+                                            group &&
+                                            (hasGroupPermission(group, 'group-instance-public-create') ||
+                                                hasGroupPermission(group, 'group-instance-plus-create') ||
+                                                hasGroupPermission(group, 'group-instance-open-create'))
+                                        ">
+                                        <div class="avatar">
+                                            <img v-lazy="group.iconUrl" />
+                                        </div>
+                                        <div class="detail">
+                                            <span class="name" v-text="group.name"></span>
+                                        </div>
+                                    </template>
                                 </el-option>
                             </el-option-group>
                         </el-select>
@@ -362,18 +364,18 @@
                             <el-option-group :label="t('dialog.new_instance.group_placeholder')">
                                 <el-option
                                     v-for="group in currentUserGroups.values()"
-                                    v-if="group"
                                     :key="group.id"
                                     class="x-friend-item"
                                     :label="group.name"
                                     :value="group.id"
                                     style="height: auto; width: 478px">
-                                    <div class="avatar">
-                                        <img v-lazy="group.iconUrl" />
-                                    </div>
-                                    <div class="detail">
-                                        <span class="name" v-text="group.name"></span>
-                                    </div>
+                                    <template v-if="group">
+                                        <div class="avatar">
+                                            <img v-lazy="group.iconUrl" />
+                                        </div>
+                                        <div class="detail">
+                                            <span class="name" v-text="group.name"></span></div
+                                    ></template>
                                 </el-option>
                             </el-option-group>
                         </el-select>

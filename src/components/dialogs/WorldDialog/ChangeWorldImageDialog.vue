@@ -77,7 +77,8 @@
         base64SignatureFile: '',
         signatureMd5: '',
         fileId: '',
-        avatarId: ''
+        avatarId: '',
+        worldId: ''
     });
 
     function uploadWorldImage() {
@@ -114,8 +115,9 @@
 
     function onFileChangeWorldImage(e) {
         const clearFile = function () {
-            if (document.querySelector('#WorldImageUploadButton')) {
-                document.querySelector('#WorldImageUploadButton').value = '';
+            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#WorldImageUploadButton'));
+            if (fileInput) {
+                fileInput.value = '';
             }
         };
         const files = e.target.files || e.dataTransfer.files;
@@ -144,10 +146,10 @@
         const r = new FileReader();
         r.onload = async function (file) {
             try {
-                const base64File = await resizeImageToFitLimits(btoa(r.result));
+                const base64File = await resizeImageToFitLimits(btoa(r.result.toString()));
                 // 10MB
                 const fileMd5 = await genMd5(base64File);
-                const fileSizeInBytes = parseInt(file.total, 10);
+                const fileSizeInBytes = parseInt(file.total.toString(), 10);
                 const base64SignatureFile = await genSig(base64File);
                 const signatureMd5 = await genMd5(base64SignatureFile);
                 const signatureSizeInBytes = parseInt(await genLength(base64SignatureFile), 10);
@@ -168,7 +170,8 @@
                     base64SignatureFile,
                     signatureMd5,
                     fileId,
-                    worldId
+                    worldId,
+                    ...worldImage.value
                 };
                 const params = {
                     fileMd5,
@@ -231,7 +234,7 @@
 
         if (json.status !== 200) {
             changeWorldImageDialogLoading.value = false;
-            $throw('World image upload failed', json, params.url);
+            $throw(json.status, 'World image upload failed', params.url);
         }
         const args = {
             json,
@@ -284,7 +287,7 @@
 
         if (json.status !== 200) {
             changeWorldImageDialogLoading.value = false;
-            $throw('World image upload failed', json, params.url);
+            $throw(json.status, 'World image upload failed', params.url);
         }
         const args = {
             json,
