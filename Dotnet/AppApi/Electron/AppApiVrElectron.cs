@@ -90,7 +90,7 @@ namespace VRCX
             var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
             if (File.Exists(filePath))
                 return File.ReadAllText(filePath);
-            
+
             return string.Empty;
         }
 

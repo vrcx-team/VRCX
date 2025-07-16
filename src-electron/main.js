@@ -34,6 +34,8 @@ if (!isDotNetInstalled()) {
     return;
 }
 
+let isDispose = false;
+
 // Get launch arguments
 let appImagePath = process.env.APPIMAGE;
 const args = process.argv.slice(1);
@@ -57,14 +59,18 @@ const WRIST_FRAME_HEIGHT = 512;
 const WRIST_FRAME_SIZE = WRIST_FRAME_WIDTH * WRIST_FRAME_HEIGHT * 4;
 const WRIST_SHM_PATH = '/dev/shm/vrcx_wrist_overlay';
 
+function createWristOverlayWindowShm() {
+    fs.writeFileSync(WRIST_SHM_PATH, Buffer.alloc(WRIST_FRAME_SIZE + 1));
+}
+
 const HMD_FRAME_WIDTH = 1024;
 const HMD_FRAME_HEIGHT = 1024;
 const HMD_FRAME_SIZE = HMD_FRAME_WIDTH * HMD_FRAME_HEIGHT * 4;
 const HMD_SHM_PATH = '/dev/shm/vrcx_hmd_overlay';
 
-// Create shared memory files
-fs.writeFileSync(WRIST_SHM_PATH, Buffer.alloc(WRIST_FRAME_SIZE + 1));
-fs.writeFileSync(HMD_SHM_PATH, Buffer.alloc(HMD_FRAME_SIZE + 1));
+function createHmdOverlayWindowShm() {
+    fs.writeFileSync(HMD_SHM_PATH, Buffer.alloc(HMD_FRAME_SIZE + 1));
+}
 
 const version = getVersion();
 interopApi.getDotNetObject('ProgramElectron').PreInit(version, args);
@@ -166,6 +172,8 @@ ipcMain.handle('app:updateVr', (event, active, hmdOverlay, wristOverlay, menuBut
         dispose();
         return;
     }
+
+    if (isDispose) return;
 
     if (!hmdOverlay) {
         destroyHmdOverlayWindow();
@@ -312,6 +320,10 @@ function createWindow() {
 let wristOverlayWindow = undefined;
 
 function createWristOverlayWindowOffscreen() {
+    if (!fs.existsSync(WRIST_SHM_PATH)) {
+        createWristOverlayWindowShm();
+    }
+
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = WRIST_FRAME_WIDTH;
@@ -374,6 +386,10 @@ function destroyWristOverlayWindow() {
 let hmdOverlayWindow = undefined;
 
 function createHmdOverlayWindowOffscreen() {
+    if (!fs.existsSync(HMD_SHM_PATH)) {
+        createHmdOverlayWindowShm();
+    }
+    
     const x = parseInt(VRCXStorage.Get('VRCX_LocationX')) || 0;
     const y = parseInt(VRCXStorage.Get('VRCX_LocationY')) || 0;
     const width = HMD_FRAME_WIDTH;
@@ -790,9 +806,11 @@ app.whenReady().then(() => {
 function dispose() {
     if (wristOverlayWindow) {
         wristOverlayWindow.close();
+        wristOverlayWindow = undefined;
     }
     if (hmdOverlayWindow) {
         hmdOverlayWindow.close();
+        hmdOverlayWindow = undefined;
     }
     
     if (fs.existsSync(WRIST_SHM_PATH)) {
@@ -804,12 +822,16 @@ function dispose() {
 }
 
 app.on('before-quit', function () {
+    isDispose = true;
+
     dispose();
 
     mainWindow.webContents.send('windowClosed');
 });
 
 app.on('window-all-closed', function () {
+    isDispose = true;
+
     dispose();
 
     if (process.platform !== 'darwin') app.quit();

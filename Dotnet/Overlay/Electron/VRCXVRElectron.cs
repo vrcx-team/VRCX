@@ -82,12 +82,6 @@ namespace VRCX
         // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
         public override void Init()
         {
-            _wristOverlayMMF = MemoryMappedFile.CreateFromFile(WRIST_OVERLAY_SHM_PATH, FileMode.Open, null, WRIST_FRAME_SIZE + 1);
-            _wristOverlayAccessor = _wristOverlayMMF.CreateViewAccessor();
-
-            _hmdOverlayMMF = MemoryMappedFile.CreateFromFile(HMD_OVERLAY_SHM_PATH, FileMode.Open, null, HMD_FRAME_SIZE + 1);
-            _hmdOverlayAccessor = _hmdOverlayMMF.CreateViewAccessor();
-
             _thread.Start();
         }
 
@@ -99,9 +93,15 @@ namespace VRCX
             thread?.Join();
 
             _wristOverlayAccessor?.Dispose();
+            _wristOverlayAccessor = null;
             _wristOverlayMMF?.Dispose();
+            _wristOverlayMMF = null;
+
             _hmdOverlayAccessor?.Dispose();
+            _hmdOverlayAccessor = null;
             _hmdOverlayMMF?.Dispose();
+            _hmdOverlayMMF = null;
+
             GLContextX11.Cleanup();
             GLContextWayland.Cleanup();
         }
@@ -332,9 +332,15 @@ namespace VRCX
             }
 
             _wristOverlayAccessor?.Dispose();
+            _wristOverlayAccessor = null;
             _wristOverlayMMF?.Dispose();
+            _wristOverlayMMF = null;
+
             _hmdOverlayAccessor?.Dispose();
+            _hmdOverlayAccessor = null;
             _hmdOverlayMMF?.Dispose();
+            _hmdOverlayMMF = null;
+
             GLContextX11.Cleanup();
             GLContextWayland.Cleanup();
         }
@@ -351,6 +357,11 @@ namespace VRCX
             {
                 OpenVR.Overlay.DestroyOverlay(_hmdOverlayHandle);
                 _hmdOverlayHandle = 0;
+
+                _hmdOverlayAccessor?.Dispose();
+                _hmdOverlayAccessor = null;
+                _hmdOverlayMMF?.Dispose();
+                _hmdOverlayMMF = null;
             }
 
             _hmdOverlayWasActive = _hmdOverlayActive;
@@ -359,9 +370,20 @@ namespace VRCX
             {
                 OpenVR.Overlay.DestroyOverlay(_wristOverlayHandle);
                 _wristOverlayHandle = 0;
+
+                _wristOverlayAccessor?.Dispose();
+                _wristOverlayAccessor = null;
+                _wristOverlayMMF?.Dispose();
+                _wristOverlayMMF = null;
             }
 
             _wristOverlayWasActive = _wristOverlayActive;
+
+            if (!_active)
+            {
+                GLContextX11.Cleanup();
+                GLContextWayland.Cleanup();
+            }
         }
 
         public override void Refresh()
@@ -673,6 +695,9 @@ namespace VRCX
                     {
                         return err;
                     }
+
+                    _wristOverlayMMF = MemoryMappedFile.CreateFromFile(WRIST_OVERLAY_SHM_PATH, FileMode.Open, null, WRIST_FRAME_SIZE + 1);
+                    _wristOverlayAccessor = _wristOverlayMMF.CreateViewAccessor();
                 }
             }
 
@@ -814,6 +839,9 @@ namespace VRCX
                     {
                         return err;
                     }
+
+                    _hmdOverlayMMF = MemoryMappedFile.CreateFromFile(HMD_OVERLAY_SHM_PATH, FileMode.Open, null, HMD_FRAME_SIZE + 1);
+                    _hmdOverlayAccessor = _hmdOverlayMMF.CreateViewAccessor();
                 }
             }
 
