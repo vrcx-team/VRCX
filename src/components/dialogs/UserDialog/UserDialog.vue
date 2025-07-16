@@ -901,7 +901,9 @@
                         <div class="x-friend-item" style="cursor: default">
                             <el-tooltip :placement="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
                                 <template #content>
-                                    <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
+                                    <span>{{
+                                        formatDateFilter(String(userOnlineForTimestamp(userDialog)), 'short')
+                                    }}</span>
                                 </template>
                                 <div class="detail">
                                     <span
@@ -1845,7 +1847,8 @@
         useLocationStore,
         useModerationStore,
         useUserStore,
-        useWorldStore
+        useWorldStore,
+        useUiStore
     } from '../../../stores';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
@@ -1895,6 +1898,7 @@
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { handlePlayerModerationAtSend, handlePlayerModeration, handlePlayerModerationDelete } = useModerationStore();
+    const { shiftHeld } = storeToRefs(useUiStore());
 
     watch(
         () => userDialog.value.loading,
@@ -2066,7 +2070,7 @@
             const data = await lookupAvatars('authorId', userId);
             const avatars = new Set();
             userDialogAvatars.value.forEach((avatar) => {
-                avatars.add(avatar.id, avatar);
+                avatars.add(avatar.id);
             });
             if (data && typeof data === 'object') {
                 data.forEach((avatar) => {
@@ -2598,7 +2602,7 @@
 
     async function sortCurrentUserGroups() {
         const D = userDialog.value;
-        let sortMethod = function () {};
+        let sortMethod = (a, b) => 0;
 
         switch (D.groupSorting.value) {
             case 'alphabetical':
@@ -2621,7 +2625,7 @@
     function setUserDialogAvatars(userId) {
         const avatars = new Set();
         userDialogAvatars.value.forEach((avatar) => {
-            avatars.add(avatar.id, avatar);
+            avatars.add(avatar.id);
         });
         for (const ref of cachedAvatars.value.values()) {
             if (ref.authorId === userId && !avatars.has(ref.id)) {
@@ -2696,7 +2700,8 @@
         const worldLists = [];
         let params = {
             ownerId: userId,
-            n: 100
+            n: 100,
+            offset: 0
         };
         const json = await request('favorite/groups', {
             method: 'GET',
@@ -2708,6 +2713,7 @@
                 continue;
             }
             params = {
+                ownerId: userId,
                 n: 100,
                 offset: 0,
                 userId,

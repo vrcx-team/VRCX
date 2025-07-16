@@ -230,7 +230,7 @@
 
     function addFavoriteFriendsToInvite() {
         const D = props.inviteDialog;
-        for (const friend of props.vipFriends) {
+        for (const friend of vipFriends.value) {
             if (!D.userIds.includes(friend.id)) {
                 D.userIds.push(friend.id);
             }

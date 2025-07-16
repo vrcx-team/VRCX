@@ -34,16 +34,16 @@
             <br />
             <div
                 v-for="image in galleryTable"
-                v-if="image.versions && image.versions.length > 0"
                 :key="image.id"
                 class="x-friend-item"
                 style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
-                <div
-                    v-if="image.versions[image.versions.length - 1].file.url"
-                    class="vrcplus-icon"
-                    @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)">
-                    <img v-lazy="image.versions[image.versions.length - 1].file.url" class="avatar" />
-                </div>
+                <template v-if="image.versions && image.versions.length > 0">
+                    <div
+                        v-if="image.versions[image.versions.length - 1].file.url"
+                        class="vrcplus-icon"
+                        @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)">
+                        <img v-lazy="image.versions[image.versions.length - 1].file.url" class="avatar" /></div
+                ></template>
             </div>
         </div>
     </safe-dialog>

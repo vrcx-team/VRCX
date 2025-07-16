@@ -18,7 +18,7 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/favorite').getFavorites}
+     * @type {import('../types/api/favorite').GetFavorites}
      */
     getFavorites(params) {
         return request('favorites', {
@@ -34,7 +34,7 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/favorite').addFavorite}
+     * @type {import('../types/api/favorite').AddFavorite}
      */
     addFavorite(params) {
         return request('favorites', {
@@ -130,7 +130,7 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/favorite').getFavoriteWorlds}
+     * @type {import('../types/api/favorite').GetFavoriteWorlds}
      */
     getFavoriteWorlds(params) {
         return request('worlds/favorites', {
@@ -146,7 +146,7 @@ const favoriteReq = {
     },
 
     /**
-     * @type {import('../types/favorite').getFavoriteAvatars}
+     * @type {import('../types/api/favorite').GetFavoriteAvatars}
      */
     getFavoriteAvatars(params) {
         return request('avatars/favorites', {

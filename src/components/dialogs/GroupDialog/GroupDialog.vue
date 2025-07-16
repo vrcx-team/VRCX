@@ -1253,7 +1253,13 @@
         auditLogTypes: []
     });
 
-    let loadMoreGroupMembersParams = {};
+    let loadMoreGroupMembersParams = ref({
+        n: 100,
+        offset: 0,
+        groupId: '',
+        sort: '',
+        roleId: ''
+    });
 
     watch(
         () => groupDialog.value.loading,
@@ -1632,16 +1638,17 @@
         const D = groupDialog.value;
         D.members = [];
         isGroupMembersDone.value = false;
-        loadMoreGroupMembersParams = {
+        loadMoreGroupMembersParams.value = {
             n: 100,
             offset: 0,
-            groupId: D.id
+            groupId: D.id,
+            ...loadMoreGroupMembersParams.value
         };
         if (D.memberSortOrder.value) {
-            loadMoreGroupMembersParams.sort = D.memberSortOrder.value;
+            loadMoreGroupMembersParams.value.sort = D.memberSortOrder.value;
         }
         if (D.memberFilter.id !== null) {
-            loadMoreGroupMembersParams.roleId = D.memberFilter.id;
+            loadMoreGroupMembersParams.value.roleId = D.memberFilter.id;
         }
         if (D.inGroup) {
             await groupRequest
@@ -1669,7 +1676,7 @@
             return;
         }
         const D = groupDialog.value;
-        const params = loadMoreGroupMembersParams;
+        const params = loadMoreGroupMembersParams.value;
         D.memberSearch = '';
         isGroupMembersLoading.value = true;
         await groupRequest
@@ -1802,7 +1809,7 @@
 
     async function setGroupMemberFilter(filter) {
         const D = groupDialog.value;
-        if (D.memberFilter.value === filter) {
+        if (D.memberFilter === filter) {
             return;
         }
         D.memberFilter = filter;

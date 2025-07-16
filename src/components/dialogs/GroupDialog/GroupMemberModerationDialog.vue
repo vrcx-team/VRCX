@@ -80,10 +80,10 @@
                                         v-text="t(item.name)"></el-dropdown-item>
                                     <el-dropdown-item
                                         v-for="item in groupDialog.ref.roles"
-                                        v-if="!item.defaultRole"
                                         :key="item.name"
                                         @click.native="setGroupMemberFilter(item)"
-                                        v-text="item.name"></el-dropdown-item>
+                                        ><span v-if="!item.defaultRole">{{ t(item.name) }}</span></el-dropdown-item
+                                    >
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </div>
@@ -101,7 +101,7 @@
                         }}</el-button>
                         <data-tables v-bind="groupMemberModerationTable" style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <el-button type="text" size="mini" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
@@ -115,7 +115,7 @@
                                 :label="t('dialog.group_member_moderation.avatar')"
                                 width="70"
                                 prop="photo">
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <el-popover placement="right" height="500px" trigger="hover">
                                         <img
                                             slot="reference"
@@ -134,7 +134,7 @@
                                 width="160"
                                 prop="$displayName"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
                                         <span
                                             v-if="randomUserColours"
@@ -145,7 +145,7 @@
                                 </template>
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <template v-for="(roleId, index) in scope.row.roleIds">
                                         <template v-for="(role, rIndex) in groupMemberModeration.groupRef.roles">
                                             <span v-if="role?.id === roleId" :key="roleId + rIndex"
@@ -160,7 +160,7 @@
                                 :label="t('dialog.group_member_moderation.notes')"
                                 prop="managerNotes"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span @click.stop v-text="scope.row.managerNotes"></span>
                                 </template>
                             </el-table-column>
@@ -169,7 +169,7 @@
                                 width="170"
                                 prop="joinedAt"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span>{{ formatDateFilter(scope.row.joinedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
@@ -178,7 +178,7 @@
                                 width="120"
                                 prop="visibility"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span v-text="scope.row.visibility"></span>
                                 </template>
                             </el-table-column>
@@ -213,7 +213,7 @@
                         }}</el-button>
                         <data-tables v-bind="groupBansModerationTable" style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <el-button type="text" size="mini" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
@@ -227,7 +227,7 @@
                                 :label="t('dialog.group_member_moderation.avatar')"
                                 width="70"
                                 prop="photo">
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <el-popover placement="right" height="500px" trigger="hover">
                                         <img
                                             slot="reference"
@@ -246,7 +246,7 @@
                                 width="160"
                                 prop="$displayName"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
                                         <span
                                             v-if="randomUserColours"
@@ -257,15 +257,17 @@
                                 </template>
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <template v-for="(roleId, index) in scope.row.roleIds">
                                         <span
                                             v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
                                             v-if="role.id === roleId"
-                                            :key="rIndex"
+                                            :key="rIndex + roleId"
                                             >{{ role.name }}</span
                                         >
-                                        <span v-if="index < scope.row.roleIds.length - 1">, </span>
+                                        <span v-if="index < scope.row.roleIds.length - 1" :key="index + roleId"
+                                            >,
+                                        </span>
                                     </template>
                                 </template>
                             </el-table-column>
@@ -273,7 +275,7 @@
                                 :label="t('dialog.group_member_moderation.notes')"
                                 prop="managerNotes"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span @click.stop v-text="scope.row.managerNotes"></span>
                                 </template>
                             </el-table-column>
@@ -282,7 +284,7 @@
                                 width="170"
                                 prop="joinedAt"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span>{{ formatDateFilter(scope.row.joinedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
@@ -291,7 +293,7 @@
                                 width="170"
                                 prop="bannedAt"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span>{{ formatDateFilter(scope.row.bannedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
@@ -326,7 +328,7 @@
                                 }}</el-button>
                                 <data-tables v-bind="groupInvitesModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <el-button type="text" size="mini" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
@@ -340,7 +342,7 @@
                                         :label="t('dialog.group_member_moderation.avatar')"
                                         width="70"
                                         prop="photo">
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <img
                                                     slot="reference"
@@ -359,7 +361,7 @@
                                         width="160"
                                         prop="$displayName"
                                         sortable>
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
                                                 <span
                                                     v-if="randomUserColours"
@@ -373,7 +375,7 @@
                                         :label="t('dialog.group_member_moderation.notes')"
                                         prop="managerNotes"
                                         sortable>
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
@@ -405,7 +407,7 @@
                                 }}</el-button>
                                 <data-tables v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <el-button type="text" size="mini" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
@@ -419,7 +421,7 @@
                                         :label="t('dialog.group_member_moderation.avatar')"
                                         width="70"
                                         prop="photo">
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <img
                                                     slot="reference"
@@ -438,7 +440,7 @@
                                         width="160"
                                         prop="$displayName"
                                         sortable>
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
                                                 <span
                                                     v-if="randomUserColours"
@@ -452,7 +454,7 @@
                                         :label="t('dialog.group_member_moderation.notes')"
                                         prop="managerNotes"
                                         sortable>
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
@@ -504,7 +506,7 @@
                                 }}</el-button>
                                 <data-tables v-bind="groupBlockedModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <el-button type="text" size="mini" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
@@ -518,7 +520,7 @@
                                         :label="t('dialog.group_member_moderation.avatar')"
                                         width="70"
                                         prop="photo">
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <img
                                                     slot="reference"
@@ -537,7 +539,7 @@
                                         width="160"
                                         prop="$displayName"
                                         sortable>
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <span style="cursor: pointer" @click="showUserDialog(scope.row.userId)">
                                                 <span
                                                     v-if="randomUserColours"
@@ -551,7 +553,7 @@
                                         :label="t('dialog.group_member_moderation.notes')"
                                         prop="managerNotes"
                                         sortable>
-                                        <template slot-scope="scope">
+                                        <template #default="scope">
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
@@ -627,7 +629,7 @@
                                 width="170"
                                 prop="created_at"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                                 </template>
                             </el-table-column>
@@ -636,7 +638,7 @@
                                 width="190"
                                 prop="eventType"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span v-text="scope.row.eventType"></span>
                                 </template>
                             </el-table-column>
@@ -645,7 +647,7 @@
                                 width="160"
                                 prop="actorDisplayName"
                                 sortable>
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span style="cursor: pointer" @click="showUserDialog(scope.row.actorId)">
                                         <span v-text="scope.row.actorDisplayName"></span>
                                     </span>
@@ -654,7 +656,7 @@
                             <el-table-column
                                 :label="t('dialog.group_member_moderation.description')"
                                 prop="description">
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <Location
                                         v-if="scope.row?.targetId.startsWith('wrld_')"
                                         :location="scope.row.targetId" />
@@ -662,7 +664,7 @@
                                 </template>
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.data')" prop="data">
-                                <template slot-scope="scope">
+                                <template #default="scope">
                                     <span
                                         v-if="Object.keys(scope.row.data).length"
                                         v-text="JSON.stringify(scope.row.data)"></span>

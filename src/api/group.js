@@ -56,7 +56,7 @@ const groupReq = {
         });
     },
     /**
-     * @type {import('../types/group').getGroup}
+     * @type {import('../types/api/group').GetGroup}
      */
     getGroup(params) {
         return request(`groups/${params.groupId}`, {
@@ -302,7 +302,7 @@ const groupReq = {
      * groupId: string,
      * userId: string
      * }} params
-     * @return { Promise<{json: any, params}> }
+     * @return { Promise<{json: any, params, ref?: any}> }
      */
     getGroupMember(params) {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
@@ -557,7 +557,7 @@ const groupReq = {
         });
     },
     /**
-     * @param {{ groupId: string, eventTypes: array }} params
+     * @param {{ groupId: string, n: number, offset: number, eventTypes?: array }} params
      * @return { Promise<{json: any, params}> }
      */
     getGroupLogs(params) {

@@ -27,7 +27,7 @@ function displayLocation(location, worldName, groupName) {
 /**
  *
  * @param {string} tag
- * @returns {object}
+ * @returns
  */
 function parseLocation(tag) {
     let _tag = String(tag || '');

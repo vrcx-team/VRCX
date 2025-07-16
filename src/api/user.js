@@ -77,8 +77,8 @@ const userReq = {
     },
 
     /**
-     * @param {string[]} params User tags to add
-     * @returns {Promise<{json: any, params: string[]}>}
+     * @param {{tags: string[]}} params User tags to add
+     * @returns {Promise<{json: any, params: {tags: string[]}}>}
      */
     addUserTags(params) {
         const userStore = useUserStore();
@@ -96,8 +96,8 @@ const userReq = {
     },
 
     /**
-     * @param {string[]} params User tags to remove
-     * @returns {Promise<{json: any, params: string[]}>}
+     * @param {{tags: string[]}} params User tags to remove
+     * @returns {Promise<{json: any, params: {tags: string[]}}>}
      */
     removeUserTags(params) {
         const userStore = useUserStore();

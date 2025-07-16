@@ -403,21 +403,21 @@
                                             icon="el-icon-back"
                                             circle
                                             class="x-link"
-                                            style="margin-left: 0px"
+                                            style="margin-left: 0"
                                             @click.stop="reorderAvatarGalleryImage(imageUrl, -1)"></el-button>
                                         <el-button
                                             size="mini"
                                             icon="el-icon-right"
                                             circle
                                             class="x-link"
-                                            style="margin-left: 0px"
+                                            style="margin-left: 0"
                                             @click.stop="reorderAvatarGalleryImage(imageUrl, 1)"></el-button>
                                         <el-button
                                             size="mini"
                                             icon="el-icon-delete"
                                             circle
                                             class="x-link"
-                                            style="margin-left: 0px"
+                                            style="margin-left: 0"
                                             @click.stop="deleteAvatarGalleryImage(imageUrl)"></el-button>
                                     </div>
                                 </el-carousel-item>

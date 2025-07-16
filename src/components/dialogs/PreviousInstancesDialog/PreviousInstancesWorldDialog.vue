@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        ref="previousInstancesWorldDialog"
+        ref="previousInstancesWorldDialogRef"
         :visible.sync="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
@@ -14,12 +14,12 @@
         </div>
         <data-tables v-loading="loading" v-bind="previousInstancesWorldDialogTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.previous_instances.instance_name')" prop="name">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <LocationWorld
                         :locationobject="scope.row.$location"
                         :grouphint="scope.row.groupName"
@@ -27,7 +27,7 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.previous_instances.instance_creator')" prop="location">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <DisplayName
                         :userid="scope.row.$location.userId"
                         :location="scope.row.$location.tag"
@@ -35,12 +35,12 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.previous_instances.time')" prop="time" width="100" sortable>
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span v-text="scope.row.timer"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <el-button
                         type="text"
                         icon="el-icon-s-data"
@@ -111,6 +111,7 @@
         }
     });
     const loading = ref(false);
+    const previousInstancesWorldDialogRef = ref(null);
 
     const isVisible = computed({
         get: () => props.previousInstancesWorldDialog.visible,
@@ -161,7 +162,7 @@
         () => {
             if (props.previousInstancesWorldDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(proxy.$refs.previousInstancesWorldDialog.$el);
+                    adjustDialogZ(previousInstancesWorldDialogRef.value.$el);
                 });
                 refreshPreviousInstancesWorldTable();
             }

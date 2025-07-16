@@ -18,9 +18,16 @@ export type GetFavoriteAvatars = (params: {
 export type GetFavoriteWorlds = (params: {
     n: number;
     offset: number;
+    userId?: string;
+    tag?: string;
 }) => Promise<{
     json: GetFavoriteWorldsResponseList;
-    params: { n: number; offset: number };
+    params: {
+        n: number;
+        offset: number;
+        userId?: string;
+        tag?: string;
+    };
 }>;
 
 export type AddFavorite = (params: {

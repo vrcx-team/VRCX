@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        ref="previousInstancesUserDialog"
+        ref="previousInstancesUserDialogRef"
         :visible.sync="isVisible"
         :title="$t('dialog.previous_instances.header')"
         width="1000px"
@@ -14,12 +14,12 @@
         </div>
         <data-tables v-loading="loading" v-bind="previousInstancesUserDialogTable" style="margin-top: 10px">
             <el-table-column :label="$t('table.previous_instances.date')" prop="created_at" sortable width="170">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.previous_instances.world')" prop="name" sortable>
-                <template slot-scope="scope">
+                <template #default="scope">
                     <Location
                         :location="scope.row.location"
                         :hint="scope.row.worldName"
@@ -27,17 +27,17 @@
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.previous_instances.instance_creator')" prop="location" width="170">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <DisplayName :userid="scope.row.$location.userId" :location="scope.row.$location.tag" />
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.previous_instances.time')" prop="time" width="100" sortable>
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span v-text="scope.row.timer"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('table.previous_instances.action')" width="90" align="right">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <el-button
                         type="text"
                         icon="el-icon-switch-button"
@@ -123,6 +123,8 @@
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
 
+    const previousInstancesUserDialogRef = ref(null);
+
     const isVisible = computed({
         get: () => props.previousInstancesUserDialog.visible,
         set: (value) => {
@@ -152,7 +154,7 @@
         () => {
             if (props.previousInstancesUserDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(proxy.$refs.previousInstancesUserDialog.$el);
+                    adjustDialogZ(previousInstancesUserDialogRef.value.$el);
                 });
                 refreshPreviousInstancesUserTable();
             }

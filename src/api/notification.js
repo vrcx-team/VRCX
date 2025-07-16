@@ -84,11 +84,15 @@ const notificationReq = {
 
     /**
      * @param {{
-     * receiverUserId: string,
-     * type: string,
-     * message: string,
-     * seen: boolean,
-     * details: JsonString<any>
+     * receiverUserId?: string,
+     * type?: string,
+     * message?: string,
+     * seen?: boolean,
+     * details?: JsonString<any>,
+     * instanceId?: string,
+     * worldId?: string,
+     * worldName?: string,
+     * messageSlot?: string,
      *  }} params
      * @param receiverUserId
      * @return { Promise<{json: any, params}> }
