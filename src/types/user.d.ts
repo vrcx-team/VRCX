@@ -128,7 +128,7 @@ interface getCurrentUserResponse extends getUserResponse {
     oculusId: string;
     offlineFriends: string[];
     onlineFriends: string[];
-    pastDisplayNames: { displayName: string; dateChanged: string }[];
+    pastDisplayNames: { displayName: string; updated_at: string }[];
     picoId: string;
     presence?: {
         avatarThumbnail: string;

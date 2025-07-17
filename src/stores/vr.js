@@ -160,9 +160,9 @@ export const useVrStore = defineStore('Vr', () => {
             };
         }
 
-        if (state.overlayActive !== newState.active) { 
-            this.vrInit() 
-            state.overlayActive = newState.active
+        if (state.overlayActive !== newState.active) {
+            vrInit();
+            state.overlayActive = newState.active;
         }
 
         AppApi.SetVR(
