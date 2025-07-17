@@ -14,13 +14,28 @@ const fs = require('fs');
 const https = require('https');
 
 //app.disableHardwareAcceleration();
-// Include bundled .NET runtime
-const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
-const bundledDotnet = path.join(bundledDotNetPath, 'bin', 'dotnet');
 
-if (fs.existsSync(bundledDotnet)) {
-    process.env.DOTNET_ROOT = bundledDotNetPath;
-    process.env.PATH = `${path.dirname(bundledDotnet)}:${process.env.PATH}`;
+if (process.platform === 'linux') {
+    // Include bundled .NET runtime
+    const bundledDotNetPath = path.join(
+        process.resourcesPath,
+        'dotnet-runtime',
+        'bin'
+    );
+    if (fs.existsSync(bundledDotNetPath)) {
+        process.env.DOTNET_ROOT = bundledDotNetPath;
+        process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
+    }
+} else if (process.platform === 'darwin') {
+    const dotnetPath = path.join('/usr/local/share/dotnet');
+    const dotnetPathArm = path.join('/usr/local/share/dotnet/x64');
+    if (fs.existsSync(dotnetPathArm)) {
+        process.env.DOTNET_ROOT = dotnetPathArm;
+        process.env.PATH = `${dotnetPathArm}:${process.env.PATH}`;
+    } else if (fs.existsSync(dotnetPath)) {
+        process.env.DOTNET_ROOT = dotnetPath;
+        process.env.PATH = `${dotnetPath}:${process.env.PATH}`;
+    }
 }
 
 if (!isDotNetInstalled()) {
@@ -704,19 +719,15 @@ function getVersion() {
 }
 
 function isDotNetInstalled() {
-    if (process.platform === 'darwin') {
-        // Assume .NET is already installed on macOS
-        return true;
+    let dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
+    if (!process.env.DOTNET_ROOT || !fs.existsSync(dotnetPath)) {
+        // fallback to command
+        dotnetPath = 'dotnet';
     }
-
-    // Check for bundled .NET runtime
-    if (fs.existsSync(bundledDotnet)) {
-        console.log('Using bundled .NET runtime at:', bundledDotNetPath);
-        return true;
-    }
+    console.log('Checking for .NET installation at:', dotnetPath);
 
     // Fallback to system .NET runtime
-    const result = spawnSync('dotnet', ['--list-runtimes'], {
+    const result = spawnSync(dotnetPath, ['--list-runtimes'], {
         encoding: 'utf-8'
     });
     return result.stdout?.includes('.NETCore.App 9.0');
