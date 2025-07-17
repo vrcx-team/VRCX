@@ -19,8 +19,7 @@ if (process.platform === 'linux') {
     // Include bundled .NET runtime
     const bundledDotNetPath = path.join(
         process.resourcesPath,
-        'dotnet-runtime',
-        'bin'
+        'dotnet-runtime'
     );
     if (fs.existsSync(bundledDotNetPath)) {
         process.env.DOTNET_ROOT = bundledDotNetPath;
