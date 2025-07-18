@@ -7,7 +7,8 @@ const {
     Tray,
     Menu,
     dialog,
-    Notification
+    Notification,
+    nativeImage
 } = require('electron');
 const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
@@ -457,7 +458,15 @@ function destroyHmdOverlayWindow() {
 }
 
 function createTray() {
-    const tray = new Tray(path.join(rootDir, 'images/tray.png'));
+    let tray = null;
+    if (process.platform === 'darwin') {
+        const image = nativeImage.createFromPath(
+            path.join(rootDir, 'images/tray.png')
+        );
+        tray = new Tray(image.resize({ width: 16, height: 16 }));
+    } else {
+        tray = new Tray(path.join(rootDir, 'images/tray.png'));
+    }
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Open',
@@ -793,12 +802,12 @@ function applyWindowState() {
 
 app.whenReady().then(() => {
     createWindow();
-
-    createWristOverlayWindowOffscreen();
-
-    createHmdOverlayWindowOffscreen();
-
     createTray();
+
+    if (process.platform === 'linux') {
+        createWristOverlayWindowOffscreen();
+        createHmdOverlayWindowOffscreen();
+    }
 
     installVRCX();
 

@@ -94,6 +94,7 @@ namespace VRCX
             catch (UriFormatException)
             {
                 VRCXStorage.Instance.Set("VRCX_ProxyServer", string.Empty);
+                VRCXStorage.Instance.Flush();
                 const string message = "The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.";
 #if !LINUX
                 System.Windows.Forms.MessageBox.Show(message, "Invalid Proxy URI", MessageBoxButtons.OK, MessageBoxIcon.Error);
