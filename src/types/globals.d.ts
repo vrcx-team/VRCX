@@ -52,6 +52,8 @@ declare global {
                 Function: (event: any, state: { windowState: any }) => void
             ) => void;
             restartApp: () => Promise<void>;
+            getWristOverlayWindow: () => Promise<boolean>;
+            getHmdOverlayWindow: () => Promise<boolean>;
             updateVr: (
                 active: bool,
                 hmdOverlay: bool,

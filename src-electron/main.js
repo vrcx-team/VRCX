@@ -181,6 +181,22 @@ ipcMain.handle('app:restart', () => {
     }
 });
 
+ipcMain.handle('app:getWristOverlayWindow', () => {
+    if (wristOverlayWindow && wristOverlayWindow.webContents) {
+        return !wristOverlayWindow.webContents.isLoading() && 
+        wristOverlayWindow.webContents.isPainting();
+    }
+    return false;
+});
+
+ipcMain.handle('app:getHmdOverlayWindow', () => {
+    if (hmdOverlayWindow && hmdOverlayWindow.webContents) {
+        return !hmdOverlayWindow.webContents.isLoading() && 
+        hmdOverlayWindow.webContents.isPainting();
+    }
+    return false;
+});
+
 ipcMain.handle(
     'app:updateVr',
     (event, active, hmdOverlay, wristOverlay, menuButton, overlayHand) => {

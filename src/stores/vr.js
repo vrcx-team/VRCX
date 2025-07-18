@@ -161,8 +161,12 @@ export const useVrStore = defineStore('Vr', () => {
         }
 
         if (state.overlayActive !== newState.active) {
-            vrInit();
-            state.overlayActive = newState.active;
+            if (window.electron.getWristOverlayWindow() ||
+                window.electron.getHmdOverlayWindow()
+            ) {
+                vrInit();
+                state.overlayActive = newState.active;
+            }
         }
 
         AppApi.SetVR(
