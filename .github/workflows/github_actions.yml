@@ -127,6 +127,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: lts/*
+            - name: Restore dependencies
+              run: npm ci
             - name: Build Electron-html
               run: npm run prod-linux
             - name: Download Electron dotnet artifacts
