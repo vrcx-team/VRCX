@@ -31,10 +31,16 @@ managedHostPath = managedHostPath.indexOf('app.asar.unpacked') < 0 ?
 }
 
 // Paths to patch
-let platformName = 'linux';
+let platformName = '';
 switch (process.platform) {
     case 'win32':
         platformName = 'win';
+        break;
+    case 'darwin':
+        platformName = 'mac';
+        break;
+    case 'linux':
+        platformName = 'linux';
         break;
 }
 const postBuildPath = path.join(

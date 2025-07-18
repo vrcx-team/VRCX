@@ -89,7 +89,7 @@
                     <simple-switch
                         :label="t('view.settings.general.application.tray')"
                         :value="isCloseToTray"
-                        @change="setIsCloseToTray" />>
+                        @change="setIsCloseToTray" />
                     <simple-switch
                         v-if="!isLinux"
                         :label="t('view.settings.general.application.disable_gpu_acceleration')"

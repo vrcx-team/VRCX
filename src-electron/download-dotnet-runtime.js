@@ -58,6 +58,11 @@ async function extractTarGz(tarGzPath, extractDir) {
 }
 
 async function main() {
+    if (process.platform !== 'linux') {
+        console.log('Skipping .NET runtime download on non-Linux platform');
+        return;
+    }
+
     console.log(`Downloading .NET ${DOTNET_VERSION} runtime...`);
 
     if (!fs.existsSync(DOTNET_RUNTIME_DIR)) {
