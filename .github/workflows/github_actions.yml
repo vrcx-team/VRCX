@@ -142,7 +142,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: Electron-MacApp
-                  path: 'build/VRCX-${{ needs.set_version.outputs.version }}.dmg'
+                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}.dmg'
 
     create_setup:
         runs-on: ubuntu-latest
