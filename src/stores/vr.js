@@ -160,15 +160,6 @@ export const useVrStore = defineStore('Vr', () => {
             };
         }
 
-        if (state.overlayActive !== newState.active) {
-            if (window.electron.getWristOverlayWindow() ||
-                window.electron.getHmdOverlayWindow()
-            ) {
-                vrInit();
-                state.overlayActive = newState.active;
-            }
-        }
-
         AppApi.SetVR(
             newState.active,
             newState.hmdOverlay,
@@ -185,6 +176,17 @@ export const useVrStore = defineStore('Vr', () => {
                 newState.menuButton,
                 newState.overlayHand
             );
+
+            if (state.overlayActive !== newState.active) {
+                if (
+                    window.electron.getWristOverlayWindow() ||
+                    window.electron.getHmdOverlayWindow()
+                ) {
+                    vrInit();
+                    state.overlayActive = newState.active;
+                }
+                setTimeout(() => vrInit(), 1000); // give the overlay time to load
+            }
         }
     }
 
