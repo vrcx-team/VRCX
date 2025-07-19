@@ -1420,6 +1420,63 @@ export const useFriendStore = defineStore('Friend', () => {
         state.friendLogTable.data = await database.getFriendLogHistory();
     }
 
+    /**
+     * @returns void
+     * @param {number} friendNumber
+     * @param {string} userId
+     */
+    function setFriendNumber(friendNumber, userId) {
+        const ref = state.friendLog.get(userId);
+        if (!ref) {
+            return;
+        }
+        ref.friendNumber = friendNumber;
+        state.friendLog.set(ref.userId, ref);
+        database.setFriendLogCurrent(ref);
+        const friendRef = state.friends.get(userId);
+        if (friendRef?.ref) {
+            friendRef.ref.$friendNumber = friendNumber;
+        }
+    }
+
+    async function tryApplyFriendOrder() {
+        const lastUpdate = await configRepository.getString(
+            `VRCX_lastStoreTime_${userStore.currentUser.id}`
+        );
+        if (lastUpdate === '-5') {
+            // this means we're done
+            return;
+        }
+
+        // reset friendNumber and friendLog
+        state.friendNumber = 0;
+        for (const ref of state.friendLog.values()) {
+            ref.friendNumber = 0;
+        }
+
+        const friendOrder = userStore.currentUser.friends;
+        for (let i = 0; i < friendOrder.length; i++) {
+            const userId = friendOrder[i];
+            state.friendNumber++;
+            setFriendNumber(state.friendNumber, userId);
+        }
+        if (state.friendNumber === 0) {
+            state.friendNumber = state.friends.size;
+        }
+        console.log('Applied friend order from API', state.friendNumber);
+        await configRepository.setInt(
+            `VRCX_friendNumber_${userStore.currentUser.id}`,
+            state.friendNumber
+        );
+        await configRepository.setString(
+            `VRCX_lastStoreTime_${userStore.currentUser.id}`,
+            '-5'
+        );
+    }
+
+    /**
+     * @deprecated We might need this again one day
+     */
     async function tryRestoreFriendNumber() {
         const lastUpdate = await configRepository.getString(
             `VRCX_lastStoreTime_${userStore.currentUser.id}`
@@ -1716,6 +1773,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         }
 
+        tryApplyFriendOrder(); // once again
         getAllUserStats(); // joinCount, lastSeen, timeSpent
         state.sortVIPFriends = true;
         state.sortOnlineFriends = true;
