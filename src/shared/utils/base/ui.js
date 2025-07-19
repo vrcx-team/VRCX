@@ -162,7 +162,9 @@ async function refreshCustomCss() {
         $appCustomStyle.setAttribute('id', 'app-custom-style');
         $appCustomStyle.rel = 'stylesheet';
         $appCustomStyle.type = 'text/css';
-        $appCustomStyle.textContent = customCss;
+        $appCustomStyle.href = URL.createObjectURL(
+            new Blob([customCss], { type: 'text/css' })
+        );
         head.appendChild($appCustomStyle);
     }
 }
