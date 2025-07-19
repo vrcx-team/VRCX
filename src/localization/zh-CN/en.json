@@ -298,6 +298,7 @@
                 "notifications": "通知",
                 "wrist_overlay": "手腕叠加界面",
                 "discord_presence": "Discord 状态面板",
+                "pictures": "图片",
                 "advanced": "高级"
             },
             "general": {
@@ -452,6 +453,7 @@
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit 手腕通知",
                         "user_images": "显示玩家头像（较慢）",
+                        "notification_opacity": "通知透明度",
                         "notification_timeout": "通知时长"
                     },
                     "conditions": {
@@ -516,6 +518,16 @@
                     "show_images": "显示世界缩略图"
                 }
             },
+            "pictures": {
+                "pictures": {
+                    "header": "图片",
+                    "open_folder": "打开文件夹",
+                    "vrc_photos": "VRChat 照片",
+                    "steam_screenshots": "Steam 截图",
+                    "auto_delete_old_prints": "自动删除旧打印的照片",
+                    "auto_delete_prints_from_vrc": "当达到打印上限时，从VRC中删除旧打印的照片。"
+                }
+            },
             "advanced": {
                 "advanced": {
                     "header": "高级设置",
@@ -551,6 +563,10 @@
                     "save_instance_stickers_to_file": {
                         "header": "“表情贴纸”保存选项",
                         "description": "将房间内的“表情贴纸”保存到 VRChat 的照片文件夹中"
+                    },
+                    "save_instance_emoji_to_file": {
+                        "header": "保存“表情贴纸”到文件",
+                        "description": "保存生成的“表情贴纸”到 VRChat 的照片文件夹中"
                     },
                     "remote_database": {
                         "header": "模型数据库",
@@ -691,7 +707,9 @@
             "pronouns": "人称代词",
             "tags": {
                 "friend_no": "第 {number} 位好友",
-                "vrchat_team": "VRChat Team"
+                "vrchat_team": "VRChat Team",
+                "18_plus_verified": "已通过 18+ 验证",
+                "age_verified": "已完成年龄验证"
             },
             "badges": {
                 "assigned": "获得于",
@@ -977,7 +995,9 @@
                 "platform": "支持的平台",
                 "time_spent": "模型使用时长",
                 "memo": "本地备注",
-                "memo_placeholder": "点击添加备注"
+                "memo_placeholder": "点击添加备注",
+                "listings": "列表",
+                "gallery": "相册"
             },
             "json": {
                 "header": "原始 JSON 信息",
@@ -1013,6 +1033,9 @@
                 "unsubscribe": "忽略群组通知",
                 "subscribe": "接收群组通知",
                 "invite_to_group": "邀请好友加入群组",
+                "manage_selected": "管理选中的群组",
+                "select_all": "全选",
+                "deselect_all": "取消全选",
                 "visibility_everyone": "可见性：所有人",
                 "visibility_friends": "可见性：好友",
                 "visibility_hidden": "可见性：隐藏",
@@ -1148,6 +1171,7 @@
             "content_pedestals": "分享浮标",
             "content_prints": "拍立得",
             "content_drones": "无人机",
+            "content_items": "Items",
             "world_id": "世界 ID",
             "instance_id": "房间 ID",
             "instance_id_placeholder": "通常是随机数",
@@ -1435,6 +1459,7 @@
             "emojis": "Emojis（表情）",
             "stickers": "贴纸",
             "prints": "拍立得",
+            "inventory": "Inventory",
             "refresh": "刷新",
             "upload": "上传",
             "clear": "清除",
@@ -1445,7 +1470,8 @@
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "选择一个 1024x1024 的 PNG 精灵表作为动画表情（最大 FPS 为64）",
             "note": "备注",
-            "crop_print_border": "裁剪白边"
+            "crop_print_border": "裁剪白边",
+            "consume_bundle": "Consume"
         },
         "change_content_image": {
             "avatar": "更改模型封面",
@@ -1630,6 +1656,15 @@
         "gallery": {
             "uploaded": "图片已成功上传到相册",
             "failed": "无法将图片上传到相册"
+         },
+        "avatar_gallery": {
+            "uploaded": "模型图片已成功上传到相册",
+            "failed": "无法将模型图片上传到相册",
+            "deleted": "模型图片已在相册中删除",
+            "not_found": "未找到模型相册图片 ID",
+            "already_first": "已是第一张图片",
+            "already_last": "已是最后一张图片",
+            "reordered": "模型图片相册排序成功"
         },
         "world": {
             "image_changed": "已更改世界封面",
@@ -1899,6 +1934,7 @@
             "rank": "信誉等级",
             "language": "语言",
             "bioLink": "社交链接",
+            "note": "备注",
             "date": "时间",
             "user": "玩家",
             "type": "种类",
