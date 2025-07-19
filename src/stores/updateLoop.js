@@ -133,16 +133,16 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     (vrcxStore.isRunningUnderWine || LINUX) &&
                     --state.nextGameRunningCheck <= 0
                 ) {
-                    if (LINUX) {
+                    if (WINDOWS) {
+                        state.nextGameRunningCheck = 3;
+                        AppApi.CheckGameRunning();
+                    } else {
                         state.nextGameRunningCheck = 1;
                         gameStore.updateIsGameRunning(
                             await AppApi.IsGameRunning(),
                             await AppApi.IsSteamVRRunning(),
                             false
                         );
-                    } else {
-                        state.nextGameRunningCheck = 3;
-                        AppApi.CheckGameRunning();
                     }
                 }
                 if (--state.nextDatabaseOptimize <= 0) {

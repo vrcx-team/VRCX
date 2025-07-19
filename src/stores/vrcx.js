@@ -652,11 +652,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function backupVrcRegistry(name) {
         let regJson;
-        if (LINUX) {
+        if (WINDOWS) {
+            regJson = await AppApi.GetVRChatRegistry();
+        } else {
             regJson = await AppApi.GetVRChatRegistryJson();
             regJson = JSON.parse(regJson);
-        } else {
-            regJson = await AppApi.GetVRChatRegistry();
         }
         const newBackup = {
             name,

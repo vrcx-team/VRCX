@@ -96,22 +96,22 @@ namespace VRCX
             });
         }
 
-        public string CustomCssPath()
+        public string CustomCss()
         {
-            var output = string.Empty;
             var filePath = Path.Join(Program.AppDataDirectory, "custom.css");
             if (File.Exists(filePath))
-                output = filePath;
-            return output;
+                return File.ReadAllText(filePath);
+            
+            return string.Empty;
         }
 
-        public string CustomScriptPath()
+        public string CustomScript()
         {
-            var output = string.Empty;
             var filePath = Path.Join(Program.AppDataDirectory, "custom.js");
             if (File.Exists(filePath))
-                output = filePath;
-            return output;
+                return File.ReadAllText(filePath);
+            
+            return string.Empty;
         }
 
         public string CurrentCulture()

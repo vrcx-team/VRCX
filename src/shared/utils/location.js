@@ -60,7 +60,7 @@ function parseLocation(tag) {
         ctx.isPrivate = true;
     } else if (_tag === 'traveling' || _tag === 'traveling:traveling') {
         ctx.isTraveling = true;
-    } else if (!_tag.startsWith('local')) {
+    } else if (tag && !_tag.startsWith('local')) {
         ctx.isRealInstance = true;
         const sep = _tag.indexOf(':');
         // technically not part of instance id, but might be there when coping id from url so why not support it

@@ -851,12 +851,7 @@ export const useUserStore = defineStore('User', () => {
                         }
                         applyUserDialogLocation(true);
 
-                        if (
-                            args.cache &&
-                            args.ref.$lastFetch < Date.now() - 10000 // 10 seconds
-                        ) {
-                            userRequest.getUser(args.params);
-                        }
+                        userRequest.getUser(args.params);
                         let inCurrentWorld = false;
                         if (
                             locationStore.lastLocation.playerList.has(D.ref.id)

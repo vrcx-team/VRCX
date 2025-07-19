@@ -27,7 +27,9 @@ export const useVrStore = defineStore('Vr', () => {
     const userStore = useUserStore();
     const sharedFeedStore = useSharedFeedStore();
 
-    const state = reactive({});
+    const state = reactive({
+        overlayActive: false
+    });
 
     watch(
         () => watchState.isFriendsLoaded,
@@ -48,6 +50,8 @@ export const useVrStore = defineStore('Vr', () => {
         sharedFeedStore.updateSharedFeed(true);
         friendStore.onlineFriendCount = 0; // force an update
         friendStore.updateOnlineFriendCoutner();
+
+        state.overlayActive = true;
     }
 
     async function saveOpenVROption() {
@@ -74,7 +78,7 @@ export const useVrStore = defineStore('Vr', () => {
                 }
             }
         }
-        let onlineFor = '';
+        let onlineFor = null;
         if (!wristOverlaySettingsStore.hideUptimeFromFeed) {
             onlineFor = userStore.currentUser.$online_for;
         }
@@ -125,6 +129,13 @@ export const useVrStore = defineStore('Vr', () => {
     }
 
     function updateOpenVR() {
+        let newState = {
+            active: false,
+            hmdOverlay: false,
+            wristOverlay: false,
+            menuButton: false,
+            overlayHand: 0
+        };
         if (
             notificationsSettingsStore.openVR &&
             gameStore.isSteamVRRunning &&
@@ -140,16 +151,42 @@ export const useVrStore = defineStore('Vr', () => {
             ) {
                 hmdOverlay = true;
             }
-            // active, hmdOverlay, wristOverlay, menuButton, overlayHand
-            AppApi.SetVR(
-                true,
+            newState = {
+                active: true,
                 hmdOverlay,
-                wristOverlaySettingsStore.overlayWrist,
-                wristOverlaySettingsStore.overlaybutton,
-                wristOverlaySettingsStore.overlayHand
+                wristOverlay: wristOverlaySettingsStore.overlayWrist,
+                menuButton: wristOverlaySettingsStore.overlaybutton,
+                overlayHand: wristOverlaySettingsStore.overlayHand
+            };
+        }
+
+        AppApi.SetVR(
+            newState.active,
+            newState.hmdOverlay,
+            newState.wristOverlay,
+            newState.menuButton,
+            newState.overlayHand
+        );
+
+        if (LINUX) {
+            window.electron.updateVr(
+                newState.active,
+                newState.hmdOverlay,
+                newState.wristOverlay,
+                newState.menuButton,
+                newState.overlayHand
             );
-        } else {
-            AppApi.SetVR(false, false, false, false, 0);
+
+            if (state.overlayActive !== newState.active) {
+                if (
+                    window.electron.getWristOverlayWindow() ||
+                    window.electron.getHmdOverlayWindow()
+                ) {
+                    vrInit();
+                    state.overlayActive = newState.active;
+                }
+                setTimeout(() => vrInit(), 1000); // give the overlay time to load
+            }
         }
     }
 

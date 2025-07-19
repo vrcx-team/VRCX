@@ -1,43 +1,56 @@
-using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using CefSharp;
 
 namespace VRCX
 {
-    public class AppApiVr
+    public class AppApiVrElectron : AppApiVr
     {
-        public static readonly AppApiVr Instance;
-
-        static AppApiVr()
+        static AppApiVrElectron()
         {
-            Instance = new AppApiVr();
+            Instance = new AppApiVrElectron();
         }
 
-        public void Init()
+        public override void Init()
         {
-            // Create Instance before Cef tries to bind it
         }
 
-        public void VrInit()
+        public override void VrInit()
         {
-            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.vr.vrInit", "");
         }
 
-        public void ToggleSystemMonitor(bool enabled)
+        public override List<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
         {
-            SystemMonitor.Instance.Start(enabled);
+            var list = new List<KeyValuePair<string, string>>();
+            while (Program.VRCXVRInstance.GetExecuteVrFeedFunctionQueue().TryDequeue(out var item))
+            {
+                list.Add(item);
+            }
+            return list;
+        }
+
+        public override List<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
+        {
+            var list = new List<KeyValuePair<string, string>>();
+            while (Program.VRCXVRInstance.GetExecuteVrOverlayFunctionQueue().TryDequeue(out var item))
+            {
+                list.Add(item);
+            }
+            return list;
+        }
+
+        public override void ToggleSystemMonitor(bool enabled)
+        {
+            SystemMonitorElectron.Instance.Start(enabled);
         }
 
         /// <summary>
         /// Returns the current CPU usage as a percentage.
         /// </summary>
         /// <returns>The current CPU usage as a percentage.</returns>
-        public float CpuUsage()
+        public override float CpuUsage()
         {
-            return SystemMonitor.Instance.CpuUsage;
+            return SystemMonitorElectron.Instance.CpuUsage;
         }
 
         /// <summary>
@@ -45,7 +58,7 @@ namespace VRCX
         /// Each sub-array contains the type of device and its current state
         /// </summary>
         /// <returns>An array of arrays containing information about the connected VR devices.</returns>
-        public string[][] GetVRDevices()
+        public override string[][] GetVRDevices()
         {
             return Program.VRCXVRInstance.GetDevices();
         }
@@ -54,16 +67,16 @@ namespace VRCX
         /// Returns the number of milliseconds that the system has been running.
         /// </summary>
         /// <returns>The number of milliseconds that the system has been running.</returns>
-        public double GetUptime()
+        public override double GetUptime()
         {
-            return SystemMonitor.Instance.UpTime;
+            return SystemMonitorElectron.Instance.UpTime;
         }
 
         /// <summary>
         /// Returns the current language of the operating system.
         /// </summary>
         /// <returns>The current language of the operating system.</returns>
-        public string CurrentCulture()
+        public override string CurrentCulture()
         {
             return CultureInfo.CurrentCulture.ToString();
         }
@@ -72,18 +85,18 @@ namespace VRCX
         /// Returns the file path of the custom user js file, if it exists.
         /// </summary>
         /// <returns>The file path of the custom user js file, or an empty string if it doesn't exist.</returns>
-        public string CustomVrScriptPath()
+        public override string CustomVrScript()
         {
-            var output = string.Empty;
             var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
             if (File.Exists(filePath))
-                output = filePath;
-            return output;
+                return File.ReadAllText(filePath);
+
+            return string.Empty;
         }
 
-        public bool IsRunningUnderWine()
+        public override bool IsRunningUnderWine()
         {
-            return Wine.GetIfWine();
+            return false;
         }
     }
 }

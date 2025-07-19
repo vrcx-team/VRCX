@@ -23,13 +23,19 @@ import { removeFromArray } from './shared/utils/base/array';
 import { timeToText } from './shared/utils/base/format';
 
 import pugTemplate from './vr.pug';
+import InteropApi from './ipc-electron/interopApi.js';
 
 Vue.component('marquee-text', MarqueeText);
 
 (async function () {
     let $app = {};
 
-    await CefSharp.BindObjectAsync('AppApiVr');
+    if (WINDOWS) {
+        await CefSharp.BindObjectAsync('AppApiVr');
+    } else {
+        // @ts-ignore
+        window.AppApiVr = InteropApi.AppApiVrElectron;
+    }
 
     Noty.overrideDefaults({
         animation: {
@@ -82,7 +88,7 @@ Vue.component('marquee-text', MarqueeText);
         methods: {
             parse() {
                 this.text = this.location;
-                var L = parseLocation(this.location);
+                const L = parseLocation(this.location);
                 if (L.isOffline) {
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
@@ -176,9 +182,12 @@ Vue.component('marquee-text', MarqueeText);
         watch: {},
         el: '#root',
         async mounted() {
-            this.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
-            await this.applyWineEmojis();
-            workerTimers.setTimeout(() => AppApiVr.VrInit(), 5000);
+            if (WINDOWS) {
+                this.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
+                await this.applyWineEmojis();
+            } else {
+                this.updateVrElectronLoop();
+            }
             if (this.appType === '1') {
                 this.refreshCustomScript();
                 this.updateStatsLoop();
@@ -189,97 +198,97 @@ Vue.component('marquee-text', MarqueeText);
     Object.assign($app, app);
 
     $app.methods.configUpdate = function (json) {
-        this.config = JSON.parse(json);
-        this.hudFeed = [];
-        this.hudTimeout = [];
-        this.setDatetimeFormat();
-        this.setAppLanguage(this.config.appLanguage);
-        this.updateFeedLength();
+        $app.config = JSON.parse(json);
+        $app.hudFeed = [];
+        $app.hudTimeout = [];
+        $app.setDatetimeFormat();
+        $app.setAppLanguage($app.config.appLanguage);
+        $app.updateFeedLength();
         if (
-            this.config.vrOverlayCpuUsage !== this.cpuUsageEnabled ||
-            this.config.pcUptimeOnFeed !== this.pcUptimeEnabled
+            $app.config.vrOverlayCpuUsage !== $app.cpuUsageEnabled ||
+            $app.config.pcUptimeOnFeed !== $app.pcUptimeEnabled
         ) {
-            this.cpuUsageEnabled = this.config.vrOverlayCpuUsage;
-            this.pcUptimeEnabled = this.config.pcUptimeOnFeed;
+            $app.cpuUsageEnabled = $app.config.vrOverlayCpuUsage;
+            $app.pcUptimeEnabled = $app.config.pcUptimeOnFeed;
             AppApiVr.ToggleSystemMonitor(
-                this.cpuUsageEnabled || this.pcUptimeEnabled
+                $app.cpuUsageEnabled || $app.pcUptimeEnabled
             );
         }
-        if (this.config.notificationOpacity !== this.notificationOpacity) {
-            this.notificationOpacity = this.config.notificationOpacity;
-            this.setNotyOpacity(this.notificationOpacity);
+        if ($app.config.notificationOpacity !== $app.notificationOpacity) {
+            $app.notificationOpacity = $app.config.notificationOpacity;
+            $app.setNotyOpacity($app.notificationOpacity);
         }
     };
 
     $app.methods.updateOnlineFriendCount = function (count) {
-        this.onlineFriendCount = parseInt(count, 10);
+        $app.onlineFriendCount = parseInt(count, 10);
     };
 
     $app.methods.nowPlayingUpdate = function (json) {
-        this.nowPlaying = JSON.parse(json);
-        if (this.appType === '2') {
-            var circle = document.querySelector('.np-progress-circle-stroke');
+        $app.nowPlaying = JSON.parse(json);
+        if ($app.appType === '2') {
+            const circle = document.querySelector('.np-progress-circle-stroke');
             if (
-                this.lastLocation.progressPie &&
-                this.nowPlaying.percentage !== 0
+                $app.lastLocation.progressPie &&
+                $app.nowPlaying.percentage !== 0
             ) {
                 circle.style.opacity = 0.5;
-                var circumference = circle.getTotalLength();
+                const circumference = circle.getTotalLength();
                 circle.style.strokeDashoffset =
                     circumference -
-                    (this.nowPlaying.percentage / 100) * circumference;
+                    ($app.nowPlaying.percentage / 100) * circumference;
             } else {
                 circle.style.opacity = 0;
             }
         }
-        this.updateFeedLength();
+        $app.updateFeedLength();
     };
 
     $app.methods.lastLocationUpdate = function (json) {
-        this.lastLocation = JSON.parse(json);
+        $app.lastLocation = JSON.parse(json);
     };
 
     $app.methods.wristFeedUpdate = function (json) {
-        this.wristFeed = JSON.parse(json);
-        this.updateFeedLength();
+        $app.wristFeed = JSON.parse(json);
+        $app.updateFeedLength();
     };
 
     $app.methods.updateFeedLength = function () {
-        if (this.appType === '2' || this.wristFeed.length === 0) {
+        if ($app.appType === '2' || $app.wristFeed.length === 0) {
             return;
         }
-        var length = 16;
-        if (!this.config.hideDevicesFromFeed) {
+        let length = 16;
+        if (!$app.config.hideDevicesFromFeed) {
             length -= 2;
-            if (this.deviceCount > 8) {
+            if ($app.deviceCount > 8) {
                 length -= 1;
             }
         }
-        if (this.nowPlaying.playing) {
+        if ($app.nowPlaying.playing) {
             length -= 1;
         }
-        if (length < this.wristFeed.length) {
-            this.wristFeed.length = length;
+        if (length < $app.wristFeed.length) {
+            $app.wristFeed.length = length;
         }
     };
 
-    $app.methods.refreshCustomScript = function () {
+    $app.methods.refreshCustomScript = async function () {
         if (document.contains(document.getElementById('vr-custom-script'))) {
             document.getElementById('vr-custom-script').remove();
         }
-        AppApiVr.CustomVrScriptPath().then((customScript) => {
-            var head = document.head;
-            if (customScript) {
-                var $vrCustomScript = document.createElement('script');
-                $vrCustomScript.setAttribute('id', 'vr-custom-script');
-                $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
-                head.appendChild($vrCustomScript);
-            }
-        });
+        const customScript = await AppApiVr.CustomVrScript();
+        if (customScript) {
+            const head = document.head;
+            const $vrCustomScript = document.createElement('script');
+            $vrCustomScript.setAttribute('id', 'vr-custom-script');
+            $vrCustomScript.type = 'text/javascript';
+            $vrCustomScript.textContent = customScript;
+            head.appendChild($vrCustomScript);
+        }
     };
 
     $app.methods.setNotyOpacity = function (value) {
-        var opacity = parseFloat(value / 100).toFixed(2);
+        const opacity = parseFloat(value / 100).toFixed(2);
         let element = document.getElementById('noty-opacity');
         if (!element) {
             document.body.insertAdjacentHTML(
@@ -293,43 +302,43 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.updateStatsLoop = async function () {
         try {
-            this.currentTime = new Date()
-                .toLocaleDateString(this.currentCulture, {
+            $app.currentTime = new Date()
+                .toLocaleDateString($app.currentCulture, {
                     month: '2-digit',
                     day: '2-digit',
                     year: 'numeric',
                     hour: 'numeric',
                     minute: 'numeric',
                     second: 'numeric',
-                    hourCycle: this.config.dtHour12 ? 'h12' : 'h23'
+                    hourCycle: $app.config.dtHour12 ? 'h12' : 'h23'
                 })
                 .replace(' AM', ' am')
                 .replace(' PM', ' pm')
                 .replace(',', '');
 
-            if (this.cpuUsageEnabled) {
-                var cpuUsage = await AppApiVr.CpuUsage();
-                this.cpuUsage = cpuUsage.toFixed(0);
+            if ($app.cpuUsageEnabled) {
+                const cpuUsage = await AppApiVr.CpuUsage();
+                $app.cpuUsage = cpuUsage.toFixed(0);
             }
-            if (this.lastLocation.date !== 0) {
-                this.lastLocationTimer = timeToText(
-                    Date.now() - this.lastLocation.date
+            if ($app.lastLocation.date !== 0) {
+                $app.lastLocationTimer = timeToText(
+                    Date.now() - $app.lastLocation.date
                 );
             } else {
-                this.lastLocationTimer = '';
+                $app.lastLocationTimer = '';
             }
-            if (this.lastLocation.onlineFor) {
-                this.onlineForTimer = timeToText(
-                    Date.now() - this.lastLocation.onlineFor
+            if ($app.lastLocation.onlineFor) {
+                $app.onlineForTimer = timeToText(
+                    Date.now() - $app.lastLocation.onlineFor
                 );
             } else {
-                this.onlineForTimer = '';
+                $app.onlineForTimer = '';
             }
 
-            if (!this.config.hideDevicesFromFeed) {
+            if (!$app.config.hideDevicesFromFeed) {
                 AppApiVr.GetVRDevices().then((devices) => {
-                    var deviceList = [];
-                    var baseStations = 0;
+                    let deviceList = [];
+                    let baseStations = 0;
                     devices.forEach((device) => {
                         device[3] = parseInt(device[3], 10);
                         if (device[0] === 'base' && device[1] === 'connected') {
@@ -338,7 +347,7 @@ Vue.component('marquee-text', MarqueeText);
                             deviceList.push(device);
                         }
                     });
-                    this.deviceCount = deviceList.length;
+                    $app.deviceCount = deviceList.length;
                     const deviceValue = (dev) => {
                         if (dev[0] === 'headset') return 0;
                         if (dev[0] === 'leftController') return 1;
@@ -368,38 +377,89 @@ Vue.component('marquee-text', MarqueeText);
                             '',
                             baseStations
                         ]);
-                        this.deviceCount += 1;
+                        $app.deviceCount += 1;
                     }
-                    this.devices = deviceList;
+                    $app.devices = deviceList;
                 });
             } else {
-                this.devices = [];
+                $app.devices = [];
             }
-            if (this.config.pcUptimeOnFeed) {
+            if ($app.config.pcUptimeOnFeed) {
                 AppApiVr.GetUptime().then((uptime) => {
                     if (uptime) {
-                        this.pcUptime = timeToText(uptime);
+                        $app.pcUptime = timeToText(uptime);
                     }
                 });
             } else {
-                this.pcUptime = '';
+                $app.pcUptime = '';
             }
         } catch (err) {
             console.error(err);
         }
-        workerTimers.setTimeout(() => this.updateStatsLoop(), 500);
+        workerTimers.setTimeout(() => $app.updateStatsLoop(), 500);
+    };
+
+    $app.methods.updateVrElectronLoop = async function () {
+        try {
+            if ($app.appType === '1') {
+                const wristOverlayQueue =
+                    await AppApiVr.GetExecuteVrFeedFunctionQueue();
+                if (wristOverlayQueue) {
+                    wristOverlayQueue.forEach((item) => {
+                        // item[0] is the function name, item[1] is already an object
+                        const fullFunctionName = item[0];
+                        const jsonArg = item[1];
+
+                        if (
+                            typeof window.$app === 'object' &&
+                            typeof window.$app[fullFunctionName] === 'function'
+                        ) {
+                            window.$app[fullFunctionName](jsonArg);
+                        } else {
+                            console.error(
+                                `$app.${fullFunctionName} is not defined or is not a function`
+                            );
+                        }
+                    });
+                }
+            } else {
+                const hmdOverlayQueue =
+                    await AppApiVr.GetExecuteVrOverlayFunctionQueue();
+                if (hmdOverlayQueue) {
+                    hmdOverlayQueue.forEach((item) => {
+                        // item[0] is the function name, item[1] is already an object
+                        const fullFunctionName = item[0];
+                        const jsonArg = item[1];
+
+                        if (
+                            typeof window.$app === 'object' &&
+                            typeof window.$app[fullFunctionName] === 'function'
+                        ) {
+                            window.$app[fullFunctionName](jsonArg);
+                        } else {
+                            console.error(
+                                `$app.${fullFunctionName} is not defined or is not a function`
+                            );
+                        }
+                    });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        workerTimers.setTimeout(() => $app.updateVrElectronLoop(), 500);
     };
 
     $app.methods.playNoty = function (json) {
-        var { noty, message, image } = JSON.parse(json);
+        let { noty, message, image } = JSON.parse(json);
         if (typeof noty === 'undefined') {
             console.error('noty is undefined');
             return;
         }
-        var noty = escapeTagRecursive(noty);
-        var message = escapeTag(message) || '';
-        var text = '';
-        var img = '';
+        noty = escapeTagRecursive(noty);
+        message = escapeTag(message) || '';
+        let text = '';
+        let img = '';
         if (image) {
             img = `<img class="noty-img" src="${image}"></img>`;
         }
@@ -423,7 +483,7 @@ Vue.component('marquee-text', MarqueeText);
                 )}`;
                 break;
             case 'Online':
-                var locationName = '';
+                let locationName = '';
                 if (noty.worldName) {
                     locationName = ` to ${displayLocation(
                         noty.location,
@@ -444,7 +504,8 @@ Vue.component('marquee-text', MarqueeText);
                     noty.senderUsername
                 }</strong> has invited you to ${displayLocation(
                     noty.details.worldId,
-                    noty.details.worldName
+                    noty.details.worldName,
+                    ''
                 )}${message}`;
                 break;
             case 'requestInvite':
@@ -556,16 +617,16 @@ Vue.component('marquee-text', MarqueeText);
         if (text) {
             new Noty({
                 type: 'alert',
-                theme: this.config.notificationTheme,
-                timeout: this.config.notificationTimeout,
-                layout: this.config.notificationPosition,
+                theme: $app.config.notificationTheme,
+                timeout: $app.config.notificationTimeout,
+                layout: $app.config.notificationPosition,
                 text: `${img}<div class="noty-text">${text}</div>`
             }).show();
         }
     };
 
     $app.methods.statusClass = function (status) {
-        var style = {};
+        let style = {};
         if (typeof status === 'undefined') {
             return style;
         }
@@ -593,56 +654,56 @@ Vue.component('marquee-text', MarqueeText);
     $app.data.cleanHudFeedLoopStatus = false;
 
     $app.methods.cleanHudFeedLoop = function () {
-        if (!this.cleanHudFeedLoopStatus) {
+        if (!$app.cleanHudFeedLoopStatus) {
             return;
         }
-        this.cleanHudFeed();
-        if (this.hudFeed.length === 0) {
-            this.cleanHudFeedLoopStatus = false;
+        $app.cleanHudFeed();
+        if ($app.hudFeed.length === 0) {
+            $app.cleanHudFeedLoopStatus = false;
             return;
         }
-        workerTimers.setTimeout(() => this.cleanHudFeedLoop(), 500);
+        workerTimers.setTimeout(() => $app.cleanHudFeedLoop(), 500);
     };
 
     $app.methods.cleanHudFeed = function () {
-        var dt = Date.now();
-        this.hudFeed.forEach((item) => {
-            if (item.time + this.config.photonOverlayMessageTimeout < dt) {
-                removeFromArray(this.hudFeed, item);
+        const dt = Date.now();
+        $app.hudFeed.forEach((item) => {
+            if (item.time + $app.config.photonOverlayMessageTimeout < dt) {
+                removeFromArray($app.hudFeed, item);
             }
         });
-        if (this.hudFeed.length > 10) {
-            this.hudFeed.length = 10;
+        if ($app.hudFeed.length > 10) {
+            $app.hudFeed.length = 10;
         }
-        if (!this.cleanHudFeedLoopStatus) {
-            this.cleanHudFeedLoopStatus = true;
-            this.cleanHudFeedLoop();
+        if (!$app.cleanHudFeedLoopStatus) {
+            $app.cleanHudFeedLoopStatus = true;
+            $app.cleanHudFeedLoop();
         }
     };
 
     $app.methods.addEntryHudFeed = function (json) {
-        var data = JSON.parse(json);
-        var combo = 1;
-        this.hudFeed.forEach((item) => {
+        const data = JSON.parse(json);
+        let combo = 1;
+        $app.hudFeed.forEach((item) => {
             if (
                 item.displayName === data.displayName &&
                 item.text === data.text
             ) {
                 combo = item.combo + 1;
-                removeFromArray(this.hudFeed, item);
+                removeFromArray($app.hudFeed, item);
             }
         });
-        this.hudFeed.unshift({
+        $app.hudFeed.unshift({
             time: Date.now(),
             combo,
             ...data
         });
-        this.cleanHudFeed();
+        $app.cleanHudFeed();
     };
 
     $app.methods.updateHudFeedTag = function (json) {
-        var ref = JSON.parse(json);
-        this.hudFeed.forEach((item) => {
+        const ref = JSON.parse(json);
+        $app.hudFeed.forEach((item) => {
             if (item.userId === ref.userId) {
                 item.colour = ref.colour;
             }
@@ -652,16 +713,16 @@ Vue.component('marquee-text', MarqueeText);
     $app.data.hudTimeout = [];
 
     $app.methods.updateHudTimeout = function (json) {
-        this.hudTimeout = JSON.parse(json);
+        $app.hudTimeout = JSON.parse(json);
     };
 
     $app.methods.setDatetimeFormat = async function () {
-        this.currentCulture = await AppApiVr.CurrentCulture();
-        var formatDate = function (date) {
+        $app.currentCulture = await AppApiVr.CurrentCulture();
+        const formatDate = function (date) {
             if (!date) {
                 return '';
             }
-            var dt = new Date(date);
+            const dt = new Date(date);
             return dt
                 .toLocaleTimeString($app.currentCulture, {
                     hour: '2-digit',
@@ -678,9 +739,9 @@ Vue.component('marquee-text', MarqueeText);
         if (!appLanguage) {
             return;
         }
-        if (appLanguage !== this.appLanguage) {
-            this.appLanguage = appLanguage;
-            i18n.locale = this.appLanguage;
+        if (appLanguage !== $app.appLanguage) {
+            $app.appLanguage = appLanguage;
+            i18n.locale = $app.appLanguage;
         }
     };
 
@@ -688,8 +749,8 @@ Vue.component('marquee-text', MarqueeText);
         if (document.contains(document.getElementById('app-emoji-font'))) {
             document.getElementById('app-emoji-font').remove();
         }
-        if (this.isRunningUnderWine) {
-            var $appEmojiFont = document.createElement('link');
+        if ($app.isRunningUnderWine) {
+            const $appEmojiFont = document.createElement('link');
             $appEmojiFont.setAttribute('id', 'app-emoji-font');
             $appEmojiFont.rel = 'stylesheet';
             $appEmojiFont.href = 'emoji.font.css';

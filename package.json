@@ -139,6 +139,15 @@
             },
             "maintainer": "rs189 <35667100+rs189@users.noreply.github.com>",
             "description": "Friendship management tool for VRChat"
+        },
+        "mac": {
+            "artifactName": "VRCX_Version.${ext}",
+            "target": [
+                "dmg"
+            ],
+            "icon": "VRCX.png",
+            "category": "public.app-category.utilities",
+            "executableName": "VRCX"
         }
     },
     "dependencies": {

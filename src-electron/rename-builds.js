@@ -17,17 +17,34 @@ try {
     process.exit(1);
 }
 
-const oldAppImage = path.join(buildDir, `VRCX_Version.AppImage`);
-const newAppImage = path.join(buildDir, `VRCX_${version}.AppImage`);
-
-try {
-    if (fs.existsSync(oldAppImage)) {
-        fs.renameSync(oldAppImage, newAppImage);
-        console.log(`Renamed: ${oldAppImage} -> ${newAppImage}`);
-    } else {
-        console.log(`File not found: ${oldAppImage}`);
+if (process.platform === 'linux') {
+    const oldAppImage = path.join(buildDir, `VRCX_Version.AppImage`);
+    const newAppImage = path.join(buildDir, `VRCX_${version}.AppImage`);
+    try {
+        if (fs.existsSync(oldAppImage)) {
+            fs.renameSync(oldAppImage, newAppImage);
+            console.log(`Renamed: ${oldAppImage} -> ${newAppImage}`);
+        } else {
+            console.log(`File not found: ${oldAppImage}`);
+        }
+    } catch (err) {
+        console.error('Error renaming files:', err);
+        process.exit(1);
     }
-} catch (err) {
-    console.error('Error renaming files:', err);
-    process.exit(1);
+} else if (process.platform === 'darwin') {
+    const oldDmg = path.join(buildDir, `VRCX_Version.dmg`);
+    const newDmg = path.join(buildDir, `VRCX_${version}.dmg`);
+    try {
+        if (fs.existsSync(oldDmg)) {
+            fs.renameSync(oldDmg, newDmg);
+            console.log(`Renamed: ${oldDmg} -> ${newDmg}`);
+        } else {
+            console.log(`File not found: ${oldDmg}`);
+        }
+    } catch (err) {
+        console.error('Error renaming files:', err);
+        process.exit(1);
+    }
+} else {
+    console.log('No renaming needed for this platform.');
 }

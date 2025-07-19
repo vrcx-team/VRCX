@@ -11,9 +11,9 @@ using NLog;
 
 namespace VRCX
 {
-    public class SystemMonitor
+    public class SystemMonitorCef
     {
-        public static readonly SystemMonitor Instance;
+        public static readonly SystemMonitorCef Instance;
         public float CpuUsage;
         public double UpTime;
         private bool _enabled;
@@ -22,9 +22,9 @@ namespace VRCX
         private Thread _thread;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        static SystemMonitor()
+        static SystemMonitorCef()
         {
-            Instance = new SystemMonitor();
+            Instance = new SystemMonitorCef();
         }
 
         public void Start(bool enabled)

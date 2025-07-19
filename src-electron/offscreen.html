@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Offscreen Mirror</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+    }
+    #mirror {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <img id="mirror" src="" alt="Main Window Mirror">
+  <script>
+    window.electronAPI.onUpdateImage((base64) => {
+      document.getElementById('mirror').src = `data:image/png;base64,${base64}`;
+    });
+  </script>
+</body>
+</html>

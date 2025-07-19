@@ -8,7 +8,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@use "./assets/scss/flags.scss";
+@use './assets/scss/flags.scss';
 
 @import '~animate.css/animate.min.css';
 @import '~noty/lib/noty.css';
@@ -19,6 +19,10 @@
     화면 24px -> 나나 32
     손등 18px -> 나나 24
 */
+
+body {
+    margin: 0;
+}
 
 .noty_body {
     display: block;
@@ -171,13 +175,20 @@
     border-radius: 16px;
 }
 
+@font-face {
+    font-family: 'ellipsis-font';
+    src: local('Times New Roman');
+    unicode-range: U+2026;
+}
+
 body,
 input,
 textarea,
 select,
 button {
-    font-family: 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC',
-        'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
+    font-family:
+        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
     line-height: normal;
     text-shadow:
         #000 0px 0px 3px,

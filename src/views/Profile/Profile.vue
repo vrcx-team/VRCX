@@ -595,6 +595,7 @@
             inputPattern: /\S+/,
             inputErrorMessage: t('prompt.direct_access_user_id.input_error'),
             callback: (action, instance) => {
+                instance.inputValue = instance.inputValue.trim();
                 if (action === 'confirm' && instance.inputValue) {
                     const testUrl = instance.inputValue.substring(0, 15);
                     if (testUrl === 'https://vrchat.') {
@@ -622,6 +623,7 @@
             inputPattern: /\S+/,
             inputErrorMessage: t('prompt.direct_access_world_id.input_error'),
             callback: (action, instance) => {
+                instance.inputValue = instance.inputValue.trim();
                 if (action === 'confirm' && instance.inputValue) {
                     if (!directAccessWorld(instance.inputValue)) {
                         $message({
@@ -641,6 +643,7 @@
             inputPattern: /\S+/,
             inputErrorMessage: t('prompt.direct_access_avatar_id.input_error'),
             callback: (action, instance) => {
+                instance.inputValue = instance.inputValue.trim();
                 if (action === 'confirm' && instance.inputValue) {
                     const testUrl = instance.inputValue.substring(0, 15);
                     if (testUrl === 'https://vrchat.') {

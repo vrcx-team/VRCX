@@ -121,8 +121,8 @@
     <Compile Remove="Cef\**" />
     <Content Remove="AppApi\Cef\**" />
     <Compile Remove="AppApi\Cef\**" />
-    <Content Remove="Overlay\**" />
-    <Compile Remove="Overlay\**" />
+    <Content Remove="Overlay\Cef\**" />
+    <Compile Remove="Overlay\Cef\**" />
     <Content Remove="DBMerger\**" />
     <Compile Remove="DBMerger\**" />
   </ItemGroup>

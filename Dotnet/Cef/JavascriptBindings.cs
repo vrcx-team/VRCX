@@ -15,7 +15,7 @@ namespace VRCX
             repository.Register("Discord", Discord.Instance);
             repository.Register("AssetBundleManager", AssetBundleManager.Instance);
         }
-        
+
         public static void ApplyVrJavascriptBindings(IJavascriptObjectRepository repository)
         {
             repository.NameConverter = null;

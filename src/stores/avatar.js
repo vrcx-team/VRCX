@@ -385,31 +385,35 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
-     * aka: `$app.methods.addAvatarToHistory`
      * @param {string} avatarId
      */
     function addAvatarToHistory(avatarId) {
-        avatarRequest.getAvatar({ avatarId }).then((args) => {
-            const ref = applyAvatar(args.json);
+        avatarRequest
+            .getAvatar({ avatarId })
+            .then((args) => {
+                const ref = applyAvatar(args.json);
 
-            database.addAvatarToCache(ref);
-            database.addAvatarToHistory(ref.id);
+                database.addAvatarToCache(ref);
+                database.addAvatarToHistory(ref.id);
 
-            if (ref.authorId === userStore.currentUser.id) {
-                return;
-            }
-
-            const historyArray = state.avatarHistoryArray;
-            for (let i = 0; i < historyArray.length; ++i) {
-                if (historyArray[i].id === ref.id) {
-                    historyArray.splice(i, 1);
+                if (ref.authorId === userStore.currentUser.id) {
+                    return;
                 }
-            }
 
-            state.avatarHistoryArray.unshift(ref);
-            state.avatarHistory.delete(ref.id);
-            state.avatarHistory.add(ref.id);
-        });
+                const historyArray = state.avatarHistoryArray;
+                for (let i = 0; i < historyArray.length; ++i) {
+                    if (historyArray[i].id === ref.id) {
+                        historyArray.splice(i, 1);
+                    }
+                }
+
+                state.avatarHistoryArray.unshift(ref);
+                state.avatarHistory.delete(ref.id);
+                state.avatarHistory.add(ref.id);
+            })
+            .catch((err) => {
+                console.error('Failed to add avatar to history:', err);
+            });
     }
 
     function clearAvatarHistory() {

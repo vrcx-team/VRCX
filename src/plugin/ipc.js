@@ -20,4 +20,5 @@ if (WINDOWS) {
     window.LogWatcher = InteropApi.LogWatcher;
     window.Discord = InteropApi.Discord;
     window.AssetBundleManager = InteropApi.AssetBundleManager;
+    window.AppApiVrElectron = InteropApi.AppApiVrElectron;
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace VRCX
 {
-    internal class IPCServer
+    public class IPCServer
     {
         public static readonly IPCServer Instance;
         public static readonly List<IPCClient> Clients = new List<IPCClient>();

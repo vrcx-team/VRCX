@@ -45,8 +45,7 @@ namespace VRCX
                 ),
                 IsLocal = true
             });
-
-            // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
+            
             // cefSettings.CefCommandLineArgs.Add("ignore-certificate-errors");
             // cefSettings.CefCommandLineArgs.Add("disable-plugins");
             cefSettings.CefCommandLineArgs.Add("disable-spell-checking");

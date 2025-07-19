@@ -77,32 +77,31 @@
                 <!--//- General | Application-->
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.general.application.header') }}</span>
-                    <template v-if="!isLinux">
-                        <simple-switch
-                            :label="t('view.settings.general.application.startup')"
-                            :value="isStartAtWindowsStartup"
-                            @change="setIsStartAtWindowsStartup" />
-                        <simple-switch
-                            :label="t('view.settings.general.application.minimized')"
-                            :value="isStartAsMinimizedState"
-                            @change="setIsStartAsMinimizedState" />
-                        <simple-switch
-                            :label="t('view.settings.general.application.tray')"
-                            :value="isCloseToTray"
-                            @change="setIsCloseToTray" />
-                    </template>
-                    <template v-if="!isLinux">
-                        <simple-switch
-                            :label="t('view.settings.general.application.disable_gpu_acceleration')"
-                            :value="disableGpuAcceleration"
-                            :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
-                            @change="setDisableGpuAcceleration" />
-                        <simple-switch
-                            :label="t('view.settings.general.application.disable_vr_overlay_gpu_acceleration')"
-                            :value="disableVrOverlayGpuAcceleration"
-                            :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
-                            @change="setDisableVrOverlayGpuAcceleration" />
-                    </template>
+                    <simple-switch
+                        v-if="!isLinux"
+                        :label="t('view.settings.general.application.startup')"
+                        :value="isStartAtWindowsStartup"
+                        @change="setIsStartAtWindowsStartup" />
+                    <simple-switch
+                        :label="t('view.settings.general.application.minimized')"
+                        :value="isStartAsMinimizedState"
+                        @change="setIsStartAsMinimizedState" />
+                    <simple-switch
+                        :label="t('view.settings.general.application.tray')"
+                        :value="isCloseToTray"
+                        @change="setIsCloseToTray" />
+                    <simple-switch
+                        v-if="!isLinux"
+                        :label="t('view.settings.general.application.disable_gpu_acceleration')"
+                        :value="disableGpuAcceleration"
+                        :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
+                        @change="setDisableGpuAcceleration" />
+                    <simple-switch
+                        v-if="!isLinux"
+                        :label="t('view.settings.general.application.disable_vr_overlay_gpu_acceleration')"
+                        :value="disableVrOverlayGpuAcceleration"
+                        :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
+                        @change="setDisableVrOverlayGpuAcceleration" />
                     <div class="options-container-item">
                         <el-button size="small" icon="el-icon-connection" @click="promptProxySettings">{{
                             t('view.settings.general.application.proxy')
@@ -796,7 +795,7 @@
                             }}</el-radio-button>
                         </el-radio-group>
                     </div>
-                    <template v-if="!isLinux">
+                    <template>
                         <simple-switch
                             :label="
                                 t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')
@@ -831,6 +830,43 @@
                                 }}</el-button
                             >
                         </div>
+                        <div class="options-container-item">
+                            <span class="name" style="vertical-align: top; padding-top: 10px">{{
+                                t(
+                                    'view.settings.notifications.notifications.steamvr_notifications.notification_opacity'
+                                )
+                            }}</span>
+                            <el-slider
+                                :value="notificationOpacity"
+                                @input="setNotificationOpacity"
+                                :show-tooltip="false"
+                                :min="0"
+                                :max="100"
+                                show-input
+                                style="display: inline-block; width: 300px" />
+                        </div>
+                        <div class="options-container-item">
+                            <el-button
+                                size="small"
+                                icon="el-icon-time"
+                                :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
+                                @click="promptNotificationTimeout"
+                                >{{
+                                    t(
+                                        'view.settings.notifications.notifications.steamvr_notifications.notification_timeout'
+                                    )
+                                }}</el-button
+                            >
+                        </div>
+                        <simple-switch
+                            :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
+                            :value="imageNotifications"
+                            @change="
+                                setImageNotifications();
+                                saveOpenVROption();
+                            " />
+                    </template>
+                    <template v-if="!isLinux">
                         <simple-switch
                             :label="
                                 t(
@@ -856,61 +892,30 @@
                                 saveOpenVROption();
                             " />
                     </template>
-                    <simple-switch
-                        :label="
-                            t(
-                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
-                            )
-                        "
-                        :value="ovrtHudNotifications"
-                        @change="
-                            setOvrtHudNotifications();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="
-                            t(
-                                'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
-                            )
-                        "
-                        :value="ovrtWristNotifications"
-                        @change="
-                            setOvrtWristNotifications();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.notifications.notifications.steamvr_notifications.user_images')"
-                        :value="imageNotifications"
-                        @change="
-                            setImageNotifications();
-                            saveOpenVROption();
-                        " />
-                    <div class="options-container-item">
-                        <span class="name" style="vertical-align: top; padding-top: 10px">{{
-                            t('view.settings.notifications.notifications.steamvr_notifications.notification_opacity')
-                        }}</span>
-                        <el-slider
-                            :value="notificationOpacity"
-                            @input="setNotificationOpacity"
-                            :show-tooltip="false"
-                            :min="0"
-                            :max="100"
-                            show-input
-                            style="display: inline-block; width: 300px" />
-                    </div>
-                    <div class="options-container-item">
-                        <el-button
-                            size="small"
-                            icon="el-icon-time"
-                            :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
-                            @click="promptNotificationTimeout"
-                            >{{
+                    <template v-if="!isLinux">
+                        <simple-switch
+                            :label="
                                 t(
-                                    'view.settings.notifications.notifications.steamvr_notifications.notification_timeout'
+                                    'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications'
                                 )
-                            }}</el-button
-                        >
-                    </div>
+                            "
+                            :value="ovrtHudNotifications"
+                            @change="
+                                setOvrtHudNotifications();
+                                saveOpenVROption();
+                            " />
+                        <simple-switch
+                            :label="
+                                t(
+                                    'view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications'
+                                )
+                            "
+                            :value="ovrtWristNotifications"
+                            @change="
+                                setOvrtWristNotifications();
+                                saveOpenVROption();
+                            " />
+                    </template>
                 </div>
                 <!--//- Notifications | Notifications | Desktop Notifications-->
                 <div class="options-container">
@@ -1047,7 +1052,7 @@
             </el-tab-pane>
 
             <!--//- Wrist Overlay Tab-->
-            <el-tab-pane v-if="!isLinux" lazy :label="t('view.settings.category.wrist_overlay')">
+            <el-tab-pane lazy :label="t('view.settings.category.wrist_overlay')">
                 <!--//- Wrist Overlay | SteamVR Wrist Overlay-->
                 <div class="options-container" style="margin-top: 0">
                     <span class="header">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}</span>
@@ -1436,19 +1441,15 @@
                             saveOpenVROption();
                         "></simple-switch>
                     <!--//- Advanced | VRChat Quit Fix-->
-                    <template v-if="!isLinux">
-                        <span class="sub-header">{{
-                            t('view.settings.advanced.advanced.vrchat_quit_fix.header')
-                        }}</span>
-                        <simple-switch
-                            :label="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
-                            :value="vrcQuitFix"
-                            :long-label="true"
-                            @change="
-                                setVrcQuitFix();
-                                saveOpenVROption();
-                            " />
-                    </template>
+                    <span class="sub-header">{{ t('view.settings.advanced.advanced.vrchat_quit_fix.header') }}</span>
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.vrchat_quit_fix.description')"
+                        :value="vrcQuitFix"
+                        :long-label="true"
+                        @change="
+                            setVrcQuitFix();
+                            saveOpenVROption();
+                        " />
                     <!--//- Advanced | Auto Cache Management-->
                     <span class="sub-header">{{
                         t('view.settings.advanced.advanced.auto_cache_management.header')
@@ -1528,7 +1529,7 @@
                     </div>
                 </div>
                 <!--//- Advanced | Video Progress Pie-->
-                <div v-if="!isLinux" class="options-container">
+                <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.video_progress_pie.header') }}</span>
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.video_progress_pie.enable')"

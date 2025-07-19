@@ -151,35 +151,35 @@ function updateTrustColorClasses(trustColor) {
     document.getElementsByTagName('head')[0].appendChild(style);
 }
 
-function refreshCustomCss() {
+async function refreshCustomCss() {
     if (document.contains(document.getElementById('app-custom-style'))) {
         document.getElementById('app-custom-style').remove();
     }
-    AppApi.CustomCssPath().then((customCss) => {
+    const customCss = await AppApi.CustomCss();
+    if (customCss) {
         const head = document.head;
-        if (customCss) {
-            const $appCustomStyle = document.createElement('link');
-            $appCustomStyle.setAttribute('id', 'app-custom-style');
-            $appCustomStyle.rel = 'stylesheet';
-            $appCustomStyle.href = `file://${customCss}?_=${Date.now()}`;
-            head.appendChild($appCustomStyle);
-        }
-    });
+        const $appCustomStyle = document.createElement('link');
+        $appCustomStyle.setAttribute('id', 'app-custom-style');
+        $appCustomStyle.rel = 'stylesheet';
+        $appCustomStyle.type = 'text/css';
+        $appCustomStyle.textContent = customCss;
+        head.appendChild($appCustomStyle);
+    }
 }
 
-function refreshCustomScript() {
+async function refreshCustomScript() {
     if (document.contains(document.getElementById('app-custom-script'))) {
         document.getElementById('app-custom-script').remove();
     }
-    AppApi.CustomScriptPath().then((customScript) => {
+    const customScript = await AppApi.CustomScript();
+    if (customScript) {
         const head = document.head;
-        if (customScript) {
-            const $appCustomScript = document.createElement('script');
-            $appCustomScript.setAttribute('id', 'app-custom-script');
-            $appCustomScript.src = `file://${customScript}?_=${Date.now()}`;
-            head.appendChild($appCustomScript);
-        }
-    });
+        const $appCustomScript = document.createElement('script');
+        $appCustomScript.setAttribute('id', 'app-custom-script');
+        $appCustomScript.type = 'text/javascript';
+        $appCustomScript.textContent = customScript;
+        head.appendChild($appCustomScript);
+    }
 }
 
 /**
