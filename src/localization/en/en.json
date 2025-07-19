@@ -322,13 +322,14 @@
                 "application": {
                     "header": "Application",
                     "startup": "Start at Windows startup",
-                    "minimized": "Start minimized",
+                    "minimized": "Start minimized at system startup",
                     "tray": "Minimize to tray when closing",
                     "disable_gpu_acceleration": "Disable GPU Acceleration",
                     "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, may fix issues with UI, requires restarting VRCX",
                     "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
                     "disable_vr_overlay_gpu_acceleration_tooltip": "VR Overlay GPU acceleration can cause VRCX to crash or cause VRAM memory leaks, requires restarting VRCX",
-                    "proxy": "Proxy settings"
+                    "proxy": "Proxy settings",
+                    "startup_linux": "Add \"--startup\" arg to startup VRCX.desktop file to start VRCX minimized at system startup"
                 },
                 "favorites": {
                     "header": "VRCX Favorite Friends",

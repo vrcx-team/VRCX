@@ -83,8 +83,15 @@
                         :value="isStartAtWindowsStartup"
                         @change="setIsStartAtWindowsStartup" />
                     <simple-switch
+                        v-if="!isLinux"
                         :label="t('view.settings.general.application.minimized')"
                         :value="isStartAsMinimizedState"
+                        @change="setIsStartAsMinimizedState" />
+                    <simple-switch
+                        v-else
+                        :label="t('view.settings.general.application.minimized')"
+                        :value="isStartAsMinimizedState"
+                        :tooltip="t('view.settings.general.application.startup_linux')"
                         @change="setIsStartAsMinimizedState" />
                     <simple-switch
                         :label="t('view.settings.general.application.tray')"
