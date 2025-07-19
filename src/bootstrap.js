@@ -18,12 +18,16 @@ import {
     systemIsDarkMode
 } from './shared/utils';
 import { i18n } from './plugin';
+import { initNoty } from './plugin/noty';
+
+initNoty(false);
 
 configRepository.init();
 
 AppApi.SetUserAgent();
 
 try {
+    // @ts-ignore
     i18n.locale = await configRepository.getString('VRCX_appLanguage', 'en');
 
     const initThemeMode = await configRepository.getString(

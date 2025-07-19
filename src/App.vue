@@ -1,6 +1,8 @@
 <script>
-    import Vue, { onMounted } from 'vue';
+    // @ts-ignore
     import template from './app.pug';
+    import Vue, { onMounted } from 'vue';
+
     import { createGlobalStores } from './stores';
     import { watchState } from './service/watchState';
 
