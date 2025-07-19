@@ -1639,10 +1639,11 @@
         D.members = [];
         isGroupMembersDone.value = false;
         loadMoreGroupMembersParams.value = {
+            sort: '',
+            roleId: '',
             n: 100,
             offset: 0,
-            groupId: D.id,
-            ...loadMoreGroupMembersParams.value
+            groupId: D.id
         };
         if (D.memberSortOrder.value) {
             loadMoreGroupMembersParams.value.sort = D.memberSortOrder.value;
@@ -1677,6 +1678,9 @@
         }
         const D = groupDialog.value;
         const params = loadMoreGroupMembersParams.value;
+        if (params.roleId === '') {
+            delete params.roleId;
+        }
         D.memberSearch = '';
         isGroupMembersLoading.value = true;
         await groupRequest
