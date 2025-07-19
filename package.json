@@ -153,6 +153,5 @@
     "dependencies": {
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.9.12"
-    },
-    "version": "2025.06.30"
+    }
 }
