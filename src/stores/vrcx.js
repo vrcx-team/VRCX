@@ -73,18 +73,18 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             window.electron.onWindowPositionChanged((event, position) => {
                 state.locationX = position.x;
                 state.locationY = position.y;
-                debounce(saveVRCXWindowOption(), 300);
+                debounce(saveVRCXWindowOption, 300)();
             });
 
             window.electron.onWindowSizeChanged((event, size) => {
                 state.sizeWidth = size.width;
                 state.sizeHeight = size.height;
-                debounce(saveVRCXWindowOption(), 300);
+                debounce(saveVRCXWindowOption, 300)();
             });
 
             window.electron.onWindowStateChange((event, state) => {
                 state.windowState = state;
-                debounce(saveVRCXWindowOption(), 300);
+                debounce(saveVRCXWindowOption, 300)();
             });
 
             // window.electron.onWindowClosed((event) => {
