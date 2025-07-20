@@ -1633,7 +1633,7 @@
         },
         "instance": {
             "closed": "房间已关闭",
-            "removed_form_queue": "已从等待队列中移除房间 {worldName}",
+            "removed_form_queue": "已从等待队列中移除 {worldName}",
             "not_allowed": "你无权访问此房间"
         },
         "avatar": {
@@ -1649,10 +1649,10 @@
             "too_large": "文件大小过大"
         },
         "print": {
-            "uploaded": "拍立得(Print)上传成功"
+            "uploaded": "拍立得照片上传成功"
         },
         "sticker": {
-            "uploaded": "贴纸(Sticker)上传成功"
+            "uploaded": "贴纸上传成功"
         },
         "gallery": {
             "uploaded": "图片已成功上传到相册",
@@ -1661,7 +1661,7 @@
         "avatar_gallery": {
             "uploaded": "图片已成功上传到模型相册",
             "failed": "图片未能上传到模型相册",
-            "deleted": "相关图片已被删除",
+            "deleted": "图片已被成功删除",
             "not_found": "未找到模型相册的 ID",
             "already_first": "已是第一张图片",
             "already_last": "已是最后一张图片",
@@ -1672,7 +1672,7 @@
             "image_invalid": "当前使用的世界封面无效"
         },
         "icon": {
-            "uploaded": "图标(Icon)上传成功"
+            "uploaded": "图标上传成功"
         },
         "user": {
             "moderated": "已更新玩家状态"
