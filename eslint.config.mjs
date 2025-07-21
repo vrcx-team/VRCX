@@ -34,6 +34,7 @@ export default defineConfig([
     {
         files: [
             '**/webpack.*.js',
+            '**/jest.config.js',
             'src-electron/*.js',
             'src/localization/*.js'
         ],
@@ -41,6 +42,18 @@ export default defineConfig([
             sourceType: 'commonjs',
             globals: {
                 ...globals.node
+            }
+        }
+    },
+    {
+        files: [
+            '**/__tests__/**/*.{js,mjs,cjs,vue}',
+            '**/*.spec.{js,mjs,cjs,vue}',
+            '**/*.test.{js,mjs,cjs,vue}'
+        ],
+        languageOptions: {
+            globals: {
+                ...globals.jest
             }
         }
     },

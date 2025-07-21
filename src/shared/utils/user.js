@@ -1,4 +1,3 @@
-import { storeToRefs } from 'pinia';
 import { useAppearanceSettingsStore, useUserStore } from '../../stores';
 import { languageMappings } from '../constants';
 import { timeToText } from './base/format';
@@ -182,15 +181,13 @@ function userImage(
     isUserDialogIcon = false
 ) {
     const appAppearanceSettingsStore = useAppearanceSettingsStore();
-    const { displayVRCPlusIconsAsAvatar } = storeToRefs(
-        appAppearanceSettingsStore
-    );
     if (!user) {
         return '';
     }
     if (
         (isUserDialogIcon && user.userIcon) ||
-        (displayVRCPlusIconsAsAvatar.value && user.userIcon)
+        (appAppearanceSettingsStore.displayVRCPlusIconsAsAvatar &&
+            user.userIcon)
     ) {
         if (isIcon) {
             return convertFileUrlToImageUrl(user.userIcon);
@@ -238,10 +235,10 @@ function userImage(
  */
 function userImageFull(user) {
     const appAppearanceSettingsStore = useAppearanceSettingsStore();
-    const { displayVRCPlusIconsAsAvatar } = storeToRefs(
-        appAppearanceSettingsStore
-    );
-    if (displayVRCPlusIconsAsAvatar.value && user.userIcon) {
+    if (
+        appAppearanceSettingsStore.displayVRCPlusIconsAsAvatar &&
+        user.userIcon
+    ) {
         return user.userIcon;
     }
     if (user.profilePicOverride) {

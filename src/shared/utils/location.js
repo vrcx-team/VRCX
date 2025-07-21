@@ -2,10 +2,10 @@
  *
  * @param {string} location
  * @param {string} worldName
- * @param {string} groupName
+ * @param {string?} groupName
  * @returns {string}
  */
-function displayLocation(location, worldName, groupName) {
+function displayLocation(location, worldName, groupName = '') {
     let text = worldName;
     const L = parseLocation(location);
     if (L.isOffline) {

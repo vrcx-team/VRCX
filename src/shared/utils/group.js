@@ -1,4 +1,4 @@
-import groupRequest from '../../api/group';
+import { groupRequest } from '../../api';
 import { parseLocation } from './location';
 
 /**

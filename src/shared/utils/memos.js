@@ -1,4 +1,3 @@
-import { storeToRefs } from 'pinia';
 import { database } from '../../service/database.js';
 import { useFriendStore } from '../../stores';
 
@@ -44,7 +43,6 @@ async function getUserMemo(userId) {
  */
 async function saveUserMemo(id, memo) {
     const friendStore = useFriendStore();
-    const { friends } = storeToRefs(friendStore);
     if (memo) {
         await database.setUserMemo({
             userId: id,
@@ -54,7 +52,7 @@ async function saveUserMemo(id, memo) {
     } else {
         await database.deleteUserMemo(id);
     }
-    const ref = friends.value.get(id);
+    const ref = friendStore.friends.get(id);
     if (ref) {
         ref.memo = String(memo || '');
         if (memo) {
@@ -71,10 +69,9 @@ async function saveUserMemo(id, memo) {
  */
 async function getAllUserMemos() {
     const friendStore = useFriendStore();
-    const { friends } = storeToRefs(friendStore);
     const memos = await database.getAllUserMemos();
     memos.forEach((memo) => {
-        const ref = friends.value.get(memo.userId);
+        const ref = friendStore.friends.get(memo.userId);
         if (typeof ref !== 'undefined') {
             ref.memo = memo.memo;
             ref.$nickName = '';

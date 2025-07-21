@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="jest" />
 
 declare global {
     const WINDOWS: boolean;

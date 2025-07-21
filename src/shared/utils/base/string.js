@@ -47,7 +47,11 @@ function commaNumber(num) {
     if (!num) {
         return '0';
     }
-    const s = String(Number(num));
+    const numValue = Number(num);
+    if (isNaN(numValue)) {
+        return '0';
+    }
+    const s = String(numValue);
     return s.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
