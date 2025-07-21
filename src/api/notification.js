@@ -93,6 +93,7 @@ const notificationReq = {
      * worldId?: string,
      * worldName?: string,
      * messageSlot?: string,
+     * rsvp?: boolean,
      *  }} params
      * @param receiverUserId
      * @return { Promise<{json: any, params}> }

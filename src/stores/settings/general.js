@@ -6,10 +6,12 @@ import { t } from '../../plugin';
 import configRepository from '../../service/config';
 import { useVrcxStore } from '../vrcx';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
+import { useFriendStore } from '../friend';
 
 export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const vrcxStore = useVrcxStore();
     const VRCXUpdaterStore = useVRCXUpdaterStore();
+    const friendStore = useFriendStore();
     const state = reactive({
         isStartAtWindowsStartup: false,
         isStartAsMinimizedState: false,
@@ -184,6 +186,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             'VRCX_localFavoriteFriendsGroups',
             JSON.stringify(value)
         );
+        friendStore.updateLocalFavoriteFriends();
     }
     function setUdonExceptionLogging() {
         state.udonExceptionLogging = !state.udonExceptionLogging;

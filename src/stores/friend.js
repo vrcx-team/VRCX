@@ -369,9 +369,6 @@ export const useFriendStore = defineStore('Friend', () => {
     function updateLocalFavoriteFriends() {
         const favoriteStore = useFavoriteStore();
         const { cachedFavorites } = favoriteStore;
-        generalSettingsStore.setLocalFavoriteFriendsGroups(
-            generalSettingsStore.localFavoriteFriendsGroups
-        );
         state.localFavoriteFriends.clear();
         for (const ref of cachedFavorites.values()) {
             if (
@@ -1112,13 +1109,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         const ref = userStore.cachedUsers.get(id);
         if (typeof ref === 'undefined') {
-            try {
-                userRequest.getUser({
-                    userId: id
-                });
-            } catch (err) {
-                console.error('Fetch user on add as friend', err);
-            }
+            // deleted account on friends list
             return;
         }
         friendRequest

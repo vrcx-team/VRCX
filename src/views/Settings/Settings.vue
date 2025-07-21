@@ -125,7 +125,7 @@
                         clearable
                         :placeholder="t('view.settings.general.favorites.group_placeholder')"
                         style="margin-top: 8px"
-                        @change="updateLocalFavoriteFriends">
+                        @change="setLocalFavoriteFriendsGroups">
                         <el-option-group :label="t('view.settings.general.favorites.group_placeholder')">
                             <el-option
                                 v-for="group in favoriteFriendGroups"
@@ -1934,7 +1934,7 @@
         timeoutHudOverlay,
         timeoutHudOverlayFilter
     } = storeToRefs(usePhotonStore());
-    const { updateLocalFavoriteFriends, saveSidebarSortOrder } = useFriendStore();
+    const { saveSidebarSortOrder } = useFriendStore();
     const { cachedWorlds } = storeToRefs(useWorldStore());
     const { cachedInstances } = storeToRefs(useInstanceStore());
     const { showLaunchOptions } = useLaunchStore();
@@ -1942,6 +1942,7 @@
     const { enablePrimaryPasswordChange } = useAuthStore();
     const { saveOpenVROption, updateVRLastLocation, updateOpenVR, updateVRConfigVars } = useVrStore();
     const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
+    const { setLocalFavoriteFriendsGroups } = useGeneralSettingsStore();
 
     const {
         isStartAtWindowsStartup,

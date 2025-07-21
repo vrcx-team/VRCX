@@ -12,6 +12,9 @@ import { parseLocation } from './location';
  * @returns
  */
 function checkCanInvite(location) {
+    if (!location) {
+        return false;
+    }
     const userStore = useUserStore();
     const locationStore = useLocationStore();
     const instanceStore = useInstanceStore();
@@ -42,6 +45,9 @@ function checkCanInvite(location) {
  * @returns
  */
 function checkCanInviteSelf(location) {
+    if (!location) {
+        return false;
+    }
     const userStore = useUserStore();
     const instanceStore = useInstanceStore();
     const friendStore = useFriendStore();

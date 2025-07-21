@@ -11,7 +11,7 @@ import { $app } from '../app';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
 import { groupDialogFilterOptions } from '../shared/constants/';
-import { replaceBioSymbols } from '../shared/utils';
+import { replaceBioSymbols, convertFileUrlToImageUrl } from '../shared/utils';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useUserStore } from './user';
@@ -685,9 +685,6 @@ export const useGroupStore = defineStore('Group', () => {
                     // keep roleIds
                     json.myMember.roleIds = ref.myMember.roleIds;
                 }
-                if (typeof json.myMember.isRepresenting !== 'undefined') {
-                    json.myMember.isRepresenting = ref.myMember.isRepresenting;
-                }
                 Object.assign(ref.myMember, json.myMember);
             }
             Object.assign(ref, json);
@@ -722,9 +719,21 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function handleGroupRepresented(args) {
+        const D = userStore.userDialog;
         const json = args.json;
+        D.representedGroup = json;
+        D.representedGroup.$thumbnailUrl = convertFileUrlToImageUrl(
+            json.iconUrl
+        );
+        if (!json || !json.isRepresenting) {
+            D.isRepresentedGroupLoading = false;
+        }
         if (!json.groupId) {
             // no group
+            return;
+        }
+        if (args.params.userId !== userStore.currentUser.id) {
+            // not current user, don't apply someone elses myMember
             return;
         }
         json.$memberId = json.id;
@@ -1002,7 +1011,6 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupRepresented(args);
-                userStore.userDialog.representedGroup = args.json;
                 return args;
             });
     }

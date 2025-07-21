@@ -410,18 +410,19 @@
                                         <el-dropdown-item icon="el-icon-postcard" command="Request Invite Message">{{
                                             t('dialog.user.actions.request_invite_with_message')
                                         }}</el-dropdown-item>
-                                        <template
-                                            v-if="
-                                                lastLocation.location &&
-                                                isGameRunning &&
-                                                checkCanInvite(lastLocation.location)
-                                            ">
-                                            <el-dropdown-item icon="el-icon-message" command="Invite">{{
-                                                t('dialog.user.actions.invite')
-                                            }}</el-dropdown-item>
-                                            <el-dropdown-item icon="el-icon-message" command="Invite Message">{{
-                                                t('dialog.user.actions.invite_with_message')
-                                            }}</el-dropdown-item>
+                                        <template v-if="isGameRunning">
+                                            <el-dropdown-item
+                                                :disabled="!checkCanInvite(lastLocation.location)"
+                                                icon="el-icon-message"
+                                                command="Invite"
+                                                >{{ t('dialog.user.actions.invite') }}</el-dropdown-item
+                                            >
+                                            <el-dropdown-item
+                                                :disabled="!checkCanInvite(lastLocation.location)"
+                                                icon="el-icon-message"
+                                                command="Invite Message"
+                                                >{{ t('dialog.user.actions.invite_with_message') }}</el-dropdown-item
+                                            >
                                         </template>
                                     </template>
                                     <template v-else-if="userDialog.incomingRequest">
@@ -901,9 +902,7 @@
                         <div class="x-friend-item" style="cursor: default">
                             <el-tooltip :placement="currentUser.id !== userDialog.id ? 'bottom' : 'top'">
                                 <template #content>
-                                    <span>{{
-                                        formatDateFilter(String(userOnlineForTimestamp(userDialog)), 'short')
-                                    }}</span>
+                                    <span>{{ formatDateFilter(userOnlineForTimestamp(userDialog), 'short') }}</span>
                                 </template>
                                 <div class="detail">
                                     <span

@@ -85,7 +85,12 @@ function connectWebSocket(token) {
             type: 'error',
             text: 'WebSocket Error'
         }).show();
-        socket.onclose();
+        socket.onclose(
+            new CloseEvent('close', {
+                code: 1006, // Abnormal Closure
+                reason: 'WebSocket Error'
+            })
+        );
     };
     socket.onmessage = ({ data }) => {
         try {
@@ -148,7 +153,6 @@ export function reconnectWebSocket() {
 
 /**
  * @param {object} args
- * @param {string} args.json.type
  */
 function handlePipeline(args) {
     const userStore = useUserStore();

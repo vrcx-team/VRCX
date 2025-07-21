@@ -20,7 +20,6 @@ import {
     compareByLocationAt,
     compareByName,
     compareByUpdatedAt,
-    convertFileUrlToImageUrl,
     extractFileId,
     getAllUserMemos,
     getGroupName,
@@ -947,14 +946,6 @@ export const useUserStore = defineStore('User', () => {
                             .getRepresentedGroup({ userId })
                             .then((args1) => {
                                 groupStore.handleGroupRepresented(args1);
-                                D.representedGroup = args1.json;
-                                D.representedGroup.$thumbnailUrl =
-                                    convertFileUrlToImageUrl(
-                                        args1.json.iconUrl
-                                    );
-                                if (!args1.json || !args1.json.isRepresenting) {
-                                    D.isRepresentedGroupLoading = false;
-                                }
                             });
                         D.loading = false;
                     });
