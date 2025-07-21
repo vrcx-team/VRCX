@@ -892,7 +892,7 @@ const gameLog = {
             FROM gamelog_join_leave
             INNER JOIN grouped_locations ON gamelog_join_leave.location = grouped_locations.location
             WHERE user_id = @userId OR display_name = @displayName
-            GROUP BY gamelog_join_leave.location, date(gamelog_join_leave.created_at)
+            GROUP BY gamelog_join_leave.location, date(gamelog_join_leave.created_at, 'localtime')
             ORDER BY gamelog_join_leave.id DESC`,
             {
                 '@userId': input.id,
