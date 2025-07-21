@@ -867,16 +867,12 @@ const gameLog = {
     },
 
     async getPreviousInstancesByUserId(input) {
-        var data = new Map();
+        var data = new Set();
         await sqliteService.execute(
             (dbRow) => {
                 var time = 0;
                 if (dbRow[2]) {
                     time = dbRow[2];
-                }
-                var ref = data.get(dbRow[1]);
-                if (typeof ref !== 'undefined') {
-                    time += ref.time;
                 }
                 var row = {
                     created_at: dbRow[0],
@@ -885,12 +881,18 @@ const gameLog = {
                     worldName: dbRow[3],
                     groupName: dbRow[4]
                 };
-                data.set(row.location, row);
+                data.add(row);
             },
-            `SELECT DISTINCT gamelog_join_leave.created_at, gamelog_join_leave.location, gamelog_join_leave.time, gamelog_location.world_name, gamelog_location.group_name
+            `
+            WITH grouped_locations AS (
+                SELECT DISTINCT location, world_name, group_name
+                FROM gamelog_location
+            )
+            SELECT gamelog_join_leave.created_at, gamelog_join_leave.location, sum(gamelog_join_leave.time) time, grouped_locations.world_name, grouped_locations.group_name
             FROM gamelog_join_leave
-            INNER JOIN gamelog_location ON gamelog_join_leave.location = gamelog_location.location
+            INNER JOIN grouped_locations ON gamelog_join_leave.location = grouped_locations.location
             WHERE user_id = @userId OR display_name = @displayName
+            GROUP BY gamelog_join_leave.location, date(gamelog_join_leave.created_at)
             ORDER BY gamelog_join_leave.id DESC`,
             {
                 '@userId': input.id,
