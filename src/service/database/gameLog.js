@@ -870,14 +870,11 @@ const gameLog = {
         var data = new Set();
         await sqliteService.execute(
             (dbRow) => {
-                var time = 0;
-                if (dbRow[2]) {
-                    time = dbRow[2];
-                }
+                if (!dbRow[2]) return; // prevent zero-time records due to OnPlayerJoined and OnPlayerLeft happening on different calendar days
                 var row = {
                     created_at: dbRow[0],
                     location: dbRow[1],
-                    time,
+                    time: dbRow[2],
                     worldName: dbRow[3],
                     groupName: dbRow[4]
                 };
