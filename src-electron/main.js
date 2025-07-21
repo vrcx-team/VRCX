@@ -748,11 +748,19 @@ function getVersion() {
 }
 
 function isDotNetInstalled() {
-    let dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
-    if (!process.env.DOTNET_ROOT || !fs.existsSync(dotnetPath)) {
+    let dotnetPath;
+
+    if (process.env.DOTNET_ROOT) {
+        dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
+        if (!fs.existsSync(dotnetPath)) {
+            // fallback to command
+            dotnetPath = 'dotnet';
+        }
+    } else {
         // fallback to command
         dotnetPath = 'dotnet';
     }
+
     console.log('Checking for .NET installation at:', dotnetPath);
 
     // Fallback to system .NET runtime
