@@ -642,7 +642,7 @@
             </div>
             <div class="current-instance-table">
                 <data-tables
-                    v-bind="currentInstanceUserList"
+                    v-bind="currentInstanceWorld.ref.id ? currentInstanceUserList : {}"
                     style="margin-top: 10px; cursor: pointer"
                     @row-click="selectCurrentInstanceRow">
                     <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo">
