@@ -92,14 +92,16 @@
             "src-electron/*",
             "VRCX.png",
             "images/tray.png",
-            "Version"
+            "Version",
+            "src-electron/libs/linux/libopenvr_api.so"
         ],
         "asarUnpack": [
             "node_modules/node-api-dotnet/**/*",
             "node_modules/node-api-dotnet/net9.0/**/*",
             "build/Electron/*",
             "build/Electron/**",
-            "build/Electron/dotnet-runtime/**/*"
+            "build/Electron/dotnet-runtime/**/*",
+            "src-electron/libs/linux/libopenvr_api.so"
         ],
         "extraResources": [
             {
@@ -121,6 +123,10 @@
             {
                 "from": "build/Electron/dotnet-runtime/",
                 "to": "dotnet-runtime/"
+            },
+            {
+                "from": "src-electron/libs/linux/libopenvr_api.so",
+                "to": "bin/libopenvr_api.so"
             }
         ],
         "directories": {
