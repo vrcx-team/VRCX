@@ -166,7 +166,7 @@
             id: props.previousInstancesUserDialog.userRef.id,
             displayName: props.previousInstancesUserDialog.userRef.displayName,
             location: row.location,
-            localDate: row.localDate
+            events: row.events
         });
         removeFromArray(previousInstancesUserDialogTable.data, row);
     }

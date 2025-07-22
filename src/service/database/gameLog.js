@@ -867,36 +867,57 @@ const gameLog = {
     },
 
     async getPreviousInstancesByUserId(input) {
+        var groupingTimeTolerance = 1 * 60 * 60 * 1000; // 1 hour
         var data = new Set();
+        var currentGroup;
+
         await sqliteService.execute(
             (dbRow) => {
-                if (!dbRow[2]) return; // prevent zero-time records due to OnPlayerJoined and OnPlayerLeft happening on different calendar days
-                var row = {
-                    created_at: dbRow[0],
-                    location: dbRow[1],
-                    time: dbRow[2],
-                    worldName: dbRow[3],
-                    groupName: dbRow[4],
-                    localDate: dbRow[5]
-                };
-                data.add(row);
+                var [created_at_iso, created_at_ts, location, time, worldName, groupName, eventId, eventType] = dbRow;
+
+                if (
+                    !currentGroup
+                    || currentGroup.location !== location
+                    || (
+                        (created_at_ts - currentGroup.last_ts) > groupingTimeTolerance // groups multiple OnPlayerJoined and OnPlayerLeft together if they are within time tolerance limit
+                        && !(currentGroup.last_join_ts && Math.abs((created_at_ts - currentGroup.last_join_ts) - time) < 1000) // allows OnPlayerLeft to connect with nearby OnPlayerJoined
+                    )
+                ) {
+                    currentGroup = {
+                        created_at: created_at_iso,
+                        location,
+                        time,
+                        worldName,
+                        groupName,
+                        events: [eventId],
+                        last_ts: created_at_ts,
+                    };
+
+                    data.add(currentGroup);
+                } else {
+                    currentGroup.time += time;
+                    currentGroup.last_ts = created_at_ts;
+                    currentGroup.events.push(eventId);
+                }
+
+                if (eventType == 'OnPlayerJoined') currentGroup.last_join_ts = created_at_ts;
             },
             `
             WITH grouped_locations AS (
                 SELECT DISTINCT location, world_name, group_name
                 FROM gamelog_location
             )
-            SELECT gamelog_join_leave.created_at, gamelog_join_leave.location, sum(gamelog_join_leave.time) time, grouped_locations.world_name, grouped_locations.group_name, date(gamelog_join_leave.created_at, 'localtime') local_date
+            SELECT gamelog_join_leave.created_at, strftime("%s", gamelog_join_leave.created_at) * 1000 created_at_ts, gamelog_join_leave.location, gamelog_join_leave.time, grouped_locations.world_name, grouped_locations.group_name, gamelog_join_leave.id, gamelog_join_leave.type
             FROM gamelog_join_leave
             INNER JOIN grouped_locations ON gamelog_join_leave.location = grouped_locations.location
             WHERE user_id = @userId OR display_name = @displayName
-            GROUP BY gamelog_join_leave.location, date(gamelog_join_leave.created_at, 'localtime')
-            ORDER BY gamelog_join_leave.id DESC`,
+            ORDER BY gamelog_join_leave.id ASC`,
             {
                 '@userId': input.id,
                 '@displayName': input.displayName
             }
         );
+
         return data;
     },
 
@@ -1126,12 +1147,11 @@ const gameLog = {
 
     deleteGameLogInstance(input) {
         sqliteService.executeNonQuery(
-            `DELETE FROM gamelog_join_leave WHERE (user_id = @user_id OR display_name = @displayName) AND (location = @location) AND (date(created_at, 'localtime') = @localDate)`,
+            `DELETE FROM gamelog_join_leave WHERE (user_id = @user_id OR display_name = @displayName) AND (location = @location) AND (id in (${input.events.join(',')}))`,
             {
                 '@user_id': input.id,
                 '@displayName': input.displayName,
-                '@location': input.location,
-                '@localDate': input.localDate
+                '@location': input.location
             }
         );
     },
