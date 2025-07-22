@@ -281,7 +281,14 @@ export const useDiscordPresenceSettingsStore = defineStore(
                 ) {
                     activityType = ActivityType.Watching;
                     appId = '1095440531821170820';
-                    bigIcon = 'popcorn_palace';
+                    if (
+                        !state.discordHideImage &&
+                        gameLogStore.nowPlaying.thumbnailUrl
+                    ) {
+                        bigIcon = gameLogStore.nowPlaying.thumbnailUrl;
+                    } else {
+                        bigIcon = 'popcorn_palace';
+                    }
                 }
                 if (gameLogStore.nowPlaying.name) {
                     L.worldName = gameLogStore.nowPlaying.name;

@@ -59,7 +59,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
             elapsed: 0,
             percentage: 0,
             remainingText: '',
-            playing: false
+            playing: false,
+            thumbnailUrl: ''
         },
         gameLogTable: {
             data: [],
@@ -168,7 +169,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
             elapsed: 0,
             percentage: 0,
             remainingText: '',
-            playing: false
+            playing: false,
+            thumbnailUrl: ''
         };
         vrStore.updateVrNowPlaying();
     }
@@ -200,7 +202,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 offset: ctx.videoPos,
                 elapsed: 0,
                 percentage: 0,
-                remainingText: ''
+                remainingText: '',
+                playing: false,
+                thumbnailUrl: ctx.thumbnailUrl
             };
         } else {
             state.nowPlaying = {
@@ -209,7 +213,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 offset: ctx.videoPos,
                 elapsed: 0,
                 percentage: 0,
-                remainingText: ''
+                remainingText: '',
+                thumbnailUrl: ctx.thumbnailUrl
             };
             if (ctx.updatedAt && ctx.videoPos) {
                 state.nowPlaying.startTime =
@@ -962,7 +967,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         let youtubeVideoId = '';
         let videoId = '';
         let videoName = '';
-        let videoLength = '';
+        let videoLength = 0;
         let displayName = '';
         let videoPos = 8; // video loading delay
         if (typeof gameLog.displayName !== 'undefined') {
@@ -1117,17 +1122,17 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const videoUrl = data[1];
         let videoPos = Number(data[2]);
         const videoLength = Number(data[3]);
-        let videoId = Number(data[4]);
+        let videoId = data[4];
         const displayName = data[5];
         let videoName = data[6];
-        if (videoId === -1) {
+        if (videoId === '-1') {
             videoId = 'YouTube';
         }
         const videoNameIndex = videoName.indexOf(']</b> ');
         if (videoNameIndex !== -1) {
             videoName = videoName.substring(videoNameIndex + 6);
         }
-        if (parseInt(videoPos, 10) === parseInt(videoLength, 10)) {
+        if (videoPos === videoLength) {
             // ummm okay
             videoPos = 0;
         }
@@ -1188,13 +1193,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const videoUrl = data[1];
         const videoPos = Number(data[2]);
         const videoLength = Number(data[3]);
-        let videoId = Number(data[4]);
+        let videoId = data[4];
         let displayName = data[5];
         const videoName = data[6];
         if (displayName === 'Random') {
             displayName = '';
         }
-        if (videoId === 9999) {
+        if (videoId === '9999') {
             videoId = 'YouTube';
         }
         if (videoUrl === state.nowPlaying.url) {
@@ -1311,6 +1316,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         const videoName = data.videoName || '';
         const videoUrl = videoName;
         const videoId = 'PopcornPalace';
+        const thumbnailUrl = data.thumbnailUrl || '';
         if (!videoName) {
             clearNowPlaying();
             return;
@@ -1320,7 +1326,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 updatedAt: gameLog.dt,
                 videoUrl,
                 videoLength,
-                videoPos
+                videoPos,
+                thumbnailUrl
             };
             setNowPlaying(entry);
             return;
@@ -1344,7 +1351,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
             location,
             displayName,
             userId,
-            videoPos
+            videoPos,
+            thumbnailUrl
         };
         setNowPlaying(entry1);
     }
