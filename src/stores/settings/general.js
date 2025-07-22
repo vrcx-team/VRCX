@@ -46,6 +46,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
             autoStateChangeAloneStatus,
             autoStateChangeCompanyStatus,
             autoStateChangeInstanceTypesStr,
+            autoStateChangeNoFriends,
             autoAcceptInviteRequests
         ] = await Promise.all([
             configRepository.getBool('VRCX_StartAtWindowsStartup', false),
@@ -71,6 +72,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                 'VRCX_autoStateChangeInstanceTypes',
                 '[]'
             ),
+            configRepository.getBool('VRCX_autoStateChangeNoFriends', false),
             configRepository.getString('VRCX_autoAcceptInviteRequests', 'Off')
         ]);
 
@@ -104,6 +106,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
         state.autoStateChangeInstanceTypes = JSON.parse(
             autoStateChangeInstanceTypesStr
         );
+        state.autoStateChangeNoFriends = autoStateChangeNoFriends;
         state.autoAcceptInviteRequests = autoAcceptInviteRequests;
     }
 
