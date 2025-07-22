@@ -257,9 +257,9 @@
                 "vrchat_credits": "拥有的 VRChat 点数",
                 "refresh": "点击以刷新",
                 "logout": "退出登录",
-                "manage_gallery_icon": "管理上传的图片/图标/表情",
+                "manage_gallery_inventory_icon": "管理相册与库存",
                 "export_friend_list": "导出好友列表",
-                "export_own_avatars": "导出自己创建的模型",
+                "export_own_avatars": "导出自己创建的模型 ID 列表",
                 "discord_names": "查看好友的 Discord 名称",
                 "export_notes": "导出备注"
             },
@@ -298,7 +298,7 @@
                 "notifications": "通知",
                 "wrist_overlay": "手腕叠加界面",
                 "discord_presence": "Discord 状态面板",
-                "pictures": "图片",
+                "pictures": "相册",
                 "advanced": "高级"
             },
             "general": {
@@ -328,7 +328,8 @@
                     "disable_gpu_acceleration_tooltip": "仅在你“知道自己在做什么”时才应更改此选项，这可能会导致 SteamVR 叠加界面出现问题，但如果你遇到 UI 显示问题，那么可以尝试关闭此选项，重启 VRCX 生效",
                     "disable_vr_overlay_gpu_acceleration": "禁用 VR 叠加界面的GPU加速",
                     "disable_vr_overlay_gpu_acceleration_tooltip": "GPU 加速可能导致 VRCX 崩溃或显存泄漏，如果你遇到了问题，请尝试打开此选项，重启 VRCX 生效",
-                    "proxy": "代理服务器设置"
+                    "proxy": "代理服务器设置",
+                    "startup_linux": "向 VRCX.desktop 启动文件添加 “--startup” 参数，以便在系统启动时将 VRCX 以最小化窗口启动。"
                 },
                 "favorites": {
                     "header": "星标好友筛选",
@@ -336,7 +337,7 @@
                 },
                 "logging": {
                     "header": "日志",
-                    "resource_load": "显示世界内Udon网络资源的加载详情",
+                    "resource_load": "显示世界内 Udon 网络资源的加载详情",
                     "empty_avatar": "不在动态里记录模型名称"
                 },
                 "automation": {
@@ -420,7 +421,7 @@
                     "group_by_instance_tooltip": "如果启用，将会在有多名好友在同一房间时，按所在房间对好友进行分类排序。",
                     "hide_friends_in_same_instance": "合并处于同一房间的好友",
                     "hide_friends_in_same_instance_tooltip": "当多名好友处于同一房间时，在列表中合并他们以避免重复显示",
-                    "split_favorite_friends": "将星标好友按照好友分组显示",
+                    "split_favorite_friends": "将星标好友按照分组显示",
                     "split_favorite_friends_tooltip": "如果启用，将会显示星标好友时按照其所在的好友分组显示。"
                 },
                 "user_dialog": {
@@ -520,19 +521,19 @@
             },
             "pictures": {
                 "pictures": {
-                    "header": "图片",
+                    "header": "截图管理",
                     "open_folder": "打开文件夹",
-                    "vrc_photos": "VRChat 照片",
+                    "vrc_photos": "VRChat 截图",
                     "steam_screenshots": "Steam 截图",
-                    "auto_delete_old_prints": "自动删除旧打印的照片",
-                    "auto_delete_prints_from_vrc": "当达到打印上限时，从VRC中删除旧打印的照片。"
+                    "auto_delete_old_prints": "自动清理最旧的“拍立得”",
+                    "auto_delete_prints_from_vrc": "当达到存储上限时自动删除最旧的“拍立得”照片"
                 }
             },
             "advanced": {
                 "advanced": {
                     "header": "高级设置",
                     "launch_options": "启动选项",
-                    "screenshot_metadata": "截图元数据查看器",
+                    "screenshot_metadata": "照片元数据查看器",
                     "vrc_registry_backup": "VRC 设置数据备份工具",
                     "common_folders": "常用文件夹",
                     "primary_password": {
@@ -561,11 +562,11 @@
                         "crop_convert_old_cancel": "否"
                     },
                     "save_instance_stickers_to_file": {
-                        "header": "“表情贴纸”保存选项",
+                        "header": "保存“表情贴纸”至图片",
                         "description": "将房间内的“表情贴纸”保存到 VRChat 的照片文件夹中"
                     },
                     "save_instance_emoji_to_file": {
-                        "header": "保存“表情贴纸”到文件",
+                        "header": "保存“表情贴纸”至文件",
                         "description": "保存生成的“表情贴纸”到 VRChat 的照片文件夹中"
                     },
                     "remote_database": {
@@ -613,7 +614,7 @@
                         "udon_exception_logging": "显示 Udon 错误日志",
                         "gpu_fix": "修复 SteamVR 叠加界面显示问题",
                         "gpu_fix_notice": "（需要重启）",
-                        "gpu_fix_warning": "只有在 SteamVR 叠加界面异常并且你有2张显卡的情况下才需要启用这个选项。",
+                        "gpu_fix_warning": "只有在 SteamVR 叠加界面异常并且你有多张显卡的情况下才需要启用这个选项。",
                         "disable_gamelog": "关闭游戏日志",
                         "disable_gamelog_notice": "（可能会弄坏很多东西！）",
                         "user_cache": "玩家信息缓存：",
@@ -708,7 +709,7 @@
             "tags": {
                 "friend_no": "第 {number} 位好友",
                 "vrchat_team": "VRChat Team",
-                "18_plus_verified": "已通过 18+ 验证",
+                "18_plus_verified": "已满18岁",
                 "age_verified": "已完成年龄验证"
             },
             "badges": {
@@ -727,7 +728,7 @@
                 "request_invite_with_message": "发送带消息的加入申请",
                 "invite_to_group": "邀请加入群组",
                 "send_boop": "Send Boop",
-                "manage_gallery_icon": "管理相册 / 图标",
+                "manage_gallery_inventory_icon": "管理相册与库存",
                 "accept_friend_request": "接受好友申请",
                 "decline_friend_request": "拒绝好友申请",
                 "cancel_friend_request": "取消好友申请",
@@ -994,10 +995,10 @@
                 "version": "版本",
                 "platform": "支持的平台",
                 "time_spent": "模型使用时长",
-                "memo": "本地备注",
-                "memo_placeholder": "点击添加备注",
+                "memo": "备注",
+                "memo_placeholder": "点此添加备注",
                 "listings": "列表",
-                "gallery": "相册"
+                "gallery": "模型相册"
             },
             "json": {
                 "header": "原始 JSON 信息",
@@ -1033,7 +1034,7 @@
                 "unsubscribe": "忽略群组通知",
                 "subscribe": "接收群组通知",
                 "invite_to_group": "邀请好友加入群组",
-                "manage_selected": "管理选中的群组",
+                "manage_selected": "批量操作",
                 "select_all": "全选",
                 "deselect_all": "取消全选",
                 "visibility_everyone": "可见性：所有人",
@@ -1171,7 +1172,7 @@
             "content_pedestals": "分享浮标",
             "content_prints": "拍立得",
             "content_drones": "无人机",
-            "content_items": "Items",
+            "content_items": "物品",
             "world_id": "世界 ID",
             "instance_id": "房间 ID",
             "instance_id_placeholder": "通常是随机数",
@@ -1452,14 +1453,14 @@
             "send": "发送"
         },
         "gallery_icons": {
-            "header": "管理照片、图标、表情和贴纸",
+            "header": "相册与库存",
             "recommended_image_size": "推荐的图片尺寸",
             "gallery": "相册",
             "icons": "图标",
             "emojis": "Emojis（表情）",
             "stickers": "贴纸",
             "prints": "拍立得",
-            "inventory": "Inventory",
+            "inventory": "库存",
             "refresh": "刷新",
             "upload": "上传",
             "clear": "清除",
@@ -1471,7 +1472,7 @@
             "flipbook_info": "选择一个 1024x1024 的 PNG 精灵表作为动画表情（最大 FPS 为64）",
             "note": "备注",
             "crop_print_border": "裁剪白边",
-            "consume_bundle": "Consume"
+            "consume_bundle": "拆开"
         },
         "change_content_image": {
             "avatar": "更改模型封面",
@@ -1513,7 +1514,7 @@
             "ok": "确定"
         },
         "screenshot_metadata": {
-            "header": "图片元数据查看器",
+            "header": "元数据查看器",
             "drag": "拖放图片到这里",
             "browse": "选择文件",
             "last_screenshot": "上一张图片",
@@ -1632,7 +1633,7 @@
         },
         "instance": {
             "closed": "房间已关闭",
-            "removed_form_queue": "已从等待队列中移除房间 {worldName}",
+            "removed_form_queue": "已从等待队列中移除 {worldName}",
             "not_allowed": "你无权访问此房间"
         },
         "avatar": {
@@ -1648,30 +1649,30 @@
             "too_large": "文件大小过大"
         },
         "print": {
-            "uploaded": "拍立得(Print)上传成功"
+            "uploaded": "拍立得照片上传成功"
         },
         "sticker": {
-            "uploaded": "贴纸(Sticker)上传成功"
+            "uploaded": "贴纸上传成功"
         },
         "gallery": {
             "uploaded": "图片已成功上传到相册",
             "failed": "无法将图片上传到相册"
-         },
+        },
         "avatar_gallery": {
-            "uploaded": "模型图片已成功上传到相册",
-            "failed": "无法将模型图片上传到相册",
-            "deleted": "模型图片已在相册中删除",
-            "not_found": "未找到模型相册图片 ID",
+            "uploaded": "图片已成功上传到模型相册",
+            "failed": "图片未能上传到模型相册",
+            "deleted": "图片已被成功删除",
+            "not_found": "未找到模型相册的 ID",
             "already_first": "已是第一张图片",
             "already_last": "已是最后一张图片",
-            "reordered": "模型图片相册排序成功"
+            "reordered": "相册图片排序成功"
         },
         "world": {
             "image_changed": "已更改世界封面",
             "image_invalid": "当前使用的世界封面无效"
         },
         "icon": {
-            "uploaded": "图标(Icon)上传成功"
+            "uploaded": "图标上传成功"
         },
         "user": {
             "moderated": "已更新玩家状态"
@@ -2105,7 +2106,7 @@
         "error": {
             "message": {
                 "error_message": "错误信息",
-                "endpoint": "接口地址",
+                "endpoint": "接口",
                 "missing_credentials": "缺少访问凭据",
                 "avatar_private_or_deleted": "这个模型是私人的，或其已被删除",
                 "vpn_in_use": "VRChat 目前限制了大多数的 VPN 服务。请断开所有已连接的 VPN 后重试。",
