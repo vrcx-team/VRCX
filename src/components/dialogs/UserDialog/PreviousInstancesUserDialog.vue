@@ -165,7 +165,8 @@
         database.deleteGameLogInstance({
             id: props.previousInstancesUserDialog.userRef.id,
             displayName: props.previousInstancesUserDialog.userRef.displayName,
-            location: row.location
+            location: row.location,
+            localDate: row.localDate
         });
         removeFromArray(previousInstancesUserDialogTable.data, row);
     }

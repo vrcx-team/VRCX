@@ -876,7 +876,8 @@ const gameLog = {
                     location: dbRow[1],
                     time: dbRow[2],
                     worldName: dbRow[3],
-                    groupName: dbRow[4]
+                    groupName: dbRow[4],
+                    localDate: dbRow[5]
                 };
                 data.add(row);
             },
@@ -885,7 +886,7 @@ const gameLog = {
                 SELECT DISTINCT location, world_name, group_name
                 FROM gamelog_location
             )
-            SELECT gamelog_join_leave.created_at, gamelog_join_leave.location, sum(gamelog_join_leave.time) time, grouped_locations.world_name, grouped_locations.group_name
+            SELECT gamelog_join_leave.created_at, gamelog_join_leave.location, sum(gamelog_join_leave.time) time, grouped_locations.world_name, grouped_locations.group_name, date(gamelog_join_leave.created_at, 'localtime') local_date
             FROM gamelog_join_leave
             INNER JOIN grouped_locations ON gamelog_join_leave.location = grouped_locations.location
             WHERE user_id = @userId OR display_name = @displayName
@@ -1125,11 +1126,12 @@ const gameLog = {
 
     deleteGameLogInstance(input) {
         sqliteService.executeNonQuery(
-            `DELETE FROM gamelog_join_leave WHERE (user_id = @user_id OR display_name = @displayName) AND (location = @location)`,
+            `DELETE FROM gamelog_join_leave WHERE (user_id = @user_id OR display_name = @displayName) AND (location = @location) AND (date(created_at, 'localtime') = @localDate)`,
             {
                 '@user_id': input.id,
                 '@displayName': input.displayName,
-                '@location': input.location
+                '@location': input.location,
+                '@localDate': input.localDate
             }
         );
     },
