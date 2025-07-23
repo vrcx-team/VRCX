@@ -870,6 +870,7 @@ const gameLog = {
         var groupingTimeTolerance = 1 * 60 * 60 * 1000; // 1 hour
         var data = new Set();
         var currentGroup;
+        var prevEvent;
 
         await sqliteService.execute(
             (dbRow) => {
@@ -880,7 +881,7 @@ const gameLog = {
                     || currentGroup.location !== location
                     || (
                         (created_at_ts - currentGroup.last_ts) > groupingTimeTolerance // groups multiple OnPlayerJoined and OnPlayerLeft together if they are within time tolerance limit
-                        && !(currentGroup.last_join_ts && Math.abs((created_at_ts - currentGroup.last_join_ts) - time) < 1000) // allows OnPlayerLeft to connect with nearby OnPlayerJoined
+                        && !(prevEvent === "OnPlayerJoined" && eventType === "OnPlayerLeft") // allows OnPlayerLeft to connect with nearby OnPlayerJoined
                     )
                 ) {
                     currentGroup = {
@@ -900,7 +901,7 @@ const gameLog = {
                     currentGroup.events.push(eventId);
                 }
 
-                if (eventType == 'OnPlayerJoined') currentGroup.last_join_ts = created_at_ts;
+                prevEvent = eventType;
             },
             `
             WITH grouped_locations AS (
