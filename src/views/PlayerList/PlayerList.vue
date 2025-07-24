@@ -662,7 +662,7 @@
                             </template>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('table.playerList.timer')" width="80" prop="timer" sortable>
+                    <el-table-column :label="t('table.playerList.timer')" width="90" prop="timer" sortable>
                         <template #default="scope">
                             <Timer :epoch="scope.row.timer" />
                         </template>

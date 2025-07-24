@@ -13,6 +13,7 @@
                     icon="el-icon-download"
                     circle
                     style="margin-left: 5px"
+                    :disabled="!fullscreenImageDialog.imageUrl.startsWith('http')"
                     @click="
                         downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)
                     "></el-button>
@@ -70,7 +71,8 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        } catch {
+        } catch (error) {
+            console.error('Error downloading image:', error);
             new Noty({
                 type: 'error',
                 text: escapeTag(`Failed to download image. ${url}`)

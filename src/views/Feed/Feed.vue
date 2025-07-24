@@ -195,7 +195,7 @@
 
             <el-table-column :label="t('table.feed.type')" prop="type" width="80">
                 <template #default="scope">
-                    <span class="x-link" v-text="t('view.feed.filters.' + scope.row.type)"></span>
+                    <span v-text="t('view.feed.filters.' + scope.row.type)"></span>
                 </template>
             </el-table-column>
 
