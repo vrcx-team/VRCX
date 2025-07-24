@@ -874,15 +874,26 @@ const gameLog = {
 
         await sqliteService.execute(
             (dbRow) => {
-                var [created_at_iso, created_at_ts, location, time, worldName, groupName, eventId, eventType] = dbRow;
+                var [
+                    created_at_iso,
+                    created_at_ts,
+                    location,
+                    time,
+                    worldName,
+                    groupName,
+                    eventId,
+                    eventType
+                ] = dbRow;
 
                 if (
-                    !currentGroup
-                    || currentGroup.location !== location
-                    || (
-                        (created_at_ts - currentGroup.last_ts) > groupingTimeTolerance // groups multiple OnPlayerJoined and OnPlayerLeft together if they are within time tolerance limit
-                        && !(prevEvent === "OnPlayerJoined" && eventType === "OnPlayerLeft") // allows OnPlayerLeft to connect with nearby OnPlayerJoined
-                    )
+                    !currentGroup ||
+                    currentGroup.location !== location ||
+                    (created_at_ts - currentGroup.last_ts >
+                        groupingTimeTolerance && // groups multiple OnPlayerJoined and OnPlayerLeft together if they are within time tolerance limit
+                        !(
+                            prevEvent === 'OnPlayerJoined' &&
+                            eventType === 'OnPlayerLeft'
+                        )) // allows OnPlayerLeft to connect with nearby OnPlayerJoined
                 ) {
                     currentGroup = {
                         created_at: created_at_iso,
@@ -891,7 +902,7 @@ const gameLog = {
                         worldName,
                         groupName,
                         events: [eventId],
-                        last_ts: created_at_ts,
+                        last_ts: created_at_ts
                     };
 
                     data.add(currentGroup);
