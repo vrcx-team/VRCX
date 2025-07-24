@@ -262,8 +262,8 @@ namespace VRCX
             if (newChunkIndex == -1) return false;
 
             // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
-            var existingiTXt = FindChunkIndex(png, "iTXt");
-            if (existingiTXt != -1) return false;
+            // var existingiTXt = FindChunkIndex(png, "iTXt");
+            // if (existingiTXt != -1) return false;
 
             var newChunk = new PNGChunk("iTXt");
             newChunk.InitializeTextChunk("Description", text);
