@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using CefSharp;
 using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
@@ -12,15 +13,32 @@ namespace VRCX
     {
         public static readonly CefService Instance;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static string _lastCefVersionPath = string.Empty;
 
         static CefService()
         {
+            _lastCefVersionPath = Path.Join(Program.AppDataDirectory, "LastCefVersion");
             Instance = new CefService();
         }
 
         internal void Init()
         {
             var userDataDir = Path.Join(Program.AppDataDirectory, "userdata");
+            
+            // delete userdata if Cef version has been downgraded, fixes VRCX not opening after a downgrade
+            var currentVersion = Cef.ChromiumVersion;
+            if (File.Exists(_lastCefVersionPath))
+            {
+                var lastCefVersion = File.ReadAllText(_lastCefVersionPath).Trim();
+                if (string.Compare(lastCefVersion, currentVersion, StringComparison.Ordinal) > 0)
+                {
+                    logger.Info("Cef downgrade detected, deleting userdata: {0} -> {1}", lastCefVersion, currentVersion);
+                    Directory.Delete(userDataDir, true);
+                }
+            }
+            File.WriteAllBytes(_lastCefVersionPath, Encoding.UTF8.GetBytes(currentVersion));
+            logger.Info("Cef version: {0}", currentVersion);
+            
             var cefSettings = new CefSettings
             {
                 RootCachePath = userDataDir,
@@ -99,9 +117,10 @@ namespace VRCX
             
             CefSharpSettings.ShutdownOnExit = false;
             CefSharpSettings.ConcurrentTaskExecution = true;
-
+            
             if (Cef.Initialize(cefSettings, false) == false)
             {
+                logger.Error("Cef failed to initialize");
                 throw new Exception("Cef.Initialize()");
             }
         }
