@@ -340,40 +340,12 @@
                             </el-button>
                             <el-dropdown-menu>
                                 <el-dropdown-item
-                                    @click.native="saveThemeMode('system')"
-                                    v-text="
-                                        t('view.settings.appearance.appearance.theme_mode_system')
-                                    "></el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="saveThemeMode('light')"
-                                    v-text="
-                                        t('view.settings.appearance.appearance.theme_mode_light')
-                                    "></el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="saveThemeMode('dark')"
-                                    v-text="
-                                        t('view.settings.appearance.appearance.theme_mode_dark')
-                                    "></el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="saveThemeMode('darkvanilla')"
-                                    v-text="
-                                        t('view.settings.appearance.appearance.theme_mode_darkvanilla')
-                                    "></el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="saveThemeMode('darkvanillaold')"
-                                    v-text="
-                                        t('view.settings.appearance.appearance.theme_mode_darkvanillaold')
-                                    "></el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="saveThemeMode('pink')"
-                                    v-text="
-                                        t('view.settings.appearance.appearance.theme_mode_pink')
-                                    "></el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="saveThemeMode('material3')"
-                                    v-text="
-                                        t('view.settings.appearance.appearance.theme_mode_material3')
-                                    "></el-dropdown-item>
+                                    v-for="(config, themeKey) in THEME_CONFIG"
+                                    :key="themeKey"
+                                    @click.native="saveThemeMode(themeKey)"
+                                    :class="{ 'is-active': themeMode === themeKey }">
+                                    {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
+                                </el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
@@ -1885,6 +1857,7 @@
     import FeedFiltersDialog from './dialogs/FeedFiltersDialog.vue';
     import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
     import { openExternalLink } from '../../shared/utils';
+    import { THEME_CONFIG } from '../../shared/constants';
 
     const { messages, t } = useI18n();
     const { $message } = getCurrentInstance().proxy;

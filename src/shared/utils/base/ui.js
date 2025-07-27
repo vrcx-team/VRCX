@@ -1,5 +1,6 @@
 import { storeToRefs } from 'pinia';
 import { useAppearanceSettingsStore } from '../../../stores';
+import { THEME_CONFIG } from '../../constants';
 
 /**
  *
@@ -21,43 +22,10 @@ function changeAppDarkStyle(isDark) {
     }
 }
 
-/**
- *
- * @param {string} themeMode
- * @returns
- */
 function changeAppThemeStyle(themeMode) {
-    const themeStyle = {};
-    switch (themeMode) {
-        case 'light':
-            themeStyle.href = '';
-            break;
-        case 'dark':
-            themeStyle.href = '';
-            break;
-        case 'darkvanillaold':
-            themeStyle.href = 'theme.darkvanillaold.css';
-            break;
-        case 'darkvanilla':
-            themeStyle.href = 'theme.darkvanilla.css';
-            break;
-        case 'pink':
-            themeStyle.href = 'theme.pink.css';
-            break;
-        case 'material3':
-            themeStyle.href = 'theme.material3.css';
-            break;
-        case 'system':
-            themeStyle.href = '';
-            break;
-    }
+    const themeConfig = THEME_CONFIG[themeMode];
+    if (!themeConfig) return;
 
-    /**
-     * prevents flickering
-     * giving absolute paths does prevent flickering
-     * when switching from another dark theme to 'dark' theme
-     * <del>works on my machine</del>
-     */
     let filePathPrefix = 'file://vrcx/';
     if (LINUX) {
         filePathPrefix = './';
@@ -70,38 +38,35 @@ function changeAppThemeStyle(themeMode) {
         $appThemeStyle.rel = 'stylesheet';
         document.head.appendChild($appThemeStyle);
     }
-    $appThemeStyle.href = themeStyle.href
-        ? `${filePathPrefix}${themeStyle.href}`
+    $appThemeStyle.href = themeConfig.cssFile
+        ? `${filePathPrefix}${themeConfig.cssFile}`
         : '';
 
     let $appThemeDarkStyle = document.getElementById('app-theme-dark-style');
-
     const darkThemeCssPath = `${filePathPrefix}theme.dark.css`;
+    const shouldApplyDarkBase =
+        themeConfig.requiresDarkBase ||
+        (themeMode === 'system' && systemIsDarkMode());
 
-    if (!$appThemeDarkStyle && themeMode !== 'light') {
-        if (themeMode === 'system' && !systemIsDarkMode()) {
-            return;
+    if (shouldApplyDarkBase) {
+        if (!$appThemeDarkStyle) {
+            $appThemeDarkStyle = document.createElement('link');
+            $appThemeDarkStyle.setAttribute('id', 'app-theme-dark-style');
+            $appThemeDarkStyle.rel = 'stylesheet';
+            $appThemeDarkStyle.href = darkThemeCssPath;
+            document.head.insertBefore($appThemeDarkStyle, $appThemeStyle);
+        } else if ($appThemeDarkStyle.href !== darkThemeCssPath) {
+            $appThemeDarkStyle.href = darkThemeCssPath;
         }
-        $appThemeDarkStyle = document.createElement('link');
-        $appThemeDarkStyle.setAttribute('id', 'app-theme-dark-style');
-        $appThemeDarkStyle.rel = 'stylesheet';
-        $appThemeDarkStyle.href = darkThemeCssPath;
-        document.head.insertBefore($appThemeDarkStyle, $appThemeStyle);
     } else {
-        if (themeMode === 'system' && systemIsDarkMode()) {
-            if ($appThemeDarkStyle.href === darkThemeCssPath) {
-                return;
-            }
-            $appThemeDarkStyle.href = darkThemeCssPath;
-        } else if (themeMode !== 'light' && themeMode !== 'system') {
-            if ($appThemeDarkStyle.href === darkThemeCssPath) {
-                return;
-            }
-            $appThemeDarkStyle.href = darkThemeCssPath;
-        } else {
-            $appThemeDarkStyle && $appThemeDarkStyle.remove();
-        }
+        $appThemeDarkStyle && $appThemeDarkStyle.remove();
     }
+
+    let isDarkForExternalApp = themeConfig.isDark;
+    if (isDarkForExternalApp === 'system') {
+        isDarkForExternalApp = systemIsDarkMode();
+    }
+    changeAppDarkStyle(isDarkForExternalApp);
 }
 
 /**

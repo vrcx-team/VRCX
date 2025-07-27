@@ -64,7 +64,14 @@ module.exports = (env, argv) => {
                     use: [
                         MiniCssExtractPlugin.loader,
                         'css-loader',
-                        'sass-loader'
+                        {
+                            loader: 'sass-loader',
+                            options: {
+                                sassOptions: {
+                                    quietDeps: true
+                                }
+                            }
+                        }
                     ]
                 },
                 {
@@ -77,7 +84,13 @@ module.exports = (env, argv) => {
             ]
         },
         devServer: {
-            port: 9000
+            port: 9000,
+            client: {
+                overlay: {
+                    warnings: false,
+                    errors: true
+                }
+            }
         },
         resolve: {
             extensions: ['.js', '.vue', '.css', '.scss'],

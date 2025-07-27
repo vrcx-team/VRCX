@@ -9,3 +9,4 @@ export * from './user';
 export * from './instance';
 export * from './world';
 export * from './moderation';
+export * from './themes';
