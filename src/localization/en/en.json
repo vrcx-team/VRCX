@@ -186,6 +186,9 @@
                 "message": "Message",
                 "boop": "Boop",
                 "groupChange": "Group Change",
+                "event": {
+                    "announcement": "Event Announcement"
+                },
                 "group": {
                     "announcement": "Announcement",
                     "informative": "Informative",

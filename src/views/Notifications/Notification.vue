@@ -20,6 +20,7 @@
                                 'ignoredFriendRequest',
                                 'message',
                                 'boop',
+                                'event.announcement',
                                 'groupChange',
                                 'group.announcement',
                                 'group.informative',
@@ -490,6 +491,16 @@
                 break;
             case 'user':
                 showUserDialog(data[1]);
+                break;
+            case 'event':
+                const ids = data[1].split(',');
+                if (ids.length < 2) {
+                    console.error('Invalid event notification link:', data[1]);
+                    return;
+                }
+
+                showGroupDialog(ids[0]);
+                // ids[1] cal_ is the event id
                 break;
         }
     }
