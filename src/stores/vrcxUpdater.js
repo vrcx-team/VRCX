@@ -6,7 +6,6 @@ import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
-import { useAuthStore } from './auth';
 import { useUiStore } from './ui';
 import { useI18n } from 'vue-i18n-bridge';
 import { AppGlobal } from '../service/appConfig';
@@ -27,8 +26,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             updatePending: false,
             updatePendingIsLatest: false,
             release: '',
-            releases: [],
-            json: {}
+            releases: []
         },
         changeLogDialog: {
             visible: false,
@@ -36,7 +34,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             changeLog: ''
         },
         pendingVRCXUpdate: false,
-        pendingVRCXInstall: false,
+        pendingVRCXInstall: '',
 
         updateInProgress: false,
         updateProgress: 0
@@ -181,7 +179,6 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
     }
     async function checkForVRCXUpdate() {
-        const authStore = useAuthStore();
         if (
             !currentVersion.value ||
             currentVersion.value === 'VRCX Nightly Build' ||
@@ -218,7 +215,6 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             console.log(json, response);
         }
         if (json === Object(json) && json.name && json.published_at) {
-            state.VRCXUpdateDialog.updateJson = json;
             state.changeLogDialog.buildName = json.name;
             state.changeLogDialog.changeLog = changeLogRemoveLinks(json.body);
             const releaseName = json.name;
@@ -227,7 +223,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             if (releaseName === state.pendingVRCXInstall) {
                 // update already downloaded
                 state.VRCXUpdateDialog.updatePendingIsLatest = true;
-            } else if (releaseName > state.currentVersion) {
+            } else if (releaseName > currentVersion.value) {
                 let downloadUrl = '';
                 let downloadName = '';
                 let hashUrl = '';
@@ -270,9 +266,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 state.pendingVRCXUpdate = true;
                 uiStore.notifyMenu('settings');
                 const type = 'Auto';
-                if (!watchState.isLoggedIn) {
-                    showVRCXUpdateDialog();
-                } else if (state.autoUpdateVRCX === 'Notify') {
+                if (state.autoUpdateVRCX === 'Notify') {
                     // this.showVRCXUpdateDialog();
                 } else if (state.autoUpdateVRCX === 'Auto Download') {
                     await downloadVRCXUpdate(
@@ -292,6 +286,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         D.visible = true;
         D.updatePendingIsLatest = false;
         D.updatePending = await AppApi.CheckForUpdateExe();
+        if (state.updateInProgress) {
+            return;
+        }
         await loadBranchVersions();
     }
 

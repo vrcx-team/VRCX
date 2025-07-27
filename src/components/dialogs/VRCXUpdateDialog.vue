@@ -44,7 +44,7 @@
                 {{ t('dialog.vrcx_updater.cancel') }}
             </el-button>
             <el-button
-                v-if="Boolean(VRCXUpdateDialog.release) !== pendingVRCXInstall"
+                v-if="VRCXUpdateDialog.release !== pendingVRCXInstall"
                 :disabled="updateInProgress"
                 type="primary"
                 size="small"
