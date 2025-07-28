@@ -8,14 +8,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-$--font-path: '~element-ui/lib/theme-chalk/fonts';
-
 @use './assets/scss/flags.scss';
 @use './assets/scss/animated-emoji.scss';
 
 @import '~animate.css/animate.min.css';
 @import '~noty/lib/noty.css';
-@import '~element-ui/packages/theme-chalk/src/index';
+@import '~element-ui/lib/theme-chalk/index.css';
 
 .color-palettes {
     background: #409eff;
