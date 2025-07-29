@@ -416,6 +416,11 @@ export const useInstanceStore = defineStore('Instance', () => {
         ) {
             applyGroupDialogInstances();
         }
+        for (const groupInstance of groupStore.groupInstances) {
+            if (groupInstance.instance.id === ref.id) {
+                groupInstance.instance = ref;
+            }
+        }
         return ref;
     }
 

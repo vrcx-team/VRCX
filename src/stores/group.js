@@ -852,9 +852,9 @@ export const useGroupStore = defineStore('Group', () => {
                 // tack on fetchedAt
                 json.$fetchedAt = args.json.fetchedAt;
             }
-            instanceStore.applyInstance(json);
-            const ref = state.cachedGroups.get(json.ownerId);
-            if (typeof ref === 'undefined') {
+            const instanceRef = instanceStore.applyInstance(json);
+            const groupRef = state.cachedGroups.get(json.ownerId);
+            if (typeof groupRef === 'undefined') {
                 if (watchState.isFriendsLoaded) {
                     const args = await groupRequest.getGroup({
                         groupId: json.ownerId
@@ -864,8 +864,8 @@ export const useGroupStore = defineStore('Group', () => {
                 return;
             }
             state.groupInstances.push({
-                group: ref,
-                instance: instanceStore.applyInstance(json)
+                group: groupRef,
+                instance: instanceRef
             });
         }
     }
