@@ -521,6 +521,7 @@ export const useUserStore = defineStore('User', () => {
                 $customTagColour: '',
                 $friendNumber: 0,
                 $lastFetch: Date.now(),
+                $platform: '',
                 //
                 ...json
             };
@@ -595,6 +596,11 @@ export const useUserStore = defineStore('User', () => {
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
         appearanceSettingsStore.applyUserTrustLevel(ref);
         applyUserLanguage(ref);
+        if (ref.platform && ref.platform !== 'offline') {
+            ref.$platform = ref.platform;
+        } else {
+            ref.$platform = ref.last_platform;
+        }
         // traveling
         if (ref.location === 'traveling') {
             ref.$location = parseLocation(ref.travelingToLocation);

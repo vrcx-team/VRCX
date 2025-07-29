@@ -179,7 +179,7 @@
                                 {{ t('dialog.user.tags.vrchat_team') }}
                             </el-tag>
                             <el-tag
-                                v-if="userDialog.ref.last_platform === 'standalonewindows'"
+                                v-if="userDialog.ref.$platform === 'standalonewindows'"
                                 type="info"
                                 effect="plain"
                                 size="mini"
@@ -188,7 +188,7 @@
                                 PC
                             </el-tag>
                             <el-tag
-                                v-else-if="userDialog.ref.last_platform === 'android'"
+                                v-else-if="userDialog.ref.$platform === 'android'"
                                 type="info"
                                 effect="plain"
                                 size="mini"
@@ -197,7 +197,7 @@
                                 Android
                             </el-tag>
                             <el-tag
-                                v-else-if="userDialog.ref.last_platform === 'ios'"
+                                v-else-if="userDialog.ref.$platform === 'ios'"
                                 type="info"
                                 effect="plain"
                                 size="mini"
@@ -206,13 +206,13 @@
                                 >iOS</el-tag
                             >
                             <el-tag
-                                v-else-if="userDialog.ref.last_platform"
+                                v-else-if="userDialog.ref.$platform"
                                 type="info"
                                 effect="plain"
                                 size="mini"
                                 class="x-tag-platform-other"
                                 style="margin-right: 5px; margin-top: 5px">
-                                {{ userDialog.ref.last_platform }}
+                                {{ userDialog.ref.$platform }}
                             </el-tag>
                             <el-tag
                                 v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"

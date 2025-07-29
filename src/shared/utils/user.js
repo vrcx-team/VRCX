@@ -126,16 +126,9 @@ function userStatusClass(user, pendingOffline = false) {
         style.busy = true;
     }
     if (
-        user.platform &&
-        user.platform !== 'standalonewindows' &&
-        user.platform !== 'web'
-    ) {
-        style.mobile = true;
-    }
-    if (
-        user.last_platform &&
-        user.last_platform !== 'standalonewindows' &&
-        user.platform === 'web'
+        user.$platform &&
+        user.$platform !== 'standalonewindows' &&
+        user.$platform !== 'web'
     ) {
         style.mobile = true;
     }
