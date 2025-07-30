@@ -596,7 +596,11 @@ export const useUserStore = defineStore('User', () => {
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
         appearanceSettingsStore.applyUserTrustLevel(ref);
         applyUserLanguage(ref);
-        if (ref.platform && ref.platform !== 'offline') {
+        if (
+            ref.platform &&
+            ref.platform !== 'offline' &&
+            ref.platform !== 'web'
+        ) {
             ref.$platform = ref.platform;
         } else {
             ref.$platform = ref.last_platform;

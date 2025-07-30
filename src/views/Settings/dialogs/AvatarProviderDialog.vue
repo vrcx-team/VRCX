@@ -9,7 +9,7 @@
             <el-input
                 v-for="(provider, index) in avatarRemoteDatabaseProviderList"
                 :key="index"
-                :value="provider"
+                v-model="avatarRemoteDatabaseProviderList[index]"
                 size="small"
                 style="margin-top: 5px"
                 @change="saveAvatarProviderList">
