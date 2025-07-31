@@ -223,10 +223,5 @@ namespace VRCX
             using var client = MainForm.Instance.Browser.GetDevToolsClient();
             _ = client.Network.SetUserAgentOverrideAsync(Program.Version);
         }
-
-        public override bool IsRunningUnderWine()
-        {
-            return Wine.GetIfWine();
-        }
     }
 }

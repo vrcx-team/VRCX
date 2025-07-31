@@ -72,10 +72,6 @@ namespace VRCX
         private static void InstallUpdate()
         {
             var setupArguments = string.Empty;
-#if !LINUX
-            if (Wine.GetIfWine())
-                setupArguments += "/SKIP_SHORTCUT=true";
-#endif
 
             try
             {

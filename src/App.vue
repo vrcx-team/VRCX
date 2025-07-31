@@ -92,14 +92,6 @@
                 store.auth.autoLoginAfterMounted();
                 store.vrcx.checkAutoBackupRestoreVrcRegistry();
                 store.game.checkVRChatDebugLogging();
-                try {
-                    if (await AppApi.IsRunningUnderWine()) {
-                        store.vrcx.isRunningUnderWine = true;
-                        store.vrcx.applyWineEmojis();
-                    }
-                } catch (err) {
-                    console.error(err, 'Failed to check if running under Wine');
-                }
             });
 
             return {

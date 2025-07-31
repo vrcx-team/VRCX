@@ -119,10 +119,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     state.nextAutoStateChange = 3;
                     userStore.updateAutoStateChange();
                 }
-                if (
-                    (vrcxStore.isRunningUnderWine || LINUX) &&
-                    --state.nextGetLogCheck <= 0
-                ) {
+                if (LINUX && --state.nextGetLogCheck <= 0) {
                     state.nextGetLogCheck = 0.5;
                     const logLines = await LogWatcher.GetLogLines();
                     if (logLines) {
@@ -131,10 +128,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                         });
                     }
                 }
-                if (
-                    (vrcxStore.isRunningUnderWine || LINUX) &&
-                    --state.nextGameRunningCheck <= 0
-                ) {
+                if (LINUX && --state.nextGameRunningCheck <= 0) {
                     if (WINDOWS) {
                         state.nextGameRunningCheck = 3;
                         AppApi.CheckGameRunning();

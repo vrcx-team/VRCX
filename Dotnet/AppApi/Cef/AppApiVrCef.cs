@@ -65,21 +65,16 @@ namespace VRCX
         {
             return CultureInfo.CurrentCulture.ToString();
         }
-        
+
         public override string CustomVrScript()
         {
             var filePath = Path.Join(Program.AppDataDirectory, "customvr.js");
             if (File.Exists(filePath))
                 return File.ReadAllText(filePath);
-            
+
             return string.Empty;
         }
 
-        public override bool IsRunningUnderWine()
-        {
-            return Wine.GetIfWine();
-        }
-        
         public override List<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
         {
             throw new NotImplementedException("GetExecuteVrFeedFunctionQueue is not implemented in AppApiVrCef.");

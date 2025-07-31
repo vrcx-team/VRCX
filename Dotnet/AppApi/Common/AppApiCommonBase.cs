@@ -14,7 +14,7 @@ namespace VRCX
         public abstract void SetZoom(double zoomLevel);
         public abstract Task<double> GetZoom();
         public abstract void DesktopNotification(string BoldText, string Text = "", string Image = "");
-        
+
         public abstract void RestartApplication(bool isUpgrade);
         public abstract bool CheckForUpdateExe();
         public abstract void ExecuteAppFunction(string function, string json);
@@ -28,7 +28,6 @@ namespace VRCX
         public abstract void CopyImageToClipboard(string path);
         public abstract void FlashWindow();
         public abstract void SetUserAgent();
-        public abstract bool IsRunningUnderWine();
 
         // Folders
         public abstract string GetVRChatAppDataLocation();
@@ -48,7 +47,7 @@ namespace VRCX
 
         public abstract Task<string> OpenFileSelectorDialog(string defaultPath = "", string defaultExt = "",
             string defaultFilter = "All files (*.*)|*.*");
-        
+
         // GameHandler
         public abstract void OnProcessStateChanged(MonitoredProcess monitoredProcess);
         public abstract void CheckGameRunning();
@@ -57,7 +56,7 @@ namespace VRCX
         public abstract int QuitGame();
         public abstract bool StartGame(string arguments);
         public abstract bool StartGameFromPath(string path, string arguments);
-        
+
         // RegistryPlayerPrefs
         public abstract object GetVRChatRegistryKey(string key);
         public abstract string GetVRChatRegistryKeyString(string key);
@@ -68,7 +67,7 @@ namespace VRCX
         public abstract bool HasVRChatRegistryFolder();
         public abstract void DeleteVRChatRegistryFolder();
         public abstract string ReadVrcRegJsonFile(string filepath);
-        
+
         // Screenshot
         public abstract string AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false);
     }

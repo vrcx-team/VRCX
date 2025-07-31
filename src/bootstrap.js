@@ -2,7 +2,6 @@ import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
-import '@infolektuell/noto-color-emoji';
 
 import Vue from 'vue';
 import { PiniaVuePlugin } from 'pinia';

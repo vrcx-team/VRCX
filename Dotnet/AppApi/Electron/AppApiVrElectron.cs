@@ -93,10 +93,5 @@ namespace VRCX
 
             return string.Empty;
         }
-
-        public override bool IsRunningUnderWine()
-        {
-            return false;
-        }
     }
 }

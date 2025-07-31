@@ -203,19 +203,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     });
 
-    async function applyWineEmojis() {
-        if (document.contains(document.getElementById('app-emoji-font'))) {
-            document.getElementById('app-emoji-font').remove();
-        }
-        if (state.isRunningUnderWine) {
-            const $appEmojiFont = document.createElement('link');
-            $appEmojiFont.setAttribute('id', 'app-emoji-font');
-            $appEmojiFont.rel = 'stylesheet';
-            $appEmojiFont.href = 'emoji.font.css';
-            document.head.appendChild($appEmojiFont);
-        }
-    }
-
     function showConsole() {
         AppApi.ShowDevTools();
         if (
@@ -771,7 +758,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         clearVRCXCacheFrequency,
         maxTableSize,
         showConsole,
-        applyWineEmojis,
         clearVRCXCache,
         startupLaunchCommand,
         eventVrcxMessage,

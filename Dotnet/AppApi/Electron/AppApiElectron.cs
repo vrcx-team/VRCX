@@ -147,12 +147,5 @@ namespace VRCX
         public override void SetUserAgent()
         {
         }
-
-        public override bool IsRunningUnderWine()
-        {
-            return false;
-        }
-
-
     }
 }

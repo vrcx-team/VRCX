@@ -3,10 +3,9 @@
     import '@fontsource/noto-sans-jp';
     import '@fontsource/noto-sans-sc';
     import '@fontsource/noto-sans-tc';
-    import '@infolektuell/noto-color-emoji';
     // @ts-ignore
     import pugTemplate from './vr.pug';
-    import Vue, { onMounted, reactive, toRefs } from 'vue';
+    import Vue, { onMounted, reactive, toRefs, nextTick } from 'vue';
     import Noty from 'noty';
     import * as workerTimers from 'worker-timers';
     import MarqueeText from 'vue-marquee-text-component';
@@ -23,7 +22,7 @@
         template: pugTemplate,
         components: {
             'marquee-text': MarqueeText,
-            'location': VrLocation
+            location: VrLocation
         },
         setup() {
             const vrState = reactive({
@@ -70,10 +69,7 @@
             });
 
             onMounted(async () => {
-                if (WINDOWS) {
-                    vrState.isRunningUnderWine = await AppApiVr.IsRunningUnderWine();
-                    await applyWineEmojis();
-                } else {
+                if (LINUX) {
                     updateVrElectronLoop();
                 }
                 if (vrState.appType === '1') {
@@ -82,29 +78,32 @@
                 }
                 setDatetimeFormat();
 
-                window.$app.configUpdate = configUpdate;
-                window.$app.updateOnlineFriendCount = updateOnlineFriendCount;
-                window.$app.nowPlayingUpdate = nowPlayingUpdate;
-                window.$app.lastLocationUpdate = lastLocationUpdate;
-                window.$app.wristFeedUpdate = wristFeedUpdate;
-                window.$app.refreshCustomScript = refreshCustomScript;
-                window.$app.playNoty = playNoty;
-                window.$app.statusClass = statusClass;
-                window.$app.notyClear = notyClear;
-                window.$app.addEntryHudFeed = addEntryHudFeed;
-                window.$app.updateHudFeedTag = updateHudFeedTag;
-                window.$app.updateHudTimeout = updateHudTimeout;
-                window.$app.setDatetimeFormat = setDatetimeFormat;
-                window.$app.setAppLanguage = setAppLanguage;
-                window.$app.trackingResultToClass = trackingResultToClass;
-                window.$app.updateFeedLength = updateFeedLength;
-                window.$app.updateStatsLoop = updateStatsLoop;
-                window.$app.updateVrElectronLoop = updateVrElectronLoop;
-                window.$app.cleanHudFeedLoop = cleanHudFeedLoop;
-                window.$app.cleanHudFeed = cleanHudFeed;
-                window.$app.applyWineEmojis = applyWineEmojis;
+                nextTick(() => {
+                    window.$app.configUpdate = configUpdate;
+                    window.$app.updateOnlineFriendCount = updateOnlineFriendCount;
+                    window.$app.nowPlayingUpdate = nowPlayingUpdate;
+                    window.$app.lastLocationUpdate = lastLocationUpdate;
+                    window.$app.wristFeedUpdate = wristFeedUpdate;
+                    window.$app.refreshCustomScript = refreshCustomScript;
+                    window.$app.playNoty = playNoty;
+                    window.$app.statusClass = statusClass;
+                    window.$app.notyClear = notyClear;
+                    window.$app.addEntryHudFeed = addEntryHudFeed;
+                    window.$app.updateHudFeedTag = updateHudFeedTag;
+                    window.$app.updateHudTimeout = updateHudTimeout;
+                    window.$app.setDatetimeFormat = setDatetimeFormat;
+                    window.$app.setAppLanguage = setAppLanguage;
+                    window.$app.trackingResultToClass = trackingResultToClass;
+                    window.$app.updateFeedLength = updateFeedLength;
+                    window.$app.updateStatsLoop = updateStatsLoop;
+                    window.$app.updateVrElectronLoop = updateVrElectronLoop;
+                    window.$app.cleanHudFeedLoop = cleanHudFeedLoop;
+                    window.$app.cleanHudFeed = cleanHudFeed;
 
-                window.$app.vrState = vrState;
+                    window.$app.vrState = vrState;
+
+                    AppApiVr.VrInit();
+                });
             });
 
             function configUpdate(json) {
@@ -618,19 +617,6 @@
                     vrState.appLanguage = appLanguage;
                     // @ts-ignore
                     i18n.locale = vrState.appLanguage;
-                }
-            }
-
-            async function applyWineEmojis() {
-                if (document.contains(document.getElementById('app-emoji-font'))) {
-                    document.getElementById('app-emoji-font').remove();
-                }
-                if (vrState.isRunningUnderWine) {
-                    const $appEmojiFont = document.createElement('link');
-                    $appEmojiFont.setAttribute('id', 'app-emoji-font');
-                    $appEmojiFont.rel = 'stylesheet';
-                    $appEmojiFont.href = 'emoji.font.css';
-                    document.head.appendChild($appEmojiFont);
                 }
             }
 
