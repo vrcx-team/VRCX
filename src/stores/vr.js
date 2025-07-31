@@ -27,9 +27,7 @@ export const useVrStore = defineStore('Vr', () => {
     const userStore = useUserStore();
     const sharedFeedStore = useSharedFeedStore();
 
-    const state = reactive({
-        overlayActive: false
-    });
+    const state = reactive({});
 
     watch(
         () => watchState.isFriendsLoaded,
@@ -50,8 +48,6 @@ export const useVrStore = defineStore('Vr', () => {
         sharedFeedStore.updateSharedFeed(true);
         friendStore.onlineFriendCount = 0; // force an update
         friendStore.updateOnlineFriendCoutner();
-
-        state.overlayActive = true;
     }
 
     async function saveOpenVROption() {
@@ -177,16 +173,7 @@ export const useVrStore = defineStore('Vr', () => {
                 newState.overlayHand
             );
 
-            if (state.overlayActive !== newState.active) {
-                if (
-                    window.electron.getWristOverlayWindow() ||
-                    window.electron.getHmdOverlayWindow()
-                ) {
-                    vrInit();
-                    state.overlayActive = newState.active;
-                }
-                setTimeout(() => vrInit(), 1000); // give the overlay time to load
-            }
+            vrInit(); // sometimes this runs before the overlay is ready
         }
     }
 

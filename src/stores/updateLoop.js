@@ -15,6 +15,7 @@ import { useUserStore } from './user';
 import { useVrcxStore } from './vrcx';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useGroupStore } from './group';
+import { useVrStore } from './vr';
 
 export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     const state = reactive({
@@ -67,6 +68,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         const vrcxUpdaterStore = useVRCXUpdaterStore();
         const uiStore = useUiStore();
         const groupStore = useGroupStore();
+        const vrStore = useVrStore();
         try {
             if (watchState.isLoggedIn) {
                 if (--state.nextCurrentUserRefresh <= 0) {
@@ -143,6 +145,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                             await AppApi.IsSteamVRRunning(),
                             false
                         );
+                        vrStore.vrInit(); // TODO: make this event based
                     }
                 }
                 if (--state.nextDatabaseOptimize <= 0) {
