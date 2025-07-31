@@ -26,11 +26,6 @@ if (process.platform === 'linux') {
         process.env.DOTNET_ROOT = bundledDotNetPath;
         process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
     }
-
-    const openvrLibPath = path.join(process.resourcesPath, '..', 'bin');
-    if (fs.existsSync(openvrLibPath)) {
-        process.env.LD_LIBRARY_PATH = `${openvrLibPath}:${process.env.LD_LIBRARY_PATH || ''}`;
-    }
 } else if (process.platform === 'darwin') {
     const dotnetPath = path.join('/usr/local/share/dotnet');
     const dotnetPathArm = path.join('/usr/local/share/dotnet/x64');

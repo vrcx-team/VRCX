@@ -126,7 +126,11 @@
             },
             {
                 "from": "src-electron/libs/linux/libopenvr_api.so",
-                "to": "bin/libopenvr_api.so"
+                "to": "dotnet-runtime/shared/Microsoft.NETCore.App/9.0.7/libopenvr_api.so"
+            },
+            {
+                "from": "src-electron/libs/linux/libopenvr_api.so",
+                "to": "dotnet-runtime/shared/Microsoft.NETCore.App/9.0.7/openvr_api.so"
             }
         ],
         "directories": {
