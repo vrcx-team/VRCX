@@ -56,6 +56,13 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         }
     });
 
+    const nextDiscordUpdate = computed({
+        get: () => state.nextDiscordUpdate,
+        set: (value) => {
+            state.nextDiscordUpdate = value;
+        }
+    });
+
     async function updateLoop() {
         const authStore = useAuthStore();
         const userStore = useUserStore();
@@ -158,6 +165,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         state,
         nextGroupInstanceRefresh,
         nextCurrentUserRefresh,
+        nextDiscordUpdate,
         updateLoop
     };
 });

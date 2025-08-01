@@ -3,6 +3,7 @@ import { BaseWorld } from '../common';
 // API functions
 export type GetWorld = (params: { worldId: string }) => Promise<{
     json: GetWorldResponse;
+    ref: any;
     params: { worldId: string };
 }>;
 

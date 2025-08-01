@@ -28,21 +28,11 @@ export const useLocationStore = defineStore('Location', () => {
 
     const state = reactive({
         lastLocation: {
-            date: 0,
+            date: null,
             location: '',
             name: '',
             playerList: new Map(),
             friendList: new Map()
-        },
-        lastLocation$: {
-            tag: '',
-            instanceId: '',
-            accessType: '',
-            worldName: '',
-            worldCapacity: 0,
-            joinUrl: '',
-            statusName: '',
-            statusImage: ''
         },
         lastLocationDestination: '',
         lastLocationDestinationTime: 0
@@ -52,13 +42,6 @@ export const useLocationStore = defineStore('Location', () => {
         get: () => state.lastLocation,
         set: (value) => {
             state.lastLocation = value;
-        }
-    });
-
-    const lastLocation$ = computed({
-        get: () => state.lastLocation$,
-        set: (value) => {
-            state.lastLocation$ = value;
         }
     });
 
@@ -153,7 +136,7 @@ export const useLocationStore = defineStore('Location', () => {
             const L = parseLocation(location);
 
             state.lastLocation.location = location;
-            state.lastLocation.date = dt;
+            state.lastLocation.date = Date.now();
 
             const entry = {
                 created_at: dt,
@@ -174,7 +157,7 @@ export const useLocationStore = defineStore('Location', () => {
             instanceStore.applyGroupDialogInstances();
         } else {
             state.lastLocation.location = '';
-            state.lastLocation.date = '';
+            state.lastLocation.date = null;
         }
     }
 
@@ -218,7 +201,7 @@ export const useLocationStore = defineStore('Location', () => {
             gameLogStore.addGameLog(entry);
         }
         database.addGamelogJoinLeaveBulk(dataBaseEntries);
-        if (state.lastLocation.date !== 0) {
+        if (state.lastLocation.date !== null && state.lastLocation.date > 0) {
             const update = {
                 time: dateTimeStamp - state.lastLocation.date,
                 created_at: new Date(state.lastLocation.date).toJSON()
@@ -248,7 +231,6 @@ export const useLocationStore = defineStore('Location', () => {
     return {
         state,
         lastLocation,
-        lastLocation$,
         lastLocationDestination,
         lastLocationDestinationTime,
         updateCurrentUserLocation,

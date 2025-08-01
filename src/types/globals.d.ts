@@ -123,15 +123,16 @@ declare global {
     };
 
     const Discord: {
-        SetTimestamps(
-            startTimestamp: number,
-            endTimestamp: number
-        ): Promise<void>;
         SetAssets(
+            details: string,
+            state: string,
+            stateUrl: string,
             bigIcon: string,
             bigIconText: string,
             smallIcon: string,
             smallIconText: string,
+            startTime: number,
+            endTime: number,
             partyId: string,
             partySize: number,
             partyMaxSize: number,
@@ -140,7 +141,6 @@ declare global {
             appId: string,
             activityType: number
         ): Promise<void>;
-        SetText(details: string, state: string): Promise<void>;
         SetActive(active: boolean): Promise<boolean>;
     };
 
