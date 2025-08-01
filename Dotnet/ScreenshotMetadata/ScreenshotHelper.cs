@@ -170,15 +170,15 @@ namespace VRCX
                     {
                         var xmlString = metadataString.Substring(xmlIndex);
                         // everything after index
-                        var result = ParseVRCPrint(xmlString.Substring(xmlIndex - 7));
+                        var result = ParseVRCImage(xmlString);
                         result.SourceFile = path;
 
                         return result;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex, "Failed to parse VRCPrint XML metadata for file '{0}'", path);
-                        return ScreenshotMetadata.JustError(path, "Failed to parse VRCPrint metadata.");
+                        Logger.Error(ex, "Failed to parse VRC image XML metadata for file '{0}'", path);
+                        return ScreenshotMetadata.JustError(path, "Failed to parse VRC image metadata.");
                     }
                 }
                 
@@ -204,7 +204,7 @@ namespace VRCX
             }
         }
         
-        public static ScreenshotMetadata ParseVRCPrint(string xmlString)
+        public static ScreenshotMetadata ParseVRCImage(string xmlString)
         {
             var doc = new XmlDocument();
             doc.LoadXml(xmlString);
@@ -217,10 +217,22 @@ namespace VRCX
             nsManager.AddNamespace("dc", "http://purl.org/dc/elements/1.1/");
             nsManager.AddNamespace("vrc", "http://ns.vrchat.com/vrc/1.0/");
             var creatorTool = root.SelectSingleNode("//xmp:CreatorTool", nsManager)?.InnerText;
-            var authorId = root.SelectSingleNode("//xmp:Author", nsManager)?.InnerText;
+            var authorName = root.SelectSingleNode("//xmp:Author", nsManager)?.InnerText; // legacy, it was authorId
             var dateTime = root.SelectSingleNode("//tiff:DateTime", nsManager)?.InnerText;
             var note = root.SelectSingleNode("//dc:title/rdf:Alt/rdf:li", nsManager)?.InnerText;
-            var worldId = root.SelectSingleNode("//vrc:World", nsManager)?.InnerText;
+            var worldId = root.SelectSingleNode("//vrc:WorldID", nsManager)?.InnerText;
+            var worldDisplayName = root.SelectSingleNode("//vrc:WorldDisplayName", nsManager)?.InnerText; // new, 01.08.2025
+            var authorId = root.SelectSingleNode("//vrc:AuthorID", nsManager)?.InnerText; // new, 01.08.2025
+            
+            if (string.IsNullOrEmpty(worldId))
+                worldId = root.SelectSingleNode("//vrc:World", nsManager)?.InnerText; // legacy, it's gone now
+            
+            if (string.IsNullOrEmpty(authorId))
+            {
+                // If authorId is not set, we assume legacy metadata format where authorName is used as authorId.
+                authorId = authorName;
+                authorName = null;
+            }
 
             return new ScreenshotMetadata
             {
@@ -229,13 +241,13 @@ namespace VRCX
                 Author = new ScreenshotMetadata.AuthorDetail
                 {
                     Id = authorId,
-                    DisplayName = null
+                    DisplayName = authorName
                 },
                 World = new ScreenshotMetadata.WorldDetail
                 {
                     Id = worldId,
                     InstanceId = worldId,
-                    Name = null
+                    Name = worldDisplayName
                 },
                 Timestamp = DateTime.TryParse(dateTime, out var dt) ? dt : null,
                 Note = note
@@ -254,16 +266,21 @@ namespace VRCX
         /// </returns>
         public static bool WritePNGDescription(string path, string text)
         {
-            if (!File.Exists(path) || !IsPNGFile(path)) return false;
+            if (!File.Exists(path) || !IsPNGFile(path))
+                return false;
 
             var png = File.ReadAllBytes(path);
-
             var newChunkIndex = FindEndOfChunk(png, "IHDR");
-            if (newChunkIndex == -1) return false;
+            if (newChunkIndex == -1)
+                return false;
 
             // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
-            // var existingiTXt = FindChunkIndex(png, "iTXt");
-            // if (existingiTXt != -1) return false;
+            var screenShotMetadata = GetScreenshotMetadata(path);
+            if (screenShotMetadata != null && screenShotMetadata.Application == "VRCX")
+            {
+                Logger.Error("Screenshot file '{0}' already has VRCX metadata", path);
+                return false;
+            }
 
             var newChunk = new PNGChunk("iTXt");
             newChunk.InitializeTextChunk("Description", text);

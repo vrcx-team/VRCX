@@ -436,8 +436,9 @@
         D.searchIndex = searchIndex;
     }
 
-    function getAndDisplayScreenshot(path, needsCarouselFiles = true) {
-        AppApi.GetScreenshotMetadata(path).then((metadata) => displayScreenshotMetadata(metadata, needsCarouselFiles));
+    async function getAndDisplayScreenshot(path, needsCarouselFiles = true) {
+        const metadata = await AppApi.GetScreenshotMetadata(path);
+        displayScreenshotMetadata(metadata, needsCarouselFiles);
     }
 
     /**
@@ -446,13 +447,19 @@
      * Example: {"error":"Invalid file selected. Please select a valid VRChat screenshot."}
      * See docs/screenshotMetadata.json for schema
      * @param {string} metadata - JSON string grabbed from PNG file
-     * @param {string} needsCarouselFiles - Whether or not to get the last/next files for the carousel
-     * @returns {void}
+     * @param {boolean} needsCarouselFiles - Whether or not to get the last/next files for the carousel
+     * @returns {Promise<void>}
      */
     async function displayScreenshotMetadata(json, needsCarouselFiles = true) {
         let time;
         let date;
         const D = props.screenshotMetadataDialog;
+        D.metadata.author = {};
+        D.metadata.world = {};
+        D.metadata.players = [];
+        D.metadata.creationDate = '';
+        D.metadata.application = '';
+
         const metadata = JSON.parse(json);
         if (!metadata?.sourceFile) {
             D.metadata = {};
