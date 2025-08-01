@@ -125,7 +125,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.progressPie = progressPie;
         state.progressPieFilter = progressPieFilter;
         state.showConfirmationOnSwitchAvatar = showConfirmationOnSwitchAvatar;
-        state.gameLogDisabled = gameLogDisabled === 'true';
+        state.gameLogDisabled = gameLogDisabled;
         state.ugcFolderPath = ugcFolderPath;
         state.autoDeleteOldPrints = autoDeleteOldPrints;
         state.notificationOpacity = notificationOpacity;
@@ -532,7 +532,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.folderSelectorDialogVisible = true;
         let newFolder = '';
         if (WINDOWS) {
-            newFolder = await AppApi.OpenFolderSelectorDialog(oldPath);  
+            newFolder = await AppApi.OpenFolderSelectorDialog(oldPath);
         } else {
             newFolder = await window.electron.openDirectoryDialog();
         }

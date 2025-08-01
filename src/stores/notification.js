@@ -2188,9 +2188,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         let bias;
         // remove join/leave notifications when switching worlds
         if (
-            noty.type === 'OnPlayerJoined' ||
-            noty.type === 'BlockedOnPlayerJoined' ||
-            noty.type === 'MutedOnPlayerJoined'
+            noty.type === 'OnPlayerJoined'
+            // noty.type === 'BlockedOnPlayerJoined' ||
+            // noty.type === 'MutedOnPlayerJoined'
         ) {
             bias = locationStore.lastLocation.date + 30 * 1000; // 30 secs
             if (Date.parse(noty.created_at) <= bias) {

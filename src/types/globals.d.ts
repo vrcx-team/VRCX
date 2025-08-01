@@ -126,7 +126,7 @@ declare global {
         SetAssets(
             details: string,
             state: string,
-            stateUrl: string,
+            detailsUrl: string,
             bigIcon: string,
             bigIconText: string,
             smallIcon: string,

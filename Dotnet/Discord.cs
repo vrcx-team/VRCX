@@ -70,6 +70,22 @@ namespace VRCX
             if (_client == null && _active)
             {
                 _client = new DiscordRpcClient(_discordAppId);
+                _client.OnReady += (sender, e) =>
+                {
+                    _logger.Info("Discord Rich Presence connected: {User}", e.User.DisplayName);
+                };
+                _client.OnError += (sender, e) =>
+                {
+                    _logger.Error("Discord Rich Presence error: {Error}", e.Message);
+                };
+                _client.OnConnectionFailed += (sender, e) =>
+                {
+                    _logger.Error("Discord Rich Presence connection failed: {Error}", e.Type);
+                };
+                _client.OnConnectionEstablished += (sender, e) =>
+                {
+                    _logger.Info("Discord Rich Presence connection established");
+                };
                 if (!_client.Initialize())
                 {
                     _client.Dispose();
@@ -123,7 +139,7 @@ namespace VRCX
         public void SetAssets(
             string details,
             string state,
-            string stateUrl,
+            string detailsUrl,
             
             string largeKey,
             string largeText,
@@ -156,8 +172,8 @@ namespace VRCX
                 }
                 
                 _presence.Details = LimitByteLength(details, 127);
-                // _presence.DetailsUrl
-                _presence.StateUrl = !string.IsNullOrEmpty(stateUrl) ? stateUrl : null;
+                _presence.DetailsUrl = !string.IsNullOrEmpty(detailsUrl) ? detailsUrl : null;
+                // _presence.StateUrl
                 _presence.State = LimitByteLength(state, 127);
                 _presence.Assets ??= new Assets();
                 

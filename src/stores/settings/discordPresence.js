@@ -14,18 +14,18 @@ import { useGameLogStore } from '../gameLog';
 import { useLocationStore } from '../location';
 import { useUpdateLoopStore } from '../updateLoop';
 import { useUserStore } from '../user';
-import { useAdvancedSettingsStore } from './advanced';
 import { ActivityType } from '../../shared/constants/discord';
+import { useI18n } from 'vue-i18n-bridge';
 
 export const useDiscordPresenceSettingsStore = defineStore(
     'DiscordPresenceSettings',
     () => {
         const locationStore = useLocationStore();
         const gameStore = useGameStore();
-        const advancedSettingsStore = useAdvancedSettingsStore();
         const gameLogStore = useGameLogStore();
         const userStore = useUserStore();
         const updateLoopStore = useUpdateLoopStore();
+        const { t } = useI18n();
 
         const state = reactive({
             discordActive: false,
@@ -116,7 +116,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                 currentLocation = locationStore.lastLocationDestination;
                 startTime = locationStore.lastLocationDestinationTime;
             }
-            if (advancedSettingsStore.gameLogDisabled) {
+            if (!currentLocation) {
                 // game log disabled, use API location
                 currentLocation = userStore.currentUser.$locationTag;
                 startTime = userStore.currentUser.$location_at;
@@ -125,12 +125,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                         userStore.currentUser.$travelingToLocation;
                 }
             }
-            if (
-                !state.discordActive ||
-                (!gameStore.isGameRunning &&
-                    !advancedSettingsStore.gameLogDisabled) ||
-                !isRealInstance(currentLocation)
-            ) {
+            if (!state.discordActive || !isRealInstance(currentLocation)) {
                 setIsDiscordActive(false);
                 return;
             }
@@ -167,36 +162,44 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     );
                 }
 
-                let platform = gameStore.isGameNoVR ? 'Desktop' : 'VR';
+                let platform = gameStore.isGameNoVR
+                    ? t('view.settings.discord_presence.rpc.desktop')
+                    : t('view.settings.discord_presence.rpc.vr');
                 if (L.groupAccessType) {
                     if (L.groupAccessType === 'public') {
-                        state.lastLocationDetails.groupAccessType = 'Public';
+                        state.lastLocationDetails.groupAccessType = t(
+                            'dialog.new_instance.group_access_type_public'
+                        );
                     } else if (L.groupAccessType === 'plus') {
-                        state.lastLocationDetails.groupAccessType = 'Plus';
+                        state.lastLocationDetails.groupAccessType = t(
+                            'dialog.new_instance.group_access_type_plus'
+                        );
                     }
                 }
                 switch (L.accessType) {
                     case 'public':
                         state.lastLocationDetails.joinUrl = getLaunchURL(L);
-                        state.lastLocationDetails.accessName = `Public #${L.instanceName} (${platform})`;
+                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_public')} #${L.instanceName} (${platform})`;
                         break;
                     case 'invite+':
-                        state.lastLocationDetails.accessName = `Invite+ #${L.instanceName} (${platform})`;
+                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_invite_plus')} #${L.instanceName} (${platform})`;
                         break;
                     case 'invite':
-                        state.lastLocationDetails.accessName = `Invite #${L.instanceName} (${platform})`;
+                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_invite')} #${L.instanceName} (${platform})`;
                         break;
                     case 'friends':
-                        state.lastLocationDetails.accessName = `Friends #${L.instanceName} (${platform})`;
+                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_friend')} #${L.instanceName} (${platform})`;
                         break;
                     case 'friends+':
-                        state.lastLocationDetails.accessName = `Friends+ #${L.instanceName} (${platform})`;
+                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_friend_plus')}+ #${L.instanceName} (${platform})`;
                         break;
                     case 'group':
-                        state.lastLocationDetails.accessName = `Group #${L.instanceName} (${platform})`;
+                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_group')} #${L.instanceName} (${platform})`;
                         try {
                             const groupName = await getGroupName(L.groupId);
-                            state.lastLocationDetails.accessName = `Group${state.lastLocationDetails.groupAccessType}(${groupName}) #${L.instanceName} (${platform})`;
+                            if (groupName) {
+                                state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_group')}${state.lastLocationDetails.groupAccessType}(${groupName}) #${L.instanceName} (${platform})`;
+                            }
                         } catch (e) {
                             console.error(
                                 `Failed to get group name for ${L.groupId}`,
@@ -220,27 +223,27 @@ export const useDiscordPresenceSettingsStore = defineStore(
             let statusImage = '';
             switch (userStore.currentUser.status) {
                 case 'active':
-                    statusName = 'Online';
+                    statusName = t('dialog.user.status.active');
                     statusImage = 'active';
                     break;
                 case 'join me':
-                    statusName = 'Join Me';
+                    statusName = t('dialog.user.status.join_me');
                     statusImage = 'joinme';
                     break;
                 case 'ask me':
-                    statusName = 'Ask Me';
+                    statusName = t('dialog.user.status.ask_me');
                     statusImage = 'askme';
                     if (state.discordHideInvite) {
                         hidePrivate = true;
                     }
                     break;
                 case 'busy':
-                    statusName = 'Do Not Disturb';
+                    statusName = t('dialog.user.status.busy');
                     statusImage = 'busy';
                     hidePrivate = true;
                     break;
                 default:
-                    statusName = 'Offline';
+                    statusName = t('dialog.user.status.offline');
                     statusImage = 'offline';
                     hidePrivate = true;
                     break;
@@ -251,7 +254,10 @@ export const useDiscordPresenceSettingsStore = defineStore(
             let activityType = ActivityType.Playing;
             let appId = '883308884863901717';
             let bigIcon = 'vrchat';
-            let stateUrl = state.lastLocationDetails.worldLink;
+            let detailsUrl = state.lastLocationDetails.worldLink;
+            let poweredBy = t(
+                'view.settings.discord_presence.rpc.powered_by_vrcx'
+            );
 
             let partyId = `${state.lastLocationDetails.worldId}:${state.lastLocationDetails.instanceName}`;
             let partySize = locationStore.lastLocation.playerList.size;
@@ -259,13 +265,17 @@ export const useDiscordPresenceSettingsStore = defineStore(
             if (partySize > partyMaxSize) {
                 partyMaxSize = partySize;
             }
+            if (partySize === 0) {
+                partyMaxSize = 0;
+            }
             if (!state.discordInstance) {
                 partySize = 0;
                 partyMaxSize = 0;
                 stateText = '';
             }
-
-            let buttonText = 'Join';
+            let buttonText = t(
+                'view.settings.discord_presence.rpc.join_button'
+            );
             let buttonUrl = state.lastLocationDetails.joinUrl;
             if (!state.discordJoinButton) {
                 buttonText = '';
@@ -356,12 +366,13 @@ export const useDiscordPresenceSettingsStore = defineStore(
                 partyMaxSize = 0;
                 buttonText = '';
                 buttonUrl = '';
-                stateUrl = '';
-                details = 'Private';
+                detailsUrl = '';
+                details = t('view.settings.discord_presence.rpc.private_world');
                 stateText = '';
                 startTime = 0;
                 endTime = 0;
                 appId = '883308884863901717'; // default VRChat app id
+                bigIcon = 'vrchat';
                 activityType = ActivityType.Playing;
             }
             if (details.length < 2) {
@@ -371,10 +382,10 @@ export const useDiscordPresenceSettingsStore = defineStore(
             Discord.SetAssets(
                 details, // main text
                 stateText, // secondary text
-                stateUrl, // state url
+                detailsUrl, // details url
 
                 bigIcon, // big icon
-                'Powered by VRCX', // big icon hover text
+                poweredBy, // big icon hover text
 
                 statusImage, // small icon
                 statusName, // small icon hover text

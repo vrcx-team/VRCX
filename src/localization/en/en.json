@@ -522,6 +522,13 @@
                     "join_button": "Join button (public only)",
                     "show_details_in_private": "Show world details in private",
                     "show_images": "Show world images"
+                },
+                "rpc": {
+                    "vr": "VR",
+                    "desktop": "Desktop",
+                    "join_button": "Join",
+                    "powered_by_vrcx": "Powered by VRCX",
+                    "private_world": "Private World"
                 }
             },
             "pictures": {
