@@ -198,8 +198,8 @@ namespace VRCX
                 return false;
             
             await print.SaveAsPngAsync(tempPath);
-            if (ScreenshotHelper.HasTXt(path))
-                ScreenshotHelper.CopyTXt(path, tempPath);
+            ScreenshotHelper.CopyMetadata(path, tempPath);
+
             File.Move(tempPath, path, true);
             return true;
         }
