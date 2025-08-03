@@ -133,7 +133,7 @@ namespace VRCX
                 {
                     var metadataString = metadata[i];
 
-                    if (metadataString.StartsWith("<x:xmpmeta", StringComparison.Ordinal))
+                    if (metadataString.StartsWith("<x:xmpmeta"))
                     {
                         result = ParseVRCImage(metadataString);
                         result.SourceFile = path;
@@ -176,22 +176,6 @@ namespace VRCX
                     return ScreenshotMetadata.JustError(path, "Failed to parse metadata. Check log file for details.");
                 }
             }
-            // Check for specific metadata string start sequences
-            /**if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
-            {
-                try
-                {
-                    var oldMetadataResult = ScreenshotHelper.ParseLfsPicture(metadataString);
-                    oldMetadataResult.SourceFile = path;
-
-                    return result;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex, "Failed to parse LFS/ScreenshotManager metadata for file '{0}'", path);
-                    return ScreenshotMetadata.JustError(path, "Failed to parse LFS/ScreenshotManager metadata.");
-                }
-            }*/
 
             if (result.Application == null || metadata.Count == 0) 
                 return ScreenshotMetadata.JustError(path, "Image has no valid metadata.");
