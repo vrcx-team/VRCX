@@ -198,7 +198,17 @@ namespace VRCX
                 return false;
             
             await print.SaveAsPngAsync(tempPath);
-            ScreenshotHelper.CopyMetadata(path, tempPath);
+            
+            using var oldPngFile = new PNGFile(path);
+            using var newPngFile = new PNGFile(tempPath);
+            
+            // Copy all iTXt chunks to new file
+            var textChunks = oldPngFile.GetChunksOfType(PNGChunkTypeFilter.iTXt);
+            
+            for (var i = 0; i < textChunks.Count; i++)
+            {
+                newPngFile.WriteChunk(textChunks[i]);
+            }
 
             File.Move(tempPath, path, true);
             return true;
