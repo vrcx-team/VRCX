@@ -12,6 +12,12 @@ export const THEME_CONFIG = {
         name: 'Light'
     },
     dark: { cssFile: '', requiresDarkBase: true, isDark: true, name: 'Dark' },
+    darkblue: {
+        cssFile: 'theme.darkblue.css',
+        requiresDarkBase: true,
+        isDark: true,
+        name: 'Dark Blue'
+    },
     darkvanillaold: {
         cssFile: 'theme.darkvanillaold.css',
         requiresDarkBase: true,

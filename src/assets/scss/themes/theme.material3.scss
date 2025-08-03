@@ -2,7 +2,7 @@
  * VRCX Material-You-like theme by Kamiya
  * https://github.com/kamiya10/VRCX-theme
  */
-@use 'theme.dark';
+
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&family=Roboto&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
@@ -30,74 +30,86 @@ body {
     --md-sys-color-inverse-surface: 236, 223, 224;
     --md-sys-color-inverse-on-surface: 54, 47, 48;
     --md-sys-color-inverse-primary: 154, 64, 88;
-    --md-sys-color-surface-1: linear-gradient(
+    --md-sys-color-surface-1:
+        linear-gradient(
             0deg,
             rgba(var(--md-sys-color-primary), 0.05),
             rgba(var(--md-sys-color-primary), 0.05)
         ),
         rgb(var(--md-sys-color-surface));
-    --md-sys-color-surface-2: linear-gradient(
+    --md-sys-color-surface-2:
+        linear-gradient(
             0deg,
             rgba(var(--md-sys-color-primary), 0.08),
             rgba(var(--md-sys-color-primary), 0.08)
         ),
         rgb(var(--md-sys-color-surface));
-    --md-sys-color-surface-3: linear-gradient(
+    --md-sys-color-surface-3:
+        linear-gradient(
             0deg,
             rgba(var(--md-sys-color-primary), 0.11),
             rgba(var(--md-sys-color-primary), 0.11)
         ),
         rgb(var(--md-sys-color-surface));
-    --md-sys-color-surface-4: linear-gradient(
+    --md-sys-color-surface-4:
+        linear-gradient(
             0deg,
             rgba(var(--md-sys-color-primary), 0.14),
             rgba(var(--md-sys-color-primary), 0.14)
         ),
         rgb(var(--md-sys-color-surface));
-    --md-sys-typescale-headline-medium-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-headline-medium-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-headline-medium-line-height: 36px;
     --md-sys-typescale-headline-medium-size: 28px;
     --md-sys-typescale-headline-medium-weight: 500;
     --md-sys-typescale-headline-medium-tracking: 0;
-    --md-sys-typescale-headline-small-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-headline-small-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-headline-small-line-height: 32px;
     --md-sys-typescale-headline-small-size: 24px;
     --md-sys-typescale-headline-small-weight: 500;
     --md-sys-typescale-headline-small-tracking: 0;
-    --md-sys-typescale-title-medium-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-title-medium-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-title-medium-line-height: 24px;
     --md-sys-typescale-title-medium-size: 16px;
     --md-sys-typescale-title-medium-weight: 600;
     --md-sys-typescale-title-medium-tracking: 0.15px;
-    --md-sys-typescale-label-large-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-label-large-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-label-large-line-height: 20px;
     --md-sys-typescale-label-large-size: 14px;
     --md-sys-typescale-label-large-weight: 600;
     --md-sys-typescale-label-large-tracking: 0.1px;
-    --md-sys-typescale-label-medium-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-label-medium-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-label-medium-line-height: 16px;
     --md-sys-typescale-label-medium-size: 12px;
     --md-sys-typescale-label-medium-weight: 600;
     --md-sys-typescale-label-medium-tracking: 0.5px;
-    --md-sys-typescale-body-large-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-body-large-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-body-large-line-height: 24px;
     --md-sys-typescale-body-large-size: 16px;
     --md-sys-typescale-body-large-weight: 400;
     --md-sys-typescale-body-large-tracking: 0.5px;
-    --md-sys-typescale-body-medium-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-body-medium-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-body-medium-line-height: 20px;
     --md-sys-typescale-body-medium-size: 14px;
     --md-sys-typescale-body-medium-weight: 400;
     --md-sys-typescale-body-medium-tracking: 0.25px;
-    --md-sys-typescale-body-small-font: 'Google Sans', 'Noto Sans',
-        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Roboto', sans-serif;
+    --md-sys-typescale-body-small-font:
+        'Google Sans', 'Noto Sans', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans SC', 'Roboto', sans-serif;
     --md-sys-typescale-body-small-line-height: 16px;
     --md-sys-typescale-body-small-size: 12px;
     --md-sys-typescale-body-small-weight: 400;
@@ -1085,8 +1097,8 @@ input[type='number'],
     border-radius: 8px;
     height: 28px;
     padding: 0 12px;
-//     margin-top: 8px !important;
-//     margin-right: 8px !important;
+    //     margin-top: 8px !important;
+    //     margin-right: 8px !important;
     color: rgb(var(--md-sys-color-on-surface-variant));
     font-family: var(--md-sys-typescale-label-large-font);
     line-height: 28px;
@@ -2036,36 +2048,37 @@ i.x-user-status {
     color: #fff;
 }
 .el-date-table td.available:hover {
-    color: #fff
+    color: #fff;
 }
 .el-date-table td.disabled div {
-    background-color: rgb(48, 46, 53)
+    background-color: rgb(48, 46, 53);
 }
-.el-date-table td.current:not(.disabled) span
-{
+.el-date-table td.current:not(.disabled) span {
     background: var(--md-sys-color-surface-2);
     color: #fff;
 }
 .el-date-table td.today span {
     color: rgb(var(--md-sys-color-primary-container));
 }
-.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
-    color:  rgb(48, 46, 53);
+.el-year-table td .cell:hover,
+.el-year-table td.current:not(.disabled) .cell {
+    color: rgb(48, 46, 53);
 }
 .el-month-table td.current:not(.disabled) .cell {
-    color:  rgb(48, 46, 53);
+    color: rgb(48, 46, 53);
 }
-.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
-    color:  rgb(48, 46, 53);
+.el-date-picker__header-label.active,
+.el-date-picker__header-label:hover {
+    color: rgb(48, 46, 53);
 }
 .el-picker-panel__icon-btn:hover {
-    color:  rgb(48, 46, 53);
+    color: rgb(48, 46, 53);
 }
 .el-month-table td .cell:hover {
-    color:  rgb(48, 46, 53);
+    color: rgb(48, 46, 53);
 }
 .el-skeleton.is-animated .el-skeleton__item {
-    background: linear-gradient(90deg, #302E34 25%, #423F46 37%, #302E34 63%);
+    background: linear-gradient(90deg, #302e34 25%, #423f46 37%, #302e34 63%);
     background-size: 400% 100%;
     animation: el-skeleton-loading 1.4s ease infinite;
 }
@@ -2079,7 +2092,18 @@ i.x-user-status {
     display: flex;
     align-items: center;
 }
-.el-dialog[aria-label='Launch'] .el-form > .el-form-item:nth-child(2) .el-form-item__label {
+.el-dialog[aria-label='Launch']
+    .el-form
+    > .el-form-item:nth-child(2)
+    .el-form-item__label {
     display: flex;
     align-items: center;
+}
+
+div.x-friend-list
+    > div:nth-child(1)
+    > div
+    > div.el-textarea.el-input--mini
+    > span.el-input__count {
+    background-color: var(--md-sys-color-surface-3) !important;
 }

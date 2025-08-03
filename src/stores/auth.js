@@ -449,6 +449,12 @@ export const useAuthStore = defineStore('Auth', () => {
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
+                    const existingStyle = document.getElementById(
+                        'login-container-style'
+                    );
+                    if (existingStyle) {
+                        existingStyle.parentNode.removeChild(existingStyle);
+                    }
                     handleLogoutEvent();
                 }
             }

@@ -1,0 +1,511 @@
+@charset "utf-8";
+
+//
+// Copyright(c) 2019-2025 pypy and individual contributors.
+// All rights reserved.
+//
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+:root {
+    color-scheme: dark;
+}
+
+html,
+body {
+    background-color: $--theme-bg-1;
+}
+
+body,
+input,
+textarea,
+select,
+button {
+    color: $--theme-text-1;
+}
+
+.el-dialog,
+.el-message-box {
+    border-radius: 28px !important;
+}
+
+.el-dropdown-menu,
+.el-select-dropdown,
+.el-popover,
+.el-picker-panel {
+    border: 1px solid hsl($--theme-hue, $--theme-saturation, 14%) !important;
+    box-shadow: 0 2px 12px hsla($--theme-hue, $--theme-saturation, 0%, 0.3) !important;
+}
+
+.el-message-box {
+    border: 0px !important;
+    box-shadow: none !important;
+}
+
+.el-loading-mask {
+    background-color: hsla(
+        $--theme-hue,
+        $--theme-saturation,
+        0%,
+        0.6
+    ) !important;
+}
+
+.el-textarea .el-input__count,
+.el-input .el-input__count .el-input__count-inner {
+    background-color: $--theme-bg-5;
+}
+
+.x-friend-item .el-textarea .el-input__count {
+    background-color: $--theme-bg-5;
+}
+
+// User dialog memo: input count background color
+.x-friend-item:hover .el-input__count {
+    background: hsl($--theme-hue, $--theme-saturation, 24%);
+}
+
+.el-input-group__append,
+.el-input-group__prepend {
+    color: $--theme-text-1;
+    background-color: $--theme-border-1;
+    border-color: $--theme-border-1;
+}
+
+.el-input-number__decrease,
+.el-input-number__increase {
+    background: unset;
+    color: $--theme-text-1;
+}
+
+.el-input-number__decrease {
+    border-right: 1px solid hsla($--theme-hue, 20%, 87%, 0.2);
+}
+
+.el-input-number__increase {
+    border-left: 1px solid hsla($--theme-hue, 20%, 87%, 0.2);
+}
+
+.el-table tr,
+.el-table td.el-table__cell,
+.el-table th.el-table__cell {
+    background-color: hsl($--theme-hue, $--theme-saturation, 15%);
+    border-bottom: 1px solid $--theme-border-2;
+}
+
+.el-table--border::after,
+.el-table--group::after,
+.el-table::before {
+    background-color: $--theme-border-2;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+    background-color: $--theme-bg-3;
+}
+
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+    background-color: hsl($--theme-hue, $--theme-saturation, 18%);
+}
+
+.el-pagination .btn-next,
+.el-pagination .btn-prev {
+    color: $--theme-text-2;
+    background-color: $--theme-bg-4;
+}
+
+.el-pagination button:disabled {
+    color: hsl($--theme-hue, $--theme-saturation, 40%);
+    background-color: $--theme-bg-4;
+}
+
+.el-dialog {
+    background-color: $--theme-bg-4;
+}
+
+div.x-friend-list
+    > div:nth-child(1)
+    > div
+    > div.el-textarea.el-input--mini
+    > span.el-input__count {
+    background-color: $--theme-bg-4;
+}
+
+.el-pager li {
+    background-color: $--theme-bg-5;
+    color: $--theme-text-2;
+}
+
+.el-table {
+    color: $--theme-text-1;
+}
+
+.el-pagination__total {
+    color: hsl($--theme-hue, $--theme-saturation, 73%);
+    margin: 0 10px;
+}
+
+.el-tag--plain.el-tag--info {
+    background-color: $--theme-bg-5;
+}
+
+.el-collapse-item .el-tag--mini {
+    background-color: $--theme-bg-5;
+    border: transparent;
+}
+
+.el-button {
+    color: $--theme-text-2;
+}
+
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled) {
+    background-color: $--theme-bg-5;
+    border-color: $--theme-border-2;
+}
+
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):focus,
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):hover {
+    color: $--theme-text-1 !important;
+    background-color: $--theme-border-2;
+    border-color: $--theme-border-3;
+}
+
+.el-button.is-disabled,
+.el-button.is-disabled:focus,
+.el-button.is-disabled:hover {
+    color: hsl($--theme-hue, $--theme-saturation, 53%);
+    background-color: hsl($--theme-hue, $--theme-saturation, 15%);
+    border-color: $--theme-bg-5;
+}
+
+.el-tabs--card > .el-tabs__header {
+    border-bottom-color: $--theme-border-2;
+}
+
+.el-dropdown-menu {
+    background-color: $--theme-bg-4;
+    border-color: $--theme-border-2;
+}
+
+.el-dropdown-menu__item--divided::before {
+    background-color: $--theme-border-2;
+}
+
+.el-dropdown-menu__item {
+    color: hsl($--theme-hue, $--theme-saturation, 83%);
+}
+
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover {
+    color: $--theme-primary;
+    background-color: hsl($--theme-hue, $--theme-saturation, 27%);
+}
+
+.el-popper[x-placement^='bottom'] .popper__arrow::after {
+    border-bottom-color: $--theme-bg-5;
+}
+
+.el-popper[x-placement^='bottom'] .popper__arrow {
+    border-bottom-color: $--theme-border-2;
+}
+
+.el-form-item {
+    margin-bottom: 4px;
+}
+
+.el-message-box {
+    background-color: $--theme-bg-4;
+}
+
+.el-tree {
+    background: hsl($--theme-hue, $--theme-saturation, 12%);
+}
+
+.el-menu-item i {
+    color: $--theme-info;
+}
+
+.el-menu-item.notify::after {
+    background: hsl($--theme-hue, 0%, 92%);
+}
+
+.el-menu-item.is-active::before {
+    background: hsl($--theme-hue, 0%, 87%);
+}
+
+.el-menu-item:focus,
+.el-menu-item:hover {
+    background-color: $--theme-border-3;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__item {
+    border-left-color: $--theme-border-2;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+    border-bottom-color: hsl($--theme-hue, $--theme-saturation, 40%);
+    border-left-color: $--theme-border-2;
+}
+
+.el-tabs--card > .el-tabs__header .el-tabs__nav {
+    border-color: $--theme-border-2;
+}
+
+.el-collapse-item__header {
+    background-color: inherit;
+}
+
+.el-collapse-item__wrap {
+    background-color: hsl($--theme-hue, $--theme-saturation, 16%);
+}
+
+.el-message-box__title {
+    color: $--theme-text-2;
+}
+
+.el-dialog__title {
+    color: $--theme-text-2;
+}
+
+.el-message-box__content {
+    color: $--theme-text-2;
+}
+
+.el-switch__core {
+    background-color: hsl($--theme-hue, $--theme-saturation, 13%);
+    border-color: hsl($--theme-hue, $--theme-saturation, 37%);
+}
+
+.el-popover {
+    color: $--theme-text-2;
+    background-color: $--theme-bg-4;
+    border-color: hsl($--theme-hue, $--theme-saturation, 37%);
+}
+
+.el-popper[x-placement^='right'] .popper__arrow::after {
+    border-right-color: hsl($--theme-hue, $--theme-saturation, 37%);
+}
+
+.el-popper[x-placement^='right'] .popper__arrow {
+    border-right-color: hsl($--theme-hue, $--theme-saturation, 37%);
+}
+
+.el-switch__label {
+    color: hsl($--theme-hue, $--theme-saturation, 63%);
+}
+
+.el-table,
+.el-table__expanded-cell {
+    background-color: inherit;
+}
+
+.el-tree-node:focus > .el-tree-node__content {
+    background-color: hsl($--theme-hue, $--theme-saturation, 16%);
+}
+
+.el-select-dropdown__item {
+    color: $--theme-text-2;
+}
+
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+    background-color: $--theme-border-2;
+}
+
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+    background-color: $--theme-border-2;
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+    background-color: hsl($--theme-hue, $--theme-saturation, 24%);
+}
+
+.el-tag.el-tag--info {
+    background-color: $--theme-border-2;
+    border-color: hsl($--theme-hue, $--theme-saturation, 14%);
+}
+
+.el-table__expanded-cell:hover {
+    background-color: hsl($--theme-hue, $--theme-saturation, 19%) !important;
+}
+
+.el-dialog__body {
+    color: $--theme-text-1;
+}
+
+.el-radio {
+    color: $--theme-text-1;
+}
+
+.el-radio-button__inner {
+    color: $--theme-text-1;
+    background: hsl($--theme-hue, $--theme-saturation, 34%);
+    border: 1px solid hsl($--theme-hue, $--theme-saturation, 40%);
+}
+
+.el-radio-button:first-child .el-radio-button__inner {
+    border-left: 1px solid rgba(0, 0, 0, 0);
+}
+
+.el-radio-button.is-disabled .el-radio-button__inner {
+    background-color: unset;
+    border-color: unset;
+    border: 1px solid hsl($--theme-hue, $--theme-saturation, 40%);
+}
+
+.el-button {
+    color: $--theme-text-1;
+}
+
+.el-form-item__label {
+    color: $--theme-text-2;
+}
+
+.el-checkbox {
+    color: $--theme-text-2;
+}
+
+.el-input.is-disabled .el-input__inner {
+    background-color: hsl($--theme-hue, $--theme-saturation, 23%);
+}
+
+.x-app {
+    background-color: $--theme-bg-1;
+}
+
+.x-container {
+    background: $--theme-bg-3;
+}
+
+.x-app > .x-container {
+    overflow: hidden auto !important;
+}
+
+.x-login-container {
+    background-color: $--theme-bg-1;
+}
+
+.x-aside-container {
+    background-color: $--theme-bg-2;
+}
+
+.x-friend-list {
+    overflow: hidden auto !important;
+}
+
+.x-friend-list > .x-friend-group {
+    color: $--theme-text-1;
+}
+
+.x-friend-item:hover,
+.x-change-image-item:hover {
+    background: hsl($--theme-hue, $--theme-saturation, 24%);
+}
+
+.x-friend-item > .detail > .name {
+    color: $--theme-text-1;
+}
+
+.x-friend-item > .detail > .extra,
+.extra {
+    color: hsl($--theme-hue, 4%, 78%);
+}
+
+.x-login-container p {
+    color: hsl($--theme-hue, 5%, 87%);
+}
+
+.x-menu-container {
+    background: $--theme-bg-2;
+    overflow: hidden auto !important;
+}
+
+.x-grey {
+    color: $--theme-text-3;
+}
+
+.el-color-picker__panel {
+    background-color: $--theme-bg-3;
+}
+
+.x-text-removed {
+    text-decoration: line-through;
+    color: hsl(0, 100%, 64%);
+    background-color: hsla(0, 100%, 50%, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
+
+.x-text-added {
+    color: rgb(76, 255, 80);
+    background-color: rgba(76, 255, 80, 0.2);
+    padding: 2px 2px;
+    border-radius: 4px;
+}
+
+.el-divider {
+    background-color: $--theme-text-4;
+}
+
+.el-divider__text {
+    background: $--theme-bg-3;
+    color: $--theme-text-1;
+}
+
+.el-tabs__content {
+    overflow-y: auto !important;
+}
+
+.el-date-picker {
+    background-color: $--theme-bg-3;
+}
+
+.el-date-table td.disabled div {
+    background-color: hsl($--theme-hue, $--theme-saturation, 16%);
+    color: $--theme-text-4;
+}
+
+.el-date-table td.next-month,
+.el-date-table td.prev-month {
+    color: $--theme-text-4;
+}
+
+.el-date-table th {
+    border-bottom: 1px solid hsl($--theme-hue, $--theme-saturation, 33%);
+}
+
+.el-picker-panel {
+    border: 1px solid $--theme-border-2;
+    background-color: $--theme-bg-4;
+}
+
+.el-year-table td.disabled .cell {
+    background-color: hsla($--theme-hue, $--theme-saturation, 0%, 0.2);
+}
+
+.el-month-table td.disabled .cell {
+    background-color: hsla($--theme-hue, $--theme-saturation, 0%, 0.2);
+}
+
+.el-color-picker__trigger {
+    border: none;
+}

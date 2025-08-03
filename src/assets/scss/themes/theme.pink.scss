@@ -2,7 +2,7 @@
  * VRCX Pink theme by Kamiya
  * https://github.com/kamiya10/VRCX-theme
  */
-@use 'theme.dark';
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 :root {
     --theme: #dfa2a2;
@@ -13,7 +13,8 @@
     --lighter-lighter-lighter-bg: #756060;
     --lighter-lighter-lighter-lighter-bg: #857070;
     --lighter-border: #aa6065;
-    --font: 'Poppins', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
+    --font:
+        'Poppins', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
         'Noto Sans SC', sans-serif;
 }
 body,
@@ -375,7 +376,7 @@ input[type='checkbox']:checked + .el-switch__core {
 }
 .el-backtop {
     background: var(--lighter-bg);
-    color: var(--theme)
+    color: var(--theme);
 }
 
 // Date picker
@@ -393,15 +394,17 @@ input[type='checkbox']:checked + .el-switch__core {
     color: #fff;
 }
 .el-date-table td.available:hover {
-    color: #fff
+    color: #fff;
 }
-.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+.el-year-table td .cell:hover,
+.el-year-table td.current:not(.disabled) .cell {
     color: var(--theme);
 }
 .el-month-table td.current:not(.disabled) .cell {
     color: var(--theme);
 }
-.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
+.el-date-picker__header-label.active,
+.el-date-picker__header-label:hover {
     color: var(--theme);
 }
 .el-picker-panel__icon-btn:hover {
@@ -411,7 +414,7 @@ input[type='checkbox']:checked + .el-switch__core {
     color: var(--theme);
 }
 .el-date-table td.disabled div {
-    background-color: #3a2b2b
+    background-color: #3a2b2b;
 }
 
 .el-skeleton.is-animated .el-skeleton__item {

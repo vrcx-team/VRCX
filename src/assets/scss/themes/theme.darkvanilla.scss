@@ -179,6 +179,7 @@ li[class='el-menu-item is-active'] {
 .el-input__inner {
     background-color: var(--dv_bg-bot);
     border-radius: var(--dv_lg-rounded);
+    transition: none !important;
 }
 
 .el-table thead {
@@ -748,3 +749,11 @@ i[class='el-icon-star-off']:not(.el-menu-item div.el-tooltip i) {
     color: var(--dv_muted);
 }
 // Date picker end
+
+div.x-friend-list
+    > div:nth-child(1)
+    > div
+    > div.el-textarea.el-input--mini
+    > span.el-input__count {
+    background-color: var(--mid) !important;
+}

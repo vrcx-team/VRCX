@@ -25,10 +25,33 @@ configRepository.init();
 
 AppApi.SetUserAgent();
 
-try {
-    // @ts-ignore
-    i18n.locale = await configRepository.getString('VRCX_appLanguage', 'en');
+// prevent flicker on login page
+function setLoginContainerStyle(isDarkMode) {
+    const loginContainerStyle = document.createElement('style');
+    loginContainerStyle.id = 'login-container-style';
+    loginContainerStyle.type = 'text/css';
 
+    const backgroundColor = isDarkMode ? '#101010' : '#ffffff';
+    const inputBackgroundColor = isDarkMode ? '#333333' : '#ffffff';
+    const inputBorder = isDarkMode ? '1px solid #3b3b3b' : '1px solid #DCDFE6';
+
+    loginContainerStyle.innerHTML = `
+    .x-login-container {
+        background-color: ${backgroundColor} !important;
+        transition: background-color 0.3s ease;
+    }
+    
+    .x-login-container .el-input__inner {
+        background-color: ${inputBackgroundColor} !important;
+        border: ${inputBorder} !important;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+        `;
+
+    document.head.insertBefore(loginContainerStyle, document.head.firstChild);
+}
+
+async function getThemeMode() {
     const initThemeMode = await configRepository.getString(
         'VRCX_ThemeMode',
         'system'
@@ -43,6 +66,17 @@ try {
     } else {
         isDarkMode = true;
     }
+
+    return { initThemeMode, isDarkMode };
+}
+
+try {
+    // @ts-ignore
+    i18n.locale = await configRepository.getString('VRCX_appLanguage', 'en');
+
+    const { initThemeMode, isDarkMode } = await getThemeMode();
+
+    setLoginContainerStyle(isDarkMode);
     changeAppDarkStyle(isDarkMode);
     changeAppThemeStyle(initThemeMode);
 } catch (error) {

@@ -23,6 +23,7 @@ module.exports = (env, argv) => {
                 dependOn: 'vendor'
             },
             'theme.dark': `${themeBasePath}theme.dark.scss`,
+            'theme.darkblue': `${themeBasePath}theme.darkblue.scss`,
             'theme.darkvanillaold': `${themeBasePath}theme.darkvanillaold.scss`,
             'theme.darkvanilla': `${themeBasePath}theme.darkvanilla.scss`,
             'theme.pink': `${themeBasePath}theme.pink.scss`,

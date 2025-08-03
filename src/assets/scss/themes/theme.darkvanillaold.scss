@@ -2,7 +2,7 @@
  * VRCX Dark-Vanilla theme by MintLily
  * https://github.com/MintLily/Dark-Vanilla
  */
-@use 'theme.dark';
+
 :root {
     --ThemeName: 'Dark Vanilla';
     --ThemeVersion: 'v1.7';
@@ -329,7 +329,7 @@ path[stroke='#e5e9f2'] {
     color: #efefef;
 }
 .el-backtop {
-    color: var(--theme-text-muted)
+    color: var(--theme-text-muted);
 }
 
 // Date picker
@@ -344,17 +344,27 @@ path[stroke='#e5e9f2'] {
     color: #fff;
 }
 .el-date-table td.available:hover {
-    color: #fff
+    color: #fff;
 }
-.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+.el-year-table td .cell:hover,
+.el-year-table td.current:not(.disabled) .cell {
     color: var(--theme-text-muted);
 }
 .el-month-table td.current:not(.disabled) .cell {
     color: var(--theme-text-muted);
 }
-.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
+.el-date-picker__header-label.active,
+.el-date-picker__header-label:hover {
     color: var(--theme-text-muted);
 }
 .el-picker-panel__icon-btn:hover {
     color: var(--theme-text-muted);
+}
+
+div.x-friend-list
+    > div:nth-child(1)
+    > div
+    > div.el-textarea.el-input--mini
+    > span.el-input__count {
+    background-color: var(--mid) !important;
 }
