@@ -24,44 +24,34 @@ namespace VRCX
 
             return "0x0";
         }
-        public static string ReadVRCXMetadata(PNGFile pngFile)
-        {
-            var metadata = ReadTextChunk("Description", pngFile);
-
-            // Check for chunk only present in files created by older modded versions of vrchat. (LFS, screenshotmanager), which put their description at the end of the file.
-            // Searching from the end of the file is a slower bruteforce operation so only do it if we have to.
-            if (metadata == null && pngFile.GetChunk(PNGChunkTypeFilter.sRGB).HasValue)
-            {
-                // reverse check logic
-                //textChunkIndex = FindChunkIndexReverse(fileStream, "iTXt");
-
-                //if (textChunkIndex == -1) return null;
-            }
-
-            return metadata;
-        }
         
-        public static bool WriteVRCXMetadata(string text, PNGFile pngFile)
-        {
-            var textChunkData = GenerateTextChunkData("Description", text);
-            var chunk = new PNGChunk()
-            {
-                Index = -1,
-                Length = textChunkData.Length,
-                ChunkType = "iTXt",
-                ChunkTypeEnum = PNGChunkTypeFilter.iTXt,
-                Data = textChunkData
-            };
-            
-            return pngFile.WriteChunk(chunk);
-        }
 
-        public static string ReadVRChatMetadata(PNGFile pngFile)
+        /// <summary>
+        /// Reads the metadata associated with a specified keyword from text chunks within a PNG file.
+        /// </summary>
+        /// <param name="keyword">The unique keyword for a speicifc text chunk to search for.</param>
+        /// <param name="pngFile">The PNG file containing the chunks to be searched.</param>
+        /// <param name="legacySearch">
+        /// Specifies whether to search for legacy text chunks created by older VRChat mods.
+        /// If true, the function searches from the end of the file using a reverse search bruteforce method.
+        /// </param>
+        /// <returns>The text associated with the specified keyword, or null if not found.</returns>
+        public static string ReadTextChunk(string keyword, PNGFile pngFile, bool legacySearch = false)
         {
-            return ReadTextChunk("XML:com.adobe.xmp", pngFile);
-        }
-        private static string ReadTextChunk(string keyword, PNGFile pngFile)
-        {
+            // Search for legacy text chunks created by old vrchat mods
+            if (legacySearch)
+            {
+                var legacyTextChunk = pngFile.GetChunkReverse(PNGChunkTypeFilter.iTXt);
+                if (legacyTextChunk.HasValue)
+                {
+                    var data = legacyTextChunk.Value.ReadITXtChunk();
+                    if (data.Item1 == keyword)
+                        return data.Item2;
+                }
+
+                return null;
+            }
+            
             var iTXtChunk = pngFile.GetChunksOfType(PNGChunkTypeFilter.iTXt);
             if (iTXtChunk.Count == 0)
                 return null;
@@ -76,7 +66,13 @@ namespace VRCX
             return null;
         }
 
-        private static byte[] GenerateTextChunkData(string keyword, string text)
+        /// <summary>
+        /// Generates a PNG text chunk ready for writing.
+        /// </summary>
+        /// <param name="keyword">The keyword to write to the text chunk.</param>
+        /// <param name="text">The text to write to the text chunk.</param>
+        /// <returns>The binary data for the text chunk.</returns>
+        public static PNGChunk GenerateTextChunk(string keyword, string text)
         {
             byte[] textBytes = Encoding.UTF8.GetBytes(text);
             byte[] keywordBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(keyword);
@@ -90,7 +86,13 @@ namespace VRCX
             constructedTextChunk.Add(0x0); // Null separator (skipping over translated keyword byte)
             constructedTextChunk.AddRange(textBytes);
 
-            return constructedTextChunk.ToArray();
+            return new PNGChunk
+            {
+                ChunkType = "iTXt",
+                ChunkTypeEnum = PNGChunkTypeFilter.iTXt,
+                Data = constructedTextChunk.ToArray(),
+                Length = constructedTextChunk.Count
+            };
         }
     }
 }

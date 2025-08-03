@@ -22,7 +22,7 @@ public struct PNGChunk
     /// <returns>True if the chunk data is empty, false otherwise</returns>
     public bool IsZero()
     {
-        return Data.Length == 0;
+        return Data == null || Data.Length == 0;
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public struct PNGChunk
         if (BitConverter.IsLittleEndian)
         {
             Array.Reverse(chunkData, 0, 4);
-            Array.Reverse(chunkData, 4, 8);
+            Array.Reverse(chunkData, 4, 4);
         }
         
         int width = BitConverter.ToInt32(chunkData, 0);
@@ -117,6 +117,18 @@ public struct PNGChunk
         return new Tuple<int, int>(width, height);
     }
 
+    /// <summary>
+    /// Constructs and returns a byte array representation of the PNG chunk. Generates a CRC.
+    /// This data can be added to a PNG file as-is.
+    /// </summary>
+    /// <returns>A byte array containing the length, chunk type, data, and CRC of the chunk.</returns>
+    /// <remarks>
+    /// The byte array is structured as follows:
+    /// - 4 bytes: Length of the data in big-endian format.
+    /// - 4 bytes: ASCII encoded chunk type.
+    /// - N bytes: Chunk data.
+    /// - 4 bytes: CRC of the chunk type and data, in big-endian format.
+    /// </remarks>
     public byte[] GetBytes()
     {
         byte[] chunkTypeBytes = Encoding.ASCII.GetBytes(ChunkType);
