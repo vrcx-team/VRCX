@@ -119,89 +119,112 @@ namespace VRCX
         public static ScreenshotMetadata? GetScreenshotMetadata(string path, bool includeJSON = false)
         {
             // Early return if file doesn't exist, or isn't a PNG(Check both extension and file header)
-            if (!File.Exists(path) || !path.EndsWith(".png") || !IsPNGFile(path))
+            if (!File.Exists(path) || !path.EndsWith(".png"))
                 return null;
 
-            // if (metadataCache.TryGetValue(path, out var cachedMetadata))
-            //    return cachedMetadata;
+            List<string> metadata = ReadTextMetadata(path);
+            ScreenshotMetadata result = new ScreenshotMetadata();
 
-            string? metadataString;
-
-            // Get the metadata string from the PNG file
-            try
+            for (var i = 0; i < metadata.Count; i++)
             {
-                metadataString = ReadPNGDescription(path);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Failed to read PNG description for file '{0}'", path);
-                return ScreenshotMetadata.JustError(path, "Failed to read PNG description. Check logs.");
-            }
-
-            // If the metadata string is empty for some reason, there's nothing to parse.
-            if (string.IsNullOrEmpty(metadataString))
-                return null;
-
-            // Check for specific metadata string start sequences
-            if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
-            {
+                bool gotMetadata = false;
+                bool gotVrchatMetadata = false;
                 try
                 {
-                    var result = ScreenshotHelper.ParseLfsPicture(metadataString);
-                    result.SourceFile = path;
+                    var metadataString = metadata[i];
 
-                    return result;
+                    if (metadataString.StartsWith("<x:xmpmeta"))
+                    {
+                        result = ParseVRCImage(metadataString);
+                        result.SourceFile = path;
+
+                        gotVrchatMetadata = true;
+                    }
+                    
+                    if (metadataString.StartsWith("{") && metadataString.EndsWith("}")) // # Professional Json Validatior© 2.0
+                    {
+                        var vrcxMetadataResult = JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataString);
+                        if (vrcxMetadataResult != null)
+                        {
+                            vrcxMetadataResult.SourceFile = path;
+                            if (gotVrchatMetadata)
+                            {
+                                result.Players = vrcxMetadataResult.Players;
+                                result.World.InstanceId = vrcxMetadataResult.World.InstanceId;
+                            }
+                            else
+                            {
+                                result = vrcxMetadataResult;
+                            }
+
+                            if (includeJSON)
+                                result.JSON = metadataString;
+                        
+                            gotMetadata = true;
+                        }
+                    }
+
+                    if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
+                    {
+                        result = ScreenshotHelper.ParseLfsPicture(metadataString);
+                        result.SourceFile = path;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Failed to parse LFS/ScreenshotManager metadata for file '{0}'", path);
-                    return ScreenshotMetadata.JustError(path, "Failed to parse LFS/ScreenshotManager metadata.");
+                    Logger.Error(ex, "Failed to parse metadata for file '{0}\n---'{1}\n---", path, String.Join("\n", metadata));
+                    return ScreenshotMetadata.JustError(path, "Failed to parse metadata. Check log file for details.");
                 }
             }
 
-            // If not JSON metadata, return early so we're not throwing/catching pointless exceptions
-            if (!metadataString.StartsWith('{'))
-            {
-                // parse VRC prints
-                var xmlIndex = metadataString.IndexOf("<x:xmpmeta", StringComparison.Ordinal);
-                if (xmlIndex != -1)
-                {
-                    try
-                    {
-                        var xmlString = metadataString.Substring(xmlIndex);
-                        // everything after index
-                        var result = ParseVRCImage(xmlString);
-                        result.SourceFile = path;
+            if (result.Application == null || metadata.Count == 0) 
+                return ScreenshotMetadata.JustError(path, "Image has no valid metadata.");
 
-                        return result;
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex, "Failed to parse VRC image XML metadata for file '{0}'", path);
-                        return ScreenshotMetadata.JustError(path, "Failed to parse VRC image metadata.");
-                    }
-                }
+            return result;
+        }
+        
+        /// <summary>
+        /// Reads textual metadata from a PNG image file.
+        /// </summary>
+        /// <param name="path">The path to the PNG image file.</param>
+        /// <returns>A list of metadata strings found in the image file.</returns>
+        /// <remarks>
+        /// This function reads all the text chunks from the PNG image file and returns them as a list.
+        /// For VRChat screenshots, the list will contain the "XML:com.adobe.xmp"(VRChat, usually) and "Description"(VRCX) chunks, with the VRChat metadata always coming first if available.
+        /// The strings are not guaranteed to be valid metadata.
+        /// If no metadata is found, an empty list is returned.
+        /// </remarks>
+        public static List<string> ReadTextMetadata(string path)
+        {
+            using var pngFile = new PNGFile(path);
+            var result = new List<string>();
+            var metadata = PNGHelper.ReadTextChunk("Description", pngFile);
+            var vrchatMetadata = PNGHelper.ReadTextChunk("XML:com.adobe.xmp", pngFile);
+            
+            if (!string.IsNullOrEmpty(vrchatMetadata))
+                result.Add(vrchatMetadata);
+            
+            if (!string.IsNullOrEmpty(metadata))
+                result.Add(metadata);
+
+            // Check for chunk only present in files created by older modded versions of vrchat. (LFS, screenshotmanager), which put their metadata at the end of the file (which is not in spec bro).
+            // Searching from the end of the file is a slower bruteforce operation so only do it if we have to.
+            if (result.Count == 0 && pngFile.GetChunk(PNGChunkTypeFilter.sRGB).HasValue)
+            {
+                var lfsMetadata = PNGHelper.ReadTextChunk("Description", pngFile, true);
                 
-                Logger.ConditionalDebug("Screenshot file '{0}' has unknown non-JSON metadata:\n{1}\n", path, metadataString);
-                return ScreenshotMetadata.JustError(path, "File has unknown non-JSON metadata.");
+                if (!string.IsNullOrEmpty(lfsMetadata))
+                    result.Add(lfsMetadata);
             }
 
-            // Parse the metadata as VRCX JSON metadata
-            try
-            {
-                var result = JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataString);
-                result.SourceFile = path;
-
-                if (includeJSON)
-                    result.JSON = metadataString;
-
-                return result;
-            }
-            catch (JsonException ex)
-            {
-                Logger.Error(ex, "Failed to parse screenshot metadata JSON for file '{0}'", path);
-                return ScreenshotMetadata.JustError(path, "Failed to parse screenshot metadata JSON. Check logs.");
-            }
+            return result;
+        }
+        
+        public static bool WriteVRCXMetadata(string text, string path)
+        {
+            using var pngFile = new PNGFile(path);
+            var chunk = PNGHelper.GenerateTextChunk("Description", text);
+            return pngFile.WriteChunk(chunk);
         }
         
         public static ScreenshotMetadata ParseVRCImage(string xmlString)
@@ -255,126 +278,6 @@ namespace VRCX
         }
 
         /// <summary>
-        ///     Writes a text description into a PNG file at the specified path.
-        ///     Creates an iTXt PNG chunk in the target file, using the Description tag, with the specified text.
-        /// </summary>
-        /// <param name="path">The file path of the PNG file in which the description is to be written.</param>
-        /// <param name="text">The text description that is to be written into the PNG file.</param>
-        /// <returns>
-        ///     <c>true</c> if the text description is successfully written to the PNG file;
-        ///     otherwise, <c>false</c>.
-        /// </returns>
-        public static bool WritePNGDescription(string path, string text)
-        {
-            if (!File.Exists(path) || !IsPNGFile(path))
-                return false;
-
-            var png = File.ReadAllBytes(path);
-            var newChunkIndex = FindEndOfChunk(png, "IHDR");
-            if (newChunkIndex == -1)
-                return false;
-
-            // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
-            var screenShotMetadata = GetScreenshotMetadata(path);
-            if (screenShotMetadata != null && screenShotMetadata.Application == "VRCX")
-            {
-                Logger.Error("Screenshot file '{0}' already has VRCX metadata", path);
-                return false;
-            }
-
-            var newChunk = new PNGChunk("iTXt");
-            newChunk.InitializeTextChunk("Description", text);
-
-            var newFile = png.ToList();
-            newFile.InsertRange(newChunkIndex, newChunk.ConstructChunkByteArray());
-
-            File.WriteAllBytes(path, newFile.ToArray());
-
-            return true;
-        }
-
-        public static bool CopyTXt(string sourceImage, string targetImage)
-        {
-            if (!File.Exists(sourceImage) || !IsPNGFile(sourceImage) ||
-                !File.Exists(targetImage) || !IsPNGFile(targetImage)) 
-                return false;
-
-            var sourceMetadata = ReadTXt(sourceImage);
-            if (sourceMetadata == null) 
-                return false;
-
-            var targetImageData = File.ReadAllBytes(targetImage);
-
-            var newChunkIndex = FindEndOfChunk(targetImageData, "IHDR");
-            if (newChunkIndex == -1)
-                return false;
-
-            // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
-            var existingiTXt = FindChunkIndex(targetImageData, "iTXt");
-            if (existingiTXt != -1)
-                return false;
-
-            var newFile = targetImageData.ToList();
-            newFile.InsertRange(newChunkIndex, sourceMetadata.ConstructChunkByteArray());
-            File.WriteAllBytes(targetImage, newFile.ToArray());
-
-            return true;
-        }
-
-        /// <summary>
-        ///     Reads a text description from a PNG file at the specified path.
-        ///     Reads any existing iTXt PNG chunk in the target file, using the Description tag.
-        /// </summary>
-        /// <param name="path">The file path of the PNG file in which the description is to be read from.</param>
-        /// <returns>
-        ///     The text description that is read from the PNG file.
-        /// </returns>
-        public static string? ReadPNGDescription(string path)
-        {
-            if (!File.Exists(path) || !IsPNGFile(path)) return null;
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512);
-            var existingiTXt = FindChunk(stream, "iTXt", true);
-
-            return existingiTXt?.GetText("Description");
-        }
-
-        public static bool HasTXt(string path)
-        {
-            if (!File.Exists(path) || !IsPNGFile(path)) return false;
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512);
-            var existingiTXt = FindChunk(stream, "iTXt", true);
-
-            return existingiTXt != null;
-        }
-
-        public static PNGChunk? ReadTXt(string path)
-        {
-            if (!File.Exists(path) || !IsPNGFile(path)) return null;
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512);
-            var existingiTXt = FindChunk(stream, "iTXt", true);
-
-            return existingiTXt;
-        }
-
-        /// <summary>
-        /// Reads the PNG resolution.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
-        public static string? ReadPNGResolution(string path)
-        {
-            if (!File.Exists(path) || !IsPNGFile(path)) return null;
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512);
-            var existingiHDR = FindChunk(stream, "IHDR", false);
-            
-            return existingiHDR?.GetResolution();
-        }
-
-        /// <summary>
         ///     Determines whether the specified file is a PNG file. We do this by checking if the first 8 bytes in the file path match the PNG signature.
         /// </summary>
         /// <param name="path">The path of the file to check.</param>
@@ -390,193 +293,6 @@ namespace VRCX
             var signature = new byte[8];
             fs.ReadExactly(signature, 0, 8);
             return signature.SequenceEqual(pngSignatureBytes);
-        }
-
-        /// <summary>
-        ///     Finds the index of the first of a specified chunk type in the specified PNG file.
-        /// </summary>
-        /// <param name="png">Array of bytes representing a PNG file.</param>
-        /// <param name="type">Type of PMG chunk to find</param>
-        /// <returns></returns>
-        private static int FindChunkIndex(byte[] png, string type)
-        {
-            var chunksProcessed = 0;
-            var chunkSeekLimit = 5;
-            var isLittleEndian = BitConverter.IsLittleEndian;
-
-            // The first 8 bytes of the file are the png signature, so we can skip them.
-            var index = 8;
-
-            while (index < png.Length)
-            {
-                var chunkLength = new byte[4];
-                Array.Copy(png, index, chunkLength, 0, 4);
-
-                // BitConverter wants little endian(unless your system is big endian for some reason), PNG multi-byte integers are big endian. So we reverse the array.
-                if (isLittleEndian) Array.Reverse(chunkLength);
-
-                var length = BitConverter.ToInt32(chunkLength, 0);
-
-                // We don't need to reverse strings since UTF-8 strings aren't affected by endianess, given that they're a sequence of bytes. 
-                var chunkName = new byte[4];
-                Array.Copy(png, index + 4, chunkName, 0, 4);
-                var name = Encoding.UTF8.GetString(chunkName);
-
-                if (name == type)
-                {
-                    return index;
-                }
-
-                if (name == "IEND") // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
-                {
-                    return -1;
-                }
-
-                // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is length bytes, and the chunk CRC is 4 bytes.
-                // We add 12 to the index to get to the start of the next chunk in the file on the next loop.
-                index += length + 12;
-                chunksProcessed++;
-
-                if (chunksProcessed > chunkSeekLimit) break;
-            }
-
-            return -1;
-        }
-
-        private static int FindChunkIndex(FileStream fs, string type, bool seekEnd)
-        {
-            var chunksProcessed = 0;
-            var chunkSeekLimit = 5;
-            var isLittleEndian = BitConverter.IsLittleEndian;
-
-            fs.Seek(8, SeekOrigin.Begin);
-            var buffer = new byte[8];
-            while (fs.Position < fs.Length)
-            {
-                var chunkIndex = (int)fs.Position;
-                fs.ReadExactly(buffer, 0, 8); // Read both chunkLength and chunkName at once into this buffer
-
-                // BitConverter wants little endian(unless your system is big endian for some reason), PNG multi-byte integers are big endian. So we reverse the array.
-                if (isLittleEndian) Array.Reverse(buffer, 0, 4); // Only reverse the chunkLength part
-
-                var chunkLength = BitConverter.ToInt32(buffer, 0);
-                var chunkType = Encoding.UTF8.GetString(buffer, 4, 4); // We don't need to reverse strings since UTF-8 strings aren't affected by endianess, given that they're a sequence of bytes. 
-
-                if (chunkType == type) return chunkIndex;
-                if (chunkType == "IEND") return -1; // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
-
-                // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is chunkLength bytes, and the chunk CRC after chunk data is 4 bytes.
-                // We've already read the length/type which is the first 8 bytes, so we'll seek the chunk length + 4(CRC) to get to the start of the next chunk in the file.
-                fs.Seek(chunkLength + 4, SeekOrigin.Current);
-                chunksProcessed++;
-
-                if (chunksProcessed > chunkSeekLimit) break;
-            }
-
-            // If we've processed more than 5 chunks and still haven't found the chunk we're looking for, we'll start searching from the end of the file.
-
-            // We start at an offset of 12 since the IEND chunk (should) always be the last chunk in the file, be 12 bytes, and we don't need to check it.
-            fs.Seek(-12, SeekOrigin.End);
-
-            // We're going to read the last 4096 bytes of the file, which (should) be enough to find any trailing iTXt chunks we're looking for.
-            // If an LFS screenshots has the metadata of like 80 players attached to it, this likely won't be enough to find the iTXt chunk.
-            // I don't have any screenshots with that much metadata to test with and will not create them manually, so I'm not going to worry about it for now.
-            var chunkNameBytes = Encoding.UTF8.GetBytes(type);
-            fs.Seek(-4096, SeekOrigin.Current);
-
-            var trailingBytes = new byte[4096];
-            fs.ReadExactly(trailingBytes, 0, 4096);
-
-            // At this scale we can just brute force/naive search for the chunk name in the trailing bytes and performance will be fine.
-            for (var i = 0; i <= trailingBytes.Length - chunkNameBytes.Length; i++)
-            {
-                var isMatch = true;
-                for (var j = 0; j < chunkNameBytes.Length; j++)
-                {
-                    if (trailingBytes[i + j] != chunkNameBytes[j])
-                    {
-                        isMatch = false;
-                        break;
-                    }
-                }
-                if (isMatch)
-                {
-                    return (int)fs.Position - 4096 + i - 4;
-                }
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        ///     Finds the index of the end of the specified chunk type in the specified PNG file.
-        /// </summary>
-        /// <param name="png">Array of bytes representing a PNG file.</param>
-        /// <param name="type">Type of PMG chunk to find</param>
-        /// <returns></returns>
-        private static int FindEndOfChunk(byte[] png, string type)
-        {
-            var index = FindChunkIndex(png, type);
-            if (index == -1)
-                return index;
-
-            var chunkLength = new byte[4];
-            Array.Copy(png, index, chunkLength, 0, 4);
-            Array.Reverse(chunkLength);
-            var length = BitConverter.ToInt32(chunkLength, 0);
-
-            return index + length + 12;
-        }
-
-        /// <summary>
-        ///     Finds the specified chunk type in the specified PNG file and returns it as a PNGChunk.
-        /// </summary>
-        /// <param name="png">Array of bytes representing a PNG file</param>
-        /// <param name="type">Type of PMG chunk to find</param>
-        /// <returns>PNGChunk</returns>
-        private static PNGChunk? FindChunk(byte[] png, string type)
-        {
-            var index = FindChunkIndex(png, type);
-            if (index == -1) return null;
-
-            var chunkLength = new byte[4];
-            Array.Copy(png, index, chunkLength, 0, 4);
-            Array.Reverse(chunkLength);
-            var length = BitConverter.ToInt32(chunkLength, 0);
-
-            var chunkData = new byte[length];
-            Array.Copy(png, index + 8, chunkData, 0, length);
-
-            return new PNGChunk(type, chunkData);
-        }
-
-        /// <summary>
-        ///     Finds the specified chunk type in the specified PNG file and returns it as a PNGChunk.
-        /// </summary>
-        /// <param name="fs">FileStream of a PNG file.</param>
-        /// <param name="type">Type of PMG chunk to find</param>
-        /// <returns>PNGChunk</returns>
-        private static PNGChunk? FindChunk(FileStream fs, string type, bool seekFromEnd)
-        {
-            var index = FindChunkIndex(fs, type, seekFromEnd);
-            if (index == -1)
-                return null;
-
-            // Seek back to start of found chunk
-            fs.Seek(index, SeekOrigin.Begin);
-
-            var chunkLength = new byte[4];
-            fs.ReadExactly(chunkLength, 0, 4);
-            Array.Reverse(chunkLength);
-            var length = BitConverter.ToInt32(chunkLength, 0);
-
-            // Skip the chunk type bytes
-            fs.Seek(4, SeekOrigin.Current);
-
-            var chunkData = new byte[length];
-            fs.ReadExactly(chunkData, 0, length);
-
-            return new PNGChunk(type, chunkData);
         }
 
         /// <summary>
@@ -691,136 +407,6 @@ namespace VRCX
             }
 
             return metadata;
-        }
-    }
-
-    // See http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html 4.2.3
-    // Basic PNG Chunk Structure: Length(int, 4 bytes) | Type (string, 4 bytes) | chunk data (Depends on type) | 32-bit CRC code (4 bytes)
-    // basic tEXt data structure: Keyword (1-79 bytes string) | Null separator (1 byte) | Text (x bytes)
-    // basic iTXt data structure: Keyword (1-79 bytes string) | Null separator (1 byte) | Compression flag (1 byte) | Compression method (1 byte) | Language tag (0-x bytes) | Null separator | Translated keyword (0-x bytes) | Null separator | Text (x bytes)
-
-    // Proper practice here for arbitrary image processing would be to check the PNG file being passed for any existing iTXt chunks with the same keyword that we're trying to use; If we find one, we replace that chunk's data instead of creating a new chunk.
-    // Luckily, VRChat should never do this! Bugs notwithstanding, we should never re-process a png file either. So we're just going to skip that logic.
-    // This code would be HORRIBLE for general parsing of PNG files/metadata. It's not really meant to do that, it's just meant to do exactly what we need it to do.
-    internal class PNGChunk
-    {
-        // crc lookup table
-        private static uint[] crcTable;
-
-        // init lookup table and store crc for iTXt
-        private static readonly uint iTXtCrc = Crc32(new[] { (byte)'i', (byte)'T', (byte)'X', (byte)'t' }, 0, 4, 0);
-        private readonly Encoding keywordEncoding = Encoding.GetEncoding("ISO-8859-1"); // ISO-8859-1/Latin1 is the encoding used for the keyword in text chunks. 
-        private List<byte> ChunkDataBytes;
-        private int ChunkDataLength;
-        private string ChunkType;
-
-        public PNGChunk(string chunkType)
-        {
-            ChunkType = chunkType;
-            ChunkDataBytes = new List<byte>();
-        }
-
-        public PNGChunk(string chunkType, byte[] bytes)
-        {
-            ChunkType = chunkType;
-            ChunkDataBytes = bytes.ToList();
-            ChunkDataLength = bytes.Length;
-        }
-
-        /// <summary>
-        ///     Initializes this PNGChunk's data in the format of an iTXt chunk with the specified keyword and text.
-        /// </summary>
-        /// <param name="keyword">Keyword for text chunk</param>
-        /// <param name="text">Text data for text chunk</param>
-        public void InitializeTextChunk(string keyword, string text)
-        {
-            // Create our chunk data byte array
-            ChunkDataBytes.AddRange(keywordEncoding.GetBytes(keyword)); // keyword
-            ChunkDataBytes.Add(0x0); // Null separator
-            ChunkDataBytes.Add(0x0); // Compression flag
-            ChunkDataBytes.Add(0x0); // Compression method
-            ChunkDataBytes.Add(0x0); // Null separator (skipping over language tag byte)
-            ChunkDataBytes.Add(0x0); // Null separator (skipping over translated keyword byte)
-            ChunkDataBytes.AddRange(Encoding.UTF8.GetBytes(text)); // our text
-
-            ChunkDataLength = ChunkDataBytes.Count;
-        }
-
-        /// <summary>
-        ///     Constructs and returns a full, coherent PNG chunk from this PNGChunk's data.
-        /// </summary>
-        /// <returns>PNG chunk byte array</returns>
-        public byte[] ConstructChunkByteArray()
-        {
-            var chunk = new List<byte>();
-
-            var chunkLengthBytes = BitConverter.GetBytes(ChunkDataLength);
-            var chunkCRCBytes = BitConverter.GetBytes(Crc32(ChunkDataBytes.ToArray(), 0, ChunkDataLength, iTXtCrc));
-
-            // Reverse the chunk length bytes/CRC bytes if system is little endian since PNG integers are big endian
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(chunkLengthBytes);
-                Array.Reverse(chunkCRCBytes);
-            }
-
-            chunk.AddRange(chunkLengthBytes); // add data length
-            chunk.AddRange(Encoding.UTF8.GetBytes(ChunkType)); // add chunk type
-            chunk.AddRange(ChunkDataBytes); // Add chunk data
-            chunk.AddRange(chunkCRCBytes); // Add chunk CRC32 hash. 
-
-            return chunk.ToArray();
-        }
-
-        /// <summary>
-        ///     Gets the text from an iTXt chunk
-        /// </summary>
-        /// <param name="keyword">Keyword of the text chunk</param>
-        /// <returns>Text from chunk.</returns>
-        public string GetText(string keyword)
-        {
-            var offset = keywordEncoding.GetByteCount(keyword) + 5;
-            return Encoding.UTF8.GetString(ChunkDataBytes.ToArray(), offset, ChunkDataBytes.Count - offset);
-        }
-
-        public string GetResolution()
-        {
-            var x = BitConverter.ToInt32(ChunkDataBytes.Take(4).Reverse().ToArray(), 0);
-            var y = BitConverter.ToInt32(ChunkDataBytes.Skip(4).Take(4).Reverse().ToArray(), 0);
-            return $"{x}x{y}";
-        }
-
-        // Crc32 implementation from
-        // https://web.archive.org/web/20150825201508/http://upokecenter.dreamhosters.com/articles/png-image-encoder-in-c/
-        private static uint Crc32(byte[] stream, int offset, int length, uint crc)
-        {
-            uint c;
-            if (crcTable == null)
-            {
-                crcTable = new uint[256];
-                for (uint n = 0; n <= 255; n++)
-                {
-                    c = n;
-                    for (var k = 0; k <= 7; k++)
-                    {
-                        if ((c & 1) == 1)
-                            c = 0xEDB88320 ^ ((c >> 1) & 0x7FFFFFFF);
-                        else
-                            c = (c >> 1) & 0x7FFFFFFF;
-                    }
-
-                    crcTable[n] = c;
-                }
-            }
-
-            c = crc ^ 0xffffffff;
-            var endOffset = offset + length;
-            for (var i = offset; i < endOffset; i++)
-            {
-                c = crcTable[(c ^ stream[i]) & 255] ^ ((c >> 8) & 0xFFFFFF);
-            }
-
-            return c ^ 0xffffffff;
         }
     }
 }

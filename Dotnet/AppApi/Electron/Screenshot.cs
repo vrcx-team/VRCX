@@ -37,7 +37,7 @@ namespace VRCX
                 path = newPath;
             }
 
-            ScreenshotHelper.WritePNGDescription(path, metadataString);
+            ScreenshotHelper.WriteVRCXMetadata(path, metadataString);
             return path;
         }
     }
