@@ -229,6 +229,8 @@ namespace VRCX
         
         public static ScreenshotMetadata ParseVRCImage(string xmlString)
         {
+            var index = xmlString.IndexOf("<x:xmpmeta", StringComparison.Ordinal);
+            xmlString = xmlString.Substring(index);
             var doc = new XmlDocument();
             doc.LoadXml(xmlString);
             var root = doc.DocumentElement;
