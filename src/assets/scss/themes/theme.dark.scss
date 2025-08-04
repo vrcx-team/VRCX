@@ -134,22 +134,6 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 @import '_theme.dark_styles';
 
-// we don't want any gray, sorry not sorry
-.x-friend-item:hover .el-input__count {
-    background: hsl($--theme-hue, $--theme-saturation, 9%);
-    //color: $--color-primary;
-}
-
-.x-friend-item:hover,
-.x-change-image-item:hover {
-    background: hsl($--theme-hue, $--theme-saturation, 9%);
-    color: $--color-primary;
-}
-
-.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
-    background-color: hsl($--theme-hue, $--theme-saturation, 9%);
-    //color: $--color-primary;
-}
 
 .el-table tr,
 .el-table td.el-table__cell,
@@ -157,16 +141,10 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     background-color: hsl($--theme-hue, $--theme-saturation, 6%);
 }
 
-.el-select-dropdown__item.hover,
-.el-select-dropdown__item:hover {
-    background-color: hsl($--theme-hue, $--theme-saturation, 9%);
-    //color: $--color-primary;
+.el-radio-button__inner {
+    background: hsl($--theme-hue, $--theme-saturation, 9%);
 }
 
-.el-dropdown-menu__item:focus,
-.el-dropdown-menu__item:not(.is-disabled):hover {
-    background-color: hsl($--theme-hue, $--theme-saturation, 9%);
-}
 
 .x-menu-container {
     border-right: 1px solid $--theme-bg-5;
@@ -174,4 +152,29 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 .x-aside-container {
     border-left: 1px solid $--theme-bg-5;
+}
+
+.x-friend-item:hover,
+.x-change-image-item:hover,
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover,
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover,
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell,
+.x-friend-item:hover .el-input__count {
+    background: hsl($--theme-hue, $--theme-saturation, 9%);
+    color: $--color-primary;
+}
+
+
+.x-friend-item:hover,
+.x-change-image-item:hover {
+    color: $--color-primary;
+}
+
+// Tag background variants
+@each $type in success, warning, danger {
+  .el-tag--plain.el-tag--#{$type} {
+    background-color: hsl($--theme-hue, $--theme-saturation, 9%);
+  }
 }
