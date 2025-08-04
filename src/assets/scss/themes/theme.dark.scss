@@ -145,6 +145,9 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     background: hsl($--theme-hue, $--theme-saturation, 9%);
 }
 
+.el-tree{
+    background: hsl($--theme-hue, $--theme-saturation, 9%);
+}
 
 .x-menu-container {
     border-right: 1px solid $--theme-bg-5;
