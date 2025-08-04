@@ -12,16 +12,16 @@ $--theme-hue: 0;
 $--theme-saturation: 0%;
 
 // AMOLED background tones
-$--theme-bg-1: hsl($--theme-hue, $--theme-saturation, 0%);  
-$--theme-bg-2: hsl($--theme-hue, $--theme-saturation, 2%);  
-$--theme-bg-3: hsl($--theme-hue, $--theme-saturation, 4%);  
-$--theme-bg-4: hsl($--theme-hue, $--theme-saturation, 6%);  
-$--theme-bg-5: hsl($--theme-hue, $--theme-saturation, 7%);  
+// #0f0f0f
+$--theme-bg-1: hsl($--theme-hue, $--theme-saturation, 6%); 
+$--theme-bg-2: hsl($--theme-hue, $--theme-saturation, 6%); 
+$--theme-bg-3: hsl($--theme-hue, $--theme-saturation, 6%); 
+$--theme-bg-4: hsl($--theme-hue, $--theme-saturation, 7%); 
+$--theme-bg-5: hsl($--theme-hue, $--theme-saturation, 10%);
 
 $--theme-border-1: hsl($--theme-hue, $--theme-saturation, 8%);   
 $--theme-border-2: hsla($--theme-hue, $--theme-saturation, 6%, 0.5); 
 $--theme-border-3: hsl($--theme-hue, $--theme-saturation, 12%);  
-
 
 $--theme-text-1: hsl($--theme-hue, $--theme-saturation, 85%); 
 $--theme-text-2: hsl($--theme-hue, $--theme-saturation, 70%); 
@@ -151,14 +151,10 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     //color: $--color-primary;
 }
 
-.el-tag {
-    background-color: hsl($--theme-hue, $--theme-saturation, 4%);
-}
-
 .el-table tr,
 .el-table td.el-table__cell,
 .el-table th.el-table__cell {
-    background-color: hsl($--theme-hue, $--theme-saturation, 4%);
+    background-color: hsl($--theme-hue, $--theme-saturation, 6%);
 }
 
 .el-select-dropdown__item.hover,
@@ -170,4 +166,12 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .el-dropdown-menu__item:focus,
 .el-dropdown-menu__item:not(.is-disabled):hover {
     background-color: hsl($--theme-hue, $--theme-saturation, 9%);
+}
+
+.x-menu-container {
+    border-right: 1px solid $--theme-bg-5;
+}
+
+.x-aside-container {
+    border-left: 1px solid $--theme-bg-5;
 }
