@@ -191,7 +191,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                         state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_friend')} #${L.instanceName} (${platform})`;
                         break;
                     case 'friends+':
-                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_friend_plus')}+ #${L.instanceName} (${platform})`;
+                        state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_friend_plus')} #${L.instanceName} (${platform})`;
                         break;
                     case 'group':
                         state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_group')} #${L.instanceName} (${platform})`;
