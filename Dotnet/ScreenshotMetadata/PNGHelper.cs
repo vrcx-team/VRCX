@@ -16,9 +16,9 @@ namespace VRCX
         public static string ReadResolution(PNGFile pngFile)
         {
             var ihdrChunk = pngFile.GetChunk(PNGChunkTypeFilter.IHDR);
-            if (ihdrChunk.HasValue)
+            if (ihdrChunk != null)
             {
-                var resolution = ihdrChunk.Value.ReadIHDRChunkResolution();
+                var resolution = ihdrChunk.ReadIHDRChunkResolution();
                 return resolution.Item1 + "x" + resolution.Item2;
             }
 
@@ -42,9 +42,9 @@ namespace VRCX
             if (legacySearch)
             {
                 var legacyTextChunk = pngFile.GetChunkReverse(PNGChunkTypeFilter.iTXt);
-                if (legacyTextChunk.HasValue)
+                if (legacyTextChunk != null)
                 {
-                    var data = legacyTextChunk.Value.ReadITXtChunk();
+                    var data = legacyTextChunk.ReadITXtChunk();
                     if (data.Item1 == keyword)
                         return data.Item2;
                 }
@@ -91,7 +91,7 @@ namespace VRCX
         public static PNGChunk GenerateTextChunk(string keyword, string text)
         {
             byte[] textBytes = Encoding.UTF8.GetBytes(text);
-            byte[] keywordBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(keyword);
+            byte[] keywordBytes = Encoding.UTF8.GetBytes(keyword);
 
             List<byte> constructedTextChunk = new List<byte>();
             constructedTextChunk.AddRange(keywordBytes);

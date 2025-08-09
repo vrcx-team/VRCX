@@ -7,7 +7,7 @@ using System.Text;
 
 namespace VRCX;
 
-public struct PNGChunk
+public class PNGChunk
 {
     public int Index;
     public int Length;
@@ -58,7 +58,7 @@ public struct PNGChunk
         */
 
         // Parse keyword as null-terminated string
-        var keywordEncoding = Encoding.GetEncoding("ISO-8859-1");
+        var keywordEncoding = Encoding.UTF8;
         int keywordLength = 0;
         for (int i = 0; i < chunkLength; i++)
         {
@@ -126,8 +126,9 @@ public struct PNGChunk
     public bool ExistsInFile(FileStream fileStream)
     {
         fileStream.Seek(Index, SeekOrigin.Begin);
-        byte[] buffer = new byte[Length];
-        fileStream.ReadExactly(buffer, 0, Length);
+        
+        byte[] buffer = new byte[4];
+        fileStream.ReadExactly(buffer, 0, 4);
         
         if (BitConverter.IsLittleEndian)
             Array.Reverse(buffer, 0, 4);
@@ -137,14 +138,15 @@ public struct PNGChunk
             return false;
 
         fileStream.Seek(4 + chunkLength, SeekOrigin.Current);
-        fileStream.ReadExactly(buffer, 0, Length);
+        fileStream.ReadExactly(buffer, 0, 4);
         
         if (BitConverter.IsLittleEndian)
             Array.Reverse(buffer, 0, 4);
         
         uint crc = BitConverter.ToUInt32(buffer, 0);
+        uint calculatedCRC = CalculateCRC();
         
-        return crc == CalculateCRC();
+        return crc == calculatedCRC;
     }
 
     /// <summary>
@@ -186,7 +188,7 @@ public struct PNGChunk
 
     public uint CalculateCRC()
     {
-        var chunkTypeBytes = Encoding.ASCII.GetBytes(ChunkType);
+        var chunkTypeBytes = Encoding.UTF8.GetBytes(ChunkType);
         return Crc32(Data, 0, Data.Length, Crc32(chunkTypeBytes, 0, chunkTypeBytes.Length, 0));
     }
 

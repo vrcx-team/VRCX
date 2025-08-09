@@ -60,7 +60,7 @@ public class PNGFile : IDisposable
     public PNGChunk? GetChunkReverse(PNGChunkTypeFilter chunkTypeFilter)
     {
         var chunk = ReadChunkReverse(chunkTypeFilter);
-        if (chunk.HasValue &&chunk.Value.IsZero())
+        if (chunk != null && chunk.IsZero())
             return null;
 
         return chunk;
@@ -147,10 +147,10 @@ public class PNGFile : IDisposable
         }
 
         fileStream.SetLength(fileStream.Length - deleteLength);
-        
+
         metadataChunkCache.Remove(chunk);
         
-        // update the index of all cached chunks
+        // Update the index of cached chunks
         for (int i = 0; i < metadataChunkCache.Count; i++)
         {
             var cachedChunk = metadataChunkCache[i];
