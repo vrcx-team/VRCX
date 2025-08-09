@@ -100,6 +100,7 @@ public class PNGFile : IDisposable
         
         // Write new chunk, append rest of file
         var chunkBytes = chunk.GetBytes();
+        fileStream.SetLength(fileStream.Length + CHUNK_NONDATA_SIZE + chunk.Length);
         fileStream.Write(chunkBytes, 0, chunkBytes.Length);
         fileStream.Write(fileBytes, 0, fileBytes.Length);
         
