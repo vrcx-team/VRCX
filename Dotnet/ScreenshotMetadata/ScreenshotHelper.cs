@@ -233,11 +233,8 @@ namespace VRCX
         {
             using var pngFile = new PNGFile(path);
             var chunk = PNGHelper.GenerateTextChunk("Description", text);
-            pngFile.WriteChunk(chunk);
             
-            DeleteTextMetadata(path, true);
-
-            return true;
+            return pngFile.WriteChunk(chunk);;
         }
 
         public static ScreenshotMetadata ParseVRCImage(string xmlString)
