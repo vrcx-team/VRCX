@@ -219,6 +219,15 @@ namespace VRCX
 
             return result;
         }
+
+        public static void DeleteTextMetadata(string path, bool deleteVRChatMetadata = false)
+        {
+            using var pngFile = new PNGFile(path, 128 * 1024);
+            if (deleteVRChatMetadata)
+                PNGHelper.DeleteTextChunk("XML:com.adobe.xmp", pngFile);
+            
+            PNGHelper.DeleteTextChunk("Description", pngFile);
+        }
         
         public static bool WriteVRCXMetadata(string text, string path)
         {
@@ -226,7 +235,7 @@ namespace VRCX
             var chunk = PNGHelper.GenerateTextChunk("Description", text);
             return pngFile.WriteChunk(chunk);
         }
-        
+
         public static ScreenshotMetadata ParseVRCImage(string xmlString)
         {
             var index = xmlString.IndexOf("<x:xmpmeta", StringComparison.Ordinal);

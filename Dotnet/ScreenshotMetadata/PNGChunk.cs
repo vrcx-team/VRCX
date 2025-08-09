@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -118,6 +119,35 @@ public struct PNGChunk
     }
 
     /// <summary>
+    /// Validates this chunk against the chunk at the same index in a given file stream, checking the chunk length and CRC.
+    /// </summary>
+    /// <param name="fileStream">The file stream from which the chunk data is read for validation.</param>
+    /// <returns>True if chunk exists at index and is valid, false otherwise.</returns>
+    public bool ExistsInFile(FileStream fileStream)
+    {
+        fileStream.Seek(Index, SeekOrigin.Begin);
+        byte[] buffer = new byte[Length];
+        fileStream.ReadExactly(buffer, 0, Length);
+        
+        if (BitConverter.IsLittleEndian)
+            Array.Reverse(buffer, 0, 4);
+        
+        int chunkLength = BitConverter.ToInt32(buffer, 0);
+        if (chunkLength != Length)
+            return false;
+
+        fileStream.Seek(4 + chunkLength, SeekOrigin.Current);
+        fileStream.ReadExactly(buffer, 0, Length);
+        
+        if (BitConverter.IsLittleEndian)
+            Array.Reverse(buffer, 0, 4);
+        
+        uint crc = BitConverter.ToUInt32(buffer, 0);
+        
+        return crc == CalculateCRC();
+    }
+
+    /// <summary>
     /// Constructs and returns a byte array representation of the PNG chunk. Generates a CRC.
     /// This data can be added to a PNG file as-is.
     /// </summary>
@@ -146,12 +176,18 @@ public struct PNGChunk
         Buffer.BlockCopy(Data, 0, result, 8, Data.Length);
     
         // Calculate and copy CRC
-        uint crc = Crc32(Data, 0, Data.Length, Crc32(chunkTypeBytes, 0, chunkTypeBytes.Length, 0));
+        uint crc = CalculateCRC();
         uint reversedCrc = BinaryPrimitives.ReverseEndianness(crc);
         
         Buffer.BlockCopy(BitConverter.GetBytes(reversedCrc), 0, result, totalLength - 4, 4);
     
         return result;
+    }
+
+    public uint CalculateCRC()
+    {
+        var chunkTypeBytes = Encoding.ASCII.GetBytes(ChunkType);
+        return Crc32(Data, 0, Data.Length, Crc32(chunkTypeBytes, 0, chunkTypeBytes.Length, 0));
     }
 
     // Crc32 implementation from

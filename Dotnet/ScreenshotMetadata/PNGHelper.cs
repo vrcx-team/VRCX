@@ -66,6 +66,22 @@ namespace VRCX
             return null;
         }
 
+        public static bool DeleteTextChunk(string keyword, PNGFile pngFile)
+        {
+            var iTXtChunk = pngFile.GetChunksOfType(PNGChunkTypeFilter.iTXt);
+            if (iTXtChunk.Count == 0)
+                return false;
+
+            for (int i = 0; i < iTXtChunk.Count; i++)
+            {
+                var data = iTXtChunk[i].ReadITXtChunk();
+                if (data.Item1 == keyword)
+                    return pngFile.DeleteChunk(iTXtChunk[i]);
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Generates a PNG text chunk ready for writing.
         /// </summary>
