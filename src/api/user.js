@@ -24,6 +24,7 @@ const userReq = {
                     `getUser missing user data for: ${params.userId}`
                 );
             }
+            json.$lastFetch = Date.now(); // todo: make this not suck
             const args = {
                 json,
                 params,

@@ -520,7 +520,6 @@ export const useUserStore = defineStore('User', () => {
                 $customTag: '',
                 $customTagColour: '',
                 $friendNumber: 0,
-                $lastFetch: Date.now(),
                 $platform: '',
                 //
                 ...json
@@ -552,7 +551,6 @@ export const useUserStore = defineStore('User', () => {
             }
             state.cachedUsers.set(ref.id, ref);
         } else {
-            json.$lastFetch = Date.now(); // todo: make this not suck
             if (json.state !== 'online') {
                 // offline event before GPS to offline location
                 friendStore.updateFriend(ref.id, json.state);
