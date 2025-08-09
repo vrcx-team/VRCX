@@ -313,8 +313,7 @@ declare global {
         // Update
         DownloadUpdate(
             fileUrl: string,
-            fileName: string,
-            hashUrl: string,
+            hashString: string,
             downloadSize: number
         ): Promise<void>;
         CancelUpdate(): Promise<void>;

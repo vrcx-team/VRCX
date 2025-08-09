@@ -3,7 +3,6 @@ import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { $app } from '../app';
 import configRepository from '../service/config';
-import { watchState } from '../service/watchState';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useUiStore } from './ui';
@@ -225,8 +224,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 state.VRCXUpdateDialog.updatePendingIsLatest = true;
             } else if (releaseName > currentVersion.value) {
                 let downloadUrl = '';
-                let downloadName = '';
-                let hashUrl = '';
+                let hashString = '';
                 let size = 0;
                 for (const asset of json.assets) {
                     if (asset.state !== 'uploaded') {
@@ -239,7 +237,12 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                                 'application/x-msdos-program')
                     ) {
                         downloadUrl = asset.browser_download_url;
-                        downloadName = asset.name;
+                        if (
+                            asset.digest &&
+                            asset.digest.startsWith('sha256:')
+                        ) {
+                            hashString = asset.digest.replace('sha256:', '');
+                        }
                         size = asset.size;
                         continue;
                     }
@@ -248,15 +251,13 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                         asset.content_type === 'application/octet-stream'
                     ) {
                         downloadUrl = asset.browser_download_url;
-                        downloadName = asset.name;
+                        if (
+                            asset.digest &&
+                            asset.digest.startsWith('sha256:')
+                        ) {
+                            hashString = asset.digest.replace('sha256:', '');
+                        }
                         size = asset.size;
-                        continue;
-                    }
-                    if (
-                        asset.name === 'SHA256SUMS.txt' &&
-                        asset.content_type === 'text/plain'
-                    ) {
-                        hashUrl = asset.browser_download_url;
                         continue;
                     }
                 }
@@ -265,17 +266,14 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 }
                 state.pendingVRCXUpdate = true;
                 uiStore.notifyMenu('settings');
-                const type = 'Auto';
                 if (state.autoUpdateVRCX === 'Notify') {
                     // this.showVRCXUpdateDialog();
                 } else if (state.autoUpdateVRCX === 'Auto Download') {
                     await downloadVRCXUpdate(
                         downloadUrl,
-                        downloadName,
-                        hashUrl,
+                        hashString,
                         size,
-                        releaseName,
-                        type
+                        releaseName
                     );
                 }
             }
@@ -344,11 +342,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     }
     async function downloadVRCXUpdate(
         downloadUrl,
-        downloadName,
-        hashUrl,
+        hashString,
         size,
-        releaseName,
-        type
+        releaseName
     ) {
         if (state.updateInProgress) {
             return;
@@ -356,12 +352,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         try {
             state.updateInProgress = true;
             await downloadFileProgress();
-            await AppApi.DownloadUpdate(
-                downloadUrl,
-                downloadName,
-                hashUrl,
-                size
-            );
+            await AppApi.DownloadUpdate(downloadUrl, hashString, size);
             state.pendingVRCXInstall = releaseName;
         } catch (err) {
             console.error(err);
@@ -386,8 +377,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 continue;
             }
             let downloadUrl = '';
-            let downloadName = '';
-            let hashUrl = '';
+            let hashString = '';
             let size = 0;
             for (const asset of release.assets) {
                 if (asset.state !== 'uploaded') {
@@ -399,7 +389,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                         asset.content_type === 'application/x-msdos-program')
                 ) {
                     downloadUrl = asset.browser_download_url;
-                    downloadName = asset.name;
+                    if (asset.digest && asset.digest.startsWith('sha256:')) {
+                        hashString = asset.digest.replace('sha256:', '');
+                    }
                     size = asset.size;
                     continue;
                 }
@@ -408,15 +400,10 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                     asset.content_type === 'application/octet-stream'
                 ) {
                     downloadUrl = asset.browser_download_url;
-                    downloadName = asset.name;
+                    if (asset.digest && asset.digest.startsWith('sha256:')) {
+                        hashString = asset.digest.replace('sha256:', '');
+                    }
                     size = asset.size;
-                    continue;
-                }
-                if (
-                    asset.name === 'SHA256SUMS.txt' &&
-                    asset.content_type === 'text/plain'
-                ) {
-                    hashUrl = asset.browser_download_url;
                     continue;
                 }
             }
@@ -424,15 +411,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 return;
             }
             const releaseName = release.name;
-            const type = 'Manual';
-            downloadVRCXUpdate(
-                downloadUrl,
-                downloadName,
-                hashUrl,
-                size,
-                releaseName,
-                type
-            );
+            downloadVRCXUpdate(downloadUrl, hashString, size, releaseName);
             break;
         }
     }

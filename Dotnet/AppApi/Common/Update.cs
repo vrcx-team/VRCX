@@ -4,9 +4,9 @@ namespace VRCX;
 
 public partial class AppApi
 {
-    public async Task DownloadUpdate(string fileUrl, string fileName, string hashUrl, int downloadSize)
+    public async Task DownloadUpdate(string fileUrl, string hashString, int downloadSize)
     {
-        await Update.DownloadUpdate(fileUrl, fileName, hashUrl, downloadSize);
+        await Update.DownloadUpdate(fileUrl, hashString, downloadSize);
     }
 
     public void CancelUpdate()

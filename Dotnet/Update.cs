@@ -26,7 +26,6 @@ namespace VRCX
         private static readonly string VrcxSetupExecutable = Path.Join(Program.AppDataDirectory, "VRCX_Setup.exe");
         private static readonly string UpdateExecutable = Path.Join(Program.AppDataDirectory, "update.exe");
         private static readonly string TempDownload = Path.Join(Program.AppDataDirectory, "tempDownload");
-        private static readonly string HashLocation = Path.Join(Program.AppDataDirectory, "sha256sum.txt");
         private static readonly HttpClient httpClient;
         private static CancellationToken _cancellationToken;
         public static int UpdateProgress;
@@ -57,9 +56,7 @@ namespace VRCX
         {
             if (Process.GetProcessesByName("VRCX_Setup").Length > 0)
                 Environment.Exit(0);
-
-            if (File.Exists(HashLocation))
-                File.Delete(HashLocation);
+            
             if (File.Exists(TempDownload))
                 File.Delete(TempDownload);
             if (File.Exists(VrcxSetupExecutable))
@@ -165,52 +162,39 @@ namespace VRCX
             throw new Exception("Unable to extract file name from content-disposition header.");
         }
 
-        public static async Task DownloadUpdate(string fileUrl, string fileName, string hashUrl, int downloadSize)
+        public static async Task DownloadUpdate(string fileUrl, string hashString, int downloadSize)
         {
             _cancellationToken = CancellationToken.None;
             const int chunkSize = 8192;
 
             if (File.Exists(TempDownload))
                 File.Delete(TempDownload);
-            if (File.Exists(HashLocation))
-                File.Delete(HashLocation);
-
-            var hashesPath = await DownloadFile(hashUrl, _cancellationToken);
-            if (!string.IsNullOrEmpty(hashesPath))
-                File.Move(hashesPath, HashLocation);
 
             await using var destination = File.OpenWrite(TempDownload);
-            using (var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, _cancellationToken))
-            await using (var download = await response.Content.ReadAsStreamAsync(_cancellationToken))
+            using var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, _cancellationToken);
+            await using var download = await response.Content.ReadAsStreamAsync(_cancellationToken);
+            var contentLength = response.Content.Headers.ContentLength;
+            var buffer = new byte[chunkSize];
+            long totalBytesRead = 0;
+
+            while (true)
             {
-                var contentLength = response.Content.Headers.ContentLength;
-                var buffer = new byte[chunkSize];
-                long totalBytesRead = 0;
-
-                while (true)
-                {
-                    int bytesRead = await download.ReadAsync(buffer, 0, chunkSize, _cancellationToken);
-                    if (bytesRead == 0) break;
-
-                    if (_cancellationToken.IsCancellationRequested)
-                        throw new OperationCanceledException("Download was cancelled.");
-
-                    await destination.WriteAsync(buffer.AsMemory(0, bytesRead), _cancellationToken);
-                    totalBytesRead += bytesRead;
-
-                    if (contentLength.HasValue)
-                    {
-                        double percentage = Math.Round((double)totalBytesRead / contentLength.Value * 100, 2);
-                        UpdateProgress = (int)percentage;
-                    }
-                }
-
                 if (contentLength.HasValue)
                 {
-                    double percentage = Math.Round((double)totalBytesRead / contentLength.Value * 100, 2);
+                    var percentage = Math.Round((double)totalBytesRead / contentLength.Value * 100, 2);
                     UpdateProgress = (int)percentage;
                 }
+                var bytesRead = await download.ReadAsync(buffer.AsMemory(0, chunkSize), _cancellationToken);
+                if (bytesRead == 0)
+                    break;
+
+                if (_cancellationToken.IsCancellationRequested)
+                    throw new OperationCanceledException("Download was cancelled.");
+
+                await destination.WriteAsync(buffer.AsMemory(0, bytesRead), _cancellationToken);
+                totalBytesRead += bytesRead;
             }
+            
             destination.Close();
 
             var data = new FileInfo(TempDownload);
@@ -220,35 +204,28 @@ namespace VRCX
                 logger.Error("Downloaded file size does not match expected size");
                 throw new Exception("Downloaded file size does not match expected size");
             }
-            if (File.Exists(HashLocation))
+
+            if (string.IsNullOrEmpty(hashString))
+            {
+                logger.Error("Hash string is empty, skipping hash check");
+            }
+            else
             {
                 logger.Info("Checking hash");
-                var lines = await File.ReadAllLinesAsync(HashLocation, _cancellationToken);
-                var hashDict = new Dictionary<string, string>();
-                foreach (var line in lines)
-                {
-                    var split = line.Split(' ');
-                    if (split.Length == 3)
-                        hashDict[split[2]] = split[0];
-                }
                 using (var sha256 = SHA256.Create())
                 await using (var stream = File.OpenRead(TempDownload))
                 {
-                    var hashBytes = await sha256.ComputeHashAsync(stream, _cancellationToken);
-                    var hashString = BitConverter.ToString(hashBytes).Replace("-", "");
-                    if (!hashDict.TryGetValue(fileName, out var expectedHash))
+                    var fileHashBytes = await sha256.ComputeHashAsync(stream, _cancellationToken);
+                    var fileHashString = Convert.ToHexString(fileHashBytes);
+                    if (!string.IsNullOrEmpty(fileHashString) &&
+                        !hashString.Equals(fileHashString, StringComparison.OrdinalIgnoreCase))
                     {
-                        logger.Error("Hash check failed, file not found in hash file");
-                    }
-                    if (!string.IsNullOrEmpty(expectedHash) &&
-                        !hashString.Equals(expectedHash, StringComparison.OrdinalIgnoreCase))
-                    {
-                        logger.Error($"Hash check failed file:{hashString} web:{expectedHash}");
+                        logger.Error($"Hash check failed file:{fileHashString} web:{hashString}");
                         throw new Exception("Hash check failed");
                         // can't delete file yet because it's in use
                     }
                 }
-                File.Delete(HashLocation);
+
                 logger.Info("Hash check passed");
             }
 
