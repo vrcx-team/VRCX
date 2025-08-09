@@ -36,7 +36,7 @@ namespace VRCX
         /// If true, the function searches from the end of the file using a reverse search bruteforce method.
         /// </param>
         /// <returns>The text associated with the specified keyword, or null if not found.</returns>
-        public static string ReadTextChunk(string keyword, PNGFile pngFile, bool legacySearch = false)
+        public static string? ReadTextChunk(string keyword, PNGFile pngFile, bool legacySearch = false)
         {
             // Search for legacy text chunks created by old vrchat mods
             if (legacySearch)

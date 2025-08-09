@@ -512,6 +512,71 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         );
     }
 
+    function askDeleteAllScreenshotMetadata() {
+        $app.$confirm(
+            t(
+                'view.settings.advanced.advanced.delete_all_screenshot_metadata.ask'
+            ),
+            {
+                confirmButtonText: t(
+                    'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm_yes'
+                ),
+                cancelButtonText: t(
+                    'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm_no'
+                ),
+                type: 'warning',
+                showInput: false,
+                callback: async (action) => {
+                    if (action === 'confirm') {
+                        deleteAllScreenshotMetadata();
+                    }
+                }
+            }
+        );
+    }
+
+    function deleteAllScreenshotMetadata() {
+        $app.$confirm(
+            t(
+                'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm'
+            ),
+            {
+                confirmButtonText: t(
+                    'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_confirm'
+                ),
+                cancelButtonText: t(
+                    'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'
+                ),
+                type: 'warning',
+                showInput: false,
+                callback: async (action) => {
+                    if (action === 'confirm') {
+                        const msgBox = $app.$message({
+                            message: 'Batch metadata removal in progress...',
+                            type: 'warning',
+                            duration: 0
+                        });
+                        try {
+                            await AppApi.DeleteAllScreenshotMetadata();
+                            $app.$message({
+                                message: 'Batch metadata removal complete',
+                                type: 'success'
+                            });
+                        } catch (err) {
+                            console.error(err);
+                            $app.$message({
+                                message: `Batch metadata removal failed: ${err}`,
+                                type: 'error'
+                            });
+                        } finally {
+                            msgBox.close();
+                        }
+                    }
+                }
+            }
+        );
+    }
+
     function resetUGCFolder() {
         setUGCFolderPath('');
     }
@@ -647,6 +712,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
         setSaveInstanceEmoji,
-        setVrcRegistryAutoBackup
+        setVrcRegistryAutoBackup,
+        askDeleteAllScreenshotMetadata
     };
 });

@@ -1285,6 +1285,9 @@
                         :value="screenshotHelperCopyToClipboard"
                         @change="setScreenshotHelperCopyToClipboard()"
                         :long-label="true" />
+                    <el-button size="small" icon="el-icon-delete" @click="askDeleteAllScreenshotMetadata()">{{
+                        t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
+                    }}</el-button>
                 </div>
 
                 <div class="options-container">
@@ -2113,7 +2116,8 @@
         openUGCFolderSelector,
         showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
-        setSaveInstanceEmoji
+        setSaveInstanceEmoji,
+        askDeleteAllScreenshotMetadata
     } = advancedSettingsStore;
 
     const instanceTypes = ref([

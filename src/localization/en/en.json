@@ -582,6 +582,13 @@
                         "header": "Save Instance Emoji To File",
                         "description": "Save spawned emoji to your VRChat Pictures folder"
                     },
+                    "delete_all_screenshot_metadata": {
+                        "button": "Delete Screenshot Metadata",
+                        "ask": "Are you sure you want to delete all VRC & VRCX screenshot metadata from your VRChat Pictures folder?",
+                        "confirm": "Deleting all screenshot metadata is a very destructive action and cannot be undone! This includes all prints, sub folders and other unrelated images in your VRChat Pictures folder, if these photos are precious to you, please make a backup before proceeding.",
+                        "confirm_yes": "Yes",
+                        "confirm_no": "No"
+                    },
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",
@@ -1533,6 +1540,7 @@
             "last_screenshot": "Last Screenshot",
             "copy_image": "Copy Image",
             "open_folder": "Open Folder",
+            "delete_metadata": "Delete Metadata",
             "upload": "Upload"
         },
         "registry_backup": {
@@ -1692,6 +1700,10 @@
         },
         "friend": {
             "load_failed": "Failed to load friends list, logging out"
+        },
+        "screenshot_metadata": {
+            "deleted": "Screenshot metadata deleted",
+            "delete_failed": "Failed to delete screenshot metadata"
         }
     },
     "prompt": {

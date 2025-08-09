@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +43,7 @@ public class PNGFile : IDisposable
         ReadAndCacheMetadata();
         
         var chunk = metadataChunkCache.FirstOrDefault((chunk) => chunkTypeFilter.HasFlag(chunk.ChunkTypeEnum));
-        if (chunk.IsZero())
+        if (chunk == null || chunk.IsZero())
             return null;
 
         return chunk;
@@ -60,7 +60,7 @@ public class PNGFile : IDisposable
     public PNGChunk? GetChunkReverse(PNGChunkTypeFilter chunkTypeFilter)
     {
         var chunk = ReadChunkReverse(chunkTypeFilter);
-        if (chunk != null && chunk.IsZero())
+        if (chunk == null || chunk.IsZero())
             return null;
 
         return chunk;

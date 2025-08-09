@@ -290,6 +290,8 @@ declare global {
             searchType?: number
         ): Promise<string>;
         GetLastScreenshot(): Promise<string>;
+        DeleteScreenshotMetadata(path: string): Promise<boolean>;
+        DeleteAllScreenshotMetadata(): Promise<void>;
 
         // Moderations
         GetVRChatModerations(

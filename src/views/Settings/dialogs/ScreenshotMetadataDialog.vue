@@ -42,6 +42,13 @@
                 @click="uploadScreenshotToGallery"
                 >{{ t('dialog.screenshot_metadata.upload') }}</el-button
             >
+            <el-button
+                v-if="screenshotMetadataDialog.metadata.filePath"
+                size="small"
+                icon="el-icon-delete"
+                @click="deleteMetadata(screenshotMetadataDialog.metadata.filePath)"
+                >{{ t('dialog.screenshot_metadata.delete_metadata') }}</el-button
+            >
             <br />
             <br />
 
@@ -277,6 +284,26 @@
                 message: 'Opened image folder',
                 type: 'success'
             });
+        });
+    }
+    function deleteMetadata(path) {
+        if (!path) {
+            return;
+        }
+        AppApi.DeleteScreenshotMetadata(path).then((result) => {
+            if (!result) {
+                $message({
+                    message: t('message.screenshot_metadata.delete_failed'),
+                    type: 'error'
+                });
+                return;
+            }
+            $message({
+                message: t('message.screenshot_metadata.deleted'),
+                type: 'success'
+            });
+            const D = props.screenshotMetadataDialog;
+            getAndDisplayScreenshot(D.metadata.filePath, true);
         });
     }
     function uploadScreenshotToGallery() {
