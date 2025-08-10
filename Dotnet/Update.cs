@@ -217,8 +217,7 @@ namespace VRCX
                 {
                     var fileHashBytes = await sha256.ComputeHashAsync(stream, _cancellationToken);
                     var fileHashString = Convert.ToHexString(fileHashBytes);
-                    if (!string.IsNullOrEmpty(fileHashString) &&
-                        !hashString.Equals(fileHashString, StringComparison.OrdinalIgnoreCase))
+                    if (!hashString.Equals(fileHashString, StringComparison.OrdinalIgnoreCase))
                     {
                         logger.Error($"Hash check failed file:{fileHashString} web:{hashString}");
                         throw new Exception("Hash check failed");

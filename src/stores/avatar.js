@@ -50,9 +50,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
             galleryLoading: false,
             lastUpdated: '',
             inCache: false,
-            cacheSize: 0,
+            cacheSize: '',
             cacheLocked: false,
-            cachePath: ''
+            cachePath: '',
+            fileAnalysis: {}
         },
         cachedAvatarModerations: new Map(),
         avatarHistory: new Set(),
@@ -131,9 +132,12 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 highestPrice: null,
                 id: '',
                 imageUrl: '',
+                listingDate: null,
                 lock: false,
                 lowestPrice: null,
                 name: '',
+                pendingUpload: false,
+                performance: {},
                 productId: null,
                 publishedListings: [],
                 releaseStatus: '',
@@ -205,9 +209,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
         D.loading = true;
         D.id = avatarId;
         D.inCache = false;
-        D.cacheSize = 0;
+        D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
+        D.fileAnalysis = {};
         D.isQuestFallback = false;
         D.isPC = false;
         D.isQuest = false;
@@ -350,7 +355,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         const D = state.avatarDialog;
         if (D.visible) {
             D.inCache = false;
-            D.cacheSize = 0;
+            D.cacheSize = '';
             D.cacheLocked = false;
             D.cachePath = '';
             checkVRChatCache(D.ref).then((cacheInfo) => {

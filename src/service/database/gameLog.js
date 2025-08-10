@@ -267,7 +267,7 @@ const gameLog = {
 
     async getVisitCount(worldId) {
         var ref = {
-            visitCount: '',
+            visitCount: 0,
             worldId: ''
         };
         await sqliteService.execute(

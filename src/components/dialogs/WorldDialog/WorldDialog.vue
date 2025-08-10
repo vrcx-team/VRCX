@@ -722,6 +722,17 @@
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)"></el-button>
+                    <el-tree
+                        v-if="Object.keys(worldDialog.fileAnalysis).length > 0"
+                        :data="worldDialog.fileAnalysis"
+                        style="margin-top: 5px; font-size: 12px">
+                        <template #default="scope">
+                            <span>
+                                <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
+                                <span v-if="!scope.data.children" v-text="scope.data.value"></span>
+                            </span>
+                        </template>
+                    </el-tree>
                     <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
                         <template #default="{ data }">
                             <span>

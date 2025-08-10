@@ -39,9 +39,10 @@ export const useWorldStore = defineStore('World', () => {
             bundleSizes: [],
             lastUpdated: '',
             inCache: false,
-            cacheSize: 0,
+            cacheSize: '',
             cacheLocked: false,
             cachePath: '',
+            fileAnalysis: {},
             lastVisit: '',
             visitCount: 0,
             timeSpent: 0,
@@ -96,11 +97,13 @@ export const useWorldStore = defineStore('World', () => {
         D.visible = true;
         D.loading = true;
         D.inCache = false;
-        D.cacheSize = 0;
+        D.cacheSize = '';
         D.cacheLocked = false;
+        D.cachePath = '';
+        D.fileAnalysis = {};
         D.rooms = [];
         D.lastVisit = '';
-        D.visitCount = '';
+        D.visitCount = 0;
         D.timeSpent = 0;
         D.isFavorite = false;
         D.avatarScalingDisabled = false;
@@ -211,7 +214,7 @@ export const useWorldStore = defineStore('World', () => {
         const D = state.worldDialog;
         if (D.visible) {
             D.inCache = false;
-            D.cacheSize = 0;
+            D.cacheSize = '';
             D.cacheLocked = false;
             D.cachePath = '';
             checkVRChatCache(D.ref).then((cacheInfo) => {

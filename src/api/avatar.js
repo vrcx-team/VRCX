@@ -122,7 +122,7 @@ const avatarReq = {
 
     /**
      * @param {{ avatarId: string }} params
-     * @returns {Promise<{json: T, params}>}
+     * @returns {Promise<{json: any, params}>}
      */
     deleteImposter(params) {
         return request(`avatars/${params.avatarId}/impostor`, {
@@ -151,7 +151,7 @@ const avatarReq = {
     },
 
     /**
-     * @param {{ avatarId: string }} avatarId
+     * @param {string} avatarId
      * @returns {Promise<{json: any, params}>}
      */
     getAvatarGallery(avatarId) {
@@ -174,7 +174,7 @@ const avatarReq = {
     },
 
     /**
-     * @param {{ imageData: string, avatarId: string }} params
+     * @param {{ imageData: string, avatarId: string }}
      * @returns {Promise<{json: any, params}>}
      */
     uploadAvatarGalleryImage(imageData, avatarId) {

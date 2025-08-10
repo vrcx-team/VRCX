@@ -86,7 +86,9 @@ async function deleteVRChatCache(ref) {
             compareUnityVersion(unityPackage.unitySortNumber)
         ) {
             assetUrl = unityPackage.assetUrl;
-            if (unityPackage.variant !== 'standard') {
+            if (!unityPackage.variant || unityPackage.variant === 'standard') {
+                variant = 'security';
+            } else {
                 variant = unityPackage.variant;
             }
             break;
@@ -119,7 +121,9 @@ async function checkVRChatCache(ref) {
             compareUnityVersion(unityPackage.unitySortNumber)
         ) {
             assetUrl = unityPackage.assetUrl;
-            if (unityPackage.variant !== 'standard') {
+            if (!unityPackage.variant || unityPackage.variant === 'standard') {
+                variant = 'security';
+            } else {
                 variant = unityPackage.variant;
             }
             break;
@@ -424,6 +428,7 @@ async function getBundleDateSize(ref) {
     const { currentInstanceWorld, currentInstanceLocation } =
         storeToRefs(instanceStore);
     const bundleSizes = [];
+    const bundleJson = [];
     for (let i = ref.unityPackages.length - 1; i > -1; i--) {
         const unityPackage = ref.unityPackages[i];
         if (
@@ -443,59 +448,63 @@ async function getBundleDateSize(ref) {
         }
         const assetUrl = unityPackage.assetUrl;
         const fileId = extractFileId(assetUrl);
-        const fileVersion = parseInt(extractFileVersion(assetUrl), 10);
-        if (!fileId) {
+        const version = parseInt(extractFileVersion(assetUrl), 10);
+        let variant = '';
+        if (!unityPackage.variant || unityPackage.variant === 'standard') {
+            variant = 'security';
+        } else {
+            variant = unityPackage.variant;
+        }
+        if (!fileId || !version) {
             continue;
         }
-        const args = await miscRequest.getBundles(fileId);
-        if (!args?.json?.versions) {
+        console.log(
+            `Fetching bundle size for ${platform} - fileId: ${fileId}, version: ${version}, variant: ${variant}`
+        );
+        const args = await miscRequest.getFileAnalysis({
+            fileId,
+            version,
+            variant
+        });
+        if (!args?.json?.success) {
             continue;
         }
 
-        let { versions } = args.json;
-        for (let j = versions.length - 1; j > -1; j--) {
-            const version = versions[j];
-            if (version.version === fileVersion) {
-                const createdAt = version.created_at;
-                const fileSize = `${(
-                    version.file.sizeInBytes / 1048576
-                ).toFixed(2)} MB`;
-                bundleSizes[platform] = {
-                    createdAt,
-                    fileSize
-                };
+        const json = args.json;
+        if (typeof json.fileSize !== 'undefined') {
+            json._fileSize = `${(json.fileSize / 1048576).toFixed(2)} MB`;
+        }
+        if (typeof json.uncompressedSize !== 'undefined') {
+            json._uncompressedSize = `${(json.uncompressedSize / 1048576).toFixed(2)} MB`;
+        }
+        if (typeof json.avatarStats?.totalTextureUsage !== 'undefined') {
+            json._totalTextureUsage = `${(json.avatarStats.totalTextureUsage / 1048576).toFixed(2)} MB`;
+        }
+        bundleJson[platform] = json;
+        const createdAt = json.created_at;
+        const fileSize = `${(json.fileSize / 1048576).toFixed(2)} MB`;
+        bundleSizes[platform] = {
+            createdAt,
+            fileSize
+        };
 
-                // update avatar dialog
-                if (avatarDialog.value.id === ref.id) {
-                    avatarDialog.value.bundleSizes[platform] =
-                        bundleSizes[platform];
-                    if (avatarDialog.value.lastUpdated < version.created_at) {
-                        avatarDialog.value.lastUpdated = version.created_at;
-                    }
-                }
-                // update world dialog
-                if (worldDialog.value.id === ref.id) {
-                    worldDialog.value.bundleSizes[platform] =
-                        bundleSizes[platform];
-                    if (worldDialog.value.lastUpdated < version.created_at) {
-                        worldDialog.value.lastUpdated = version.created_at;
-                    }
-                }
-                // update player list
-                if (currentInstanceLocation.value.worldId === ref.id) {
-                    currentInstanceWorld.value.bundleSizes[platform] =
-                        bundleSizes[platform];
-
-                    if (
-                        currentInstanceWorld.value.lastUpdated <
-                        version.created_at
-                    ) {
-                        currentInstanceWorld.value.lastUpdated =
-                            version.created_at;
-                    }
-                }
-                break;
-            }
+        // update avatar dialog
+        if (avatarDialog.value.id === ref.id) {
+            avatarDialog.value.bundleSizes[platform] = bundleSizes[platform];
+            avatarDialog.value.lastUpdated = createdAt;
+            avatarDialog.value.fileAnalysis = buildTreeData(bundleJson);
+        }
+        // update world dialog
+        if (worldDialog.value.id === ref.id) {
+            worldDialog.value.bundleSizes[platform] = bundleSizes[platform];
+            worldDialog.value.lastUpdated = createdAt;
+            worldDialog.value.fileAnalysis = buildTreeData(bundleJson);
+        }
+        // update player list
+        if (currentInstanceLocation.value.worldId === ref.id) {
+            currentInstanceWorld.value.bundleSizes[platform] =
+                bundleSizes[platform];
+            currentInstanceWorld.value.lastUpdated = createdAt;
         }
     }
 
