@@ -143,6 +143,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 .el-radio-button__inner {
     background: hsl($--theme-hue, $--theme-saturation, 9%);
+    border: 1px solid hsl($--theme-hue, $--theme-saturation, 12%);
 }
 
 .el-tree{
