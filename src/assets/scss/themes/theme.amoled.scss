@@ -11,22 +11,24 @@
 $--theme-hue: 0;
 $--theme-saturation: 0%;
 
-$--theme-bg-1: hsl($--theme-hue, $--theme-saturation, 6%); // #101010
-$--theme-bg-2: hsl($--theme-hue, $--theme-saturation, 9%); // #171717
-$--theme-bg-3: hsl($--theme-hue, $--theme-saturation, 13%); // #222222
-$--theme-bg-4: hsl($--theme-hue, $--theme-saturation, 17%); // #2b2b2b
-$--theme-bg-5: hsl($--theme-hue, $--theme-saturation, 20%); // #333333
+// AMOLED background tones
+// #0f0f0f
+$--theme-bg-1: hsl($--theme-hue, $--theme-saturation, 6%); 
+$--theme-bg-2: hsl($--theme-hue, $--theme-saturation, 6%); 
+$--theme-bg-3: hsl($--theme-hue, $--theme-saturation, 6%); 
+$--theme-bg-4: hsl($--theme-hue, $--theme-saturation, 7%); 
+$--theme-bg-5: hsl($--theme-hue, $--theme-saturation, 9%);
 
-$--theme-border-1: hsl($--theme-hue, $--theme-saturation, 23%); // #3a3a3a
-$--theme-border-2: hsl($--theme-hue, $--theme-saturation, 25%); // #404040
-$--theme-border-3: hsl($--theme-hue, $--theme-saturation, 31%); // #505050
+$--theme-border-1: hsl($--theme-hue, $--theme-saturation, 8%);   
+$--theme-border-2: hsla($--theme-hue, $--theme-saturation, 6%, 0.5); 
+$--theme-border-3: hsl($--theme-hue, $--theme-saturation, 12%);  
 
-$--theme-text-1: hsl($--theme-hue, $--theme-saturation, 100%); // #ffffff
-$--theme-text-2: hsl($--theme-hue, $--theme-saturation, 78%); // #c8c8c8
-$--theme-text-3: hsl($--theme-hue, $--theme-saturation, 70%); // #b3b3b3
-$--theme-text-4: hsl($--theme-hue, $--theme-saturation, 38%); // #606266
+$--theme-text-1: hsl($--theme-hue, $--theme-saturation, 85%); 
+$--theme-text-2: hsl($--theme-hue, $--theme-saturation, 70%); 
+$--theme-text-3: hsl($--theme-hue, $--theme-saturation, 68%); 
+$--theme-text-4: hsl($--theme-hue, $--theme-saturation, 38%); 
 
-$--theme-primary: #66b1ff;
+$--theme-primary: #B18FFF;
 $--theme-success: #67c23a;
 $--theme-warning: #e6a23c;
 $--theme-danger: #f56c6c;
@@ -131,3 +133,51 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 @import '~element-ui/packages/theme-chalk/src/index';
 
 @import '_theme.dark_styles';
+
+
+.el-table tr,
+.el-table td.el-table__cell,
+.el-table th.el-table__cell {
+    background-color: hsl($--theme-hue, $--theme-saturation, 6%);
+}
+
+.el-radio-button__inner {
+    background: hsl($--theme-hue, $--theme-saturation, 9%);
+}
+
+.el-tree{
+    background: hsl($--theme-hue, $--theme-saturation, 9%);
+}
+
+.x-menu-container {
+    border-right: 1px solid $--theme-bg-5;
+}
+
+.x-aside-container {
+    border-left: 1px solid $--theme-bg-5;
+}
+
+.x-friend-item:hover,
+.x-change-image-item:hover,
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover,
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover,
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell,
+.x-friend-item:hover .el-input__count {
+    background: hsl($--theme-hue, $--theme-saturation, 9%);
+    color: $--color-primary;
+}
+
+
+.x-friend-item:hover,
+.x-change-image-item:hover {
+    color: $--color-primary;
+}
+
+// Tag background variants
+@each $type in success, warning, danger {
+  .el-tag--plain.el-tag--#{$type} {
+    background-color: hsl($--theme-hue, $--theme-saturation, 9%);
+  }
+}
