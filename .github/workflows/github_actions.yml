@@ -113,7 +113,7 @@ jobs:
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}.AppImage'
 
     build_macos:
-        runs-on: macos-latest
+        runs-on: macos-latest-large
         needs: [set_version, build_dotnet_linux, build_node]
 
         steps:
