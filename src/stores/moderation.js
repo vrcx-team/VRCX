@@ -64,51 +64,6 @@ export const useModerationStore = defineStore('Moderation', () => {
         { flush: 'sync' }
     );
 
-    function handlePlayerModeration(args) {
-        args.ref = applyPlayerModeration(args.json);
-        const { ref } = args;
-        const array = state.playerModerationTable.data;
-        const { length } = array;
-        for (let i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
-                Vue.set(array, i, ref);
-                return;
-            }
-        }
-        state.playerModerationTable.data.push(ref);
-    }
-
-    /**
-     *
-     * @param args
-     */
-    function handlePlayerModerationAtSend(args) {
-        const { ref } = args;
-        const D = userStore.userDialog;
-        if (
-            D.visible === false ||
-            (ref.targetUserId !== D.id &&
-                ref.sourceUserId !== userStore.currentUser.id)
-        ) {
-            return;
-        }
-        if (ref.type === 'block') {
-            D.isBlock = true;
-        } else if (ref.type === 'mute') {
-            D.isMute = true;
-        } else if (ref.type === 'hideAvatar') {
-            D.isHideAvatar = true;
-        } else if (ref.type === 'interactOff') {
-            D.isInteractOff = true;
-        } else if (ref.type === 'muteChat') {
-            D.isMuteChat = true;
-        }
-        $app.$message({
-            message: t('message.user.moderated'),
-            type: 'success'
-        });
-    }
-
     function handlePlayerModerationAtDelete(args) {
         const { ref } = args;
         const D = userStore.userDialog;
@@ -191,6 +146,13 @@ export const useModerationStore = defineStore('Moderation', () => {
         if (json.targetUserId) {
             state.cachedPlayerModerationsUserIds.add(json.targetUserId);
         }
+        const array = state.playerModerationTable.data;
+        const index = array.findIndex((item) => item.id === ref.id);
+        if (index !== -1) {
+            array[index] = ref;
+        } else {
+            array.push(ref);
+        }
         return ref;
     }
 
@@ -238,18 +200,16 @@ export const useModerationStore = defineStore('Moderation', () => {
                 }
                 if (res[0]?.json) {
                     for (let json of res[0].json) {
-                        handlePlayerModeration({
-                            json,
-                            params: {
-                                playerModerationId: json.id
-                            }
-                        });
+                        applyPlayerModeration(json);
                     }
                 }
                 deleteExpiredPlayerModerations();
             })
             .catch((error) => {
-                console.error('Failed to load player/avatar moderations:', error);
+                console.error(
+                    'Failed to load player/avatar moderations:',
+                    error
+                );
             });
     }
 
@@ -261,8 +221,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         playerModerationTable,
 
         refreshPlayerModerations,
-        handlePlayerModerationAtSend,
-        handlePlayerModeration,
+        applyPlayerModeration,
         handlePlayerModerationDelete
     };
 });

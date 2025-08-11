@@ -1000,7 +1000,7 @@ export const useUserStore = defineStore('User', () => {
         if (!D.visible) {
             return;
         }
-        const L = parseLocation(D.ref.$location.tag);
+        const L = parseLocation(D.ref.$location?.tag);
         if (updateInstanceOccupants && L.isRealInstance) {
             instanceRequest.getInstance({
                 worldId: L.worldId,

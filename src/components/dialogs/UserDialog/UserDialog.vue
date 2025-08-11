@@ -1896,7 +1896,7 @@
     const { isGameRunning } = storeToRefs(useGameStore());
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
-    const { handlePlayerModerationAtSend, handlePlayerModeration, handlePlayerModerationDelete } = useModerationStore();
+    const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
     const { shiftHeld } = storeToRefs(useUiStore());
 
     watch(
@@ -2386,14 +2386,26 @@
     }
 
     function handleSendPlayerModeration(args) {
-        const ref = {
-            json: args.json,
-            params: {
-                playerModerationId: args.json.id
-            }
-        };
-        handlePlayerModeration();
-        handlePlayerModerationAtSend(ref);
+        const ref = applyPlayerModeration(args.json);
+        const D = userDialog.value;
+        if (D.visible === false || (ref.targetUserId !== D.id && ref.sourceUserId !== currentUser.value.id)) {
+            return;
+        }
+        if (ref.type === 'block') {
+            D.isBlock = true;
+        } else if (ref.type === 'mute') {
+            D.isMute = true;
+        } else if (ref.type === 'hideAvatar') {
+            D.isHideAvatar = true;
+        } else if (ref.type === 'interactOff') {
+            D.isInteractOff = true;
+        } else if (ref.type === 'muteChat') {
+            D.isMuteChat = true;
+        }
+        $message({
+            message: t('message.user.moderated'),
+            type: 'success'
+        });
     }
 
     async function performUserDialogCommand(command, userId) {
@@ -2446,10 +2458,11 @@
                 break;
             }
             case 'Moderation Unblock':
-                playerModerationRequest.deletePlayerModeration({
+                args = await playerModerationRequest.deletePlayerModeration({
                     moderated: userId,
                     type: 'block'
                 });
+                handlePlayerModerationDelete(args);
                 break;
             case 'Moderation Block': {
                 args = await playerModerationRequest.sendPlayerModeration({
