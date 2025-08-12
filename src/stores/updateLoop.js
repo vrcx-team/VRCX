@@ -63,6 +63,13 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         }
     });
 
+    const ipcTimeout = computed({
+        get: () => state.ipcTimeout,
+        set: (value) => {
+            state.ipcTimeout = value;
+        }
+    });
+
     async function updateLoop() {
         const authStore = useAuthStore();
         const userStore = useUserStore();
@@ -102,7 +109,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 if (--state.nextAppUpdateCheck <= 0) {
                     state.nextAppUpdateCheck = 3600; // 1hour
                     if (vrcxUpdaterStore.autoUpdateVRCX !== 'Off') {
-                        vrcxUpdaterStore.checkForVRCXUpdate(uiStore.notifyMenu);
+                        vrcxUpdaterStore.checkForVRCXUpdate();
                     }
                 }
                 if (--state.ipcTimeout <= 0) {
@@ -166,6 +173,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         nextGroupInstanceRefresh,
         nextCurrentUserRefresh,
         nextDiscordUpdate,
+        ipcTimeout,
         updateLoop
     };
 });

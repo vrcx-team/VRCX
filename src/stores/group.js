@@ -366,7 +366,7 @@ export const useGroupStore = defineStore('Group', () => {
     /**
      *
      * @param {{ groupId: string }} params
-     * @return { Promise<{json: any, params}> }
+     * @return { Promise<{posts: any, params}> }
      */
     async function getAllGroupPosts(params) {
         const n = 100;

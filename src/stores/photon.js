@@ -137,7 +137,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         photonLobbyJointime: new Map(),
         photonLobbyActivePortals: new Map(),
         photonEvent7List: new Map(),
-        photonLastEvent7List: '',
+        photonLastEvent7List: 0,
         photonLastChatBoxMsg: new Map()
     });
 
@@ -204,7 +204,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         }
     });
 
-    const photonLobbyActivePortal = computed({
+    const photonLobbyActivePortals = computed({
         get: () => state.photonLobbyActivePortals,
         set: (value) => {
             state.photonLobbyActivePortals = value;
@@ -229,6 +229,13 @@ export const usePhotonStore = defineStore('Photon', () => {
         get: () => state.photonLastChatBoxMsg,
         set: (value) => {
             state.photonLastChatBoxMsg = value;
+        }
+    });
+
+    const moderationEventQueue = computed({
+        get: () => state.moderationEventQueue,
+        set: (value) => {
+            state.moderationEventQueue = value;
         }
     });
 
@@ -261,7 +268,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             configRepository.getInt('VRCX_photonLobbyTimeoutThreshold', 6000),
             configRepository.getString(
                 'VRCX_photonOverlayMessageTimeout',
-                6000
+                (6000).toString()
             ),
             configRepository.getString('VRCX_photonEventTypeFilter', '[]'),
             configRepository.getString('VRCX_chatboxUserBlacklist')
@@ -316,7 +323,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             state.photonLobbyTimeoutThreshold = value;
             configRepository.setString(
                 'VRCX_photonLobbyTimeoutThreshold',
-                value
+                value.toString()
             );
         }
     });
@@ -326,7 +333,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             state.photonOverlayMessageTimeout = value;
             configRepository.setString(
                 'VRCX_photonOverlayMessageTimeout',
-                value
+                value.toString()
             );
         }
     });
@@ -1909,10 +1916,11 @@ export const usePhotonStore = defineStore('Photon', () => {
         photonLobbyLastModeration,
         photonLobbyTimeout,
         photonLobbyJointime,
-        photonLobbyActivePortal,
+        photonLobbyActivePortals,
         photonEvent7List,
         photonLastEvent7List,
         photonLastChatBoxMsg,
+        moderationEventQueue,
 
         setPhotonLoggingEnabled,
         setPhotonEventOverlay,

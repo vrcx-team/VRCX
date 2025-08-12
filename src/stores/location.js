@@ -178,7 +178,7 @@ export const useLocationStore = defineStore('Location', () => {
         photonStore.photonLobbyJointime = new Map();
         photonStore.photonLobbyActivePortals = new Map();
         photonStore.photonEvent7List = new Map();
-        photonStore.photonLastEvent7List = '';
+        photonStore.photonLastEvent7List = 0;
         photonStore.photonLastChatBoxMsg = new Map();
         photonStore.moderationEventQueue = new Map();
         if (photonStore.photonEventTable.data.length > 0) {

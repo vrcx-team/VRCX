@@ -1225,7 +1225,7 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     /**
      *
-     * @param {string} noty
+     * @param {any} noty
      * @param {string} message
      * @param {string} image
      */

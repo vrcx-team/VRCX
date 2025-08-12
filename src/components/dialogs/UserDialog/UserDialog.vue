@@ -136,8 +136,9 @@
                                 size="mini"
                                 class="name"
                                 :class="userDialog.ref.$trustClass"
-                                style="margin-right: 5px; margin-top: 5px"
-                                v-text="userDialog.ref.$trustLevel"></el-tag>
+                                style="margin-right: 5px; margin-top: 5px">
+                                {{ userDialog.ref.$trustLevel }}
+                            </el-tag>
                             <el-tag
                                 v-if="userDialog.isFriend && userDialog.friend"
                                 type="info"
@@ -239,7 +240,8 @@
                                     'border-color': userDialog.ref.$customTagColour
                                 }"
                                 style="margin-right: 5px; margin-top: 5px"
-                                v-text="userDialog.ref.$customTag"></el-tag>
+                                >{{ userDialog.ref.$customTag }}</el-tag
+                            >
                             <br />
                             <el-tooltip
                                 v-show="!userDialog.loading"
@@ -1521,8 +1523,8 @@
                                     <el-dropdown-item
                                         v-for="(item, key) in userDialogWorldSortingOptions"
                                         :key="key"
-                                        @click.native="setUserDialogWorldSorting(item)"
-                                        v-text="t(item.name)">
+                                        @click.native="setUserDialogWorldSorting(item)">
+                                        {{ t(item.name) }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -1543,8 +1545,8 @@
                                     <el-dropdown-item
                                         v-for="(item, key) in userDialogWorldOrderOptions"
                                         :key="key"
-                                        @click.native="setUserDialogWorldOrder(item)"
-                                        v-text="t(item.name)">
+                                        @click.native="setUserDialogWorldOrder(item)">
+                                        {{ t(item.name) }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -1669,13 +1671,11 @@
                                         ></span>
                                     </el-button>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item
-                                            @click.native="changeUserDialogAvatarSorting('name')"
-                                            v-text="t('dialog.user.avatars.sort_by_name')">
+                                        <el-dropdown-item @click.native="changeUserDialogAvatarSorting('name')">
+                                            {{ t('dialog.user.avatars.sort_by_name') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item
-                                            @click.native="changeUserDialogAvatarSorting('update')"
-                                            v-text="t('dialog.user.avatars.sort_by_update')">
+                                        <el-dropdown-item @click.native="changeUserDialogAvatarSorting('update')">
+                                            {{ t('dialog.user.avatars.sort_by_update') }}
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </el-dropdown>
@@ -1695,17 +1695,14 @@
                                         ></span>
                                     </el-button>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item
-                                            @click.native="userDialog.avatarReleaseStatus = 'all'"
-                                            v-text="t('dialog.user.avatars.all')">
+                                        <el-dropdown-item @click.native="userDialog.avatarReleaseStatus = 'all'">
+                                            {{ t('dialog.user.avatars.all') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item
-                                            @click.native="userDialog.avatarReleaseStatus = 'public'"
-                                            v-text="t('dialog.user.avatars.public')">
+                                        <el-dropdown-item @click.native="userDialog.avatarReleaseStatus = 'public'">
+                                            {{ t('dialog.user.avatars.public') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item
-                                            @click.native="userDialog.avatarReleaseStatus = 'private'"
-                                            v-text="t('dialog.user.avatars.private')">
+                                        <el-dropdown-item @click.native="userDialog.avatarReleaseStatus = 'private'">
+                                            {{ t('dialog.user.avatars.private') }}
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </el-dropdown>

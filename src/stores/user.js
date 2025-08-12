@@ -224,11 +224,13 @@ export const useUserStore = defineStore('User', () => {
                 fileCreatedAt: ''
             },
             representedGroup: {
+                bannerId: '',
                 bannerUrl: '',
                 description: '',
                 discriminator: '',
                 groupId: '',
                 iconUrl: '',
+                id: '',
                 isRepresenting: false,
                 memberCount: 0,
                 memberVisibility: '',
@@ -236,7 +238,8 @@ export const useUserStore = defineStore('User', () => {
                 ownerId: '',
                 privacy: '',
                 shortCode: '',
-                $thumbnailUrl: ''
+                $thumbnailUrl: '',
+                $memberId: ''
             },
             isRepresentedGroupLoading: false,
             joinCount: 0,
@@ -775,10 +778,12 @@ export const useUserStore = defineStore('User', () => {
         };
         D.isRepresentedGroupLoading = true;
         D.representedGroup = {
+            bannerId: '',
             bannerUrl: '',
             description: '',
             discriminator: '',
             groupId: '',
+            id: '',
             iconUrl: '',
             isRepresenting: false,
             memberCount: 0,
@@ -787,7 +792,8 @@ export const useUserStore = defineStore('User', () => {
             ownerId: '',
             privacy: '',
             shortCode: '',
-            $thumbnailUrl: ''
+            $thumbnailUrl: '',
+            $memberId: ''
         };
         D.lastSeen = '';
         D.joinCount = 0;

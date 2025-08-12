@@ -626,21 +626,25 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 distinguishCancelAndClose: true,
                 confirmButtonText: t('prompt.auto_clear_cache.ok'),
                 cancelButtonText: t('prompt.auto_clear_cache.cancel'),
-                inputValue: vrcxStore.clearVRCXCacheFrequency / 3600 / 2,
+                inputValue: (
+                    vrcxStore.clearVRCXCacheFrequency /
+                    3600 /
+                    2
+                ).toString(),
                 inputPattern: /\d+$/,
                 inputErrorMessage: t('prompt.auto_clear_cache.input_error'),
                 callback: async (action, instance) => {
                     if (
                         action === 'confirm' &&
                         instance.inputValue &&
-                        !isNaN(instance.inputValue)
+                        !isNaN(parseInt(instance.inputValue, 10))
                     ) {
                         vrcxStore.clearVRCXCacheFrequency = Math.trunc(
-                            Number(instance.inputValue) * 3600 * 2
+                            parseInt(instance.inputValue, 10) * 3600 * 2
                         );
                         await configRepository.setString(
                             'VRCX_clearVRCXCacheFrequency',
-                            vrcxStore.clearVRCXCacheFrequency
+                            vrcxStore.clearVRCXCacheFrequency.toString()
                         );
                     }
                 }

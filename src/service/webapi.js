@@ -14,7 +14,7 @@ class WebApiService {
     }
 
     /**
-     * @param {string} options
+     * @param {any} options
      * @returns {Promise<{status: number, data?: string}>}
      */
     async execute(options) {

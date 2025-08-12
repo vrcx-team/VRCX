@@ -82,8 +82,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 debounce(saveVRCXWindowOption, 300)();
             });
 
-            window.electron.onWindowStateChange((event, state) => {
-                state.windowState = state;
+            window.electron.onWindowStateChange((event, newState) => {
+                state.windowState = newState.windowState;
                 debounce(saveVRCXWindowOption, 300)();
             });
 
@@ -121,10 +121,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             );
         }
         state.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
-        state.locationX = await VRCXStorage.Get('VRCX_LocationX');
-        state.locationY = await VRCXStorage.Get('VRCX_LocationY');
-        state.sizeWidth = await VRCXStorage.Get('VRCX_SizeWidth');
-        state.sizeHeight = await VRCXStorage.Get('VRCX_SizeHeight');
+        state.locationX = parseInt(await VRCXStorage.Get('VRCX_LocationX'), 10);
+        state.locationY = parseInt(await VRCXStorage.Get('VRCX_LocationY'), 10);
+        state.sizeWidth = parseInt(await VRCXStorage.Get('VRCX_SizeWidth'), 10);
+        state.sizeHeight = parseInt(
+            await VRCXStorage.Get('VRCX_SizeHeight'),
+            10
+        );
         state.windowState = await VRCXStorage.Get('VRCX_WindowState');
 
         state.maxTableSize = await configRepository.getInt(
@@ -381,10 +384,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function saveVRCXWindowOption() {
         if (LINUX) {
-            VRCXStorage.Set('VRCX_LocationX', state.locationX);
-            VRCXStorage.Set('VRCX_LocationY', state.locationY);
-            VRCXStorage.Set('VRCX_SizeWidth', state.sizeWidth);
-            VRCXStorage.Set('VRCX_SizeHeight', state.sizeHeight);
+            VRCXStorage.Set('VRCX_LocationX', state.locationX.toString());
+            VRCXStorage.Set('VRCX_LocationY', state.locationY.toString());
+            VRCXStorage.Set('VRCX_SizeWidth', state.sizeWidth.toString());
+            VRCXStorage.Set('VRCX_SizeHeight', state.sizeHeight.toString());
             VRCXStorage.Set('VRCX_WindowState', state.windowState);
             VRCXStorage.Flush();
         }

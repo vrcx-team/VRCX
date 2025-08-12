@@ -36,7 +36,7 @@ export const useGameStore = defineStore('Game', () => {
     const state = reactive({
         lastCrashedTime: null,
         VRChatUsedCacheSize: '',
-        VRChatTotalCacheSize: '',
+        VRChatTotalCacheSize: 0,
         VRChatCacheSizeLoading: false,
         isGameRunning: false,
         isGameNoVR: true,
@@ -132,7 +132,7 @@ export const useGameStore = defineStore('Game', () => {
             // check if relaunched less than 2mins ago (prvent crash loop)
             if (
                 state.lastCrashedTime &&
-                new Date() - state.lastCrashedTime < 120_000
+                new Date().getTime() - state.lastCrashedTime.getTime() < 120_000
             ) {
                 console.log('VRChat was recently crashed, not relaunching');
                 return;
@@ -200,7 +200,7 @@ export const useGameStore = defineStore('Game', () => {
                 userStore.currentUser.$previousAvatarSwapTime = Date.now();
             } else {
                 await configRepository.setBool('isGameNoVR', state.isGameNoVR);
-                userStore.currentUser.$online_for = '';
+                userStore.currentUser.$online_for = 0;
                 userStore.currentUser.$offline_for = Date.now();
                 instanceStore.removeAllQueuedInstances();
                 autoVRChatCacheManagement();

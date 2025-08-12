@@ -458,9 +458,6 @@ async function getBundleDateSize(ref) {
         if (!fileId || !version) {
             continue;
         }
-        console.log(
-            `Fetching bundle size for ${platform} - fileId: ${fileId}, version: ${version}, variant: ${variant}`
-        );
         const args = await miscRequest.getFileAnalysis({
             fileId,
             version,

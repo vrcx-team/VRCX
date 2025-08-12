@@ -28,7 +28,7 @@
                 :key="item.index"
                 :index="item.index"
                 :class="{ notify: notifiedMenus.includes(item.index) }">
-                <i :class="item.icon" />
+                <i :class="item.icon"></i>
                 <template #title>
                     <span>{{ $t(item.tooltip) }}</span>
                 </template>

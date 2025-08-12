@@ -177,6 +177,37 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             await configRepository.setString('VRCX_id', state.vrcxId);
         }
     }
+    function getAssetOfInterest(assets) {
+        let downloadUrl = '';
+        let hashString = '';
+        let size = 0;
+        for (const asset of assets) {
+            if (asset.state !== 'uploaded') {
+                continue;
+            }
+            if (
+                !LINUX &&
+                (asset.content_type === 'application/x-msdownload' ||
+                    asset.content_type === 'application/x-msdos-program')
+            ) {
+                downloadUrl = asset.browser_download_url;
+                if (asset.digest && asset.digest.startsWith('sha256:')) {
+                    hashString = asset.digest.replace('sha256:', '');
+                }
+                size = asset.size;
+                continue;
+            }
+            if (LINUX && asset.content_type === 'application/octet-stream') {
+                downloadUrl = asset.browser_download_url;
+                if (asset.digest && asset.digest.startsWith('sha256:')) {
+                    hashString = asset.digest.replace('sha256:', '');
+                }
+                size = asset.size;
+                continue;
+            }
+        }
+        return { downloadUrl, hashString, size };
+    }
     async function checkForVRCXUpdate() {
         if (
             !currentVersion.value ||
@@ -223,44 +254,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 // update already downloaded
                 state.VRCXUpdateDialog.updatePendingIsLatest = true;
             } else if (releaseName > currentVersion.value) {
-                let downloadUrl = '';
-                let hashString = '';
-                let size = 0;
-                for (const asset of json.assets) {
-                    if (asset.state !== 'uploaded') {
-                        continue;
-                    }
-                    if (
-                        !LINUX &&
-                        (asset.content_type === 'application/x-msdownload' ||
-                            asset.content_type ===
-                                'application/x-msdos-program')
-                    ) {
-                        downloadUrl = asset.browser_download_url;
-                        if (
-                            asset.digest &&
-                            asset.digest.startsWith('sha256:')
-                        ) {
-                            hashString = asset.digest.replace('sha256:', '');
-                        }
-                        size = asset.size;
-                        continue;
-                    }
-                    if (
-                        LINUX &&
-                        asset.content_type === 'application/octet-stream'
-                    ) {
-                        downloadUrl = asset.browser_download_url;
-                        if (
-                            asset.digest &&
-                            asset.digest.startsWith('sha256:')
-                        ) {
-                            hashString = asset.digest.replace('sha256:', '');
-                        }
-                        size = asset.size;
-                        continue;
-                    }
-                }
+                const { downloadUrl, hashString, size } = getAssetOfInterest(
+                    json.assets
+                );
                 if (!downloadUrl) {
                     return;
                 }
@@ -321,13 +317,13 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             return;
         }
         for (const release of json) {
-            for (const asset of release.assets) {
-                if (
-                    (asset.content_type === 'application/x-msdownload' ||
-                        asset.content_type === 'application/x-msdos-program') &&
-                    asset.state === 'uploaded'
-                ) {
+            if (release.prerelease) {
+                continue;
+            }
+            assetLoop: for (const asset of release.assets) {
+                if (asset.state === 'uploaded') {
                     releases.push(release);
+                    break assetLoop;
                 }
             }
         }
@@ -376,37 +372,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             if (release.name !== state.VRCXUpdateDialog.release) {
                 continue;
             }
-            let downloadUrl = '';
-            let hashString = '';
-            let size = 0;
-            for (const asset of release.assets) {
-                if (asset.state !== 'uploaded') {
-                    continue;
-                }
-                if (
-                    WINDOWS &&
-                    (asset.content_type === 'application/x-msdownload' ||
-                        asset.content_type === 'application/x-msdos-program')
-                ) {
-                    downloadUrl = asset.browser_download_url;
-                    if (asset.digest && asset.digest.startsWith('sha256:')) {
-                        hashString = asset.digest.replace('sha256:', '');
-                    }
-                    size = asset.size;
-                    continue;
-                }
-                if (
-                    LINUX &&
-                    asset.content_type === 'application/octet-stream'
-                ) {
-                    downloadUrl = asset.browser_download_url;
-                    if (asset.digest && asset.digest.startsWith('sha256:')) {
-                        hashString = asset.digest.replace('sha256:', '');
-                    }
-                    size = asset.size;
-                    continue;
-                }
-            }
+            const { downloadUrl, hashString, size } = getAssetOfInterest(
+                release.assets
+            );
             if (!downloadUrl) {
                 return;
             }
