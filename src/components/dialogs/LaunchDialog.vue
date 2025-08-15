@@ -66,13 +66,31 @@
                 @click="showInviteDialog(launchDialog.location)">
                 {{ t('dialog.launch.invite') }}
             </el-button>
-            <el-button
-                type="primary"
-                size="small"
-                :disabled="!launchDialog.secureOrShortName"
-                @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
-                {{ t('dialog.launch.launch') }}
-            </el-button>
+            <template v-if="isGameRunning">
+                <el-button
+                    type="default"
+                    size="small"
+                    :disabled="!launchDialog.secureOrShortName"
+                    @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
+                    {{ t('dialog.launch.launch') }}
+                </el-button>
+                <el-button
+                    type="primary"
+                    size="small"
+                    :disabled="!launchDialog.secureOrShortName"
+                    @click="handleAttachGame(launchDialog.location, launchDialog.shortName)">
+                    {{ t('dialog.launch.open_ingame') }}
+                </el-button>
+            </template>
+            <template v-else>
+                <el-button
+                    type="primary"
+                    size="small"
+                    :disabled="!launchDialog.secureOrShortName"
+                    @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
+                    {{ t('dialog.launch.launch') }}
+                </el-button>
+            </template>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
@@ -88,6 +106,7 @@
     import {
         useAppearanceSettingsStore,
         useFriendStore,
+        useGameStore,
         useInstanceStore,
         useLaunchStore,
         useLocationStore
@@ -100,9 +119,10 @@
     const { friends } = storeToRefs(useFriendStore());
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { lastLocation } = storeToRefs(useLocationStore());
-    const { launchGame } = useLaunchStore();
+    const { launchGame, tryOpenInstanceInVrc } = useLaunchStore();
     const { launchDialogData } = storeToRefs(useLaunchStore());
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { isGameRunning } = storeToRefs(useGameStore());
 
     const launchDialogRef = ref(null);
 
@@ -178,6 +198,10 @@
     }
     function handleLaunchGame(location, shortName, desktop) {
         launchGame(location, shortName, desktop);
+        isVisible.value = false;
+    }
+    function handleAttachGame(location, shortName) {
+        tryOpenInstanceInVrc(location, shortName);
         isVisible.value = false;
     }
     function getConfig() {

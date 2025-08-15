@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using librsync.net;
 using Newtonsoft.Json;
 using NLog;
@@ -164,6 +165,11 @@ namespace VRCX
             }
 
             return null;
+        }
+
+        public Task<bool> TryOpenInstanceInVrc(string launchUrl)
+        {
+            return VRCIPC.Send(launchUrl);
         }
     }
 }

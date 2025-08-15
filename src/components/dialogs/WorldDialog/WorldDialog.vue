@@ -348,15 +348,10 @@
                                     :currentuserid="currentUser.id"
                                     :worlddialogshortname="worldDialog.$location.shortName" />
                                 <Launch :location="room.tag" style="margin-left: 5px" />
-                                <el-tooltip
-                                    placement="top"
-                                    :content="t('dialog.world.instances.self_invite_tooltip')"
-                                    :disabled="hideTooltips">
-                                    <InviteYourself
-                                        :location="room.$location.tag"
-                                        :shortname="room.$location.shortName"
-                                        style="margin-left: 5px" />
-                                </el-tooltip>
+                                <InviteYourself
+                                    :location="room.$location.tag"
+                                    :shortname="room.$location.shortName"
+                                    style="margin-left: 5px" />
                                 <el-tooltip
                                     placement="top"
                                     :content="t('dialog.world.instances.refresh_instance_info')"

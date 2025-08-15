@@ -1207,7 +1207,8 @@
                         @change="
                             setDiscordWorldIntegration();
                             saveDiscordOption();
-                        " />
+                        "
+                        :tooltip="t('view.settings.discord_presence.discord_presence.world_integration_tooltip')" />
                     <simple-switch
                         :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')"
                         :value="discordInstance"

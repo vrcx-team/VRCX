@@ -525,7 +525,7 @@
                     "show_images": "Show world images",
                     "show_current_platform": "Show current platform",
                     "world_integration": "World integration",
-                    "world_integration_tooltip": "Show \"Watching\\Listening to\" video for Popcorn Palace, PyPyDance, VRDancing and LS Media",
+                    "world_integration_tooltip": "Show \"Watching/Listening to\" for Popcorn Palace, PyPyDance, VRDancing and LS Media",
                     "display_world_name_as_discord_status": "Display world name as Discord status"
                 },
                 "rpc": {
@@ -785,6 +785,7 @@
                 "header": "Info",
                 "launch_invite_tooltip": "Launch/Invite",
                 "self_invite_tooltip": "Invite Yourself",
+                "open_in_vrchat_tooltip": "Open in VRChat",
                 "refresh_instance_info": "Refresh Instance Info",
                 "instance_queue": "Queue:",
                 "instance_users": "Users:",
@@ -1321,7 +1322,8 @@
             "start_as_desktop": "Start as Desktop (No VR)",
             "info": "Info",
             "invite": "Invite",
-            "launch": "Launch"
+            "launch": "Launch",
+            "open_ingame": "Open in Game"
         },
         "export_friends_list": {
             "header": "Export Friends List",

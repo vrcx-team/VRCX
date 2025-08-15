@@ -201,6 +201,7 @@ declare global {
             runProcessOnce: boolean
         ): Promise<void>;
         GetFileBase64(path: string): Promise<string | null>;
+        TryOpenInstanceInVrc(launchUrl: string): Promise<boolean>;
 
         // Folders
         GetVRChatAppDataLocation(): Promise<string>;

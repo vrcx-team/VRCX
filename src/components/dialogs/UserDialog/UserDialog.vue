@@ -568,15 +568,10 @@
                             <div style="flex: none">
                                 <template v-if="isRealInstance(userDialog.$location.tag)">
                                     <Launch :location="userDialog.$location.tag" />
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.user.info.self_invite_tooltip')"
-                                        :disabled="hideTooltips">
-                                        <InviteYourself
-                                            :location="userDialog.$location.tag"
-                                            :shortname="userDialog.$location.shortName"
-                                            style="margin-left: 5px" />
-                                    </el-tooltip>
+                                    <InviteYourself
+                                        :location="userDialog.$location.tag"
+                                        :shortname="userDialog.$location.shortName"
+                                        style="margin-left: 5px" />
                                     <el-tooltip
                                         placement="top"
                                         :content="t('dialog.user.info.refresh_instance_info')"
