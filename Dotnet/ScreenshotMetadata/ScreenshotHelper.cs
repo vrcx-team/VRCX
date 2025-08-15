@@ -196,7 +196,7 @@ namespace VRCX
         /// </remarks>
         public static List<string> ReadTextMetadata(string path)
         {
-            using var pngFile = new PNGFile(path);
+            using var pngFile = new PNGFile(path, false);
             var result = new List<string>();
             var metadata = PNGHelper.ReadTextChunk("Description", pngFile);
             var vrchatMetadata = PNGHelper.ReadTextChunk("XML:com.adobe.xmp", pngFile);
@@ -231,7 +231,7 @@ namespace VRCX
         
         public static bool WriteVRCXMetadata(string text, string path)
         {
-            using var pngFile = new PNGFile(path);
+            using var pngFile = new PNGFile(path, true);
             var chunk = PNGHelper.GenerateTextChunk("Description", text);
             
             return pngFile.WriteChunk(chunk);;

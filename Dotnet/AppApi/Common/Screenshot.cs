@@ -35,7 +35,7 @@ public partial class AppApi
             }
         }
 
-        using var png = new PNGFile(path);
+        using var png = new PNGFile(path, false);
         metadata.Add("fileResolution", PNGHelper.ReadResolution(png));
 
         var creationDate = File.GetCreationTime(path);

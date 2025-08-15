@@ -199,8 +199,8 @@ namespace VRCX
             
             await print.SaveAsPngAsync(tempPath);
             
-            var oldPngFile = new PNGFile(path);
-            var newPngFile = new PNGFile(tempPath);
+            var oldPngFile = new PNGFile(path, false);
+            var newPngFile = new PNGFile(tempPath, true);
 
             // Copy all iTXt chunks to new file
             var textChunks = oldPngFile.GetChunksOfType(PNGChunkTypeFilter.iTXt);

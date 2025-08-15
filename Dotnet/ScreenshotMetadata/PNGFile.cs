@@ -17,15 +17,16 @@ public class PNGFile : IDisposable
     private const int MAX_CHUNKS_TO_READ = 16;
     private const int CHUNK_FIELD_SIZE = 4;
     private const int CHUNK_NONDATA_SIZE = 12;
-    
+
     /// <summary>
     /// Initializes a new instance of <see cref="PNGFile"/> class with the specified file path.
     /// Opens the PNG file for reading and writing.
     /// </summary>
     /// <param name="filePath">The path to the PNG file to open for reading and writing.</param>
-    public PNGFile(string filePath)
+    /// <param name="writeAccess">Open file with write permissions.</param>
+    public PNGFile(string filePath, bool writeAccess)
     {
-        fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, 4096);
+        fileStream = new FileStream(filePath, FileMode.Open, writeAccess ? FileAccess.ReadWrite : FileAccess.Read, FileShare.ReadWrite, 4096);
     }
     
     public PNGFile(string filePath, int bufferSize)
