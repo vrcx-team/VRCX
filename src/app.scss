@@ -117,7 +117,8 @@
 
 .el-dialog__body {
     padding: 20px;
-    word-break: auto-phrase;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .el-dialog__footer > .el-button + .el-button {
