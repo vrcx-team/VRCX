@@ -94,7 +94,7 @@
         }
     });
 
-    const emit = defineEmits(['update:WorldExportDialogVisible']);
+    const emit = defineEmits(['update:worldExportDialogVisible']);
 
     const { t } = useI18n();
     const { proxy } = getCurrentInstance();
@@ -128,7 +128,7 @@
             return props.worldExportDialogVisible;
         },
         set(value) {
-            emit('update:WorldExportDialogVisible', value);
+            emit('update:worldExportDialogVisible', value);
         }
     });
 
