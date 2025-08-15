@@ -381,7 +381,7 @@
                     "theme_mode_dark": "Dark",
                     "theme_mode_blue": "Blue",
                     "theme_mode_darkblue": "Dark Blue",
-                    "theme_mode_amoled" : "Amoled",
+                    "theme_mode_amoled": "Amoled",
                     "theme_mode_darkvanillaold": "Dark Vanilla (old)",
                     "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Pink",
@@ -1554,7 +1554,7 @@
             "name": "Name",
             "date": "Date",
             "action": "Action",
-            "auto_backup": "Weekly Auto Backup",
+            "auto_backup": "Auto backup every 3 days (deletes after 2 weeks)",
             "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "group_member_moderation": {

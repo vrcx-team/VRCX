@@ -111,6 +111,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     if (vrcxUpdaterStore.autoUpdateVRCX !== 'Off') {
                         vrcxUpdaterStore.checkForVRCXUpdate();
                     }
+                    vrcxStore.tryAutoBackupVrcRegistry();
                 }
                 if (--state.ipcTimeout <= 0) {
                     vrcxStore.ipcEnabled = false;
