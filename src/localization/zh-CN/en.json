@@ -186,6 +186,9 @@
                 "message": "消息",
                 "boop": "Boop",
                 "groupChange": "群组变动",
+                "event": {
+                    "announcement": "活动日历事件"
+                },
                 "group": {
                     "announcement": "群组公告",
                     "informative": "群组消息",
@@ -376,7 +379,9 @@
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
+                    "theme_mode_blue": "蓝色",
                     "theme_mode_darkblue": "深蓝色",
+                    "theme_mode_amoled": "纯黑（Amoled）",
                     "theme_mode_darkvanillaold": "深色香草（旧）",
                     "theme_mode_darkvanilla": "深色香草",
                     "theme_mode_pink": "粉色",
@@ -518,6 +523,13 @@
                     "join_button": "在面板上显示加入按钮（仅限公开房间）",
                     "show_details_in_private": "在私人房间时显示房间信息",
                     "show_images": "显示世界缩略图"
+                },
+                "rpc": {
+                    "vr": "VR 模式",
+                    "desktop": "桌面模式",
+                    "join_button": "加入",
+                    "powered_by_vrcx": "由 VRCX 强力驱动",
+                    "private_world": "私人世界"
                 }
             },
             "pictures": {
@@ -569,6 +581,13 @@
                     "save_instance_emoji_to_file": {
                         "header": "保存“表情贴纸”至文件",
                         "description": "保存生成的“表情贴纸”到 VRChat 的照片文件夹中"
+                    },
+                    "delete_all_screenshot_metadata": {
+                        "button": "删除截图元数据",
+                        "ask": "你确定要从 VRChat 图片文件夹中删除所有由 VRC 和 VRCX 添加的截图元数据吗？",
+                        "confirm": "删除截图元数据是一个非常破坏性的操作，无法撤销！这包括你的 VRChat 图片文件夹中的所有拍立得图片，如果这些照片的元数据信息对你很珍贵，请在继续之前进行备份。",
+                        "confirm_yes": "是，确认删除",
+                        "confirm_no": "否，我再想想"
                     },
                     "remote_database": {
                         "header": "模型数据库",
@@ -1521,6 +1540,7 @@
             "last_screenshot": "上一张图片",
             "copy_image": "复制图片",
             "open_folder": "打开文件夹",
+            "delete_metadata": "删除当前图片的元数据",
             "upload": "上传"
         },
         "registry_backup": {
@@ -1680,6 +1700,10 @@
         },
         "friend": {
             "load_failed": "加载好友列表失败，即将登出"
+        },
+        "screenshot_metadata": {
+            "deleted": "已删除图片元数据",
+            "delete_failed": "删除图片元数据失败"
         }
     },
     "prompt": {
