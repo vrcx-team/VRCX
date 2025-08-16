@@ -296,6 +296,8 @@ div.x-friend-list
 }
 
 .el-popover {
+    text-align: left;
+    word-break: break-word;
     color: $--theme-text-2;
     background-color: $--theme-bg-4;
     border-color: hsl($--theme-hue, $--theme-saturation, 37%);
