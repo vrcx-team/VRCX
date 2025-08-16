@@ -1122,8 +1122,14 @@ input[type='number'],
     color: rgb(var(--md-sys-color-error));
     border-color: rgb(var(--md-sys-color-error));
 }
-.el-tag.el-tag--info {
+
+.el-tag,
+.el-tag.el-tag--success,
+.el-tag.el-tag--info,
+.el-tag.el-tag--warning,
+.el-tag.el-tag--danger {
     border-color: rgb(var(--md-sys-color-outline));
+    background-color: transparent;
 }
 
 /* Friend */

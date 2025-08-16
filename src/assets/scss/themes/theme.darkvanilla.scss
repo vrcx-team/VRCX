@@ -575,8 +575,11 @@ img.friends-list-avatar {
     border-radius: var(--dv_md-rounded);
 }
 
+.el-tag,
+.el-tag.el-tag--success,
 .el-tag.el-tag--info,
-.el-tag--plain.el-tag--success {
+.el-tag.el-tag--warning,
+.el-tag.el-tag--danger {
     background-color: var(--dv_bg-bot);
 }
 

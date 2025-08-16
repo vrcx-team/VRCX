@@ -224,9 +224,17 @@ i.el-icon-close:hover {
 }
 .el-tag.el-tag--info {
     color: #baa;
+}
+
+.el-tag,
+.el-tag.el-tag--success,
+.el-tag.el-tag--info,
+.el-tag.el-tag--warning,
+.el-tag.el-tag--danger {
     background-color: var(--lighter-lighter-bg);
     border: 1px solid var(--lighter-lighter-lighter-lighter-bg);
 }
+
 .el-collapse-item__header > span + span,
 .el-form-item__label,
 .el-pagination__total,
@@ -365,7 +373,7 @@ input[type='checkbox']:checked + .el-switch__core {
 
 .el-collapse-item .el-tag--mini {
     border: transparent;
-    background-color: #333;
+    background-color: var(--lighter-lighter-bg);
 }
 .el-divider {
     background-color: #606266;

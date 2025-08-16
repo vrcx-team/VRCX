@@ -184,7 +184,11 @@ a {
     color: var(--theme-text) !important;
 }
 
-.el-tag.el-tag--info {
+.el-tag,
+.el-tag.el-tag--success,
+.el-tag.el-tag--info,
+.el-tag.el-tag--warning,
+.el-tag.el-tag--danger {
     background: var(--farback) !important;
 }
 
