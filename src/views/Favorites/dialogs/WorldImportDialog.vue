@@ -323,7 +323,7 @@
         D.loading = true;
         const data = [...worldImportTable.value.data].reverse();
         D.importProgressTotal = data.length;
-        let ref = '';
+        let ref = undefined;
         try {
             for (let i = data.length - 1; i >= 0; i--) {
                 if (!D.loading || !isVisible.value) {
@@ -333,14 +333,14 @@
                 if (D.worldImportFavoriteGroup) {
                     await addFavoriteWorld(ref, D.worldImportFavoriteGroup, false);
                 } else if (D.worldImportLocalFavoriteGroup) {
-                    addLocalWorldFavorite(ref, D.worldImportLocalFavoriteGroup);
+                    addLocalWorldFavorite(ref.id, D.worldImportLocalFavoriteGroup);
                 }
                 removeFromArray(worldImportTable.value.data, ref);
                 D.worldIdList.delete(ref.id);
                 D.importProgress++;
             }
         } catch (err) {
-            D.errors = `Name: ${ref.name}\nWorldId: ${ref.id}\n${err}\n\n`;
+            D.errors = `Name: ${ref?.name}\nWorldId: ${ref?.id}\n${err}\n\n`;
         } finally {
             D.importProgress = 0;
             D.importProgressTotal = 0;
