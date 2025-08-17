@@ -86,10 +86,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 state.windowState = newState.windowState;
                 debounce(saveVRCXWindowOption, 300)();
             });
-
-            // window.electron.onWindowClosed((event) => {
-            //    window.$app.saveVRCXWindowOption();
-            // });
         }
 
         state.databaseVersion = await configRepository.getInt(

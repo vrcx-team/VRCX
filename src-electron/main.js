@@ -874,8 +874,6 @@ function disposeOverlay() {
 
 app.on('before-quit', function () {
     disposeOverlay();
-
-    mainWindow.webContents.send('windowClosed');
 });
 
 app.on('window-all-closed', function () {
