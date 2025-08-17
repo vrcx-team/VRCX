@@ -3,7 +3,7 @@ const path = require('path');
 const https = require('https');
 const { spawnSync } = require('child_process');
 
-const DOTNET_VERSION = '9.0.7';
+const DOTNET_VERSION = '9.0.8';
 const DOTNET_RUNTIME_URL = `https://builds.dotnet.microsoft.com/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-x64.tar.gz`;
 const DOTNET_RUNTIME_DIR = path.join(
     __dirname,
