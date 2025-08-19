@@ -140,10 +140,17 @@
     border-radius: 16px;
 }
 
+@font-face {
+    font-family: 'ellipsis-font';
+    src: local('Times New Roman');
+    unicode-range: U+2026;
+}
+
 body {
     font-family:
-        'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC', 'Noto Sans SC',
-        'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui, sans-serif;
+        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
     margin: 0;
 }
 
