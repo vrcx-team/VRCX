@@ -42,7 +42,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         folderSelectorDialogVisible: false,
         isVRChatConfigDialogVisible: false,
         saveInstanceEmoji: false,
-        vrcRegistryAutoBackup: true
+        vrcRegistryAutoBackup: true,
+        vrcRegistryAskRestore: true
     });
 
     async function initAdvancedSettings() {
@@ -70,7 +71,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             autoDeleteOldPrints,
             notificationOpacity,
             saveInstanceEmoji,
-            vrcRegistryAutoBackup
+            vrcRegistryAutoBackup,
+            vrcRegistryAskRestore
         ] = await Promise.all([
             configRepository.getBool('enablePrimaryPassword', false),
             configRepository.getBool('VRCX_relaunchVRChatAfterCrash', false),
@@ -104,7 +106,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_autoDeleteOldPrints', false),
             configRepository.getFloat('VRCX_notificationOpacity', 100),
             configRepository.getBool('VRCX_saveInstanceEmoji', false),
-            configRepository.getBool('VRCX_vrcRegistryAutoBackup', true)
+            configRepository.getBool('VRCX_vrcRegistryAutoBackup', true),
+            configRepository.getBool('VRCX_vrcRegistryAskRestore', true)
         ]);
 
         state.enablePrimaryPassword = enablePrimaryPassword;
@@ -131,6 +134,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.notificationOpacity = notificationOpacity;
         state.saveInstanceEmoji = saveInstanceEmoji;
         state.vrcRegistryAutoBackup = vrcRegistryAutoBackup;
+        state.vrcRegistryAskRestore = vrcRegistryAskRestore;
 
         handleSetAppLauncherSettings();
     }
@@ -203,6 +207,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         set: (value) => (state.saveInstanceEmoji = value)
     });
     const vrcRegistryAutoBackup = computed(() => state.vrcRegistryAutoBackup);
+    const vrcRegistryAskRestore = computed(() => state.vrcRegistryAskRestore);
 
     /**
      * @param {boolean} value
@@ -373,6 +378,14 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setBool(
             'VRCX_vrcRegistryAutoBackup',
             state.vrcRegistryAutoBackup
+        );
+    }
+
+    async function setVrcRegistryAskRestore() {
+        state.vrcRegistryAskRestore = !state.vrcRegistryAskRestore;
+        await configRepository.setBool(
+            'VRCX_vrcRegistryAskRestore',
+            state.vrcRegistryAskRestore
         );
     }
 
@@ -682,6 +695,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         isVRChatConfigDialogVisible,
         saveInstanceEmoji,
         vrcRegistryAutoBackup,
+        vrcRegistryAskRestore,
 
         setEnablePrimaryPasswordConfigRepository,
         setRelaunchVRChatAfterCrash,
@@ -717,6 +731,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         promptAutoClearVRCXCacheFrequency,
         setSaveInstanceEmoji,
         setVrcRegistryAutoBackup,
+        setVrcRegistryAskRestore,
         askDeleteAllScreenshotMetadata
     };
 });

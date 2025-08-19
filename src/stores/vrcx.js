@@ -7,12 +7,7 @@ import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
 import { failedGetRequests } from '../service/request';
 import { watchState } from '../service/watchState';
-import {
-    debounce,
-    parseLocation,
-    refreshCustomCss,
-    removeFromArray
-} from '../shared/utils';
+import { debounce, parseLocation, refreshCustomCss } from '../shared/utils';
 import { useAvatarStore } from './avatar';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
@@ -669,7 +664,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     async function checkAutoBackupRestoreVrcRegistry() {
-        if (!advancedSettingsStore.vrcRegistryAutoBackup) {
+        if (
+            !advancedSettingsStore.vrcRegistryAutoBackup ||
+            !advancedSettingsStore.vrcRegistryAskRestore
+        ) {
             return;
         }
 

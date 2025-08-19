@@ -1555,6 +1555,7 @@
             "date": "Date",
             "action": "Action",
             "auto_backup": "Auto backup every 3 days (deletes after 2 weeks)",
+            "ask_to_restore": "Ask to restore when no VRC registry settings are present",
             "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "group_member_moderation": {
