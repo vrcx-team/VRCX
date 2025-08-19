@@ -60,6 +60,7 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.CefCommandLineArgs.Add("disk-cache-size", "2147483647");
             cefSettings.CefCommandLineArgs.Add("unsafely-disable-devtools-self-xss-warnings");
+            cefSettings.CefCommandLineArgs.Add("do-not-de-elevate"); // fix program failing to start when running as admin
 
             if (WebApi.ProxySet)
             {
