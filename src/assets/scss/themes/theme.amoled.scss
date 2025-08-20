@@ -101,6 +101,8 @@ $--select-dropdown-background: $--theme-bg-4;
 $--select-dropdown-border: 1px solid $--theme-border-1;
 
 $--dropdown-menu-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+$--box-shadow-base: 0 1px 2px hsla($--theme-hue, $--theme-saturation, 0%, 0.1);
+$--box-shadow-dark: 0 1px 3px hsla($--theme-hue, $--theme-saturation, 0%, 0.15);
 
 $--tree-font-color: $--theme-text-2;
 $--tree-node-hover-background-color: hsl(

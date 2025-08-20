@@ -538,3 +538,7 @@ div.x-friend-list
 .el-color-picker__trigger {
     border: none;
 }
+
+.el-tooltip__popper {
+    box-shadow: $--box-shadow-dark !important;
+}
