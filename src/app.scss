@@ -847,6 +847,7 @@ i.x-status-icon.red {
 .el-dialog,
 .el-message-box {
     border-radius: 28px;
+    word-break: break-word;
 }
 
 .el-tabs__nav-wrap::after {

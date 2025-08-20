@@ -2392,8 +2392,6 @@
             D.isBlock = true;
         } else if (ref.type === 'mute') {
             D.isMute = true;
-        } else if (ref.type === 'hideAvatar') {
-            D.isHideAvatar = true;
         } else if (ref.type === 'interactOff') {
             D.isInteractOff = true;
         } else if (ref.type === 'muteChat') {

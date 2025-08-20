@@ -1080,8 +1080,12 @@ export const useInstanceStore = defineStore('Instance', () => {
     function updatePlayerListDebounce() {
         const users = [];
         const pushUser = function (ref) {
-            let photonId = '';
+            let photonId = -1;
             let isFriend = false;
+            let isBlocked = false;
+            let isMuted = false;
+            let isAvatarInteractionDisabled = false;
+            let isChatBoxMuted = false;
             photonStore.photonLobbyCurrent.forEach((ref1, id) => {
                 if (typeof ref1 !== 'undefined') {
                     if (
@@ -1138,6 +1142,11 @@ export const useInstanceStore = defineStore('Instance', () => {
                         }
                     });
                 }
+                isBlocked = ref.$moderations.isBlocked;
+                isMuted = ref.$moderations.isMuted;
+                isAvatarInteractionDisabled =
+                    ref.$moderations.isAvatarInteractionDisabled;
+                isChatBoxMuted = ref.$moderations.isChatBoxMuted;
             }
             users.push({
                 ref,

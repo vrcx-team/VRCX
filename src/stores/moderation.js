@@ -1,16 +1,13 @@
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { avatarModerationRequest, playerModerationRequest } from '../api';
-import { $app } from '../app';
 import { watchState } from '../service/watchState';
 import { useAvatarStore } from './avatar';
 import { useUserStore } from './user';
-import { useI18n } from 'vue-i18n-bridge';
 
 export const useModerationStore = defineStore('Moderation', () => {
     const avatarStore = useAvatarStore();
     const userStore = useUserStore();
-    const { t } = useI18n();
 
     const state = reactive({
         cachedPlayerModerations: new Map(),
@@ -66,6 +63,23 @@ export const useModerationStore = defineStore('Moderation', () => {
 
     function handlePlayerModerationAtDelete(args) {
         const { ref } = args;
+
+        let hasModeration = false;
+        for (const ref of state.cachedPlayerModerations.values()) {
+            if (ref.targetUserId === ref.targetUserId) {
+                hasModeration = true;
+                break;
+            }
+        }
+        if (!hasModeration) {
+            state.cachedPlayerModerationsUserIds.delete(ref.targetUserId);
+        }
+
+        const userRef = userStore.cachedUsers.get(ref.targetUserId);
+        if (typeof userRef !== 'undefined') {
+            userRef.$moderations = getUserModerations(ref.targetUserId);
+        }
+
         const D = userStore.userDialog;
         if (
             D.visible === false ||
@@ -91,7 +105,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
                 array.splice(i, 1);
-                return;
+                break;
             }
         }
     }
@@ -112,9 +126,9 @@ export const useModerationStore = defineStore('Moderation', () => {
                         playerModerationId: ref.id
                     }
                 });
+                break;
             }
         }
-        state.cachedPlayerModerationsUserIds.delete(moderated);
     }
 
     /**
@@ -152,6 +166,10 @@ export const useModerationStore = defineStore('Moderation', () => {
             array[index] = ref;
         } else {
             array.push(ref);
+        }
+        const userRef = userStore.cachedUsers.get(ref.targetUserId);
+        if (typeof userRef !== 'undefined') {
+            userRef.$moderations = getUserModerations(ref.targetUserId);
         }
         return ref;
     }
@@ -213,6 +231,44 @@ export const useModerationStore = defineStore('Moderation', () => {
             });
     }
 
+    /**
+     * Get user moderations
+     * @param {string} userId
+     * @return {object} moderations
+     * @property {boolean} isBlocked
+     * @property {boolean} isMuted
+     * @property {boolean} isAvatarInteractionDisabled
+     * @property {boolean} isChatBoxMuted
+     */
+    function getUserModerations(userId) {
+        let moderations = {
+            isBlocked: false,
+            isMuted: false,
+            isAvatarInteractionDisabled: false,
+            isChatBoxMuted: false
+        };
+        for (let ref of state.cachedPlayerModerations.values()) {
+            if (ref.targetUserId !== userId) {
+                continue;
+            }
+            switch (ref.type) {
+                case 'block':
+                    moderations.isBlocked = true;
+                    break;
+                case 'mute':
+                    moderations.isMuted = true;
+                    break;
+                case 'interactOff':
+                    moderations.isAvatarInteractionDisabled = true;
+                    break;
+                case 'muteChat':
+                    moderations.isChatBoxMuted = true;
+                    break;
+            }
+        }
+        return moderations;
+    }
+
     return {
         state,
         cachedPlayerModerations,
@@ -222,6 +278,7 @@ export const useModerationStore = defineStore('Moderation', () => {
 
         refreshPlayerModerations,
         applyPlayerModeration,
-        handlePlayerModerationDelete
+        handlePlayerModerationDelete,
+        getUserModerations
     };
 });
