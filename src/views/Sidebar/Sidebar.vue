@@ -78,13 +78,16 @@
                         ({{ groupInstances.length }})
                     </span>
                 </template>
+                <el-button class="group-calendar-button" icon="el-icon-date" circle @click="openGroupCalendarDialog" />
                 <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
             </el-tab-pane>
         </el-tabs>
+        <GroupCalendarDialog :visible="isGroupCalendarDialogVisible" @close="isGroupCalendarDialogVisible = false" />
     </div>
 </template>
 
 <script setup>
+    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { userImage } from '../../shared/utils';
@@ -97,6 +100,7 @@
     } from '../../stores';
     import FriendsSidebar from './components/FriendsSidebar.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
+    import GroupCalendarDialog from '../../components/dialogs/GroupDialog/GroupCalendarDialog.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
     const { refreshFriendsList, confirmDeleteFriend } = useFriendStore();
@@ -106,7 +110,26 @@
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
 
+    const isGroupCalendarDialogVisible = ref(false);
+
     const isSideBarTabShow = computed(() => {
         return !(menuActiveIndex.value === 'friendList' || menuActiveIndex.value === 'charts');
     });
+
+    function openGroupCalendarDialog() {
+        isGroupCalendarDialogVisible.value = true;
+    }
 </script>
+
+<style scoped>
+    .group-calendar-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+        border: none;
+        z-index: 5;
+        width: 40px;
+        height: 40px;
+    }
+</style>

@@ -697,6 +697,36 @@ const groupReq = {
             };
             return args;
         });
+    },
+
+    getGroupCalendar(groupId) {
+        return request(`calendar/${groupId}`, {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * @type {import('../types/api/group').GetCalendars}
+     */
+    getGroupCalendars(date) {
+        return request(`calendar?date=${date}`, {
+            method: 'GET'
+        });
+    },
+
+    /**
+     * @type {import('../types/api/group').GetFollowingCalendars}
+     */
+    getFollowingGroupCalendars(date) {
+        return request(`calendar/following?date=${date}`, {
+            method: 'GET'
+        });
+    },
+
+    getFeaturedGroupCalendars(date) {
+        return request(`calendar/featured?date=${date}`, {
+            method: 'GET'
+        });
     }
 
     // getRequestedGroups() {

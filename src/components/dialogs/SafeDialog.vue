@@ -42,7 +42,15 @@
 
         nextTick(() => {
             addWrapperListeners();
+            removeTitleAttribute();
         });
+    };
+
+    const removeTitleAttribute = () => {
+        const wrapper = elDialogRef.value?.$el;
+        if (wrapper && wrapper.nodeType === Node.ELEMENT_NODE) {
+            wrapper.removeAttribute('title');
+        }
     };
 
     const handleClose = () => {

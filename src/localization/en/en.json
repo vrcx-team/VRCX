@@ -1632,6 +1632,9 @@
             "header": "Allowed Video Player Domains",
             "add_domain": "Add Domain",
             "save": "Save"
+        },
+        "group_calendar": {
+            "header": "Group Calendar"
         }
     },
     "confirm": {
