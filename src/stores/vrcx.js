@@ -359,6 +359,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 break;
             case 'External': {
                 const displayName = data.DisplayName ?? '';
+                const notify = data.notify ?? true;
                 entry = {
                     created_at: new Date().toJSON(),
                     type: 'External',
@@ -368,7 +369,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     location: locationStore.lastLocation.location
                 };
                 database.addGamelogExternalToDatabase(entry);
-                notificationStore.queueGameLogNoty(entry);
+                if (notify){
+                    notificationStore.queueGameLogNoty(entry);
+                }
                 gameLogStore.addGameLog(entry);
                 break;
             }
