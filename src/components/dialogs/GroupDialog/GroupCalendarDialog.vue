@@ -112,6 +112,7 @@
     import { groupRequest } from '../../../api';
     import { useGroupStore } from '../../../stores';
     import GroupCalendarEventCard from './GroupCalendarEventCard.vue';
+    import { replaceBioSymbols } from '../../../shared/utils';
 
     const { cachedGroups } = storeToRefs(useGroupStore());
     const { showGroupDialog } = useGroupStore();
@@ -283,6 +284,10 @@
     async function getCalendarData() {
         try {
             const response = await groupRequest.getGroupCalendars(dayjs(selectedDay.value).toISOString());
+            response.results.forEach((event) => {
+                event.title = replaceBioSymbols(event.title);
+                event.description = replaceBioSymbols(event.description);
+            });
             calendar.value = response.results;
         } catch (error) {
             console.error('Error fetching calendars:', error);
@@ -292,6 +297,10 @@
     async function getFollowingCalendarData() {
         try {
             const response = await groupRequest.getFollowingGroupCalendars(dayjs(selectedDay.value).toISOString());
+            response.results.forEach((event) => {
+                event.title = replaceBioSymbols(event.title);
+                event.description = replaceBioSymbols(event.description);
+            });
             followingCalendar.value = response.results;
         } catch (error) {
             console.error('Error fetching following calendars:', error);
