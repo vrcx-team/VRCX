@@ -22,6 +22,26 @@ function hasGroupPermission(ref, permission) {
 
 /**
  *
+ * @param {object} group
+ * @returns {boolean}
+ */
+function hasGroupModerationPermission(group) {
+    return (
+        hasGroupPermission(group, 'group-invites-manage') ||
+        hasGroupPermission(group, 'group-moderates-manage') ||
+        hasGroupPermission(group, 'group-audit-view') ||
+        hasGroupPermission(group, 'group-bans-manage') ||
+        hasGroupPermission(group, 'group-data-manage') ||
+        hasGroupPermission(group, 'group-members-manage') ||
+        hasGroupPermission(group, 'group-members-remove') ||
+        hasGroupPermission(group, 'group-roles-assign') ||
+        hasGroupPermission(group, 'group-roles-manage') ||
+        hasGroupPermission(group, 'group-default-role-manage')
+    );
+}
+
+/**
+ *
  * @param {string} data
  * @returns {Promise<string>}
  */
@@ -49,4 +69,4 @@ async function getGroupName(data) {
     return groupName;
 }
 
-export { hasGroupPermission, getGroupName };
+export { hasGroupPermission, hasGroupModerationPermission, getGroupName };

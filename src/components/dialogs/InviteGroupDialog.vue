@@ -14,14 +14,12 @@
                 :placeholder="$t('dialog.invite_to_group.choose_group_placeholder')"
                 filterable
                 :disabled="inviteGroupDialog.loading"
-                style="margin-top: 15px"
-                @change="isAllowedToInviteToGroup">
+                style="margin-top: 15px; width: 100%">
                 <el-option-group
-                    v-if="currentUserGroups.size"
-                    :label="$t('dialog.invite_to_group.groups')"
+                    :label="$t('dialog.invite_to_group.groups_with_invite_permission')"
                     style="width: 410px">
                     <el-option
-                        v-for="group in currentUserGroups.values()"
+                        v-for="group in groupsWithInvitePermission"
                         :key="group.id"
                         :label="group.name"
                         :value="group.id"
@@ -158,16 +156,16 @@
             <el-button
                 type="primary"
                 size="small"
-                :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length"
+                :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length || !inviteGroupDialog.groupId"
                 @click="sendGroupInvite">
-                Invite
+                {{ $t('dialog.invite_to_group.invite') }}
             </el-button>
         </template>
     </safe-dialog>
 </template>
 
 <script setup>
-    import { ref, watch, getCurrentInstance, nextTick } from 'vue';
+    import { ref, watch, getCurrentInstance, nextTick, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { groupRequest, userRequest } from '../../api';
     import { adjustDialogZ, hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
@@ -191,6 +189,12 @@
     );
 
     const inviteGroupDialogRef = ref(null);
+
+    const groupsWithInvitePermission = computed(() => {
+        return Array.from(currentUserGroups.value.values()).filter((group) =>
+            hasGroupPermission(group, 'group-invites-manage')
+        );
+    });
 
     function initDialog() {
         nextTick(() => adjustDialogZ(inviteGroupDialogRef.value.$el));

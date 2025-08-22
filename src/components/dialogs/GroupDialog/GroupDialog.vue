@@ -318,7 +318,10 @@
                                                 {{ t('dialog.group.actions.create_post') }}
                                             </el-dropdown-item>
                                         </template>
-                                        <el-dropdown-item icon="el-icon-s-operation" command="Moderation Tools">
+                                        <el-dropdown-item
+                                            :disabled="!hasGroupModerationPermission(groupDialog.ref)"
+                                            icon="el-icon-s-operation"
+                                            command="Moderation Tools">
                                             {{ t('dialog.group.actions.moderation_tools') }}
                                         </el-dropdown-item>
                                         <template
@@ -1152,14 +1155,6 @@
         </div>
         <!--Nested-->
         <GroupPostEditDialog :dialog-data.sync="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
-        <GroupMemberModerationDialog
-            :is-group-members-loading.sync="isGroupMembersLoading"
-            :group-member-moderation="groupMemberModeration"
-            @close-dialog="closeMemberModerationDialog"
-            @group-members-search="groupMembersSearch"
-            @load-all-group-members="loadAllGroupMembers"
-            @set-group-member-filter="setGroupMemberFilter"
-            @set-group-member-sort-order="setGroupMemberSortOrder" />
         <InviteGroupDialog />
     </safe-dialog>
 </template>
@@ -1179,6 +1174,7 @@
         downloadAndSaveJson,
         getFaviconUrl,
         hasGroupPermission,
+        hasGroupModerationPermission,
         languageClass,
         openExternalLink,
         refreshInstancePlayerCount,
@@ -1195,7 +1191,6 @@
         useUserStore
     } from '../../../stores';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
-    import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
 
     const { t } = useI18n();
@@ -1212,7 +1207,8 @@
         setGroupVisibility,
         applyGroupMember,
         handleGroupMember,
-        handleGroupMemberProps
+        handleGroupMemberProps,
+        showGroupMemberModerationDialog
     } = useGroupStore();
 
     const { lastLocation } = storeToRefs(useLocationStore());
@@ -1244,13 +1240,6 @@
         roleIds: [],
         postId: '',
         groupId: ''
-    });
-    const groupMemberModeration = reactive({
-        visible: false,
-        loading: false,
-        id: '',
-        groupRef: {},
-        auditLogTypes: []
     });
 
     let loadMoreGroupMembersParams = ref({
@@ -1290,10 +1279,6 @@
     }
     function clearGroupRepresentation(groupId) {
         handleGroupRepresentationChange(groupId, false);
-    }
-
-    function closeMemberModerationDialog() {
-        groupMemberModeration.visible = false;
     }
 
     function groupMembersSearch() {
@@ -1539,28 +1524,6 @@
         });
     }
 
-    function showGroupMemberModerationDialog(groupId) {
-        if (groupId !== groupDialog.value.id) {
-            return;
-        }
-        const D = groupMemberModeration;
-        D.id = groupId;
-
-        D.groupRef = {};
-        D.auditLogTypes = [];
-        groupRequest.getCachedGroup({ groupId }).then((args) => {
-            D.groupRef = args.ref;
-            if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
-                groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
-                    if (groupMemberModeration.id !== args.params.groupId) {
-                        return;
-                    }
-                    groupMemberModeration.auditLogTypes = args.json;
-                });
-            }
-        });
-        D.visible = true;
-    }
     function joinGroup(id) {
         if (!id) {
             return null;

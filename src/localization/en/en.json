@@ -747,6 +747,7 @@
                 "request_invite": "Request Invite",
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
+                "group_moderation": "Group Moderation",
                 "send_boop": "Send Boop",
                 "manage_gallery_inventory_icon": "Manage VRC+ Images & Inventory",
                 "accept_friend_request": "Accept Friend Request",
@@ -1407,9 +1408,10 @@
             "header": "Invite To Group",
             "description": "Don't spam invite users, you'll get rate limited.",
             "choose_group_placeholder": "Choose Group",
-            "groups": "Groups",
+            "groups_with_invite_permission": "Groups with Invite Permission",
             "choose_friends_placeholder": "Choose Friends",
-            "selected_users": "Selected Users"
+            "selected_users": "Selected Users",
+            "invite": "Invite"
         },
         "note_export": {
             "header": "Note Export",
@@ -1600,6 +1602,7 @@
             "select_user": "Select User",
             "selected_users": "Selected Users",
             "select_all": "Select All",
+            "user_isnt_in_group": "User isn't in group",
             "cancel": "Cancel",
             "choose_roles_placeholder": "Choose Roles",
             "selected_roles": "Selected Roles",
@@ -1636,6 +1639,12 @@
         },
         "group_calendar": {
             "header": "Group Calendar"
+        },
+        "moderate_group": {
+            "header": "Moderate Group Member",
+            "choose_group_placeholder": "Choose Group",
+            "groups_with_moderation_permission": "Groups with Moderation Permission",
+            "moderation_tools": "Moderation Tools"
         }
     },
     "confirm": {

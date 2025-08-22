@@ -26,6 +26,7 @@
     import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
+    import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import GalleryDialog from './components/dialogs/GalleryDialog.vue';
     import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
     import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
@@ -65,6 +66,7 @@
             WorldDialog,
             AvatarDialog,
             GroupDialog,
+            GroupMemberModerationDialog,
             GalleryDialog,
             FullscreenImageDialog,
             PreviousInstancesInfoDialog,
