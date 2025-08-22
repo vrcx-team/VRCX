@@ -156,7 +156,8 @@ namespace VRCX
             string buttonText,
             string buttonUrl,
             string appId,
-            int activityType)
+            int activityType,
+            int statusDisplayType)
         {
             _lock.EnterWriteLock();
             try
@@ -212,7 +213,7 @@ namespace VRCX
                 }
 
                 _presence.Type = (ActivityType)activityType;
-                _presence.StatusDisplay = StatusDisplayType.Details;
+                _presence.StatusDisplay = (StatusDisplayType)statusDisplayType;
                 
                 Button[] buttons = [];
                 if (!string.IsNullOrEmpty(buttonUrl))

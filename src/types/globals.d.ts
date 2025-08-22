@@ -139,7 +139,8 @@ declare global {
             buttonText: string,
             buttonUrl: string,
             appId: string,
-            activityType: number
+            activityType: number,
+            statusDisplayType: number
         ): Promise<void>;
         SetActive(active: boolean): Promise<boolean>;
     };
