@@ -2,6 +2,7 @@
     "i18n-ally.localesPaths": ["src/localization"],
     "i18n-ally.keystyle": "nested",
     "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.indent": 4,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "omnisharp.enableRoslynAnalyzers": true,
