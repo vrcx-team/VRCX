@@ -364,7 +364,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     location: locationStore.lastLocation.location
                 };
                 database.addGamelogExternalToDatabase(entry);
-                if (notify){
+                if (notify) {
                     notificationStore.queueGameLogNoty(entry);
                 }
                 gameLogStore.addGameLog(entry);
