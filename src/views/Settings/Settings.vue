@@ -1521,6 +1521,11 @@
                             :value="enableAppLauncherAutoClose"
                             :long-label="true"
                             @change="setEnableAppLauncherAutoClose" />
+                        <simple-switch
+                            :label="t('view.settings.advanced.advanced.app_launcher.run_process_once')"
+                            :value="enableAppLauncherRunProcessOnce"
+                            :long-label="true"
+                            @change="setEnableAppLauncherRunProcessOnce" />
                     </div>
                 </template>
 
@@ -2118,6 +2123,7 @@
         avatarRemoteDatabase,
         enableAppLauncher,
         enableAppLauncherAutoClose,
+        enableAppLauncherRunProcessOnce,
         screenshotHelper,
         screenshotHelperModifyFilename,
         screenshotHelperCopyToClipboard,
@@ -2143,6 +2149,7 @@
         setAvatarRemoteDatabase,
         setEnableAppLauncher,
         setEnableAppLauncherAutoClose,
+        setEnableAppLauncherRunProcessOnce,
         setScreenshotHelper,
         setScreenshotHelperModifyFilename,
         setScreenshotHelperCopyToClipboard,

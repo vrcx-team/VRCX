@@ -631,7 +631,8 @@
                         "folder": "Auto-Launch Folder",
                         "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
                         "enable": "Enable",
-                        "auto_close": "Auto close apps"
+                        "auto_close": "Auto close apps",
+                        "run_process_once": "Open single instance of app"
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",

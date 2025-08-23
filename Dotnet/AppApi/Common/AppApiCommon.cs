@@ -149,10 +149,11 @@ namespace VRCX
             return output;
         }
 
-        public void SetAppLauncherSettings(bool enabled, bool killOnExit)
+        public void SetAppLauncherSettings(bool enabled, bool killOnExit, bool runProcessOnce)
         {
             AutoAppLaunchManager.Instance.Enabled = enabled;
             AutoAppLaunchManager.Instance.KillChildrenOnExit = killOnExit;
+            AutoAppLaunchManager.Instance.RunProcessOnce = runProcessOnce;
         }
 
         public string GetFileBase64(string path)
