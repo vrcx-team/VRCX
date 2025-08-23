@@ -802,7 +802,7 @@
                 "instance_hard_closed": "ปิดถาวร",
                 "close_instance": "ปิดอินสแตนซ์",
                 "instance_age_gated": "จำกัดอายุ",
-                "open_previouse_instance": "เปิดอินสแตนซ์ก่อนหน้า"
+                "open_previous_instance": "เปิดอินสแตนซ์ก่อนหน้า"
             },
             "groups": {
                 "header": "กลุ่ม",

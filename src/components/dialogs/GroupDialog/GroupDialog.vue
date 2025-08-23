@@ -612,7 +612,7 @@
                             </div>
                         </div>
                         <el-tooltip :disabled="hideTooltips" placement="top" :content="t('dialog.user.info.open_previous_instance')">
-                            <div class="x-friend-item x-link" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
+                            <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
                                 <div class="detail">
                                     <span class="name">{{ t('dialog.group.info.last_visited') }}</span>
                                     <span class="extra">{{formatDateFilter(groupDialog.lastVisit,'long') }}</span>
