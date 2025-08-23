@@ -22,7 +22,17 @@
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
-                            <span class="dialog-title" v-text="avatarDialog.ref.name"></span>
+                            <el-popover placement="top" trigger="click">
+                                <span
+                                    slot="reference"
+                                    class="dialog-title"
+                                    style="margin-right: 5px; cursor: pointer"
+                                    v-text="avatarDialog.ref.name"
+                                    @click="copyToClipboard(avatarDialog.ref.name)"></span>
+                                <span style="display: block; text-align: center; font-family: monospace">{{
+                                    textToHex(avatarDialog.ref.name)
+                                }}</span>
+                            </el-popover>
                         </div>
                         <div style="margin-top: 5px">
                             <span
@@ -613,7 +623,8 @@
         storeAvatarImage,
         timeToText,
         moveArrayItem,
-        formatDateFilter
+        formatDateFilter,
+        textToHex
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,

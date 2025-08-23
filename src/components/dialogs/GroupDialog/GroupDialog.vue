@@ -37,7 +37,17 @@
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
                         <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
-                        <span class="dialog-title" style="margin-right: 5px" v-text="groupDialog.ref.name"></span>
+                        <el-popover placement="top" trigger="click">
+                            <span
+                                slot="reference"
+                                class="dialog-title"
+                                style="margin-right: 5px; cursor: pointer"
+                                v-text="groupDialog.ref.name"
+                                @click="copyToClipboard(groupDialog.ref.name)"></span>
+                            <span style="display: block; text-align: center; font-family: monospace">{{
+                                textToHex(groupDialog.ref.name)
+                            }}</span>
+                        </el-popover>
                         <span
                             class="group-discriminator x-grey"
                             style="font-family: monospace; font-size: 12px; margin-right: 5px">
@@ -1181,7 +1191,8 @@
         removeFromArray,
         userImage,
         userStatusClass,
-        formatDateFilter
+        formatDateFilter,
+        textToHex
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,

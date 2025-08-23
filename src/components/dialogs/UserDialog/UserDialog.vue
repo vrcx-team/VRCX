@@ -86,7 +86,8 @@
                                     slot="reference"
                                     class="dialog-title"
                                     style="margin-left: 5px; margin-right: 5px; cursor: pointer"
-                                    v-text="userDialog.ref.displayName"></span>
+                                    v-text="userDialog.ref.displayName"
+                                    @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
                                     textToHex(userDialog.ref.displayName)
                                 }}</span>

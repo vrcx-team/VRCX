@@ -22,13 +22,25 @@
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
-                            <i
-                                v-show="
-                                    currentUser.$homeLocation && currentUser.$homeLocation.worldId === worldDialog.id
-                                "
-                                class="el-icon-s-home"
-                                style="margin-right: 5px" />
-                            <span class="dialog-title" v-text="worldDialog.ref.name" />
+                            <el-popover placement="top" trigger="click">
+                                <span
+                                    slot="reference"
+                                    class="dialog-title"
+                                    style="margin-right: 5px; cursor: pointer"
+                                    @click="copyToClipboard(worldDialog.ref.name)">
+                                    <i
+                                        v-if="
+                                            currentUser.$homeLocation &&
+                                            currentUser.$homeLocation.worldId === worldDialog.id
+                                        "
+                                        class="el-icon-s-home"
+                                        style="margin-right: 5px" />
+                                    {{ worldDialog.ref.name }}
+                                </span>
+                                <span style="display: block; text-align: center; font-family: monospace">{{
+                                    textToHex(worldDialog.ref.name)
+                                }}</span>
+                            </el-popover>
                         </div>
                         <div style="margin-top: 5px">
                             <span
@@ -785,7 +797,9 @@
         openFolderGeneric,
         deleteVRChatCache,
         commaNumber,
-        formatDateFilter
+        formatDateFilter,
+        textToHex,
+        copyToClipboard
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
