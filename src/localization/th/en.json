@@ -1064,7 +1064,8 @@
                 "role_description": "คำอธิบาย:",
                 "role_updated_at": "อัปเดตเมื่อ:",
                 "role_created_at": "สร้างเมื่อ:",
-                "role_permissions": "สิทธิ์:"
+                "role_permissions": "สิทธิ์:",
+                "last_visited": "เข้าชมล่าสุด"
             },
             "posts": {
                 "header": "โพสต์",
