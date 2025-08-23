@@ -5,7 +5,9 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9-windows10.0.19041.0</TargetFramework>
-    <Platform>x64</Platform>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
