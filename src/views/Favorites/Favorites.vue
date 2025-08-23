@@ -3,7 +3,9 @@
         <div style="font-size: 13px; position: absolute; display: flex; right: 0; z-index: 1; margin-right: 15px">
             <div v-if="editFavoritesMode" style="display: inline-block; margin-right: 10px">
                 <el-button size="small" @click="clearBulkFavoriteSelection">{{ t('view.favorite.clear') }}</el-button>
-                <el-button size="small" @click="bulkCopyFavoriteSelection">{{ t('view.favorite.copy') }}</el-button>
+                <el-button size="small" @click="handleBulkCopyFavoriteSelection">{{
+                    t('view.favorite.copy')
+                }}</el-button>
                 <el-button size="small" @click="showBulkUnfavoriteSelectionConfirm">{{
                     t('view.favorite.bulk_unfavorite')
                 }}</el-button>
@@ -72,15 +74,20 @@
         favoriteAvatars,
         isFavoriteLoading,
         localAvatarFavoritesList,
-        localWorldFavoritesList
+        localWorldFavoritesList,
+        avatarImportDialogInput,
+        worldImportDialogInput,
+        friendImportDialogInput
     } = storeToRefs(useFavoriteStore());
     const {
         refreshFavorites,
         refreshFavoriteGroups,
         clearBulkFavoriteSelection,
-        bulkCopyFavoriteSelection,
         getLocalWorldFavorites,
-        handleFavoriteGroup
+        handleFavoriteGroup,
+        showFriendImportDialog,
+        showWorldImportDialog,
+        showAvatarImportDialog
     } = useFavoriteStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { applyAvatar } = useAvatarStore();
@@ -173,6 +180,49 @@
                 }
             }
         );
+    }
+
+    function handleBulkCopyFavoriteSelection() {
+        let idList = '';
+        switch (currentTabName.value) {
+            case 'friend':
+                for (const ctx of favoriteFriends.value) {
+                    if (ctx.$selected) {
+                        idList += `${ctx.id}\n`;
+                    }
+                }
+                friendImportDialogInput.value = idList;
+                showFriendImportDialog();
+
+                break;
+
+            case 'world':
+                for (const ctx of favoriteWorlds.value) {
+                    if (ctx.$selected) {
+                        idList += `${ctx.id}\n`;
+                    }
+                }
+                worldImportDialogInput.value = idList;
+                showWorldImportDialog();
+
+                break;
+
+            case 'avatar':
+                for (const ctx of favoriteAvatars.value) {
+                    if (ctx.$selected) {
+                        idList += `${ctx.id}\n`;
+                    }
+                }
+                avatarImportDialogInput.value = idList;
+                showAvatarImportDialog();
+
+                break;
+
+            default:
+                break;
+        }
+
+        console.log('Favorite selection\n', idList);
     }
 
     async function refreshLocalAvatarFavorites() {
