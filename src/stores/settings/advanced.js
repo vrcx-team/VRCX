@@ -25,6 +25,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         avatarRemoteDatabase: true,
         enableAppLauncher: true,
         enableAppLauncherAutoClose: true,
+        enableAppLauncherRunProcessOnce: true,
         screenshotHelper: true,
         screenshotHelperModifyFilename: false,
         screenshotHelperCopyToClipboard: false,
@@ -58,6 +59,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             avatarRemoteDatabase,
             enableAppLauncher,
             enableAppLauncherAutoClose,
+            enableAppLauncherRunProcessOnce,
             screenshotHelper,
             screenshotHelperModifyFilename,
             screenshotHelperCopyToClipboard,
@@ -84,6 +86,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_avatarRemoteDatabase', true),
             configRepository.getBool('VRCX_enableAppLauncher', true),
             configRepository.getBool('VRCX_enableAppLauncherAutoClose', true),
+            configRepository.getBool(
+                'VRCX_enableAppLauncherRunProcessOnce',
+                true
+            ),
             configRepository.getBool('VRCX_screenshotHelper', true),
             configRepository.getBool(
                 'VRCX_screenshotHelperModifyFilename',
@@ -120,6 +126,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.avatarRemoteDatabase = avatarRemoteDatabase;
         state.enableAppLauncher = enableAppLauncher;
         state.enableAppLauncherAutoClose = enableAppLauncherAutoClose;
+        state.enableAppLauncherRunProcessOnce = enableAppLauncherRunProcessOnce;
         state.screenshotHelper = screenshotHelper;
         state.screenshotHelperModifyFilename = screenshotHelperModifyFilename;
         state.screenshotHelperCopyToClipboard = screenshotHelperCopyToClipboard;
@@ -166,6 +173,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const enableAppLauncher = computed(() => state.enableAppLauncher);
     const enableAppLauncherAutoClose = computed(
         () => state.enableAppLauncherAutoClose
+    );
+    const enableAppLauncherRunProcessOnce = computed(
+        () => state.enableAppLauncherRunProcessOnce
     );
     const screenshotHelper = computed(() => state.screenshotHelper);
     ``;
@@ -277,6 +287,15 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setBool(
             'VRCX_enableAppLauncherAutoClose',
             state.enableAppLauncherAutoClose
+        );
+        handleSetAppLauncherSettings();
+    }
+    async function setEnableAppLauncherRunProcessOnce() {
+        state.enableAppLauncherRunProcessOnce =
+            !state.enableAppLauncherRunProcessOnce;
+        await configRepository.setBool(
+            'VRCX_enableAppLauncherRunProcessOnce',
+            state.enableAppLauncherRunProcessOnce
         );
         handleSetAppLauncherSettings();
     }
@@ -440,7 +459,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     function handleSetAppLauncherSettings() {
         AppApi.SetAppLauncherSettings(
             state.enableAppLauncher,
-            state.enableAppLauncherAutoClose
+            state.enableAppLauncherAutoClose,
+            state.enableAppLauncherRunProcessOnce
         );
     }
 
@@ -678,6 +698,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         avatarRemoteDatabase,
         enableAppLauncher,
         enableAppLauncherAutoClose,
+        enableAppLauncherRunProcessOnce,
         screenshotHelper,
         screenshotHelperModifyFilename,
         screenshotHelperCopyToClipboard,
@@ -707,6 +728,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setAvatarRemoteDatabase,
         setEnableAppLauncher,
         setEnableAppLauncherAutoClose,
+        setEnableAppLauncherRunProcessOnce,
         setScreenshotHelper,
         setScreenshotHelperModifyFilename,
         setScreenshotHelperCopyToClipboard,

@@ -139,7 +139,8 @@ declare global {
             buttonText: string,
             buttonUrl: string,
             appId: string,
-            activityType: number
+            activityType: number,
+            statusDisplayType: number
         ): Promise<void>;
         SetActive(active: boolean): Promise<boolean>;
     };
@@ -196,7 +197,8 @@ declare global {
         GetColourBulk(userIds: string[]): Promise<Record<string, number>>;
         SetAppLauncherSettings(
             enabled: boolean,
-            killOnExit: boolean
+            killOnExit: boolean,
+            runProcessOnce: boolean
         ): Promise<void>;
         GetFileBase64(path: string): Promise<string | null>;
 

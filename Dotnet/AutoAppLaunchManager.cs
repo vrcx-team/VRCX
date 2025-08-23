@@ -21,6 +21,7 @@ namespace VRCX
         public bool Enabled = false;
         /// <summary> Whether or not to kill child processes when VRChat closes. </summary>
         public bool KillChildrenOnExit = true;
+        public bool RunProcessOnce = true;
         public readonly string AppShortcutDirectory;
 
         private DateTime startTime = DateTime.Now;
@@ -110,11 +111,15 @@ namespace VRCX
                     UpdateChildProcesses();
 
                 var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
-
                 foreach (var file in shortcutFiles)
                 {
-                    if (!IsChildProcessRunning(file))
-                        StartChildProcess(file);
+                    if (RunProcessOnce && IsProcessRunning(file))
+                        continue;
+                    
+                    if (IsChildProcessRunning(file))
+                        continue;
+                    
+                    StartChildProcess(file);
                 }
 
                 if (shortcutFiles.Length == 0)
@@ -272,6 +277,20 @@ namespace VRCX
         private bool IsChildProcessRunning(string path)
         {
             return startedProcesses.ContainsKey(path);
+        }
+        
+        private bool IsProcessRunning(string filePath)
+        {
+            try
+            {
+                var processName = Path.GetFileNameWithoutExtension(filePath);
+                return Process.GetProcessesByName(processName).Length != 0;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error checking if process is running: {0}", filePath);
+                return false;
+            }
         }
 
         public void Init()

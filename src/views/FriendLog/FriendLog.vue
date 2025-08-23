@@ -105,9 +105,7 @@
     watch(
         () => hideUnfriends.value,
         (newValue) => {
-            if (newValue) {
-                friendLogTable.value.filters[2].value = newValue;
-            }
+            friendLogTable.value.filters[2].value = newValue;
         },
         { immediate: true }
     );

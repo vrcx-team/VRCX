@@ -22,13 +22,25 @@
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
-                            <i
-                                v-show="
-                                    currentUser.$homeLocation && currentUser.$homeLocation.worldId === worldDialog.id
-                                "
-                                class="el-icon-s-home"
-                                style="margin-right: 5px" />
-                            <span class="dialog-title" v-text="worldDialog.ref.name" />
+                            <el-popover placement="top" trigger="click">
+                                <span
+                                    slot="reference"
+                                    class="dialog-title"
+                                    style="margin-right: 5px; cursor: pointer"
+                                    @click="copyToClipboard(worldDialog.ref.name)">
+                                    <i
+                                        v-if="
+                                            currentUser.$homeLocation &&
+                                            currentUser.$homeLocation.worldId === worldDialog.id
+                                        "
+                                        class="el-icon-s-home"
+                                        style="margin-right: 5px" />
+                                    {{ worldDialog.ref.name }}
+                                </span>
+                                <span style="display: block; text-align: center; font-family: monospace">{{
+                                    textToHex(worldDialog.ref.name)
+                                }}</span>
+                            </el-popover>
                         </div>
                         <div style="margin-top: 5px">
                             <span
@@ -308,7 +320,7 @@
                     </div>
                 </div>
             </div>
-            <el-tabs>
+            <el-tabs ref="worldDialogTabsRef" @tab-click="worldDialogTabClick">
                 <el-tab-pane :label="t('dialog.world.instances.header')">
                     <div class="">
                         <i class="el-icon-user" />
@@ -785,7 +797,9 @@
         openFolderGeneric,
         deleteVRChatCache,
         commaNumber,
-        formatDateFilter
+        formatDateFilter,
+        textToHex,
+        copyToClipboard
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -914,19 +928,43 @@
     });
 
     const worldDialogRef = ref(null);
+    const worldDialogTabsRef = ref(null);
+    const worldDialogLastActiveTab = ref('');
 
     watch(
         () => worldDialog.value.loading,
-        (newVal) => {
-            if (newVal) {
+        () => {
+            if (worldDialog.value.visible) {
                 nextTick(() => {
                     if (worldDialogRef.value?.$el) {
                         adjustDialogZ(worldDialogRef.value.$el);
                     }
                 });
+                !worldDialog.value.loading && toggleLastActiveTab();
             }
         }
     );
+
+    function toggleLastActiveTab() {
+        if (worldDialogTabsRef.value.currentName === '0') {
+            worldDialogLastActiveTab.value = t('dialog.world.instances.header');
+        } else if (worldDialogTabsRef.value.currentName === '1') {
+            worldDialogLastActiveTab.value = t('dialog.world.info.header');
+        } else if (worldDialogTabsRef.value.currentName === '2') {
+            worldDialogLastActiveTab.value = t('dialog.world.json.header');
+            refreshWorldDialogTreeData();
+        }
+    }
+
+    function worldDialogTabClick(obj) {
+        if (worldDialogLastActiveTab.value === obj.label) {
+            return;
+        }
+        if (obj.label === t('dialog.world.json.header')) {
+            refreshWorldDialogTreeData();
+        }
+        worldDialogLastActiveTab.value = obj.label;
+    }
 
     function displayPreviousImages(command) {
         previousImagesFileId.value = '';
