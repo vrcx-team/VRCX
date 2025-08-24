@@ -682,7 +682,7 @@
                         <el-tooltip
                             :disabled="hideTooltips"
                             placement="top"
-                            :content="t('dialog.user.info.open_previouse_instance')">
+                            :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">

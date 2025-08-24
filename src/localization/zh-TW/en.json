@@ -823,7 +823,7 @@
                 "instance_hard_closed": "強制關閉",
                 "close_instance": "關閉房間",
                 "instance_age_gated": "年齡限制",
-                "open_previouse_instance": "開啟上個房間"
+                "open_previous_instance": "開啟上個房間"
             },
             "groups": {
                 "header": "群組",
@@ -1085,7 +1085,8 @@
                 "role_description": "敘述：",
                 "role_updated_at": "更新時間：",
                 "role_created_at": "創建時間：",
-                "role_permissions": "權限："
+                "role_permissions": "權限：",
+                "last_visited": "上次造訪"
             },
             "posts": {
                 "header": "貼文",

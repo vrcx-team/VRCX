@@ -1,16 +1,10 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VRCX-Cef", "Dotnet\VRCX-Cef.csproj", "{D9F66F2E-3ED9-4D53-A6AC-ADCC1513562A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8612F19B-3C1F-4B17-8679-A2747A53EC6B}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRCX-Electron", "Dotnet\VRCX-Electron.csproj", "{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VRCX-Electron", "Dotnet\VRCX-Electron.csproj", "{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBMerger", "DBMerger\DBMerger.csproj", "{9BE1DD2F-CABC-4CF9-A53E-C62923760887}"
 EndProject
@@ -24,14 +18,16 @@ Global
 		{D9F66F2E-3ED9-4D53-A6AC-ADCC1513562A}.Debug|x64.Build.0 = Debug|x64
 		{D9F66F2E-3ED9-4D53-A6AC-ADCC1513562A}.Release|x64.ActiveCfg = Release|x64
 		{D9F66F2E-3ED9-4D53-A6AC-ADCC1513562A}.Release|x64.Build.0 = Release|x64
+
 		{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}.Debug|x64.ActiveCfg = Debug|x64
 		{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}.Debug|x64.Build.0 = Debug|x64
 		{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}.Release|x64.ActiveCfg = Release|x64
 		{B0275E4A-FE0F-410A-96F1-1D73DF2535FA}.Release|x64.Build.0 = Release|x64
-		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Debug|x64.Build.0 = Debug|Any CPU
-		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.ActiveCfg = Release|Any CPU
-		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.Build.0 = Release|Any CPU
+
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Debug|x64.ActiveCfg = Debug|x64
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Debug|x64.Build.0 = Debug|x64
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.ActiveCfg = Release|x64
+		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

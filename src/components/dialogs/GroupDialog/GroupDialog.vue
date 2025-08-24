@@ -611,6 +611,14 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
+                        <el-tooltip :disabled="hideTooltips" placement="top" :content="t('dialog.user.info.open_previous_instance')">
+                            <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
+                                <div class="detail">
+                                    <span class="name">{{ t('dialog.group.info.last_visited') }}</span>
+                                    <span class="extra">{{formatDateFilter(groupDialog.lastVisit,'long') }}</span>
+                                </div>
+                            </div>
+                        </el-tooltip>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.links') }}</span>
@@ -1166,6 +1174,10 @@
         <!--Nested-->
         <GroupPostEditDialog :dialog-data.sync="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
         <InviteGroupDialog />
+        <PreviousInstancesGroupDialog
+            :previous-instances-group-dialog.sync="previousInstancesGroupDialog"
+            :current-user="currentUser"
+        />
     </safe-dialog>
 </template>
 
@@ -1203,6 +1215,7 @@
     } from '../../../stores';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
+    import PreviousInstancesGroupDialog from "../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue";
 
     const { t } = useI18n();
 
@@ -1253,6 +1266,12 @@
         groupId: ''
     });
 
+    const previousInstancesGroupDialog = ref({
+        visible: false,
+        openFlg: false,
+        groupRef: {}
+    });
+
     let loadMoreGroupMembersParams = ref({
         n: 100,
         offset: 0,
@@ -1283,6 +1302,14 @@
         inviteGroupDialog.value.groupId = groupId;
         inviteGroupDialog.value.userId = userId;
         inviteGroupDialog.value.visible = true;
+    }
+
+    function showPreviousInstancesGroupDialog(groupRef) {
+        const D = previousInstancesGroupDialog.value;
+        D.groupRef = groupRef;
+        D.visible = true;
+        D.openFlg = true;
+        nextTick(() => (D.openFlg = false));
     }
 
     function setGroupRepresentation(groupId) {

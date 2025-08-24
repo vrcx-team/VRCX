@@ -10,6 +10,7 @@ import {
 import { $app } from '../app';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
+import { database } from '../service/database.js';
 import { groupDialogFilterOptions } from '../shared/constants/';
 import {
     replaceBioSymbols,
@@ -45,6 +46,7 @@ export const useGroupStore = defineStore('Group', () => {
             memberSearchResults: [],
             instances: [],
             memberRoles: [],
+            lastVisit: '',
             memberFilter: {
                 name: 'dialog.group.members.filters.everyone',
                 id: null
@@ -183,6 +185,7 @@ export const useGroupStore = defineStore('Group', () => {
         D.postsFiltered = [];
         D.instances = [];
         D.memberRoles = [];
+        D.lastVisit = '';
         D.memberSearch = '';
         D.memberSearchResults = [];
         D.galleries = {};
@@ -215,6 +218,11 @@ export const useGroupStore = defineStore('Group', () => {
                             D.ownerDisplayName = args1.ref.displayName;
                             return args1;
                         });
+                    database.getLastGroupVisit(D.ref.name).then((r) => {
+                        if (D.id === args.ref.id) {
+                            D.lastVisit = r.created_at;
+                        }
+                    });
                     instanceStore.applyGroupDialogInstances();
                     getGroupDialogGroup(groupId);
                 }

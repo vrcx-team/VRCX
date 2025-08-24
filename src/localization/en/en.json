@@ -829,7 +829,7 @@
                 "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
-                "open_previouse_instance": "Open Previous Instance"
+                "open_previous_instance": "Open Previous Instance"
             },
             "groups": {
                 "header": "Groups",
@@ -1091,7 +1091,8 @@
                 "role_description": "Description:",
                 "role_updated_at": "Updated At:",
                 "role_created_at": "Created At:",
-                "role_permissions": "Permissions:"
+                "role_permissions": "Permissions:",
+                "last_visited": "Last Visited"
             },
             "posts": {
                 "header": "Posts",

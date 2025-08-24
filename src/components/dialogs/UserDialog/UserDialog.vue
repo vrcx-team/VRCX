@@ -847,7 +847,7 @@
                             <el-tooltip
                                 :disabled="hideTooltips"
                                 placement="top"
-                                :content="t('dialog.user.info.open_previouse_instance')">
+                                :content="t('dialog.user.info.open_previous_instance')">
                                 <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
                                     <div class="detail">
                                         <span class="name">
@@ -886,7 +886,7 @@
                             <el-tooltip
                                 :disabled="hideTooltips || currentUser.id !== userDialog.id"
                                 placement="top"
-                                :content="t('dialog.user.info.open_previouse_instance')">
+                                :content="t('dialog.user.info.open_previous_instance')">
                                 <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
                                     <div class="detail">
                                         <span class="name">

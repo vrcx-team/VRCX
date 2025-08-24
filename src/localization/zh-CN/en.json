@@ -804,7 +804,7 @@
                 "instance_hard_closed": "房间已关闭",
                 "close_instance": "关闭该房间",
                 "instance_age_gated": "房间具有年龄限制",
-                "open_previouse_instance": "打开上次加入的房间"
+                "open_previous_instance": "打开上次加入的房间"
             },
             "groups": {
                 "header": "群组",
@@ -1066,7 +1066,8 @@
                 "role_description": "描述：",
                 "role_updated_at": "更新时间：",
                 "role_created_at": "创建时间：",
-                "role_permissions": "权限："
+                "role_permissions": "权限：",
+                "last_visited": "上次访问"
             },
             "posts": {
                 "header": "帖子",
