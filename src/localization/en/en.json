@@ -829,7 +829,7 @@
                 "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
-                "open_previous_instance": "Open Previous Instance"
+                "open_previous_instance": "Open Previous Instances"
             },
             "groups": {
                 "header": "Groups",

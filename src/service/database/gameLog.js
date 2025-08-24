@@ -324,11 +324,11 @@ const gameLog = {
         return ref;
     },
 
-    async getPreviousInstancesByGroupName(groupName) {
-        var data = new Map();
+    async getPreviousInstancesByGroupId(groupId) {
+        const data = new Map();
         await sqliteService.execute(
             (dbRow) => {
-                var time = 0;
+                let time = 0;
                 if (dbRow[2]) {
                     time = dbRow[2];
                 }
@@ -345,21 +345,17 @@ const gameLog = {
                 };
                 data.set(row.location, row);
             },
-            `SELECT created_at, location, time, world_name, group_name FROM gamelog_location WHERE group_name = @groupName ORDER BY id DESC`,
+            `SELECT created_at, location, time, world_name, group_name FROM gamelog_location WHERE location LIKE '%${groupId}%' ORDER BY id DESC`,
             {
-                '@groupName': groupName
+                '@groupId': groupId
             }
         );
         return data;
     },
 
     async getLastSeen(input, inCurrentWorld) {
-        if (inCurrentWorld) {
-            var count = 2;
-        } else {
-            var count = 1;
-        }
-        var ref = {
+        const count = inCurrentWorld ? 2 : 1;
+        let ref = {
             created_at: '',
             userId: ''
         };
