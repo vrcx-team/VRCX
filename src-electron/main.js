@@ -837,8 +837,12 @@ app.whenReady().then(() => {
     createTray();
 
     if (process.platform === 'linux') {
-        createWristOverlayWindowOffscreen();
-        createHmdOverlayWindowOffscreen();
+        try {
+            createWristOverlayWindowOffscreen();
+            createHmdOverlayWindowOffscreen();
+        } catch (err) {
+            console.error('Error creating overlay windows:', err);
+        }
     }
 
     installVRCX();
