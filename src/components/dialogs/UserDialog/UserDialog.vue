@@ -2538,6 +2538,7 @@
     }
 
     async function getUserGroups(userId) {
+        exitEditModeCurrentUserGroups();
         userDialog.value.isGroupsLoading = true;
         userGroups.value = {
             groups: [],
@@ -2859,9 +2860,6 @@
         userRequest.saveCurrentUser({
             allowAvatarCopying: !currentUser.value.allowAvatarCopying
         });
-        //     .then((args) => {
-        //     return args;
-        // });
     }
 
     function resetHome() {
