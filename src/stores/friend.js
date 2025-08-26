@@ -270,6 +270,8 @@ export const useFriendStore = defineStore('Friend', () => {
         (isLoggedIn) => {
             state.friends.clear();
             state.friendNumber = 0;
+            state.friendLog.clear();
+            state.friendLogTable.data = [];
             groupStore.groupInstances = [];
             state.vipFriends_ = [];
             state.onlineFriends_ = [];
@@ -1128,9 +1130,14 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         friendRequest
             .getFriendStatus({
-                userId: id
+                userId: id,
+                currentUserId: userStore.currentUser.id
             })
             .then((args) => {
+                if (args.params.currentUserId !== userStore.currentUser.id) {
+                    // safety check for delayed response
+                    return;
+                }
                 handleFriendStatus(args);
                 if (args.json.isFriend && !state.friendLog.has(id)) {
                     if (state.friendNumber === 0) {
@@ -1207,9 +1214,14 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         friendRequest
             .getFriendStatus({
-                userId: id
+                userId: id,
+                currentUserId: userStore.currentUser.id
             })
             .then((args) => {
+                if (args.params.currentUserId !== userStore.currentUser.id) {
+                    // safety check for delayed response
+                    return;
+                }
                 handleFriendStatus(args);
                 if (!args.json.isFriend && state.friendLog.has(id)) {
                     const friendLogHistory = {

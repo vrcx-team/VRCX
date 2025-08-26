@@ -823,7 +823,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 'Primary password is enabled, this disables auto login.'
             );
             state.attemptingAutoLogin = false;
-            logout();
+            handleLogoutEvent();
             return;
         }
         const attemptsInLastHour = Array.from(state.autoLoginAttempts).filter(
@@ -834,7 +834,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
             );
             state.attemptingAutoLogin = false;
-            logout();
+            handleLogoutEvent();
             return;
         }
         state.autoLoginAttempts.add(new Date().getTime());
