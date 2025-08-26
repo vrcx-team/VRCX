@@ -14,7 +14,18 @@ const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const https = require('https');
 
+const VRCX_URI_PREFIX = "vrcx"
+
 //app.disableHardwareAcceleration();
+
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [path.resolve(process.argv[1])])
+    } else {
+        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX)
+    }
+}
+
 
 if (process.platform === 'linux') {
     // Include bundled .NET runtime
@@ -105,12 +116,33 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
 });
 
+/** @type {BrowserWindow} */
 let mainWindow = undefined;
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
 const hasAskedToMoveAppImage =
     VRCXStorage.Get('VRCX_HasAskedToMoveAppImage') === 'true';
 let isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+
+const gotTheLock = app.requestSingleInstanceLock()
+const strip_vrcx_prefix_regex = new RegExp("^" + VRCX_URI_PREFIX + ":\/\/")
+
+if (!gotTheLock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        if (mainWindow && commandLine.length >= 2) {
+            mainWindow.webContents.send('launch-command', commandLine.pop().trim().replace(strip_vrcx_prefix_regex, ""))
+        }
+    })
+
+    app.on('open-url', (event, url) => {
+        if (mainWindow && url) {
+            mainWindow.webContents.send('launch-command', url.replace(strip_vrcx_prefix_regex, ""))
+        }
+    })
+}
+
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -270,7 +302,7 @@ function createWindow() {
         icon: path.join(rootDir, 'VRCX.png'),
         autoHideMenuBar: true,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
         }
     });
     applyWindowState();
