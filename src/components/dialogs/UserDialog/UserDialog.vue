@@ -1890,13 +1890,12 @@
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
     const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-    const { clearInviteImageUpload, showGalleryDialog, checkPreviousImageAvailable, showFullscreenImageDialog } =
-        useGalleryStore();
+    const { clearInviteImageUpload, checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
-    const { shiftHeld } = storeToRefs(useUiStore());
+    const { shiftHeld, menuActiveIndex } = storeToRefs(useUiStore());
 
     watch(
         () => userDialog.value.loading,
@@ -2296,7 +2295,9 @@
         } else if (command === 'Previous Instances') {
             showPreviousInstancesUserDialog(D.ref);
         } else if (command === 'Manage Gallery') {
-            showGalleryDialog();
+            // redirect to tools tab
+            userDialog.value.visible = false;
+            menuActiveIndex.value = 'tools';
         } else if (command === 'Invite To Group') {
             showInviteGroupDialog('', D.id);
             // } else if (command === 'Send Boop') {

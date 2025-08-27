@@ -78,11 +78,9 @@
                         ({{ groupInstances.length }})
                     </span>
                 </template>
-                <el-button class="group-calendar-button" icon="el-icon-date" circle @click="openGroupCalendarDialog" />
                 <GroupsSidebar :group-instances="groupInstances" :group-order="inGameGroupOrder" />
             </el-tab-pane>
         </el-tabs>
-        <GroupCalendarDialog :visible="isGroupCalendarDialogVisible" @close="isGroupCalendarDialogVisible = false" />
     </div>
 </template>
 
@@ -100,7 +98,6 @@
     } from '../../stores';
     import FriendsSidebar from './components/FriendsSidebar.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
-    import GroupCalendarDialog from '../../components/dialogs/GroupDialog/GroupCalendarDialog.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
     const { refreshFriendsList, confirmDeleteFriend } = useFriendStore();
@@ -110,15 +107,9 @@
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
 
-    const isGroupCalendarDialogVisible = ref(false);
-
     const isSideBarTabShow = computed(() => {
         return !(menuActiveIndex.value === 'friendList' || menuActiveIndex.value === 'charts');
     });
-
-    function openGroupCalendarDialog() {
-        isGroupCalendarDialogVisible.value = true;
-    }
 </script>
 
 <style scoped>

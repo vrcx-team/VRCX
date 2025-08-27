@@ -139,7 +139,7 @@
         errors.value = '';
     }
 
-    const emit = defineEmits(['update:isNoteExportDialogVisible']);
+    const emit = defineEmits(['close']);
 
     function updateNoteExportDialog() {
         const data = [];
@@ -196,6 +196,6 @@
     }
 
     function closeDialog() {
-        emit('update:isNoteExportDialogVisible', false);
+        emit('close');
     }
 </script>

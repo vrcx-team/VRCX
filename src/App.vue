@@ -19,6 +19,7 @@
     import Notification from './views/Notifications/Notification.vue';
     import FriendList from './views/FriendList/FriendList.vue';
     import Charts from './views/Charts/Charts.vue';
+    import Tools from './views/Tools/Tools.vue';
     import Profile from './views/Profile/Profile.vue';
     import Settings from './views/Settings/Settings.vue';
 
@@ -59,6 +60,7 @@
             Notification,
             FriendList,
             Charts,
+            Tools,
             Profile,
             Settings,
 

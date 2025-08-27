@@ -628,6 +628,7 @@
                         :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
                         :value="!hideUserMemos"
                         @change="setHideUserMemos" />
+                    <!-- redirect to tools tab -->
                     <div class="options-container-item">
                         <span class="name">{{
                             t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes')
@@ -641,6 +642,7 @@
                             >{{ t('view.settings.appearance.user_dialog.export_notes') }}</el-button
                         >
                     </div>
+                    <!-- redirect to tools tab end -->
                 </div>
                 <!--//- Appearance | Friend Log-->
                 <div class="options-container">
@@ -1264,6 +1266,7 @@
 
             <!--//- "Pictures" Tab-->
             <el-tab-pane lazy :label="t('view.settings.category.pictures')">
+                <!-- redirect to tools tab -->
                 <div class="options-container" style="margin-top: 0">
                     <span class="header">{{ t('view.settings.category.pictures') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
@@ -1274,6 +1277,7 @@
                         </el-button-group>
                     </div>
                 </div>
+                <!-- redirect to tools tab end -->
 
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.pictures.pictures.open_folder') }}</span>
@@ -1845,9 +1849,7 @@
             </el-tab-pane>
         </el-tabs>
         <OpenSourceSoftwareNoticeDialog :ossDialog.sync="ossDialog" />
-        <NoteExportDialog :isNoteExportDialogVisible.sync="isNoteExportDialogVisible" />
         <NotificationPositionDialog :isNotificationPositionDialogVisible.sync="isNotificationPositionDialogVisible" />
-        <ScreenshotMetadataDialog :screenshotMetadataDialog="screenshotMetadataDialog" />
         <RegistryBackupDialog />
         <YouTubeApiDialog :isYouTubeApiDialogVisible.sync="isYouTubeApiDialogVisible" />
         <FeedFiltersDialog :feedFiltersDialogMode.sync="feedFiltersDialogMode" />
@@ -1886,9 +1888,7 @@
     } from '../../stores';
     import { photonEventTableTypeFilterList } from '../../shared/constants';
     import OpenSourceSoftwareNoticeDialog from './dialogs/OpenSourceSoftwareNoticeDialog.vue';
-    import NoteExportDialog from './dialogs/NoteExportDialog.vue';
     import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
-    import ScreenshotMetadataDialog from './dialogs/ScreenshotMetadataDialog.vue';
     import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
     import ChangelogDialog from './dialogs/ChangelogDialog.vue';
@@ -2179,20 +2179,10 @@
     ]);
 
     const ossDialog = ref(false);
-    const isNoteExportDialogVisible = ref(false);
     const feedFiltersDialogMode = ref('');
     const isNotificationPositionDialogVisible = ref(false);
 
     const isYouTubeApiDialogVisible = ref(false);
-    const screenshotMetadataDialog = ref({
-        visible: false,
-        loading: false,
-        search: '',
-        searchType: 'Player Name',
-        searchTypes: ['Player Name', 'Player ID', 'World  Name', 'World  ID'],
-        metadata: {},
-        isUploading: false
-    });
 
     const zoomLevel = ref(100);
 
@@ -2224,16 +2214,18 @@
         feedFiltersDialogMode.value = 'wrist';
     }
 
+    // redirect to tools tab
     function showNoteExportDialog() {
-        isNoteExportDialogVisible.value = true;
+        menuActiveIndex.value = 'tools';
     }
 
     function showNotificationPositionDialog() {
         isNotificationPositionDialogVisible.value = true;
     }
 
+    // redirect to tools tab
     function showScreenshotMetadataDialog() {
-        screenshotMetadataDialog.value.visible = true;
+        menuActiveIndex.value = 'tools';
     }
 
     function openVrcxAppDataFolder() {

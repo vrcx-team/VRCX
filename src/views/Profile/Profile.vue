@@ -529,7 +529,6 @@
         inviteRequestMessageTable,
         inviteRequestResponseMessageTable
     } = storeToRefs(useInviteStore());
-    const { showGalleryDialog } = useGalleryStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { directAccessWorld } = useSearchStore();
     const { logout } = useAuthStore();
@@ -549,6 +548,11 @@
     const isExportAvatarsListDialogVisible = ref(false);
 
     const visits = ref(0);
+
+    // redirect to tools tab
+    function showGalleryDialog() {
+        menuActiveIndex.value = 'tools';
+    }
 
     function getVisits() {
         miscRequest.getVisits().then((args) => {

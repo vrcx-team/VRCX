@@ -49,7 +49,7 @@
                                         :class="{
                                             'has-events': filteredCalendar[formatDateKey(date)]?.length
                                         }">
-                                        {{ dayjs(date).format('D') }}
+                                        {{ dayjs(date).local().format('D') }}
                                         <div
                                             v-if="filteredCalendar[formatDateKey(date)]?.length"
                                             class="calendar-event-badge"
@@ -80,10 +80,13 @@
                     <div class="groups-grid" v-loading="isLoading">
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
-                                <div class="group-header" @click="showGroupDialog(group.groupId)">
+                                <div class="group-header" @click="toggleGroup(group.groupId)">
+                                    <i
+                                        class="el-icon-arrow-right"
+                                        :class="{ rotate: !groupCollapsed[group.groupId] }"></i>
                                     {{ group.groupName }}
                                 </div>
-                                <div class="events-row">
+                                <div class="events-row" v-show="!groupCollapsed[group.groupId]">
                                     <GroupCalendarEventCard
                                         v-for="event in group.events"
                                         :key="event.id"
@@ -111,11 +114,10 @@
     import dayjs from 'dayjs';
     import { groupRequest } from '../../../api';
     import { useGroupStore } from '../../../stores';
-    import GroupCalendarEventCard from './GroupCalendarEventCard.vue';
+    import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
     import { replaceBioSymbols } from '../../../shared/utils';
 
     const { cachedGroups } = storeToRefs(useGroupStore());
-    const { showGroupDialog } = useGroupStore();
 
     const { t } = useI18n();
 
@@ -132,13 +134,15 @@
     const followingCalendar = ref([]);
     const selectedDay = ref(new Date());
     const isLoading = ref(false);
-    const viewMode = ref('timeline'); // 'timeline' | 'grid'
+    const viewMode = ref('timeline');
     const searchQuery = ref('');
+    const groupCollapsed = ref({});
 
     watch(
         () => props.visible,
         async (newVisible) => {
             if (newVisible) {
+                selectedDay.value = new Date();
                 isLoading.value = true;
                 await Promise.all([getCalendarData(), getFollowingCalendarData()])
                     .catch((error) => {
@@ -170,6 +174,74 @@
                 }
             }
         }
+    );
+
+    const groupedByGroupEvents = computed(() => {
+        const currentMonth = dayjs(selectedDay.value).month();
+        const currentYear = dayjs(selectedDay.value).year();
+
+        const currentMonthEvents = calendar.value.filter((event) => {
+            const eventDate = dayjs(event.startsAt);
+            return eventDate.month() === currentMonth && eventDate.year() === currentYear;
+        });
+
+        const groupMap = new Map();
+        currentMonthEvents.forEach((event) => {
+            const groupId = event.ownerId;
+            if (!groupMap.has(groupId)) {
+                groupMap.set(groupId, []);
+            }
+            groupMap.get(groupId).push(event);
+        });
+
+        Array.from(groupMap.values()).forEach((events) => {
+            events.sort((a, b) => (dayjs(a.startsAt).isBefore(dayjs(b.startsAt)) ? -1 : 1));
+        });
+
+        return Array.from(groupMap.entries()).map(([groupId, events]) => ({
+            groupId,
+            groupName: getGroupName(events[0]),
+            events: events
+        }));
+    });
+
+    const filteredGroupEvents = computed(() => {
+        const hasSearch = searchQuery.value.trim();
+        return !hasSearch
+            ? groupedByGroupEvents.value
+            : groupedByGroupEvents.value.filter((group) => {
+                  if (group.groupName.toLowerCase().includes(searchQuery.value.toLowerCase())) return true;
+
+                  return group.events.some(
+                      (event) =>
+                          event.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                          event.description?.toLowerCase().includes(searchQuery.value.toLowerCase())
+                  );
+              });
+    });
+
+    watch(
+        [filteredGroupEvents, searchQuery],
+        ([groups, search]) => {
+            const newCollapsed = { ...groupCollapsed.value };
+            let hasChanged = false;
+            const hasSearch = search.trim();
+
+            groups.forEach((group) => {
+                if (!(group.groupId in newCollapsed)) {
+                    newCollapsed[group.groupId] = false;
+                    hasChanged = true;
+                } else if (hasSearch) {
+                    newCollapsed[group.groupId] = false;
+                    hasChanged = true;
+                }
+            });
+
+            if (hasChanged) {
+                groupCollapsed.value = newCollapsed;
+            }
+        },
+        { immediate: true }
     );
 
     const filteredCalendar = computed(() => {
@@ -231,49 +303,6 @@
             .sort((a, b) => dayjs(a.startsAt).diff(dayjs(b.startsAt)));
     });
 
-    const groupedByGroupEvents = computed(() => {
-        const currentMonth = dayjs(selectedDay.value).month();
-        const currentYear = dayjs(selectedDay.value).year();
-
-        const currentMonthEvents = calendar.value.filter((event) => {
-            const eventDate = dayjs(event.startsAt);
-            return eventDate.month() === currentMonth && eventDate.year() === currentYear;
-        });
-
-        const groupMap = new Map();
-        currentMonthEvents.forEach((event) => {
-            const groupId = event.ownerId;
-            if (!groupMap.has(groupId)) {
-                groupMap.set(groupId, []);
-            }
-            groupMap.get(groupId).push(event);
-        });
-
-        Array.from(groupMap.values()).forEach((events) => {
-            events.sort((a, b) => (dayjs(a.startsAt).isBefore(dayjs(b.startsAt)) ? -1 : 1));
-        });
-
-        return Array.from(groupMap.entries()).map(([groupId, events]) => ({
-            groupId,
-            groupName: getGroupName(events[0]),
-            events: events
-        }));
-    });
-
-    const filteredGroupEvents = computed(() => {
-        if (!searchQuery.value.trim()) return groupedByGroupEvents.value;
-
-        const query = searchQuery.value.toLowerCase();
-        return groupedByGroupEvents.value.filter((group) => {
-            if (group.groupName.toLowerCase().includes(query)) return true;
-
-            return group.events.some(
-                (event) =>
-                    event.title?.toLowerCase().includes(query) || event.description?.toLowerCase().includes(query)
-            );
-        });
-    });
-
     const formatDateKey = (date) => dayjs(date).format('YYYY-MM-DD');
 
     function getGroupName(event) {
@@ -313,6 +342,13 @@
 
     function toggleViewMode() {
         viewMode.value = viewMode.value === 'timeline' ? 'grid' : 'timeline';
+    }
+
+    function toggleGroup(groupId) {
+        groupCollapsed.value = {
+            ...groupCollapsed.value,
+            [groupId]: !groupCollapsed.value[groupId]
+        };
     }
 
     function closeDialog() {
@@ -447,7 +483,7 @@
         display: flex;
         flex-direction: column;
         .search-container {
-            padding: 16px 20px;
+            padding: 2px 20px 12px 20px;
             border-bottom: 1px solid #ebeef5;
             display: flex;
             justify-content: flex-end;
@@ -463,22 +499,24 @@
             .groups-container {
                 overflow: visible;
                 .group-row {
-                    margin-bottom: 24px;
+                    margin-bottom: 18px;
                     overflow: visible;
                     .group-header {
                         font-size: 16px;
                         font-weight: bold;
                         color: var(--el-text-color-primary);
-                        padding: 8px 12px 12px 12px;
-                        margin-bottom: 16px;
+                        padding: 4px 12px 10px 12px;
                         cursor: pointer;
-                        transition: all 0.3s ease;
                         border-radius: 4px;
-                        margin: 0 -12px 16px -12px;
-                        &:hover {
+                        margin: 0 -12px 10px -12px;
+                        display: flex;
+                        align-items: center;
+
+                        .el-icon-arrow-right {
+                            font-size: 14px;
+                            margin-right: 8px;
+                            transition: transform 0.3s;
                             color: var(--el-color-primary);
-                            background-color: var(--el-color-primary-light-9);
-                            transform: translateX(4px);
                         }
                     }
                     .events-row {
@@ -498,5 +536,9 @@
                 color: var(--el-text-color-secondary);
             }
         }
+    }
+
+    .rotate {
+        transform: rotate(90deg);
     }
 </style>

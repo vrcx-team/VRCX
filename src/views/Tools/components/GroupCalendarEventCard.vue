@@ -65,6 +65,7 @@
         mode: {
             type: String,
             required: true,
+            // @ts-ignore
             validator: (value) => ['timeline', 'grid'].includes(value)
         },
         isFollowing: {

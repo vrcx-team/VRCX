@@ -3,6 +3,8 @@ import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
 
+import 'remixicon/fonts/remixicon.css';
+
 import Vue from 'vue';
 import { PiniaVuePlugin } from 'pinia';
 import { DataTables } from 'vue-data-tables';
