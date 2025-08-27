@@ -49,7 +49,7 @@
                                         :class="{
                                             'has-events': filteredCalendar[formatDateKey(date)]?.length
                                         }">
-                                        {{ dayjs(date).local().format('D') }}
+                                        {{ dayjs(date).utc().format('D') }}
                                         <div
                                             v-if="filteredCalendar[formatDateKey(date)]?.length"
                                             class="calendar-event-badge"
