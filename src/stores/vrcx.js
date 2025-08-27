@@ -65,6 +65,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function init() {
         if (LINUX) {
+            window.electron.ipcRenderer.on('launch-command', (command) => {
+                if (command) {
+                    eventLaunchCommand(command);
+                }
+            });
+
             window.electron.onWindowPositionChanged((event, position) => {
                 state.locationX = position.x;
                 state.locationY = position.y;
@@ -516,6 +522,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             case 'MsgPing':
                 state.externalNotifierVersion = data.version;
                 break;
+            case 'LaunchCommand':
+                eventLaunchCommand(data.command);
+                break;
+            case 'VRCXLaunch':
+                console.log('VRCXLaunch:', data);
+                break;
             default:
                 console.log('IPC:', data);
         }
@@ -532,17 +544,22 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     watch(
         () => watchState.isLoggedIn,
-        (_isLoggedIn) => {
+        (isLoggedIn) => {
             state.isRegistryBackupDialogVisible = false;
+            if (isLoggedIn) {
+                startupLaunchCommand();
+            }
         },
         { flush: 'sync' }
     );
 
-    window.electron.ipcRenderer.on('launch-command', (command) => {
+    async function startupLaunchCommand() {
+        const command = await AppApi.GetLaunchCommand();
         if (command) {
-            eventLaunchCommand(command)
+            eventLaunchCommand(command);
         }
-    })
+    }
+
     function eventLaunchCommand(input) {
         if (!watchState.isLoggedIn) {
             return;
