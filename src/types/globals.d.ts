@@ -62,6 +62,9 @@ declare global {
                 menuButton: bool,
                 overlayHand: int
             ) => Promise<void>;
+            ipcRenderer: {
+                on(channel: String, func: (...args: unknown[]) => void) 
+            };
         };
         __APP_GLOBALS__: AppGlobals;
     }
