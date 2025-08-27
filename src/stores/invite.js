@@ -5,9 +5,13 @@ import { $app } from '../app';
 import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
 import { useInstanceStore } from './instance';
+import { useGameStore } from './game';
+import { useLaunchStore } from './launch';
 
 export const useInviteStore = defineStore('Invite', () => {
     const instanceStore = useInstanceStore();
+    const gameStore = useGameStore();
+    const launchStore = useLaunchStore();
     const state = reactive({
         editInviteMessageDialog: {
             visible: false,
@@ -158,6 +162,12 @@ export const useInviteStore = defineStore('Invite', () => {
             // self invite
             const L = parseLocation(location);
             if (!L.isRealInstance) {
+                return;
+            }
+            if (gameStore.isGameRunning && !LINUX) {
+                const secureOrShortName =
+                    args.json.shortName || args.json.secureName;
+                launchStore.tryOpenInstanceInVrc(location, secureOrShortName);
                 return;
             }
             instanceRequest
