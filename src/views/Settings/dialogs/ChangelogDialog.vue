@@ -4,7 +4,6 @@
         :visible="changeLogDialog.visible"
         :title="t('dialog.change_log.header')"
         width="800px"
-        top="5vh"
         append-to-body
         @close="closeDialog">
         <div v-loading="!changeLogDialog.changeLog" class="changelog-dialog">

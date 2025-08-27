@@ -36,6 +36,9 @@
     const elDialogRef = ref(null);
     const wrapperElement = ref(null);
     const mouseDownOnWrapper = ref(false);
+    const styleObserver = ref(null);
+    const resizeObserver = ref(null);
+    let handleResize = null;
 
     const handleOpen = () => {
         emit('open');
@@ -43,6 +46,7 @@
         nextTick(() => {
             addWrapperListeners();
             removeTitleAttribute();
+            centerDialog();
         });
     };
 
@@ -56,6 +60,22 @@
     const handleClose = () => {
         emit('close');
         removeWrapperListeners();
+
+        if (styleObserver.value) {
+            styleObserver.value.disconnect();
+            styleObserver.value = null;
+        }
+
+        if (resizeObserver.value) {
+            resizeObserver.value.disconnect();
+            resizeObserver.value = null;
+        }
+
+        if (handleResize) {
+            window.removeEventListener('resize', handleResize);
+            handleResize = null;
+        }
+
         emit('update:visible', false);
     };
 
@@ -98,7 +118,68 @@
         mouseDownOnWrapper.value = false;
     };
 
+    const centerDialog = () => {
+        const wrapper = elDialogRef.value?.$el;
+        if (!wrapper) return;
+
+        const dialog = wrapper.querySelector('.el-dialog');
+        if (!dialog) return;
+
+        const applyCenterStyle = () => {
+            const dialogHeight = dialog.offsetHeight;
+            const viewportHeight = window.innerHeight;
+
+            let marginTop;
+            if (dialogHeight >= viewportHeight) {
+                marginTop = '25px';
+            } else {
+                const topOffset = Math.max(0, (viewportHeight - dialogHeight) / 2);
+                marginTop = `${topOffset}px`;
+            }
+
+            dialog.style.setProperty('margin-top', marginTop, 'important');
+        };
+
+        applyCenterStyle();
+
+        styleObserver.value = new MutationObserver(() => {
+            applyCenterStyle();
+        });
+
+        styleObserver.value.observe(dialog, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        handleResize = () => {
+            applyCenterStyle();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        resizeObserver.value = new ResizeObserver(() => {
+            applyCenterStyle();
+        });
+
+        resizeObserver.value.observe(dialog);
+    };
+
     onBeforeUnmount(() => {
         removeWrapperListeners();
+
+        if (styleObserver.value) {
+            styleObserver.value.disconnect();
+            styleObserver.value = null;
+        }
+
+        if (resizeObserver.value) {
+            resizeObserver.value.disconnect();
+            resizeObserver.value = null;
+        }
+
+        if (handleResize) {
+            window.removeEventListener('resize', handleResize);
+            handleResize = null;
+        }
     });
 </script>

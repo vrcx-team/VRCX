@@ -3,7 +3,6 @@
         :visible="!!feedFiltersDialogMode"
         :title="dialogTitle"
         width="550px"
-        top="5vh"
         destroy-on-close
         @close="handleDialogClose">
         <div class="toggle-list" style="height: 75vh; overflow-y: auto">

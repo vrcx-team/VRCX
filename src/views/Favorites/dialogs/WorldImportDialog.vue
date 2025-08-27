@@ -4,7 +4,6 @@
         :visible.sync="isVisible"
         :title="t('dialog.world_import.header')"
         width="650px"
-        top="10vh"
         class="x-dialog">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ t('dialog.world_import.description') }}</div>

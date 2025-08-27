@@ -4,8 +4,7 @@
         class="x-dialog x-user-dialog"
         :visible.sync="userDialog.visible"
         :show-close="false"
-        width="770px"
-        top="10vh">
+        width="770px">
         <div v-loading="userDialog.loading">
             <div style="display: flex">
                 <el-popover

@@ -4,7 +4,6 @@
         :visible="visible"
         :title="t('dialog.group_calendar.header')"
         :show-close="false"
-        top="10vh"
         width="90vw"
         height="80vh"
         @close="closeDialog">

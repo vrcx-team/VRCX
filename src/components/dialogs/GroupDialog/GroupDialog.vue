@@ -4,7 +4,6 @@
         :visible.sync="groupDialog.visible"
         :show-close="false"
         width="770px"
-        top="10vh"
         class="x-dialog x-group-dialog">
         <div class="group-banner-image">
             <el-popover placement="right" width="500px" trigger="click">

@@ -4,7 +4,6 @@
         :visible="isScreenshotMetadataDialogVisible"
         :title="t('dialog.screenshot_metadata.header')"
         width="1050px"
-        top="10vh"
         @close="closeDialog">
         <div
             v-loading="screenshotMetadataDialog.loading"

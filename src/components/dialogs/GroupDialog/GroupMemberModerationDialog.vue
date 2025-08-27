@@ -4,7 +4,6 @@
         :visible.sync="groupMemberModeration.visible"
         :title="t('dialog.group_member_moderation.header')"
         append-to-body
-        top="5vh"
         width="90vw">
         <div>
             <h3>{{ groupMemberModeration.groupRef.name }}</h3>

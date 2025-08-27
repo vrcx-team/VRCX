@@ -4,7 +4,6 @@
         :visible="isVRChatConfigDialogVisible"
         :title="t('dialog.config_json.header')"
         width="420px"
-        top="10vh"
         @close="closeDialog">
         <div v-loading="loading">
             <div style="font-size: 12px; word-break: keep-all">
