@@ -697,7 +697,13 @@
                             <span v-text="scope.row.photonId"></span>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('table.playerList.icon')" prop="isMaster" width="70" align="center">
+                    <el-table-column
+                        :label="t('table.playerList.icon')"
+                        prop="isMaster"
+                        width="80"
+                        align="center"
+                        sortable
+                        :sort-method="sortInstanceIcon">
                         <template #default="scope">
                             <el-tooltip v-if="scope.row.isMaster" placement="left" content="Instance Master">
                                 <span>👑</span>
@@ -928,5 +934,20 @@
         chatboxUserBlacklist.value.set(user.id, user.displayName);
         await saveChatboxUserBlacklist();
         getCurrentInstanceUserList();
+    }
+
+    function sortInstanceIcon(a, b) {
+        const getValue = (item) => {
+            let value = 0;
+            if (item.isMaster) value += 1000;
+            if (item.isModerator) value += 500;
+            if (item.isFriend) value += 200;
+            if (item.isBlocked) value -= 100;
+            if (item.isMuted) value -= 50;
+            if (item.isAvatarInteractionDisabled) value -= 20;
+            if (item.isChatBoxMuted) value -= 10;
+            return value;
+        };
+        return getValue(b) - getValue(a);
     }
 </script>
