@@ -10,9 +10,9 @@
         <template #title>
             <div class="dialog-title-container">
                 <span>{{ t('dialog.group_calendar.header') }}</span>
-                <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">
+                <!-- <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">
                     {{ viewMode === 'timeline' ? 'List View' : 'Calendar View' }}
-                </el-button>
+                </el-button> -->
             </div>
         </template>
         <div class="top-content">
@@ -133,7 +133,7 @@
     const followingCalendar = ref([]);
     const selectedDay = ref(new Date());
     const isLoading = ref(false);
-    const viewMode = ref('timeline');
+    const viewMode = ref('grid');
     const searchQuery = ref('');
     const groupCollapsed = ref({});
 
