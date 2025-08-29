@@ -14,7 +14,10 @@
                 <span class="name">{{ t('view.favorite.edit_mode') }}</span>
                 <el-switch v-model="editFavoritesMode" style="margin-left: 5px"></el-switch>
             </div>
-            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_tooltip')" :disabled="hideTooltips">
+            <el-tooltip
+                placement="bottom"
+                :content="t('view.favorite.refresh_favorites_tooltip')"
+                :disabled="hideTooltips">
                 <el-button
                     type="default"
                     :loading="isFavoriteLoading"

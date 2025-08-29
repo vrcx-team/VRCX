@@ -130,7 +130,7 @@
             "copy": "Copy",
             "clear": "Clear",
             "bulk_unfavorite": "Bulk Unfavorite",
-            "refresh_tooltip": "Refresh all favorites",
+            "refresh_favorites_tooltip": "Refresh VRChat favorites",
             "export": "Export",
             "import": "Import",
             "move_tooltip": "Move",

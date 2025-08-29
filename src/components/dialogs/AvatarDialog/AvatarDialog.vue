@@ -373,8 +373,8 @@
                     </div>
                 </div>
             </div>
-            <el-tabs>
-                <el-tab-pane :label="t('dialog.avatar.info.header')">
+            <el-tabs ref="avatarDialogTabsRef" @tab-click="avatarDialogTabClick">
+                <el-tab-pane name="Info" :label="t('dialog.avatar.info.header')">
                     <div class="x-friend-list" style="max-height: unset">
                         <div
                             v-if="avatarDialog.galleryImages.length || avatarDialog.ref.authorId === currentUser.id"
@@ -556,7 +556,7 @@
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.avatar.json.header')">
+                <el-tab-pane name="JSON" :label="t('dialog.avatar.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
                         size="mini"
@@ -658,6 +658,8 @@
     defineEmits(['openPreviousImagesDialog']);
 
     const avatarDialogRef = ref(null);
+    const avatarDialogTabsRef = ref(null);
+    const avatarDialogLastActiveTab = ref('Info');
     const changeAvatarImageDialogVisible = ref(false);
     const previousImagesFileId = ref('');
 
@@ -720,18 +722,43 @@
 
     watch(
         () => avatarDialog.value.loading,
-        (newVal) => {
-            if (newVal) {
+        () => {
+            if (avatarDialog.value.visible) {
                 nextTick(() => {
-                    const D = avatarDialog.value;
-                    if (D.visible) {
+                    if (avatarDialogRef.value?.$el) {
                         adjustDialogZ(avatarDialogRef.value.$el);
                     }
                 });
                 handleDialogOpen();
+                !avatarDialog.value.loading && toggleLastActiveTab();
             }
         }
     );
+
+    function handleAvatarDialogTab(name) {
+        if (name === 'JSON') {
+            refreshAvatarDialogTreeData();
+        }
+    }
+
+    function toggleLastActiveTab() {
+        let tabName = avatarDialogTabsRef.value.currentName;
+        console.log(tabName);
+        if (tabName === '0') {
+            tabName = avatarDialogLastActiveTab.value;
+            avatarDialogTabsRef.value.setCurrentName(tabName);
+        }
+        handleAvatarDialogTab(tabName);
+        avatarDialogLastActiveTab.value = tabName;
+    }
+
+    function avatarDialogTabClick(obj) {
+        if (avatarDialogLastActiveTab.value === obj.name) {
+            return;
+        }
+        handleAvatarDialogTab(obj.name);
+        avatarDialogLastActiveTab.value = obj.name;
+    }
 
     function getImageUrlFromImageId(imageId) {
         return `https://api.vrchat.cloud/api/1/file/${imageId}/1/`;

@@ -553,7 +553,7 @@
             </div>
 
             <el-tabs ref="userDialogTabsRef" @tab-click="userDialogTabClick">
-                <el-tab-pane :label="t('dialog.user.info.header')">
+                <el-tab-pane name="Info" :label="t('dialog.user.info.header')">
                     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                         <div
                             v-if="userDialog.ref.location"
@@ -1085,7 +1085,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.groups.header')" lazy>
+                <el-tab-pane name="Groups" :label="t('dialog.user.groups.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <el-button
@@ -1488,7 +1488,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.worlds.header')" lazy>
+                <el-tab-pane name="Worlds" :label="t('dialog.user.worlds.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <el-button
@@ -1570,7 +1570,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.favorite_worlds.header')" lazy>
+                <el-tab-pane name="Favorite Worlds" :label="t('dialog.user.favorite_worlds.header')" lazy>
                     <el-button
                         v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0"
                         type="default"
@@ -1628,7 +1628,7 @@
                     </el-tabs>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.avatars.header')" lazy>
+                <el-tab-pane name="Avatars" :label="t('dialog.user.avatars.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <el-button
@@ -1736,7 +1736,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.json.header')" lazy style="height: 50vh">
+                <el-tab-pane name="JSON" :label="t('dialog.user.json.header')" lazy style="height: 50vh">
                     <el-button
                         type="default"
                         size="mini"
@@ -1900,7 +1900,11 @@
         () => userDialog.value.loading,
         () => {
             if (userDialog.value.visible) {
-                nextTick(() => adjustDialogZ(userDialogRef.value.$el));
+                nextTick(() => {
+                    if (userDialogTabsRef.value?.$el) {
+                        adjustDialogZ(userDialogTabsRef.value.$el);
+                    }
+                });
                 !userDialog.value.loading && toggleLastActiveTab(userDialog.value.id);
             }
         }
@@ -1914,7 +1918,7 @@
     const userDialogGroupAllSelected = ref(false);
     const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
 
-    const userDialogLastActiveTab = ref('');
+    const userDialogLastActiveTab = ref('Info');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
     const userDialogLastWorld = ref('');
@@ -1996,40 +2000,55 @@
         userDialog.value.note = note.replace(/[\r\n]/g, '');
     }
 
-    function toggleLastActiveTab(userId) {
-        if (userDialogTabsRef.value.currentName === '0') {
-            userDialogLastActiveTab.value = t('dialog.user.info.header');
-        } else if (userDialogTabsRef.value.currentName === '1') {
-            userDialogLastActiveTab.value = t('dialog.user.groups.header');
+    function handleUserDialogTab(name, userId) {
+        if (name === 'Groups') {
             if (userDialogLastGroup.value !== userId) {
                 userDialogLastGroup.value = userId;
                 getUserGroups(userId);
             }
-        } else if (userDialogTabsRef.value.currentName === '2') {
-            userDialogLastActiveTab.value = t('dialog.user.worlds.header');
+        } else if (name === 'Avatars') {
+            setUserDialogAvatars(userId);
+            if (userDialogLastAvatar.value !== userId) {
+                userDialogLastAvatar.value = userId;
+                if (userId === currentUser.value.id) {
+                    refreshUserDialogAvatars();
+                } else {
+                    setUserDialogAvatarsRemote(userId);
+                }
+            }
+        } else if (name === 'Worlds') {
             setUserDialogWorlds(userId);
             if (userDialogLastWorld.value !== userId) {
                 userDialogLastWorld.value = userId;
                 refreshUserDialogWorlds();
             }
-        } else if (userDialogTabsRef.value.currentName === '3') {
-            userDialogLastActiveTab.value = t('dialog.user.favorite_worlds.header');
+        } else if (name === 'Favorite Worlds') {
             if (userDialogLastFavoriteWorld.value !== userId) {
                 userDialogLastFavoriteWorld.value = userId;
                 getUserFavoriteWorlds(userId);
             }
-        } else if (userDialogTabsRef.value.currentName === '4') {
-            userDialogLastActiveTab.value = t('dialog.user.avatars.header');
-            setUserDialogAvatars(userId);
-            userDialogLastAvatar.value = userId;
-            if (userId === currentUser.value.id) {
-                refreshUserDialogAvatars();
-            }
-            setUserDialogAvatarsRemote(userId);
-        } else if (userDialogTabsRef.value.currentName === '5') {
-            userDialogLastActiveTab.value = t('dialog.user.json.header');
+        } else if (name === 'JSON') {
             refreshUserDialogTreeData();
         }
+    }
+
+    function toggleLastActiveTab(userId) {
+        let tabName = userDialogTabsRef.value.currentName;
+        if (tabName === '0') {
+            tabName = userDialogLastActiveTab.value;
+            userDialogTabsRef.value.setCurrentName(tabName);
+        }
+        handleUserDialogTab(tabName, userId);
+        userDialogLastActiveTab.value = tabName;
+    }
+
+    function userDialogTabClick(obj) {
+        const userId = userDialog.value.id;
+        if (userDialogLastActiveTab.value === obj.name) {
+            return;
+        }
+        handleUserDialogTab(obj.name, userId);
+        userDialogLastActiveTab.value = obj.label;
     }
 
     function showPronounsDialog() {
@@ -2741,43 +2760,6 @@
         }
         userFavoriteWorlds.value = worldLists;
         userDialog.value.isFavoriteWorldsLoading = false;
-    }
-
-    function userDialogTabClick(obj) {
-        const userId = userDialog.value.id;
-        if (userDialogLastActiveTab.value === obj.label) {
-            return;
-        }
-        if (obj.label === t('dialog.user.groups.header')) {
-            if (userDialogLastGroup.value !== userId) {
-                userDialogLastGroup.value = userId;
-                getUserGroups(userId);
-            }
-        } else if (obj.label === t('dialog.user.avatars.header')) {
-            setUserDialogAvatars(userId);
-            if (userDialogLastAvatar.value !== userId) {
-                userDialogLastAvatar.value = userId;
-                if (userId === currentUser.value.id) {
-                    refreshUserDialogAvatars();
-                } else {
-                    setUserDialogAvatarsRemote(userId);
-                }
-            }
-        } else if (obj.label === t('dialog.user.worlds.header')) {
-            setUserDialogWorlds(userId);
-            if (userDialogLastWorld.value !== userId) {
-                userDialogLastWorld.value = userId;
-                refreshUserDialogWorlds();
-            }
-        } else if (obj.label === t('dialog.user.favorite_worlds.header')) {
-            if (userDialogLastFavoriteWorld.value !== userId) {
-                userDialogLastFavoriteWorld.value = userId;
-                getUserFavoriteWorlds(userId);
-            }
-        } else if (obj.label === t('dialog.user.json.header')) {
-            refreshUserDialogTreeData();
-        }
-        userDialogLastActiveTab.value = obj.label;
     }
 
     function checkNote(ref, note) {

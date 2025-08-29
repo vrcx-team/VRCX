@@ -325,7 +325,7 @@
                 </div>
             </div>
             <el-tabs ref="worldDialogTabsRef" @tab-click="worldDialogTabClick">
-                <el-tab-pane :label="t('dialog.world.instances.header')">
+                <el-tab-pane name="Instances" :label="t('dialog.world.instances.header')">
                     <div class="">
                         <i class="el-icon-user" />
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
@@ -436,7 +436,7 @@
                         </template>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.world.info.header')" lazy>
+                <el-tab-pane name="Info" :label="t('dialog.world.info.header')" lazy>
                     <div class="x-friend-list" style="max-height: none">
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
@@ -719,13 +719,13 @@
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
+                <el-tab-pane name="JSON" :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
                         size="mini"
                         icon="el-icon-refresh"
                         circle
-                        @click="refreshWorldDialogTreeData()"></el-button>
+                        @click="refreshWorldDialogTreeData"></el-button>
                     <el-button
                         type="default"
                         size="mini"
@@ -928,7 +928,7 @@
 
     const worldDialogRef = ref(null);
     const worldDialogTabsRef = ref(null);
-    const worldDialogLastActiveTab = ref('');
+    const worldDialogLastActiveTab = ref('Instances');
 
     watch(
         () => worldDialog.value.loading,
@@ -944,25 +944,28 @@
         }
     );
 
-    function toggleLastActiveTab() {
-        if (worldDialogTabsRef.value.currentName === '0') {
-            worldDialogLastActiveTab.value = t('dialog.world.instances.header');
-        } else if (worldDialogTabsRef.value.currentName === '1') {
-            worldDialogLastActiveTab.value = t('dialog.world.info.header');
-        } else if (worldDialogTabsRef.value.currentName === '2') {
-            worldDialogLastActiveTab.value = t('dialog.world.json.header');
+    function handleWorldDialogTab(tabName) {
+        if (tabName === 'JSON') {
             refreshWorldDialogTreeData();
         }
     }
 
+    function toggleLastActiveTab() {
+        let tabName = worldDialogTabsRef.value.currentName;
+        if (tabName === '0') {
+            tabName = worldDialogLastActiveTab.value;
+            worldDialogTabsRef.value.setCurrentName(tabName);
+        }
+        handleWorldDialogTab(tabName);
+        worldDialogLastActiveTab.value = tabName;
+    }
+
     function worldDialogTabClick(obj) {
-        if (worldDialogLastActiveTab.value === obj.label) {
+        if (worldDialogLastActiveTab.value === obj.name) {
             return;
         }
-        if (obj.label === t('dialog.world.json.header')) {
-            refreshWorldDialogTreeData();
-        }
-        worldDialogLastActiveTab.value = obj.label;
+        handleWorldDialogTab(obj.name);
+        worldDialogLastActiveTab.value = obj.name;
     }
 
     function displayPreviousImages(command) {
