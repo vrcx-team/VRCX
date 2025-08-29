@@ -846,7 +846,7 @@
     import * as workerTimers from 'worker-timers';
     import { groupRequest, userRequest } from '../../../api';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
-    import { hasGroupPermission, userImage, userImageFull, formatDateFilter } from '../../../shared/utils';
+    import { hasGroupPermission, userImage, userImageFull, formatDateFilter, debounce } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useGalleryStore, useGroupStore, useUserStore } from '../../../stores';
     import GroupMemberModerationExportDialog from './GroupMemberModerationExportDialog.vue';
 
@@ -864,7 +864,6 @@
     const selectedUsersArray = ref([]);
     const isGroupMembersLoading = ref(false);
     const isGroupMembersDone = ref(false);
-    const groupMembersSearch = ref('');
     const memberFilter = ref({
         id: null,
         name: 'dialog.group.members.filters.everyone'
@@ -1772,6 +1771,52 @@
             .replace('group.', '')
             .replace(/\./g, ' ')
             .replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+
+    function groupMembersSearch() {
+        if (memberSearch.value.length < 3) {
+            groupMemberModerationTable.data = [];
+            isGroupMembersLoading.value = false;
+            return;
+        }
+        isGroupMembersLoading.value = true;
+        debounce(groupMembersSearchDebounced, 200)();
+    }
+
+    function groupMembersSearchDebounced() {
+        const groupId = groupMemberModeration.value.id;
+        const search = memberSearch.value;
+        groupMemberModerationTable.data = [];
+        if (memberSearch.value.length < 3) {
+            return;
+        }
+        isGroupMembersLoading.value = true;
+        groupRequest
+            .getGroupMembersSearch({
+                groupId,
+                query: search,
+                n: 100,
+                offset: 0
+            })
+            .then((args) => {
+                for (const json of args.json.results) {
+                    handleGroupMember({
+                        json,
+                        params: {
+                            groupId: args.params.groupId
+                        }
+                    });
+                }
+                if (groupId === args.params.groupId) {
+                    groupMemberModerationTable.data = args.json.results.map((member) => ({
+                        ...member,
+                        $selected: Boolean(selectedUsers[member.userId])
+                    }));
+                }
+            })
+            .finally(() => {
+                isGroupMembersLoading.value = false;
+            });
     }
 
     async function getGroupMembers() {

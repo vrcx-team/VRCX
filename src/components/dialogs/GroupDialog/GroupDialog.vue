@@ -1212,7 +1212,8 @@
         userImage,
         userStatusClass,
         formatDateFilter,
-        textToHex
+        textToHex,
+        debounce
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -1253,8 +1254,6 @@
     const groupDialogRef = ref(null);
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
-    const groupMembersSearchTimer = ref(null);
-    const groupMembersSearchPending = ref(false);
     const groupDialogGalleryCurrentName = ref('0');
     const groupDialogTabCurrentName = ref('0');
     const isGroupGalleryLoading = ref(false);
@@ -1328,37 +1327,22 @@
     }
 
     function groupMembersSearch() {
-        if (groupMembersSearchTimer.value) {
-            groupMembersSearchPending.value = true;
-        } else {
-            groupMembersSearchExecute();
-            groupMembersSearchTimer.value = setTimeout(() => {
-                if (groupMembersSearchPending.value) {
-                    groupMembersSearchExecute();
-                }
-                groupMembersSearchTimer.value = null;
-            }, 500);
+        if (groupDialog.value.memberSearch.length < 3) {
+            groupDialog.value.memberSearchResults = [];
+            isGroupMembersLoading.value = false;
+            return;
         }
+        debounce(groupMembersSearchDebounced, 200)();
     }
 
-    function groupMembersSearchExecute() {
-        try {
-            groupMembersSearchDebounce();
-        } catch (err) {
-            console.error(err);
-        }
-        groupMembersSearchTimer.value = null;
-        groupMembersSearchPending.value = false;
-    }
-
-    function groupMembersSearchDebounce() {
+    function groupMembersSearchDebounced() {
         const D = groupDialog.value;
         const search = D.memberSearch;
         D.memberSearchResults = [];
         if (!search || search.length < 3) {
             return;
         }
-        isGroupMembersLoading.value = false;
+        isGroupMembersLoading.value = true;
         groupRequest
             .getGroupMembersSearch({
                 groupId: D.id,
