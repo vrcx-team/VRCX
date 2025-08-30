@@ -8,7 +8,6 @@ import 'remixicon/fonts/remixicon.css';
 // import Vue from 'vue';
 // import { PiniaVuePlugin } from 'pinia';
 // import { DataTables } from 'vue-data-tables';
-// import VueLazyload from 'vue-lazyload';
 import configRepository from './service/config';
 import vrcxJsonStorage from './service/jsonStorage';
 // import {
@@ -19,10 +18,10 @@ import vrcxJsonStorage from './service/jsonStorage';
 //     systemIsDarkMode
 // } from './shared/utils';
 // import { i18n } from './plugin';
-// import { initNoty } from './plugin/noty';
+import { initNoty } from './plugin/noty';
 import './plugin/ipc';
 
-// initNoty(false);
+initNoty(false);
 
 configRepository.init();
 
@@ -91,16 +90,6 @@ AppApi.SetUserAgent();
 
 // Vue.use(PiniaVuePlugin);
 // Vue.use(DataTables);
-
-// Vue.use(VueLazyload, {
-//     preLoad: 1,
-//     observer: true,
-//     observerOptions: {
-//         rootMargin: '0px',
-//         threshold: 0
-//     },
-//     attempt: 3
-// });
 
 new vrcxJsonStorage(VRCXStorage);
 
