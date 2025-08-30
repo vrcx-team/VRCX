@@ -34,7 +34,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { instanceRequest, inviteMessagesRequest, notificationRequest } from '../../../api';
     import { parseLocation } from '../../../shared/utils';
     import { useGalleryStore, useUserStore } from '../../../stores';

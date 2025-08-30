@@ -484,7 +484,7 @@
 
 <script setup>
     import { ref, watch, nextTick, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';

@@ -4,7 +4,7 @@
             <el-select
                 value=""
                 clearable
-                :placeholder="$t('side_panel.search_placeholder')"
+                :placeholder="t('side_panel.search_placeholder')"
                 filterable
                 remote
                 :remote-method="quickSearchRemoteMethod"
@@ -20,10 +20,10 @@
                                 }}</span>
                                 <span v-if="!item.ref.isFriend" class="extra"></span>
                                 <span v-else-if="item.ref.state === 'offline'" class="extra">{{
-                                    $t('side_panel.search_result_active')
+                                    t('side_panel.search_result_active')
                                 }}</span>
                                 <span v-else-if="item.ref.state === 'active'" class="extra">{{
-                                    $t('side_panel.search_result_offline')
+                                    t('side_panel.search_result_offline')
                                 }}</span>
                                 <Location
                                     v-else
@@ -35,13 +35,13 @@
                             <img v-lazy="userImage(item.ref)" class="avatar" />
                         </template>
                         <span v-else>
-                            {{ $t('side_panel.search_result_more') }}
+                            {{ t('side_panel.search_result_more') }}
                             <span style="font-weight: bold">{{ item.label }}</span>
                         </span>
                     </div>
                 </el-option>
             </el-select>
-            <el-tooltip placement="bottom" :content="$t('side_panel.direct_access_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('side_panel.direct_access_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
                     size="mini"
@@ -49,7 +49,7 @@
                     circle
                     @click="directAccessPaste"></el-button>
             </el-tooltip>
-            <el-tooltip placement="bottom" :content="$t('side_panel.refresh_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
                     :loading="isRefreshFriendsLoading"
@@ -63,7 +63,7 @@
         <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 60px); margin-top: 5px">
             <el-tab-pane>
                 <template slot="label">
-                    <span>{{ $t('side_panel.friends') }}</span>
+                    <span>{{ t('side_panel.friends') }}</span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         ({{ onlineFriendCount }}/{{ friends.size }})
                     </span>
@@ -73,7 +73,7 @@
             </el-tab-pane>
             <el-tab-pane lazy>
                 <template slot="label">
-                    <span>{{ $t('side_panel.groups') }}</span>
+                    <span>{{ t('side_panel.groups') }}</span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         ({{ groupInstances.length }})
                     </span>
@@ -88,6 +88,7 @@
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { userImage } from '../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -106,6 +107,7 @@
     const { quickSearchRemoteMethod, quickSearchChange, directAccessPaste } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
+    const { t } = useI18n();
 
     const isSideBarTabShow = computed(() => {
         return !(menuActiveIndex.value === 'friendList' || menuActiveIndex.value === 'charts');

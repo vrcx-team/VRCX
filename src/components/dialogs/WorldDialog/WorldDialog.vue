@@ -156,10 +156,9 @@
                             </el-tag>
                         </div>
                         <div>
-                            <template v-for="tag in worldDialog.ref.tags">
+                            <template v-for="tag in worldDialog.ref.tags" :key="tag">
                                 <el-tag
                                     v-if="tag.startsWith('content_')"
-                                    :key="tag"
                                     effect="plain"
                                     size="mini"
                                     style="margin-right: 5px; margin-top: 5px">
@@ -779,7 +778,7 @@
 <script setup>
     import { computed, ref, watch, nextTick, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { database } from '../../../service/database.js';
     import {

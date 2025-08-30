@@ -17,9 +17,9 @@
                         <el-dropdown-menu slot="dropdown">
                             <template
                                 v-for="groupAPI in favoriteAvatarGroups"
+                                :key="groupAPI.name"
                                 v-if="isLocalFavorite || groupAPI.name !== group.name">
                                 <el-dropdown-item
-                                    :key="groupAPI.name"
                                     style="display: block; margin: 10px 0"
                                     :disabled="groupAPI.count >= groupAPI.capacity"
                                     @click.native="handleDropdownItemClick(groupAPI)">
@@ -142,7 +142,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { $app } from '../../../app';
     import {

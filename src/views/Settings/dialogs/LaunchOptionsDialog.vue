@@ -58,7 +58,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { openExternalLink } from '../../../shared/utils';
     import { useLaunchStore } from '../../../stores';

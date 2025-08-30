@@ -65,7 +65,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { nextTick, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { branches } from '../../shared/constants';
     import { adjustDialogZ } from '../../shared/utils';
     import { useVRCXUpdaterStore } from '../../stores';

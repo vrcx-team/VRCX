@@ -311,7 +311,7 @@
 
 <script setup>
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useGalleryStore, useAppearanceSettingsStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
     import { timeToText, statusClass, formatDateFilter } from '../../shared/utils';
 

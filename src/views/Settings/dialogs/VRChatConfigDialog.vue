@@ -188,7 +188,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
     import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
     import { useAdvancedSettingsStore, useAppearanceSettingsStore, useGameStore } from '../../../stores';

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { instanceRequest, userRequest, worldRequest } from '../api';
 import { $app } from '../app';
 import configRepository from '../service/config';
@@ -29,7 +29,7 @@ import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();
@@ -659,7 +659,8 @@ export const useInstanceStore = defineStore('Instance', () => {
                             userId: L.userId
                         })
                         .then((args) => {
-                            Vue.set(L, 'user', args.ref);
+                            // TODO: upgrade, need test
+                            // Vue.set(L, 'user', args.ref);
                             return args;
                         })
                         .catch((error) => {

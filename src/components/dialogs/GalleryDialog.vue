@@ -503,7 +503,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
     import { AppGlobal } from '../../service/appConfig';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';

@@ -49,7 +49,7 @@
 
 <script setup>
     import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';
     import { getFaviconUrl } from '../../../shared/utils';
 

@@ -183,10 +183,9 @@
                                 >{{ t('dialog.avatar.tags.future_proofing') }}</el-tag
                             >
                             <div>
-                                <template v-for="tag in avatarDialog.ref.tags">
+                                <template v-for="tag in avatarDialog.ref.tags" :key="tag">
                                     <el-tag
                                         v-if="tag.startsWith('content_')"
-                                        :key="tag"
                                         effect="plain"
                                         size="mini"
                                         style="margin-right: 5px; margin-top: 5px">
@@ -209,7 +208,6 @@
                                     </el-tag>
                                     <el-tag
                                         v-if="tag.startsWith('author_tag_')"
-                                        :key="tag"
                                         effect="plain"
                                         size="mini"
                                         style="margin-right: 5px; margin-top: 5px">
@@ -605,7 +603,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, imageRequest, miscRequest } from '../../../api';
     import { database } from '../../../service/database';
     import {

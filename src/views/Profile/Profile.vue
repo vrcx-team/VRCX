@@ -492,7 +492,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { authRequest, miscRequest, userRequest } from '../../api';
     import {
         parseAvatarUrl,

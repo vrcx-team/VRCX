@@ -257,12 +257,11 @@
                         </template>
 
                         <template v-if="scope.row.responses">
-                            <template v-for="response in scope.row.responses">
+                            <template v-for="response in scope.row.responses" :key="response.text">
                                 <el-tooltip
                                     placement="top"
                                     :content="response.text"
-                                    :disabled="hideTooltips"
-                                    :key="response.text">
+                                    :disabled="hideTooltips">
                                     <el-button
                                         v-if="response.icon === 'check'"
                                         type="text"
@@ -415,7 +414,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
     import {
         checkCanInvite,

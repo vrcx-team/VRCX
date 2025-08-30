@@ -17,7 +17,7 @@
                 <span v-if="isFriendActiveOrOffline" class="extra">{{ friend.ref.statusDescription }}</span>
                 <template v-else>
                     <span v-if="friend.pendingOffline" class="extra">
-                        <i class="el-icon-warning-outline" /> {{ $t('side_panel.pending_offline') }}
+                        <i class="el-icon-warning-outline" /> {{ t('side_panel.pending_offline') }}
                     </span>
                     <template v-else-if="isGroupByInstance">
                         <i v-if="isFriendTraveling" class="el-icon el-icon-loading"></i>
@@ -63,6 +63,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { userImage, userStatusClass } from '../shared/utils';
     import { useAppearanceSettingsStore, useFriendStore } from '../stores';
 
@@ -73,6 +74,7 @@
 
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
     const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
+    const { t } = useI18n();
 
     const isFriendTraveling = computed(() => props.friend.ref?.location === 'traveling');
     const isFriendActiveOrOffline = computed(() => props.friend.state === 'active' || props.friend.state === 'offline');

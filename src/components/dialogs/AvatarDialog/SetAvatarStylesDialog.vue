@@ -39,7 +39,7 @@
                 </el-select>
             </div>
             <br />
-            <div style="font-size: 12px; margin-top: 10px">{{ $t('dialog.set_world_tags.author_tags') }}<br /></div>
+            <div style="font-size: 12px; margin-top: 10px">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
             <el-input
                 v-model="setAvatarStylesDialog.authorTags"
                 type="textarea"
@@ -63,7 +63,7 @@
 <script setup>
     import { watch, getCurrentInstance } from 'vue';
 
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { arraysMatch } from '../../../shared/utils';
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';

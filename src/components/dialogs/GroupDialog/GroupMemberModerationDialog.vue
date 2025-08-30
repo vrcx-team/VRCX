@@ -145,9 +145,9 @@
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
                                 <template #default="scope">
-                                    <template v-for="(roleId, index) in scope.row.roleIds">
-                                        <template v-for="(role, rIndex) in groupMemberModeration.groupRef.roles">
-                                            <span v-if="role?.id === roleId" :key="roleId + rIndex"
+                                    <template v-for="(roleId, index) in scope.row.roleIds" :key="roleId">
+                                        <template v-for="(role, rIndex) in groupMemberModeration.groupRef.roles" :key="roleId + rIndex">
+                                            <span v-if="role?.id === roleId"
                                                 >{{ role.name
                                                 }}<span v-if="index < scope.row.roleIds.length - 1">, </span></span
                                             ></template
@@ -257,14 +257,14 @@
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
                                 <template #default="scope">
-                                    <template v-for="(roleId, index) in scope.row.roleIds">
+                                    <template v-for="(roleId, index) in scope.row.roleIds" :key="roleId">
                                         <span
                                             v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
                                             v-if="role.id === roleId"
                                             :key="rIndex + roleId"
                                             >{{ role.name }}</span
                                         >
-                                        <span v-if="index < scope.row.roleIds.length - 1" :key="index + roleId"
+                                        <span v-if="index < scope.row.roleIds.length - 1"
                                             >,
                                         </span>
                                     </template>
@@ -842,7 +842,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { groupRequest, userRequest } from '../../../api';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';

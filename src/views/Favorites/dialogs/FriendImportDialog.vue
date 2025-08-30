@@ -43,9 +43,8 @@
                         ></span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteFriendGroups">
+                        <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
                             <el-dropdown-item
-                                :key="groupAPI.name"
                                 style="display: block; margin: 10px 0"
                                 :disabled="groupAPI.count >= groupAPI.capacity"
                                 @click.native="selectFriendImportGroup(groupAPI)">
@@ -125,7 +124,7 @@
 <script setup>
     import { ref, computed, watch, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest, userRequest } from '../../../api';
     import { adjustDialogZ, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';

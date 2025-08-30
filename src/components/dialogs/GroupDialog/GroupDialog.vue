@@ -502,15 +502,13 @@
                                         <template #content>
                                             <span>{{ t('dialog.group.posts.visibility') }}</span>
                                             <br />
-                                            <template v-for="roleId in groupDialog.announcement.roleIds">
-                                                <template v-for="role in groupDialog.ref.roles"
+                                            <template v-for="roleId in groupDialog.announcement.roleIds" :key="roleId">
+                                                <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"
                                                     ><span
                                                         v-if="role.id === roleId"
-                                                        :key="roleId + role.id"
                                                         v-text="role.name"
                                                 /></template>
                                                 <span
-                                                    :key="roleId"
                                                     v-if="
                                                         groupDialog.announcement.roleIds.indexOf(roleId) <
                                                         groupDialog.announcement.roleIds.length - 1
@@ -708,8 +706,8 @@
                                         <span class="name">{{ t('dialog.group.info.roles') }}</span>
                                         <span v-if="groupDialog.memberRoles.length === 0" class="extra"> - </span>
                                         <span v-else class="extra">
-                                            <template v-for="(role, rIndex) in groupDialog.memberRoles">
-                                                <el-tooltip :key="rIndex" placement="top">
+                                            <template v-for="(role, rIndex) in groupDialog.memberRoles" :key="rIndex">
+                                                <el-tooltip placement="top">
                                                     <template #content>
                                                         <span>{{ t('dialog.group.info.role') }} {{ role.name }}</span>
                                                         <br />
@@ -729,9 +727,9 @@
                                                         <br />
                                                         <span>{{ t('dialog.group.info.role_permissions') }}</span>
                                                         <br />
-                                                        <template v-for="(permission, pIndex) in role.permissions">
-                                                            <span :key="pIndex">{{ permission }}</span>
-                                                            <br :key="pIndex + permission" />
+                                                        <template v-for="(permission, pIndex) in role.permissions" :key="pIndex">
+                                                            <span>{{ permission }}</span>
+                                                            <br />
                                                         </template>
                                                     </template>
                                                     <span
@@ -807,16 +805,15 @@
                                             <template slot="content">
                                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
                                                 <br />
-                                                <template v-for="roleId in post.roleIds">
-                                                    <template v-for="role in groupDialog.ref.roles"
+                                                <template v-for="roleId in post.roleIds" :key="roleId">
+                                                    <template v-for="role in groupDialog.ref.roles" :key="role.id + roleId"
                                                         ><span
                                                             v-if="role.id === roleId"
-                                                            :key="role.id + roleId"
                                                             v-text="role.name" />
                                                     </template>
                                                     <template
                                                         v-if="post.roleIds.indexOf(roleId) < post.roleIds.length - 1"
-                                                        ><span :key="roleId">,&nbsp;</span></template
+                                                        ><span>,&nbsp;</span></template
                                                     >
                                                 </template>
                                             </template>
@@ -1017,14 +1014,13 @@
                                                 <i class="el-icon-edit-outline" style="margin-right: 5px" />
                                             </el-tooltip>
                                         </template>
-                                        <template v-for="roleId in user.roleIds">
-                                            <template v-for="role in groupDialog.ref.roles"
+                                        <template v-for="roleId in user.roleIds" :key="roleId">
+                                            <template v-for="role in groupDialog.ref.roles" :key="role.id + roleId"
                                                 ><span
                                                     v-if="role.id === roleId"
-                                                    :key="role.id + roleId"
                                                     v-text="role.name" /></template
                                             ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                ><span :key="roleId">,&nbsp;</span></template
+                                                ><span>,&nbsp;</span></template
                                             >
                                         </template>
                                     </span>
@@ -1081,14 +1077,13 @@
                                                 <i class="el-icon-edit-outline" style="margin-right: 5px" />
                                             </el-tooltip>
                                         </template>
-                                        <template v-for="roleId in user.roleIds">
-                                            <template v-for="role in groupDialog.ref.roles"
+                                        <template v-for="roleId in user.roleIds" :key="roleId">
+                                            <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"
                                                 ><span
                                                     v-if="role.id === roleId"
-                                                    :key="roleId + role"
                                                     v-text="role.name" /></template
                                             ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                ><span :key="roleId">&nbsp;</span></template
+                                                ><span>&nbsp;</span></template
                                             >
                                         </template>
                                     </span>
@@ -1120,8 +1115,8 @@
                         v-loading="isGroupGalleryLoading"
                         type="card"
                         style="margin-top: 10px">
-                        <template v-for="(gallery, index) in groupDialog.ref.galleries">
-                            <el-tab-pane :key="index">
+                        <template v-for="(gallery, index) in groupDialog.ref.galleries" :key="index">
+                            <el-tab-pane>
                                 <span slot="label">
                                     <span style="font-weight: bold; font-size: 16px" v-text="gallery.name" />
                                     <i
@@ -1192,7 +1187,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { groupRequest } from '../../../api';
     import { $app } from '../../../app';

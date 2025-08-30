@@ -72,7 +72,7 @@
         formatDateFilter
     } from '../../../shared/utils';
     import { database } from '../../../service/database';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useInstanceStore, useUiStore } from '../../../stores';
 
     const { proxy } = getCurrentInstance();

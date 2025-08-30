@@ -110,7 +110,7 @@
 
 <script setup>
     import { ref, computed, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
     import GallerySelectDialog from './GallerySelectDialog.vue';

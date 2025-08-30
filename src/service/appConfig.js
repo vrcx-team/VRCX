@@ -1,6 +1,6 @@
-import Vue from 'vue';
+import { reactive } from 'vue';
 
-const AppGlobal = Vue.observable({
+const AppGlobal = reactive({
     debug: false,
     debugWebSocket: false,
     debugUserDiff: false,

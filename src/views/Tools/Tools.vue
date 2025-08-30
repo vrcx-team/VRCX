@@ -89,7 +89,7 @@
 <script setup>
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useUiStore, useGalleryStore } from '../../stores';
     import GroupCalendarDialog from './dialogs/GroupCalendarDialog.vue';
     import ScreenshotMetadataDialog from './dialogs/ScreenshotMetadataDialog.vue';

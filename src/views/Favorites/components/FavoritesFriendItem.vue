@@ -22,15 +22,14 @@
                     <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
                         <el-tooltip
                             placement="left"
-                            :content="$t('view.favorite.move_tooltip')"
+                            :content="t('view.favorite.move_tooltip')"
                             :disabled="hideTooltips">
                             <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
-                            <template v-for="groupAPI in favoriteFriendGroups">
+                            <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
                                 <el-dropdown-item
                                     v-if="groupAPI.name !== group.name"
-                                    :key="groupAPI.name"
                                     style="display: block; margin: 10px 0"
                                     :disabled="groupAPI.count >= groupAPI.capacity"
                                     @click.native="moveFavorite(favorite.ref, groupAPI, 'friend')">
@@ -46,7 +45,7 @@
                 <template v-else>
                     <el-tooltip
                         placement="right"
-                        :content="$t('view.favorite.unfavorite_tooltip')"
+                        :content="t('view.favorite.unfavorite_tooltip')"
                         :disabled="hideTooltips">
                         <el-button
                             v-if="shiftHeld"
@@ -84,6 +83,7 @@
 
 <script setup>
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { userImage, userStatusClass } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useFavoriteStore, useUiStore } from '../../../stores';
@@ -100,6 +100,7 @@
     const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
+    const { t } = useI18n();
 
     function moveFavorite(ref, group, type) {
         favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {

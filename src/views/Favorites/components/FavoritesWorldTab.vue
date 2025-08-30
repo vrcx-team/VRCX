@@ -2,26 +2,26 @@
     <div>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div>
-                <el-button size="small" @click="showExportDialog">{{ $t('view.favorite.export') }}</el-button>
+                <el-button size="small" @click="showExportDialog">{{ t('view.favorite.export') }}</el-button>
                 <el-button size="small" style="margin-left: 5px" @click="showWorldImportDialog">{{
-                    $t('view.favorite.import')
+                    t('view.favorite.import')
                 }}</el-button>
             </div>
             <div style="display: flex; align-items: center; font-size: 13px; margin-right: 10px">
-                <span class="name" style="margin-right: 5px; line-height: 10px">{{ $t('view.favorite.sort_by') }}</span>
+                <span class="name" style="margin-right: 5px; line-height: 10px">{{ t('view.favorite.sort_by') }}</span>
                 <el-radio-group v-model="sortFav" style="margin-right: 12px" @change="saveSortFavoritesOption">
                     <el-radio :label="false">{{
-                        $t('view.settings.appearance.appearance.sort_favorite_by_name')
+                        t('view.settings.appearance.appearance.sort_favorite_by_name')
                     }}</el-radio>
                     <el-radio :label="true">{{
-                        $t('view.settings.appearance.appearance.sort_favorite_by_date')
+                        t('view.settings.appearance.appearance.sort_favorite_by_date')
                     }}</el-radio>
                 </el-radio-group>
                 <el-input
                     v-model="worldFavoriteSearch"
                     clearable
                     size="mini"
-                    :placeholder="$t('view.favorite.worlds.search')"
+                    :placeholder="t('view.favorite.worlds.search')"
                     style="width: 200px"
                     @input="searchWorldFavorites" />
             </div>
@@ -54,7 +54,7 @@
                 </div>
             </div>
         </div>
-        <span style="display: block; margin-top: 20px">{{ $t('view.favorite.worlds.vrchat_favorites') }}</span>
+        <span style="display: block; margin-top: 20px">{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in favoriteWorldGroups" :key="group.name">
                 <template slot="title">
@@ -75,7 +75,7 @@
                         <el-dropdown trigger="click" size="mini" style="margin-left: 10px" @click.native.stop>
                             <el-tooltip
                                 placement="top"
-                                :content="$t('view.favorite.visibility_tooltip')"
+                                :content="t('view.favorite.visibility_tooltip')"
                                 :disabled="hideTooltips">
                                 <el-button type="default" icon="el-icon-view" size="mini" circle />
                             </el-tooltip>
@@ -91,7 +91,7 @@
                             </el-dropdown-menu>
                             <el-tooltip
                                 placement="top"
-                                :content="$t('view.favorite.rename_tooltip')"
+                                :content="t('view.favorite.rename_tooltip')"
                                 :disabled="hideTooltips">
                                 <el-button
                                     size="mini"
@@ -102,7 +102,7 @@
                             </el-tooltip>
                             <el-tooltip
                                 placement="right"
-                                :content="$t('view.favorite.clear_tooltip')"
+                                :content="t('view.favorite.clear_tooltip')"
                                 :disabled="hideTooltips">
                                 <el-button
                                     size="mini"
@@ -139,21 +139,21 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <span style="display: block; margin-top: 20px">{{ $t('view.favorite.worlds.local_favorites') }}</span>
+        <span style="display: block; margin-top: 20px">{{ t('view.favorite.worlds.local_favorites') }}</span>
         <br />
         <el-button size="small" @click="promptNewLocalWorldFavoriteGroup">{{
-            $t('view.favorite.worlds.new_group')
+            t('view.favorite.worlds.new_group')
         }}</el-button>
         <el-button
             v-if="!refreshingLocalFavorites"
             size="small"
             style="margin-left: 5px"
             @click="refreshLocalWorldFavorite"
-            >{{ $t('view.favorite.worlds.refresh') }}</el-button
+            >{{ t('view.favorite.worlds.refresh') }}</el-button
         >
         <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
             <i class="el-icon-loading" style="margin-right: 5px" />
-            <span>{{ $t('view.favorite.worlds.cancel_refresh') }}</span>
+            <span>{{ t('view.favorite.worlds.cancel_refresh') }}</span>
         </el-button>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in localWorldFavoriteGroups" v-if="localWorldFavorites[group]" :key="group">
@@ -162,7 +162,7 @@
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
                         getLocalWorldFavoriteGroupLength(group)
                     }}</span>
-                    <el-tooltip placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
                             icon="el-icon-edit"
@@ -172,7 +172,7 @@
                     </el-tooltip>
                     <el-tooltip
                         placement="right"
-                        :content="$t('view.favorite.delete_tooltip')"
+                        :content="t('view.favorite.delete_tooltip')"
                         :disabled="hideTooltips">
                         <el-button
                             size="mini"
@@ -215,7 +215,7 @@
 <script setup>
     import { computed, ref, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../../stores';
     import WorldExportDialog from '../dialogs/WorldExportDialog.vue';

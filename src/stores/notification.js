@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { notificationRequest, userRequest, worldRequest } from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
@@ -135,7 +135,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         const { length } = array;
         for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
-                Vue.set(array, i, ref);
+                // TODO: upgrade, need test
+                // Vue.set(array, i, ref);
                 return;
             }
         }

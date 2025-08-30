@@ -10,7 +10,7 @@
 
 <script setup>
     import { computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { checkCanInviteSelf } from '../shared/utils';
     import { useLaunchStore } from '../stores';
 

@@ -10,8 +10,8 @@
             v-model="checkedGroupLogsExportLogsOptions"
             style="margin-bottom: 10px"
             @change="updateGroupLogsExportContent">
-            <template v-for="option in checkGroupsLogsExportLogsOptions">
-                <el-checkbox :key="option.label" :label="option.label">
+            <template v-for="option in checkGroupsLogsExportLogsOptions" :key="option.label">
+                <el-checkbox :label="option.label">
                     {{ t(option.text) }}
                 </el-checkbox>
             </template>
@@ -31,7 +31,7 @@
 
 <script setup>
     import { ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { copyToClipboard } from '../../../shared/utils';
 
     const { t } = useI18n();

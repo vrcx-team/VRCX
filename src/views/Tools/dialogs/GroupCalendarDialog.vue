@@ -108,7 +108,7 @@
 
 <script setup>
     import { ref, watch, computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import dayjs from 'dayjs';
     import { groupRequest } from '../../../api';

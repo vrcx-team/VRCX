@@ -43,9 +43,8 @@
                         </span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteAvatarGroups">
+                        <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
                             <el-dropdown-item
-                                :key="groupAPI.name"
                                 style="display: block; margin: 10px 0"
                                 :disabled="groupAPI.count >= groupAPI.capacity"
                                 @click.native="selectAvatarImportGroup(groupAPI)">
@@ -68,9 +67,8 @@
                         </span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="group in localAvatarFavoriteGroups">
+                        <template v-for="group in localAvatarFavoriteGroups" :key="group">
                             <el-dropdown-item
-                                :key="group"
                                 style="display: block; margin: 10px 0"
                                 @click.native="selectAvatarImportLocalGroup(group)">
                                 {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
@@ -173,7 +171,7 @@
 
 <script setup>
     import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { avatarRequest, favoriteRequest } from '../../../api';
     import { adjustDialogZ, removeFromArray } from '../../../shared/utils';

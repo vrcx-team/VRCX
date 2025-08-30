@@ -23,10 +23,9 @@
         </div>
         <div v-if="favoriteDialog.type === 'world'" style="margin-top: 20px">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.local_favorites') }}</span>
-            <template v-for="group in localWorldFavoriteGroups">
+            <template v-for="group in localWorldFavoriteGroups" :key="group">
                 <el-button
                     v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)"
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)">
                     <i class="el-icon-check"></i>
@@ -34,7 +33,6 @@
                 </el-button>
                 <el-button
                     v-else
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="addLocalWorldFavorite(favoriteDialog.objectId, group)">
                     {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
@@ -43,10 +41,9 @@
         </div>
         <div v-if="favoriteDialog.type === 'avatar'" style="margin-top: 20px">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.local_avatar_favorites') }}</span>
-            <template v-for="group in localAvatarFavoriteGroups">
+            <template v-for="group in localAvatarFavoriteGroups" :key="group">
                 <el-button
                     v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)"
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)">
                     <i class="el-icon-check"></i>
@@ -54,7 +51,6 @@
                 </el-button>
                 <el-button
                     v-else
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     :disabled="!isLocalUserVrcplusSupporter"
                     @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)">
@@ -69,7 +65,7 @@
     import Noty from 'noty';
     import { storeToRefs } from 'pinia';
     import { computed, nextTick, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../api';
     import { adjustDialogZ } from '../../shared/utils';
     import { useFavoriteStore, useUserStore } from '../../stores';

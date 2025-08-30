@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
 import { authRequest } from '../api';
 import { $app } from '../app';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';

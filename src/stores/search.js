@@ -13,7 +13,7 @@ import { useAppearanceSettingsStore } from './settings/appearance';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 export const useSearchStore = defineStore('Search', () => {
     const userStore = useUserStore();

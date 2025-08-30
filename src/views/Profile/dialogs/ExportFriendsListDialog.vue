@@ -29,7 +29,7 @@
 
 <script setup>
     import { ref, computed, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
 
     import { useUserStore } from '../../../stores';

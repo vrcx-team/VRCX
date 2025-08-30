@@ -6,7 +6,7 @@ import configRepository from '../service/config';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useUiStore } from './ui';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import { AppGlobal } from '../service/appConfig';
 
 export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {

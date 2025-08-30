@@ -24,11 +24,10 @@
                         >{{ t('dialog.user.info.instance_disabled_content') }} {{ state.disabledContentSettings }}<br
                     /></span>
                     <span v-if="state.userList.length">{{ t('dialog.user.info.instance_users') }}<br /></span>
-                    <template v-for="user in state.userList">
+                    <template v-for="user in state.userList" :key="user.id">
                         <span
                             style="cursor: pointer; margin-right: 5px"
                             @click="showUserDialog(user.id)"
-                            :key="user.id"
                             >{{ user.displayName }}</span
                         >
                     </template>
@@ -58,7 +57,7 @@
 
 <script setup>
     import { getCurrentInstance, reactive, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { miscRequest } from '../api';
     import { formatDateFilter, hasGroupPermission } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useLocationStore, useUserStore } from '../stores';

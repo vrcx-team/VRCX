@@ -2,7 +2,7 @@
     <span v-if="lastJoin">
         <el-tooltip placement="top" style="margin-left: 5px">
             <template #content>
-                <span>{{ $t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
+                <span>{{ t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
             </template>
             <i class="el-icon el-icon-location-outline" style="display: inline-block" />
         </el-tooltip>
@@ -12,9 +12,11 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { useInstanceStore } from '../stores';
 
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());
+    const { t } = useI18n();
 
     const props = defineProps({
         location: String,

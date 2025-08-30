@@ -16,15 +16,14 @@
                     <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
                         <el-tooltip
                             placement="left"
-                            :content="$t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
+                            :content="t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
                             :disabled="hideTooltips">
                             <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
-                            <template v-for="groupAPI in favoriteWorldGroups">
+                            <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
                                 <el-dropdown-item
                                     v-if="isLocalFavorite || groupAPI.name !== group.name"
-                                    :key="groupAPI.name"
                                     style="display: block; margin: 10px 0"
                                     :disabled="groupAPI.count >= groupAPI.capacity"
                                     @click.native="handleDropdownItemClick(groupAPI)">
@@ -42,13 +41,13 @@
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
-                        :content="$t('view.favorite.unavailable_tooltip')">
+                        :content="t('view.favorite.unavailable_tooltip')">
                         <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
                     </el-tooltip>
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.ref.releaseStatus === 'private'"
                         placement="left"
-                        :content="$t('view.favorite.private')">
+                        :content="t('view.favorite.private')">
                         <i class="el-icon-warning" style="color: #e6a23c; margin-left: 5px"></i>
                     </el-tooltip>
                     <el-tooltip placement="left" :disabled="hideTooltips">
@@ -69,7 +68,7 @@
                     <el-tooltip
                         v-if="!isLocalFavorite"
                         placement="right"
-                        :content="$t('view.favorite.unfavorite_tooltip')"
+                        :content="t('view.favorite.unfavorite_tooltip')"
                         :disabled="hideTooltips">
                         <el-button
                             v-if="shiftHeld"
@@ -91,7 +90,7 @@
                 <el-tooltip
                     v-if="isLocalFavorite"
                     placement="right"
-                    :content="$t('view.favorite.unfavorite_tooltip')"
+                    :content="t('view.favorite.unfavorite_tooltip')"
                     :disabled="hideTooltips">
                     <el-button
                         v-if="shiftHeld"
@@ -117,7 +116,7 @@
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
-                        :content="$t('view.favorite.unavailable_tooltip')">
+                        :content="t('view.favorite.unavailable_tooltip')">
                         <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
                     </el-tooltip>
                     <el-button
@@ -135,6 +134,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import {
         useAppearanceSettingsStore,
@@ -161,6 +161,8 @@
     const { shiftHeld } = storeToRefs(useUiStore());
     const { isGameRunning } = storeToRefs(useGameStore());
     const { canOpenInstanceInGame } = useInviteStore();
+
+    const { t } = useI18n();
 
     const isSelected = computed({
         get: () => props.favorite.$selected,

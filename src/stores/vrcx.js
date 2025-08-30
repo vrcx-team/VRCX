@@ -24,7 +24,7 @@ import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import Noty from 'noty';
 
 export const useVrcxStore = defineStore('Vrcx', () => {

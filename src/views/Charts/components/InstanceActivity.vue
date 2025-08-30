@@ -115,7 +115,7 @@
     import { ref, onActivated, onDeactivated, watch, computed, onMounted, nextTick, onBeforeMount } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { database } from '../../../service/database';
     import { getWorldName, loadEcharts, parseLocation, timeToText } from '../../../shared/utils';

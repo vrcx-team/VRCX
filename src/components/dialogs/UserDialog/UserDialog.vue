@@ -962,10 +962,10 @@
                         <div v-if="currentUser.id !== userDialog.id" class="x-friend-item" style="cursor: default">
                             <el-tooltip placement="top" :disabled="!userDialog.dateFriendedInfo.length">
                                 <template v-if="userDialog.dateFriendedInfo.length" #content>
-                                    <template v-for="ref in userDialog.dateFriendedInfo">
-                                        <span :key="ref.userId"
+                                    <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.userId">
+                                        <span
                                             >{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
-                                        ><br :key="ref.userId + 'br'" />
+                                        ><br />
                                     </template>
                                 </template>
                                 <div class="detail">
@@ -1787,7 +1787,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import {
         favoriteRequest,
         friendRequest,

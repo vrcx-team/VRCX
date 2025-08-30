@@ -106,7 +106,7 @@
 <script setup>
     import { ref, computed, nextTick, watch, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
     import { adjustDialogZ, checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';

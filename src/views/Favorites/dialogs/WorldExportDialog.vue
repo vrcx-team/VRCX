@@ -4,8 +4,8 @@
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
             @change="updateWorldExportDialog">
-            <template v-for="option in exportSelectOptions">
-                <el-checkbox :key="option.value" :label="option.label"></el-checkbox>
+            <template v-for="option in exportSelectOptions" :key="option.value">
+                <el-checkbox :label="option.label"></el-checkbox>
             </template>
         </el-checkbox-group>
 
@@ -26,9 +26,8 @@
                 <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectWorldExportGroup(null)">
                     None
                 </el-dropdown-item>
-                <template v-for="groupAPI in favoriteWorldGroups">
+                <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
                     <el-dropdown-item
-                        :key="groupAPI.name"
                         style="display: block; margin: 10px 0"
                         @click.native="selectWorldExportGroup(groupAPI)">
                         {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
@@ -56,9 +55,8 @@
                     @click.native="selectWorldExportLocalGroup(null)">
                     None
                 </el-dropdown-item>
-                <template v-for="group in localWorldFavoriteGroups">
+                <template v-for="group in localWorldFavoriteGroups" :key="group">
                     <el-dropdown-item
-                        :key="group"
                         style="display: block; margin: 10px 0"
                         @click.native="selectWorldExportLocalGroup(group)">
                         {{ group }} ({{ localWorldFavorites[group].length }})
@@ -83,7 +81,7 @@
 
 <script setup>
     import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { useFavoriteStore, useWorldStore } from '../../../stores';
 

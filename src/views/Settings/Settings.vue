@@ -1870,7 +1870,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref, getCurrentInstance, computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import {
         useFavoriteStore,
         useAppearanceSettingsStore,

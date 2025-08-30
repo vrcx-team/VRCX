@@ -1,5 +1,10 @@
 import './ipc';
-import './dayjs';
-import './components';
+// import './dayjs';
+// import './components';
 
-export { t, i18n } from './i18n';
+export { i18n } from './i18n';
+function t() {
+    return '';
+}
+
+export { t };

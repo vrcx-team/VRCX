@@ -47,7 +47,7 @@
 
 <script setup>
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useNotificationsSettingsStore } from '../../../stores';
 
     const { t } = useI18n();

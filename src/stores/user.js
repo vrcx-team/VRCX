@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import * as workerTimers from 'worker-timers';
 import {
     avatarRequest,
@@ -1022,7 +1022,8 @@ export const useUserStore = defineStore('User', () => {
                         userId: L.userId
                     })
                     .then((args) => {
-                        Vue.set(L, 'user', args.ref);
+                        // TODO: upgrade, need test
+                        // Vue.set(L, 'user', args.ref);
                     });
             } else {
                 L.user = ref;

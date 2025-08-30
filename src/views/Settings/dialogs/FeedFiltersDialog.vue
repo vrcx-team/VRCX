@@ -60,7 +60,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { feedFiltersOptions, sharedFeedFiltersDefaults } from '../../../shared/constants';
     import { useNotificationsSettingsStore, usePhotonStore, useSharedFeedStore } from '../../../stores';

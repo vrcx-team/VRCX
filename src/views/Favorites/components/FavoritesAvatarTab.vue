@@ -220,7 +220,7 @@
 <script setup>
     import { ref, computed, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
     import AvatarExportDialog from '../dialogs/AvatarExportDialog.vue';

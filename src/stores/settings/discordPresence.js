@@ -18,7 +18,7 @@ import {
     ActivityType,
     StatusDisplayType
 } from '../../shared/constants/discord';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 export const useDiscordPresenceSettingsStore = defineStore(
     'DiscordPresenceSettings',

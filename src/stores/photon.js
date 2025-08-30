@@ -27,7 +27,7 @@ import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 export const usePhotonStore = defineStore('Photon', () => {
     const vrStore = useVrStore();

@@ -32,7 +32,7 @@
 
 <script setup>
     import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { worldRequest } from '../../../api';
 
     const props = defineProps({

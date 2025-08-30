@@ -170,7 +170,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { vrcPlusImageRequest } from '../../../api';
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
     import { formatDateFilter } from '../../../shared/utils';

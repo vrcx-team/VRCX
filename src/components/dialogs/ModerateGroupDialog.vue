@@ -2,7 +2,7 @@
     <safe-dialog
         ref="moderateGroupDialogRef"
         :visible.sync="moderateGroupDialog.visible"
-        :title="$t('dialog.moderate_group.header')"
+        :title="t('dialog.moderate_group.header')"
         width="450px"
         append-to-body>
         <div v-if="moderateGroupDialog.visible">
@@ -22,12 +22,12 @@
             <el-select
                 v-model="moderateGroupDialog.groupId"
                 clearable
-                :placeholder="$t('dialog.moderate_group.choose_group_placeholder')"
+                :placeholder="t('dialog.moderate_group.choose_group_placeholder')"
                 filterable
                 style="margin-top: 15px; width: 100%">
                 <el-option-group
                     v-if="currentUserGroups.size"
-                    :label="$t('dialog.moderate_group.groups_with_moderation_permission')">
+                    :label="t('dialog.moderate_group.groups_with_moderation_permission')">
                     <el-option
                         v-for="group in groupsWithModerationPermission"
                         :key="group.id"
@@ -54,7 +54,7 @@
                     showGroupMemberModerationDialog(moderateGroupDialog.groupId, moderateGroupDialog.userId);
                     moderateGroupDialog.visible = false;
                 ">
-                {{ $t('dialog.moderate_group.moderation_tools') }}
+                {{ t('dialog.moderate_group.moderation_tools') }}
             </el-button>
         </template>
     </safe-dialog>
@@ -63,6 +63,7 @@
 <script setup>
     import { ref, watch, getCurrentInstance, nextTick, computed } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import { groupRequest, userRequest } from '../../api';
     import {
         adjustDialogZ,
@@ -75,6 +76,7 @@
 
     const { currentUserGroups, moderateGroupDialog } = storeToRefs(useGroupStore());
     const { applyGroup, showGroupMemberModerationDialog } = useGroupStore();
+    const { t } = useI18n();
 
     const { proxy } = getCurrentInstance();
 

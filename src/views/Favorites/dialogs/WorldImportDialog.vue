@@ -45,9 +45,8 @@
                         </span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteWorldGroups">
+                        <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
                             <el-dropdown-item
-                                :key="groupAPI.name"
                                 style="display: block; margin: 10px 0"
                                 :disabled="groupAPI.count >= groupAPI.capacity"
                                 @click.native="selectWorldImportGroup(groupAPI)">
@@ -69,9 +68,8 @@
                         </span>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <template v-for="group in localWorldFavoriteGroups">
+                        <template v-for="group in localWorldFavoriteGroups" :key="group">
                             <el-dropdown-item
-                                :key="group"
                                 style="display: block; margin: 10px 0"
                                 @click.native="selectWorldImportLocalGroup(group)">
                                 {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
@@ -177,7 +175,7 @@
 
 <script setup>
     import { ref, watch, computed, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { favoriteRequest, worldRequest } from '../../../api';
     import { adjustDialogZ, removeFromArray } from '../../../shared/utils';

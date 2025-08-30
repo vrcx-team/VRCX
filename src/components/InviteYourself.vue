@@ -14,7 +14,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { instanceRequest } from '../api';
     import { checkCanInviteSelf, parseLocation } from '../shared/utils';
     import { useAppearanceSettingsStore } from '../stores/settings/appearance';

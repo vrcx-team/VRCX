@@ -19,9 +19,8 @@
                 <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectFriendExportGroup(null)">
                     All Favorites
                 </el-dropdown-item>
-                <template v-for="groupAPI in favoriteFriendGroups">
+                <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
                     <el-dropdown-item
-                        :key="groupAPI.name"
                         style="display: block; margin: 10px 0"
                         @click.native="selectFriendExportGroup(groupAPI)">
                         {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
@@ -44,7 +43,7 @@
 
 <script setup>
     import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { useFavoriteStore } from '../../../stores';
 

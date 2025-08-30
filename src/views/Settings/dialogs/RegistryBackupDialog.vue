@@ -84,7 +84,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { downloadAndSaveJson, removeFromArray, formatDateFilter } from '../../../shared/utils';
 

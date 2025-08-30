@@ -30,7 +30,7 @@
                 :class="{ notify: notifiedMenus.includes(item.index) }">
                 <i :class="item.icon"></i>
                 <template #title>
-                    <span>{{ $t(item.tooltip) }}</span>
+                    <span>{{ t(item.tooltip) }}</span>
                 </template>
             </el-menu-item>
         </el-menu>
@@ -39,7 +39,10 @@
 
 <script setup>
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import { useUiStore, useVRCXUpdaterStore } from '../stores';
+
+    const { t } = useI18n();
 
     const navItems = [
         { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },

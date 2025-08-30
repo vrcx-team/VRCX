@@ -1,8 +1,7 @@
 <template>
     <div class="x-friend-list" style="padding: 10px 5px">
-        <template v-for="(group, index) in groupedGroupInstances">
+        <template v-for="(group, index) in groupedGroupInstances" :key="getGroupId(group)">
             <div
-                :key="getGroupId(group)"
                 class="x-friend-group x-link"
                 :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">

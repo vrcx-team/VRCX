@@ -2,23 +2,23 @@
     <safe-dialog
         ref="previousInstancesUserDialogRef"
         :visible.sync="isVisible"
-        :title="$t('dialog.previous_instances.header')"
+        :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
             <el-input
                 v-model="previousInstancesUserDialogTable.filters[0].value"
-                :placeholder="$t('dialog.previous_instances.search_placeholder')"
+                :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="display: block; width: 150px"></el-input>
         </div>
         <data-tables v-loading="loading" v-bind="previousInstancesUserDialogTable" style="margin-top: 10px">
-            <el-table-column :label="$t('table.previous_instances.date')" prop="created_at" sortable width="170">
+            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.world')" prop="name" sortable>
+            <el-table-column :label="t('table.previous_instances.world')" prop="name" sortable>
                 <template #default="scope">
                     <Location
                         :location="scope.row.location"
@@ -26,17 +26,17 @@
                         :grouphint="scope.row.groupName" />
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.instance_creator')" prop="location" width="170">
+            <el-table-column :label="t('table.previous_instances.instance_creator')" prop="location" width="170">
                 <template #default="scope">
                     <DisplayName :userid="scope.row.$location.userId" :location="scope.row.$location.tag" />
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.time')" prop="time" width="100" sortable>
+            <el-table-column :label="t('table.previous_instances.time')" prop="time" width="100" sortable>
                 <template #default="scope">
                     <span v-text="scope.row.timer"></span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.action')" width="90" align="right">
+            <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
                 <template #default="scope">
                     <el-button
                         type="text"
@@ -70,6 +70,7 @@
 <script setup>
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
         adjustDialogZ,
@@ -122,6 +123,7 @@
     const { showLaunchDialog } = useLaunchStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
+    const { t } = useI18n();
 
     const previousInstancesUserDialogRef = ref(null);
 

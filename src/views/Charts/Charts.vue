@@ -4,15 +4,17 @@
             <span class="header">{{ t('view.charts.header') }}</span>
         </div>
         <keep-alive>
-            <InstanceActivity v-if="menuActiveIndex === 'charts'" />
-            <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
+            <div>
+                <InstanceActivity v-if="menuActiveIndex === 'charts'" />
+                <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
+            </div>
         </keep-alive>
     </div>
 </template>
 
 <script setup>
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import InstanceActivity from './components/InstanceActivity.vue';
     import { useUiStore } from '../../stores';
 
