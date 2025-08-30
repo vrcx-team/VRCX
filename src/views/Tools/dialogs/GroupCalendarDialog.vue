@@ -357,7 +357,7 @@
 
 <style lang="scss" scoped>
     .x-dialog {
-        ::v-deep .el-dialog {
+        :deep(.el-dialog) {
             max-height: 750px;
             .el-dialog__body {
                 height: 680px;
@@ -369,7 +369,7 @@
             overflow: hidden;
             .timeline-view {
                 .timeline-container {
-                    ::v-deep .el-timeline {
+                    :deep(.el-timeline) {
                         width: 100%;
                         height: 100%;
                         min-width: 200px;

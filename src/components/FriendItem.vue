@@ -87,7 +87,7 @@
     .skeleton {
         height: 40px;
         width: 100%;
-        ::v-deep .el-skeleton {
+        :deep(.el-skeleton) {
             height: 100%;
             > div {
                 height: 100%;

@@ -131,7 +131,7 @@
             flex: 0 0 280px;
             max-width: 280px;
         }
-        ::v-deep .el-card__body {
+        :deep(.el-card__body) {
             overflow: visible;
         }
         .banner {
@@ -213,7 +213,7 @@
             }
         }
     }
-    ::v-deep .el-card {
+    :deep(.el-card) {
         border-radius: 8px;
         width: 100%;
         overflow: visible;

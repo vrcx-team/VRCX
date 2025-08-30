@@ -185,7 +185,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        ::v-deep .el-card__body {
+        :deep(.el-card__body) {
             overflow: visible;
         }
 
@@ -230,7 +230,7 @@
         }
     }
 
-    ::v-deep .el-card {
+    :deep(.el-card) {
         border-radius: 8px;
         width: 100%;
         overflow: visible;
