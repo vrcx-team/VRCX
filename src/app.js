@@ -13,6 +13,7 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 
 import './app.scss';
+import registerComponents from './plugin/components';
 
 console.log(`isLinux: ${LINUX}`);
 
@@ -23,6 +24,8 @@ const $app = createApp(App);
 $app.use(pinia);
 $app.use(i18n);
 $app.use(ElementPlus);
+
+registerComponents($app);
 
 $app.mount('#root');
 

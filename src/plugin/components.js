@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import AvatarInfo from '../components/AvatarInfo.vue';
 import CountdownTimer from '../components/CountdownTimer.vue';
 import SafeDialog from '../components/dialogs/SafeDialog.vue';
@@ -12,15 +11,17 @@ import LocationWorld from '../components/LocationWorld.vue';
 import SimpleSwitch from '../components/SimpleSwitch.vue';
 import Timer from '../components/Timer.vue';
 
-Vue.component('SafeDialog', SafeDialog);
-Vue.component('SimpleSwitch', SimpleSwitch);
-Vue.component('Location', Location);
-Vue.component('Timer', Timer);
-Vue.component('InstanceInfo', InstanceInfo);
-Vue.component('LastJoin', LastJoin);
-Vue.component('CountdownTimer', CountdownTimer);
-Vue.component('AvatarInfo', AvatarInfo);
-Vue.component('DisplayName', DisplayName);
-Vue.component('InviteYourself', InviteYourself);
-Vue.component('Launch', Launch);
-Vue.component('LocationWorld', LocationWorld);
+export default function registerComponents(app) {
+    app.component('SafeDialog', SafeDialog);
+    app.component('SimpleSwitch', SimpleSwitch);
+    app.component('Location', Location);
+    app.component('Timer', Timer);
+    app.component('InstanceInfo', InstanceInfo);
+    app.component('LastJoin', LastJoin);
+    app.component('CountdownTimer', CountdownTimer);
+    app.component('AvatarInfo', AvatarInfo);
+    app.component('DisplayName', DisplayName);
+    app.component('InviteYourself', InviteYourself);
+    app.component('Launch', Launch);
+    app.component('LocationWorld', LocationWorld);
+}
