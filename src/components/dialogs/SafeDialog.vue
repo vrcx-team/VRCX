@@ -4,10 +4,10 @@
         :model-value="props.visible"
         v-bind="attrs"
         :close-on-click-modal="false"
+        :top="marginTop"
         @update:modelValue="onUpdateModelValue"
         @open="handleOpen"
-        @close="handleClose"
-        :top="marginTop">
+        @close="handleClose">
         <slot></slot>
 
         <template v-if="slots.title" #header>

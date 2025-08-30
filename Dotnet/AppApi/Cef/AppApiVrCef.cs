@@ -21,7 +21,7 @@ namespace VRCX
         public override void VrInit()
         {
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.vr.vrInit", "");
+                MainForm.Instance.Browser.ExecuteScriptAsync("$pinia.vr.vrInit", "");
         }
 
         public override void ToggleSystemMonitor(bool enabled)

@@ -174,7 +174,10 @@
         },
         setup() {
             const store = createGlobalStores();
-            // window.$app.store = store;
+
+            if (typeof window !== 'undefined') {
+                window.$pinia = store;
+            }
             // Vue.prototype.utils = utils;
 
             const { locale } = useI18n();

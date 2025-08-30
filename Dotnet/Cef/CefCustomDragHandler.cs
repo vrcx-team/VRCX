@@ -26,7 +26,7 @@ namespace VRCX
                 }
                 
                 if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                    MainForm.Instance.Browser.ExecuteScriptAsync("$app.store.vrcx.dragEnterCef", file);
+                    MainForm.Instance.Browser.ExecuteScriptAsync("$pinia.vrcx.dragEnterCef", file);
 
                 dragData.Dispose();
                 return false;
