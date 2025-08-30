@@ -165,7 +165,8 @@
 </template>
 
 <script setup>
-    import { ref, watch, getCurrentInstance, nextTick, computed } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { ref, watch, nextTick, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { groupRequest, userRequest } from '../../api';
@@ -176,8 +177,6 @@
     const { currentUserGroups, inviteGroupDialog } = storeToRefs(useGroupStore());
     const { applyGroup } = useGroupStore();
     const { t } = useI18n();
-
-    const { proxy } = getCurrentInstance();
 
     watch(
         () => {
@@ -238,7 +237,7 @@
                 }
                 // not allowed to invite
                 inviteGroupDialog.value.groupId = '';
-                proxy.$message({
+                ElMessage({
                     type: 'error',
                     message: 'You are not allowed to invite to this group'
                 });
@@ -249,7 +248,7 @@
             });
     }
     function sendGroupInvite() {
-        proxy.$confirm('Continue? Invite User(s) To Group', 'Confirm', {
+        ElMessageBox.confirm('Continue? Invite User(s) To Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

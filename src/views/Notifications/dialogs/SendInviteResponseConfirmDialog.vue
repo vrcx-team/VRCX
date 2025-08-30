@@ -22,16 +22,14 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { notificationRequest } from '../../../api';
     import { useGalleryStore } from '../../../stores';
 
     const { t } = useI18n();
 
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
     const galleryStore = useGalleryStore();
     const { uploadImage } = storeToRefs(galleryStore);
 
@@ -69,7 +67,7 @@
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    $message({
+                    ElMessage({
                         message: 'Invite response photo message sent',
                         type: 'success'
                     });
@@ -88,7 +86,7 @@
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    $message({
+                    ElMessage({
                         message: 'Invite response message sent',
                         type: 'success'
                     });

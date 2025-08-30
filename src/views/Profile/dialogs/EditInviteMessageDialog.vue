@@ -27,16 +27,14 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { inviteMessagesRequest } from '../../../api';
     import { useInviteStore } from '../../../stores';
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const inviteStore = useInviteStore();
     const { editInviteMessageDialog } = storeToRefs(inviteStore);
 
@@ -68,7 +66,7 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === D.inviteMessage.message) {
-                        $message({
+                        ElMessage({
                             message: "VRChat API didn't update message, try again",
                             type: 'error'
                         });

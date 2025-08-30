@@ -58,8 +58,9 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { Refresh } from '@element-plus/icons-vue';
-    import { ref, getCurrentInstance } from 'vue';
+    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
@@ -70,7 +71,6 @@
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const {
         favoriteFriends,
@@ -121,7 +121,7 @@
         if (elementsTicked.length === 0) {
             return;
         }
-        proxy.$confirm(
+        ElMessageBox.confirm(
             `Are you sure you want to unfavorite ${elementsTicked.length} favorites?
             This action cannot be undone.`,
             `Delete ${elementsTicked.length} favorites?`,
@@ -147,7 +147,7 @@
         editFavoritesMode.value = false;
     }
     function changeFavoriteGroupName(ctx) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.change_favorite_group_name.description'),
             t('prompt.change_favorite_group_name.header'),
             {
@@ -173,7 +173,7 @@
                                         favoriteGroupId: args.json.id
                                     }
                                 });
-                                proxy.$message({
+                                ElMessage({
                                     message: t('prompt.change_favorite_group_name.message.success'),
                                     type: 'success'
                                 });

@@ -54,8 +54,9 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { CaretBottom } from '@element-plus/icons-vue';
-    import { getCurrentInstance, reactive, watch } from 'vue';
+    import { reactive, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { miscRequest } from '../api';
     import { formatDateFilter, hasGroupPermission } from '../shared/utils';
@@ -91,8 +92,6 @@
         isAgeGated: false,
         disabledContentSettings: ''
     });
-
-    const { proxy } = getCurrentInstance();
 
     function parse() {
         Object.assign(state, {
@@ -151,7 +150,7 @@
     }
 
     function closeInstance(location) {
-        proxy.$confirm('Continue? Close Instance, nobody will be able to join', 'Confirm', {
+        ElMessageBox.confirm('Continue? Close Instance, nobody will be able to join', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'warning',
@@ -159,7 +158,7 @@
                 if (action !== 'confirm') return;
                 const args = await miscRequest.closeInstance({ location, hardClose: false });
                 if (args.json) {
-                    proxy.$message({ message: t('message.instance.closed'), type: 'success' });
+                    ElMessage({ message: t('message.instance.closed'), type: 'success' });
                     instanceStore.applyInstance(args.json);
                 }
             }

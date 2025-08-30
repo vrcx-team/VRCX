@@ -48,16 +48,15 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+
     import { Delete } from '@element-plus/icons-vue';
 
-    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';
     import { getFaviconUrl } from '../../../shared/utils';
 
     const { t } = useI18n();
-    const { $message } = getCurrentInstance().proxy;
-
     const props = defineProps({
         bioDialog: {
             type: Object,
@@ -81,7 +80,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                $message({
+                ElMessage({
                     message: 'Bio updated',
                     type: 'success'
                 });

@@ -220,7 +220,8 @@
 <script setup>
     import { Loading, Edit, Delete } from '@element-plus/icons-vue';
 
-    import { ref, computed, getCurrentInstance } from 'vue';
+    import { ElMessageBox } from 'element-plus';
+    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
@@ -240,7 +241,6 @@
         }
     });
 
-    const { proxy } = getCurrentInstance();
     const emit = defineEmits(['change-favorite-group-name', 'refresh-local-avatar-favorites']);
 
     const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
@@ -342,7 +342,7 @@
     }
 
     function clearFavoriteGroup(ctx) {
-        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -366,18 +366,22 @@
     }
 
     function promptNewLocalAvatarFavoriteGroup() {
-        proxy.$prompt(t('prompt.new_local_favorite_group.description'), t('prompt.new_local_favorite_group.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.new_local_favorite_group.ok'),
-            cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    newLocalAvatarFavoriteGroup(instance.inputValue);
+        ElMessageBox.prompt(
+            t('prompt.new_local_favorite_group.description'),
+            t('prompt.new_local_favorite_group.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.new_local_favorite_group.ok'),
+                cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        newLocalAvatarFavoriteGroup(instance.inputValue);
+                    }
                 }
             }
-        });
+        );
     }
 
     function refreshLocalAvatarFavorites() {
@@ -385,7 +389,7 @@
     }
 
     function promptLocalAvatarFavoriteGroupRename(group) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.local_favorite_group_rename.description'),
             t('prompt.local_favorite_group_rename.header'),
             {
@@ -405,7 +409,7 @@
     }
 
     function promptLocalAvatarFavoriteGroupDelete(group) {
-        proxy.$confirm(`Delete Group? ${group}`, 'Confirm', {
+        ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

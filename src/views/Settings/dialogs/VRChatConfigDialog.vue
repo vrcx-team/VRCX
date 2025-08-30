@@ -186,9 +186,10 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { Refresh, Delete, FolderOpened } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
     import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
@@ -201,10 +202,6 @@
     const { isVRChatConfigDialogVisible } = storeToRefs(useAdvancedSettingsStore());
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $confirm = instance.proxy.$confirm;
-    const $message = instance.proxy.$message;
 
     const VRChatConfigFile = ref({});
     // it's a object
@@ -271,7 +268,7 @@
     });
 
     function showDeleteAllVRChatCacheConfirm() {
-        $confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -375,7 +372,7 @@
                 const parsedConfig = JSON.parse(config);
                 VRChatConfigFile.value = { ...VRChatConfigFile.value, ...parsedConfig };
             } catch {
-                $message({
+                ElMessage({
                     message: 'Invalid JSON in config.json',
                     type: 'error'
                 });

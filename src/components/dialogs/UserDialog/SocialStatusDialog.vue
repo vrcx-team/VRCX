@@ -57,15 +57,14 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';
     import { useUserStore } from '../../../stores';
 
     const { t } = useI18n();
-    const { $message } = getCurrentInstance().proxy;
-
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -103,7 +102,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                $message({
+                ElMessage({
                     message: 'Status updated',
                     type: 'success'
                 });

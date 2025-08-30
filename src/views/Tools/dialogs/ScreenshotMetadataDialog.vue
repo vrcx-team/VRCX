@@ -168,9 +168,10 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { FolderOpened, Picture, CopyDocument, Folder, Upload, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, reactive, ref, watch } from 'vue';
+    import { reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { vrcPlusImageRequest } from '../../../api';
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
@@ -181,9 +182,6 @@
     const { currentUser } = storeToRefs(useUserStore());
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const userStore = useUserStore();
     const { lookupUser } = userStore;
@@ -287,7 +285,7 @@
             return;
         }
         AppApi.CopyImageToClipboard(path).then(() => {
-            $message({
+            ElMessage({
                 message: 'Image copied to clipboard',
                 type: 'success'
             });
@@ -298,7 +296,7 @@
             return;
         }
         AppApi.OpenFolderAndSelectItem(path).then(() => {
-            $message({
+            ElMessage({
                 message: 'Opened image folder',
                 type: 'success'
             });
@@ -310,13 +308,13 @@
         }
         AppApi.DeleteScreenshotMetadata(path).then((result) => {
             if (!result) {
-                $message({
+                ElMessage({
                     message: t('message.screenshot_metadata.delete_failed'),
                     type: 'error'
                 });
                 return;
             }
-            $message({
+            ElMessage({
                 message: t('message.screenshot_metadata.deleted'),
                 type: 'success'
             });
@@ -327,7 +325,7 @@
     function uploadScreenshotToGallery() {
         const D = screenshotMetadataDialog;
         if (D.metadata.fileSizeBytes > 10000000) {
-            $message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -340,7 +338,7 @@
                     .uploadGalleryImage(base64Body)
                     .then((args) => {
                         handleGalleryImageAdd(args);
-                        $message({
+                        ElMessage({
                             message: t('message.gallery.uploaded'),
                             type: 'success'
                         });
@@ -351,7 +349,7 @@
                     });
             })
             .catch((err) => {
-                $message({
+                ElMessage({
                     message: t('message.gallery.failed'),
                     type: 'error'
                 });

@@ -32,8 +32,8 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { openExternalLink } from '../../../shared/utils';
     import { useAdvancedSettingsStore } from '../../../stores';
@@ -45,9 +45,6 @@
     const { lookupYouTubeVideo, setYouTubeApiKey } = advancedSettingsStore;
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const props = defineProps({
         isYouTubeApiDialogVisible: {
@@ -61,7 +58,7 @@
     async function testYouTubeApiKey() {
         const previousKey = youTubeApiKey.value;
         if (!youTubeApiKey.value) {
-            $message({
+            ElMessage({
                 message: 'YouTube API key removed',
                 type: 'success'
             });
@@ -71,13 +68,13 @@
         const data = await lookupYouTubeVideo('dQw4w9WgXcQ');
         if (!data) {
             setYouTubeApiKey(previousKey);
-            $message({
+            ElMessage({
                 message: 'Invalid YouTube API key',
                 type: 'error'
             });
         } else {
             setYouTubeApiKey(youTubeApiKey.value);
-            $message({
+            ElMessage({
                 message: 'YouTube API key valid!',
                 type: 'success'
             });

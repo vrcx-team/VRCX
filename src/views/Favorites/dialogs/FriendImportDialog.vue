@@ -123,15 +123,14 @@
 
 <script setup>
     import { Close } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
 
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
+    import { ref, computed, watch } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest, userRequest } from '../../../api';
     import { adjustDialogZ, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
-
-    const { proxy } = getCurrentInstance();
 
     const { t } = useI18n();
 
@@ -241,7 +240,7 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({
+                    ElMessage({
                         message: 'Friend added to favorites',
                         type: 'success'
                     });

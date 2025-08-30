@@ -210,9 +210,9 @@
 </template>
 
 <script setup>
-    import { Loading, View, Edit, Delete } from '@element-plus/icons-vue';
-
-    import { computed, ref, getCurrentInstance } from 'vue';
+    import { View, Edit, Delete } from '@element-plus/icons-vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
@@ -236,8 +236,6 @@
         'save-sort-favorites-option',
         'refresh-local-world-favorite'
     ]);
-
-    const { proxy } = getCurrentInstance();
 
     const { t } = useI18n();
     const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
@@ -313,7 +311,7 @@
                     favoriteGroupId: args.json.id
                 }
             });
-            proxy.$message({
+            ElMessage({
                 message: 'Group visibility changed',
                 type: 'success'
             });
@@ -322,22 +320,26 @@
     }
 
     function promptNewLocalWorldFavoriteGroup() {
-        proxy.$prompt(t('prompt.new_local_favorite_group.description'), t('prompt.new_local_favorite_group.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.new_local_favorite_group.ok'),
-            cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    newLocalWorldFavoriteGroup(instance.inputValue);
+        ElMessageBox.prompt(
+            t('prompt.new_local_favorite_group.description'),
+            t('prompt.new_local_favorite_group.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.new_local_favorite_group.ok'),
+                cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        newLocalWorldFavoriteGroup(instance.inputValue);
+                    }
                 }
             }
-        });
+        );
     }
 
     function promptLocalWorldFavoriteGroupRename(group) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.local_favorite_group_rename.description'),
             t('prompt.local_favorite_group_rename.header'),
             {
@@ -357,7 +359,7 @@
     }
 
     function promptLocalWorldFavoriteGroupDelete(group) {
-        proxy.$confirm(`Delete Group? ${group}`, 'Confirm', {
+        ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -370,7 +372,7 @@
     }
 
     function clearFavoriteGroup(ctx) {
-        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

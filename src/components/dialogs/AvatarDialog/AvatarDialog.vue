@@ -597,6 +597,8 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
     import {
         Warning,
         Delete,
@@ -668,8 +670,6 @@
 
     const { t } = useI18n();
     const instance = getCurrentInstance();
-    const { $message, $confirm, $prompt } = instance.proxy;
-
     defineEmits(['openPreviousImagesDialog']);
 
     const avatarDialogRef = ref(null);
@@ -842,7 +842,7 @@
                 showFavoriteDialog('avatar', D.id);
                 break;
             default:
-                $confirm(`Continue? ${command}`, 'Confirm', {
+                ElMessageBox.confirm(`Continue? ${command}`, 'Confirm', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
                     type: 'info',
@@ -862,7 +862,7 @@
                                         avatarId: D.id
                                     })
                                     .then((args) => {
-                                        $message({
+                                        ElMessage({
                                             message: 'Fallback avatar changed',
                                             type: 'success'
                                         });
@@ -878,7 +878,7 @@
                                     .then((args) => {
                                         // 'AVATAR-MODERATION';
                                         applyAvatarModeration(args.json);
-                                        $message({
+                                        ElMessage({
                                             message: 'Avatar blocked',
                                             type: 'success'
                                         });
@@ -910,7 +910,7 @@
                                     })
                                     .then((args) => {
                                         applyAvatar(args.json);
-                                        $message({
+                                        ElMessage({
                                             message: 'Avatar updated to public',
                                             type: 'success'
                                         });
@@ -925,7 +925,7 @@
                                     })
                                     .then((args) => {
                                         applyAvatar(args.json);
-                                        $message({
+                                        ElMessage({
                                             message: 'Avatar updated to private',
                                             type: 'success'
                                         });
@@ -951,7 +951,7 @@
                                             sortUserDialogAvatars(array);
                                         }
 
-                                        $message({
+                                        ElMessage({
                                             message: 'Avatar deleted',
                                             type: 'success'
                                         });
@@ -965,7 +965,7 @@
                                         avatarId: D.id
                                     })
                                     .then((args) => {
-                                        $message({
+                                        ElMessage({
                                             message: 'Imposter deleted',
                                             type: 'success'
                                         });
@@ -979,7 +979,7 @@
                                         avatarId: D.id
                                     })
                                     .then((args) => {
-                                        $message({
+                                        ElMessage({
                                             message: 'Imposter queued for creation',
                                             type: 'success'
                                         });
@@ -1001,7 +1001,7 @@
                                                 avatarId: D.id
                                             })
                                             .then((args) => {
-                                                $message({
+                                                ElMessage({
                                                     message: 'Imposter deleted and queued for creation',
                                                     type: 'success'
                                                 });
@@ -1048,34 +1048,38 @@
     }
 
     function promptChangeAvatarDescription(avatar) {
-        $prompt(t('prompt.change_avatar_description.description'), t('prompt.change_avatar_description.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.change_avatar_description.ok'),
-            cancelButtonText: t('prompt.change_avatar_description.cancel'),
-            inputValue: avatar.ref.description,
-            inputErrorMessage: t('prompt.change_avatar_description.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== avatar.ref.description) {
-                    avatarRequest
-                        .saveAvatar({
-                            id: avatar.id,
-                            description: instance.inputValue
-                        })
-                        .then((args) => {
-                            applyAvatar(args.json);
-                            $message({
-                                message: t('prompt.change_avatar_description.message.success'),
-                                type: 'success'
+        ElMessageBox.prompt(
+            t('prompt.change_avatar_description.description'),
+            t('prompt.change_avatar_description.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.change_avatar_description.ok'),
+                cancelButtonText: t('prompt.change_avatar_description.cancel'),
+                inputValue: avatar.ref.description,
+                inputErrorMessage: t('prompt.change_avatar_description.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue !== avatar.ref.description) {
+                        avatarRequest
+                            .saveAvatar({
+                                id: avatar.id,
+                                description: instance.inputValue
+                            })
+                            .then((args) => {
+                                applyAvatar(args.json);
+                                ElMessage({
+                                    message: t('prompt.change_avatar_description.message.success'),
+                                    type: 'success'
+                                });
+                                return args;
                             });
-                            return args;
-                        });
+                    }
                 }
             }
-        });
+        );
     }
 
     function promptRenameAvatar(avatar) {
-        $prompt(t('prompt.rename_avatar.description'), t('prompt.rename_avatar.header'), {
+        ElMessageBox.prompt(t('prompt.rename_avatar.description'), t('prompt.rename_avatar.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.rename_avatar.ok'),
             cancelButtonText: t('prompt.rename_avatar.cancel'),
@@ -1090,7 +1094,7 @@
                         })
                         .then((args) => {
                             applyAvatar(args.json);
-                            $message({
+                            ElMessage({
                                 message: t('prompt.rename_avatar.message.success'),
                                 type: 'success'
                             });
@@ -1233,7 +1237,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            $message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -1241,7 +1245,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            $message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -1255,7 +1259,7 @@
             avatarRequest
                 .uploadAvatarGalleryImage(base64Body, avatarDialog.value.id)
                 .then(async (args) => {
-                    $message({
+                    ElMessage({
                         message: t('message.avatar_gallery.uploaded'),
                         type: 'success'
                     });
@@ -1279,21 +1283,21 @@
         });
         const index = fileIds.indexOf(fileId);
         if (index === -1) {
-            $message({
+            ElMessage({
                 message: t('message.avatar_gallery.not_found'),
                 type: 'error'
             });
             return;
         }
         if (direction === -1 && index === 0) {
-            $message({
+            ElMessage({
                 message: t('message.avatar_gallery.already_first'),
                 type: 'warning'
             });
             return;
         }
         if (direction === 1 && index === fileIds.length - 1) {
-            $message({
+            ElMessage({
                 message: t('message.avatar_gallery.already_last'),
                 type: 'warning'
             });
@@ -1305,7 +1309,7 @@
             moveArrayItem(fileIds, index, index + 1);
         }
         avatarRequest.setAvatarGalleryOrder(fileIds).then(async (args) => {
-            $message({
+            ElMessage({
                 message: t('message.avatar_gallery.reordered'),
                 type: 'success'
             });
@@ -1317,7 +1321,7 @@
     function deleteAvatarGalleryImage(imageUrl) {
         const fileId = extractFileId(imageUrl);
         miscRequest.deleteFile(fileId).then((args) => {
-            $message({
+            ElMessage({
                 message: t('message.avatar_gallery.deleted'),
                 type: 'success'
             });

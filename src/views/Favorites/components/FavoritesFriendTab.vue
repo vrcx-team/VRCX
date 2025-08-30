@@ -77,7 +77,8 @@
 <script setup>
     import { Edit, Delete } from '@element-plus/icons-vue';
 
-    import { ref, getCurrentInstance, computed } from 'vue';
+    import { ElMessageBox } from 'element-plus';
+    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
@@ -93,8 +94,6 @@
     });
 
     const emit = defineEmits(['change-favorite-group-name']);
-
-    const { proxy } = getCurrentInstance();
 
     const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
@@ -119,7 +118,7 @@
     }
 
     function clearFavoriteGroup(ctx) {
-        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

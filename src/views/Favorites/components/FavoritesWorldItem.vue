@@ -132,9 +132,10 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { Warning, Back, Message, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance } from 'vue';
+    import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import {
@@ -153,8 +154,6 @@
     });
 
     const emit = defineEmits(['handle-select', 'remove-local-world-favorite', 'click']);
-    const { proxy } = getCurrentInstance();
-
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
@@ -216,7 +215,7 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({ message: 'World added to favorites', type: 'success' });
+                    ElMessage({ message: 'World added to favorites', type: 'success' });
                 }
                 return args;
             });

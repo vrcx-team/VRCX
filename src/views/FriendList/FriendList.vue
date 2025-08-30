@@ -265,9 +265,10 @@
 </template>
 
 <script setup>
+    import { ElMessageBox } from 'element-plus';
     import { Loading, Refresh, Close } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { friendRequest, userRequest } from '../../api';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
@@ -294,8 +295,6 @@
 
     const { t } = useI18n();
 
-    const { proxy } = getCurrentInstance();
-    const $confirm = proxy.$confirm;
     const emit = defineEmits(['lookup-user']);
 
     const { friends } = storeToRefs(useFriendStore());
@@ -382,7 +381,7 @@
     function showBulkUnfriendSelectionConfirm() {
         const pending = friendsListTable.data.filter((item) => item.$selected).map((item) => item.displayName);
         if (!pending.length) return;
-        $confirm(
+        ElMessageBox.confirm(
             `Are you sure you want to delete ${pending.length} friends?
             This can negatively affect your trust rank,
             This action cannot be undone.`,

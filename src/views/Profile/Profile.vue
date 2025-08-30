@@ -490,10 +490,12 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
     import { SwitchButton, Picture, User, Refresh, Delete, Edit } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { ref, getCurrentInstance } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { authRequest, miscRequest, userRequest } from '../../api';
     import {
@@ -538,8 +540,6 @@
 
     const { t } = useI18n();
 
-    const { $prompt, $message } = getCurrentInstance().proxy;
-
     const vrchatCredit = ref(null);
     const configTreeData = ref([]);
     const currentUserTreeData = ref([]);
@@ -578,7 +578,7 @@
         isExportAvatarsListDialogVisible.value = true;
     }
     function promptUsernameDialog() {
-        $prompt(t('prompt.direct_access_username.description'), t('prompt.direct_access_username.header'), {
+        ElMessageBox.prompt(t('prompt.direct_access_username.description'), t('prompt.direct_access_username.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.direct_access_username.ok'),
             cancelButtonText: t('prompt.direct_access_username.cancel'),
@@ -594,7 +594,7 @@
         });
     }
     function promptUserIdDialog() {
-        $prompt(t('prompt.direct_access_user_id.description'), t('prompt.direct_access_user_id.header'), {
+        ElMessageBox.prompt(t('prompt.direct_access_user_id.description'), t('prompt.direct_access_user_id.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.direct_access_user_id.ok'),
             cancelButtonText: t('prompt.direct_access_user_id.cancel'),
@@ -609,7 +609,7 @@
                         if (userId) {
                             showUserDialog(userId);
                         } else {
-                            $message({
+                            ElMessage({
                                 message: t('prompt.direct_access_user_id.message.error'),
                                 type: 'error'
                             });
@@ -622,7 +622,7 @@
         });
     }
     function promptWorldDialog() {
-        $prompt(t('prompt.direct_access_world_id.description'), t('prompt.direct_access_world_id.header'), {
+        ElMessageBox.prompt(t('prompt.direct_access_world_id.description'), t('prompt.direct_access_world_id.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.direct_access_world_id.ok'),
             cancelButtonText: t('prompt.direct_access_world_id.cancel'),
@@ -632,7 +632,7 @@
                 instance.inputValue = instance.inputValue.trim();
                 if (action === 'confirm' && instance.inputValue) {
                     if (!directAccessWorld(instance.inputValue)) {
-                        $message({
+                        ElMessage({
                             message: t('prompt.direct_access_world_id.message.error'),
                             type: 'error'
                         });
@@ -642,32 +642,36 @@
         });
     }
     function promptAvatarDialog() {
-        $prompt(t('prompt.direct_access_avatar_id.description'), t('prompt.direct_access_avatar_id.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.direct_access_avatar_id.ok'),
-            cancelButtonText: t('prompt.direct_access_avatar_id.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_avatar_id.input_error'),
-            callback: (action, instance) => {
-                instance.inputValue = instance.inputValue.trim();
-                if (action === 'confirm' && instance.inputValue) {
-                    const testUrl = instance.inputValue.substring(0, 15);
-                    if (testUrl === 'https://vrchat.') {
-                        const avatarId = parseAvatarUrl(instance.inputValue);
-                        if (avatarId) {
-                            showAvatarDialog(avatarId);
+        ElMessageBox.prompt(
+            t('prompt.direct_access_avatar_id.description'),
+            t('prompt.direct_access_avatar_id.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.direct_access_avatar_id.ok'),
+                cancelButtonText: t('prompt.direct_access_avatar_id.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.direct_access_avatar_id.input_error'),
+                callback: (action, instance) => {
+                    instance.inputValue = instance.inputValue.trim();
+                    if (action === 'confirm' && instance.inputValue) {
+                        const testUrl = instance.inputValue.substring(0, 15);
+                        if (testUrl === 'https://vrchat.') {
+                            const avatarId = parseAvatarUrl(instance.inputValue);
+                            if (avatarId) {
+                                showAvatarDialog(avatarId);
+                            } else {
+                                ElMessage({
+                                    message: t('prompt.direct_access_avatar_id.message.error'),
+                                    type: 'error'
+                                });
+                            }
                         } else {
-                            $message({
-                                message: t('prompt.direct_access_avatar_id.message.error'),
-                                type: 'error'
-                            });
+                            showAvatarDialog(instance.inputValue);
                         }
-                    } else {
-                        showAvatarDialog(instance.inputValue);
                     }
                 }
             }
-        });
+        );
     }
     async function getConfig() {
         await authRequest.getConfig();

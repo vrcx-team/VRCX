@@ -12,9 +12,10 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { Message } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance } from 'vue';
+    import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { instanceRequest } from '../api';
     import { checkCanInviteSelf, parseLocation } from '../shared/utils';
@@ -34,8 +35,6 @@
     const { canOpenInstanceInGame } = useInviteStore();
     const { tryOpenInstanceInVrc } = useLaunchStore();
 
-    const { proxy } = getCurrentInstance();
-
     const isVisible = computed(() => checkCanInviteSelf(props.location));
 
     function confirmInvite() {
@@ -51,7 +50,7 @@
                 shortName: props.shortname
             })
             .then((args) => {
-                proxy.$message({ message: 'Self invite sent', type: 'success' });
+                ElMessage({ message: 'Self invite sent', type: 'success' });
                 return args;
             });
     }

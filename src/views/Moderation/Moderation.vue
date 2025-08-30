@@ -91,8 +91,9 @@
 </template>
 
 <script setup>
+    import { ElMessageBox } from 'element-plus';
     import { Refresh, Close } from '@element-plus/icons-vue';
-    import { getCurrentInstance, ref } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { playerModerationRequest } from '../../api';
@@ -102,8 +103,6 @@
     import { formatDateFilter } from '../../shared/utils';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { isPlayerModerationsLoading, playerModerationTable } = storeToRefs(useModerationStore());
@@ -159,7 +158,7 @@
     }
 
     function deletePlayerModerationPrompt(row) {
-        proxy.$confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

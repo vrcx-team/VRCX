@@ -85,7 +85,8 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
+    import { ref, computed, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
     import { useI18n } from 'vue-i18n';
     import { worldRequest } from '../../../api';
     import { useWorldStore } from '../../../stores';
@@ -114,8 +115,6 @@
     const { showWorldDialog } = useWorldStore();
 
     const { t } = useI18n();
-
-    const { proxy } = getCurrentInstance();
 
     const setWorldTagsDialog = ref({
         authorTags: '',
@@ -296,7 +295,7 @@
                 tags
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Tags updated',
                     type: 'success'
                 });

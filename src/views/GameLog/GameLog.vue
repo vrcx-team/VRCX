@@ -191,9 +191,9 @@
 </template>
 
 <script setup>
+    import { ElMessageBox } from 'element-plus';
     import { Close, Delete, DataLine } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { database } from '../../service/database';
     import { removeFromArray, openExternalLink, formatDateFilter } from '../../shared/utils';
@@ -217,8 +217,6 @@
     const { updateSharedFeed } = useSharedFeedStore();
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-
     const emit = defineEmits(['updateGameLogSessionTable']);
 
     function deleteGameLogEntry(row) {
@@ -232,7 +230,7 @@
     }
 
     function deleteGameLogEntryPrompt(row) {
-        proxy.$confirm('Continue? Delete Log', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

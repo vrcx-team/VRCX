@@ -409,6 +409,8 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
     import {
         Refresh,
         Check,
@@ -421,7 +423,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
     import {
@@ -465,8 +467,6 @@
     const { currentUser } = storeToRefs(useUserStore());
 
     const { t } = useI18n();
-
-    const { $confirm, $message } = getCurrentInstance().proxy;
 
     const sendInviteResponseDialog = ref({
         messageSlot: {},
@@ -518,7 +518,7 @@
 
     function acceptFriendRequestNotification(row) {
         // FIXME: 메시지 수정
-        $confirm('Continue? Accept Friend Request', 'Confirm', {
+        ElMessageBox.confirm('Continue? Accept Friend Request', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -541,7 +541,7 @@
     }
 
     function acceptRequestInvite(row) {
-        $confirm('Continue? Send Invite', 'Confirm', {
+        ElMessageBox.confirm('Continue? Send Invite', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -568,7 +568,7 @@
                                     row.senderUserId
                                 )
                                 .then((_args) => {
-                                    $message('Invite sent');
+                                    ElMessage('Invite sent');
                                     notificationRequest.hideNotification({
                                         notificationId: row.id
                                     });
@@ -642,7 +642,7 @@
     }
 
     function hideNotificationPrompt(row) {
-        $confirm(`Continue? Decline ${row.type}`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Decline ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -662,7 +662,7 @@
     }
 
     function deleteNotificationLogPrompt(row) {
-        $confirm(`Continue? Delete ${row.type}`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Delete ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

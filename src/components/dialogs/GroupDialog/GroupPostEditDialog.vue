@@ -109,7 +109,8 @@
 </template>
 
 <script setup>
-    import { ref, computed, getCurrentInstance } from 'vue';
+    import { ElMessage } from 'element-plus';
+    import { ref, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
@@ -125,7 +126,6 @@
 
     const emit = defineEmits(['update:dialogData']);
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
     const { showFullscreenImageDialog, handleFilesList } = useGalleryStore();
@@ -169,7 +169,7 @@
             return;
         }
         if (!D.title || !D.text) {
-            proxy.$message({
+            ElMessage({
                 message: 'Title and text are required',
                 type: 'warning'
             });
@@ -189,7 +189,7 @@
         }
         groupRequest.editGroupPost(params).then((args) => {
             handleGroupPost();
-            proxy.$message({
+            ElMessage({
                 message: 'Group post edited',
                 type: 'success'
             });
@@ -200,7 +200,7 @@
     function createGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.title || !D.text) {
-            proxy.$message({
+            ElMessage({
                 message: 'Title and text are required',
                 type: 'warning'
             });
@@ -220,7 +220,7 @@
         }
         groupRequest.createGroupPost(params).then((args) => {
             handleGroupPost();
-            proxy.$message({
+            ElMessage({
                 message: 'Group post created',
                 type: 'success'
             });

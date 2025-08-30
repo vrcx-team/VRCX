@@ -33,7 +33,9 @@
 <script setup>
     import { Delete } from '@element-plus/icons-vue';
 
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
+    import { ElMessage } from 'element-plus';
+
+    import { ref, computed, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { worldRequest } from '../../../api';
 
@@ -45,8 +47,6 @@
     });
 
     const emit = defineEmits(['update:worldAllowedDomainsDialog']);
-
-    const { proxy } = getCurrentInstance();
 
     const { t } = useI18n();
 
@@ -81,7 +81,7 @@
                 urlList: urlList.value
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Allowed Video Player Domains updated',
                     type: 'success'
                 });

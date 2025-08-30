@@ -140,6 +140,7 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { Warning, Back, Check, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
@@ -212,7 +213,7 @@
                 tags: groupAPI.name
             })
             .then((args) => {
-                $app.$message({
+                ElMessage({
                     message: 'Avatar added to favorites',
                     type: 'success'
                 });

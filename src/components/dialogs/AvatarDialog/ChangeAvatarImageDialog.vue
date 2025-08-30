@@ -39,9 +39,10 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { Refresh, Upload } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { imageRequest } from '../../../api';
     import { AppGlobal } from '../../../service/appConfig';
@@ -50,9 +51,6 @@
     import { useAvatarStore, useGalleryStore } from '../../../stores';
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const { avatarDialog } = storeToRefs(useAvatarStore());
     const { previousImagesTable } = storeToRefs(useGalleryStore());
@@ -125,7 +123,7 @@
         // validate file
         if (files[0].size >= 100000000) {
             // 100MB
-            $message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -133,7 +131,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            $message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -157,7 +155,7 @@
 
                 const fileId = extractFileId(imageUrl);
                 if (!fileId) {
-                    $message({
+                    ElMessage({
                         message: t('message.avatar.image_invalid'),
                         type: 'error'
                     });
@@ -322,7 +320,7 @@
         applyAvatar(args.json);
         changeAvatarImageDialogLoading.value = false;
         if (args.json.imageUrl === args.params.imageUrl) {
-            $message({
+            ElMessage({
                 message: t('message.avatar.image_changed'),
                 type: 'success'
             });

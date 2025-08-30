@@ -56,17 +56,15 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { openExternalLink } from '../../../shared/utils';
     import { useLaunchStore } from '../../../stores';
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const launchStore = useLaunchStore();
     const { isLaunchOptionsDialogVisible } = storeToRefs(launchStore);
@@ -105,14 +103,14 @@
             D.vrcLaunchPathOverride.endsWith('.exe') &&
             !D.vrcLaunchPathOverride.endsWith('launch.exe')
         ) {
-            $message({
+            ElMessage({
                 message: 'Invalid path, you must enter VRChat folder or launch.exe',
                 type: 'error'
             });
             return;
         }
         configRepository.setString('vrcLaunchPathOverride', D.vrcLaunchPathOverride);
-        $message({
+        ElMessage({
             message: 'Updated launch options',
             type: 'success'
         });

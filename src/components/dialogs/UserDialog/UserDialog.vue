@@ -1775,6 +1775,8 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
     import {
         Delete,
         Check,
@@ -1871,9 +1873,6 @@
     import ModerateGroupDialog from '../ModerateGroupDialog.vue';
 
     const { t } = useI18n();
-
-    const { proxy } = getCurrentInstance();
-    const { $message, $confirm } = proxy;
 
     const { hideTooltips, hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
@@ -2145,7 +2144,7 @@
 
     function handleBadgeUpdate(args) {
         if (args.json) {
-            $message({
+            ElMessage({
                 message: t('message.badge.updated'),
                 type: 'success'
             });
@@ -2167,7 +2166,7 @@
                     D.isHideAvatar = false;
                 }
             } else {
-                $message({
+                ElMessage({
                     message: t('message.avatar.change_moderation_failed'),
                     type: 'error'
                 });
@@ -2258,7 +2257,7 @@
                     D.id
                 )
                 .then((args) => {
-                    $message('Request invite sent');
+                    ElMessage('Request invite sent');
                     return args;
                 });
         } else if (command === 'Invite Message') {
@@ -2305,7 +2304,7 @@
                             D.id
                         )
                         .then((_args) => {
-                            $message('Invite sent');
+                            ElMessage('Invite sent');
                             return _args;
                         });
                 });
@@ -2317,7 +2316,7 @@
             if (fallbackAvatar) {
                 showAvatarDialog(fallbackAvatar);
             } else {
-                $message({
+                ElMessage({
                     message: 'No fallback avatar set',
                     type: 'error'
                 });
@@ -2355,7 +2354,7 @@
                 ? command
                 : t(`${i18nPreFix}${formattedCommand}`);
 
-            $confirm(
+            ElMessageBox.confirm(
                 t('confirm.message', {
                     command: displayCommandText
                 }),
@@ -2434,7 +2433,7 @@
         } else if (ref.type === 'muteChat') {
             D.isMuteChat = true;
         }
-        $message({
+        ElMessage({
             message: t('message.user.moderated'),
             type: 'success'
         });
@@ -2859,7 +2858,7 @@
     }
 
     function resetHome() {
-        $confirm('Continue? Reset Home', 'Confirm', {
+        ElMessageBox.confirm('Continue? Reset Home', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -2870,7 +2869,7 @@
                             homeLocation: ''
                         })
                         .then((args) => {
-                            $message({
+                            ElMessage({
                                 message: 'Home world has been reset',
                                 type: 'success'
                             });
@@ -2927,7 +2926,7 @@
             );
         } catch (err) {
             console.error(err);
-            $message({
+            ElMessage({
                 message: 'Failed to save in-game group order',
                 type: 'error'
             });

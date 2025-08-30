@@ -22,17 +22,14 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { instanceRequest, notificationRequest } from '../../../api';
     import { parseLocation } from '../../../shared/utils';
     import { useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const { uploadImage } = storeToRefs(useGalleryStore());
     const { clearInviteImageUpload } = useGalleryStore();
@@ -106,7 +103,7 @@
                 } else {
                     J.loading = false;
                     J.visible = false;
-                    $message({
+                    ElMessage({
                         message: 'Invite message sent',
                         type: 'success'
                     });
@@ -122,7 +119,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Invite photo message sent',
                             type: 'success'
                         });
@@ -135,7 +132,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Invite message sent',
                             type: 'success'
                         });
@@ -152,7 +149,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Request invite photo message sent',
                             type: 'success'
                         });
@@ -165,7 +162,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Request invite message sent',
                             type: 'success'
                         });

@@ -501,9 +501,10 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { Refresh, Upload, Close, Picture, Delete, Plus } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
     import { AppGlobal } from '../../service/appConfig';
@@ -513,7 +514,6 @@
 
     const { t } = useI18n();
 
-    const { proxy } = getCurrentInstance();
     const {
         galleryTable,
         galleryDialogVisible,
@@ -570,7 +570,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -578,7 +578,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -590,7 +590,7 @@
             const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
                 handleGalleryImageAdd(args);
-                proxy.$message({
+                ElMessage({
                     message: t('message.gallery.uploaded'),
                     type: 'success'
                 });
@@ -607,7 +607,7 @@
 
     function setProfilePicOverride(fileId) {
         if (!currentUser.value.$isVRCPlus) {
-            proxy.$message({
+            ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'
             });
@@ -625,7 +625,7 @@
                 profilePicOverride
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Profile picture changed',
                     type: 'success'
                 });
@@ -669,7 +669,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -677,7 +677,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -691,7 +691,7 @@
                 if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
                     VRCPlusIconsTable.value.unshift(args.json);
                 }
-                proxy.$message({
+                ElMessage({
                     message: t('message.icon.uploaded'),
                     type: 'success'
                 });
@@ -708,7 +708,7 @@
 
     function setVRCPlusIcon(fileId) {
         if (!currentUser.value.$isVRCPlus) {
-            proxy.$message({
+            ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'
             });
@@ -726,7 +726,7 @@
                 userIcon
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Icon changed',
                     type: 'success'
                 });
@@ -792,7 +792,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -800,7 +800,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -828,7 +828,7 @@
                 if (Object.keys(emojiTable.value).length !== 0) {
                     emojiTable.value.unshift(args.json);
                 }
-                proxy.$message({
+                ElMessage({
                     message: t('message.emoji.uploaded'),
                     type: 'success'
                 });
@@ -889,7 +889,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -897,7 +897,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -913,7 +913,7 @@
             const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadSticker(base64Body, params).then((args) => {
                 handleStickerAdd(args);
-                proxy.$message({
+                ElMessage({
                     message: t('message.sticker.uploaded'),
                     type: 'success'
                 });
@@ -956,7 +956,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -964,7 +964,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -985,7 +985,7 @@
             const base64Body = btoa(r.result.toString());
             const cropWhiteBorder = printCropBorder.value;
             vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params).then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: t('message.print.uploaded'),
                     type: 'success'
                 });

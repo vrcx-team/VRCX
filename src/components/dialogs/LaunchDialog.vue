@@ -106,7 +106,8 @@
 <script setup>
     import { Sort } from '@element-plus/icons-vue';
 
-    import { ref, computed, nextTick, watch, getCurrentInstance } from 'vue';
+    import { ref, computed, nextTick, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { instanceRequest, worldRequest } from '../../api';
@@ -123,7 +124,6 @@
     } from '../../stores';
     import InviteDialog from './InviteDialog/InviteDialog.vue';
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
     const { friends } = storeToRefs(useFriendStore());
@@ -302,12 +302,12 @@
     async function copyInstanceMessage(input) {
         try {
             await navigator.clipboard.writeText(input);
-            proxy.$message({
+            ElMessage({
                 message: 'Instance copied to clipboard',
                 type: 'success'
             });
         } catch (error) {
-            proxy.$message({
+            ElMessage({
                 message: 'Instance copied failed',
                 type: 'error'
             });

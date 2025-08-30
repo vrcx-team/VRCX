@@ -795,7 +795,8 @@
         Sort
     } from '@element-plus/icons-vue';
 
-    import { computed, ref, watch, nextTick, getCurrentInstance } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { computed, ref, watch, nextTick } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
@@ -835,8 +836,6 @@
     import ChangeWorldImageDialog from './ChangeWorldImageDialog.vue';
     import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
     import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
-
-    const { proxy } = getCurrentInstance();
 
     const { hideTooltips, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
@@ -1035,7 +1034,7 @@
             case 'Unpublish':
             case 'Delete Persistent Data':
             case 'Delete':
-                proxy.$confirm(`Continue? ${command}`, 'Confirm', {
+                ElMessageBox.confirm(`Continue? ${command}`, 'Confirm', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
                     type: 'info',
@@ -1055,7 +1054,7 @@
                                         homeLocation: D.id
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'Home world updated',
                                             type: 'success'
                                         });
@@ -1068,7 +1067,7 @@
                                         homeLocation: ''
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'Home world has been reset',
                                             type: 'success'
                                         });
@@ -1081,7 +1080,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'World has been published',
                                             type: 'success'
                                         });
@@ -1094,7 +1093,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'World has been unpublished',
                                             type: 'success'
                                         });
@@ -1110,7 +1109,7 @@
                                         if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
                                             worldDialog.value.hasPersistData = false;
                                         }
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'Persistent data has been deleted',
                                             type: 'success'
                                         });
@@ -1135,7 +1134,7 @@
                                             const array = Array.from(map.values());
                                             userDialog.value.worlds = array;
                                         }
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'World has been deleted',
                                             type: 'success'
                                         });
@@ -1201,7 +1200,7 @@
     }
 
     function promptRenameWorld(world) {
-        proxy.$prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
+        ElMessageBox.prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.rename_world.ok'),
             cancelButtonText: t('prompt.rename_world.cancel'),
@@ -1215,7 +1214,7 @@
                             name: instance.inputValue
                         })
                         .then((args) => {
-                            proxy.$message({
+                            ElMessage({
                                 message: t('prompt.rename_world.message.success'),
                                 type: 'success'
                             });
@@ -1226,33 +1225,37 @@
         });
     }
     function promptChangeWorldDescription(world) {
-        proxy.$prompt(t('prompt.change_world_description.description'), t('prompt.change_world_description.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.change_world_description.ok'),
-            cancelButtonText: t('prompt.change_world_description.cancel'),
-            inputValue: world.ref.description,
-            inputErrorMessage: t('prompt.change_world_description.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.description) {
-                    worldRequest
-                        .saveWorld({
-                            id: world.id,
-                            description: instance.inputValue
-                        })
-                        .then((args) => {
-                            proxy.$message({
-                                message: t('prompt.change_world_description.message.success'),
-                                type: 'success'
+        ElMessageBox.prompt(
+            t('prompt.change_world_description.description'),
+            t('prompt.change_world_description.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.change_world_description.ok'),
+                cancelButtonText: t('prompt.change_world_description.cancel'),
+                inputValue: world.ref.description,
+                inputErrorMessage: t('prompt.change_world_description.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue !== world.ref.description) {
+                        worldRequest
+                            .saveWorld({
+                                id: world.id,
+                                description: instance.inputValue
+                            })
+                            .then((args) => {
+                                ElMessage({
+                                    message: t('prompt.change_world_description.message.success'),
+                                    type: 'success'
+                                });
+                                return args;
                             });
-                            return args;
-                        });
+                    }
                 }
             }
-        });
+        );
     }
 
     function promptChangeWorldCapacity(world) {
-        proxy.$prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
+        ElMessageBox.prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.change_world_capacity.ok'),
             cancelButtonText: t('prompt.change_world_capacity.cancel'),
@@ -1267,7 +1270,7 @@
                             capacity: Number(instance.inputValue)
                         })
                         .then((args) => {
-                            proxy.$message({
+                            ElMessage({
                                 message: t('prompt.change_world_capacity.message.success'),
                                 type: 'success'
                             });
@@ -1279,7 +1282,7 @@
     }
 
     function promptChangeWorldRecommendedCapacity(world) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.change_world_recommended_capacity.description'),
             t('prompt.change_world_recommended_capacity.header'),
             {
@@ -1297,7 +1300,7 @@
                                 recommendedCapacity: Number(instance.inputValue)
                             })
                             .then((args) => {
-                                proxy.$message({
+                                ElMessage({
                                     message: t('prompt.change_world_recommended_capacity.message.success'),
                                     type: 'success'
                                 });
@@ -1310,7 +1313,7 @@
     }
 
     function promptChangeWorldYouTubePreview(world) {
-        proxy.$prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
+        ElMessageBox.prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.change_world_preview.ok'),
             cancelButtonText: t('prompt.change_world_preview.cancel'),
@@ -1330,7 +1333,7 @@
                                 instance.inputValue = id2;
                             }
                         } catch {
-                            proxy.$message({
+                            ElMessage({
                                 message: t('prompt.change_world_preview.message.error'),
                                 type: 'error'
                             });
@@ -1344,7 +1347,7 @@
                                 previewYoutubeId: instance.inputValue
                             })
                             .then((args) => {
-                                proxy.$message({
+                                ElMessage({
                                     message: t('prompt.change_world_preview.message.success'),
                                     type: 'success'
                                 });
@@ -1383,14 +1386,14 @@
         navigator.clipboard
             .writeText(worldDialog.value.id)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'World ID copied to clipboard',
                     type: 'success'
                 });
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                proxy.$message({
+                ElMessage({
                     message: 'Copy failed',
                     type: 'error'
                 });
@@ -1400,14 +1403,14 @@
         navigator.clipboard
             .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'World URL copied to clipboard',
                     type: 'success'
                 });
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                proxy.$message({
+                ElMessage({
                     message: 'Copy failed',
                     type: 'error'
                 });
@@ -1417,14 +1420,14 @@
         navigator.clipboard
             .writeText(worldDialog.value.ref.name)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'World name copied to clipboard',
                     type: 'success'
                 });
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                proxy.$message({
+                ElMessage({
                     message: 'Copy failed',
                     type: 'error'
                 });

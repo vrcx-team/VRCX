@@ -30,15 +30,14 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { inviteMessagesRequest, notificationRequest } from '../../../api';
     import { useGalleryStore } from '../../../stores';
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
     const galleryStore = useGalleryStore();
     const { uploadImage } = storeToRefs(galleryStore);
 
@@ -76,13 +75,13 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === I.messageSlot.message) {
-                        $message({
+                        ElMessage({
                             message: "VRChat API didn't update message, try again",
                             type: 'error'
                         });
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        $message('Invite message updated');
+                        ElMessage('Invite message updated');
                     }
                     return args;
                 });
@@ -101,7 +100,7 @@
                     notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
-                    $message({
+                    ElMessage({
                         message: 'Invite response message sent',
                         type: 'success'
                     });
@@ -120,7 +119,7 @@
                     notificationRequest.hideNotification({
                         notificationId: I.invite.id
                     });
-                    $message({
+                    ElMessage({
                         message: 'Invite response message sent',
                         type: 'success'
                     });

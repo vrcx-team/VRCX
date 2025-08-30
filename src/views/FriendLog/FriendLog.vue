@@ -87,9 +87,10 @@
 </template>
 
 <script setup>
+    import { ElMessageBox } from 'element-plus';
     import { Close, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, watch } from 'vue';
+    import { watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import configRepository from '../../service/config';
     import { database } from '../../service/database';
@@ -111,13 +112,11 @@
     );
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-
     function saveTableFilters() {
         configRepository.setString('VRCX_friendLogTableFilters', JSON.stringify(friendLogTable.value.filters[0].value));
     }
     function deleteFriendLogPrompt(row) {
-        proxy.$confirm('Continue? Delete Log', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

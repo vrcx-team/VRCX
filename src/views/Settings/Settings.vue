@@ -1866,6 +1866,8 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+
     import {
         InfoFilled,
         ArrowRight,
@@ -1880,7 +1882,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { ref, getCurrentInstance, computed } from 'vue';
+    import { ref, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import {
         useFavoriteStore,
@@ -1918,8 +1920,6 @@
     import { THEME_CONFIG } from '../../shared/constants';
 
     const { messages, t } = useI18n();
-    const { $message } = getCurrentInstance().proxy;
-
     const { cachedUsers } = storeToRefs(useUserStore());
     const generalSettingsStore = useGeneralSettingsStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -2253,12 +2253,12 @@
     function openVrcxAppDataFolder() {
         AppApi.OpenVrcxAppDataFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2269,12 +2269,12 @@
     function openVrcAppDataFolder() {
         AppApi.OpenVrcAppDataFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2285,12 +2285,12 @@
     function openVrcPhotosFolder() {
         AppApi.OpenVrcPhotosFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2301,12 +2301,12 @@
     function openVrcScreenshotsFolder() {
         AppApi.OpenVrcScreenshotsFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2317,12 +2317,12 @@
     function openCrashVrcCrashDumps() {
         AppApi.OpenCrashVrcCrashDumps().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });

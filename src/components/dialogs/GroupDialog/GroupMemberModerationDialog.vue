@@ -840,10 +840,12 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+
     import { Refresh, Delete } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, reactive, ref, watch } from 'vue';
+    import { reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { groupRequest, userRequest } from '../../../api';
@@ -859,9 +861,6 @@
     const { applyGroupMember, handleGroupMember, handleGroupMemberProps } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const selectedUsers = reactive({});
     const selectedUsersArray = ref([]);
     const isGroupMembersLoading = ref(false);
@@ -1086,7 +1085,7 @@
                 });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to delete group invites: ${err}`,
                     type: 'error'
                 });
@@ -1094,7 +1093,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Deleted ${memberCount} group invites`,
                 type: 'success'
             });
@@ -1138,7 +1137,7 @@
             }
             groupBansModerationTable.data = fetchedBans;
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group bans',
                 type: 'error'
             });
@@ -1169,13 +1168,13 @@
                 await groupRequest.banGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to ban group member: ${err}`,
                     type: 'error'
                 });
             }
         }
-        $message({ message: `Banned ${memberCount} group members`, type: 'success' });
+        ElMessage({ message: `Banned ${memberCount} group members`, type: 'success' });
         progressCurrent.value = 0;
         progressTotal.value = 0;
         getAllGroupBans(D.id);
@@ -1198,7 +1197,7 @@
                 await groupRequest.unbanGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to unban group member: ${err}`,
                     type: 'error'
                 });
@@ -1207,7 +1206,7 @@
         }
 
         if (allSuccess) {
-            $message({ message: `Unbanned ${memberCount} group members`, type: 'success' });
+            ElMessage({ message: `Unbanned ${memberCount} group members`, type: 'success' });
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1232,7 +1231,7 @@
                 await groupRequest.kickGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to kick group member: ${err}`,
                     type: 'error'
                 });
@@ -1240,7 +1239,7 @@
             }
         }
         if (allSuccess) {
-            $message({ message: `Kicked ${memberCount} group members`, type: 'success' });
+            ElMessage({ message: `Kicked ${memberCount} group members`, type: 'success' });
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1268,7 +1267,7 @@
                 handleGroupMemberProps(args);
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to set group member note for ${err}`,
                     type: 'error'
                 });
@@ -1276,7 +1275,7 @@
             }
         }
         if (allSuccess) {
-            $message({ message: `Saved notes for ${memberCount} group members`, type: 'success' });
+            ElMessage({ message: `Saved notes for ${memberCount} group members`, type: 'success' });
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1316,7 +1315,7 @@
                     handleGroupMemberRoleChange(args);
                 } catch (err) {
                     console.error(err);
-                    $message({
+                    ElMessage({
                         message: `Failed to remove group member roles: ${err}`,
                         type: 'error'
                     });
@@ -1325,7 +1324,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Roles removed`,
                 type: 'success'
             });
@@ -1364,7 +1363,7 @@
                     handleGroupMemberRoleChange(args);
                 } catch (err) {
                     console.error(err);
-                    $message({
+                    ElMessage({
                         message: `Failed to add group member roles: ${err}`,
                         type: 'error'
                     });
@@ -1373,7 +1372,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Added group member roles`,
                 type: 'success'
             });
@@ -1468,7 +1467,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group logs',
                 type: 'error'
             });
@@ -1498,7 +1497,7 @@
                 await groupRequest.deleteBlockedGroupRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to delete blocked group requests: ${err}`,
                     type: 'error'
                 });
@@ -1506,7 +1505,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Deleted ${memberCount} blocked group requests`,
                 type: 'success'
             });
@@ -1534,7 +1533,7 @@
                 await groupRequest.blockGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to block group join requests: ${err}`,
                     type: 'error'
                 });
@@ -1542,7 +1541,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Blocked ${memberCount} group join requests`,
                 type: 'success'
             });
@@ -1571,7 +1570,7 @@
                 await groupRequest.rejectGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to reject group join requests: ${err}`,
                     type: 'error'
                 });
@@ -1579,7 +1578,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Rejected ${memberCount} group join requests`,
                 type: 'success'
             });
@@ -1607,7 +1606,7 @@
                 await groupRequest.acceptGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to accept group join requests: ${err}`,
                     type: 'error'
                 });
@@ -1615,7 +1614,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Accepted ${memberCount} group join requests`,
                 type: 'success'
             });
@@ -1663,7 +1662,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group join requests',
                 type: 'error'
             });
@@ -1696,7 +1695,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group join requests',
                 type: 'error'
             });
@@ -1733,7 +1732,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group invites',
                 type: 'error'
             });

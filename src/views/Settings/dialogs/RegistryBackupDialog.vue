@@ -82,9 +82,10 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { Upload, Download, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { downloadAndSaveJson, removeFromArray, formatDateFilter } from '../../../shared/utils';
@@ -98,9 +99,6 @@
     const { setVrcRegistryAutoBackup, setVrcRegistryAskRestore } = useAdvancedSettingsStore();
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const { $confirm, $message, $prompt } = instance.proxy;
 
     const registryBackupTable = ref({
         data: [],
@@ -130,7 +128,7 @@
     }
 
     function restoreVrcRegistryBackup(row) {
-        $confirm('Continue? Restore Backup', 'Confirm', {
+        ElMessageBox.confirm('Continue? Restore Backup', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'warning',
@@ -141,14 +139,14 @@
                 const data = JSON.stringify(row.data);
                 AppApi.SetVRChatRegistry(data)
                     .then(() => {
-                        $message({
+                        ElMessage({
                             message: 'VRC registry settings restored',
                             type: 'success'
                         });
                     })
                     .catch((e) => {
                         console.error(e);
-                        $message({
+                        ElMessage({
                             message: `Failed to restore VRC registry settings, check console for full error: ${e}`,
                             type: 'error'
                         });
@@ -169,7 +167,7 @@
     }
 
     function deleteVrcRegistry() {
-        $confirm('Continue? Delete VRC Registry Settings', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete VRC Registry Settings', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'warning',
@@ -178,7 +176,7 @@
                     return;
                 }
                 AppApi.DeleteVRChatRegistryFolder().then(() => {
-                    $message({
+                    ElMessage({
                         message: 'VRC registry settings deleted',
                         type: 'success'
                     });
@@ -193,7 +191,7 @@
     }
 
     async function promptVrcRegistryBackupName() {
-        const name = await $prompt('Enter a name for the backup', 'Backup Name', {
+        const name = await ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             inputPattern: /\S+/,
@@ -261,20 +259,20 @@
             }
             AppApi.SetVRChatRegistry(json)
                 .then(() => {
-                    $message({
+                    ElMessage({
                         message: 'VRC registry settings restored',
                         type: 'success'
                     });
                 })
                 .catch((e) => {
                     console.error(e);
-                    $message({
+                    ElMessage({
                         message: `Failed to restore VRC registry settings, check console for full error: ${e}`,
                         type: 'error'
                     });
                 });
         } catch {
-            $message({
+            ElMessage({
                 message: 'Invalid JSON',
                 type: 'error'
             });

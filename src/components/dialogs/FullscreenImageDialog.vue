@@ -24,16 +24,13 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { Sort, Download } from '@element-plus/icons-vue';
 
     import Noty from 'noty';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
     import { copyToClipboard, escapeTag, extractFileId } from '../../shared/utils';
     import { useGalleryStore } from '../../stores';
-
-    const { proxy } = getCurrentInstance();
-    const { $message } = proxy;
 
     const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
 
@@ -45,7 +42,7 @@
         if (!url) {
             return;
         }
-        $message({
+        ElMessage({
             message: 'Downloading image...',
             type: 'info'
         });

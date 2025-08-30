@@ -170,9 +170,10 @@
 </template>
 
 <script setup>
-    import { Loading, Close } from '@element-plus/icons-vue';
+    import { Close } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
 
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
+    import { ref, computed, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { avatarRequest, favoriteRequest } from '../../../api';
@@ -181,8 +182,6 @@
 
     const emit = defineEmits(['update:avatarImportDialogInput']);
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-
     const { showUserDialog } = useUserStore();
     const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
@@ -318,7 +317,7 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({
+                    ElMessage({
                         message: 'Avatar added to favorites',
                         type: 'success'
                     });

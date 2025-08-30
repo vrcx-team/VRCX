@@ -25,14 +25,11 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance } from 'vue';
+    import { ElMessage } from 'element-plus';
     import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-    const { $message } = proxy;
-
     const props = defineProps({
         pronounsDialog: {
             type: Object,
@@ -55,7 +52,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                $message({
+                ElMessage({
                     message: 'Pronouns updated',
                     type: 'success'
                 });

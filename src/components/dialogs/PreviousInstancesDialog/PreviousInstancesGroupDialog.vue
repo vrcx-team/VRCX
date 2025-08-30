@@ -64,6 +64,7 @@
 <script setup>
     import { DataLine, Close } from '@element-plus/icons-vue';
 
+    import { ElMessageBox } from 'element-plus';
     import { ref, reactive, computed, watch, nextTick, getCurrentInstance } from 'vue';
     import {
         parseLocation,
@@ -77,7 +78,6 @@
     import { useI18n } from 'vue-i18n';
     import { useInstanceStore, useUiStore } from '../../../stores';
 
-    const { proxy } = getCurrentInstance();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = useUiStore();
     const { t } = useI18n();
@@ -146,7 +146,7 @@
     }
 
     function deleteGameLogGroupInstancePrompt(row) {
-        proxy.$confirm('Continue? Delete GameLog Instance', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

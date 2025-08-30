@@ -175,8 +175,9 @@
 
 <script setup>
     import { Close } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
 
-    import { ref, watch, computed, getCurrentInstance } from 'vue';
+    import { ref, watch, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { favoriteRequest, worldRequest } from '../../../api';
@@ -192,7 +193,6 @@
 
     const emit = defineEmits(['update:worldImportDialogInput']);
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
     const worldImportDialogRef = ref(null);
@@ -356,7 +356,7 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({
+                    ElMessage({
                         message: 'World added to favorites',
                         type: 'success'
                     });

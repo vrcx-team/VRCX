@@ -43,6 +43,8 @@
 
 <script setup>
     import { ref, computed, watch, getCurrentInstance } from 'vue';
+    import { ElMessage } from 'element-plus';
+
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { useFavoriteStore } from '../../../stores';
@@ -95,7 +97,7 @@
         navigator.clipboard
             .writeText(friendExportContent.value)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'Copied successfully!',
                     type: 'success',
                     duration: 2000

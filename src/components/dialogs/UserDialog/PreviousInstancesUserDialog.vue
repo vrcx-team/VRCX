@@ -70,8 +70,9 @@
 <script setup>
     import { SwitchButton, DataLine, Close } from '@element-plus/icons-vue';
 
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
@@ -103,8 +104,6 @@
     });
 
     const emit = defineEmits(['update:previous-instances-user-dialog']);
-    const { proxy } = getCurrentInstance();
-
     const loading = ref(false);
     const previousInstancesUserDialogTable = reactive({
         data: [],
@@ -176,7 +175,7 @@
     }
 
     function deleteGameLogUserInstancePrompt(row) {
-        proxy.$confirm('Continue? Delete User From GameLog Instance', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete User From GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

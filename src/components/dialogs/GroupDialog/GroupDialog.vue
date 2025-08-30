@@ -1181,6 +1181,8 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
     import {
         Check,
         View,
@@ -1201,7 +1203,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { groupRequest } from '../../../api';
@@ -1256,10 +1258,6 @@
 
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
-
-    const instance = getCurrentInstance();
-    const $confirm = instance.proxy.$confirm;
-    const $message = instance.proxy.$message;
 
     const groupDialogRef = ref(null);
     const isGroupMembersDone = ref(false);
@@ -1406,7 +1404,7 @@
             });
     }
     function confirmDeleteGroupPost(post) {
-        $confirm('Are you sure you want to delete this post?', 'Confirm', {
+        ElMessageBox.confirm('Are you sure you want to delete this post?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -1513,7 +1511,7 @@
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                $app.$message({
+                ElMessage({
                     message: 'Group subscription updated',
                     type: 'success'
                 });
@@ -1522,7 +1520,7 @@
     }
 
     function blockGroup(groupId) {
-        $app.$confirm('Are you sure you want to block this group?', 'Confirm', {
+        ElMessageBox.confirm('Are you sure you want to block this group?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -1543,7 +1541,7 @@
     }
 
     function unblockGroup(groupId) {
-        $app.$confirm('Are you sure you want to unblock this group?', 'Confirm', {
+        ElMessageBox.confirm('Are you sure you want to unblock this group?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -1582,12 +1580,12 @@
                     getGroupDialogGroup(id);
                 }
                 if (args.json.membershipStatus === 'member') {
-                    $message({
+                    ElMessage({
                         message: 'Group joined',
                         type: 'success'
                     });
                 } else if (args.json.membershipStatus === 'requested') {
-                    $message({
+                    ElMessage({
                         message: 'Group join request sent',
                         type: 'success'
                     });

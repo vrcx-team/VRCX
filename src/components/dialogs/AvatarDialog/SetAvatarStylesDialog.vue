@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-    import { watch, getCurrentInstance } from 'vue';
+    import { watch } from 'vue';
 
     import { useI18n } from 'vue-i18n';
     import { arraysMatch } from '../../../shared/utils';
@@ -69,9 +69,6 @@
     import { useAvatarStore } from '../../../stores';
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const { applyAvatar } = useAvatarStore();
 
     const props = defineProps({

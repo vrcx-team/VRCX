@@ -68,6 +68,7 @@
 <script setup>
     import { DataLine, Close } from '@element-plus/icons-vue';
 
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
@@ -82,7 +83,6 @@
     } from '../../../shared/utils';
     import { useInstanceStore, useUiStore, useUserStore } from '../../../stores';
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
     const props = defineProps({
@@ -147,7 +147,7 @@
     }
 
     function deleteGameLogWorldInstancePrompt(row) {
-        proxy.$confirm('Continue? Delete GameLog Instance', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',

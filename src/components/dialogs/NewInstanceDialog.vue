@@ -483,7 +483,8 @@
 </template>
 
 <script setup>
-    import { ref, watch, nextTick, getCurrentInstance } from 'vue';
+    import { ref, watch, nextTick } from 'vue';
+    import { ElMessage } from 'element-plus';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
@@ -517,8 +518,6 @@
     });
 
     const { t } = useI18n();
-
-    const { proxy } = getCurrentInstance();
 
     const { friends, vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
     const { currentUserGroups, cachedGroups } = storeToRefs(useGroupStore());
@@ -720,7 +719,7 @@
                 worldId: L.worldId
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Self invite sent',
                     type: 'success'
                 });

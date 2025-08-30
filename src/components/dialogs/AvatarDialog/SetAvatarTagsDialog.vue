@@ -94,7 +94,9 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+
+    import { watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
@@ -102,9 +104,6 @@
     const { showAvatarDialog, applyAvatar } = useAvatarStore();
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const props = defineProps({
         setAvatarTagsDialog: {
             type: Object,
@@ -229,7 +228,7 @@
             }
         } catch (err) {
             console.error(err);
-            $message({
+            ElMessage({
                 message: 'Error saving avatar tags',
                 type: 'error'
             });

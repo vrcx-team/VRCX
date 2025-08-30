@@ -163,8 +163,10 @@
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { instanceRequest, notificationRequest } from '../../../api';
     import { parseLocation, userImage, userStatusClass } from '../../../shared/utils';
@@ -177,10 +179,6 @@
     const { clearInviteImageUpload } = useGalleryStore();
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-    const $confirm = instance.proxy.$confirm;
-
     const props = defineProps({
         inviteDialog: {
             type: Object,
@@ -238,7 +236,7 @@
     }
 
     function sendInvite() {
-        $confirm('Continue? Invite', 'Confirm', {
+        ElMessageBox.confirm('Continue? Invite', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -275,7 +273,7 @@
                     } else {
                         D.loading = false;
                         D.visible = false;
-                        $message({
+                        ElMessage({
                             message: 'Invite sent',
                             type: 'success'
                         });
