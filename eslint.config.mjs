@@ -57,7 +57,7 @@ export default defineConfig([
             }
         }
     },
-    pluginVue.configs['flat/vue2-essential'],
+    pluginVue.configs['flat/vue3-essential'],
     {
         rules: {
             'no-unused-vars': 'warn',

@@ -1,15 +1,16 @@
 <template>
     <el-dialog
         ref="elDialogRef"
-        :visible="props.visible"
+        :model-value="props.visible"
         v-bind="attrs"
         :close-on-click-modal="false"
+        @update:modelValue="onUpdateModelValue"
         @open="handleOpen"
         @close="handleClose"
         :top="marginTop">
         <slot></slot>
 
-        <template v-if="slots.title" #title>
+        <template v-if="slots.title" #header>
             <slot name="title"></slot>
         </template>
 
@@ -41,6 +42,10 @@
     const resizeObserver = ref(null);
     const marginTop = ref('5px');
     let handleResize = null;
+
+    const onUpdateModelValue = (val) => {
+        emit('update:visible', val);
+    };
 
     const handleOpen = () => {
         emit('open');
