@@ -29,7 +29,7 @@
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" @click.native.stop>
+                <el-dropdown trigger="click" size="small">
                     <el-button size="mini">
                         <span v-if="avatarImportDialog.avatarImportFavoriteGroup">
                             {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{
@@ -42,18 +42,20 @@
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
-                            <el-dropdown-item
-                                style="display: block; margin: 10px 0"
-                                :disabled="groupAPI.count >= groupAPI.capacity"
-                                @click.native="selectAvatarImportGroup(groupAPI)">
-                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    :disabled="groupAPI.count >= groupAPI.capacity"
+                                    @click="selectAvatarImportGroup(groupAPI)">
+                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
-                <el-dropdown trigger="click" size="small" style="margin: 5px" @click.native.stop>
+                <el-dropdown trigger="click" size="small" style="margin: 5px">
                     <el-button size="mini">
                         <span v-if="avatarImportDialog.avatarImportLocalFavoriteGroup">
                             {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{
@@ -66,15 +68,17 @@
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="group in localAvatarFavoriteGroups" :key="group">
-                            <el-dropdown-item
-                                style="display: block; margin: 10px 0"
-                                @click.native="selectAvatarImportLocalGroup(group)">
-                                {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="group in localAvatarFavoriteGroups" :key="group">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    @click="selectAvatarImportLocalGroup(group)">
+                                    {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <span v-if="avatarImportDialog.avatarImportFavoriteGroup" style="margin-left: 5px">
                     {{ avatarImportTable.data.length }} /

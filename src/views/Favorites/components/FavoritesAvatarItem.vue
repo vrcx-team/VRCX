@@ -10,23 +10,25 @@
                     <span class="extra" v-text="localFavFakeRef.authorName"></span>
                 </div>
                 <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
+                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px">
                         <el-tooltip placement="top" :content="tooltipContent" :disabled="hideTooltips">
                             <el-button type="default" :icon="Back" size="mini" circle></el-button>
                         </el-tooltip>
-                        <el-dropdown-menu slot="dropdown">
-                            <template
-                                v-for="groupAPI in favoriteAvatarGroups"
-                                :key="groupAPI.name"
-                                v-if="isLocalFavorite || groupAPI.name !== group.name">
-                                <el-dropdown-item
-                                    style="display: block; margin: 10px 0"
-                                    :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click.native="handleDropdownItemClick(groupAPI)">
-                                    {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <template
+                                    v-for="groupAPI in favoriteAvatarGroups"
+                                    :key="groupAPI.name"
+                                    v-if="isLocalFavorite || groupAPI.name !== group.name">
+                                    <el-dropdown-item
+                                        style="display: block; margin: 10px 0"
+                                        :disabled="groupAPI.count >= groupAPI.capacity"
+                                        @click="handleDropdownItemClick(groupAPI)">
+                                        {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                    </el-dropdown-item>
+                                </template>
+                            </el-dropdown-menu>
+                        </template>
                     </el-dropdown>
                     <el-button v-if="!isLocalFavorite" type="text" size="mini" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="isSelected"></el-checkbox>

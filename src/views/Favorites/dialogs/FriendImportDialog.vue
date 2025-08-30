@@ -29,7 +29,7 @@
             style="margin-top: 10px" />
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" @click.native.stop>
+                <el-dropdown trigger="click" size="small">
                     <el-button size="mini">
                         <span v-if="friendImportDialog.friendImportFavoriteGroup">
                             {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{
@@ -42,16 +42,18 @@
                             <i class="el-icon-arrow-down el-icon--right"></i
                         ></span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
-                            <el-dropdown-item
-                                style="display: block; margin: 10px 0"
-                                :disabled="groupAPI.count >= groupAPI.capacity"
-                                @click.native="selectFriendImportGroup(groupAPI)">
-                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    :disabled="groupAPI.count >= groupAPI.capacity"
+                                    @click="selectFriendImportGroup(groupAPI)">
+                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <span v-if="friendImportDialog.friendImportFavoriteGroup" style="margin-left: 5px">
                     {{ friendImportTable.data.length }} /

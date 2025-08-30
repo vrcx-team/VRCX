@@ -25,7 +25,7 @@
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="handleCopyGroupLogsExportContent" />
+            @click="handleCopyGroupLogsExportContent" />
     </safe-dialog>
 </template>
 

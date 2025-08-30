@@ -27,7 +27,7 @@
                 :placeholder="t('view.feed.search_placeholder')"
                 clearable
                 style="flex: none; width: 150px; margin-left: 10px"
-                @keyup.native.13="feedTableLookup"
+                @keyup.enter="feedTableLookup"
                 @change="feedTableLookup"></el-input>
         </div>
 

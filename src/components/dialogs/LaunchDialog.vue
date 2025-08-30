@@ -6,7 +6,7 @@
                     v-model="launchDialog.url"
                     size="mini"
                     style="width: 260px"
-                    @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
                         size="mini"
@@ -17,7 +17,7 @@
                 </el-tooltip>
             </el-form-item>
             <el-form-item v-if="launchDialog.shortUrl">
-                <template slot="label">
+                <template #label>
                     <span>{{ t('dialog.launch.short_url') }}</span>
                     <el-tooltip placement="top" style="margin-left: 5px" :content="t('dialog.launch.short_url_notice')">
                         <i class="el-icon-warning" />
@@ -27,7 +27,7 @@
                     v-model="launchDialog.shortUrl"
                     size="mini"
                     style="width: 260px"
-                    @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
                         size="mini"
@@ -42,7 +42,7 @@
                     v-model="launchDialog.location"
                     size="mini"
                     style="width: 260px"
-                    @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
                         size="mini"
@@ -53,10 +53,13 @@
                 </el-tooltip>
             </el-form-item>
         </el-form>
-        <el-checkbox v-model="launchDialog.desktop" style="float: left; margin-top: 5px" @change="saveLaunchDialog">
+        <el-checkbox
+            v-model="launchDialog.desktop"
+            style="display: inline-flex; align-items: center; margin-top: 5px"
+            @change="saveLaunchDialog">
             {{ t('dialog.launch.start_as_desktop') }}
         </el-checkbox>
-        <template slot="footer">
+        <template #footer>
             <el-button size="small" @click="showPreviousInstancesInfoDialog(launchDialog.location)">
                 {{ t('dialog.launch.info') }}
             </el-button>

@@ -40,7 +40,7 @@
                 :placeholder="t('view.game_log.search_placeholder')"
                 clearable
                 style="flex: none; width: 150px; margin-left: 10px"
-                @keyup.native.enter="gameLogTableLookup"
+                @keyup.enter="gameLogTableLookup"
                 @change="gameLogTableLookup"></el-input>
         </div>
 

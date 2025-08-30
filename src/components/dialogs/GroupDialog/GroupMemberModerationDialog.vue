@@ -34,21 +34,22 @@
                                             memberSearch.length ||
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
-                                "
-                                @click.native.stop>
-                                <el-button size="mini">
+                                ">
+                                <el-button size="mini" @click.stop>
                                     <span
                                         >{{ t(memberSortOrder.name) }} <i class="el-icon-arrow-down el-icon--right"></i
                                     ></span>
                                 </el-button>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item
-                                        v-for="item in groupDialogSortingOptions"
-                                        :key="item.name"
-                                        @click.native="setGroupMemberSortOrder(item)">
-                                        {{ t(item.name) }}
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item
+                                            v-for="item in groupDialogSortingOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberSortOrder(item)">
+                                            {{ t(item.name) }}
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
                             </el-dropdown>
                             <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
                             <el-dropdown
@@ -61,26 +62,28 @@
                                             memberSearch.length ||
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
-                                "
-                                @click.native.stop>
-                                <el-button size="mini">
+                                ">
+                                <el-button size="mini" @click.stop>
                                     <span
                                         >{{ t(memberFilter.name) }} <i class="el-icon-arrow-down el-icon--right"></i
                                     ></span>
                                 </el-button>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item
-                                        v-for="item in groupDialogFilterOptions"
-                                        :key="item.name"
-                                        @click.native="setGroupMemberFilter(item)"
-                                        v-text="t(item.name)"></el-dropdown-item>
-                                    <el-dropdown-item
-                                        v-for="item in groupMemberModeration.groupRef.roles"
-                                        :key="item.name"
-                                        @click.native="setGroupMemberFilter(item)"
-                                        ><span v-if="!item.defaultRole">{{ t(item.name) }}</span></el-dropdown-item
-                                    >
-                                </el-dropdown-menu>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item
+                                            v-for="item in groupDialogFilterOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberFilter(item)"
+                                            v-text="t(item.name)"></el-dropdown-item>
+                                        <template v-for="role in groupMemberModeration.groupRef.roles" :key="role.name">
+                                            <el-dropdown-item
+                                                v-if="!role.defaultRole"
+                                                @click="setGroupMemberFilter(role)">
+                                                {{ t(role.name) }}
+                                            </el-dropdown-item>
+                                        </template>
+                                    </el-dropdown-menu>
+                                </template>
                             </el-dropdown>
                         </div>
                         <el-input
@@ -312,14 +315,14 @@
                         <br />
                         <el-tabs>
                             <el-tab-pane>
-                                <span slot="label">
+                                <template #label>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.sent_invites')
                                     }}</span>
                                     <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
                                         groupInvitesModerationTable.data.length
                                     }}</span>
-                                </span>
+                                </template>
                                 <el-button size="small" @click="selectAllGroupInvites">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
@@ -395,14 +398,14 @@
                             </el-tab-pane>
 
                             <el-tab-pane>
-                                <span slot="label">
+                                <template #label>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.join_requests')
                                     }}</span>
                                     <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
                                         groupJoinRequestsModerationTable.data.length
                                     }}</span>
-                                </span>
+                                </template>
                                 <el-button size="small" @click="selectAllGroupJoinRequests">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
@@ -504,14 +507,14 @@
                             </el-tab-pane>
 
                             <el-tab-pane>
-                                <span slot="label">
+                                <template #label>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.blocked_requests')
                                     }}</span>
                                     <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
                                         groupBlockedModerationTable.data.length
                                     }}</span>
-                                </span>
+                                </template>
                                 <el-button size="small" @click="selectAllGroupBlocked">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>

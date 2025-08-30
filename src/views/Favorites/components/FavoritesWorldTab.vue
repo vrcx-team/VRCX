@@ -57,7 +57,7 @@
         <span style="display: block; margin-top: 20px">{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in favoriteWorldGroups" :key="group.name">
-                <template slot="title">
+                <template #title>
                     <div style="display: flex; align-items: center">
                         <span
                             style="font-weight: bold; font-size: 14px; margin-left: 10px"
@@ -72,23 +72,27 @@
                         <span style="color: #909399; font-size: 12px; margin-left: 10px"
                             >{{ group.count }}/{{ group.capacity }}</span
                         >
-                        <el-dropdown trigger="click" size="mini" style="margin-left: 10px" @click.native.stop>
+                        <el-dropdown trigger="click" size="mini" style="margin-left: 10px">
                             <el-tooltip
                                 placement="top"
                                 :content="t('view.favorite.visibility_tooltip')"
                                 :disabled="hideTooltips">
-                                <el-button type="default" :icon="View" size="mini" circle />
+                                <el-button type="default" :icon="View" size="mini" circle @click.stop />
                             </el-tooltip>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item
-                                    v-for="visibility in worldGroupVisibilityOptions"
-                                    v-if="group.visibility !== visibility"
-                                    :key="visibility"
-                                    style="display: block; margin: 10px 0"
-                                    @click.native="changeWorldGroupVisibility(group.name, visibility)"
-                                    >{{ visibility.charAt(0).toUpperCase() + visibility.slice(1) }}</el-dropdown-item
-                                >
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="visibility in worldGroupVisibilityOptions"
+                                        v-if="group.visibility !== visibility"
+                                        :key="visibility"
+                                        style="display: block; margin: 10px 0"
+                                        @click="changeWorldGroupVisibility(group.name, visibility)"
+                                        >{{
+                                            visibility.charAt(0).toUpperCase() + visibility.slice(1)
+                                        }}</el-dropdown-item
+                                    >
+                                </el-dropdown-menu>
+                            </template>
                             <el-tooltip
                                 placement="top"
                                 :content="t('view.favorite.rename_tooltip')"
@@ -157,7 +161,7 @@
         </el-button>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in localWorldFavoriteGroups" v-if="localWorldFavorites[group]" :key="group">
-                <template slot="title">
+                <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
                         getLocalWorldFavoriteGroupLength(group)

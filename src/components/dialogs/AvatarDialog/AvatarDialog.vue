@@ -284,91 +284,93 @@
                                 :type="avatarDialog.isBlocked ? 'danger' : 'default'"
                                 :icon="MoreFilled"
                                 circle></el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item :icon="Refresh" command="Refresh">{{
-                                    t('dialog.avatar.actions.refresh')
-                                }}</el-dropdown-item>
-                                <el-dropdown-item :icon="Share" command="Share">{{
-                                    t('dialog.avatar.actions.share')
-                                }}</el-dropdown-item>
-                                <el-dropdown-item
-                                    v-if="avatarDialog.isBlocked"
-                                    :icon="CircleCheck"
-                                    command="Unblock Avatar"
-                                    style="color: #f56c6c"
-                                    divided
-                                    >{{ t('dialog.avatar.actions.unblock') }}</el-dropdown-item
-                                >
-                                <el-dropdown-item v-else :icon="CircleClose" command="Block Avatar" divided>{{
-                                    t('dialog.avatar.actions.block')
-                                }}</el-dropdown-item>
-                                <el-dropdown-item
-                                    v-if="/quest/.test(avatarDialog.ref.tags)"
-                                    :icon="Check"
-                                    command="Select Fallback Avatar"
-                                    >{{ t('dialog.avatar.actions.select_fallback') }}</el-dropdown-item
-                                >
-                                <el-dropdown-item
-                                    v-if="avatarDialog.ref.authorId !== currentUser.id"
-                                    :icon="Picture"
-                                    command="Previous Images"
-                                    >{{ t('dialog.avatar.actions.show_previous_images') }}</el-dropdown-item
-                                >
-                                <template v-if="avatarDialog.ref.authorId === currentUser.id">
-                                    <el-dropdown-item
-                                        v-if="avatarDialog.ref.releaseStatus === 'public'"
-                                        :icon="User"
-                                        command="Make Private"
-                                        divided
-                                        >{{ t('dialog.avatar.actions.make_private') }}</el-dropdown-item
-                                    >
-                                    <el-dropdown-item v-else :icon="User" command="Make Public" divided>{{
-                                        t('dialog.avatar.actions.make_public')
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :icon="Refresh" command="Refresh">{{
+                                        t('dialog.avatar.actions.refresh')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Edit" command="Rename">{{
-                                        t('dialog.avatar.actions.rename')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Edit" command="Change Description">{{
-                                        t('dialog.avatar.actions.change_description')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Edit" command="Change Content Tags">{{
-                                        t('dialog.avatar.actions.change_content_tags')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Edit" command="Change Styles and Author Tags">{{
-                                        t('dialog.avatar.actions.change_styles_author_tags')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Picture" command="Change Image">{{
-                                        t('dialog.avatar.actions.change_image')
+                                    <el-dropdown-item :icon="Share" command="Share">{{
+                                        t('dialog.avatar.actions.share')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item
-                                        v-if="avatarDialog.ref.unityPackageUrl"
-                                        :icon="Download"
-                                        command="Download Unity Package"
-                                        >{{ t('dialog.avatar.actions.download_package') }}</el-dropdown-item
-                                    >
-                                    <el-dropdown-item
-                                        v-if="avatarDialog.hasImposter"
-                                        :icon="Refresh"
-                                        command="Regenerate Imposter"
+                                        v-if="avatarDialog.isBlocked"
+                                        :icon="CircleCheck"
+                                        command="Unblock Avatar"
                                         style="color: #f56c6c"
                                         divided
-                                        >{{ t('dialog.avatar.actions.regenerate_impostor') }}</el-dropdown-item
+                                        >{{ t('dialog.avatar.actions.unblock') }}</el-dropdown-item
+                                    >
+                                    <el-dropdown-item v-else :icon="CircleClose" command="Block Avatar" divided>{{
+                                        t('dialog.avatar.actions.block')
+                                    }}</el-dropdown-item>
+                                    <el-dropdown-item
+                                        v-if="/quest/.test(avatarDialog.ref.tags)"
+                                        :icon="Check"
+                                        command="Select Fallback Avatar"
+                                        >{{ t('dialog.avatar.actions.select_fallback') }}</el-dropdown-item
                                     >
                                     <el-dropdown-item
-                                        v-if="avatarDialog.hasImposter"
-                                        :icon="Delete"
-                                        command="Delete Imposter"
-                                        style="color: #f56c6c"
-                                        >{{ t('dialog.avatar.actions.delete_impostor') }}</el-dropdown-item
+                                        v-if="avatarDialog.ref.authorId !== currentUser.id"
+                                        :icon="Picture"
+                                        command="Previous Images"
+                                        >{{ t('dialog.avatar.actions.show_previous_images') }}</el-dropdown-item
                                     >
-                                    <el-dropdown-item v-else :icon="User" command="Create Imposter" divided>{{
-                                        t('dialog.avatar.actions.create_impostor')
-                                    }}</el-dropdown-item>
-                                    <el-dropdown-item :icon="Delete" command="Delete" style="color: #f56c6c">{{
-                                        t('dialog.avatar.actions.delete')
-                                    }}</el-dropdown-item>
-                                </template>
-                            </el-dropdown-menu>
+                                    <template v-if="avatarDialog.ref.authorId === currentUser.id">
+                                        <el-dropdown-item
+                                            v-if="avatarDialog.ref.releaseStatus === 'public'"
+                                            :icon="User"
+                                            command="Make Private"
+                                            divided
+                                            >{{ t('dialog.avatar.actions.make_private') }}</el-dropdown-item
+                                        >
+                                        <el-dropdown-item v-else :icon="User" command="Make Public" divided>{{
+                                            t('dialog.avatar.actions.make_public')
+                                        }}</el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Rename">{{
+                                            t('dialog.avatar.actions.rename')
+                                        }}</el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Description">{{
+                                            t('dialog.avatar.actions.change_description')
+                                        }}</el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Content Tags">{{
+                                            t('dialog.avatar.actions.change_content_tags')
+                                        }}</el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Styles and Author Tags">{{
+                                            t('dialog.avatar.actions.change_styles_author_tags')
+                                        }}</el-dropdown-item>
+                                        <el-dropdown-item :icon="Picture" command="Change Image">{{
+                                            t('dialog.avatar.actions.change_image')
+                                        }}</el-dropdown-item>
+                                        <el-dropdown-item
+                                            v-if="avatarDialog.ref.unityPackageUrl"
+                                            :icon="Download"
+                                            command="Download Unity Package"
+                                            >{{ t('dialog.avatar.actions.download_package') }}</el-dropdown-item
+                                        >
+                                        <el-dropdown-item
+                                            v-if="avatarDialog.hasImposter"
+                                            :icon="Refresh"
+                                            command="Regenerate Imposter"
+                                            style="color: #f56c6c"
+                                            divided
+                                            >{{ t('dialog.avatar.actions.regenerate_impostor') }}</el-dropdown-item
+                                        >
+                                        <el-dropdown-item
+                                            v-if="avatarDialog.hasImposter"
+                                            :icon="Delete"
+                                            command="Delete Imposter"
+                                            style="color: #f56c6c"
+                                            >{{ t('dialog.avatar.actions.delete_impostor') }}</el-dropdown-item
+                                        >
+                                        <el-dropdown-item v-else :icon="User" command="Create Imposter" divided>{{
+                                            t('dialog.avatar.actions.create_impostor')
+                                        }}</el-dropdown-item>
+                                        <el-dropdown-item :icon="Delete" command="Delete" style="color: #f56c6c">{{
+                                            t('dialog.avatar.actions.delete')
+                                        }}</el-dropdown-item>
+                                    </template>
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                 </div>
@@ -481,20 +483,23 @@
                                         placement="top"
                                         :content="t('dialog.avatar.info.id_tooltip')"
                                         :disabled="hideTooltips">
-                                        <el-dropdown
-                                            trigger="click"
-                                            size="mini"
-                                            style="margin-left: 5px"
-                                            @click.native.stop>
-                                            <el-button type="default" :icon="Sort" size="mini" circle></el-button>
-                                            <el-dropdown-menu>
-                                                <el-dropdown-item @click.native="copyAvatarId(avatarDialog.id)">{{
-                                                    t('dialog.avatar.info.copy_id')
-                                                }}</el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyAvatarUrl(avatarDialog.id)">{{
-                                                    t('dialog.avatar.info.copy_url')
-                                                }}</el-dropdown-item>
-                                            </el-dropdown-menu>
+                                        <el-dropdown trigger="click" size="mini" style="margin-left: 5px">
+                                            <el-button
+                                                type="default"
+                                                :icon="Sort"
+                                                size="mini"
+                                                circle
+                                                @click.stop></el-button>
+                                            <template #dropdown>
+                                                <el-dropdown-menu>
+                                                    <el-dropdown-item @click="copyAvatarId(avatarDialog.id)">{{
+                                                        t('dialog.avatar.info.copy_id')
+                                                    }}</el-dropdown-item>
+                                                    <el-dropdown-item @click="copyAvatarUrl(avatarDialog.id)">{{
+                                                        t('dialog.avatar.info.copy_url')
+                                                    }}</el-dropdown-item>
+                                                </el-dropdown-menu>
+                                            </template>
                                         </el-dropdown>
                                     </el-tooltip></span
                                 >
@@ -602,7 +607,6 @@
     import { ElMessage, ElMessageBox } from 'element-plus';
 
     import {
-        Warning,
         Delete,
         Star,
         StarFilled,
@@ -623,7 +627,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, imageRequest, miscRequest } from '../../../api';
     import { database } from '../../../service/database';
@@ -631,11 +635,9 @@
         adjustDialogZ,
         buildTreeData,
         commaNumber,
-        compareUnityVersion,
         copyToClipboard,
         downloadAndSaveJson,
         extractFileId,
-        extractFileVersion,
         openExternalLink,
         openFolderGeneric,
         replaceVrcPackageUrl,
@@ -671,7 +673,6 @@
     const { showFullscreenImageDialog, checkPreviousImageAvailable } = useGalleryStore();
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
     defineEmits(['openPreviousImagesDialog']);
 
     const avatarDialogRef = ref(null);

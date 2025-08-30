@@ -10,7 +10,7 @@
                     resize="none"
                     readonly
                     style="margin-top: 15px"
-                    @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+                    @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
             <el-tab-pane :label="t('dialog.export_friends_list.json')">
                 <el-input
@@ -21,7 +21,7 @@
                     resize="none"
                     readonly
                     style="margin-top: 15px"
-                    @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+                    @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
         </el-tabs>
     </safe-dialog>

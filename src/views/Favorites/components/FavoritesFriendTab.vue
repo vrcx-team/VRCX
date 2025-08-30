@@ -22,7 +22,7 @@
         <span style="display: block; margin-top: 30px">{{ t('view.favorite.avatars.vrchat_favorites') }}</span>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in favoriteFriendGroups" :key="group.name">
-                <template slot="title">
+                <template #title>
                     <span
                         style="font-weight: bold; font-size: 14px; margin-left: 10px"
                         v-text="group.displayName"></span>

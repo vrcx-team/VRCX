@@ -62,7 +62,7 @@
         </div>
         <el-tabs class="zero-margin-tabs" stretch style="height: calc(100% - 60px); margin-top: 5px">
             <el-tab-pane>
-                <template slot="label">
+                <template #label>
                     <span>{{ t('side_panel.friends') }}</span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         ({{ onlineFriendCount }}/{{ friends.size }})
@@ -72,7 +72,7 @@
                 <FriendsSidebar @confirm-delete-friend="confirmDeleteFriend" />
             </el-tab-pane>
             <el-tab-pane lazy>
-                <template slot="label">
+                <template #label>
                     <span>{{ t('side_panel.groups') }}</span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         ({{ groupInstances.length }})

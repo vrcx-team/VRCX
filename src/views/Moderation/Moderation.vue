@@ -37,7 +37,7 @@
             :paginationProps="paginationProps"
             v-loading="isPlayerModerationsLoading">
             <el-table-column :label="t('table.moderation.date')" prop="created" sortable="custom" width="120">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
                             <span>{{ formatDateFilter(scope.row.created, 'long') }}</span>
@@ -47,12 +47,12 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.type')" prop="type" width="100">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span v-text="t('view.moderation.filters.' + scope.row.type)"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.source')" prop="sourceDisplayName">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span
                         class="x-link"
                         v-text="scope.row.sourceDisplayName"
@@ -60,7 +60,7 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.target')" prop="targetDisplayName">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span
                         class="x-link"
                         v-text="scope.row.targetDisplayName"
@@ -68,7 +68,7 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.action')" width="80" align="right">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <template v-if="scope.row.sourceUserId === currentUser.id">
                         <el-button
                             v-if="shiftHeld"

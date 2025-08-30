@@ -28,7 +28,7 @@
                         ref="loginFormRef"
                         :model="loginForm"
                         :rules="loginForm.rules"
-                        @submit.native.prevent="handleLogin()">
+                        @submit.prevent="handleLogin()">
                         <el-form-item :label="t('view.login.field.username')" prop="username" required>
                             <el-input
                                 v-model="loginForm.username"

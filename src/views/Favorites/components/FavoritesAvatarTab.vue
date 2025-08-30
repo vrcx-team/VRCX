@@ -60,7 +60,7 @@
         </span>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in favoriteAvatarGroups" :key="group.name">
-                <template slot="title">
+                <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group.displayName" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         {{ group.count }}/{{ group.capacity }}
@@ -108,7 +108,7 @@
                 </div>
             </el-collapse-item>
             <el-collapse-item>
-                <template slot="title">
+                <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px">Local History</span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px"
                         >{{ avatarHistoryArray.length }}/100</span
@@ -164,7 +164,7 @@
                 v-for="group in localAvatarFavoriteGroups"
                 v-if="localAvatarFavorites[group]"
                 :key="group">
-                <template slot="title">
+                <template #title>
                     <span :style="{ fontWeight: 'bold', fontSize: '14px', marginLeft: '10px' }">{{ group }}</span>
                     <span :style="{ color: '#909399', fontSize: '12px', marginLeft: '10px' }">{{
                         getLocalAvatarFavoriteGroupLength(group)

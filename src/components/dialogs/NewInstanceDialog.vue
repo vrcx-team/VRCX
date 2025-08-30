@@ -85,7 +85,7 @@
                         <el-input
                             v-model="newInstanceDialog.worldId"
                             size="mini"
-                            @click.native="$event.target.tagName === 'INPUT' && $event.target.select()"
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                             @change="buildInstance"></el-input>
                     </el-form-item>
                     <el-form-item
@@ -157,7 +157,7 @@
                                 v-model="newInstanceDialog.location"
                                 size="mini"
                                 readonly
-                                @click.native="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
+                                @click="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
                         </el-form-item>
                         <el-form-item :label="t('dialog.new_instance.url')">
                             <el-input v-model="newInstanceDialog.url" size="mini" readonly></el-input>
@@ -227,7 +227,7 @@
                         <el-input
                             v-model="newInstanceDialog.worldId"
                             size="mini"
-                            @click.native="$event.target.tagName === 'INPUT' && $event.target.select()"
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                             @change="buildLegacyInstance"></el-input>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.instance_id')">
@@ -385,7 +385,7 @@
                             v-model="newInstanceDialog.location"
                             size="mini"
                             readonly
-                            @click.native="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.url')">
                         <el-input v-model="newInstanceDialog.url" size="mini" readonly></el-input>

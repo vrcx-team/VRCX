@@ -44,16 +44,18 @@
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
-                            <el-dropdown-item
-                                style="display: block; margin: 10px 0"
-                                :disabled="groupAPI.count >= groupAPI.capacity"
-                                @click="selectWorldImportGroup(groupAPI)">
-                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    :disabled="groupAPI.count >= groupAPI.capacity"
+                                    @click="selectWorldImportGroup(groupAPI)">
+                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <el-dropdown trigger="click" size="small" style="margin: 5px" @click.stop>
                     <el-button size="mini">
@@ -67,15 +69,17 @@
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="group in localWorldFavoriteGroups" :key="group">
-                            <el-dropdown-item
-                                style="display: block; margin: 10px 0"
-                                @click="selectWorldImportLocalGroup(group)">
-                                {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="group in localWorldFavoriteGroups" :key="group">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    @click="selectWorldImportLocalGroup(group)">
+                                    {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <span v-if="worldImportDialog.worldImportFavoriteGroup" style="margin-left: 5px">
                     {{ worldImportTable.data.length }} /

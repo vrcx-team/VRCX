@@ -79,13 +79,15 @@
                     <el-button size="small"
                         >{{ t('view.search.world.category') }} <i class="el-icon-arrow-down el-icon--right"></i
                     ></el-button>
-                    <el-dropdown-menu v-slot="dropdown">
-                        <el-dropdown-item
-                            v-for="row in cachedConfig.dynamicWorldRows"
-                            :key="row.index"
-                            :command="row"
-                            v-text="row.name"></el-dropdown-item>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item
+                                v-for="row in cachedConfig.dynamicWorldRows"
+                                :key="row.index"
+                                :command="row"
+                                v-text="row.name"></el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <el-checkbox v-model="searchWorldLabs" style="margin-left: 10px">{{
                     t('view.search.world.community_lab')
@@ -143,17 +145,19 @@
                                 >{{ t('view.search.avatar.search_provider') }}
                                 <i class="el-icon-arrow-down el-icon--right"></i
                             ></el-button>
-                            <el-dropdown-menu v-slot="dropdown">
-                                <el-dropdown-item
-                                    v-for="provider in avatarRemoteDatabaseProviderList"
-                                    :key="provider"
-                                    @click="setAvatarProvider(provider)">
-                                    <i
-                                        v-if="provider === avatarRemoteDatabaseProvider"
-                                        class="el-icon-check el-icon--left"></i>
-                                    {{ provider }}
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="provider in avatarRemoteDatabaseProviderList"
+                                        :key="provider"
+                                        @click="setAvatarProvider(provider)">
+                                        <i
+                                            v-if="provider === avatarRemoteDatabaseProvider"
+                                            class="el-icon-check el-icon--left"></i>
+                                        {{ provider }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                         <el-tooltip
                             placement="bottom"

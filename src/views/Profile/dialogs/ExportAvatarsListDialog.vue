@@ -9,7 +9,7 @@
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+            @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
     </safe-dialog>
 </template>
 
