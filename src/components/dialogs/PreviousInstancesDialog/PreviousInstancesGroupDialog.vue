@@ -13,7 +13,7 @@
                 style="width: 150px" />
         </div>
 
-        <data-tables v-loading="loading" v-bind="previousInstancesGroupDialogTable" style="margin-top: 10px">
+        <DataTable v-loading="loading" v-bind="previousInstancesGroupDialogTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
@@ -57,7 +57,7 @@
                         @click="deleteGameLogGroupInstancePrompt(scope.row)" />
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </safe-dialog>
 </template>
 

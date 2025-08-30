@@ -89,7 +89,7 @@
                         @click="friendsListSearchChange"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
+            <DataTable
                 v-loading="friendsListLoading"
                 v-bind="friendsListTable"
                 :table-props="{ height: 'calc(100vh - 170px)', size: 'mini' }"
@@ -259,7 +259,7 @@
                             @click.stop="confirmDeleteFriend(scope.row.id)"></el-button>
                     </template>
                 </el-table-column>
-            </data-tables>
+            </DataTable>
         </div>
     </div>
 </template>

@@ -95,7 +95,7 @@
                         <el-button size="small" @click="selectAllGroupMembers">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</el-button>
-                        <data-tables
+                        <DataTable
                             v-if="groupMemberModerationTable.data.length"
                             v-bind="groupMemberModerationTable"
                             style="margin-top: 10px">
@@ -181,7 +181,7 @@
                                     <span v-text="scope.row.visibility"></span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </div>
                 </el-tab-pane>
 
@@ -210,7 +210,7 @@
                         <el-button size="small" @click="selectAllGroupBans">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</el-button>
-                        <data-tables v-bind="groupBansModerationTable" style="margin-top: 10px">
+                        <DataTable v-bind="groupBansModerationTable" style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
                                     <el-button type="text" size="mini" @click.stop>
@@ -296,7 +296,7 @@
                                     <span>{{ formatDateFilter(scope.row.bannedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </div>
                 </el-tab-pane>
 
@@ -325,7 +325,7 @@
                                 <el-button size="small" @click="selectAllGroupInvites">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
-                                <data-tables v-bind="groupInvitesModerationTable" style="margin-top: 10px">
+                                <DataTable v-bind="groupInvitesModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
                                             <el-button type="text" size="mini" @click.stop>
@@ -378,7 +378,7 @@
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
-                                </data-tables>
+                                </DataTable>
                                 <br />
                                 <el-button
                                     :disabled="
@@ -407,7 +407,7 @@
                                 <el-button size="small" @click="selectAllGroupJoinRequests">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
-                                <data-tables v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
+                                <DataTable v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
                                             <el-button type="text" size="mini" @click.stop>
@@ -460,7 +460,7 @@
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
-                                </data-tables>
+                                </DataTable>
                                 <br />
                                 <el-button
                                     :disabled="
@@ -515,7 +515,7 @@
                                 <el-button size="small" @click="selectAllGroupBlocked">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
-                                <data-tables v-bind="groupBlockedModerationTable" style="margin-top: 10px">
+                                <DataTable v-bind="groupBlockedModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
                                             <el-button type="text" size="mini" @click.stop>
@@ -568,7 +568,7 @@
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
-                                </data-tables>
+                                </DataTable>
                                 <br />
                                 <el-button
                                     :disabled="
@@ -637,7 +637,7 @@
                             </div>
                         </div>
                         <br />
-                        <data-tables v-bind="groupLogsModerationTable" style="margin-top: 10px">
+                        <DataTable v-bind="groupLogsModerationTable" style="margin-top: 10px">
                             <el-table-column
                                 :label="t('dialog.group_member_moderation.created_at')"
                                 width="170"
@@ -684,7 +684,7 @@
                                         v-text="JSON.stringify(scope.row.data)"></span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </div>
                 </el-tab-pane>
             </el-tabs>

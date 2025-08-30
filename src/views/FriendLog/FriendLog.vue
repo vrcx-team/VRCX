@@ -1,34 +1,34 @@
 <template>
     <div v-show="menuActiveIndex === 'friendLog'" class="x-container">
-        <data-tables v-bind="friendLogTable">
-            <template #tool>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <el-select
-                        v-model="friendLogTable.filters[0].value"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.friend_log.filter_placeholder')"
-                        @change="saveTableFilters">
-                        <el-option
-                            v-for="type in [
-                                'Friend',
-                                'Unfriend',
-                                'FriendRequest',
-                                'CancelFriendRequest',
-                                'DisplayName',
-                                'TrustLevel'
-                            ]"
-                            :key="type"
-                            :label="t('view.friend_log.filters.' + type)"
-                            :value="type" />
-                    </el-select>
-                    <el-input
-                        v-model="friendLogTable.filters[1].value"
-                        :placeholder="t('view.friend_log.search_placeholder')"
-                        style="flex: none; width: 150px; margin-left: 10px" />
-                </div>
-            </template>
+        <!-- 工具栏 -->
+        <div style="margin: 0 0 10px; display: flex; align-items: center">
+            <el-select
+                v-model="friendLogTable.filters[0].value"
+                multiple
+                clearable
+                style="flex: 1"
+                :placeholder="t('view.friend_log.filter_placeholder')"
+                @change="saveTableFilters">
+                <el-option
+                    v-for="type in [
+                        'Friend',
+                        'Unfriend',
+                        'FriendRequest',
+                        'CancelFriendRequest',
+                        'DisplayName',
+                        'TrustLevel'
+                    ]"
+                    :key="type"
+                    :label="t('view.friend_log.filters.' + type)"
+                    :value="type" />
+            </el-select>
+            <el-input
+                v-model="friendLogTable.filters[1].value"
+                :placeholder="t('view.friend_log.search_placeholder')"
+                style="flex: none; width: 150px; margin-left: 10px" />
+        </div>
+
+        <DataTable v-bind="friendLogTable">
 
             <el-table-column :label="t('table.friendLog.date')" prop="created_at" sortable="custom" width="200">
                 <template #default="scope">
@@ -83,7 +83,7 @@
                         @click="deleteFriendLogPrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </div>
 </template>
 

@@ -12,75 +12,75 @@
 
             <VRCXUpdateDialog></VRCXUpdateDialog>
 
-        <template v-if="watchState.isLoggedIn">
-            <!-- ### Menu ### -->
-            <NavMenu></NavMenu>
+            <template v-if="watchState.isLoggedIn">
+                <!-- ### Menu ### -->
+                <NavMenu></NavMenu>
 
-            <!-- ### Sidebar ### -->
-            <Sidebar></Sidebar>
+                <!-- ### Sidebar ### -->
+                <Sidebar></Sidebar>
 
-            <!-- ### Tabs ### -->
-            <Feed></Feed>
+                <!-- ### Tabs ### -->
+                <Feed></Feed>
 
-            <GameLog></GameLog>
+                <GameLog></GameLog>
 
-            <PlayerList></PlayerList>
+                <PlayerList></PlayerList>
 
-            <Search></Search>
+                <Search></Search>
 
-            <Favorites></Favorites>
+                <Favorites></Favorites>
 
-            <FriendLog></FriendLog>
+                <FriendLog></FriendLog>
 
-            <Moderation></Moderation>
+                <Moderation></Moderation>
 
-            <Notification></Notification>
+                <Notification></Notification>
 
-            <FriendList></FriendList>
+                <FriendList></FriendList>
 
-            <Charts></Charts>
+                <Charts></Charts>
 
-            <Tools></Tools>
+                <Tools></Tools>
 
-            <Profile></Profile>
+                <Profile></Profile>
 
-            <Settings></Settings>
+                <Settings></Settings>
 
-            <!-- ## Dialogs ## -->
-            <UserDialog></UserDialog>
+                <!-- ## Dialogs ## -->
+                <UserDialog></UserDialog>
 
-            <WorldDialog></WorldDialog>
+                <WorldDialog></WorldDialog>
 
-            <AvatarDialog></AvatarDialog>
+                <AvatarDialog></AvatarDialog>
 
-            <GroupDialog></GroupDialog>
+                <GroupDialog></GroupDialog>
 
-            <GroupMemberModerationDialog></GroupMemberModerationDialog>
+                <GroupMemberModerationDialog></GroupMemberModerationDialog>
 
-            <GalleryDialog></GalleryDialog>
+                <GalleryDialog></GalleryDialog>
 
-            <FullscreenImageDialog></FullscreenImageDialog>
+                <FullscreenImageDialog></FullscreenImageDialog>
 
-            <PreviousInstancesInfoDialog></PreviousInstancesInfoDialog>
+                <PreviousInstancesInfoDialog></PreviousInstancesInfoDialog>
 
-            <LaunchDialog></LaunchDialog>
+                <LaunchDialog></LaunchDialog>
 
-            <LaunchOptionsDialog></LaunchOptionsDialog>
+                <LaunchOptionsDialog></LaunchOptionsDialog>
 
-            <FriendImportDialog></FriendImportDialog>
+                <FriendImportDialog></FriendImportDialog>
 
-            <WorldImportDialog></WorldImportDialog>
+                <WorldImportDialog></WorldImportDialog>
 
-            <AvatarImportDialog></AvatarImportDialog>
+                <AvatarImportDialog></AvatarImportDialog>
 
-            <ChooseFavoriteGroupDialog></ChooseFavoriteGroupDialog>
+                <ChooseFavoriteGroupDialog></ChooseFavoriteGroupDialog>
 
-            <EditInviteMessageDialog></EditInviteMessageDialog>
+                <EditInviteMessageDialog></EditInviteMessageDialog>
 
-            <VRChatConfigDialog></VRChatConfigDialog>
+                <VRChatConfigDialog></VRChatConfigDialog>
 
-            <PrimaryPasswordDialog></PrimaryPasswordDialog>
-        </template>
+                <PrimaryPasswordDialog></PrimaryPasswordDialog>
+            </template>
         </div>
     </el-config-provider>
 </template>

@@ -12,7 +12,7 @@
                 :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="display: block; width: 150px"></el-input>
         </div>
-        <data-tables v-loading="loading" v-bind="previousInstancesWorldDialogTable" style="margin-top: 10px">
+        <DataTable v-loading="loading" v-bind="previousInstancesWorldDialogTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
@@ -61,7 +61,7 @@
                         @click="deleteGameLogWorldInstancePrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </safe-dialog>
 </template>
 

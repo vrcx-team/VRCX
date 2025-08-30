@@ -1,44 +1,44 @@
 <template>
     <div v-show="menuActiveIndex === 'moderation'" class="x-container">
-        <data-tables
+        <!-- 工具栏 -->
+        <div class="tool-slot">
+            <el-select
+                v-model="filters[0].value"
+                @change="saveTableFilters()"
+                multiple
+                clearable
+                style="flex: 1"
+                :placeholder="t('view.moderation.filter_placeholder')">
+                <el-option
+                    v-for="item in moderationTypes"
+                    :key="item"
+                    :label="t('view.moderation.filters.' + item)"
+                    :value="item" />
+            </el-select>
+            <el-input
+                v-model="filters[1].value"
+                :placeholder="t('view.moderation.search_placeholder')"
+                class="filter-input" />
+            <el-tooltip
+                placement="bottom"
+                :content="t('view.moderation.refresh_tooltip')"
+                :disabled="hideTooltips">
+                <el-button
+                    type="default"
+                    :loading="isPlayerModerationsLoading"
+                    @click="refreshPlayerModerations()"
+                    icon="el-icon-refresh"
+                    circle />
+            </el-tooltip>
+        </div>
+
+        <DataTable
             :data="playerModerationTable.data"
             :pageSize="playerModerationTable.pageSize"
             :filters="filters"
             :tableProps="tableProps"
             :paginationProps="paginationProps"
             v-loading="isPlayerModerationsLoading">
-            <template slot="tool">
-                <div class="tool-slot">
-                    <el-select
-                        v-model="filters[0].value"
-                        @change="saveTableFilters()"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.moderation.filter_placeholder')">
-                        <el-option
-                            v-for="item in moderationTypes"
-                            :key="item"
-                            :label="t('view.moderation.filters.' + item)"
-                            :value="item" />
-                    </el-select>
-                    <el-input
-                        v-model="filters[1].value"
-                        :placeholder="t('view.moderation.search_placeholder')"
-                        class="filter-input" />
-                    <el-tooltip
-                        placement="bottom"
-                        :content="t('view.moderation.refresh_tooltip')"
-                        :disabled="hideTooltips">
-                        <el-button
-                            type="default"
-                            :loading="isPlayerModerationsLoading"
-                            @click="refreshPlayerModerations()"
-                            icon="el-icon-refresh"
-                            circle />
-                    </el-tooltip>
-                </div>
-            </template>
             <el-table-column :label="t('table.moderation.date')" prop="created" sortable="custom" width="120">
                 <template slot-scope="scope">
                     <el-tooltip placement="right">
@@ -89,7 +89,7 @@
                     </template>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </div>
 </template>
 

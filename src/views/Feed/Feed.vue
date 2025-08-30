@@ -31,7 +31,7 @@
                 @change="feedTableLookup"></el-input>
         </div>
 
-        <data-tables v-loading="feedTable.loading" v-bind="feedTable" lazy>
+        <DataTable v-loading="feedTable.loading" v-bind="feedTable">
             <el-table-column type="expand" width="20">
                 <template #default="scope">
                     <div style="position: relative; font-size: 14px">
@@ -305,7 +305,7 @@
                     </template>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </div>
 </template>
 

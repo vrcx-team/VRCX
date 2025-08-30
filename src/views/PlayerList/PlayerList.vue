@@ -239,7 +239,7 @@
                 </div>
                 <el-tabs type="card">
                     <el-tab-pane :label="t('view.player_list.photon.current')">
-                        <data-tables v-bind="photonEventTable" style="margin-bottom: 10px">
+                        <DataTable v-bind="photonEventTable" style="margin-bottom: 10px">
                             <el-table-column :label="t('table.playerList.date')" prop="created_at" width="120">
                                 <template #default="scope">
                                     <el-tooltip placement="right">
@@ -436,10 +436,10 @@
                                     <span v-else v-text="scope.row.text"></span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </el-tab-pane>
                     <el-tab-pane :label="t('view.player_list.photon.previous')">
-                        <data-tables v-bind="photonEventTablePrevious" style="margin-bottom: 10px">
+                        <DataTable v-bind="photonEventTablePrevious" style="margin-bottom: 10px">
                             <el-table-column :label="t('table.playerList.date')" prop="created_at" width="120">
                                 <template #default="scope">
                                     <el-tooltip placement="right">
@@ -636,12 +636,12 @@
                                     <span v-else v-text="scope.row.text"></span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </el-tab-pane>
                 </el-tabs>
             </div>
             <div class="current-instance-table">
-                <data-tables
+                <DataTable
                     v-bind="currentInstanceWorld.ref.id ? currentInstanceUserList : {}"
                     style="margin-top: 10px; cursor: pointer"
                     @row-click="selectCurrentInstanceRow">
@@ -836,7 +836,7 @@
                             <span v-text="scope.row.ref.note"></span>
                         </template>
                     </el-table-column>
-                </data-tables>
+                </DataTable>
             </div>
         </div>
         <ChatboxBlacklistDialog

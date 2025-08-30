@@ -22,7 +22,7 @@
                 <span class="name" style="margin-right: 24px">{{ t('dialog.registry_backup.ask_to_restore') }}</span>
                 <el-switch v-model="vrcRegistryAskRestore" @change="setVrcRegistryAskRestore"></el-switch>
             </div>
-            <data-tables v-bind="registryBackupTable" style="margin-top: 10px">
+            <DataTable v-bind="registryBackupTable" style="margin-top: 10px">
                 <el-table-column :label="t('dialog.registry_backup.name')" prop="name"></el-table-column>
                 <el-table-column :label="t('dialog.registry_backup.date')" prop="date">
                     <template #default="scope">
@@ -63,7 +63,7 @@
                         </el-tooltip>
                     </template>
                 </el-table-column>
-            </data-tables>
+            </DataTable>
             <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px">
                 <el-button type="danger" size="small" @click="deleteVrcRegistry">{{
                     t('dialog.registry_backup.reset')

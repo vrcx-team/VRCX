@@ -1,6 +1,6 @@
 <template>
     <div v-show="menuActiveIndex === 'notification'" v-loading="isNotificationsLoading" class="x-container">
-        <data-tables v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
+        <DataTable v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
             <template #tool>
                 <div style="margin: 0 0 10px; display: flex; align-items: center">
                     <el-select
@@ -401,7 +401,7 @@
                     </template>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
         <SendInviteResponseDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
             :send-invite-response-dialog-visible.sync="sendInviteResponseDialogVisible" />

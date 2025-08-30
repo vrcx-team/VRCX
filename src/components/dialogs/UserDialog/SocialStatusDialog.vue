@@ -11,13 +11,13 @@
                     <template #title>
                         <span style="font-size: 16px">{{ t('dialog.social_status.history') }}</span>
                     </template>
-                    <data-tables
+                    <DataTable
                         v-bind="socialStatusHistoryTable"
                         style="cursor: pointer"
                         @row-click="setSocialStatusFromHistory">
                         <el-table-column :label="t('table.social_status.no')" prop="no" width="50"></el-table-column>
                         <el-table-column :label="t('table.social_status.status')" prop="status"></el-table-column>
-                    </data-tables>
+                    </DataTable>
                 </el-collapse-item>
             </el-collapse>
 

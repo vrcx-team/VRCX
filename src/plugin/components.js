@@ -10,6 +10,7 @@ import Location from '../components/Location.vue';
 import LocationWorld from '../components/LocationWorld.vue';
 import SimpleSwitch from '../components/SimpleSwitch.vue';
 import Timer from '../components/Timer.vue';
+import DataTable from '../components/DataTable.vue';
 
 export default function registerComponents(app) {
     app.component('SafeDialog', SafeDialog);
@@ -24,4 +25,5 @@ export default function registerComponents(app) {
     app.component('InviteYourself', InviteYourself);
     app.component('Launch', Launch);
     app.component('LocationWorld', LocationWorld);
+    app.component('DataTable', DataTable);
 }

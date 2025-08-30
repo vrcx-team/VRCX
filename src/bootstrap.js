@@ -18,10 +18,10 @@ import vrcxJsonStorage from './service/jsonStorage';
 //     systemIsDarkMode
 // } from './shared/utils';
 // import { i18n } from './plugin';
-import { initNoty } from './plugin/noty';
+// import { initNoty } from './plugin/noty';
 import './plugin/ipc';
 
-initNoty(false);
+// initNoty(false);
 
 configRepository.init();
 

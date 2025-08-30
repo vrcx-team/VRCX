@@ -1,50 +1,50 @@
 <template>
     <div v-show="menuActiveIndex === 'gameLog'" class="x-container">
-        <data-tables v-loading="gameLogTable.loading" v-bind="gameLogTable" lazy>
-            <template #tool>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                        <el-tooltip
-                            placement="bottom"
-                            :content="t('view.feed.favorites_only_tooltip')"
-                            :disabled="hideTooltips">
-                            <el-switch
-                                v-model="gameLogTable.vip"
-                                active-color="#13ce66"
-                                @change="gameLogTableLookup"></el-switch>
-                        </el-tooltip>
-                    </div>
-                    <el-select
-                        v-model="gameLogTable.filter"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.game_log.filter_placeholder')"
-                        @change="gameLogTableLookup">
-                        <el-option
-                            v-for="type in [
-                                'Location',
-                                'OnPlayerJoined',
-                                'OnPlayerLeft',
-                                'VideoPlay',
-                                'Event',
-                                'External',
-                                'StringLoad',
-                                'ImageLoad'
-                            ]"
-                            :key="type"
-                            :label="t('view.game_log.filters.' + type)"
-                            :value="type"></el-option>
-                    </el-select>
-                    <el-input
-                        v-model="gameLogTable.search"
-                        :placeholder="t('view.game_log.search_placeholder')"
-                        clearable
-                        style="flex: none; width: 150px; margin-left: 10px"
-                        @keyup.native.enter="gameLogTableLookup"
-                        @change="gameLogTableLookup"></el-input>
-                </div>
-            </template>
+        <!-- 工具栏 -->
+        <div style="margin: 0 0 10px; display: flex; align-items: center">
+            <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
+                <el-tooltip
+                    placement="bottom"
+                    :content="t('view.feed.favorites_only_tooltip')"
+                    :disabled="hideTooltips">
+                    <el-switch
+                        v-model="gameLogTable.vip"
+                        active-color="#13ce66"
+                        @change="gameLogTableLookup"></el-switch>
+                </el-tooltip>
+            </div>
+            <el-select
+                v-model="gameLogTable.filter"
+                multiple
+                clearable
+                style="flex: 1"
+                :placeholder="t('view.game_log.filter_placeholder')"
+                @change="gameLogTableLookup">
+                <el-option
+                    v-for="type in [
+                        'Location',
+                        'OnPlayerJoined',
+                        'OnPlayerLeft',
+                        'VideoPlay',
+                        'Event',
+                        'External',
+                        'StringLoad',
+                        'ImageLoad'
+                    ]"
+                    :key="type"
+                    :label="t('view.game_log.filters.' + type)"
+                    :value="type"></el-option>
+            </el-select>
+            <el-input
+                v-model="gameLogTable.search"
+                :placeholder="t('view.game_log.search_placeholder')"
+                clearable
+                style="flex: none; width: 150px; margin-left: 10px"
+                @keyup.native.enter="gameLogTableLookup"
+                @change="gameLogTableLookup"></el-input>
+        </div>
+
+        <DataTable v-loading="gameLogTable.loading" v-bind="gameLogTable">
 
             <el-table-column :label="t('table.gameLog.date')" prop="created_at" sortable="custom" width="120">
                 <template #default="scope">
@@ -187,7 +187,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </div>
 </template>
 

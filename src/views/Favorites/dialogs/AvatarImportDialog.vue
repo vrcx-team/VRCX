@@ -117,7 +117,7 @@
             </h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="avatarImportDialog.errors"></pre>
         </template>
-        <data-tables v-loading="avatarImportDialog.loading" v-bind="avatarImportTable" style="margin-top: 10px">
+        <DataTable v-loading="avatarImportDialog.loading" v-bind="avatarImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
                 <template slot-scope="scope">
                     <el-popover placement="right" height="500px" trigger="hover">
@@ -165,7 +165,7 @@
                     </el-button>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </safe-dialog>
 </template>
 

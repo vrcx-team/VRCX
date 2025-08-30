@@ -40,7 +40,7 @@
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
         </template>
 
-        <data-tables v-loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
+        <DataTable v-loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
                 <template slot-scope="scope">
                     <el-popover placement="right" height="500px" trigger="hover">
@@ -83,7 +83,7 @@
                         @click="removeFromNoteExportTable(scope.row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </safe-dialog>
 </template>
 

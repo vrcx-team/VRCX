@@ -10,7 +10,7 @@
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
-        <data-tables
+        <DataTable
             v-bind="inviteResponseMessageTable"
             style="margin-top: 10px; cursor: pointer"
             @row-click="showSendInviteResponseConfirmDialog">
@@ -39,7 +39,7 @@
                         @click.stop="showEditAndSendInviteResponseDialog(scope.row)" />
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
 
         <template #footer>
             <el-button type="small" @click="cancelSendInviteResponse">{{

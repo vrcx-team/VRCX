@@ -118,7 +118,7 @@
             </h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="worldImportDialog.errors"></pre>
         </template>
-        <data-tables v-loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
+        <DataTable v-loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
                 <template slot-scope="scope">
                     <el-popover placement="right" height="500px" trigger="hover">
@@ -169,7 +169,7 @@
                         @click="deleteItemWorldImport(scope.row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </safe-dialog>
 </template>
 

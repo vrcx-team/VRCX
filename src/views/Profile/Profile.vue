@@ -163,7 +163,7 @@
                         @click="inviteMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables v-if="inviteMessageTable.visible" v-bind="inviteMessageTable" style="margin-top: 10px">
+            <DataTable v-if="inviteMessageTable.visible" v-bind="inviteMessageTable" style="margin-top: 10px">
                 <el-table-column
                     :label="t('table.profile.invite_messages.slot')"
                     prop="slot"
@@ -189,7 +189,7 @@
                             @click="showEditInviteMessageDialog('message', scope.row)"></el-button>
                     </template>
                 </el-table-column>
-            </data-tables>
+            </DataTable>
         </div>
 
         <div class="options-container">
@@ -217,7 +217,7 @@
                         @click="inviteResponseMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
+            <DataTable
                 v-if="inviteResponseMessageTable.visible"
                 v-bind="inviteResponseMessageTable"
                 style="margin-top: 10px">
@@ -246,7 +246,7 @@
                             @click="showEditInviteMessageDialog('response', scope.row)"></el-button>
                     </template>
                 </el-table-column>
-            </data-tables>
+            </DataTable>
         </div>
 
         <div class="options-container">
@@ -274,7 +274,7 @@
                         @click="inviteRequestMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
+            <DataTable
                 v-if="inviteRequestMessageTable.visible"
                 v-bind="inviteRequestMessageTable"
                 style="margin-top: 10px">
@@ -303,7 +303,7 @@
                             @click="showEditInviteMessageDialog('request', scope.row)"></el-button>
                     </template>
                 </el-table-column>
-            </data-tables>
+            </DataTable>
         </div>
 
         <div class="options-container">
@@ -331,7 +331,7 @@
                         @click="inviteRequestResponseMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
+            <DataTable
                 v-if="inviteRequestResponseMessageTable.visible"
                 v-bind="inviteRequestResponseMessageTable"
                 style="margin-top: 10px">
@@ -360,12 +360,12 @@
                             @click="showEditInviteMessageDialog('requestResponse', scope.row)"></el-button>
                     </template>
                 </el-table-column>
-            </data-tables>
+            </DataTable>
         </div>
 
         <div class="options-container">
             <span class="header">{{ t('view.profile.past_display_names') }}</span>
-            <data-tables v-bind="pastDisplayNameTable" style="margin-top: 10px">
+            <DataTable v-bind="pastDisplayNameTable" style="margin-top: 10px">
                 <el-table-column
                     :label="t('table.profile.previous_display_name.date')"
                     prop="updated_at"
@@ -377,7 +377,7 @@
                 <el-table-column
                     :label="t('table.profile.previous_display_name.name')"
                     prop="displayName"></el-table-column>
-            </data-tables>
+            </DataTable>
         </div>
 
         <div class="options-container">
