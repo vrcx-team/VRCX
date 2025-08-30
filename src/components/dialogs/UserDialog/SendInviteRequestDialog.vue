@@ -1,8 +1,8 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :model-value="sendInviteRequestDialogVisible"
-        @update:model-value="$emit('update:sendInviteRequestDialogVisible', $event)"
+        :visible="sendInviteRequestDialogVisible"
+        @update:visible="$emit('update:sendInviteRequestDialogVisible', $event)"
         :title="t('dialog.invite_request_message.header')"
         width="800px"
         append-to-body

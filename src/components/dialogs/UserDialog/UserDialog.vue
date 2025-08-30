@@ -2,7 +2,7 @@
     <safe-dialog
         ref="userDialogRef"
         class="x-dialog x-user-dialog"
-        v-model="userDialog.visible"
+        v-model:visible="userDialog.visible"
         :show-close="false"
         width="770px">
         <div v-loading="userDialog.loading">
@@ -1054,21 +1054,17 @@
                                         placement="top"
                                         :content="t('dialog.user.info.id_tooltip')"
                                         :disabled="hideTooltips">
-                                        <el-dropdown
-                                            trigger="click"
-                                            size="mini"
-                                            style="margin-left: 5px"
-                                            @click.native.stop>
+                                        <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.stop>
                                             <el-button type="default" :icon="Sort" size="mini" circle></el-button>
                                             <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item @click.native="copyUserId(userDialog.id)">{{
+                                                <el-dropdown-item @click="copyUserId(userDialog.id)">{{
                                                     t('dialog.user.info.copy_id')
                                                 }}</el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyUserURL(userDialog.id)">{{
+                                                <el-dropdown-item @click="copyUserURL(userDialog.id)">{{
                                                     t('dialog.user.info.copy_url')
                                                 }}</el-dropdown-item>
                                                 <el-dropdown-item
-                                                    @click.native="copyUserDisplayName(userDialog.ref.displayName)"
+                                                    @click="copyUserDisplayName(userDialog.ref.displayName)"
                                                     >{{ t('dialog.user.info.copy_display_name') }}</el-dropdown-item
                                                 >
                                             </el-dropdown-menu>
@@ -1108,7 +1104,7 @@
                                     size="small"
                                     style="margin-right: 5px"
                                     :disabled="userDialog.isGroupsLoading"
-                                    @click.native.stop>
+                                    @click.stop>
                                     <el-button size="mini">
                                         <span
                                             >{{ t(userDialog.groupSorting.name) }}
@@ -1123,7 +1119,7 @@
                                                 item === userDialogGroupSortingOptions.inGame &&
                                                 userDialog.id !== currentUser.id
                                             "
-                                            @click.native="setUserDialogGroupSorting(item)"
+                                            @click="setUserDialogGroupSorting(item)"
                                             >{{ t(item.name) }}
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
@@ -1160,16 +1156,16 @@
                                         <i class="el-icon-arrow-down el-icon--right"></i>
                                     </el-button>
                                     <el-dropdown-menu>
-                                        <el-dropdown-item @click.native="bulkSetVisibility('visible')">
+                                        <el-dropdown-item @click="bulkSetVisibility('visible')">
                                             {{ t('dialog.group.actions.visibility_everyone') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item @click.native="bulkSetVisibility('friends')">
+                                        <el-dropdown-item @click="bulkSetVisibility('friends')">
                                             {{ t('dialog.group.actions.visibility_friends') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item @click.native="bulkSetVisibility('hidden')">
+                                        <el-dropdown-item @click="bulkSetVisibility('hidden')">
                                             {{ t('dialog.group.actions.visibility_hidden') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item divided @click.native="bulkLeaveGroups">
+                                        <el-dropdown-item divided @click="bulkLeaveGroups">
                                             <i class="el-icon-delete"></i>
                                             {{ t('dialog.user.groups.leave_group_tooltip') }}
                                         </el-dropdown-item>
@@ -1272,7 +1268,7 @@
                                         trigger="click"
                                         size="small"
                                         style="margin-right: 5px"
-                                        @click.native.stop>
+                                        @click.stop>
                                         <el-button size="mini">
                                             <span v-if="group.myMember.visibility === 'visible'">{{
                                                 t('dialog.group.tags.visible')
@@ -1287,19 +1283,19 @@
                                             <i class="el-icon-arrow-down el-icon--right" style="margin-left: 5px"></i>
                                         </el-button>
                                         <el-dropdown-menu>
-                                            <el-dropdown-item @click.native="setGroupVisibility(group.id, 'visible')"
+                                            <el-dropdown-item @click="setGroupVisibility(group.id, 'visible')"
                                                 ><i
                                                     v-if="group.myMember.visibility === 'visible'"
                                                     class="el-icon-check"></i>
                                                 {{ t('dialog.group.actions.visibility_everyone') }}</el-dropdown-item
                                             >
-                                            <el-dropdown-item @click.native="setGroupVisibility(group.id, 'friends')"
+                                            <el-dropdown-item @click="setGroupVisibility(group.id, 'friends')"
                                                 ><i
                                                     v-if="group.myMember.visibility === 'friends'"
                                                     class="el-icon-check"></i>
                                                 {{ t('dialog.group.actions.visibility_friends') }}</el-dropdown-item
                                             >
-                                            <el-dropdown-item @click.native="setGroupVisibility(group.id, 'hidden')"
+                                            <el-dropdown-item @click="setGroupVisibility(group.id, 'hidden')"
                                                 ><i
                                                     v-if="group.myMember.visibility === 'hidden'"
                                                     class="el-icon-check"></i>
@@ -1505,7 +1501,7 @@
                                 size="small"
                                 style="margin-right: 5px"
                                 :disabled="userDialog.isWorldsLoading"
-                                @click.native.stop>
+                                @click.stop>
                                 <el-button size="mini">
                                     <span
                                         >{{ t(userDialog.worldSorting.name) }}
@@ -1516,7 +1512,7 @@
                                     <el-dropdown-item
                                         v-for="(item, key) in userDialogWorldSortingOptions"
                                         :key="key"
-                                        @click.native="setUserDialogWorldSorting(item)">
+                                        @click="setUserDialogWorldSorting(item)">
                                         {{ t(item.name) }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
@@ -1527,7 +1523,7 @@
                                 size="small"
                                 style="margin-right: 5px"
                                 :disabled="userDialog.isWorldsLoading"
-                                @click.native.stop>
+                                @click.stop>
                                 <el-button size="mini">
                                     <span
                                         >{{ t(userDialog.worldOrder.name) }}
@@ -1538,7 +1534,7 @@
                                     <el-dropdown-item
                                         v-for="(item, key) in userDialogWorldOrderOptions"
                                         :key="key"
-                                        @click.native="setUserDialogWorldOrder(item)">
+                                        @click="setUserDialogWorldOrder(item)">
                                         {{ t(item.name) }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
@@ -1656,7 +1652,7 @@
                                     size="small"
                                     style="margin-right: 5px"
                                     :disabled="userDialog.isWorldsLoading"
-                                    @click.native.stop>
+                                    @click.stop>
                                     <el-button size="mini">
                                         <span
                                             >{{ t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`) }}
@@ -1664,10 +1660,10 @@
                                         ></span>
                                     </el-button>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item @click.native="changeUserDialogAvatarSorting('name')">
+                                        <el-dropdown-item @click="changeUserDialogAvatarSorting('name')">
                                             {{ t('dialog.user.avatars.sort_by_name') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item @click.native="changeUserDialogAvatarSorting('update')">
+                                        <el-dropdown-item @click="changeUserDialogAvatarSorting('update')">
                                             {{ t('dialog.user.avatars.sort_by_update') }}
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
@@ -1680,7 +1676,7 @@
                                     size="small"
                                     style="margin-right: 5px"
                                     :disabled="userDialog.isWorldsLoading"
-                                    @click.native.stop>
+                                    @click.stop>
                                     <el-button size="mini">
                                         <span
                                             >{{ t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`) }}
@@ -1688,13 +1684,13 @@
                                         ></span>
                                     </el-button>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item @click.native="userDialog.avatarReleaseStatus = 'all'">
+                                        <el-dropdown-item @click="userDialog.avatarReleaseStatus = 'all'">
                                             {{ t('dialog.user.avatars.all') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item @click.native="userDialog.avatarReleaseStatus = 'public'">
+                                        <el-dropdown-item @click="userDialog.avatarReleaseStatus = 'public'">
                                             {{ t('dialog.user.avatars.public') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item @click.native="userDialog.avatarReleaseStatus = 'private'">
+                                        <el-dropdown-item @click="userDialog.avatarReleaseStatus = 'private'">
                                             {{ t('dialog.user.avatars.private') }}
                                         </el-dropdown-item>
                                     </el-dropdown-menu>

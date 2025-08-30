@@ -9,7 +9,7 @@
             </template>
         </el-checkbox-group>
 
-        <el-dropdown trigger="click" size="small" @click.native.stop>
+        <el-dropdown trigger="click" size="small" @click.stop>
             <el-button size="mini">
                 <span v-if="avatarExportFavoriteGroup">
                     {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{
@@ -23,20 +23,18 @@
                 </span>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectAvatarExportGroup(null)">
+                <el-dropdown-item style="display: block; margin: 10px 0" @click="selectAvatarExportGroup(null)">
                     All Favorites
                 </el-dropdown-item>
                 <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
-                    <el-dropdown-item
-                        style="display: block; margin: 10px 0"
-                        @click.native="selectAvatarExportGroup(groupAPI)">
+                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectAvatarExportGroup(groupAPI)">
                         {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
                     </el-dropdown-item>
                 </template>
             </el-dropdown-menu>
         </el-dropdown>
 
-        <el-dropdown trigger="click" size="small" style="margin-left: 10px" @click.native.stop>
+        <el-dropdown trigger="click" size="small" style="margin-left: 10px" @click.stop>
             <el-button size="mini">
                 <span v-if="avatarExportLocalFavoriteGroup">
                     {{ avatarExportLocalFavoriteGroup }} ({{
@@ -50,15 +48,13 @@
                 </span>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                    style="display: block; margin: 10px 0"
-                    @click.native="selectAvatarExportLocalGroup(null)">
+                <el-dropdown-item style="display: block; margin: 10px 0" @click="selectAvatarExportLocalGroup(null)">
                     None
                 </el-dropdown-item>
                 <template v-for="group in localAvatarFavoriteGroups" :key="group">
                     <el-dropdown-item
                         style="display: block; margin: 10px 0"
-                        @click.native="selectAvatarExportLocalGroup(group)">
+                        @click="selectAvatarExportLocalGroup(group)">
                         {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                     </el-dropdown-item>
                 </template>
@@ -73,7 +69,7 @@
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="handleCopyAvatarExportData"></el-input>
+            @click="handleCopyAvatarExportData"></el-input>
     </safe-dialog>
 </template>
 

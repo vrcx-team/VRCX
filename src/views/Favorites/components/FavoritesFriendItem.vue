@@ -19,7 +19,7 @@
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
+                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.stop>
                         <el-tooltip
                             placement="left"
                             :content="t('view.favorite.move_tooltip')"
@@ -32,7 +32,7 @@
                                     v-if="groupAPI.name !== group.name"
                                     style="display: block; margin: 10px 0"
                                     :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click.native="moveFavorite(favorite.ref, groupAPI, 'friend')">
+                                    @click="moveFavorite(favorite.ref, groupAPI, 'friend')">
                                     {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
                                 </el-dropdown-item>
                             </template>

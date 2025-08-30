@@ -13,7 +13,7 @@
                     <span v-else class="extra" v-once>{{ localFavFakeRef.authorName }}</span>
                 </div>
                 <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
+                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.stop>
                         <el-tooltip
                             placement="left"
                             :content="t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
@@ -26,7 +26,7 @@
                                     v-if="isLocalFavorite || groupAPI.name !== group.name"
                                     style="display: block; margin: 10px 0"
                                     :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click.native="handleDropdownItemClick(groupAPI)">
+                                    @click="handleDropdownItemClick(groupAPI)">
                                     {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
                                 </el-dropdown-item>
                             </template>

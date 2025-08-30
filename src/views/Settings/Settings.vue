@@ -313,7 +313,7 @@
                     <span class="header">{{ t('view.settings.appearance.appearance.header') }}</span>
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
-                        <el-dropdown trigger="click" size="small" @click.native.stop>
+                        <el-dropdown trigger="click" size="small" @click.stop>
                             <el-button size="mini">
                                 <span
                                     >{{ messages[appLanguage]?.language }}
@@ -324,14 +324,14 @@
                                 <el-dropdown-item
                                     v-for="(obj, language) in messages"
                                     :key="language"
-                                    @click.native="changeAppLanguage(language)"
+                                    @click="changeAppLanguage(language)"
                                     v-text="obj.language" />
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                        <el-dropdown trigger="click" size="small" @click.native.stop>
+                        <el-dropdown trigger="click" size="small" @click.stop>
                             <el-button size="mini">
                                 <span
                                     >{{ t(`view.settings.appearance.appearance.theme_mode_${themeMode}`) }}
@@ -342,7 +342,7 @@
                                 <el-dropdown-item
                                     v-for="(config, themeKey) in THEME_CONFIG"
                                     :key="themeKey"
-                                    @click.native="saveThemeMode(themeKey)"
+                                    @click="saveThemeMode(themeKey)"
                                     :class="{ 'is-active': themeMode === themeKey }">
                                     {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
                                 </el-dropdown-item>
@@ -415,7 +415,7 @@
                             @click="promptMaxTableSizeDialog"
                             >{{ t('view.settings.appearance.appearance.table_max_size') }}</el-button
                         >
-                        <el-dropdown trigger="click" size="small" @click.native.stop>
+                        <el-dropdown trigger="click" size="small" @click.stop>
                             <el-button size="small">
                                 <span
                                     >{{ t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }}
@@ -426,7 +426,7 @@
                                 <el-dropdown-item
                                     v-for="number in [10, 15, 20, 25, 50, 100]"
                                     :key="number"
-                                    @click.native="handleSetTablePageSize(number)"
+                                    @click="handleSetTablePageSize(number)"
                                     v-text="number" />
                             </el-dropdown-menu>
                         </el-dropdown>

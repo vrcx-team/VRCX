@@ -3,7 +3,6 @@
         ref="elDialogRef"
         :model-value="props.visible"
         v-bind="attrs"
-        :close-on-click-modal="false"
         :top="marginTop"
         @update:modelValue="onUpdateModelValue"
         @open="handleOpen"
@@ -31,6 +30,10 @@
     });
 
     const emit = defineEmits(['update:visible', 'open', 'close']);
+
+    defineOptions({
+        inheritAttrs: false
+    });
 
     const attrs = useAttrs();
     const slots = useSlots();
@@ -82,8 +85,6 @@
             window.removeEventListener('resize', handleResize);
             handleResize = null;
         }
-
-        emit('update:visible', false);
     };
 
     const handleWrapperMouseDown = (event) => {
@@ -94,7 +95,7 @@
 
     const handleWrapperMouseUp = (event) => {
         if (event.target === wrapperElement.value && mouseDownOnWrapper.value) {
-            handleClose();
+            onUpdateModelValue(false);
         }
         mouseDownOnWrapper.value = false;
     };

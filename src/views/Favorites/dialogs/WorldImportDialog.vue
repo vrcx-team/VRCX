@@ -30,7 +30,7 @@
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.native.stop>
+                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.stop>
                     <el-button size="mini">
                         <span v-if="worldImportDialog.worldImportFavoriteGroup">
                             {{ worldImportDialog.worldImportFavoriteGroup.displayName }}
@@ -49,13 +49,13 @@
                             <el-dropdown-item
                                 style="display: block; margin: 10px 0"
                                 :disabled="groupAPI.count >= groupAPI.capacity"
-                                @click.native="selectWorldImportGroup(groupAPI)">
+                                @click="selectWorldImportGroup(groupAPI)">
                                 {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
                             </el-dropdown-item>
                         </template>
                     </el-dropdown-menu>
                 </el-dropdown>
-                <el-dropdown trigger="click" size="small" style="margin: 5px" @click.native.stop>
+                <el-dropdown trigger="click" size="small" style="margin: 5px" @click.stop>
                     <el-button size="mini">
                         <span v-if="worldImportDialog.worldImportLocalFavoriteGroup">
                             {{ worldImportDialog.worldImportLocalFavoriteGroup }}
@@ -71,7 +71,7 @@
                         <template v-for="group in localWorldFavoriteGroups" :key="group">
                             <el-dropdown-item
                                 style="display: block; margin: 10px 0"
-                                @click.native="selectWorldImportLocalGroup(group)">
+                                @click="selectWorldImportLocalGroup(group)">
                                 {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                             </el-dropdown-item>
                         </template>

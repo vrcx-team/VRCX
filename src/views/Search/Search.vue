@@ -6,7 +6,7 @@
                 :placeholder="t('view.search.search_placeholder')"
                 style="flex: 1"
                 @input="updateSearchText"
-                @keyup.native.13="search"></el-input>
+                @keyup.enter="search"></el-input>
             <el-tooltip placement="bottom" :content="t('view.search.clear_results_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
@@ -138,7 +138,7 @@
                             trigger="click"
                             size="mini"
                             style="margin-right: 5px"
-                            @click.native.stop>
+                            @click.stop>
                             <el-button size="small"
                                 >{{ t('view.search.avatar.search_provider') }}
                                 <i class="el-icon-arrow-down el-icon--right"></i
@@ -147,7 +147,7 @@
                                 <el-dropdown-item
                                     v-for="provider in avatarRemoteDatabaseProviderList"
                                     :key="provider"
-                                    @click.native="setAvatarProvider(provider)">
+                                    @click="setAvatarProvider(provider)">
                                     <i
                                         v-if="provider === avatarRemoteDatabaseProvider"
                                         class="el-icon-check el-icon--left"></i>
