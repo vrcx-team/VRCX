@@ -8,11 +8,12 @@
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
-                    <img
-                        slot="reference"
-                        :src="worldDialog.ref.thumbnailImageUrl"
-                        class="x-link"
-                        style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
+                    <template #reference>
+                        <img
+                            :src="worldDialog.ref.thumbnailImageUrl"
+                            class="x-link"
+                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
+                    </template>
                     <img
                         v-lazy="worldDialog.ref.imageUrl"
                         class="x-link"
@@ -23,20 +24,21 @@
                     <div style="flex: 1">
                         <div>
                             <el-popover placement="top" trigger="click">
-                                <span
-                                    slot="reference"
-                                    class="dialog-title"
-                                    style="margin-right: 5px; cursor: pointer"
-                                    @click="copyToClipboard(worldDialog.ref.name)">
-                                    <i
-                                        v-if="
-                                            currentUser.$homeLocation &&
-                                            currentUser.$homeLocation.worldId === worldDialog.id
-                                        "
-                                        class="el-icon-s-home"
-                                        style="margin-right: 5px" />
-                                    {{ worldDialog.ref.name }}
-                                </span>
+                                <template #reference>
+                                    <span
+                                        class="dialog-title"
+                                        style="margin-right: 5px; cursor: pointer"
+                                        @click="copyToClipboard(worldDialog.ref.name)">
+                                        <i
+                                            v-if="
+                                                currentUser.$homeLocation &&
+                                                currentUser.$homeLocation.worldId === worldDialog.id
+                                            "
+                                            class="el-icon-s-home"
+                                            style="margin-right: 5px" />
+                                        {{ worldDialog.ref.name }}
+                                    </span>
+                                </template>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
                                     textToHex(worldDialog.ref.name)
                                 }}</span>

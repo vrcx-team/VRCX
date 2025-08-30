@@ -15,11 +15,12 @@
                     placement="right"
                     width="500px"
                     trigger="click">
-                    <img
-                        slot="reference"
-                        class="x-link"
-                        :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
-                        style="flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover" />
+                    <template #reference
+                        ><img
+                            class="x-link"
+                            :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
+                            style="flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
+                    /></template>
                     <img
                         v-lazy="userDialog.ref.profilePicOverride"
                         class="x-link"
@@ -27,11 +28,13 @@
                         @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)" />
                 </el-popover>
                 <el-popover v-else-if="!userDialog.loading" placement="right" width="500px" trigger="click">
-                    <img
-                        slot="reference"
-                        class="x-link"
-                        :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-                        style="flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover" />
+                    <template #reference
+                        ><img
+                            class="x-link"
+                            :src="userDialog.ref.currentAvatarThumbnailImageUrl"
+                            style="flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
+                    /></template>
+
                     <img
                         v-lazy="userDialog.ref.currentAvatarImageUrl"
                         class="x-link"
@@ -81,12 +84,13 @@
                                 </el-tooltip>
                             </template>
                             <el-popover placement="top" trigger="click">
-                                <span
-                                    slot="reference"
-                                    class="dialog-title"
-                                    style="margin-left: 5px; margin-right: 5px; cursor: pointer"
-                                    v-text="userDialog.ref.displayName"
-                                    @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
+                                <template #reference>
+                                    <span
+                                        class="dialog-title"
+                                        style="margin-left: 5px; margin-right: 5px; cursor: pointer"
+                                        v-text="userDialog.ref.displayName"
+                                        @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
+                                </template>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
                                     textToHex(userDialog.ref.displayName)
                                 }}</span>
@@ -113,16 +117,17 @@
                             <template v-if="userDialog.ref.id === currentUser.id">
                                 <br />
                                 <el-popover placement="top" trigger="click">
-                                    <span
-                                        slot="reference"
-                                        class="x-grey"
-                                        style="
-                                            margin-right: 10px;
-                                            font-family: monospace;
-                                            font-size: 12px;
-                                            cursor: pointer;
-                                        "
-                                        v-text="currentUser.username"></span>
+                                    <template #reference>
+                                        <span
+                                            class="x-grey"
+                                            style="
+                                                margin-right: 10px;
+                                                font-family: monospace;
+                                                font-size: 12px;
+                                                cursor: pointer;
+                                            "
+                                            v-text="currentUser.username"></span>
+                                    </template>
                                     <span style="display: block; text-align: center; font-family: monospace">{{
                                         textToHex(currentUser.username)
                                     }}</span>
@@ -253,20 +258,21 @@
                                     <span v-if="badge.hidden">&nbsp;(Hidden)</span>
                                 </template>
                                 <el-popover placement="right" width="300px" trigger="click">
-                                    <img
-                                        slot="reference"
-                                        class="x-link x-user-badge"
-                                        :src="badge.badgeImageUrl"
-                                        style="
-                                            flex: none;
-                                            height: 32px;
-                                            width: 32px;
-                                            border-radius: 3px;
-                                            object-fit: cover;
-                                            margin-top: 5px;
-                                            margin-right: 5px;
-                                        "
-                                        :class="{ 'x-user-badge-hidden': badge.hidden }" />
+                                    <template #reference>
+                                        <img
+                                            class="x-link x-user-badge"
+                                            :src="badge.badgeImageUrl"
+                                            style="
+                                                flex: none;
+                                                height: 32px;
+                                                width: 32px;
+                                                border-radius: 3px;
+                                                object-fit: cover;
+                                                margin-top: 5px;
+                                                margin-right: 5px;
+                                            "
+                                            :class="{ 'x-user-badge-hidden': badge.hidden }" />
+                                    </template>
                                     <img
                                         v-lazy="badge.badgeImageUrl"
                                         class="x-link"
@@ -312,17 +318,18 @@
 
                     <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 10px">
                         <el-popover placement="right" width="500px" trigger="click">
-                            <img
-                                slot="reference"
-                                class="x-link"
-                                :src="userImage(userDialog.ref, true, '256', true)"
-                                style="
-                                    flex: none;
-                                    width: 120px;
-                                    height: 120px;
-                                    border-radius: 12px;
-                                    object-fit: cover;
-                                " />
+                            <template #reference>
+                                <img
+                                    class="x-link"
+                                    :src="userImage(userDialog.ref, true, '256', true)"
+                                    style="
+                                        flex: none;
+                                        width: 120px;
+                                        height: 120px;
+                                        border-radius: 12px;
+                                        object-fit: cover;
+                                    " />
+                            </template>
                             <img
                                 v-lazy="userDialog.ref.userIcon"
                                 class="x-link"
@@ -734,24 +741,25 @@
                                     class="extra">
                                     <div style="display: inline-block; flex: none; margin-right: 5px">
                                         <el-popover placement="right" width="500px" trigger="click">
-                                            <el-image
-                                                slot="reference"
-                                                v-loading="userDialog.isRepresentedGroupLoading"
-                                                class="x-link"
-                                                :src="userDialog.representedGroup.$thumbnailUrl"
-                                                style="
-                                                    flex: none;
-                                                    width: 60px;
-                                                    height: 60px;
-                                                    border-radius: 4px;
-                                                    object-fit: cover;
-                                                "
-                                                :style="{
-                                                    background: userDialog.isRepresentedGroupLoading ? '#f5f7fa' : ''
-                                                }"
-                                                @load="userDialog.isRepresentedGroupLoading = false">
-                                                <div slot="error"></div>
-                                            </el-image>
+                                            <template #reference>
+                                                <el-image
+                                                    v-loading="userDialog.isRepresentedGroupLoading"
+                                                    class="x-link"
+                                                    :src="userDialog.representedGroup.$thumbnailUrl"
+                                                    style="
+                                                        flex: none;
+                                                        width: 60px;
+                                                        height: 60px;
+                                                        border-radius: 4px;
+                                                        object-fit: cover;
+                                                    "
+                                                    :style="{
+                                                        background: userDialog.isRepresentedGroupLoading ? '#f5f7fa' : ''
+                                                    }"
+                                                    @load="userDialog.isRepresentedGroupLoading = false">
+                                                    <template #error></template>
+                                                </el-image>
+                                            </template>
                                             <img
                                                 v-lazy="userDialog.representedGroup.iconUrl"
                                                 class="x-link"

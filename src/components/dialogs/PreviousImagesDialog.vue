@@ -14,7 +14,9 @@
                     width="500px"
                     trigger="click"
                     v-if="image.file">
-                    <img slot="reference" v-lazy="image.file.url" class="x-link" />
+                    <template #reference>
+                        <img v-lazy="image.file.url" class="x-link" />
+                    </template>
                     <img
                         v-lazy="image.file.url"
                         class="x-link"

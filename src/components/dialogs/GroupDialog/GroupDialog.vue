@@ -392,17 +392,18 @@
                 <el-tab-pane :label="t('dialog.group.info.header')">
                     <div class="group-banner-image-info">
                         <el-popover placement="right" width="500px" trigger="click">
-                            <img
-                                slot="reference"
-                                v-lazy="groupDialog.ref.bannerUrl"
-                                class="x-link"
-                                style="
-                                    flex: none;
-                                    width: 100%;
-                                    aspect-ratio: 6/1;
-                                    object-fit: cover;
-                                    border-radius: 4px;
-                                " />
+                            <template #reference>
+                                <img
+                                    v-lazy="groupDialog.ref.bannerUrl"
+                                    class="x-link"
+                                    style="
+                                        flex: none;
+                                        width: 100%;
+                                        aspect-ratio: 6/1;
+                                        object-fit: cover;
+                                        border-radius: 4px;
+                                    " />
+                            </template>
                             <img
                                 v-lazy="groupDialog.ref.bannerUrl"
                                 class="x-link"
@@ -466,21 +467,20 @@
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.announcement') }}</span>
                                 <span style="display: block" v-text="groupDialog.announcement.title" />
-                                <div
-                                    v-if="groupDialog.announcement.imageUrl"
-                                    style="display: inline-block; margin-right: 5px">
+                                <div v-if="groupDialog.announcement.imageUrl" style="display: inline-block; margin-right: 5px">
                                     <el-popover placement="right" width="500px" trigger="click">
-                                        <img
-                                            slot="reference"
-                                            v-lazy="groupDialog.announcement.imageUrl"
-                                            class="x-link"
-                                            style="
-                                                flex: none;
-                                                width: 60px;
-                                                height: 60px;
-                                                border-radius: 4px;
-                                                object-fit: cover;
-                                            " />
+                                        <template #reference>
+                                            <img
+                                                v-lazy="groupDialog.announcement.imageUrl"
+                                                class="x-link"
+                                                style="
+                                                    flex: none;
+                                                    width: 60px;
+                                                    height: 60px;
+                                                    border-radius: 4px;
+                                                    object-fit: cover;
+                                                " />
+                                        </template>
                                         <img
                                             v-lazy="groupDialog.announcement.imageUrl"
                                             class="x-link"
@@ -776,17 +776,18 @@
                                     <span style="display: block" v-text="post.title" />
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
                                         <el-popover placement="right" width="500px" trigger="click">
-                                            <img
-                                                slot="reference"
-                                                v-lazy="post.imageUrl"
-                                                class="x-link"
-                                                style="
-                                                    flex: none;
-                                                    width: 60px;
-                                                    height: 60px;
-                                                    border-radius: 4px;
-                                                    object-fit: cover;
-                                                " />
+                                            <template #reference>
+                                                <img
+                                                    v-lazy="post.imageUrl"
+                                                    class="x-link"
+                                                    style="
+                                                        flex: none;
+                                                        width: 60px;
+                                                        height: 60px;
+                                                        border-radius: 4px;
+                                                        object-fit: cover;
+                                                    " />
+                                            </template>
                                             <img
                                                 v-lazy="post.imageUrl"
                                                 class="x-link"
@@ -1132,15 +1133,14 @@
                                 </span>
                                 <span style="color: #c7c7c7; padding: 10px" v-text="gallery.description" />
                                 <el-carousel :interval="0" height="600px" style="margin-top: 10px">
-                                    <el-carousel-item
-                                        v-for="image in groupDialog.galleries[gallery.id]"
-                                        :key="image.id">
+                                    <el-carousel-item v-for="image in groupDialog.galleries[gallery.id]" :key="image.id">
                                         <el-popover placement="top" width="700px" trigger="click">
-                                            <img
-                                                slot="reference"
-                                                v-lazy="image.imageUrl"
-                                                class="x-link"
-                                                style="width: 100%; height: 100%; object-fit: contain" />
+                                            <template #reference>
+                                                <img
+                                                    v-lazy="image.imageUrl"
+                                                    class="x-link"
+                                                    style="width: 100%; height: 100%; object-fit: contain" />
+                                            </template>
                                             <img
                                                 v-lazy="image.imageUrl"
                                                 class="x-link"

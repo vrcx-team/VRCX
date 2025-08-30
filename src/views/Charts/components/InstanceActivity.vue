@@ -14,9 +14,11 @@
                         </div>
                     </div>
 
-                    <el-icon slot="reference" style="margin-left: 5px; font-size: 12px; opacity: 0.7"
-                        ><InfoFilled
-                    /></el-icon>
+                    <template #reference>
+                        <el-icon style="margin-left: 5px; font-size: 12px; opacity: 0.7"
+                            ><InfoFilled
+                        /></el-icon>
+                    </template>
                 </el-popover>
             </div>
 
@@ -56,7 +58,9 @@
                             </div>
                         </div>
 
-                        <el-button slot="reference" :icon="Setting" circle></el-button>
+                        <template #reference>
+                            <el-button :icon="Setting" circle></el-button>
+                        </template>
                     </el-popover>
                 </el-tooltip>
                 <el-button-group style="margin-right: 10px">
@@ -459,7 +463,7 @@
                                 return 0;
                             }
                         }
-                        return item.joinTime - dayjs.tz(selectedDate.value).startOf('day');
+                        return item.joinTime - dayjs.tz(selectedDate.value).startOf('day').valueOf();
                     })
                 },
                 {
@@ -483,7 +487,7 @@
                         if (idx === 0) {
                             const midnight = dayjs.tz(selectedDate.value).startOf('day');
                             if (midnight.isAfter(item.joinTime)) {
-                                return item.leaveTime - dayjs.tz(midnight);
+                                return item.leaveTime - dayjs.tz(midnight).valueOf();
                             }
                         }
                         return item.time;

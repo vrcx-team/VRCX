@@ -28,9 +28,11 @@
                         }}</el-descriptions-item>
                         <el-descriptions-item label="Description">{{ event.description }}</el-descriptions-item>
                     </el-descriptions>
-                    <div class="event-title-content" slot="reference" @click="onGroupClick">
-                        {{ event.title }}
-                    </div>
+                    <template #reference>
+                        <div class="event-title-content" @click="onGroupClick">
+                            {{ event.title }}
+                        </div>
+                    </template>
                 </el-popover>
             </div>
             <div class="event-info">

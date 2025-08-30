@@ -91,29 +91,29 @@
         </template>
         <DataTable v-loading="friendImportDialog.loading" v-bind="friendImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <el-popover placement="right" height="500px" trigger="hover">
-                        <template slot="reference">
-                            <img class="friends-list-avatar" :src="userImage(scope.row)" />
+                        <template #reference>
+                            <img class="friends-list-avatar" :src="userImage(row)" />
                         </template>
                         <img
                             class="friends-list-avatar"
-                            :src="userImageFull(scope.row)"
+                            :src="userImageFull(row)"
                             style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(userImageFull(scope.row))" />
+                            @click="showFullscreenImageDialog(userImageFull(row))" />
                     </el-popover>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.name')" prop="displayName">
-                <template slot-scope="scope">
-                    <span class="x-link" :title="scope.row.displayName" @click="showUserDialog(scope.row.id)">
-                        {{ scope.row.displayName }}
+                <template #default="{ row }">
+                    <span class="x-link" :title="row.displayName" @click="showUserDialog(row.id)">
+                        {{ row.displayName }}
                     </span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template slot-scope="scope">
-                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemFriendImport(scope.row)">
+                <template #default="{ row }">
+                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemFriendImport(row)">
                     </el-button>
                 </template>
             </el-table-column>
@@ -211,7 +211,7 @@
         }
         const data = [...friendImportTable.value.data].reverse();
         D.importProgressTotal = data.length;
-        let ref = '';
+    let ref = null;
         try {
             for (let i = data.length - 1; i >= 0; i--) {
                 if (!D.loading || !isVisible.value) {
@@ -224,7 +224,7 @@
                 D.importProgress++;
             }
         } catch (err) {
-            D.errors = `Name: ${ref.displayName}\nUserId: ${ref.id}\n${err}\n\n`;
+            D.errors = `Name: ${ref?.displayName}\nUserId: ${ref?.id}\n${err}\n\n`;
         } finally {
             D.importProgress = 0;
             D.importProgressTotal = 0;

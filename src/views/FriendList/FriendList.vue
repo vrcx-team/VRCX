@@ -100,28 +100,30 @@
                     :key="friendsListBulkUnfriendForceUpdate"
                     width="55"
                     prop="$selected">
-                    <template slot-scope="scope">
+                    <template #default="{ row }">
                         <el-button type="text" size="mini" @click.stop>
                             <el-checkbox
-                                v-model="scope.row.$selected"
+                                v-model="row.$selected"
                                 @change="friendsListBulkUnfriendForceUpdate++"></el-checkbox>
                         </el-button>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.no')" width="70" prop="$friendNumber" sortable="custom">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.$friendNumber ? scope.row.$friendNumber : '' }}</span>
+                    <template #default="{ row }">
+                        <span>{{ row.$friendNumber ? row.$friendNumber : '' }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.avatar')" width="70" prop="photo">
-                    <template slot-scope="scope">
+                    <template #default="{ row }">
                         <el-popover placement="right" height="500px" trigger="hover">
-                            <img slot="reference" v-lazy="userImage(scope.row, true)" class="friends-list-avatar" />
+                            <template #reference>
+                                <img v-lazy="userImage(row, true)" class="friends-list-avatar" />
+                            </template>
                             <img
-                                v-lazy="userImageFull(scope.row)"
+                                v-lazy="userImageFull(row)"
                                 class="friends-list-avatar"
                                 style="height: 500px; cursor: pointer"
-                                @click="showFullscreenImageDialog(userImageFull(scope.row))" />
+                                @click="showFullscreenImageDialog(userImageFull(row))" />
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -131,24 +133,16 @@
                     prop="displayName"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')">
-                    <template slot-scope="scope">
-                        <span :style="{ color: randomUserColours ? scope.row.$userColour : undefined }" class="name">{{
-                            scope.row.displayName
+                    <template #default="{ row }">
+                        <span :style="{ color: randomUserColours ? row.$userColour : undefined }" class="name">{{
+                            row.displayName
                         }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.rank')" width="110" prop="$trustSortNum" sortable="custom">
-                    <template slot-scope="scope">
-                        <span
-                            v-if="randomUserColours"
-                            :class="scope.row.$trustClass"
-                            class="name"
-                            v-text="scope.row.$trustLevel"></span>
-                        <span
-                            v-else
-                            class="name"
-                            :style="{ color: scope.row.$userColour }"
-                            v-text="scope.row.$trustLevel"></span>
+                    <template #default="{ row }">
+                        <span v-if="randomUserColours" :class="row.$trustClass" class="name" v-text="row.$trustLevel"></span>
+                        <span v-else class="name" :style="{ color: row.$userColour }" v-text="row.$trustLevel"></span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -157,13 +151,9 @@
                     prop="status"
                     sortable
                     :sort-method="(a, b) => sortStatus(a.status, b.status)">
-                    <template slot-scope="scope">
-                        <i
-                            v-if="scope.row.status !== 'offline'"
-                            :class="statusClass(scope.row.status)"
-                            style="margin-right: 3px"
-                            class="x-user-status"></i>
-                        <span v-text="scope.row.statusDescription"></span>
+                    <template #default="{ row }">
+                        <i v-if="row.status !== 'offline'" :class="statusClass(row.status)" style="margin-right: 3px" class="x-user-status"></i>
+                        <span v-text="row.statusDescription"></span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -172,22 +162,19 @@
                     prop="$languages"
                     sortable
                     :sort-method="(a, b) => sortLanguages(a, b)">
-                    <template slot-scope="scope">
-                        <el-tooltip v-for="item in scope.row.$languages" :key="item.key" placement="top">
-                            <template slot="content">
+                    <template #default="{ row }">
+                        <el-tooltip v-for="item in row.$languages" :key="item.key" placement="top">
+                            <template #content>
                                 <span>{{ item.value }} ({{ item.key }})</span>
                             </template>
-                            <span
-                                :class="languageClass(item.key)"
-                                style="display: inline-block; margin-right: 5px"
-                                class="flags"></span>
+                            <span :class="languageClass(item.key)" style="display: inline-block; margin-right: 5px" class="flags"></span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.bioLink')" width="100" prop="bioLinks">
-                    <template slot-scope="scope">
-                        <el-tooltip v-for="(link, index) in scope.row.bioLinks" v-if="link" :key="index">
-                            <template slot="content">
+                    <template #default="{ row }">
+                        <el-tooltip v-for="(link, index) in row.bioLinks.filter(Boolean)" :key="index">
+                            <template #content>
                                 <span v-text="link"></span>
                             </template>
                             <img
@@ -209,8 +196,8 @@
                     prop="$joinCount"
                     sortable></el-table-column>
                 <el-table-column :label="t('table.friendList.timeTogether')" width="140" prop="$timeSpent" sortable>
-                    <template slot-scope="scope">
-                        <span v-if="scope.row.$timeSpent">{{ timeToText(scope.row.$timeSpent) }}</span>
+                    <template #default="{ row }">
+                        <span v-if="row.$timeSpent">{{ timeToText(row.$timeSpent) }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -219,8 +206,8 @@
                     prop="$lastSeen"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')">
-                    <template slot-scope="scope">
-                        <span>{{ formatDateFilter(scope.row.$lastSeen, 'long') }}</span>
+                    <template #default="{ row }">
+                        <span>{{ formatDateFilter(row.$lastSeen, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -229,8 +216,8 @@
                     prop="last_activity"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_activity')">
-                    <template slot-scope="scope">
-                        <span>{{ formatDateFilter(scope.row.last_activity, 'long') }}</span>
+                    <template #default="{ row }">
+                        <span>{{ formatDateFilter(row.last_activity, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -239,8 +226,8 @@
                     prop="last_login"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')">
-                    <template slot-scope="scope">
-                        <span>{{ formatDateFilter(scope.row.last_login, 'long') }}</span>
+                    <template #default="{ row }">
+                        <span>{{ formatDateFilter(row.last_login, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -250,13 +237,8 @@
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')"></el-table-column>
                 <el-table-column :label="t('table.friendList.unfriend')" width="100" align="center">
-                    <template slot-scope="scope">
-                        <el-button
-                            type="text"
-                            :icon="Close"
-                            style="color: #f56c6c"
-                            size="mini"
-                            @click.stop="confirmDeleteFriend(scope.row.id)"></el-button>
+                    <template #default="{ row }">
+                        <el-button type="text" :icon="Close" style="color: #f56c6c" size="mini" @click.stop="confirmDeleteFriend(row.id)"></el-button>
                     </template>
                 </el-table-column>
             </DataTable>

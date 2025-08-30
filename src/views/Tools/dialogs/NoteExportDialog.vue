@@ -42,28 +42,30 @@
 
         <DataTable v-loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <el-popover placement="right" height="500px" trigger="hover">
-                        <img slot="reference" v-lazy="userImage(scope.row.ref)" class="friends-list-avatar" />
+                        <template #reference>
+                            <img v-lazy="userImage(row.ref)" class="friends-list-avatar" />
+                        </template>
                         <img
-                            v-lazy="userImageFull(scope.row.ref)"
+                            v-lazy="userImageFull(row.ref)"
                             class="friends-list-avatar"
                             style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(userImageFull(scope.row.ref))" />
+                            @click="showFullscreenImageDialog(userImageFull(row.ref))" />
                     </el-popover>
                 </template>
             </el-table-column>
 
             <el-table-column :label="t('table.import.name')" width="170" prop="name">
-                <template slot-scope="scope">
-                    <span class="x-link" @click="showUserDialog(scope.row.id)" v-text="scope.row.name"></span>
+                <template #default="{ row }">
+                    <span class="x-link" @click="showUserDialog(row.id)" v-text="row.name"></span>
                 </template>
             </el-table-column>
 
             <el-table-column :label="t('table.import.note')" prop="memo">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <el-input
-                        v-model="scope.row.memo"
+                        v-model="row.memo"
                         type="textarea"
                         maxlength="256"
                         show-word-limit
@@ -75,12 +77,12 @@
             </el-table-column>
 
             <el-table-column :label="t('table.import.skip_export')" width="90" align="right">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <el-button
                         type="text"
                         :icon="Close"
                         size="mini"
-                        @click="removeFromNoteExportTable(scope.row)"></el-button>
+                        @click="removeFromNoteExportTable(row)"></el-button>
                 </template>
             </el-table-column>
         </DataTable>

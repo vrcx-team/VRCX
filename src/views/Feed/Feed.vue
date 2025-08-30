@@ -74,9 +74,8 @@
                         <template v-else-if="scope.row.type === 'Avatar'">
                             <div style="display: flex; align-items: center">
                                 <el-popover placement="right" width="500px" trigger="click">
-                                    <div
-                                        slot="reference"
-                                        style="display: inline-block; vertical-align: top; width: 160px">
+                                    <template #reference>
+                                        <div style="display: inline-block; vertical-align: top; width: 160px">
                                         <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
                                             <img
                                                 v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl"
@@ -90,7 +89,8 @@
                                                 :hintavatarname="scope.row.previousAvatarName"
                                                 :avatartags="scope.row.previousCurrentAvatarTags" />
                                         </template>
-                                    </div>
+                                        </div>
+                                    </template>
                                     <img
                                         v-lazy="scope.row.previousCurrentAvatarImageUrl"
                                         class="x-link"
@@ -101,9 +101,8 @@
                                     <el-icon><Right /></el-icon>
                                 </span>
                                 <el-popover placement="right" width="500px" trigger="click">
-                                    <div
-                                        slot="reference"
-                                        style="display: inline-block; vertical-align: top; width: 160px">
+                                    <template #reference>
+                                        <div style="display: inline-block; vertical-align: top; width: 160px">
                                         <template v-if="scope.row.currentAvatarThumbnailImageUrl">
                                             <img
                                                 v-lazy="scope.row.currentAvatarThumbnailImageUrl"
@@ -117,7 +116,8 @@
                                                 :hintavatarname="scope.row.avatarName"
                                                 :avatartags="scope.row.currentAvatarTags" />
                                         </template>
-                                    </div>
+                                        </div>
+                                    </template>
                                     <img
                                         v-lazy="scope.row.currentAvatarImageUrl"
                                         class="x-link"

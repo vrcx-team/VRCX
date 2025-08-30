@@ -120,53 +120,46 @@
         </template>
         <DataTable v-loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <el-popover placement="right" height="500px" trigger="hover">
-                        <img slot="reference" v-lazy="scope.row.thumbnailImageUrl" class="friends-list-avatar" />
+                        <template #reference>
+                            <img v-lazy="row.thumbnailImageUrl" class="friends-list-avatar" />
+                        </template>
                         <img
-                            v-lazy="scope.row.imageUrl"
+                            v-lazy="row.imageUrl"
                             class="friends-list-avatar"
                             style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(scope.row.imageUrl)" />
+                            @click="showFullscreenImageDialog(row.imageUrl)" />
                     </el-popover>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.name')" prop="name">
-                <template slot-scope="scope">
-                    <span class="x-link" @click="showWorldDialog(scope.row.id)" v-text="scope.row.name"></span>
+                <template #default="{ row }">
+                    <span class="x-link" @click="showWorldDialog(row.id)" v-text="row.name"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.author')" width="120" prop="authorName">
-                <template slot-scope="scope">
-                    <span
-                        class="x-link"
-                        @click="showUserDialog(scope.row.authorId)"
-                        v-text="scope.row.authorName"></span>
+                <template #default="{ row }">
+                    <span class="x-link" @click="showUserDialog(row.authorId)" v-text="row.authorName"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.status')" width="70" prop="releaseStatus">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <span
                         :style="{
                             color:
-                                scope.row.releaseStatus === 'public'
+                                row.releaseStatus === 'public'
                                     ? '#67c23a'
-                                    : scope.row.releaseStatus === 'private'
+                                    : row.releaseStatus === 'private'
                                       ? '#f56c6c'
                                       : undefined
                         }"
-                        v-text="
-                            scope.row.releaseStatus.charAt(0).toUpperCase() + scope.row.releaseStatus.slice(1)
-                        "></span>
+                        v-text="row.releaseStatus.charAt(0).toUpperCase() + row.releaseStatus.slice(1)"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template slot-scope="scope">
-                    <el-button
-                        type="text"
-                        :icon="Close"
-                        size="mini"
-                        @click="deleteItemWorldImport(scope.row)"></el-button>
+                <template #default="{ row }">
+                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemWorldImport(row)"></el-button>
                 </template>
             </el-table-column>
         </DataTable>

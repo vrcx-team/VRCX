@@ -62,16 +62,17 @@
                     <template v-if="gallerySelectDialog.selectedFileId">
                         <div style="display: inline-block; flex: none; margin-right: 5px">
                             <el-popover placement="right" width="500px" trigger="click">
-                                <img
-                                    slot="reference"
-                                    v-lazy="gallerySelectDialog.selectedImageUrl"
-                                    style="
-                                        flex: none;
-                                        width: 60px;
-                                        height: 60px;
-                                        border-radius: 4px;
-                                        object-fit: cover;
-                                    " />
+                                <template #reference>
+                                    <img
+                                        v-lazy="gallerySelectDialog.selectedImageUrl"
+                                        style="
+                                            flex: none;
+                                            width: 60px;
+                                            height: 60px;
+                                            border-radius: 4px;
+                                            object-fit: cover;
+                                        " />
+                                </template>
                                 <img
                                     v-lazy="gallerySelectDialog.selectedImageUrl"
                                     style="height: 500px"

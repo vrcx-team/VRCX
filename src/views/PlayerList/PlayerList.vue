@@ -3,11 +3,12 @@
         <div style="display: flex; flex-direction: column; height: 100%">
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click" style="height: 120px">
-                    <img
-                        slot="reference"
-                        v-lazy="currentInstanceWorld.ref.thumbnailImageUrl"
-                        class="x-link"
-                        style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
+                    <template #reference>
+                        <img
+                            v-lazy="currentInstanceWorld.ref.thumbnailImageUrl"
+                            class="x-link"
+                            style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
+                    </template>
                     <img
                         v-lazy="currentInstanceWorld.ref.imageUrl"
                         class="x-link"
@@ -100,7 +101,7 @@
                             >
                         </el-tag>
                         <el-tag
-                            v-if="currentInstanceWorld.isIOS"
+                            v-if="currentInstanceWorld.isIos"
                             class="x-tag-platform-ios"
                             type="info"
                             effect="plain"
@@ -649,10 +650,11 @@
                         <template #default="scope">
                             <template v-if="userImage(scope.row.ref)">
                                 <el-popover placement="right" height="500px" trigger="hover">
-                                    <img
-                                        slot="reference"
-                                        v-lazy="userImage(scope.row.ref)"
-                                        class="friends-list-avatar" />
+                                    <template #reference>
+                                        <img
+                                            v-lazy="userImage(scope.row.ref)"
+                                            class="friends-list-avatar" />
+                                    </template>
                                     <img
                                         v-lazy="userImageFull(scope.row.ref)"
                                         class="friends-list-avatar"
@@ -813,7 +815,7 @@
                     <el-table-column :label="t('table.playerList.bioLink')" width="100" prop="ref.bioLinks">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <el-tooltip v-for="(link, index) in scope.row.ref.bioLinks" v-if="link" :key="index">
+                                <el-tooltip v-for="(link, index) in scope.row.ref.bioLinks.filter(Boolean)" :key="index">
                                     <template #content>
                                         <span v-text="link"></span>
                                     </template>
