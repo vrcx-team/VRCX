@@ -50,12 +50,15 @@
             }}</el-button>
         </template>
         <EditAndSendInviteResponseDialog
-            :edit-and-send-invite-response-dialog.sync="editAndSendInviteResponseDialog"
-            :send-invite-response-dialog.sync="sendInviteResponseDialog"
+            :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
+            :send-invite-response-dialog="sendInviteResponseDialog"
+            @update:edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog = $event"
+            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteResponseConfirmDialog
-            :send-invite-response-dialog.sync="sendInviteResponseDialog"
+            :send-invite-response-dialog="sendInviteResponseDialog"
             :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
+            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
             @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
 </template>

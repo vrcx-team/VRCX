@@ -8,11 +8,12 @@
         <div v-loading="avatarDialog.loading">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
-                    <img
-                        slot="reference"
-                        v-lazy="avatarDialog.ref.thumbnailImageUrl"
-                        class="x-link"
-                        style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
+                    <template #reference>
+                        <img
+                            v-lazy="avatarDialog.ref.thumbnailImageUrl"
+                            class="x-link"
+                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
+                    </template>
                     <img
                         v-lazy="avatarDialog.ref.imageUrl"
                         class="x-link"
@@ -23,12 +24,13 @@
                     <div style="flex: 1">
                         <div>
                             <el-popover placement="top" trigger="click">
-                                <span
-                                    slot="reference"
-                                    class="dialog-title"
-                                    style="margin-right: 5px; cursor: pointer"
-                                    v-text="avatarDialog.ref.name"
-                                    @click="copyToClipboard(avatarDialog.ref.name)"></span>
+                                <template #reference>
+                                    <span
+                                        class="dialog-title"
+                                        style="margin-right: 5px; cursor: pointer"
+                                        v-text="avatarDialog.ref.name"
+                                        @click="copyToClipboard(avatarDialog.ref.name)"></span>
+                                </template>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
                                     textToHex(avatarDialog.ref.name)
                                 }}</span>

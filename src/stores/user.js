@@ -1022,8 +1022,7 @@ export const useUserStore = defineStore('User', () => {
                         userId: L.userId
                     })
                     .then((args) => {
-                        // TODO: upgrade, need test
-                        // Vue.set(L, 'user', args.ref);
+                        L.user = args.ref;
                     });
             } else {
                 L.user = ref;

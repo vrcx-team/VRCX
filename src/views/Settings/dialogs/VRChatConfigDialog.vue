@@ -60,14 +60,15 @@
                         :min="item.min"
                         :max="item.max"
                         @input="refreshDialogValues"
-                        style="flex: 1; margin-top: 5px"
-                        ><el-button
-                            v-if="item.folderBrowser"
-                            slot="append"
-                            size="mini"
-                            :icon="FolderOpened"
-                            @click="openConfigFolderBrowser(value)"></el-button
-                    ></el-input>
+                        style="flex: 1; margin-top: 5px">
+                        <template #append>
+                            <el-button
+                                v-if="item.folderBrowser"
+                                size="mini"
+                                :icon="FolderOpened"
+                                @click="openConfigFolderBrowser(value)"></el-button>
+                        </template>
+                    </el-input>
                 </div>
             </div>
 

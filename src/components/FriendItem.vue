@@ -73,6 +73,8 @@
         isGroupByInstance: Boolean
     });
 
+    defineEmits(['click', 'confirm-delete-friend']);
+
     const { hideNicknames } = storeToRefs(useAppearanceSettingsStore());
     const { isRefreshFriendsLoading } = storeToRefs(useFriendStore());
     const { t } = useI18n();

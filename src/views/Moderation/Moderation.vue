@@ -39,7 +39,7 @@
             <el-table-column :label="t('table.moderation.date')" prop="created" sortable="custom" width="120">
                 <template slot-scope="scope">
                     <el-tooltip placement="right">
-                        <template slot="content">
+                        <template #content>
                             <span>{{ formatDateFilter(scope.row.created, 'long') }}</span>
                         </template>
                         <span>{{ formatDateFilter(scope.row.created, 'short') }}</span>

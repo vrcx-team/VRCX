@@ -8,12 +8,14 @@
         @close="closeGalleryDialog">
         <el-tabs type="card" ref="galleryTabs">
             <el-tab-pane v-loading="galleryDialogGalleryLoading">
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.gallery') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ galleryTable.length }}/64
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.gallery') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ galleryTable.length }}/64
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="GalleryUploadButton"
                     type="file"
@@ -77,12 +79,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogIconsLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.icons') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ VRCPlusIconsTable.length }}/64
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.icons') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ VRCPlusIconsTable.length }}/64
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="VRCPlusIconUploadButton"
                     type="file"
@@ -146,12 +150,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogEmojisLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.emojis') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ emojiTable.length }}/{{ cachedConfig?.maxUserEmoji }}
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.emojis') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ emojiTable.length }}/{{ cachedConfig?.maxUserEmoji }}
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="EmojiUploadButton"
                     type="file"
@@ -290,12 +296,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogStickersLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.stickers') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ stickerTable.length }}/{{ cachedConfig?.maxUserStickers }}
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.stickers') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ stickerTable.length }}/{{ cachedConfig?.maxUserStickers }}
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="StickerUploadButton"
                     type="file"
@@ -351,10 +359,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogPrintsLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.prints') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ printTable.length }}/64 </span>
-                </span>
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.prints') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ printTable.length }}/64
+                        </span>
+                    </span>
+                </template>
                 <input
                     id="PrintUploadButton"
                     type="file"
@@ -447,10 +459,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogInventoryLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.inventory') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ inventoryTable.length }} </span>
-                </span>
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.inventory') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ inventoryTable.length }}
+                        </span>
+                    </span>
+                </template>
                 <br />
                 <br />
                 <div style="display: flex; align-items: center">

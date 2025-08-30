@@ -65,6 +65,8 @@
         }
     });
 
+    defineEmits(['click']);
+
     const smallThumbnail = computed(() => {
         return props.favorite.thumbnailImageUrl.replace('256', '128') || props.favorite.thumbnailImageUrl;
     });

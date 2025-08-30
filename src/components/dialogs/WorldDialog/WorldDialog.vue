@@ -756,13 +756,13 @@
         </div>
 
         <!-- Nested -->
-        <WorldAllowedDomainsDialog :world-allowed-domains-dialog.sync="worldAllowedDomainsDialog" />
+        <WorldAllowedDomainsDialog v-model:world-allowed-domains-dialog="worldAllowedDomainsDialog" />
         <SetWorldTagsDialog
             :is-set-world-tags-dialog-v-model="isSetWorldTagsDialogVisible"
             :old-tags="worldDialog.ref?.tags"
             :world-id="worldDialog.id"
             :is-world-dialog-visible="worldDialog.visible" />
-        <PreviousInstancesWorldDialog :previous-instances-world-dialog.sync="previousInstancesWorldDialog" />
+        <PreviousInstancesWorldDialog v-model:previous-instances-world-dialog="previousInstancesWorldDialog" />
         <NewInstanceDialog
             :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
             :last-location="lastLocation" />

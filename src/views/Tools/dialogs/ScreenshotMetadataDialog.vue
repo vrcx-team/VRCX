@@ -117,35 +117,23 @@
                 style="margin-top: 10px"
                 @change="screenshotMetadataCarouselChange">
                 <el-carousel-item>
-                    <span placement="top" width="700px" trigger="click">
-                        <img
-                            slot="reference"
-                            class="x-link"
-                            :src="screenshotMetadataDialog.metadata.previousFilePath"
-                            style="width: 100%; height: 100%; object-fit: contain" />
-                    </span>
+                    <img
+                        class="x-link"
+                        :src="screenshotMetadataDialog.metadata.previousFilePath"
+                        style="width: 100%; height: 100%; object-fit: contain" />
                 </el-carousel-item>
                 <el-carousel-item>
-                    <span
-                        placement="top"
-                        width="700px"
-                        trigger="click"
-                        @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)">
-                        <img
-                            slot="reference"
-                            class="x-link"
-                            :src="screenshotMetadataDialog.metadata.filePath"
-                            style="width: 100%; height: 100%; object-fit: contain" />
-                    </span>
+                    <img
+                        class="x-link"
+                        :src="screenshotMetadataDialog.metadata.filePath"
+                        style="width: 100%; height: 100%; object-fit: contain"
+                        @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)" />
                 </el-carousel-item>
                 <el-carousel-item>
-                    <span placement="top" width="700px" trigger="click">
-                        <img
-                            slot="reference"
-                            class="x-link"
-                            :src="screenshotMetadataDialog.metadata.nextFilePath"
-                            style="width: 100%; height: 100%; object-fit: contain" />
-                    </span>
+                    <img
+                        class="x-link"
+                        :src="screenshotMetadataDialog.metadata.nextFilePath"
+                        style="width: 100%; height: 100%; object-fit: contain" />
                 </el-carousel-item>
             </el-carousel>
             <br />

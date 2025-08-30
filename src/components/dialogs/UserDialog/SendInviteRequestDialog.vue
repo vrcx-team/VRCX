@@ -56,7 +56,7 @@
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <EditAndSendInviteDialog
-            :edit-and-send-invite-dialog.sync="editAndSendInviteDialog"
+            v-model:edit-and-send-invite-dialog="editAndSendInviteDialog"
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />

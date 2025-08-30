@@ -1761,7 +1761,7 @@
             :send-invite-request-dialog-v-model="sendInviteRequestDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-        <PreviousInstancesUserDialog :previous-instances-user-dialog.sync="previousInstancesUserDialog" />
+        <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
         <PreviousImagesDialog />
         <InviteGroupDialog />
         <SocialStatusDialog

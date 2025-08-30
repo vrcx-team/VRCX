@@ -135,8 +135,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         const { length } = array;
         for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
-                // TODO: upgrade, need test
-                // Vue.set(array, i, ref);
+                array[i] = ref;
                 return;
             }
         }
