@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        :visible.sync="isDialogVisible"
+        v-model="isDialogVisible"
         class="x-dialog"
         :title="t('dialog.friend_export.header')"
         width="650px"

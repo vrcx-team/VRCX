@@ -19,15 +19,12 @@
                 v-model="filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
                 class="filter-input" />
-            <el-tooltip
-                placement="bottom"
-                :content="t('view.moderation.refresh_tooltip')"
-                :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('view.moderation.refresh_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
                     :loading="isPlayerModerationsLoading"
                     @click="refreshPlayerModerations()"
-                    icon="el-icon-refresh"
+                    :icon="Refresh"
                     circle />
             </el-tooltip>
         </div>
@@ -77,13 +74,13 @@
                             v-if="shiftHeld"
                             style="color: #f56c6c"
                             type="text"
-                            icon="el-icon-close"
+                            :icon="Close"
                             size="mini"
                             @click="deletePlayerModeration(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
-                            icon="el-icon-close"
+                            :icon="Close"
                             size="mini"
                             @click="deletePlayerModerationPrompt(scope.row)"></el-button>
                     </template>
@@ -94,6 +91,7 @@
 </template>
 
 <script setup>
+    import { Refresh, Close } from '@element-plus/icons-vue';
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';

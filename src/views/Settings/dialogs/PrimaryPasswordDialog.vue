@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="enablePrimaryPasswordDialog.visible"
+        v-model="enablePrimaryPasswordDialog.visible"
         :before-close="enablePrimaryPasswordDialog.beforeClose"
         :close-on-click-modal="false"
         :title="t('dialog.primary_password.header')"

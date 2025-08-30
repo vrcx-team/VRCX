@@ -16,13 +16,13 @@
             <span>{{ t('dialog.change_content_image.description') }}</span>
             <br />
             <el-button-group style="padding-bottom: 10px; padding-top: 10px">
-                <el-button type="default" size="small" icon="el-icon-refresh" @click="refresh">{{
+                <el-button type="default" size="small" :icon="Refresh" @click="refresh">{{
                     t('dialog.change_content_image.refresh')
                 }}</el-button>
-                <el-button type="default" size="small" icon="el-icon-upload2" @click="uploadWorldImage">{{
+                <el-button type="default" size="small" :icon="Upload" @click="uploadWorldImage">{{
                     t('dialog.change_content_image.upload')
                 }}</el-button>
-                <!--                el-button(type="default" size="small" @click="deleteWorldImage" icon="el-icon-delete") Delete Latest Image-->
+                <!--                el-button(type="default" size="small" @click="deleteWorldImage" :icon="Delete") Delete Latest Image-->
             </el-button-group>
             <br />
             <div v-for="image in previousImagesTable" :key="image.version" style="display: inline-block">
@@ -40,6 +40,7 @@
 </template>
 
 <script setup>
+    import { Refresh, Upload } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n';

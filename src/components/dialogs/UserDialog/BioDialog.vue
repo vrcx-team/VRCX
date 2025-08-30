@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="bioDialog.visible"
+        v-model="bioDialog.visible"
         :title="t('dialog.bio.header')"
         width="600px"
         append-to-body>
@@ -27,7 +27,7 @@
                     slot="prepend"
                     :src="getFaviconUrl(link)"
                     style="width: 16px; height: 16px; vertical-align: middle" />
-                <el-button slot="append" icon="el-icon-delete" @click="bioDialog.bioLinks.splice(index, 1)" />
+                <el-button slot="append" :icon="Delete" @click="bioDialog.bioLinks.splice(index, 1)" />
             </el-input>
 
             <el-button
@@ -48,6 +48,8 @@
 </template>
 
 <script setup>
+    import { Delete } from '@element-plus/icons-vue';
+
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';

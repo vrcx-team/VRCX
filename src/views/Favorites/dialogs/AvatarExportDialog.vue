@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog :visible.sync="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
+    <safe-dialog v-model="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"

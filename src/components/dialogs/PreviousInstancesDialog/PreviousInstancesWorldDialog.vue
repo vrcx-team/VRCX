@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="previousInstancesWorldDialogRef"
-        :visible.sync="isVisible"
+        v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
@@ -43,20 +43,20 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-s-data"
+                        :icon="DataLine"
                         size="mini"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteGameLogWorldInstance(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteGameLogWorldInstancePrompt(scope.row)"></el-button>
                 </template>
@@ -66,6 +66,8 @@
 </template>
 
 <script setup>
+    import { DataLine, Close } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

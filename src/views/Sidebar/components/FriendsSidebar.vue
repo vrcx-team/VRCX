@@ -7,7 +7,7 @@
                 isFriendsGroupMe = !isFriendsGroupMe;
                 saveFriendsGroupStates();
             ">
-            <i class="el-icon-arrow-right" :class="{ rotate: isFriendsGroupMe }"></i>
+            <el-icon><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.me') }}</span>
         </div>
         <div v-show="isFriendsGroupMe">
@@ -43,7 +43,7 @@
                 isVIPFriends = !isVIPFriends;
                 saveFriendsGroupStates();
             ">
-            <i class="el-icon-arrow-right" :class="{ rotate: isVIPFriends }"></i>
+            <el-icon><ArrowRight /></el-icon>
             <span style="margin-left: 5px">
                 {{ t('side_panel.favorite') }} &horbar;
                 {{ vipFriendsDisplayNumber }}
@@ -81,7 +81,7 @@
 
         <template v-if="isSidebarGroupByInstance && friendsInSameInstance.length">
             <div class="x-friend-group x-link" @click="toggleSwitchGroupByInstanceCollapsed">
-                <i class="el-icon-arrow-right" :class="{ rotate: !isSidebarGroupByInstanceCollapsed }"></i>
+                <el-icon><ArrowRight /></el-icon>
                 <span style="margin-left: 5px"
                     >{{ t('side_panel.same_instance') }} &horbar; {{ friendsInSameInstance.length }}</span
                 >
@@ -114,7 +114,7 @@
                 isOnlineFriends = !isOnlineFriends;
                 saveFriendsGroupStates();
             ">
-            <i class="el-icon-arrow-right" :class="{ rotate: isOnlineFriends }"></i>
+            <el-icon><ArrowRight /></el-icon>
             <span style="margin-left: 5px"
                 >{{ t('side_panel.online') }} &horbar; {{ onlineFriendsByGroupStatus.length }}</span
             >
@@ -134,7 +134,7 @@
                 isActiveFriends = !isActiveFriends;
                 saveFriendsGroupStates();
             ">
-            <i class="el-icon-arrow-right" :class="{ rotate: isActiveFriends }"></i>
+            <el-icon><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.active') }} &horbar; {{ activeFriends.length }}</span>
         </div>
         <div v-show="isActiveFriends">
@@ -152,7 +152,7 @@
                 isOfflineFriends = !isOfflineFriends;
                 saveFriendsGroupStates();
             ">
-            <i class="el-icon-arrow-right" :class="{ rotate: isOfflineFriends }"></i>
+            <el-icon><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.offline') }} &horbar; {{ offlineFriends.length }}</span>
         </div>
         <div v-show="isOfflineFriends">
@@ -167,6 +167,7 @@
 </template>
 
 <script setup>
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

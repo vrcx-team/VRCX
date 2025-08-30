@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="newInstanceDialogRef"
-        :visible.sync="newInstanceDialog.visible"
+        v-model="newInstanceDialog.visible"
         :title="t('dialog.new_instance.header')"
         width="650px"
         append-to-body>

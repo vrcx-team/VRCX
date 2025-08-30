@@ -21,7 +21,7 @@
                     type="default"
                     :loading="VRChatCacheSizeLoading"
                     size="small"
-                    icon="el-icon-refresh"
+                    :icon="Refresh"
                     circle
                     style="margin-left: 5px"
                     @click="getVRChatCacheSize"></el-button>
@@ -32,7 +32,7 @@
                 <el-button
                     size="small"
                     style="margin-left: 5px"
-                    icon="el-icon-delete"
+                    :icon="Delete"
                     @click="showDeleteAllVRChatCacheConfirm"
                     >{{ t('dialog.config_json.delete_cache') }}</el-button
                 >
@@ -65,7 +65,7 @@
                             v-if="item.folderBrowser"
                             slot="append"
                             size="mini"
-                            icon="el-icon-folder-opened"
+                            :icon="FolderOpened"
                             @click="openConfigFolderBrowser(value)"></el-button
                     ></el-input>
                 </div>
@@ -186,6 +186,7 @@
 </template>
 
 <script setup>
+    import { Refresh, Delete, FolderOpened } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

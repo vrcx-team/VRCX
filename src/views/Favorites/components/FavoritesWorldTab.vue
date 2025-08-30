@@ -77,7 +77,7 @@
                                 placement="top"
                                 :content="t('view.favorite.visibility_tooltip')"
                                 :disabled="hideTooltips">
-                                <el-button type="default" icon="el-icon-view" size="mini" circle />
+                                <el-button type="default" :icon="View" size="mini" circle />
                             </el-tooltip>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item
@@ -95,7 +95,7 @@
                                 :disabled="hideTooltips">
                                 <el-button
                                     size="mini"
-                                    icon="el-icon-edit"
+                                    :icon="Edit"
                                     circle
                                     style="margin-left: 5px"
                                     @click.stop="changeFavoriteGroupName(group)" />
@@ -106,7 +106,7 @@
                                 :disabled="hideTooltips">
                                 <el-button
                                     size="mini"
-                                    icon="el-icon-delete"
+                                    :icon="Delete"
                                     circle
                                     style="margin-left: 5px"
                                     @click.stop="clearFavoriteGroup(group)" />
@@ -165,18 +165,15 @@
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             circle
                             style="margin-left: 10px"
                             @click.stop="promptLocalWorldFavoriteGroupRename(group)" />
                     </el-tooltip>
-                    <el-tooltip
-                        placement="right"
-                        :content="t('view.favorite.delete_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-delete"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="promptLocalWorldFavoriteGroupDelete(group)" />
@@ -208,11 +205,13 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <WorldExportDialog :world-export-dialog-visible.sync="worldExportDialogVisible" />
+        <WorldExportDialog :world-export-dialog-v-model="worldExportDialogVisible" />
     </div>
 </template>
 
 <script setup>
+    import { Loading, View, Edit, Delete } from '@element-plus/icons-vue';
+
     import { computed, ref, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

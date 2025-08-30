@@ -2,7 +2,7 @@
     <safe-dialog
         ref="userDialogRef"
         class="x-dialog x-user-dialog"
-        :visible.sync="userDialog.visible"
+        v-model="userDialog.visible"
         :show-close="false"
         width="770px">
         <div v-loading="userDialog.loading">
@@ -343,7 +343,7 @@
                                 :disabled="hideTooltips">
                                 <el-button
                                     type="warning"
-                                    icon="el-icon-star-on"
+                                    :icon="Star"
                                     circle
                                     @click="userDialogCommand('Add Favorite')"></el-button>
                             </el-tooltip>
@@ -354,7 +354,7 @@
                                 :disabled="hideTooltips">
                                 <el-button
                                     type="default"
-                                    icon="el-icon-star-off"
+                                    :icon="StarFilled"
                                     circle
                                     @click="userDialogCommand('Add Favorite')"></el-button>
                             </el-tooltip>
@@ -368,18 +368,18 @@
                                           ? 'danger'
                                           : 'default'
                                 "
-                                icon="el-icon-more"
+                                :icon="MoreFilled"
                                 circle
                                 style="margin-left: 5px"></el-button>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item icon="el-icon-refresh" command="Refresh">{{
+                                <el-dropdown-item :icon="Refresh" command="Refresh">{{
                                     t('dialog.user.actions.refresh')
                                 }}</el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-share" command="Share">{{
+                                <el-dropdown-item :icon="Share" command="Share">{{
                                     t('dialog.user.actions.share')
                                 }}</el-dropdown-item>
                                 <template v-if="userDialog.ref.id === currentUser.id">
-                                    <el-dropdown-item icon="el-icon-picture-outline" command="Manage Gallery" divided>{{
+                                    <el-dropdown-item :icon="Picture" command="Manage Gallery" divided>{{
                                         t('dialog.user.actions.manage_gallery_inventory_icon')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author">{{
@@ -388,19 +388,19 @@
                                     <el-dropdown-item icon="el-icon-s-custom" command="Show Fallback Avatar Details">{{
                                         t('dialog.user.actions.show_fallback_avatar')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Edit Social Status" divided>{{
+                                    <el-dropdown-item :icon="Edit" command="Edit Social Status" divided>{{
                                         t('dialog.user.actions.edit_status')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Edit Language">{{
+                                    <el-dropdown-item :icon="Edit" command="Edit Language">{{
                                         t('dialog.user.actions.edit_language')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Edit Bio">{{
+                                    <el-dropdown-item :icon="Edit" command="Edit Bio">{{
                                         t('dialog.user.actions.edit_bio')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Edit Pronouns">{{
+                                    <el-dropdown-item :icon="Edit" command="Edit Pronouns">{{
                                         t('dialog.user.actions.edit_pronouns')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-switch-button" command="Logout" divided>{{
+                                    <el-dropdown-item :icon="SwitchButton" command="Logout" divided>{{
                                         t('dialog.user.actions.logout')
                                     }}</el-dropdown-item>
                                 </template>
@@ -415,36 +415,36 @@
                                         <template v-if="isGameRunning">
                                             <el-dropdown-item
                                                 :disabled="!checkCanInvite(lastLocation.location)"
-                                                icon="el-icon-message"
+                                                :icon="Message"
                                                 command="Invite"
                                                 >{{ t('dialog.user.actions.invite') }}</el-dropdown-item
                                             >
                                             <el-dropdown-item
                                                 :disabled="!checkCanInvite(lastLocation.location)"
-                                                icon="el-icon-message"
+                                                :icon="Message"
                                                 command="Invite Message"
                                                 >{{ t('dialog.user.actions.invite_with_message') }}</el-dropdown-item
                                             >
                                         </template>
                                     </template>
                                     <template v-else-if="userDialog.incomingRequest">
-                                        <el-dropdown-item icon="el-icon-check" command="Accept Friend Request">{{
+                                        <el-dropdown-item :icon="Check" command="Accept Friend Request">{{
                                             t('dialog.user.actions.accept_friend_request')
                                         }}</el-dropdown-item>
-                                        <el-dropdown-item icon="el-icon-close" command="Decline Friend Request">{{
+                                        <el-dropdown-item :icon="Close" command="Decline Friend Request">{{
                                             t('dialog.user.actions.decline_friend_request')
                                         }}</el-dropdown-item>
                                     </template>
                                     <el-dropdown-item
                                         v-else-if="userDialog.outgoingRequest"
-                                        icon="el-icon-close"
+                                        :icon="Close"
                                         command="Cancel Friend Request">
                                         {{ t('dialog.user.actions.cancel_friend_request') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item v-else icon="el-icon-plus" command="Send Friend Request">{{
+                                    <el-dropdown-item v-else :icon="Plus" command="Send Friend Request">{{
                                         t('dialog.user.actions.send_friend_request')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-message" command="Invite To Group">{{
+                                    <el-dropdown-item :icon="Message" command="Invite To Group">{{
                                         t('dialog.user.actions.invite_to_group')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item icon="el-icon-s-operation" command="Group Moderation">{{
@@ -457,18 +457,18 @@
                                     <el-dropdown-item icon="el-icon-s-custom" command="Show Fallback Avatar Details">{{
                                         t('dialog.user.actions.show_fallback_avatar')
                                     }}</el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-tickets" command="Previous Instances">{{
+                                    <el-dropdown-item :icon="Tickets" command="Previous Instances">{{
                                         t('dialog.user.actions.show_previous_instances')
                                     }}</el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="userDialog.ref.currentAvatarImageUrl"
-                                        icon="el-icon-picture-outline"
+                                        :icon="Picture"
                                         command="Previous Images">
                                         {{ t('dialog.user.actions.show_previous_images') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="userDialog.isBlock"
-                                        icon="el-icon-circle-check"
+                                        :icon="CircleCheck"
                                         command="Moderation Unblock"
                                         divided
                                         style="color: #f56c6c">
@@ -476,7 +476,7 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-else
-                                        icon="el-icon-circle-close"
+                                        :icon="CircleClose"
                                         command="Moderation Block"
                                         divided
                                         :disabled="userDialog.ref.$isModerator">
@@ -509,11 +509,11 @@
                                         command="Moderation Disable Chatbox">
                                         {{ t('dialog.user.actions.moderation_disable_chatbox') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-user-solid" command="Show Avatar">
+                                    <el-dropdown-item :icon="User" command="Show Avatar">
                                         <i v-if="userDialog.isShowAvatar" class="el-icon-check el-icon--left"></i>
                                         <span>{{ t('dialog.user.actions.moderation_show_avatar') }}</span>
                                     </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-user" command="Hide Avatar">
+                                    <el-dropdown-item :icon="User" command="Hide Avatar">
                                         <i v-if="userDialog.isHideAvatar" class="el-icon-check el-icon--left"></i>
                                         <span>{{ t('dialog.user.actions.moderation_hide_avatar') }}</span>
                                     </el-dropdown-item>
@@ -526,19 +526,19 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-else
-                                        icon="el-icon-circle-close"
+                                        :icon="CircleClose"
                                         command="Moderation Disable Avatar Interaction">
                                         {{ t('dialog.user.actions.moderation_disable_avatar_interaction') }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
-                                        icon="el-icon-s-flag"
+                                        :icon="Flag"
                                         command="Report Hacking"
                                         :disabled="userDialog.ref.$isModerator">
                                         {{ t('dialog.user.actions.report_hacking') }}
                                     </el-dropdown-item>
                                     <template v-if="userDialog.isFriend">
                                         <el-dropdown-item
-                                            icon="el-icon-delete"
+                                            :icon="Delete"
                                             command="Unfriend"
                                             divided
                                             style="color: #f56c6c">
@@ -577,7 +577,7 @@
                                         :disabled="hideTooltips">
                                         <el-button
                                             size="mini"
-                                            icon="el-icon-refresh"
+                                            :icon="Refresh"
                                             style="margin-left: 5px"
                                             circle
                                             @click="refreshInstancePlayerCount(userDialog.$location.tag)"></el-button>
@@ -668,7 +668,7 @@
                                     <el-button
                                         v-if="userDialog.note"
                                         type="text"
-                                        icon="el-icon-delete"
+                                        :icon="Delete"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="deleteNote(userDialog.id)"></el-button>
@@ -797,7 +797,7 @@
                                 <div v-if="userDialog.id === currentUser.id" style="float: right">
                                     <el-button
                                         type="text"
-                                        icon="el-icon-edit"
+                                        :icon="Edit"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="showBioDialog"></el-button>
@@ -963,8 +963,7 @@
                             <el-tooltip placement="top" :disabled="!userDialog.dateFriendedInfo.length">
                                 <template v-if="userDialog.dateFriendedInfo.length" #content>
                                     <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.userId">
-                                        <span
-                                            >{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
+                                        <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
                                         ><br />
                                     </template>
                                 </template>
@@ -1038,7 +1037,7 @@
                                     <span v-text="userDialog.$homeLocationName"></span>
                                     <el-button
                                         size="mini"
-                                        icon="el-icon-delete"
+                                        :icon="Delete"
                                         circle
                                         style="margin-left: 5px"
                                         @click.stop="resetHome()">
@@ -1060,11 +1059,7 @@
                                             size="mini"
                                             style="margin-left: 5px"
                                             @click.native.stop>
-                                            <el-button
-                                                type="default"
-                                                icon="el-icon-s-order"
-                                                size="mini"
-                                                circle></el-button>
+                                            <el-button type="default" :icon="Sort" size="mini" circle></el-button>
                                             <el-dropdown-menu slot="dropdown">
                                                 <el-dropdown-item @click.native="copyUserId(userDialog.id)">{{
                                                     t('dialog.user.info.copy_id')
@@ -1092,7 +1087,7 @@
                                 type="default"
                                 :loading="userDialog.isGroupsLoading"
                                 size="mini"
-                                icon="el-icon-refresh"
+                                :icon="Refresh"
                                 circle
                                 @click="getUserGroups(userDialog.id)">
                             </el-button>
@@ -1137,7 +1132,7 @@
                             <el-button
                                 v-if="userDialogGroupEditMode"
                                 size="small"
-                                icon="el-icon-edit"
+                                :icon="Edit"
                                 style="margin-right: 5px; height: 29px; padding: 7px 15px"
                                 @click="exitEditModeCurrentUserGroups">
                                 {{ t('dialog.user.groups.exit_edit_mode') }}
@@ -1145,7 +1140,7 @@
                             <el-button
                                 v-else-if="currentUser.id === userDialog.id"
                                 size="small"
-                                icon="el-icon-edit"
+                                :icon="Edit"
                                 style="margin-right: 5px; height: 29px; padding: 7px 15px"
                                 @click="editModeCurrentUserGroups">
                                 {{ t('dialog.user.groups.edit_mode') }}
@@ -1159,7 +1154,7 @@
                                 <el-dropdown trigger="click">
                                     <el-button
                                         size="small"
-                                        icon="el-icon-setting"
+                                        :icon="Setting"
                                         style="margin-right: 5px; height: 29px; padding: 7px 15px; margin-bottom: 5px">
                                         {{ t('dialog.group.actions.manage_selected') }}
                                         <i class="el-icon-arrow-down el-icon--right"></i>
@@ -1217,7 +1212,7 @@
                                     <div style="margin-right: 3px; margin-left: 5px" @click.stop>
                                         <el-button
                                             size="mini"
-                                            icon="el-icon-download"
+                                            :icon="Download"
                                             style="
                                                 display: block;
                                                 padding: 7px;
@@ -1229,7 +1224,7 @@
                                         </el-button>
                                         <el-button
                                             size="mini"
-                                            icon="el-icon-download"
+                                            :icon="Download"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupBottom(group.id)">
                                         </el-button>
@@ -1329,7 +1324,7 @@
                                         <el-button
                                             v-if="shiftHeld"
                                             size="mini"
-                                            icon="el-icon-close"
+                                            :icon="Close"
                                             circle
                                             style="color: #f56c6c; margin-left: 5px"
                                             @click.stop="leaveGroup(group.id)">
@@ -1337,7 +1332,7 @@
                                         <el-button
                                             v-else
                                             size="mini"
-                                            icon="el-icon-delete"
+                                            :icon="Delete"
                                             circle
                                             style="margin-left: 5px"
                                             @click.stop="leaveGroupPrompt(group.id)">
@@ -1495,7 +1490,7 @@
                                 type="default"
                                 :loading="userDialog.isWorldsLoading"
                                 size="mini"
-                                icon="el-icon-refresh"
+                                :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogWorlds()">
                             </el-button>
@@ -1576,7 +1571,7 @@
                         type="default"
                         :loading="userDialog.isFavoriteWorldsLoading"
                         size="small"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="position: absolute; right: 15px; bottom: 15px; z-index: 99"
                         @click="getUserFavoriteWorlds(userDialog.id)">
@@ -1636,7 +1631,7 @@
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
                                 size="mini"
-                                icon="el-icon-refresh"
+                                :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogAvatars()">
                             </el-button>
@@ -1645,7 +1640,7 @@
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
                                 size="mini"
-                                icon="el-icon-refresh"
+                                :icon="Refresh"
                                 circle
                                 @click="setUserDialogAvatarsRemote(userDialog.id)">
                             </el-button>
@@ -1737,17 +1732,12 @@
                 </el-tab-pane>
 
                 <el-tab-pane name="JSON" :label="t('dialog.user.json.header')" lazy style="height: 50vh">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        @click="refreshUserDialogTreeData()">
+                    <el-button type="default" size="mini" :icon="Refresh" circle @click="refreshUserDialogTreeData()">
                     </el-button>
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-download"
+                        :icon="Download"
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(userDialog.id, userDialog.ref)">
@@ -1764,11 +1754,11 @@
             </el-tabs>
         </div>
         <SendInviteDialog
-            :send-invite-dialog-visible.sync="sendInviteDialogVisible"
+            :send-invite-dialog-v-model="sendInviteDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteRequestDialog
-            :send-invite-request-dialog-visible.sync="sendInviteRequestDialogVisible"
+            :send-invite-request-dialog-v-model="sendInviteRequestDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <PreviousInstancesUserDialog :previous-instances-user-dialog.sync="previousInstancesUserDialog" />
@@ -1785,6 +1775,30 @@
 </template>
 
 <script setup>
+    import {
+        Delete,
+        Check,
+        Star,
+        StarFilled,
+        MoreFilled,
+        Refresh,
+        Share,
+        Picture,
+        Edit,
+        SwitchButton,
+        Message,
+        Close,
+        Plus,
+        Tickets,
+        CircleCheck,
+        CircleClose,
+        User,
+        Flag,
+        Sort,
+        Setting,
+        Download
+    } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

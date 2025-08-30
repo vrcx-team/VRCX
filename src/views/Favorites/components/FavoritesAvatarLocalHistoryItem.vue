@@ -12,7 +12,7 @@
                 <el-button
                     :disabled="currentUser.currentAvatar === favorite.id"
                     size="mini"
-                    icon="el-icon-check"
+                    :icon="Check"
                     circle
                     style="margin-left: 5px"
                     @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
@@ -21,7 +21,7 @@
                 <el-tooltip placement="right" content="Favorite" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        icon="el-icon-star-on"
+                        :icon="Star"
                         size="mini"
                         circle
                         style="margin-left: 5px"
@@ -32,7 +32,7 @@
                 <el-tooltip placement="right" content="Favorite" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        icon="el-icon-star-off"
+                        :icon="StarFilled"
                         size="mini"
                         circle
                         style="margin-left: 5px"
@@ -44,6 +44,7 @@
 </template>
 
 <script setup>
+    import { Check, Star, StarFilled } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';

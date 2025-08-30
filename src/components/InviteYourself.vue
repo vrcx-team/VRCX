@@ -4,14 +4,15 @@
         placement="top"
         :content="t('dialog.user.info.self_invite_tooltip')"
         :disabled="hideTooltips">
-        <el-button v-show="isVisible" @click="confirmInvite" size="mini" icon="el-icon-message" circle />
+        <el-button v-show="isVisible" @click="confirmInvite" size="mini" :icon="Message" circle />
     </el-tooltip>
     <el-tooltip v-else placement="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')" :disabled="hideTooltips">
-        <el-button @click="openInstance" size="mini" icon="el-icon-message" circle />
+        <el-button @click="openInstance" size="mini" :icon="Message" circle />
     </el-tooltip>
 </template>
 
 <script setup>
+    import { Message } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';

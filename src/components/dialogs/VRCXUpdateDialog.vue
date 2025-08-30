@@ -2,7 +2,7 @@
     <safe-dialog
         ref="VRCXUpdateDialogRef"
         class="x-dialog"
-        :visible.sync="VRCXUpdateDialog.visible"
+        v-model="VRCXUpdateDialog.visible"
         :title="t('dialog.vrcx_updater.header')"
         append-to-body
         width="400px">

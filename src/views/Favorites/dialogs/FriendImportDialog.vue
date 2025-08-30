@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="friendImportDialogRef"
-        :visible.sync="isVisible"
+        v-model="isVisible"
         :title="t('dialog.friend_import.header')"
         width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
@@ -113,7 +113,7 @@
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
                 <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-close" size="mini" @click="deleteItemFriendImport(scope.row)">
+                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemFriendImport(scope.row)">
                     </el-button>
                 </template>
             </el-table-column>
@@ -122,6 +122,8 @@
 </template>
 
 <script setup>
+    import { Close } from '@element-plus/icons-vue';
+
     import { ref, computed, watch, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

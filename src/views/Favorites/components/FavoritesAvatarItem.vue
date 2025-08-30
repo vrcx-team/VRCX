@@ -12,7 +12,7 @@
                 <template v-if="editFavoritesMode">
                     <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
                         <el-tooltip placement="top" :content="tooltipContent" :disabled="hideTooltips">
-                            <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
+                            <el-button type="default" :icon="Back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
                             <template
@@ -37,13 +37,13 @@
                         v-if="favorite.deleted"
                         placement="left"
                         :content="t('view.favorite.unavailable_tooltip')">
-                        <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-tooltip
                         v-if="favorite.ref.releaseStatus === 'private'"
                         placement="left"
                         :content="t('view.favorite.private')">
-                        <i class="el-icon-warning" style="color: #e6a23c; margin-left: 5px"></i>
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-tooltip
                         v-if="favorite.ref.releaseStatus !== 'private' && !favorite.deleted"
@@ -53,7 +53,7 @@
                         <el-button
                             :disabled="currentUser.currentAvatar === favorite.id"
                             size="mini"
-                            icon="el-icon-check"
+                            :icon="Check"
                             circle
                             style="margin-left: 5px"
                             @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
@@ -65,14 +65,14 @@
                         <el-button
                             v-if="shiftHeld"
                             size="mini"
-                            icon="el-icon-close"
+                            :icon="Close"
                             circle
                             style="color: #f56c6c; margin-left: 5px"
                             @click.stop="deleteFavorite(favorite.id)"></el-button>
                         <el-button
                             v-else
                             type="default"
-                            icon="el-icon-star-on"
+                            :icon="Star"
                             size="mini"
                             circle
                             style="margin-left: 5px"
@@ -89,7 +89,7 @@
                             size="mini"
                             circle
                             style="margin-left: 5px"
-                            icon="el-icon-check"
+                            :icon="Check"
                             @click.stop="selectAvatarWithConfirmation(favorite.id)" />
                     </el-tooltip>
                 </template>
@@ -101,14 +101,14 @@
                     <el-button
                         v-if="shiftHeld"
                         size="mini"
-                        icon="el-icon-close"
+                        :icon="Close"
                         circle
                         style="color: #f56c6c; margin-left: 5px"
                         @click.stop="removeLocalAvatarFavorite(favorite.id, favoriteGroupName)" />
                     <el-button
                         v-else
                         type="default"
-                        icon="el-icon-star-on"
+                        :icon="Star"
                         size="mini"
                         circle
                         style="margin-left: 5px"
@@ -123,14 +123,14 @@
                 <el-button
                     v-if="isLocalFavorite"
                     type="text"
-                    icon="el-icon-close"
+                    :icon="Close"
                     size="mini"
                     style="margin-left: 5px"
                     @click.stop="removeLocalAvatarFavorite(favorite.id, favoriteGroupName)"></el-button>
                 <el-button
                     v-else
                     type="text"
-                    icon="el-icon-close"
+                    :icon="Close"
                     size="mini"
                     style="margin-left: 5px"
                     @click.stop="deleteFavorite(favorite.id)"></el-button>
@@ -140,6 +140,7 @@
 </template>
 
 <script setup>
+    import { Warning, Back, Check, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="socialStatusDialog.visible"
+        v-model="socialStatusDialog.visible"
         :title="t('dialog.social_status.header')"
         append-to-body
         width="400px">

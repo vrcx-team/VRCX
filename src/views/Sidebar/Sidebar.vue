@@ -54,7 +54,7 @@
                     type="default"
                     :loading="isRefreshFriendsLoading"
                     size="mini"
-                    icon="el-icon-refresh"
+                    :icon="Refresh"
                     circle
                     style="margin-right: 10px"
                     @click="refreshFriendsList" />
@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';

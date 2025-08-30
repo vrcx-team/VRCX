@@ -37,7 +37,7 @@
                             :disabled="hideTooltips">
                             <el-button
                                 type="text"
-                                icon="el-icon-upload2"
+                                :icon="Upload"
                                 size="mini"
                                 @click="restoreVrcRegistryBackup(scope.row)"></el-button>
                         </el-tooltip>
@@ -47,7 +47,7 @@
                             :disabled="hideTooltips">
                             <el-button
                                 type="text"
-                                icon="el-icon-download"
+                                :icon="Download"
                                 size="mini"
                                 @click="saveVrcRegistryBackupToFile(scope.row)"></el-button>
                         </el-tooltip>
@@ -57,7 +57,7 @@
                             :disabled="hideTooltips">
                             <el-button
                                 type="text"
-                                icon="el-icon-delete"
+                                :icon="Delete"
                                 size="mini"
                                 @click="deleteVrcRegistryBackup(scope.row)"></el-button>
                         </el-tooltip>
@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+    import { Upload, Download, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

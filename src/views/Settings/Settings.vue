@@ -50,7 +50,7 @@
                         <el-button size="small" icon="el-icon-document" @click="showChangeLogDialog">{{
                             t('view.settings.general.vrcx_updater.change_log')
                         }}</el-button>
-                        <el-button size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()">{{
+                        <el-button size="small" :icon="Upload" @click="showVRCXUpdateDialog()">{{
                             t('view.settings.general.vrcx_updater.change_build')
                         }}</el-button>
                     </div>
@@ -253,7 +253,7 @@
                                 placement="top"
                                 style="margin-left: 5px"
                                 :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
-                                <i class="el-icon-info"></i>
+                                <el-icon><InfoFilled /></el-icon>
                             </el-tooltip>
                         </span>
                         <br />
@@ -502,7 +502,7 @@
                                     value="Sort by Location"></el-option>
                             </el-option-group>
                         </el-select>
-                        <i class="el-icon-arrow-right" style="margin: 16px 5px"></i>
+                        <el-icon><ArrowRight /></el-icon>
                         <el-select
                             :value="sidebarSortMethod2"
                             :disabled="!sidebarSortMethod1"
@@ -544,7 +544,7 @@
                                     value="Sort by Location"></el-option>
                             </el-option-group>
                         </el-select>
-                        <i class="el-icon-arrow-right" style="margin: 16px 5px"></i>
+                        <el-icon><ArrowRight /></el-icon>
                         <el-select
                             :value="sidebarSortMethod3"
                             :disabled="!sidebarSortMethod2"
@@ -989,7 +989,9 @@
                         }}</span>
                         <el-dropdown trigger="click" size="small" @command="(voice) => changeTTSVoice(voice)">
                             <el-button size="mini" :disabled="notificationTTS === 'Never'">
-                                <span>{{ getTTSVoiceName() }} <i class="el-icon-arrow-down el-icon--right"></i></span>
+                                <span
+                                    >{{ getTTSVoiceName() }} <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
+                                ></span>
                             </el-button>
                             <el-dropdown-menu>
                                 <el-dropdown-item
@@ -1283,10 +1285,10 @@
                     <span class="header">{{ t('view.settings.pictures.pictures.open_folder') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcPhotosFolder()">{{
+                            <el-button size="small" :icon="Folder" @click="openVrcPhotosFolder()">{{
                                 t('view.settings.pictures.pictures.vrc_photos')
                             }}</el-button>
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcScreenshotsFolder()">{{
+                            <el-button size="small" :icon="Folder" @click="openVrcScreenshotsFolder()">{{
                                 t('view.settings.pictures.pictures.steam_screenshots')
                             }}</el-button>
                         </el-button-group>
@@ -1319,7 +1321,7 @@
                         :value="screenshotHelperCopyToClipboard"
                         @change="setScreenshotHelperCopyToClipboard()"
                         :long-label="true" />
-                    <el-button size="small" icon="el-icon-delete" @click="askDeleteAllScreenshotMetadata()">{{
+                    <el-button size="small" :icon="Delete" @click="askDeleteAllScreenshotMetadata()">{{
                         t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
                     }}</el-button>
                 </div>
@@ -1342,13 +1344,13 @@
                             t('view.settings.advanced.advanced.user_generated_content.description')
                         }}</span>
                     </div>
-                    <el-button size="small" icon="el-icon-folder" @click="openUGCFolder()" style="margin-top: 5px">{{
+                    <el-button size="small" :icon="Folder" @click="openUGCFolder()" style="margin-top: 5px">{{
                         t('view.settings.advanced.advanced.user_generated_content.folder')
                     }}</el-button>
-                    <el-button size="small" icon="el-icon-folder-opened" @click="openUGCFolderSelector()">{{
+                    <el-button size="small" :icon="FolderOpened" @click="openUGCFolderSelector()">{{
                         t('view.settings.advanced.advanced.user_generated_content.set_folder')
                     }}</el-button>
-                    <el-button size="small" icon="el-icon-delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
+                    <el-button size="small" :icon="Delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
                         t('view.settings.advanced.advanced.user_generated_content.reset_override')
                     }}</el-button>
                     <br />
@@ -1361,7 +1363,7 @@
                         placement="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <i class="el-icon-info"></i>
+                        <el-icon><InfoFilled /></el-icon>
                     </el-tooltip>
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
@@ -1424,13 +1426,13 @@
                     <span class="header">{{ t('view.settings.advanced.advanced.common_folders') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcxAppDataFolder()"
+                            <el-button size="small" :icon="Folder" @click="openVrcxAppDataFolder()"
                                 >VRCX Data</el-button
                             >
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcAppDataFolder()"
+                            <el-button size="small" :icon="Folder" @click="openVrcAppDataFolder()"
                                 >VRChat Data</el-button
                             >
-                            <el-button size="small" icon="el-icon-folder" @click="openCrashVrcCrashDumps()"
+                            <el-button size="small" :icon="Folder" @click="openCrashVrcCrashDumps()"
                                 >Crash Dumps</el-button
                             >
                         </el-button-group>
@@ -1502,7 +1504,7 @@
                             saveOpenVROption();
                         " />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog">{{
+                        <el-button size="small" :icon="User" @click="showAvatarProviderDialog">{{
                             t('view.settings.advanced.advanced.remote_database.avatar_database_provider')
                         }}</el-button>
                     </div>
@@ -1512,18 +1514,14 @@
                     <div class="options-container">
                         <span class="header">{{ t('view.settings.advanced.advanced.app_launcher.header') }}</span>
                         <br />
-                        <el-button
-                            size="small"
-                            icon="el-icon-folder"
-                            style="margin-top: 5px"
-                            @click="openShortcutFolder()"
-                            >{{ t('view.settings.advanced.advanced.app_launcher.folder') }}</el-button
-                        >
+                        <el-button size="small" :icon="Folder" style="margin-top: 5px" @click="openShortcutFolder()">{{
+                            t('view.settings.advanced.advanced.app_launcher.folder')
+                        }}</el-button>
                         <el-tooltip
                             placement="top"
                             style="margin-left: 5px"
                             :content="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')">
-                            <i class="el-icon-info"></i>
+                            <el-icon><InfoFilled /></el-icon>
                         </el-tooltip>
                         <simple-switch
                             :label="t('view.settings.advanced.advanced.remote_database.enable')"
@@ -1769,7 +1767,7 @@
                         ></span>
                     </div>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-tickets" @click="showConsole">{{
+                        <el-button size="small" :icon="Tickets" @click="showConsole">{{
                             t('view.settings.advanced.advanced.cache_debug.show_console')
                         }}</el-button>
                     </div>
@@ -1778,7 +1776,7 @@
                 <div class="options-container">
                     <span class="sub-header">{{ t('view.settings.advanced.advanced.sqlite_table_size.header') }}</span>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-refresh" @click="getSqliteTableSizes">{{
+                        <el-button size="small" :icon="Refresh" @click="getSqliteTableSizes">{{
                             t('view.settings.advanced.advanced.sqlite_table_size.refresh')
                         }}</el-button>
                     </div>
@@ -1868,6 +1866,19 @@
 </template>
 
 <script setup>
+    import {
+        InfoFilled,
+        ArrowRight,
+        Upload,
+        Folder,
+        Delete,
+        FolderOpened,
+        User,
+        Tickets,
+        Refresh,
+        ArrowDown
+    } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { ref, getCurrentInstance, computed } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -47,7 +47,7 @@
                         <el-button
                             type="default"
                             :loading="isNotificationsLoading"
-                            icon="el-icon-refresh"
+                            :icon="Refresh"
                             circle
                             style="flex: none"
                             @click="refreshNotifications()" />
@@ -219,7 +219,7 @@
                             <el-tooltip placement="top" content="Accept" :disabled="hideTooltips">
                                 <el-button
                                     type="text"
-                                    icon="el-icon-check"
+                                    :icon="Check"
                                     style="color: #67c23a"
                                     size="mini"
                                     @click="acceptFriendRequestNotification(scope.row)" />
@@ -229,7 +229,7 @@
                             <el-tooltip placement="top" content="Decline with message" :disabled="hideTooltips">
                                 <el-button
                                     type="text"
-                                    icon="el-icon-chat-line-square"
+                                    :icon="ChatLineSquare"
                                     size="mini"
                                     @click="showSendInviteResponseDialog(scope.row)" />
                             </el-tooltip>
@@ -240,7 +240,7 @@
                                 <el-tooltip placement="top" content="Invite" :disabled="hideTooltips">
                                     <el-button
                                         type="text"
-                                        icon="el-icon-check"
+                                        :icon="Check"
                                         style="color: #67c23a"
                                         size="mini"
                                         @click="acceptRequestInvite(scope.row)" />
@@ -249,7 +249,7 @@
                             <el-tooltip placement="top" content="Decline with message" :disabled="hideTooltips">
                                 <el-button
                                     type="text"
-                                    icon="el-icon-chat-line-square"
+                                    :icon="ChatLineSquare"
                                     size="mini"
                                     style="margin-left: 5px"
                                     @click="showSendInviteRequestResponseDialog(scope.row)" />
@@ -258,14 +258,11 @@
 
                         <template v-if="scope.row.responses">
                             <template v-for="response in scope.row.responses" :key="response.text">
-                                <el-tooltip
-                                    placement="top"
-                                    :content="response.text"
-                                    :disabled="hideTooltips">
+                                <el-tooltip placement="top" :content="response.text" :disabled="hideTooltips">
                                     <el-button
                                         v-if="response.icon === 'check'"
                                         type="text"
-                                        icon="el-icon-check"
+                                        :icon="Check"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="
@@ -274,7 +271,7 @@
                                     <el-button
                                         v-else-if="response.icon === 'cancel'"
                                         type="text"
-                                        icon="el-icon-close"
+                                        :icon="Close"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="
@@ -283,7 +280,7 @@
                                     <el-button
                                         v-else-if="response.icon === 'ban'"
                                         type="text"
-                                        icon="el-icon-circle-close"
+                                        :icon="CircleClose"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="
@@ -292,7 +289,7 @@
                                     <el-button
                                         v-else-if="response.icon === 'bell-slash'"
                                         type="text"
-                                        icon="el-icon-bell"
+                                        :icon="Bell"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="
@@ -308,7 +305,7 @@
                                     <el-button
                                         v-else-if="response.icon === 'reply'"
                                         type="text"
-                                        icon="el-icon-chat-line-square"
+                                        :icon="ChatLineSquare"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="
@@ -317,7 +314,7 @@
                                     <el-button
                                         v-else
                                         type="text"
-                                        icon="el-icon-collection-tag"
+                                        :icon="CollectionTag"
                                         size="mini"
                                         style="margin-left: 5px"
                                         @click="
@@ -343,13 +340,13 @@
                                     v-if="shiftHeld"
                                     style="color: #f56c6c; margin-left: 5px"
                                     type="text"
-                                    icon="el-icon-close"
+                                    :icon="Close"
                                     size="mini"
                                     @click="hideNotification(scope.row)" />
                                 <el-button
                                     v-else
                                     type="text"
-                                    icon="el-icon-close"
+                                    :icon="Close"
                                     size="mini"
                                     style="margin-left: 5px"
                                     @click="hideNotificationPrompt(scope.row)" />
@@ -362,13 +359,13 @@
                                 v-if="shiftHeld"
                                 style="color: #f56c6c; margin-left: 5px"
                                 type="text"
-                                icon="el-icon-close"
+                                :icon="Close"
                                 size="mini"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
-                                icon="el-icon-delete"
+                                :icon="Delete"
                                 size="mini"
                                 style="margin-left: 5px"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
@@ -387,13 +384,13 @@
                                 v-if="shiftHeld"
                                 style="color: #f56c6c; margin-left: 5px"
                                 type="text"
-                                icon="el-icon-close"
+                                :icon="Close"
                                 size="mini"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
-                                icon="el-icon-delete"
+                                :icon="Delete"
                                 size="mini"
                                 style="margin-left: 5px"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
@@ -404,14 +401,25 @@
         </DataTable>
         <SendInviteResponseDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-response-dialog-visible.sync="sendInviteResponseDialogVisible" />
+            :send-invite-response-dialog-v-model="sendInviteResponseDialogVisible" />
         <SendInviteRequestResponseDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-request-response-dialog-visible.sync="sendInviteRequestResponseDialogVisible" />
+            :send-invite-request-response-dialog-v-model="sendInviteRequestResponseDialogVisible" />
     </div>
 </template>
 
 <script setup>
+    import {
+        Refresh,
+        Check,
+        ChatLineSquare,
+        Close,
+        CircleClose,
+        Bell,
+        CollectionTag,
+        Delete
+    } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n';

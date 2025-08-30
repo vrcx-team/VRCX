@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        :visible.sync="groupPostEditDialog.visible"
+        v-model="groupPostEditDialog.visible"
         :title="t('dialog.group_post_edit.header')"
         width="650px"
         append-to-body>

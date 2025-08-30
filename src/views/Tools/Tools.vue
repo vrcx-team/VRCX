@@ -6,7 +6,7 @@
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
-                        <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['group'] }"></i>
+                        <el-icon><ArrowRight /></el-icon>
                         <span class="category-title">Group</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
@@ -26,7 +26,7 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('image')">
-                        <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['image'] }"></i>
+                        <el-icon><ArrowRight /></el-icon>
                         <span class="category-title">Image</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
@@ -57,7 +57,7 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('user')">
-                        <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['user'] }"></i>
+                        <el-icon><ArrowRight /></el-icon>
                         <span class="category-title">User</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
@@ -87,6 +87,7 @@
 </template>
 
 <script setup>
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

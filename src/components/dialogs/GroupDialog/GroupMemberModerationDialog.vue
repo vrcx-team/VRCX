@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="groupMemberModeration.visible"
+        v-model="groupMemberModeration.visible"
         :title="t('dialog.group_member_moderation.header')"
         append-to-body
         width="90vw">
@@ -13,7 +13,7 @@
                         <el-button
                             type="default"
                             size="mini"
-                            icon="el-icon-refresh"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="loadAllGroupMembers" />
@@ -146,7 +146,9 @@
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
                                 <template #default="scope">
                                     <template v-for="(roleId, index) in scope.row.roleIds" :key="roleId">
-                                        <template v-for="(role, rIndex) in groupMemberModeration.groupRef.roles" :key="roleId + rIndex">
+                                        <template
+                                            v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
+                                            :key="roleId + rIndex">
                                             <span v-if="role?.id === roleId"
                                                 >{{ role.name
                                                 }}<span v-if="index < scope.row.roleIds.length - 1">, </span></span
@@ -192,7 +194,7 @@
                         <el-button
                             type="default"
                             size="mini"
-                            icon="el-icon-refresh"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="getAllGroupBans(groupMemberModeration.id)"></el-button>
@@ -264,9 +266,7 @@
                                             :key="rIndex + roleId"
                                             >{{ role.name }}</span
                                         >
-                                        <span v-if="index < scope.row.roleIds.length - 1"
-                                            >,
-                                        </span>
+                                        <span v-if="index < scope.row.roleIds.length - 1">, </span>
                                     </template>
                                 </template>
                             </el-table-column>
@@ -307,7 +307,7 @@
                         <el-button
                             type="default"
                             size="mini"
-                            icon="el-icon-refresh"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)"></el-button>
@@ -595,7 +595,7 @@
                         <el-button
                             type="default"
                             size="mini"
-                            icon="el-icon-refresh"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="getAllGroupLogs(groupMemberModeration.id)"></el-button>
@@ -708,7 +708,7 @@
             <el-button
                 type="default"
                 size="mini"
-                icon="el-icon-delete"
+                :icon="Delete"
                 circle
                 style="margin-left: 5px"
                 @click="clearSelectedGroupMembers"></el-button>
@@ -834,12 +834,14 @@
             }}</el-button>
         </div>
         <group-member-moderation-export-dialog
-            :is-group-logs-export-dialog-visible.sync="isGroupLogsExportDialogVisible"
+            :is-group-logs-export-dialog-v-model="isGroupLogsExportDialogVisible"
             :group-logs-moderation-table="groupLogsModerationTable" />
     </safe-dialog>
 </template>
 
 <script setup>
+    import { Refresh, Delete } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

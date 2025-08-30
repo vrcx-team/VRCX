@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        :visible.sync="isVisible"
+        v-model="isVisible"
         :title="t('dialog.set_world_tags.header')"
         width="400px"
         destroy-on-close

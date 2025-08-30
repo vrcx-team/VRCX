@@ -3,8 +3,8 @@
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}
             <el-tooltip v-if="tooltip" placement="top" class="tooltip" :content="tooltip"
-                ><i class="el-icon-info"
-            /></el-tooltip>
+                ><el-icon><InfoFilled /></el-icon
+            ></el-tooltip>
         </div>
 
         <el-switch class="switch" :value="value" @change="change" :disabled="disabled"></el-switch>
@@ -12,6 +12,7 @@
 </template>
 
 <script setup>
+    import { InfoFilled } from '@element-plus/icons-vue';
     defineProps({
         label: String,
         value: Boolean,

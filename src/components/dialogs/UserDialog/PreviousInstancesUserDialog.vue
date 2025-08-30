@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="previousInstancesUserDialogRef"
-        :visible.sync="isVisible"
+        v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
@@ -40,25 +40,25 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-switch-button"
+                        :icon="SwitchButton"
                         size="mini"
                         @click="showLaunchDialog(scope.row.location)"></el-button>
                     <el-button
                         type="text"
-                        icon="el-icon-s-data"
+                        :icon="DataLine"
                         size="mini"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteGameLogUserInstance(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteGameLogUserInstancePrompt(scope.row)"></el-button>
                 </template>
@@ -68,6 +68,8 @@
 </template>
 
 <script setup>
+    import { SwitchButton, DataLine, Close } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

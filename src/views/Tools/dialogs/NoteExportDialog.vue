@@ -78,7 +78,7 @@
                 <template slot-scope="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="removeFromNoteExportTable(scope.row)"></el-button>
                 </template>
@@ -88,6 +88,7 @@
 </template>
 
 <script setup>
+    import { Close } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

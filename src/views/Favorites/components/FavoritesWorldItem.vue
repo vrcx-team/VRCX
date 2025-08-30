@@ -18,7 +18,7 @@
                             placement="left"
                             :content="t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
                             :disabled="hideTooltips">
-                            <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
+                            <el-button type="default" :icon="Back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
                             <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
@@ -42,13 +42,13 @@
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
                         :content="t('view.favorite.unavailable_tooltip')">
-                        <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.ref.releaseStatus === 'private'"
                         placement="left"
                         :content="t('view.favorite.private')">
-                        <i class="el-icon-warning" style="color: #e6a23c; margin-left: 5px"></i>
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-tooltip placement="left" :disabled="hideTooltips">
                         <template #content>
@@ -60,7 +60,7 @@
                         </template>
                         <el-button
                             size="mini"
-                            icon="el-icon-message"
+                            :icon="Message"
                             style="margin-left: 5px"
                             @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
@@ -73,13 +73,13 @@
                         <el-button
                             v-if="shiftHeld"
                             size="mini"
-                            icon="el-icon-close"
+                            :icon="Close"
                             circle
                             style="color: #f56c6c; margin-left: 5px"
                             @click.stop="deleteFavorite(favorite.id)"></el-button>
                         <el-button
                             v-else
-                            icon="el-icon-star-on"
+                            :icon="Star"
                             size="mini"
                             circle
                             style="margin-left: 5px"
@@ -95,13 +95,13 @@
                     <el-button
                         v-if="shiftHeld"
                         size="mini"
-                        icon="el-icon-close"
+                        :icon="Close"
                         circle
                         style="color: #f56c6c; margin-left: 5px"
                         @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"></el-button>
                     <el-button
                         v-else
-                        icon="el-icon-star-on"
+                        :icon="Star"
                         size="mini"
                         circle
                         style="margin-left: 5px"
@@ -117,11 +117,11 @@
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
                         :content="t('view.favorite.unavailable_tooltip')">
-                        <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-button
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         style="margin-left: 5px"
                         @click.stop="handleDeleteFavorite"></el-button>
@@ -132,6 +132,7 @@
 </template>
 
 <script setup>
+    import { Warning, Back, Message, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -17,10 +17,10 @@
                 <span v-if="isFriendActiveOrOffline" class="extra">{{ friend.ref.statusDescription }}</span>
                 <template v-else>
                     <span v-if="friend.pendingOffline" class="extra">
-                        <i class="el-icon-warning-outline" /> {{ t('side_panel.pending_offline') }}
+                        <el-icon><WarningFilled /></el-icon> {{ t('side_panel.pending_offline') }}
                     </span>
                     <template v-else-if="isGroupByInstance">
-                        <i v-if="isFriendTraveling" class="el-icon el-icon-loading"></i>
+                        <el-icon v-if="isFriendTraveling"><Loading /></el-icon>
                         <Timer
                             class="extra"
                             :epoch="epoch"
@@ -39,7 +39,7 @@
             <span>{{ friend.name || friend.id }}</span>
             <el-button
                 ttype="text"
-                icon="el-icon-close"
+                :icon="Close"
                 size="mini"
                 style="margin-left: 5px"
                 @click.stop="$emit('confirm-delete-friend', friend.id)">
@@ -61,6 +61,7 @@
 </template>
 
 <script setup>
+    import { WarningFilled, Close, Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';

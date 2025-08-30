@@ -9,21 +9,20 @@
                         <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
                         <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
                         <div>
-                            <i class="el-icon-warning-outline"></i
+                            <el-icon><WarningFilled /></el-icon
                             ><i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
                         </div>
                     </div>
 
-                    <i
-                        slot="reference"
-                        class="el-icon-info"
-                        style="margin-left: 5px; font-size: 12px; opacity: 0.7"></i>
+                    <el-icon slot="reference" style="margin-left: 5px; font-size: 12px; opacity: 0.7"
+                        ><InfoFilled
+                    /></el-icon>
                 </el-popover>
             </div>
 
             <div>
                 <el-tooltip :content="t('view.charts.instance_activity.refresh')" placement="top"
-                    ><el-button icon="el-icon-refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
+                    ><el-button :icon="Refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
                 ></el-tooltip>
                 <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
                     <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
@@ -57,13 +56,13 @@
                             </div>
                         </div>
 
-                        <el-button slot="reference" icon="el-icon-setting" circle></el-button>
+                        <el-button slot="reference" :icon="Setting" circle></el-button>
                     </el-popover>
                 </el-tooltip>
                 <el-button-group style="margin-right: 10px">
                     <el-tooltip :content="t('view.charts.instance_activity.previous_day')" placement="top">
                         <el-button
-                            icon="el-icon-arrow-left"
+                            :icon="ArrowLeft"
                             :disabled="isPrevDayBtnDisabled"
                             @click="changeSelectedDateFromBtn(false)"></el-button>
                     </el-tooltip>
@@ -78,9 +77,7 @@
                     type="date"
                     :clearable="false"
                     align="right"
-                    :picker-options="{
-                        disabledDate: (time) => getDatePickerDisabledDate(time)
-                    }"
+                    :disabled-date="getDatePickerDisabledDate"
                     @change="reloadData"></el-date-picker>
             </div>
         </div>
@@ -112,6 +109,7 @@
 </template>
 
 <script setup>
+    import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft } from '@element-plus/icons-vue';
     import { ref, onActivated, onDeactivated, watch, computed, onMounted, nextTick, onBeforeMount } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';

@@ -40,14 +40,14 @@
                     size="small"
                     type="danger"
                     plain
-                    icon="el-icon-switch-button"
+                    :icon="SwitchButton"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
                     @click="logout()"
                     >{{ t('view.profile.profile.logout') }}</el-button
                 >
                 <el-button
                     size="small"
-                    icon="el-icon-picture-outline"
+                    :icon="Picture"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
                     @click="showGalleryDialog()"
                     >{{ t('view.profile.profile.manage_gallery_inventory_icon') }}</el-button
@@ -68,7 +68,7 @@
                 >
                 <el-button
                     size="small"
-                    icon="el-icon-user"
+                    :icon="User"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
                     @click="showExportAvatarsListDialog()"
                     >{{ t('view.profile.profile.export_own_avatars') }}</el-button
@@ -98,7 +98,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="getConfig"></el-button>
@@ -145,7 +145,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="
@@ -157,7 +157,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         circle
                         style="margin-left: 5px"
                         @click="inviteMessageTable.visible = false"></el-button>
@@ -184,7 +184,7 @@
                     <template #default="scope">
                         <el-button
                             type="text"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             size="mini"
                             @click="showEditInviteMessageDialog('message', scope.row)"></el-button>
                     </template>
@@ -199,7 +199,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="
@@ -211,7 +211,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         circle
                         style="margin-left: 5px"
                         @click="inviteResponseMessageTable.visible = false"></el-button>
@@ -241,7 +241,7 @@
                     <template #default="scope">
                         <el-button
                             type="text"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             size="mini"
                             @click="showEditInviteMessageDialog('response', scope.row)"></el-button>
                     </template>
@@ -256,7 +256,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="
@@ -268,7 +268,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         circle
                         style="margin-left: 5px"
                         @click="inviteRequestMessageTable.visible = false"></el-button>
@@ -298,7 +298,7 @@
                     <template #default="scope">
                         <el-button
                             type="text"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             size="mini"
                             @click="showEditInviteMessageDialog('request', scope.row)"></el-button>
                     </template>
@@ -313,7 +313,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="
@@ -325,7 +325,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         circle
                         style="margin-left: 5px"
                         @click="inviteRequestResponseMessageTable.visible = false"></el-button>
@@ -355,7 +355,7 @@
                     <template #default="scope">
                         <el-button
                             type="text"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             size="mini"
                             @click="showEditInviteMessageDialog('requestResponse', scope.row)"></el-button>
                     </template>
@@ -387,7 +387,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="refreshConfigTreeData()"></el-button>
@@ -396,7 +396,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         circle
                         style="margin-left: 5px"
                         @click="configTreeData = []"></el-button>
@@ -419,7 +419,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="refreshCurrentUserTreeData()"></el-button>
@@ -428,7 +428,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         circle
                         style="margin-left: 5px"
                         @click="currentUserTreeData = []"></el-button>
@@ -454,7 +454,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="margin-left: 5px"
                         @click="getCurrentUserFeedback()"></el-button>
@@ -463,7 +463,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         circle
                         style="margin-left: 5px"
                         @click="currentUserFeedbackData = []"></el-button>
@@ -481,15 +481,17 @@
                 </template>
             </el-tree>
         </div>
-        <DiscordNamesDialog :discord-names-dialog-visible.sync="discordNamesDialogVisible" :friends="friends" />
+        <DiscordNamesDialog :discord-names-dialog-v-model="discordNamesDialogVisible" :friends="friends" />
         <ExportFriendsListDialog
-            :is-export-friends-list-dialog-visible.sync="isExportFriendsListDialogVisible"
+            :is-export-friends-list-dialog-v-model="isExportFriendsListDialogVisible"
             :friends="friends" />
-        <ExportAvatarsListDialog :is-export-avatars-list-dialog-visible.sync="isExportAvatarsListDialogVisible" />
+        <ExportAvatarsListDialog :is-export-avatars-list-dialog-v-model="isExportAvatarsListDialogVisible" />
     </div>
 </template>
 
 <script setup>
+    import { SwitchButton, Picture, User, Refresh, Delete, Edit } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { ref, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';

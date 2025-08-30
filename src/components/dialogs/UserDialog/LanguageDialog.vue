@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="languageDialog.visible"
+        v-model="languageDialog.visible"
         :title="t('dialog.language.header')"
         width="400px"
         append-to-body>

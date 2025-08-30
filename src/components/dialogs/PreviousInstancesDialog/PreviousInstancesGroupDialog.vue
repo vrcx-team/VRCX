@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="previousInstancesGroupDialogRef"
-        :visible.sync="isVisible"
+        v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
@@ -39,20 +39,20 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-s-data"
+                        :icon="DataLine"
                         size="mini"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)" />
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteGameLogGroupInstance(scope.row)" />
                     <el-button
                         v-else
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteGameLogGroupInstancePrompt(scope.row)" />
                 </template>
@@ -62,6 +62,8 @@
 </template>
 
 <script setup>
+    import { DataLine, Close } from '@element-plus/icons-vue';
+
     import { ref, reactive, computed, watch, nextTick, getCurrentInstance } from 'vue';
     import {
         parseLocation,

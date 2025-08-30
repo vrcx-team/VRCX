@@ -11,7 +11,7 @@
         "localization": "node ./src/localization/localizationHelperCLI.js",
         "test": "jest",
         "test:coverage": "jest --coverage",
-        "prod": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode production",
+        "prod": "cross-env PLATFORM=windows vite build",
         "prod-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode production",
         "build-electron": "node ./src-electron/download-dotnet-runtime.js --arch=x64 && node ./src-electron/patch-package-version.js && electron-builder --x64 --publish never",
         "build-electron-arm64": "node ./src-electron/download-dotnet-runtime.js --arch=arm64 && node ./src-electron/patch-package-version.js && electron-builder --arm64 --publish never",

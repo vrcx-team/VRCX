@@ -24,7 +24,7 @@
                             placement="left"
                             :content="t('view.favorite.move_tooltip')"
                             :disabled="hideTooltips">
-                            <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
+                            <el-button type="default" :icon="Back" size="mini" circle></el-button>
                         </el-tooltip>
                         <el-dropdown-menu slot="dropdown">
                             <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
@@ -50,14 +50,14 @@
                         <el-button
                             v-if="shiftHeld"
                             size="mini"
-                            icon="el-icon-close"
+                            :icon="Close"
                             circle
                             style="color: #f56c6c; margin-left: 5px"
                             @click.stop="deleteFavorite(favorite.id)"></el-button>
                         <el-button
                             v-else
                             type="default"
-                            icon="el-icon-star-on"
+                            :icon="Star"
                             size="mini"
                             circle
                             style="margin-left: 5px"
@@ -72,7 +72,7 @@
                 </div>
                 <el-button
                     type="text"
-                    icon="el-icon-close"
+                    :icon="Close"
                     size="mini"
                     style="margin-left: 5px"
                     @click.stop="deleteFavorite(favorite.id)"></el-button>
@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+    import { Back, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';

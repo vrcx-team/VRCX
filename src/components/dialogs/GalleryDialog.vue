@@ -24,14 +24,14 @@
                 <br />
                 <br />
                 <el-button-group>
-                    <el-button type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh">
+                    <el-button type="default" size="small" @click="refreshGalleryTable" :icon="Refresh">
                         {{ t('dialog.gallery_icons.refresh') }}
                     </el-button>
                     <el-button
                         type="default"
                         size="small"
                         @click="displayGalleryUpload"
-                        icon="el-icon-upload2"
+                        :icon="Upload"
                         :disabled="!currentUser.$isVRCPlus">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
@@ -39,7 +39,7 @@
                         type="default"
                         size="small"
                         @click="setProfilePicOverride('')"
-                        icon="el-icon-close"
+                        :icon="Close"
                         :disabled="!currentUser.profilePicOverride">
                         {{ t('dialog.gallery_icons.clear') }}
                     </el-button>
@@ -63,13 +63,13 @@
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
                                 size="mini"
-                                icon="el-icon-picture-outline"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteGalleryImage(image.id)"
                                 size="mini"
-                                icon="el-icon-delete"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -93,14 +93,14 @@
                 <br />
                 <br />
                 <el-button-group>
-                    <el-button type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh">
+                    <el-button type="default" size="small" @click="refreshVRCPlusIconsTable" :icon="Refresh">
                         {{ t('dialog.gallery_icons.refresh') }}
                     </el-button>
                     <el-button
                         type="default"
                         size="small"
                         @click="displayVRCPlusIconUpload"
-                        icon="el-icon-upload2"
+                        :icon="Upload"
                         :disabled="!currentUser.$isVRCPlus">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
@@ -108,7 +108,7 @@
                         type="default"
                         size="small"
                         @click="setVRCPlusIcon('')"
-                        icon="el-icon-close"
+                        :icon="Close"
                         :disabled="!currentUser.userIcon">
                         {{ t('dialog.gallery_icons.clear') }}
                     </el-button>
@@ -132,13 +132,13 @@
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
                                 size="mini"
-                                icon="el-icon-picture-outline"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteVRCPlusIcon(image.id)"
                                 size="mini"
-                                icon="el-icon-delete"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -163,14 +163,14 @@
                 <br />
                 <div>
                     <el-button-group style="margin-right: 10px">
-                        <el-button type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh">
+                        <el-button type="default" size="small" @click="refreshEmojiTable" :icon="Refresh">
                             {{ t('dialog.gallery_icons.refresh') }}
                         </el-button>
                         <el-button
                             type="default"
                             size="small"
                             @click="displayEmojiUpload"
-                            icon="el-icon-upload2"
+                            :icon="Upload"
                             :disabled="!currentUser.$isVRCPlus">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
@@ -276,13 +276,13 @@
                                     )
                                 "
                                 size="mini"
-                                icon="el-icon-picture-outline"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteEmoji(image.id)"
                                 size="mini"
-                                icon="el-icon-delete"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -306,14 +306,14 @@
                 <br />
                 <br />
                 <el-button-group>
-                    <el-button type="default" size="small" @click="refreshStickerTable" icon="el-icon-refresh">
+                    <el-button type="default" size="small" @click="refreshStickerTable" :icon="Refresh">
                         {{ t('dialog.gallery_icons.refresh') }}
                     </el-button>
                     <el-button
                         type="default"
                         size="small"
                         @click="displayStickerUpload"
-                        icon="el-icon-upload2"
+                        :icon="Upload"
                         :disabled="!currentUser.$isVRCPlus">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
@@ -337,13 +337,13 @@
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
                                 size="mini"
-                                icon="el-icon-picture-outline"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteSticker(image.id)"
                                 size="mini"
-                                icon="el-icon-delete"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -366,14 +366,14 @@
                 <br />
                 <div style="display: flex; align-items: center">
                     <el-button-group>
-                        <el-button type="default" size="small" @click="refreshPrintTable" icon="el-icon-refresh">
+                        <el-button type="default" size="small" @click="refreshPrintTable" :icon="Refresh">
                             {{ t('dialog.gallery_icons.refresh') }}
                         </el-button>
                         <el-button
                             type="default"
                             size="small"
                             @click="displayPrintUpload"
-                            icon="el-icon-upload2"
+                            :icon="Upload"
                             :disabled="!currentUser.$isVRCPlus">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
@@ -433,13 +433,13 @@
                             type="default"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))"
                             size="mini"
-                            icon="el-icon-picture-outline"
+                            :icon="Picture"
                             circle></el-button>
                         <el-button
                             type="default"
                             @click="deletePrint(image.id)"
                             size="mini"
-                            icon="el-icon-delete"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"></el-button>
                     </div>
@@ -455,7 +455,7 @@
                 <br />
                 <div style="display: flex; align-items: center">
                     <el-button-group>
-                        <el-button type="default" size="small" @click="getInventory" icon="el-icon-refresh">
+                        <el-button type="default" size="small" @click="getInventory" :icon="Refresh">
                             {{ t('dialog.gallery_icons.refresh') }}
                         </el-button>
                     </el-button-group>
@@ -489,7 +489,7 @@
                         type="default"
                         @click="consumeInventoryBundle(item.id)"
                         size="mini"
-                        icon="el-icon-plus"
+                        :icon="Plus"
                         style="float: right"
                         circle>
                         {{ t('dialog.gallery_icons.consume_bundle') }}
@@ -501,6 +501,7 @@
 </template>
 
 <script setup>
+    import { Refresh, Upload, Close, Picture, Delete, Plus } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, ref } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -25,15 +25,13 @@
                     /></span>
                     <span v-if="state.userList.length">{{ t('dialog.user.info.instance_users') }}<br /></span>
                     <template v-for="user in state.userList" :key="user.id">
-                        <span
-                            style="cursor: pointer; margin-right: 5px"
-                            @click="showUserDialog(user.id)"
-                            >{{ user.displayName }}</span
-                        >
+                        <span style="cursor: pointer; margin-right: 5px" @click="showUserDialog(user.id)">{{
+                            user.displayName
+                        }}</span>
                     </template>
                 </div>
             </template>
-            <i class="el-icon-caret-bottom"></i>
+            <el-icon><CaretBottom /></el-icon>
         </el-tooltip>
         <span v-if="state.occupants" style="margin-left: 5px">{{ state.occupants }}/{{ state.capacity }}</span>
         <span v-if="props.friendcount" style="margin-left: 5px">({{ props.friendcount }})</span>
@@ -56,6 +54,7 @@
 </template>
 
 <script setup>
+    import { CaretBottom } from '@element-plus/icons-vue';
     import { getCurrentInstance, reactive, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { miscRequest } from '../api';

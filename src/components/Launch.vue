@@ -4,11 +4,12 @@
         placement="top"
         :content="t('dialog.user.info.launch_invite_tooltip')"
         :disabled="hideTooltips">
-        <el-button @click="confirm" size="mini" icon="el-icon-switch-button" circle />
+        <el-button @click="confirm" size="mini" :icon="SwitchButton" circle />
     </el-tooltip>
 </template>
 
 <script setup>
+    import { SwitchButton } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { checkCanInviteSelf } from '../shared/utils';

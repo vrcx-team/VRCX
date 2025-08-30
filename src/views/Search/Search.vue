@@ -10,7 +10,7 @@
             <el-tooltip placement="bottom" :content="t('view.search.clear_results_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
-                    icon="el-icon-delete"
+                    :icon="Delete"
                     circle
                     style="flex: none; margin-left: 10px"
                     @click="handleClearSearch"></el-button>
@@ -53,14 +53,14 @@
                 <el-button-group v-if="searchUserResults.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchUserParams.offset"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="handleMoreSearchUser(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
                     >
                     <el-button
                         :disabled="searchUserResults.length < 10"
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="handleMoreSearchUser(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -113,14 +113,14 @@
                 <el-button-group v-if="searchWorldResults.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchWorldParams.offset"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="moreSearchWorld(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
                     >
                     <el-button
                         :disabled="searchWorldResults.length < 10"
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="moreSearchWorld(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -163,7 +163,7 @@
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
                                 size="mini"
-                                icon="el-icon-refresh"
+                                :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogAvatars"></el-button>
                         </el-tooltip>
@@ -241,7 +241,7 @@
                 <el-button-group v-if="searchAvatarPage.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchAvatarPageNum"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="moreSearchAvatar(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
@@ -251,7 +251,7 @@
                             searchAvatarResults.length < 10 ||
                             (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length
                         "
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="moreSearchAvatar(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -295,14 +295,14 @@
                 <el-button-group v-if="searchGroupResults.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchGroupParams.offset"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="moreSearchGroup(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
                     >
                     <el-button
                         :disabled="searchGroupResults.length < 10"
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="moreSearchGroup(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -314,6 +314,7 @@
 </template>
 
 <script setup>
+    import { Delete, Back, Right, Refresh } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';

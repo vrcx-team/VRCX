@@ -68,7 +68,7 @@
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             circle
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)" />
@@ -76,7 +76,7 @@
                     <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-delete"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="clearFavoriteGroup(group)" />
@@ -116,7 +116,7 @@
                     <el-tooltip placement="right" content="Clear" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-delete"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="promptClearAvatarHistory"></el-button>
@@ -157,7 +157,7 @@
                 {{ t('view.favorite.avatars.refresh') }}
             </el-button>
             <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
-                <i class="el-icon-loading" style="margin-right: 5px"></i>
+                <el-icon><Loading /></el-icon>
                 <span>{{ t('view.favorite.avatars.cancel_refresh') }}</span>
             </el-button>
             <el-collapse-item
@@ -172,7 +172,7 @@
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             circle
                             :style="{ marginLeft: '5px' }"
                             @click.stop="promptLocalAvatarFavoriteGroupRename(group)"></el-button>
@@ -180,7 +180,7 @@
                     <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-delete"
+                            :icon="Delete"
                             circle
                             :style="{ marginLeft: '5px' }"
                             @click.stop="promptLocalAvatarFavoriteGroupDelete(group)"></el-button>
@@ -213,11 +213,13 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <AvatarExportDialog :avatar-export-dialog-visible.sync="avatarExportDialogVisible" />
+        <AvatarExportDialog :avatar-export-dialog-v-model="avatarExportDialogVisible" />
     </div>
 </template>
 
 <script setup>
+    import { Loading, Edit, Delete } from '@element-plus/icons-vue';
+
     import { ref, computed, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

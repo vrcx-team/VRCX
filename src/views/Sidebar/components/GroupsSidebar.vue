@@ -1,16 +1,9 @@
 <template>
     <div class="x-friend-list" style="padding: 10px 5px">
         <template v-for="(group, index) in groupedGroupInstances" :key="getGroupId(group)">
-            <div
-                class="x-friend-group x-link"
-                :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
+            <div class="x-friend-group x-link" :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">
-                    <i
-                        class="el-icon-arrow-right"
-                        :style="{
-                            transform: groupInstancesCfg[getGroupId(group)].isCollapsed ? '' : 'rotate(90deg)',
-                            transition: 'transform 0.3s'
-                        }"></i>
+                    <el-icon><ArrowRight /></el-icon>
                     <span style="margin-left: 5px">{{ group[0].group.name }} – {{ group.length }}</span>
                 </div>
             </div>
@@ -42,6 +35,7 @@
 </template>
 
 <script setup>
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed, ref } from 'vue';
     import { convertFileUrlToImageUrl } from '../../../shared/utils';

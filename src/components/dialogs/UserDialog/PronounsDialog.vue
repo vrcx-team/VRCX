@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="pronounsDialog.visible"
+        v-model="pronounsDialog.visible"
         :title="t('dialog.pronouns.header')"
         width="600px"
         append-to-body>

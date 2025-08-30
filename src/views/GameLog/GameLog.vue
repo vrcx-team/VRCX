@@ -45,7 +45,6 @@
         </div>
 
         <DataTable v-loading="gameLogTable.loading" v-bind="gameLogTable">
-
             <el-table-column :label="t('table.gameLog.date')" prop="created_at" sortable="custom" width="120">
                 <template #default="scope">
                     <el-tooltip placement="right">
@@ -59,7 +58,7 @@
 
             <el-table-column :label="t('table.gameLog.type')" prop="type" width="120">
                 <template #default="scope">
-                    <el-tooltip placement="right" :open-delay="500" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :show-after="500" :disabled="hideTooltips">
                         <template #content>
                             <span>{{ t('view.game_log.filters.' + scope.row.type) }}</span>
                         </template>
@@ -167,13 +166,13 @@
                             v-if="shiftHeld"
                             style="color: #f56c6c"
                             type="text"
-                            icon="el-icon-close"
+                            :icon="Close"
                             size="mini"
                             @click="deleteGameLogEntry(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
-                            icon="el-icon-delete"
+                            :icon="Delete"
                             size="mini"
                             @click="deleteGameLogEntryPrompt(scope.row)"></el-button>
                     </template>
@@ -181,7 +180,7 @@
                         <el-button
                             v-if="scope.row.type === 'Location'"
                             type="text"
-                            icon="el-icon-s-data"
+                            :icon="DataLine"
                             size="mini"
                             @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     </el-tooltip>
@@ -192,6 +191,7 @@
 </template>
 
 <script setup>
+    import { Close, Delete, DataLine } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';

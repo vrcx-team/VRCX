@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="editAndSendInviteResponseDialog.visible"
+        v-model="editAndSendInviteResponseDialog.visible"
         :title="t('dialog.edit_send_invite_response_message.header')"
         width="400px"
         append-to-body>

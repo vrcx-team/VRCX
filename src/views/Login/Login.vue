@@ -6,7 +6,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-download"
+                        :icon="Download"
                         circle
                         @click="showVRCXUpdateDialog"></el-button>
                 </el-tooltip>
@@ -118,7 +118,7 @@
                                 <el-button
                                     type="default"
                                     size="mini"
-                                    icon="el-icon-delete"
+                                    :icon="Delete"
                                     style="margin-left: 10px"
                                     circle
                                     @click.stop="deleteSavedLogin(user.user.id)"></el-button>
@@ -150,6 +150,7 @@
 </template>
 
 <script setup>
+    import { Download, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { onBeforeUnmount, ref } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="moderateGroupDialogRef"
-        :visible.sync="moderateGroupDialog.visible"
+        v-model="moderateGroupDialog.visible"
         :title="t('dialog.moderate_group.header')"
         width="450px"
         append-to-body>

@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="inviteDialog.visible"
+        v-model="inviteDialog.visible"
         :title="t('dialog.invite.header')"
         width="500px"
         append-to-body>
@@ -155,7 +155,7 @@
             >
         </template>
         <SendInviteDialog
-            :send-invite-dialog-visible.sync="sendInviteDialogVisible"
+            :send-invite-dialog-v-model="sendInviteDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />

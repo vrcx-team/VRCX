@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="worldImportDialogRef"
-        :visible.sync="isVisible"
+        v-model="isVisible"
         :title="t('dialog.world_import.header')"
         width="650px"
         class="x-dialog">
@@ -164,7 +164,7 @@
                 <template slot-scope="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteItemWorldImport(scope.row)"></el-button>
                 </template>
@@ -174,6 +174,8 @@
 </template>
 
 <script setup>
+    import { Close } from '@element-plus/icons-vue';
+
     import { ref, watch, computed, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';

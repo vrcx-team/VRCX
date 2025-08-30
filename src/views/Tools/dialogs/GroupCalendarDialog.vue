@@ -72,7 +72,7 @@
                             placeholder="Search groups or events..."
                             clearable
                             size="small"
-                            prefix-icon="el-icon-search"
+                            prefix-:icon="Search"
                             class="search-input" />
                     </div>
 

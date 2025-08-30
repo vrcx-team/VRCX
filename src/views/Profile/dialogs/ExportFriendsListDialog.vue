@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog :title="t('dialog.export_friends_list.header')" :visible.sync="isVisible" width="650px">
+    <safe-dialog :title="t('dialog.export_friends_list.header')" v-model="isVisible" width="650px">
         <el-tabs type="card">
             <el-tab-pane :label="t('dialog.export_friends_list.csv')">
                 <el-input

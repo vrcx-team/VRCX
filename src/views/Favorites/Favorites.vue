@@ -22,7 +22,7 @@
                     type="default"
                     :loading="isFavoriteLoading"
                     size="small"
-                    icon="el-icon-refresh"
+                    :icon="Refresh"
                     circle
                     @click="
                         refreshFavorites();
@@ -58,6 +58,7 @@
 </template>
 
 <script setup>
+    import { Refresh } from '@element-plus/icons-vue';
     import { ref, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

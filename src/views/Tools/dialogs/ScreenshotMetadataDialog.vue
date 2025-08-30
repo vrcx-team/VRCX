@@ -16,35 +16,35 @@
             }}</span>
             <br />
             <br />
-            <el-button size="small" icon="el-icon-folder-opened" @click="getAndDisplayScreenshotFromFile">{{
+            <el-button size="small" :icon="FolderOpened" @click="getAndDisplayScreenshotFromFile">{{
                 t('dialog.screenshot_metadata.browse')
             }}</el-button>
-            <el-button size="small" icon="el-icon-picture-outline" @click="getAndDisplayLastScreenshot">{{
+            <el-button size="small" :icon="Picture" @click="getAndDisplayLastScreenshot">{{
                 t('dialog.screenshot_metadata.last_screenshot')
             }}</el-button>
             <el-button
                 size="small"
-                icon="el-icon-copy-document"
+                :icon="CopyDocument"
                 @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)"
                 >{{ t('dialog.screenshot_metadata.copy_image') }}</el-button
             >
             <el-button
                 size="small"
-                icon="el-icon-folder"
+                :icon="Folder"
                 @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)"
                 >{{ t('dialog.screenshot_metadata.open_folder') }}</el-button
             >
             <el-button
                 v-if="currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath"
                 size="small"
-                icon="el-icon-upload2"
+                :icon="Upload"
                 @click="uploadScreenshotToGallery"
                 >{{ t('dialog.screenshot_metadata.upload') }}</el-button
             >
             <el-button
                 v-if="screenshotMetadataDialog.metadata.filePath"
                 size="small"
-                icon="el-icon-delete"
+                :icon="Delete"
                 @click="deleteMetadata(screenshotMetadataDialog.metadata.filePath)"
                 >{{ t('dialog.screenshot_metadata.delete_metadata') }}</el-button
             >
@@ -168,6 +168,7 @@
 </template>
 
 <script setup>
+    import { FolderOpened, Picture, CopyDocument, Folder, Upload, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

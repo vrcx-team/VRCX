@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="gallerySelectDialog.visible"
+        v-model="gallerySelectDialog.visible"
         :title="t('dialog.gallery_select.header')"
         width="100%"
         append-to-body>
@@ -16,16 +16,16 @@
                 style="display: none"
                 @change="onFileChangeGallery" />
             <el-button-group>
-                <el-button type="default" size="small" icon="el-icon-close" @click="selectImageGallerySelect('', '')">{{
+                <el-button type="default" size="small" :icon="Close" @click="selectImageGallerySelect('', '')">{{
                     t('dialog.gallery_select.none')
                 }}</el-button>
-                <el-button type="default" size="small" icon="el-icon-refresh" @click="refreshGalleryTable">{{
+                <el-button type="default" size="small" :icon="Refresh" @click="refreshGalleryTable">{{
                     t('dialog.gallery_select.refresh')
                 }}</el-button>
                 <el-button
                     type="default"
                     size="small"
-                    icon="el-icon-upload2"
+                    :icon="Upload"
                     :disabled="!currentUser.$isVRCPlus"
                     @click="displayGalleryUpload"
                     >{{ t('dialog.gallery_select.upload') }}</el-button
@@ -50,6 +50,8 @@
 </template>
 
 <script setup>
+    import { Close, Refresh, Upload } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';

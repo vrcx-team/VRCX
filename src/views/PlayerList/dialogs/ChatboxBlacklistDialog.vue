@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="chatboxBlacklistDialog.visible"
+        v-model="chatboxBlacklistDialog.visible"
         :title="t('dialog.chatbox_blacklist.header')"
         width="600px">
         <div v-if="chatboxBlacklistDialog.visible" v-loading="chatboxBlacklistDialog.loading">
@@ -15,7 +15,7 @@
                 @change="saveChatboxBlacklist">
                 <template #append>
                     <el-button
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         @click="
                             chatboxBlacklist.splice(index, 1);
                             saveChatboxBlacklist();
@@ -43,6 +43,8 @@
 </template>
 
 <script setup>
+    import { Delete } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';

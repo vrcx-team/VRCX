@@ -45,7 +45,7 @@
                             }}</el-tag>
                             <br />
                             <span style="margin-right: 5px">
-                                <i class="el-icon-right"></i>
+                                <el-icon><Right /></el-icon>
                             </span>
                             <Location
                                 v-if="scope.row.location"
@@ -98,7 +98,7 @@
                                         @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)" />
                                 </el-popover>
                                 <span style="position: relative; margin: 0 10px">
-                                    <i class="el-icon-right"></i>
+                                    <el-icon><Right /></el-icon>
                                 </span>
                                 <el-popover placement="right" width="500px" trigger="click">
                                     <div
@@ -148,7 +148,7 @@
                             <span style="margin-left: 5px" v-text="scope.row.previousStatusDescription"></span>
                             <br />
                             <span>
-                                <i class="el-icon-right"></i>
+                                <el-icon><Right /></el-icon>
                             </span>
                             <el-tooltip placement="top">
                                 <template #content>
@@ -246,7 +246,7 @@
                                 <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
                             </el-tooltip>
                             <span style="margin: 0 5px">
-                                <i class="el-icon-right"></i>
+                                <el-icon><Right /></el-icon>
                             </span>
                             <el-tooltip placement="top">
                                 <template #content>
@@ -310,6 +310,7 @@
 </template>
 
 <script setup>
+    import { Right } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useGalleryStore, useAppearanceSettingsStore, useUserStore, useFeedStore, useUiStore } from '../../stores';

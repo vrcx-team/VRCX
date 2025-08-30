@@ -12,7 +12,7 @@
             <el-button
                 type="default"
                 size="mini"
-                icon="el-icon-download"
+                :icon="Download"
                 circle
                 style="font-size: 14px; height: 50px; width: 50px"
                 @click="showVRCXUpdateDialog" />
@@ -38,6 +38,7 @@
 </template>
 
 <script setup>
+    import { Download } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useUiStore, useVRCXUpdaterStore } from '../stores';

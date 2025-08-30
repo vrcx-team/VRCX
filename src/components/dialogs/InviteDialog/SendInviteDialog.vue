@@ -59,7 +59,7 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-edit"
+                        :icon="Edit"
                         size="mini"
                         @click.stop="showEditAndSendInviteDialog(scope.row)"></el-button>
                 </template>
@@ -75,7 +75,7 @@
             </el-button>
         </template>
         <SendInviteConfirmDialog
-            :visible.sync="isSendInviteConfirmDialogVisible"
+            v-model="isSendInviteConfirmDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
@@ -88,6 +88,8 @@
 </template>
 
 <script setup>
+    import { Edit } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';

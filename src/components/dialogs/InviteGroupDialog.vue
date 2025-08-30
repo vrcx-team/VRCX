@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="inviteGroupDialogRef"
-        :visible.sync="inviteGroupDialog.visible"
+        v-model="inviteGroupDialog.visible"
         :title="t('dialog.invite_to_group.header')"
         width="450px"
         append-to-body>

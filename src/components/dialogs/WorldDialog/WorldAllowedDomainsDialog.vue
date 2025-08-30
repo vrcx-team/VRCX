@@ -1,6 +1,6 @@
 <template>
     <safe-dialog
-        :visible.sync="isVisible"
+        v-model="isVisible"
         :title="t('dialog.allowed_video_player_domains.header')"
         width="600px"
         destroy-on-close
@@ -12,7 +12,7 @@
                 v-model="urlList[index]"
                 size="small"
                 style="margin-top: 5px">
-                <el-button slot="append" icon="el-icon-delete" @click="urlList.splice(index, 1)"></el-button>
+                <el-button slot="append" :icon="Delete" @click="urlList.splice(index, 1)"></el-button>
             </el-input>
             <el-button size="mini" style="margin-top: 5px" @click="urlList.push('')">
                 {{ t('dialog.allowed_video_player_domains.add_domain') }}
@@ -31,6 +31,8 @@
 </template>
 
 <script setup>
+    import { Delete } from '@element-plus/icons-vue';
+
     import { ref, computed, watch, getCurrentInstance } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { worldRequest } from '../../../api';

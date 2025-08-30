@@ -1,12 +1,12 @@
 <template>
-    <safe-dialog ref="favoriteDialogRef" :visible.sync="isVisible" :title="t('dialog.favorite.header')" width="300px">
+    <safe-dialog ref="favoriteDialogRef" v-model="isVisible" :title="t('dialog.favorite.header')" width="300px">
         <div v-loading="loading">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
                 <el-button
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="deleteFavoriteNoConfirm(favoriteDialog.objectId)">
-                    <i class="el-icon-check"></i>
+                    <el-icon><Check /></el-icon>
                     {{ favoriteDialog.currentGroup.displayName }} ({{ favoriteDialog.currentGroup.count }} /
                     {{ favoriteDialog.currentGroup.capacity }})
                 </el-button>
@@ -28,7 +28,7 @@
                     v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)">
-                    <i class="el-icon-check"></i>
+                    <el-icon><Check /></el-icon>
                     {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                 </el-button>
                 <el-button
@@ -46,7 +46,7 @@
                     v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)">
-                    <i class="el-icon-check"></i>
+                    <el-icon><Check /></el-icon>
                     {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 </el-button>
                 <el-button
@@ -62,6 +62,8 @@
 </template>
 
 <script setup>
+    import { Check } from '@element-plus/icons-vue';
+
     import Noty from 'noty';
     import { storeToRefs } from 'pinia';
     import { computed, nextTick, ref, watch } from 'vue';

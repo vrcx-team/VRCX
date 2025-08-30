@@ -32,7 +32,7 @@
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-edit"
+                            :icon="Edit"
                             circle
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)"></el-button>
@@ -40,7 +40,7 @@
                     <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
                         <el-button
                             size="mini"
-                            icon="el-icon-delete"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="clearFavoriteGroup(group)"></el-button>
@@ -70,11 +70,13 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <FriendExportDialog :friend-export-dialog-visible.sync="friendExportDialogVisible" />
+        <FriendExportDialog :friend-export-dialog-v-model="friendExportDialogVisible" />
     </div>
 </template>
 
 <script setup>
+    import { Edit, Delete } from '@element-plus/icons-vue';
+
     import { ref, getCurrentInstance, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

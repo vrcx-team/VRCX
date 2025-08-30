@@ -13,7 +13,7 @@
                 size="small"
                 style="margin-top: 5px"
                 @change="saveAvatarProviderList">
-                <el-button slot="append" icon="el-icon-delete" @click="removeAvatarProvider(provider)"></el-button>
+                <el-button slot="append" :icon="Delete" @click="removeAvatarProvider(provider)"></el-button>
             </el-input>
 
             <el-button size="mini" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">
@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+    import { Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { useAvatarProviderStore } from '../../../stores';

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog :visible.sync="isVisible" :title="t('dialog.export_own_avatars.header')" width="650px">
+    <safe-dialog v-model="isVisible" :title="t('dialog.export_own_avatars.header')" width="650px">
         <el-input
             v-model="exportAvatarsListCsv"
             v-loading="loading"

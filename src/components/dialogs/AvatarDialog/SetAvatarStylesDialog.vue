@@ -2,7 +2,7 @@
     <safe-dialog
         ref="setAvatarStylesDialog"
         class="x-dialog"
-        :visible.sync="setAvatarStylesDialog.visible"
+        v-model="setAvatarStylesDialog.visible"
         :title="t('dialog.set_avatar_styles.header')"
         width="400px"
         append-to-body>

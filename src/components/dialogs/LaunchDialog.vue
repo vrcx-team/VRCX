@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog ref="launchDialogRef" :visible.sync="isVisible" :title="t('dialog.launch.header')" width="450px">
+    <safe-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
         <el-form :model="launchDialog" label-width="100px">
             <el-form-item :label="t('dialog.launch.url')">
                 <el-input
@@ -10,7 +10,7 @@
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
                         size="mini"
-                        icon="el-icon-s-order"
+                        :icon="Sort"
                         style="margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.url)" />
@@ -31,7 +31,7 @@
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
                         size="mini"
-                        icon="el-icon-s-order"
+                        :icon="Sort"
                         style="margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.shortUrl)" />
@@ -46,7 +46,7 @@
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
                         size="mini"
-                        icon="el-icon-s-order"
+                        :icon="Sort"
                         style="margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.location)" />
@@ -104,6 +104,8 @@
 </template>
 
 <script setup>
+    import { Sort } from '@element-plus/icons-vue';
+
     import { ref, computed, nextTick, watch, getCurrentInstance } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';

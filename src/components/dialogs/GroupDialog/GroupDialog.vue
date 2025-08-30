@@ -1,7 +1,7 @@
 <template>
     <safe-dialog
         ref="groupDialogRef"
-        :visible.sync="groupDialog.visible"
+        v-model="groupDialog.visible"
         :show-close="false"
         width="770px"
         class="x-dialog x-group-dialog">
@@ -192,7 +192,7 @@
                                 :disabled="hideTooltips">
                                 <el-button
                                     type="warning"
-                                    icon="el-icon-star-on"
+                                    :icon="Star"
                                     circle
                                     style="margin-left: 5px"
                                     @click="clearGroupRepresentation(groupDialog.id)"></el-button>
@@ -205,7 +205,7 @@
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-star-off"
+                                        :icon="StarFilled"
                                         circle
                                         style="margin-left: 5px"
                                         :disabled="groupDialog.ref.privacy === 'private'"
@@ -221,7 +221,7 @@
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-close"
+                                        :icon="Close"
                                         circle
                                         style="margin-left: 5px"
                                         @click="cancelGroupRequest(groupDialog.id)"></el-button>
@@ -236,7 +236,7 @@
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-check"
+                                        :icon="Check"
                                         circle
                                         style="margin-left: 5px"
                                         @click="joinGroup(groupDialog.id)"></el-button>
@@ -251,7 +251,7 @@
                                 :disabled="hideTooltips">
                                 <el-button
                                     type="default"
-                                    icon="el-icon-message"
+                                    :icon="Message"
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
@@ -264,7 +264,7 @@
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-message"
+                                        :icon="Message"
                                         disabled
                                         circle
                                         style="margin-left: 5px"></el-button>
@@ -277,7 +277,7 @@
                                 :disabled="hideTooltips">
                                 <el-button
                                     type="default"
-                                    icon="el-icon-check"
+                                    :icon="Check"
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
@@ -290,40 +290,40 @@
                             @command="groupDialogCommand">
                             <el-button
                                 :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
-                                icon="el-icon-more"
+                                :icon="MoreFilled"
                                 circle></el-button>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item icon="el-icon-refresh" command="Refresh">
+                                <el-dropdown-item :icon="Refresh" command="Refresh">
                                     {{ t('dialog.group.actions.refresh') }}
                                 </el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-share" command="Share">
+                                <el-dropdown-item :icon="Share" command="Share">
                                     {{ t('dialog.group.actions.share') }}
                                 </el-dropdown-item>
                                 <template v-if="groupDialog.inGroup">
                                     <template v-if="groupDialog.ref.myMember">
                                         <el-dropdown-item
                                             v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
-                                            icon="el-icon-close"
+                                            :icon="Close"
                                             command="Unsubscribe To Announcements"
                                             divided>
                                             {{ t('dialog.group.actions.unsubscribe') }}
                                         </el-dropdown-item>
                                         <el-dropdown-item
                                             v-else
-                                            icon="el-icon-check"
+                                            :icon="Check"
                                             command="Subscribe To Announcements"
                                             divided>
                                             {{ t('dialog.group.actions.subscribe') }}
                                         </el-dropdown-item>
                                         <el-dropdown-item
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
-                                            icon="el-icon-message"
+                                            :icon="Message"
                                             command="Invite To Group">
                                             {{ t('dialog.group.actions.invite_to_group') }}
                                         </el-dropdown-item>
                                         <template
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                            <el-dropdown-item icon="el-icon-tickets" command="Create Post">
+                                            <el-dropdown-item :icon="Tickets" command="Create Post">
                                                 {{ t('dialog.group.actions.create_post') }}
                                             </el-dropdown-item>
                                         </template>
@@ -335,19 +335,19 @@
                                         </el-dropdown-item>
                                         <template
                                             v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'">
-                                            <el-dropdown-item icon="el-icon-view" command="Visibility Everyone" divided>
+                                            <el-dropdown-item :icon="View" command="Visibility Everyone" divided>
                                                 <i
                                                     v-if="groupDialog.ref.myMember.visibility === 'visible'"
                                                     class="el-icon-check"></i>
                                                 {{ t('dialog.group.actions.visibility_everyone') }}
                                             </el-dropdown-item>
-                                            <el-dropdown-item icon="el-icon-view" command="Visibility Friends">
+                                            <el-dropdown-item :icon="View" command="Visibility Friends">
                                                 <i
                                                     v-if="groupDialog.ref.myMember.visibility === 'friends'"
                                                     class="el-icon-check"></i>
                                                 {{ t('dialog.group.actions.visibility_friends') }}
                                             </el-dropdown-item>
-                                            <el-dropdown-item icon="el-icon-view" command="Visibility Hidden">
+                                            <el-dropdown-item :icon="View" command="Visibility Hidden">
                                                 <i
                                                     v-if="groupDialog.ref.myMember.visibility === 'hidden'"
                                                     class="el-icon-check"></i>
@@ -355,7 +355,7 @@
                                             </el-dropdown-item>
                                         </template>
                                         <el-dropdown-item
-                                            icon="el-icon-delete"
+                                            :icon="Delete"
                                             command="Leave Group"
                                             style="color: #f56c6c"
                                             divided>
@@ -366,13 +366,13 @@
                                 <template v-else>
                                     <el-dropdown-item
                                         v-if="groupDialog.ref.membershipStatus === 'userblocked'"
-                                        icon="el-icon-circle-check"
+                                        :icon="CircleCheck"
                                         command="Unblock Group"
                                         style="color: #f56c6c"
                                         divided>
                                         {{ t('dialog.group.actions.unblock') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item v-else icon="el-icon-circle-close" command="Block Group" divided>
+                                    <el-dropdown-item v-else :icon="CircleClose" command="Block Group" divided>
                                         {{ t('dialog.group.actions.block') }}
                                     </el-dropdown-item>
                                 </template>
@@ -416,7 +416,7 @@
                                 <el-tooltip placement="top" content="Refresh player count" :disabled="hideTooltips">
                                     <el-button
                                         size="mini"
-                                        icon="el-icon-refresh"
+                                        :icon="Refresh"
                                         style="margin-left: 5px"
                                         circle
                                         @click="refreshInstancePlayerCount(room.tag)" />
@@ -504,9 +504,7 @@
                                             <br />
                                             <template v-for="roleId in groupDialog.announcement.roleIds" :key="roleId">
                                                 <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"
-                                                    ><span
-                                                        v-if="role.id === roleId"
-                                                        v-text="role.name"
+                                                    ><span v-if="role.id === roleId" v-text="role.name"
                                                 /></template>
                                                 <span
                                                     v-if="
@@ -555,7 +553,7 @@
                                             :disabled="hideTooltips">
                                             <el-button
                                                 type="text"
-                                                icon="el-icon-edit"
+                                                :icon="Edit"
                                                 size="mini"
                                                 style="margin-left: 5px"
                                                 @click="
@@ -568,7 +566,7 @@
                                             :disabled="hideTooltips">
                                             <el-button
                                                 type="text"
-                                                icon="el-icon-delete"
+                                                :icon="Delete"
                                                 size="mini"
                                                 style="margin-left: 5px"
                                                 @click="confirmDeleteGroupPost(groupDialog.announcement)" />
@@ -663,7 +661,7 @@
                                         <el-button
                                             type="default"
                                             size="mini"
-                                            icon="el-icon-s-order"
+                                            :icon="Sort"
                                             circle
                                             style="margin-left: 5px"
                                             @click="copyToClipboard(groupDialog.ref.$url)" /> </el-tooltip
@@ -682,7 +680,7 @@
                                         <el-button
                                             type="default"
                                             size="mini"
-                                            icon="el-icon-s-order"
+                                            :icon="Sort"
                                             circle
                                             style="margin-left: 5px"
                                             @click="copyToClipboard(groupDialog.id)" /> </el-tooltip
@@ -727,7 +725,9 @@
                                                         <br />
                                                         <span>{{ t('dialog.group.info.role_permissions') }}</span>
                                                         <br />
-                                                        <template v-for="(permission, pIndex) in role.permissions" :key="pIndex">
+                                                        <template
+                                                            v-for="(permission, pIndex) in role.permissions"
+                                                            :key="pIndex">
                                                             <span>{{ permission }}</span>
                                                             <br />
                                                         </template>
@@ -806,10 +806,10 @@
                                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
                                                 <br />
                                                 <template v-for="roleId in post.roleIds" :key="roleId">
-                                                    <template v-for="role in groupDialog.ref.roles" :key="role.id + roleId"
-                                                        ><span
-                                                            v-if="role.id === roleId"
-                                                            v-text="role.name" />
+                                                    <template
+                                                        v-for="role in groupDialog.ref.roles"
+                                                        :key="role.id + roleId"
+                                                        ><span v-if="role.id === roleId" v-text="role.name" />
                                                     </template>
                                                     <template
                                                         v-if="post.roleIds.indexOf(roleId) < post.roleIds.length - 1"
@@ -848,7 +848,7 @@
                                                 :disabled="hideTooltips">
                                                 <el-button
                                                     type="text"
-                                                    icon="el-icon-edit"
+                                                    :icon="Edit"
                                                     size="mini"
                                                     style="margin-left: 5px"
                                                     @click="showGroupPostEditDialog(groupDialog.id, post)" />
@@ -859,7 +859,7 @@
                                                 :disabled="hideTooltips">
                                                 <el-button
                                                     type="text"
-                                                    icon="el-icon-delete"
+                                                    :icon="Delete"
                                                     size="mini"
                                                     style="margin-left: 5px"
                                                     @click="confirmDeleteGroupPost(post)" />
@@ -885,14 +885,14 @@
                             <el-button
                                 type="default"
                                 size="mini"
-                                icon="el-icon-refresh"
+                                :icon="Refresh"
                                 :loading="isGroupMembersLoading"
                                 circle
                                 @click="loadAllGroupMembers" />
                             <el-button
                                 type="default"
                                 size="mini"
-                                icon="el-icon-download"
+                                :icon="Download"
                                 circle
                                 style="margin-left: 5px"
                                 @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)" />
@@ -1016,9 +1016,7 @@
                                         </template>
                                         <template v-for="roleId in user.roleIds" :key="roleId">
                                             <template v-for="role in groupDialog.ref.roles" :key="role.id + roleId"
-                                                ><span
-                                                    v-if="role.id === roleId"
-                                                    v-text="role.name" /></template
+                                                ><span v-if="role.id === roleId" v-text="role.name" /></template
                                             ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
                                                 ><span>,&nbsp;</span></template
                                             >
@@ -1079,9 +1077,7 @@
                                         </template>
                                         <template v-for="roleId in user.roleIds" :key="roleId">
                                             <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"
-                                                ><span
-                                                    v-if="role.id === roleId"
-                                                    v-text="role.name" /></template
+                                                ><span v-if="role.id === roleId" v-text="role.name" /></template
                                             ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
                                                 ><span>&nbsp;</span></template
                                             >
@@ -1106,7 +1102,7 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         :loading="isGroupGalleryLoading"
                         circle
                         @click="getGroupGalleries" />
@@ -1154,13 +1150,13 @@
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         @click="refreshGroupDialogTreeData()" />
                     <el-button
                         type="default"
                         size="mini"
-                        icon="el-icon-download"
+                        :icon="Download"
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)" />
@@ -1185,6 +1181,25 @@
 </template>
 
 <script setup>
+    import {
+        Check,
+        View,
+        Star,
+        StarFilled,
+        Close,
+        Message,
+        MoreFilled,
+        Refresh,
+        Share,
+        Tickets,
+        Delete,
+        CircleCheck,
+        CircleClose,
+        Edit,
+        Sort,
+        Download
+    } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

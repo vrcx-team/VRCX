@@ -26,7 +26,7 @@
                             :disabled="hideTooltips">
                             <el-button
                                 size="mini"
-                                icon="el-icon-loading"
+                                :icon="Loading"
                                 circle
                                 style="margin-left: 5px"
                                 @click="friendsListLoading = false"></el-button>
@@ -83,7 +83,7 @@
                 <el-tooltip placement="top" :content="t('view.friend_list.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="flex: none"
                         @click="friendsListSearchChange"></el-button>
@@ -253,7 +253,7 @@
                     <template slot-scope="scope">
                         <el-button
                             type="text"
-                            icon="el-icon-close"
+                            :icon="Close"
                             style="color: #f56c6c"
                             size="mini"
                             @click.stop="confirmDeleteFriend(scope.row.id)"></el-button>
@@ -265,6 +265,7 @@
 </template>
 
 <script setup>
+    import { Loading, Refresh, Close } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

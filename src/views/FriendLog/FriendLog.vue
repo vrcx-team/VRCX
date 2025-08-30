@@ -29,7 +29,6 @@
         </div>
 
         <DataTable v-bind="friendLogTable">
-
             <el-table-column :label="t('table.friendLog.date')" prop="created_at" sortable="custom" width="200">
                 <template #default="scope">
                     <el-tooltip placement="right">
@@ -72,13 +71,13 @@
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
-                        icon="el-icon-close"
+                        :icon="Close"
                         size="mini"
                         @click="deleteFriendLog(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         size="mini"
                         @click="deleteFriendLogPrompt(scope.row)"></el-button>
                 </template>
@@ -88,6 +87,7 @@
 </template>
 
 <script setup>
+    import { Close, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

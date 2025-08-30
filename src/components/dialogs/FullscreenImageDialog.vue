@@ -1,16 +1,16 @@
 <template>
-    <safe-dialog class="x-dialog" :visible.sync="fullscreenImageDialog.visible" append-to-body width="97vw">
+    <safe-dialog class="x-dialog" v-model="fullscreenImageDialog.visible" append-to-body width="97vw">
         <div>
             <div style="margin: 0 0 5px 5px">
                 <el-button
                     size="mini"
-                    icon="el-icon-s-order"
+                    :icon="Sort"
                     circle
                     @click="copyImageUrl(fullscreenImageDialog.imageUrl)"></el-button>
                 <el-button
                     type="default"
                     size="mini"
-                    icon="el-icon-download"
+                    :icon="Download"
                     circle
                     style="margin-left: 5px"
                     :disabled="!fullscreenImageDialog.imageUrl.startsWith('http')"
@@ -24,6 +24,8 @@
 </template>
 
 <script setup>
+    import { Sort, Download } from '@element-plus/icons-vue';
+
     import Noty from 'noty';
     import { storeToRefs } from 'pinia';
     import { getCurrentInstance } from 'vue';
