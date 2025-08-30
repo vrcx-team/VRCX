@@ -113,8 +113,7 @@
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemFriendImport(row)">
-                    </el-button>
+                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemFriendImport(row)"> </el-button>
                 </template>
             </el-table-column>
         </DataTable>
@@ -211,7 +210,7 @@
         }
         const data = [...friendImportTable.value.data].reverse();
         D.importProgressTotal = data.length;
-    let ref = null;
+        let ref = null;
         try {
             for (let i = data.length - 1; i >= 0; i--) {
                 if (!D.loading || !isVisible.value) {

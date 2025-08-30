@@ -141,7 +141,11 @@
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.rank')" width="110" prop="$trustSortNum" sortable="custom">
                     <template #default="{ row }">
-                        <span v-if="randomUserColours" :class="row.$trustClass" class="name" v-text="row.$trustLevel"></span>
+                        <span
+                            v-if="randomUserColours"
+                            :class="row.$trustClass"
+                            class="name"
+                            v-text="row.$trustLevel"></span>
                         <span v-else class="name" :style="{ color: row.$userColour }" v-text="row.$trustLevel"></span>
                     </template>
                 </el-table-column>
@@ -152,7 +156,11 @@
                     sortable
                     :sort-method="(a, b) => sortStatus(a.status, b.status)">
                     <template #default="{ row }">
-                        <i v-if="row.status !== 'offline'" :class="statusClass(row.status)" style="margin-right: 3px" class="x-user-status"></i>
+                        <i
+                            v-if="row.status !== 'offline'"
+                            :class="statusClass(row.status)"
+                            style="margin-right: 3px"
+                            class="x-user-status"></i>
                         <span v-text="row.statusDescription"></span>
                     </template>
                 </el-table-column>
@@ -167,7 +175,10 @@
                             <template #content>
                                 <span>{{ item.value }} ({{ item.key }})</span>
                             </template>
-                            <span :class="languageClass(item.key)" style="display: inline-block; margin-right: 5px" class="flags"></span>
+                            <span
+                                :class="languageClass(item.key)"
+                                style="display: inline-block; margin-right: 5px"
+                                class="flags"></span>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -238,7 +249,12 @@
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')"></el-table-column>
                 <el-table-column :label="t('table.friendList.unfriend')" width="100" align="center">
                     <template #default="{ row }">
-                        <el-button type="text" :icon="Close" style="color: #f56c6c" size="mini" @click.stop="confirmDeleteFriend(row.id)"></el-button>
+                        <el-button
+                            type="text"
+                            :icon="Close"
+                            style="color: #f56c6c"
+                            size="mini"
+                            @click.stop="confirmDeleteFriend(row.id)"></el-button>
                     </template>
                 </el-table-column>
             </DataTable>

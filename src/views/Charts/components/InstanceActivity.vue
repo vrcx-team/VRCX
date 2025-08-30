@@ -15,9 +15,7 @@
                     </div>
 
                     <template #reference>
-                        <el-icon style="margin-left: 5px; font-size: 12px; opacity: 0.7"
-                            ><InfoFilled
-                        /></el-icon>
+                        <el-icon style="margin-left: 5px; font-size: 12px; opacity: 0.7"><InfoFilled /></el-icon>
                     </template>
                 </el-popover>
             </div>

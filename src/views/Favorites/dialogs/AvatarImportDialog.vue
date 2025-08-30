@@ -163,8 +163,7 @@
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemAvatarImport(row)">
-                    </el-button>
+                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemAvatarImport(row)"> </el-button>
                 </template>
             </el-table-column>
         </DataTable>
@@ -335,7 +334,7 @@
         D.loading = true;
         const data = [...avatarImportTable.value.data].reverse();
         D.importProgressTotal = data.length;
-    let ref = null;
+        let ref = null;
         try {
             for (let i = data.length - 1; i >= 0; i--) {
                 if (!D.loading || !isVisible.value) {

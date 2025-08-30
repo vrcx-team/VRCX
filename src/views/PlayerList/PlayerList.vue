@@ -651,9 +651,7 @@
                             <template v-if="userImage(scope.row.ref)">
                                 <el-popover placement="right" height="500px" trigger="hover">
                                     <template #reference>
-                                        <img
-                                            v-lazy="userImage(scope.row.ref)"
-                                            class="friends-list-avatar" />
+                                        <img v-lazy="userImage(scope.row.ref)" class="friends-list-avatar" />
                                     </template>
                                     <img
                                         v-lazy="userImageFull(scope.row.ref)"
@@ -815,7 +813,9 @@
                     <el-table-column :label="t('table.playerList.bioLink')" width="100" prop="ref.bioLinks">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <el-tooltip v-for="(link, index) in scope.row.ref.bioLinks.filter(Boolean)" :key="index">
+                                <el-tooltip
+                                    v-for="(link, index) in scope.row.ref.bioLinks.filter(Boolean)"
+                                    :key="index">
                                     <template #content>
                                         <span v-text="link"></span>
                                     </template>

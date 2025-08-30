@@ -76,19 +76,24 @@
                                 <el-popover placement="right" width="500px" trigger="click">
                                     <template #reference>
                                         <div style="display: inline-block; vertical-align: top; width: 160px">
-                                        <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
-                                            <img
-                                                v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl"
-                                                class="x-link"
-                                                style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
-                                            <br />
-                                            <AvatarInfo
-                                                :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
-                                                :userid="scope.row.userId"
-                                                :hintownerid="scope.row.previousOwnerId"
-                                                :hintavatarname="scope.row.previousAvatarName"
-                                                :avatartags="scope.row.previousCurrentAvatarTags" />
-                                        </template>
+                                            <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
+                                                <img
+                                                    v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl"
+                                                    class="x-link"
+                                                    style="
+                                                        flex: none;
+                                                        width: 160px;
+                                                        height: 120px;
+                                                        border-radius: 4px;
+                                                    " />
+                                                <br />
+                                                <AvatarInfo
+                                                    :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
+                                                    :userid="scope.row.userId"
+                                                    :hintownerid="scope.row.previousOwnerId"
+                                                    :hintavatarname="scope.row.previousAvatarName"
+                                                    :avatartags="scope.row.previousCurrentAvatarTags" />
+                                            </template>
                                         </div>
                                     </template>
                                     <img
@@ -103,19 +108,24 @@
                                 <el-popover placement="right" width="500px" trigger="click">
                                     <template #reference>
                                         <div style="display: inline-block; vertical-align: top; width: 160px">
-                                        <template v-if="scope.row.currentAvatarThumbnailImageUrl">
-                                            <img
-                                                v-lazy="scope.row.currentAvatarThumbnailImageUrl"
-                                                class="x-link"
-                                                style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
-                                            <br />
-                                            <AvatarInfo
-                                                :imageurl="scope.row.currentAvatarThumbnailImageUrl"
-                                                :userid="scope.row.userId"
-                                                :hintownerid="scope.row.ownerId"
-                                                :hintavatarname="scope.row.avatarName"
-                                                :avatartags="scope.row.currentAvatarTags" />
-                                        </template>
+                                            <template v-if="scope.row.currentAvatarThumbnailImageUrl">
+                                                <img
+                                                    v-lazy="scope.row.currentAvatarThumbnailImageUrl"
+                                                    class="x-link"
+                                                    style="
+                                                        flex: none;
+                                                        width: 160px;
+                                                        height: 120px;
+                                                        border-radius: 4px;
+                                                    " />
+                                                <br />
+                                                <AvatarInfo
+                                                    :imageurl="scope.row.currentAvatarThumbnailImageUrl"
+                                                    :userid="scope.row.userId"
+                                                    :hintownerid="scope.row.ownerId"
+                                                    :hintavatarname="scope.row.avatarName"
+                                                    :avatartags="scope.row.currentAvatarTags" />
+                                            </template>
                                         </div>
                                     </template>
                                     <img

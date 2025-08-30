@@ -754,7 +754,9 @@
                                                         object-fit: cover;
                                                     "
                                                     :style="{
-                                                        background: userDialog.isRepresentedGroupLoading ? '#f5f7fa' : ''
+                                                        background: userDialog.isRepresentedGroupLoading
+                                                            ? '#f5f7fa'
+                                                            : ''
                                                     }"
                                                     @load="userDialog.isRepresentedGroupLoading = false">
                                                     <template #error></template>

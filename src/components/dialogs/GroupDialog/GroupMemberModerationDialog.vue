@@ -342,7 +342,9 @@
                                         <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <template #reference>
-                                                    <img v-lazy="userImage(scope.row.user)" class="friends-list-avatar" />
+                                                    <img
+                                                        v-lazy="userImage(scope.row.user)"
+                                                        class="friends-list-avatar" />
                                                 </template>
                                                 <img
                                                     v-lazy="userImageFull(scope.row.user)"
@@ -423,7 +425,9 @@
                                         <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <template #reference>
-                                                    <img v-lazy="userImage(scope.row.user)" class="friends-list-avatar" />
+                                                    <img
+                                                        v-lazy="userImage(scope.row.user)"
+                                                        class="friends-list-avatar" />
                                                 </template>
                                                 <img
                                                     v-lazy="userImageFull(scope.row.user)"
@@ -530,7 +534,9 @@
                                         <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <template #reference>
-                                                    <img v-lazy="userImage(scope.row.user)" class="friends-list-avatar" />
+                                                    <img
+                                                        v-lazy="userImage(scope.row.user)"
+                                                        class="friends-list-avatar" />
                                                 </template>
                                                 <img
                                                     v-lazy="userImageFull(scope.row.user)"

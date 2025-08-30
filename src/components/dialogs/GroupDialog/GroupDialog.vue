@@ -467,7 +467,9 @@
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.announcement') }}</span>
                                 <span style="display: block" v-text="groupDialog.announcement.title" />
-                                <div v-if="groupDialog.announcement.imageUrl" style="display: inline-block; margin-right: 5px">
+                                <div
+                                    v-if="groupDialog.announcement.imageUrl"
+                                    style="display: inline-block; margin-right: 5px">
                                     <el-popover placement="right" width="500px" trigger="click">
                                         <template #reference>
                                             <img
@@ -1133,7 +1135,9 @@
                                 </span>
                                 <span style="color: #c7c7c7; padding: 10px" v-text="gallery.description" />
                                 <el-carousel :interval="0" height="600px" style="margin-top: 10px">
-                                    <el-carousel-item v-for="image in groupDialog.galleries[gallery.id]" :key="image.id">
+                                    <el-carousel-item
+                                        v-for="image in groupDialog.galleries[gallery.id]"
+                                        :key="image.id">
                                         <el-popover placement="top" width="700px" trigger="click">
                                             <template #reference>
                                                 <img
