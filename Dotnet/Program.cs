@@ -230,7 +230,7 @@ namespace VRCX
                 logger.Info("Launch Command: {0}", StartupArgs.LaunchArguments.LaunchCommand);
             logger.Debug("Wine detection: {0}", Wine.GetIfWine());
 
-            SQLiteLegacy.Instance.Init();
+            SQLite.Instance.Init();
             AppApiInstance = new AppApiCef();
 
             AppApiVrInstance = new AppApiVrCef();
@@ -262,7 +262,7 @@ namespace VRCX
             Discord.Instance.Exit();
             SystemMonitorCef.Instance.Exit();
             VRCXStorage.Instance.Save();
-            SQLiteLegacy.Instance.Exit();
+            SQLite.Instance.Exit();
             ProcessMonitor.Instance.Exit();
         }
 #else

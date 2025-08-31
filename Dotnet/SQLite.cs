@@ -8,18 +8,18 @@ using System.Text.Json;
 
 namespace VRCX
 {
-    public class SQLiteLegacy
+    public class SQLite
     {
-        public static SQLiteLegacy Instance;
+        public static SQLite Instance;
         private readonly ReaderWriterLockSlim m_ConnectionLock;
         private SQLiteConnection m_Connection;
 
-        static SQLiteLegacy()
+        static SQLite()
         {
-            Instance = new SQLiteLegacy();
+            Instance = new SQLite();
         }
 
-        public SQLiteLegacy()
+        public SQLite()
         {
             m_ConnectionLock = new ReaderWriterLockSlim();
         }

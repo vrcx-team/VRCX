@@ -89,10 +89,17 @@ namespace VRCX
                 if (File.Exists(vueDevtoolsCrxPath))
                 {
                     var vueDevtoolsPath = Path.Join(extensionsPath, "Vue-js-devtools");
-                    if (!Directory.Exists(vueDevtoolsPath))
+                    try
                     {
+                        if (Directory.Exists(vueDevtoolsPath))
+                            Directory.Delete(vueDevtoolsPath, true);
+                        
                         Directory.CreateDirectory(vueDevtoolsPath);
                         ZipFile.ExtractToDirectory(vueDevtoolsCrxPath, vueDevtoolsPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, "Failed to extract Vue Devtools");
                     }
                 }
                 
