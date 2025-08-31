@@ -10,7 +10,6 @@ import { i18n } from './plugin/i18n';
 import App from './App.vue';
 import { pinia } from './stores';
 import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
 import VueLazyload from 'vue-lazyload';
 
 import './app.scss';
