@@ -698,7 +698,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     return {
-        state,
+        // state,
 
         enablePrimaryPassword,
         relaunchVRChatAfterCrash,

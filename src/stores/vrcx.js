@@ -763,7 +763,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     return {
-        state,
+        // state,
+
         isRunningUnderWine,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,

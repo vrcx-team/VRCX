@@ -143,7 +143,7 @@ export const useWristOverlaySettingsStore = defineStore(
         initWristOverlaySettings();
 
         return {
-            state,
+            // state,
 
             overlayWrist,
             hidePrivateFromFeed,

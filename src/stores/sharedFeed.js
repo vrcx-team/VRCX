@@ -605,5 +605,9 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         state.sharedFeed.pendingUpdate = true;
     }
 
-    return { state, sharedFeed, updateSharedFeed };
+    return {
+        // state,
+        sharedFeed,
+        updateSharedFeed
+    };
 });

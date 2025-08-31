@@ -1984,7 +1984,7 @@ export const useUserStore = defineStore('User', () => {
     }
 
     return {
-        state,
+        // state,
 
         currentUser,
         currentTravelers,

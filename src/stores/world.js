@@ -325,7 +325,8 @@ export const useWorldStore = defineStore('World', () => {
     }
 
     return {
-        state,
+        // state,
+
         worldDialog,
         cachedWorlds,
         showWorldDialog,

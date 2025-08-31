@@ -1873,7 +1873,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     return {
-        state,
+        // state,
 
         favoriteFriends,
         favoriteWorlds,

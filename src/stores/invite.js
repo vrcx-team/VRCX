@@ -196,7 +196,8 @@ export const useInviteStore = defineStore('Invite', () => {
     }
 
     return {
-        state,
+        // state,
+
         editInviteMessageDialog,
         inviteMessageTable,
         inviteResponseMessageTable,

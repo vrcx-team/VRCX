@@ -498,7 +498,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
         }
 
         return {
-            state,
+            // state,
 
             discordActive,
             discordInstance,

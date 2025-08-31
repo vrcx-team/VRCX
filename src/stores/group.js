@@ -1095,7 +1095,8 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     return {
-        state,
+        // state,
+
         groupDialog,
         currentUserGroups,
         inviteGroupDialog,

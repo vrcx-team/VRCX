@@ -80,7 +80,6 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
         const discordPresenceSettingsStore = useDiscordPresenceSettingsStore();
         const gameLogStore = useGameLogStore();
         const vrcxUpdaterStore = useVRCXUpdaterStore();
-        const uiStore = useUiStore();
         const groupStore = useGroupStore();
         const vrStore = useVrStore();
         try {
@@ -170,7 +169,8 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     }
 
     return {
-        state,
+        // state,
+
         nextGroupInstanceRefresh,
         nextCurrentUserRefresh,
         nextDiscordUpdate,

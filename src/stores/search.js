@@ -403,12 +403,14 @@ export const useSearchStore = defineStore('Search', () => {
     }
 
     return {
-        state,
+        // state,
+
         searchText,
         searchUserResults,
         stringComparer,
         quickSearchItems,
         friendsListSearch,
+
         clearSearch,
         searchUserByDisplayName,
         moreSearchUser,

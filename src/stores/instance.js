@@ -1214,7 +1214,8 @@ export const useInstanceStore = defineStore('Instance', () => {
     // };
 
     return {
-        state,
+        // state,
+
         cachedInstances,
         currentInstanceWorld,
         currentInstanceLocation,
@@ -1223,6 +1224,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesInfoDialogInstanceId,
         instanceJoinHistory,
         currentInstanceUserList,
+
         applyInstance,
         updateCurrentInstanceWorld,
         createNewInstance,

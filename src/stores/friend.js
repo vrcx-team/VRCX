@@ -1806,7 +1806,7 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     return {
-        state,
+        // state,
 
         friends,
         onlineFriends_,

@@ -1891,7 +1891,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     return {
-        state,
+        // state,
 
         photonLoggingEnabled,
         photonEventOverlay,
