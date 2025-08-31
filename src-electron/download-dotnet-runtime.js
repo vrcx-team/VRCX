@@ -4,6 +4,27 @@ const https = require('https');
 const { spawnSync } = require('child_process');
 const { getArchAndPlatform } = require('./utils');
 
+let runnerArch = process.arch.toString();
+let runnerPlatform = process.platform.toString();
+const args = process.argv.slice(2);
+for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--arch' && i + 1 < args.length) {
+        runnerArch = args[i + 1];
+    } else if (args[i] === '--platform' && i + 1 < args.length) {
+        runnerPlatform = args[i + 1];
+    }
+}
+let platform = '';
+if (runnerPlatform === 'linux') {
+    platform = 'linux';
+} else if (runnerPlatform === 'darwin') {
+    platform = 'osx';
+} else if (runnerPlatform === 'win32') {
+    platform = 'win';
+} else {
+    throw new Error(`Unsupported platform: ${runnerPlatform}`);
+}
+
 const DOTNET_VERSION = '9.0.8';
 const DOTNET_RUNTIME_DIR = path.join(
     __dirname,
