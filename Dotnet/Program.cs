@@ -24,7 +24,7 @@ namespace VRCX
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        public static VRCXVRInterface VRCXVRInstance { get; private set; }
+        public static VRCXVRInterface VRCXVRInstance { get; set; }
         public static AppApi AppApiInstance { get; private set; }
         public static AppApiVr AppApiVrInstance { get; private set; }
 

@@ -81,6 +81,7 @@ namespace VRCX
             Exit();
             Instance = new VRCXVRLegacy();
             Instance.Init();
+            Program.VRCXVRInstance = Instance;
             MainForm.Instance.Browser.ExecuteScriptAsync("console.log('VRCXVR Restarted');");
         }
 
