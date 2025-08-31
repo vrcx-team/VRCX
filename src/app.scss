@@ -90,7 +90,6 @@
 //     padding: 5px 0;
 // }
 
-// expand table cell on hover, TODO: replace with a better solution
 // .el-table .cell {
 //     display: -webkit-box;
 //     -webkit-box-orient: vertical;
@@ -880,11 +879,11 @@ i.x-status-icon.red {
 //     flex-direction: column;
 // }
 
-// .el-tabs__content {
-//     flex: 1;
-//     max-height: 100%;
-//     overflow-y: auto;
-// }
+.el-tabs__content {
+    // flex: 1;
+    // max-height: 100%;
+    overflow-y: auto;
+}
 
 // .x-aside-container .el-tabs,
 // .x-aside-container .el-tabs__nav-wrap,
@@ -924,22 +923,18 @@ i.x-status-icon.red {
 //     line-height: 22px;
 // }
 
-// User dialog memo: tag line-height
 // .el-dialog__body .el-tag--mini {
 //     line-height: 17px;
 // }
 
-// feed table detail time tag line-height
 // .el-table__expanded-cell .el-tag--mini {
 //     line-height: 18px;
 // }
 
-// User dialog memo: input count background color
 // .x-friend-item:hover .el-input__count {
 //     background: #f0f0f0;
 // }
 
-// Align the left page with the right friend bar
 // .x-app > .x-container {
 //     padding-top: 15px;
 // }

@@ -10,6 +10,7 @@ import 'remixicon/fonts/remixicon.css';
 // import { DataTables } from 'vue-data-tables';
 import configRepository from './service/config';
 import vrcxJsonStorage from './service/jsonStorage';
+import './plugin/dayjs';
 // import {
 //     changeAppDarkStyle,
 //     changeAppThemeStyle,

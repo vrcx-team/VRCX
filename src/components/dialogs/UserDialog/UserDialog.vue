@@ -583,7 +583,7 @@
                 </div>
             </div>
 
-            <el-tabs v-model="userDialogLastActiveTab" @tab-click="userDialogTabClick">
+            <el-tabs ref="userDialogTabsRef" v-model="userDialogLastActiveTab" @tab-click="userDialogTabClick">
                 <el-tab-pane name="Info" :label="t('dialog.user.info.header')">
                     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                         <div
@@ -2856,10 +2856,7 @@
         }
         const ref = cachedUsers.value.get(targetUserId);
         if (typeof ref !== 'undefined') {
-            applyUser({
-                id: targetUserId,
-                note: _note
-            });
+            ref.note = _note;
         }
     }
 
