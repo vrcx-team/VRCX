@@ -104,7 +104,7 @@
                         icon="el-icon-close"
                         circle
                         style="color: #f56c6c; margin-left: 5px"
-                        @click.stop="removeLocalAvatarFavorite" />
+                        @click.stop="removeLocalAvatarFavorite(favorite.id, favoriteGroupName)" />
                     <el-button
                         v-else
                         type="default"
@@ -126,7 +126,7 @@
                     icon="el-icon-close"
                     size="mini"
                     style="margin-left: 5px"
-                    @click.stop="removeLocalAvatarFavorite"></el-button>
+                    @click.stop="removeLocalAvatarFavorite(favorite.id, favoriteGroupName)"></el-button>
                 <el-button
                     v-else
                     type="text"
@@ -181,6 +181,13 @@
     const smallThumbnail = computed(
         () => localFavFakeRef.value.thumbnailImageUrl.replace('256', '128') || localFavFakeRef.value.thumbnailImageUrl
     );
+    const favoriteGroupName = computed(() => {
+        if (typeof props.group === 'string') {
+            return props.group;
+        } else {
+            return props.group?.name;
+        }
+    });
 
     function moveFavorite(ref, group, type) {
         favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {
