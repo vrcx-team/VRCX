@@ -3,8 +3,29 @@ const path = require('path');
 const https = require('https');
 const { spawnSync } = require('child_process');
 
+let runnerArch = process.arch.toString();
+let runnerPlatform = process.platform.toString();
+const args = process.argv.slice(2);
+for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--arch' && i + 1 < args.length) {
+        runnerArch = args[i + 1];
+    } else if (args[i] === '--platform' && i + 1 < args.length) {
+        runnerPlatform = args[i + 1];
+    }
+}
+let platform = '';
+if (runnerPlatform === 'linux') {
+    platform = 'linux';
+} else if (runnerPlatform === 'darwin') {
+    platform = 'osx';
+} else if (runnerPlatform === 'win32') {
+    platform = 'win';
+} else {
+    throw new Error(`Unsupported platform: ${runnerPlatform}`);
+}
+
 const DOTNET_VERSION = '9.0.8';
-const DOTNET_RUNTIME_URL = `https://builds.dotnet.microsoft.com/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-x64.tar.gz`;
+const DOTNET_RUNTIME_URL = `https://builds.dotnet.microsoft.com/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-${platform}-${runnerArch}.tar.gz`;
 const DOTNET_RUNTIME_DIR = path.join(
     __dirname,
     '..',
@@ -58,12 +79,14 @@ async function extractTarGz(tarGzPath, extractDir) {
 }
 
 async function main() {
-    if (process.platform !== 'linux') {
-        console.log('Skipping .NET runtime download on non-Linux platform');
+    if (platform !== 'linux' && platform !== 'darwin') {
+        console.log('Skipping .NET runtime download on non supported platform');
         return;
     }
 
-    console.log(`Downloading .NET ${DOTNET_VERSION} runtime...`);
+    console.log(
+        `Downloading .NET ${DOTNET_VERSION}-${platform}-${runnerArch} runtime...`
+    );
 
     if (!fs.existsSync(DOTNET_RUNTIME_DIR)) {
         fs.mkdirSync(DOTNET_RUNTIME_DIR, { recursive: true });

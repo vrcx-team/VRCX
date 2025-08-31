@@ -43,6 +43,9 @@ switch (process.platform) {
         platformName = 'linux';
         break;
 }
+if (process.arch === 'arm64') {
+    platformName += '-arm64';
+}
 const postBuildPath = path.join(
     __dirname,
     `./../build/${platformName}-unpacked/resources/app.asar.unpacked/node_modules/node-api-dotnet/init.js`
