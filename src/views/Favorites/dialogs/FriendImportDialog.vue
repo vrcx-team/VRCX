@@ -23,14 +23,14 @@
         <el-input
             v-model="friendImportDialog.input"
             type="textarea"
-            size="mini"
+            size="small"
             rows="10"
             resize="none"
             style="margin-top: 10px" />
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
                 <el-dropdown trigger="click" size="small">
-                    <el-button size="mini">
+                    <el-button size="small">
                         <span v-if="friendImportDialog.friendImportFavoriteGroup">
                             {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{
                                 friendImportDialog.friendImportFavoriteGroup.count
@@ -115,7 +115,7 @@
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemFriendImport(row)"> </el-button>
+                    <el-button type="text" :icon="Close" size="small" @click="deleteItemFriendImport(row)"> </el-button>
                 </template>
             </el-table-column>
         </DataTable>

@@ -4,7 +4,7 @@
             v-model="exportAvatarsListCsv"
             v-loading="loading"
             type="textarea"
-            size="mini"
+            size="small"
             rows="15"
             resize="none"
             readonly

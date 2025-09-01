@@ -10,7 +10,7 @@
         </el-checkbox-group>
 
         <el-dropdown trigger="click" size="small">
-            <el-button size="mini">
+            <el-button size="small">
                 <span v-if="avatarExportFavoriteGroup">
                     {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{
                         avatarExportFavoriteGroup.capacity
@@ -39,7 +39,7 @@
         </el-dropdown>
 
         <el-dropdown trigger="click" size="small" style="margin-left: 10px">
-            <el-button size="mini">
+            <el-button size="small">
                 <span v-if="avatarExportLocalFavoriteGroup">
                     {{ avatarExportLocalFavoriteGroup }} ({{
                         getLocalAvatarFavoriteGroupLength(avatarExportLocalFavoriteGroup)
@@ -72,7 +72,7 @@
         <el-input
             v-model="avatarExportContent"
             type="textarea"
-            size="mini"
+            size="small"
             rows="15"
             resize="none"
             readonly

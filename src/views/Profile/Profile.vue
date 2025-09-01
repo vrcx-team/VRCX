@@ -97,7 +97,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -144,7 +144,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -156,7 +156,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"
@@ -185,7 +185,7 @@
                         <el-button
                             type="text"
                             :icon="Edit"
-                            size="mini"
+                            size="small"
                             @click="showEditInviteMessageDialog('message', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -198,7 +198,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -210,7 +210,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"
@@ -242,7 +242,7 @@
                         <el-button
                             type="text"
                             :icon="Edit"
-                            size="mini"
+                            size="small"
                             @click="showEditInviteMessageDialog('response', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -255,7 +255,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -267,7 +267,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"
@@ -299,7 +299,7 @@
                         <el-button
                             type="text"
                             :icon="Edit"
-                            size="mini"
+                            size="small"
                             @click="showEditInviteMessageDialog('request', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -312,7 +312,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -324,7 +324,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"
@@ -356,7 +356,7 @@
                         <el-button
                             type="text"
                             :icon="Edit"
-                            size="mini"
+                            size="small"
                             @click="showEditInviteMessageDialog('requestResponse', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -386,7 +386,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -395,7 +395,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"
@@ -418,7 +418,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -427,7 +427,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"
@@ -453,7 +453,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         style="margin-left: 5px"
@@ -462,7 +462,7 @@
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Delete"
                         circle
                         style="margin-left: 5px"

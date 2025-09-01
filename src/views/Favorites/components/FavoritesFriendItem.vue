@@ -19,12 +19,12 @@
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px">
+                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                         <el-tooltip
                             placement="left"
                             :content="t('view.favorite.move_tooltip')"
                             :disabled="hideTooltips">
-                            <el-button type="default" :icon="Back" size="mini" circle></el-button>
+                            <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </el-tooltip>
                         <template #dropdown>
                             <el-dropdown-menu>
@@ -40,7 +40,7 @@
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <el-button type="text" size="mini" style="margin-left: 5px" @click.stop>
+                    <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="favorite.$selected"></el-checkbox>
                     </el-button>
                 </template>
@@ -51,7 +51,7 @@
                         :disabled="hideTooltips">
                         <el-button
                             v-if="shiftHeld"
-                            size="mini"
+                            size="small"
                             :icon="Close"
                             circle
                             style="color: #f56c6c; margin-left: 5px"
@@ -60,7 +60,7 @@
                             v-else
                             type="default"
                             :icon="Star"
-                            size="mini"
+                            size="small"
                             circle
                             style="margin-left: 5px"
                             @click.stop="showFavoriteDialog('friend', favorite.id)"></el-button>
@@ -75,7 +75,7 @@
                 <el-button
                     type="text"
                     :icon="Close"
-                    size="mini"
+                    size="small"
                     style="margin-left: 5px"
                     @click.stop="deleteFavorite(favorite.id)"></el-button>
             </template>

@@ -24,7 +24,7 @@
                 <el-input
                     v-model="avatarFavoriteSearch"
                     clearable
-                    size="mini"
+                    size="small"
                     :placeholder="t('view.favorite.avatars.search')"
                     style="width: 200px"
                     @input="searchAvatarFavorites" />
@@ -67,7 +67,7 @@
                     </span>
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Edit"
                             circle
                             style="margin-left: 10px"
@@ -75,7 +75,7 @@
                     </el-tooltip>
                     <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Delete"
                             circle
                             style="margin-left: 5px"
@@ -115,7 +115,7 @@
                     >
                     <el-tooltip placement="right" content="Clear" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Delete"
                             circle
                             style="margin-left: 5px"
@@ -171,7 +171,7 @@
                     }}</span>
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Edit"
                             circle
                             :style="{ marginLeft: '5px' }"
@@ -179,7 +179,7 @@
                     </el-tooltip>
                     <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Delete"
                             circle
                             :style="{ marginLeft: '5px' }"

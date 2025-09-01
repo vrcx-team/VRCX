@@ -31,7 +31,7 @@
                     >
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Edit"
                             circle
                             style="margin-left: 10px"
@@ -39,7 +39,7 @@
                     </el-tooltip>
                     <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Delete"
                             circle
                             style="margin-left: 5px"

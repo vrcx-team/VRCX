@@ -44,7 +44,7 @@
             <el-tooltip placement="bottom" :content="t('side_panel.direct_access_tooltip')" :disabled="hideTooltips">
                 <el-button
                     type="default"
-                    size="mini"
+                    size="small"
                     icon="el-icon-discover"
                     circle
                     @click="directAccessPaste"></el-button>
@@ -53,7 +53,7 @@
                 <el-button
                     type="default"
                     :loading="isRefreshFriendsLoading"
-                    size="mini"
+                    size="small"
                     :icon="Refresh"
                     circle
                     style="margin-right: 10px"

@@ -71,7 +71,7 @@
                         show-word-limit
                         :rows="2"
                         :autosize="{ minRows: 1, maxRows: 10 }"
-                        size="mini"
+                        size="small"
                         resize="none"></el-input>
                 </template>
             </el-table-column>
@@ -81,7 +81,7 @@
                     <el-button
                         type="text"
                         :icon="Close"
-                        size="mini"
+                        size="small"
                         @click="removeFromNoteExportTable(row)"></el-button>
                 </template>
             </el-table-column>

@@ -56,7 +56,7 @@
                                 v-if="worldDialog.ref.$isLabs"
                                 type="primary"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.labs') }}
                             </el-tag>
@@ -64,7 +64,7 @@
                                 v-else-if="worldDialog.ref.releaseStatus === 'public'"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.public') }}
                             </el-tag>
@@ -72,7 +72,7 @@
                                 v-else
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.private') }}
                             </el-tag>
@@ -81,7 +81,7 @@
                                 class="x-tag-platform-pc"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 PC<span
                                     v-if="worldDialog.bundleSizes['standalonewindows']"
@@ -96,7 +96,7 @@
                                 class="x-tag-platform-quest"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 Android<span
                                     v-if="worldDialog.bundleSizes['android']"
@@ -111,7 +111,7 @@
                                 class="x-tag-platform-ios"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 iOS<span
                                     v-if="worldDialog.bundleSizes['ios']"
@@ -125,7 +125,7 @@
                                 v-if="worldDialog.avatarScalingDisabled"
                                 type="warning"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                             </el-tag>
@@ -133,7 +133,7 @@
                                 v-if="worldDialog.focusViewDisabled"
                                 type="warning"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.focus_view_disabled') }}
                             </el-tag>
@@ -141,7 +141,7 @@
                                 v-if="worldDialog.ref.unityPackageUrl"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.future_proofing') }}
                             </el-tag>
@@ -150,7 +150,7 @@
                                 class="x-link"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
@@ -162,7 +162,7 @@
                                 <el-tag
                                     v-if="tag.startsWith('content_')"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     <template v-if="tag === 'content_horror'">
                                         {{ t('dialog.world.tags.content_horror') }}
@@ -364,7 +364,7 @@
                                     :content="t('dialog.world.instances.refresh_instance_info')"
                                     :disabled="hideTooltips">
                                     <el-button
-                                        size="mini"
+                                        size="small"
                                         :icon="Refresh"
                                         style="margin-left: 5px"
                                         circle
@@ -376,7 +376,7 @@
                                     :content="t('dialog.previous_instances.info')"
                                     :disabled="hideTooltips">
                                     <el-button
-                                        size="mini"
+                                        size="small"
                                         :icon="DataLine"
                                         style="margin-left: 5px"
                                         plain
@@ -453,7 +453,7 @@
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
                                     :placeholder="t('dialog.world.info.memo_placeholder')"
-                                    size="mini"
+                                    size="small"
                                     resize="none"
                                     @change="onWorldMemoChange" />
                             </div>
@@ -471,8 +471,8 @@
                                         placement="top"
                                         :content="t('dialog.world.info.id_tooltip')"
                                         :disabled="hideTooltips">
-                                        <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.stop>
-                                            <el-button type="default" :icon="Sort" size="mini" circle />
+                                        <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
+                                            <el-button type="default" :icon="Sort" size="small" circle />
                                             <template #dropdown>
                                                 <el-dropdown-menu>
                                                     <el-dropdown-item @click="copyWorldId()">
@@ -723,13 +723,13 @@
                 <el-tab-pane name="JSON" :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         @click="refreshWorldDialogTreeData"></el-button>
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Download"
                         circle
                         style="margin-left: 5px"

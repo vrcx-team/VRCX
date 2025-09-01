@@ -23,12 +23,12 @@
             <!--                            @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" />-->
             <!--                    </el-popover>-->
             <!--                </div>-->
-            <!--                <el-button size="mini" @click="clearImageGallerySelect" style="vertical-align: top">-->
+            <!--                <el-button size="small" @click="clearImageGallerySelect" style="vertical-align: top">-->
             <!--                    {{ t('dialog.invite_message.clear_selected_image') }}-->
             <!--                </el-button>-->
             <!--            </template>-->
             <!--            <template v-else>-->
-            <!--                <el-button size="mini" @click="showGallerySelectDialog" style="margin-right: 5px">-->
+            <!--                <el-button size="small" @click="showGallerySelectDialog" style="margin-right: 5px">-->
             <!--                    {{ t('dialog.invite_message.select_image') }}-->
             <!--                </el-button>-->
             <!--            </template>-->
@@ -60,7 +60,7 @@
                     <el-button
                         type="text"
                         :icon="Edit"
-                        size="mini"
+                        size="small"
                         @click.stop="showEditAndSendInviteDialog(scope.row)"></el-button>
                 </template>
             </el-table-column>

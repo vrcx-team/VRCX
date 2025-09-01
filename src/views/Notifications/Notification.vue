@@ -221,7 +221,7 @@
                                     type="text"
                                     :icon="Check"
                                     style="color: #67c23a"
-                                    size="mini"
+                                    size="small"
                                     @click="acceptFriendRequestNotification(scope.row)" />
                             </el-tooltip>
                         </template>
@@ -230,7 +230,7 @@
                                 <el-button
                                     type="text"
                                     :icon="ChatLineSquare"
-                                    size="mini"
+                                    size="small"
                                     @click="showSendInviteResponseDialog(scope.row)" />
                             </el-tooltip>
                         </template>
@@ -242,7 +242,7 @@
                                         type="text"
                                         :icon="Check"
                                         style="color: #67c23a"
-                                        size="mini"
+                                        size="small"
                                         @click="acceptRequestInvite(scope.row)" />
                                 </el-tooltip>
                             </template>
@@ -250,7 +250,7 @@
                                 <el-button
                                     type="text"
                                     :icon="ChatLineSquare"
-                                    size="mini"
+                                    size="small"
                                     style="margin-left: 5px"
                                     @click="showSendInviteRequestResponseDialog(scope.row)" />
                             </el-tooltip>
@@ -263,7 +263,7 @@
                                         v-if="response.icon === 'check'"
                                         type="text"
                                         :icon="Check"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
@@ -272,7 +272,7 @@
                                         v-else-if="response.icon === 'cancel'"
                                         type="text"
                                         :icon="Close"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
@@ -281,7 +281,7 @@
                                         v-else-if="response.icon === 'ban'"
                                         type="text"
                                         :icon="CircleClose"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
@@ -290,7 +290,7 @@
                                         v-else-if="response.icon === 'bell-slash'"
                                         type="text"
                                         :icon="Bell"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
@@ -306,7 +306,7 @@
                                         v-else-if="response.icon === 'reply'"
                                         type="text"
                                         :icon="ChatLineSquare"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
@@ -315,7 +315,7 @@
                                         v-else
                                         type="text"
                                         :icon="CollectionTag"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
@@ -341,13 +341,13 @@
                                     style="color: #f56c6c; margin-left: 5px"
                                     type="text"
                                     :icon="Close"
-                                    size="mini"
+                                    size="small"
                                     @click="hideNotification(scope.row)" />
                                 <el-button
                                     v-else
                                     type="text"
                                     :icon="Close"
-                                    size="mini"
+                                    size="small"
                                     style="margin-left: 5px"
                                     @click="hideNotificationPrompt(scope.row)" />
                             </el-tooltip>
@@ -360,13 +360,13 @@
                                 style="color: #f56c6c; margin-left: 5px"
                                 type="text"
                                 :icon="Close"
-                                size="mini"
+                                size="small"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
                                 :icon="Delete"
-                                size="mini"
+                                size="small"
                                 style="margin-left: 5px"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
                         </el-tooltip>
@@ -385,13 +385,13 @@
                                 style="color: #f56c6c; margin-left: 5px"
                                 type="text"
                                 :icon="Close"
-                                size="mini"
+                                size="small"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
                                 :icon="Delete"
-                                size="mini"
+                                size="small"
                                 style="margin-left: 5px"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
                         </el-tooltip>

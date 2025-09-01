@@ -7,7 +7,7 @@
                     <template v-if="state.canCloseInstance">
                         <el-button
                             :disabled="state.isClosed"
-                            size="mini"
+                            size="small"
                             type="primary"
                             @click="closeInstance(props.location)">
                             {{ t('dialog.user.info.close_instance') }} </el-button

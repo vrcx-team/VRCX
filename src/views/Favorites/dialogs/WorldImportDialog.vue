@@ -24,14 +24,14 @@
         <el-input
             v-model="worldImportDialog.input"
             type="textarea"
-            size="mini"
+            size="small"
             rows="10"
             resize="none"
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
                 <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.stop>
-                    <el-button size="mini">
+                    <el-button size="small">
                         <span v-if="worldImportDialog.worldImportFavoriteGroup">
                             {{ worldImportDialog.worldImportFavoriteGroup.displayName }}
                             ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{
@@ -58,7 +58,7 @@
                     </template>
                 </el-dropdown>
                 <el-dropdown trigger="click" size="small" style="margin: 5px" @click.stop>
-                    <el-button size="mini">
+                    <el-button size="small">
                         <span v-if="worldImportDialog.worldImportLocalFavoriteGroup">
                             {{ worldImportDialog.worldImportLocalFavoriteGroup }}
                             ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }})
@@ -163,7 +163,7 @@
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemWorldImport(row)"></el-button>
+                    <el-button type="text" :icon="Close" size="small" @click="deleteItemWorldImport(row)"></el-button>
                 </template>
             </el-table-column>
         </DataTable>

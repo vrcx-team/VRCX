@@ -93,7 +93,7 @@
                 v-if="screenshotMetadataDialog.metadata.fileResolution"
                 style="margin-right: 5px"
                 v-text="screenshotMetadataDialog.metadata.fileResolution"></span>
-            <el-tag v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini">{{
+            <el-tag v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="small">{{
                 screenshotMetadataDialog.metadata.fileSize
             }}</el-tag>
             <br />

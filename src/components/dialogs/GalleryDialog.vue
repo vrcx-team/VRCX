@@ -64,13 +64,13 @@
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="mini"
+                                size="small"
                                 :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteGalleryImage(image.id)"
-                                size="mini"
+                                size="small"
                                 :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
@@ -135,13 +135,13 @@
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="mini"
+                                size="small"
                                 :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteVRCPlusIcon(image.id)"
-                                size="mini"
+                                size="small"
                                 :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
@@ -281,13 +281,13 @@
                                         getEmojiFileName(image)
                                     )
                                 "
-                                size="mini"
+                                size="small"
                                 :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteEmoji(image.id)"
-                                size="mini"
+                                size="small"
                                 :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
@@ -344,13 +344,13 @@
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="mini"
+                                size="small"
                                 :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteSticker(image.id)"
-                                size="mini"
+                                size="small"
                                 :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
@@ -393,7 +393,7 @@
                     <el-input
                         type="textarea"
                         v-model="printUploadNote"
-                        size="mini"
+                        size="small"
                         rows="1"
                         resize="none"
                         maxlength="32"
@@ -444,13 +444,13 @@
                         <el-button
                             type="default"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))"
-                            size="mini"
+                            size="small"
                             :icon="Picture"
                             circle></el-button>
                         <el-button
                             type="default"
                             @click="deletePrint(image.id)"
-                            size="mini"
+                            size="small"
                             :icon="Delete"
                             circle
                             style="margin-left: 5px"></el-button>
@@ -504,7 +504,7 @@
                         v-if="item.itemType === 'bundle'"
                         type="default"
                         @click="consumeInventoryBundle(item.id)"
-                        size="mini"
+                        size="small"
                         :icon="Plus"
                         style="float: right"
                         circle>

@@ -20,7 +20,7 @@
         <el-input
             v-model="setWorldTagsDialog.authorTags"
             type="textarea"
-            size="mini"
+            size="small"
             show-word-limit
             :autosize="{ minRows: 2, maxRows: 5 }"
             placeholder=""

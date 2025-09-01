@@ -12,7 +12,7 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
+                            size="small"
                             :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
@@ -35,7 +35,7 @@
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
                                 ">
-                                <el-button size="mini" @click.stop>
+                                <el-button size="small" @click.stop>
                                     <span
                                         >{{ t(memberSortOrder.name) }} <i class="el-icon-arrow-down el-icon--right"></i
                                     ></span>
@@ -63,7 +63,7 @@
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
                                 ">
-                                <el-button size="mini" @click.stop>
+                                <el-button size="small" @click.stop>
                                     <span
                                         >{{ t(memberFilter.name) }} <i class="el-icon-arrow-down el-icon--right"></i
                                     ></span>
@@ -90,7 +90,7 @@
                             v-model="memberSearch"
                             :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')"
                             clearable
-                            size="mini"
+                            size="small"
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px"
                             @input="groupMembersSearch"></el-input>
@@ -104,7 +104,7 @@
                             style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
-                                    <el-button type="text" size="mini" @click.stop>
+                                    <el-button type="text" size="small" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
                                             @change="
@@ -195,7 +195,7 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
+                            size="small"
                             :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
@@ -207,7 +207,7 @@
                         <el-input
                             v-model="groupBansModerationTable.filters[0].value"
                             clearable
-                            size="mini"
+                            size="small"
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px"></el-input>
                         <br />
@@ -217,7 +217,7 @@
                         <DataTable v-bind="groupBansModerationTable" style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
-                                    <el-button type="text" size="mini" @click.stop>
+                                    <el-button type="text" size="small" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
                                             @change="
@@ -307,7 +307,7 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
+                            size="small"
                             :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
@@ -329,7 +329,7 @@
                                 <DataTable v-bind="groupInvitesModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="mini" @click.stop>
+                                            <el-button type="text" size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -412,7 +412,7 @@
                                 <DataTable v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="mini" @click.stop>
+                                            <el-button type="text" size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -521,7 +521,7 @@
                                 <DataTable v-bind="groupBlockedModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="mini" @click.stop>
+                                            <el-button type="text" size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -598,7 +598,7 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
+                            size="small"
                             :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
@@ -699,7 +699,7 @@
             <br />
             <el-input
                 v-model="selectUserId"
-                size="mini"
+                size="small"
                 style="margin-top: 5px; width: 340px"
                 :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
                 clearable></el-input>
@@ -711,7 +711,7 @@
             <span class="name">{{ t('dialog.group_member_moderation.selected_users') }}</span>
             <el-button
                 type="default"
-                size="mini"
+                size="small"
                 :icon="Delete"
                 circle
                 style="margin-left: 5px"
@@ -743,7 +743,7 @@
                 :rows="2"
                 :autosize="{ minRows: 1, maxRows: 20 }"
                 :placeholder="t('dialog.group_member_moderation.note_placeholder')"
-                size="mini"
+                size="small"
                 resize="none"
                 style="margin-top: 5px"></el-input>
             <br />

@@ -29,7 +29,7 @@
             <br />
             <el-input
                 v-model="setAvatarTagsDialog.selectedTagsCsv"
-                size="mini"
+                size="small"
                 :autosize="{ minRows: 2, maxRows: 5 }"
                 :placeholder="t('dialog.set_avatar_tags.custom_tags_placeholder')"
                 style="margin-top: 10px"
@@ -76,7 +76,7 @@
                         <span v-else class="extra" v-text="avatar.releaseStatus"></span>
                         <span class="extra" v-text="avatar.$tagString"></span>
                     </div>
-                    <el-button type="text" size="mini" style="margin-left: 5px" @click.stop>
+                    <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="avatar.$selected" @change="updateAvatarTagsSelection"></el-checkbox>
                     </el-button>
                 </div>

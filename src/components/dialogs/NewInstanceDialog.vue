@@ -9,7 +9,7 @@
             <el-tab-pane :label="t('dialog.new_instance.normal')">
                 <el-form :model="newInstanceDialog" label-width="150px">
                     <el-form-item :label="t('dialog.new_instance.access_type')">
-                        <el-radio-group v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance">
+                        <el-radio-group v-model="newInstanceDialog.accessType" size="small" @change="buildInstance">
                             <el-radio-button label="public">{{
                                 t('dialog.new_instance.access_type_public')
                             }}</el-radio-button>
@@ -33,7 +33,7 @@
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_access_type')">
-                        <el-radio-group v-model="newInstanceDialog.groupAccessType" size="mini" @change="buildInstance">
+                        <el-radio-group v-model="newInstanceDialog.groupAccessType" size="small" @change="buildInstance">
                             <el-radio-button
                                 label="members"
                                 :disabled="
@@ -59,7 +59,7 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.region')">
-                        <el-radio-group v-model="newInstanceDialog.region" size="mini" @change="buildInstance">
+                        <el-radio-group v-model="newInstanceDialog.region" size="small" @change="buildInstance">
                             <el-radio-button label="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
                             <el-radio-button label="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
                             <el-radio-button label="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
@@ -84,7 +84,7 @@
                     <el-form-item :label="t('dialog.new_instance.world_id')">
                         <el-input
                             v-model="newInstanceDialog.worldId"
-                            size="mini"
+                            size="small"
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                             @change="buildInstance"></el-input>
                     </el-form-item>
@@ -155,12 +155,12 @@
                         <el-form-item :label="t('dialog.new_instance.location')">
                             <el-input
                                 v-model="newInstanceDialog.location"
-                                size="mini"
+                                size="small"
                                 readonly
                                 @click="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
                         </el-form-item>
                         <el-form-item :label="t('dialog.new_instance.url')">
-                            <el-input v-model="newInstanceDialog.url" size="mini" readonly></el-input>
+                            <el-input v-model="newInstanceDialog.url" size="small" readonly></el-input>
                         </el-form-item>
                     </template>
                 </el-form>
@@ -170,7 +170,7 @@
                     <el-form-item :label="t('dialog.new_instance.access_type')">
                         <el-radio-group
                             v-model="newInstanceDialog.accessType"
-                            size="mini"
+                            size="small"
                             @change="buildLegacyInstance">
                             <el-radio-button label="public">{{
                                 t('dialog.new_instance.access_type_public')
@@ -197,7 +197,7 @@
                         :label="t('dialog.new_instance.group_access_type')">
                         <el-radio-group
                             v-model="newInstanceDialog.groupAccessType"
-                            size="mini"
+                            size="small"
                             @change="buildLegacyInstance">
                             <el-radio-button label="members">{{
                                 t('dialog.new_instance.group_access_type_members')
@@ -211,7 +211,7 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.region')">
-                        <el-radio-group v-model="newInstanceDialog.region" size="mini" @change="buildLegacyInstance">
+                        <el-radio-group v-model="newInstanceDialog.region" size="small" @change="buildLegacyInstance">
                             <el-radio-button label="US West">{{ t('dialog.new_instance.region_usw') }}</el-radio-button>
                             <el-radio-button label="US East">{{ t('dialog.new_instance.region_use') }}</el-radio-button>
                             <el-radio-button label="Europe">{{ t('dialog.new_instance.region_eu') }}</el-radio-button>
@@ -226,7 +226,7 @@
                     <el-form-item :label="t('dialog.new_instance.world_id')">
                         <el-input
                             v-model="newInstanceDialog.worldId"
-                            size="mini"
+                            size="small"
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                             @change="buildLegacyInstance"></el-input>
                     </el-form-item>
@@ -234,7 +234,7 @@
                         <el-input
                             v-model="newInstanceDialog.instanceName"
                             :placeholder="t('dialog.new_instance.instance_id_placeholder')"
-                            size="mini"
+                            size="small"
                             @change="buildLegacyInstance"></el-input>
                     </el-form-item>
                     <el-form-item
@@ -383,12 +383,12 @@
                     <el-form-item :label="t('dialog.new_instance.location')">
                         <el-input
                             v-model="newInstanceDialog.location"
-                            size="mini"
+                            size="small"
                             readonly
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"></el-input>
                     </el-form-item>
                     <el-form-item :label="t('dialog.new_instance.url')">
-                        <el-input v-model="newInstanceDialog.url" size="mini" readonly></el-input>
+                        <el-input v-model="newInstanceDialog.url" size="small" readonly></el-input>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>

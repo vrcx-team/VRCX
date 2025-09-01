@@ -6,7 +6,7 @@
         width="650px"
         destroy-on-close>
         <el-dropdown trigger="click" size="small">
-            <el-button size="mini">
+            <el-button size="small">
                 <span v-if="friendExportFavoriteGroup">
                     {{ friendExportFavoriteGroup.displayName }} ({{ friendExportFavoriteGroup.count }}/{{
                         friendExportFavoriteGroup.capacity
@@ -34,7 +34,7 @@
         <el-input
             v-model="friendExportContent"
             type="textarea"
-            size="mini"
+            size="small"
             rows="15"
             resize="none"
             readonly

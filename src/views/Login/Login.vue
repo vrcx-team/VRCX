@@ -5,7 +5,7 @@
                 <el-tooltip placement="top" :content="t('view.login.updater')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Download"
                         circle
                         @click="showVRCXUpdateDialog"></el-button>
@@ -13,7 +13,7 @@
                 <el-tooltip placement="top" :content="t('view.login.proxy_settings')" :disabled="hideTooltips">
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         icon="el-icon-connection"
                         style="margin-left: 5px"
                         circle
@@ -117,7 +117,7 @@
                                 </div>
                                 <el-button
                                     type="default"
-                                    size="mini"
+                                    size="small"
                                     :icon="Delete"
                                     style="margin-left: 10px"
                                     circle

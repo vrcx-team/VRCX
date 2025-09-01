@@ -9,7 +9,7 @@
             <el-input
                 v-model="bioDialog.bio"
                 type="textarea"
-                size="mini"
+                size="small"
                 maxlength="512"
                 show-word-limit
                 :autosize="{ minRows: 5, maxRows: 20 }"
@@ -32,7 +32,7 @@
 
             <el-button
                 :disabled="bioDialog.bioLinks.length >= 3"
-                size="mini"
+                size="small"
                 style="margin-top: 5px"
                 @click="bioDialog.bioLinks.push('')">
                 {{ t('dialog.bio.add_link') }}

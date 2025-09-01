@@ -4,12 +4,12 @@
             <el-form-item :label="t('dialog.launch.url')">
                 <el-input
                     v-model="launchDialog.url"
-                    size="mini"
+                    size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
-                        size="mini"
+                        size="small"
                         :icon="Sort"
                         style="margin-left: 5px"
                         circle
@@ -25,12 +25,12 @@
                 </template>
                 <el-input
                     v-model="launchDialog.shortUrl"
-                    size="mini"
+                    size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
-                        size="mini"
+                        size="small"
                         :icon="Sort"
                         style="margin-left: 5px"
                         circle
@@ -40,12 +40,12 @@
             <el-form-item :label="t('dialog.launch.location')">
                 <el-input
                     v-model="launchDialog.location"
-                    size="mini"
+                    size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
                     <el-button
-                        size="mini"
+                        size="small"
                         :icon="Sort"
                         style="margin-left: 5px"
                         circle

@@ -59,7 +59,7 @@
                         <br />
                         <el-radio-group
                             :value="autoUpdateVRCX"
-                            size="mini"
+                            size="small"
                             style="margin-top: 5px"
                             @input="setAutoUpdateVRCX">
                             <el-radio-button label="Off">{{
@@ -259,7 +259,7 @@
                         <br />
                         <el-radio-group
                             :value="autoAcceptInviteRequests"
-                            size="mini"
+                            size="small"
                             style="margin-top: 5px"
                             @input="setAutoAcceptInviteRequests">
                             <el-radio-button label="Off">{{
@@ -314,7 +314,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
                         <el-dropdown trigger="click" size="small" @click.stop>
-                            <el-button size="mini">
+                            <el-button size="small">
                                 <span
                                     >{{ messages[appLanguage]?.language }}
                                     <i class="el-icon-arrow-down el-icon--right"></i
@@ -332,7 +332,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
                         <el-dropdown trigger="click" size="small" @click.stop>
-                            <el-button size="mini">
+                            <el-button size="small">
                                 <span
                                     >{{ t(`view.settings.appearance.appearance.theme_mode_${themeMode}`) }}
                                     <i class="el-icon-arrow-down el-icon--right"></i
@@ -663,7 +663,7 @@
                         <div>
                             <el-color-picker
                                 :value="trustColor.untrusted"
-                                size="mini"
+                                size="small"
                                 :predefine="['#CCCCCC']"
                                 @change="updateTrustColor('untrusted', $event)">
                                 <template #trigger>
@@ -674,7 +674,7 @@
                         <div>
                             <el-color-picker
                                 :value="trustColor.basic"
-                                size="mini"
+                                size="small"
                                 :predefine="['#1778ff']"
                                 @change="updateTrustColor('basic', $event)">
                                 <template #trigger>
@@ -685,7 +685,7 @@
                         <div>
                             <el-color-picker
                                 :value="trustColor.known"
-                                size="mini"
+                                size="small"
                                 :predefine="['#2bcf5c']"
                                 @change="updateTrustColor('known', $event)">
                                 <template #trigger>
@@ -696,7 +696,7 @@
                         <div>
                             <el-color-picker
                                 :value="trustColor.trusted"
-                                size="mini"
+                                size="small"
                                 :predefine="['#ff7b42']"
                                 @change="updateTrustColor('trusted', $event)">
                                 <template #trigger>
@@ -707,7 +707,7 @@
                         <div>
                             <el-color-picker
                                 :value="trustColor.veteran"
-                                size="mini"
+                                size="small"
                                 :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
                                 @change="updateTrustColor('veteran', $event)">
                                 <template #trigger>
@@ -718,7 +718,7 @@
                         <div>
                             <el-color-picker
                                 :value="trustColor.vip"
-                                size="mini"
+                                size="small"
                                 :predefine="['#ff2626']"
                                 @change="updateTrustColor('vip', $event)">
                                 <template #trigger>
@@ -729,7 +729,7 @@
                         <div>
                             <el-color-picker
                                 :value="trustColor.troll"
-                                size="mini"
+                                size="small"
                                 :predefine="['#782f2f']"
                                 @change="updateTrustColor('troll', $event)">
                                 <template #trigger>
@@ -764,7 +764,7 @@
                         <br />
                         <el-radio-group
                             :value="overlayToast"
-                            size="mini"
+                            size="small"
                             :disabled="
                                 (!overlayNotifications || !openVR) &&
                                 !xsNotifications &&
@@ -924,7 +924,7 @@
                         <br />
                         <el-radio-group
                             :value="desktopToast"
-                            size="mini"
+                            size="small"
                             style="margin-top: 5px"
                             @input="
                                 setDesktopToast($event);
@@ -977,7 +977,7 @@
                         <br />
                         <el-radio-group
                             :value="notificationTTS"
-                            size="mini"
+                            size="small"
                             style="margin-top: 5px"
                             @input="saveNotificationTTS">
                             <el-radio-button label="Never">{{
@@ -1002,7 +1002,7 @@
                             t('view.settings.notifications.notifications.text_to_speech.tts_voice')
                         }}</span>
                         <el-dropdown trigger="click" size="small" @command="(voice) => changeTTSVoice(voice)">
-                            <el-button size="mini" :disabled="notificationTTS === 'Never'">
+                            <el-button size="small" :disabled="notificationTTS === 'Never'">
                                 <span
                                     >{{ getTTSVoiceName() }} <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
                                 ></span>
@@ -1133,7 +1133,7 @@
                         }}</span>
                         <el-radio-group
                             :value="overlayHand"
-                            size="mini"
+                            size="small"
                             @input="
                                 setOverlayHand($event);
                                 saveOpenVROption();
@@ -1637,7 +1637,7 @@
                         <span class="name">{{ t('view.settings.advanced.photon.event_hud.filter') }}</span>
                         <el-radio-group
                             :value="photonEventOverlayFilter"
-                            size="mini"
+                            size="small"
                             :disabled="!openVR || !photonEventOverlay"
                             @input="
                                 setPhotonEventOverlayFilter($event);
@@ -1694,7 +1694,7 @@
                         <span class="name">{{ t('view.settings.advanced.photon.timeout_hud.filter') }}</span>
                         <el-radio-group
                             :value="timeoutHudOverlayFilter"
-                            size="mini"
+                            size="small"
                             :disabled="!openVR || !timeoutHudOverlay"
                             @input="
                                 setTimeoutHudOverlayFilter($event);

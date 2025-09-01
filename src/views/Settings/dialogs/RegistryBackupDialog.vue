@@ -38,7 +38,7 @@
                             <el-button
                                 type="text"
                                 :icon="Upload"
-                                size="mini"
+                                size="small"
                                 @click="restoreVrcRegistryBackup(scope.row)"></el-button>
                         </el-tooltip>
                         <el-tooltip
@@ -48,7 +48,7 @@
                             <el-button
                                 type="text"
                                 :icon="Download"
-                                size="mini"
+                                size="small"
                                 @click="saveVrcRegistryBackupToFile(scope.row)"></el-button>
                         </el-tooltip>
                         <el-tooltip
@@ -58,7 +58,7 @@
                             <el-button
                                 type="text"
                                 :icon="Delete"
-                                size="mini"
+                                size="small"
                                 @click="deleteVrcRegistryBackup(scope.row)"></el-button>
                         </el-tooltip>
                     </template>

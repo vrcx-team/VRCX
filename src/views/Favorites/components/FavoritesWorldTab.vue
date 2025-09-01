@@ -20,7 +20,7 @@
                 <el-input
                     v-model="worldFavoriteSearch"
                     clearable
-                    size="mini"
+                    size="small"
                     :placeholder="t('view.favorite.worlds.search')"
                     style="width: 200px"
                     @input="searchWorldFavorites" />
@@ -64,7 +64,7 @@
                             v-text="group.displayName" />
                         <el-tag
                             style="margin: 1px 0 0 5px"
-                            size="mini"
+                            size="small"
                             :type="userFavoriteWorldsStatusForFavTab(group.visibility)"
                             effect="plain"
                             >{{ group.visibility.charAt(0).toUpperCase() + group.visibility.slice(1) }}</el-tag
@@ -72,12 +72,12 @@
                         <span style="color: #909399; font-size: 12px; margin-left: 10px"
                             >{{ group.count }}/{{ group.capacity }}</span
                         >
-                        <el-dropdown trigger="click" size="mini" style="margin-left: 10px">
+                        <el-dropdown trigger="click" size="small" style="margin-left: 10px">
                             <el-tooltip
                                 placement="top"
                                 :content="t('view.favorite.visibility_tooltip')"
                                 :disabled="hideTooltips">
-                                <el-button type="default" :icon="View" size="mini" circle @click.stop />
+                                <el-button type="default" :icon="View" size="small" circle @click.stop />
                             </el-tooltip>
                             <template #dropdown>
                                 <el-dropdown-menu>
@@ -98,7 +98,7 @@
                                 :content="t('view.favorite.rename_tooltip')"
                                 :disabled="hideTooltips">
                                 <el-button
-                                    size="mini"
+                                    size="small"
                                     :icon="Edit"
                                     circle
                                     style="margin-left: 5px"
@@ -109,7 +109,7 @@
                                 :content="t('view.favorite.clear_tooltip')"
                                 :disabled="hideTooltips">
                                 <el-button
-                                    size="mini"
+                                    size="small"
                                     :icon="Delete"
                                     circle
                                     style="margin-left: 5px"
@@ -168,7 +168,7 @@
                     }}</span>
                     <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Edit"
                             circle
                             style="margin-left: 10px"
@@ -176,7 +176,7 @@
                     </el-tooltip>
                     <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :disabled="hideTooltips">
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Delete"
                             circle
                             style="margin-left: 5px"

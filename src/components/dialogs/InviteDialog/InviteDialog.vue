@@ -8,18 +8,18 @@
         <div v-if="inviteDialog.visible" v-loading="inviteDialog.loading">
             <Location :location="inviteDialog.worldId" :link="false" />
             <br />
-            <el-button size="mini" style="margin-top: 10px" @click="addSelfToInvite">{{
+            <el-button size="small" style="margin-top: 10px" @click="addSelfToInvite">{{
                 t('dialog.invite.add_self')
             }}</el-button>
             <el-button
-                size="mini"
+                size="small"
                 :disabled="inviteDialog.friendsInInstance.length === 0"
                 style="margin-top: 10px"
                 @click="addFriendsInInstanceToInvite"
                 >{{ t('dialog.invite.add_friends_in_instance') }}</el-button
             >
             <el-button
-                size="mini"
+                size="small"
                 :disabled="vipFriends.length === 0"
                 style="margin-top: 10px"
                 @click="addFavoriteFriendsToInvite"

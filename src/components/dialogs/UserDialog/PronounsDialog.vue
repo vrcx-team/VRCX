@@ -9,7 +9,7 @@
             <el-input
                 type="textarea"
                 v-model="pronounsDialog.pronouns"
-                size="mini"
+                size="small"
                 maxlength="32"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 5 }"

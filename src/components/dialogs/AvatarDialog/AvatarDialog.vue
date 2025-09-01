@@ -48,7 +48,7 @@
                                 v-if="avatarDialog.ref.releaseStatus === 'public'"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('dialog.avatar.tags.public') }}</el-tag
                             >
@@ -56,7 +56,7 @@
                                 v-else
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('dialog.avatar.tags.private') }}</el-tag
                             >
@@ -65,7 +65,7 @@
                                 class="x-tag-platform-pc"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >PC
                                 <span
@@ -86,7 +86,7 @@
                                 class="x-tag-platform-quest"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >Android
                                 <span
@@ -107,7 +107,7 @@
                                 class="x-tag-platform-ios"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >iOS
                                 <span
@@ -128,7 +128,7 @@
                                 class="x-link"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 @click="openFolderGeneric(avatarDialog.cachePath)">
                                 <span v-text="avatarDialog.cacheSize"></span>
@@ -138,7 +138,7 @@
                                 v-if="avatarDialog.ref.styles?.primary || avatarDialog.ref.styles?.secondary"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >Styles
                                 <span
@@ -158,7 +158,7 @@
                                 v-if="avatarDialog.isQuestFallback"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('dialog.avatar.tags.fallback') }}</el-tag
                             >
@@ -166,7 +166,7 @@
                                 v-if="avatarDialog.hasImposter"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('dialog.avatar.tags.impostor') }}
                                 <span
@@ -180,7 +180,7 @@
                                 v-if="avatarDialog.ref.unityPackageUrl"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >{{ t('dialog.avatar.tags.future_proofing') }}</el-tag
                             >
@@ -189,7 +189,7 @@
                                     <el-tag
                                         v-if="tag.startsWith('content_')"
                                         effect="plain"
-                                        size="mini"
+                                        size="small"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <template v-if="tag === 'content_horror'">{{
                                             t('dialog.avatar.tags.content_horror')
@@ -211,7 +211,7 @@
                                     <el-tag
                                         v-if="tag.startsWith('author_tag_')"
                                         effect="plain"
-                                        size="mini"
+                                        size="small"
                                         style="margin-right: 5px; margin-top: 5px">
                                         <template>
                                             {{ tag.replace('author_tag_', '') }}
@@ -411,21 +411,21 @@
                                         v-if="avatarDialog.ref.authorId === currentUser.id"
                                         style="position: absolute; bottom: 5px; left: 33.3%">
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             :icon="Back"
                                             circle
                                             class="x-link"
                                             style="margin-left: 0"
                                             @click.stop="reorderAvatarGalleryImage(imageUrl, -1)"></el-button>
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             :icon="Right"
                                             circle
                                             class="x-link"
                                             style="margin-left: 0"
                                             @click.stop="reorderAvatarGalleryImage(imageUrl, 1)"></el-button>
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             :icon="Delete"
                                             circle
                                             class="x-link"
@@ -465,7 +465,7 @@
                                 <el-input
                                     v-model="memo"
                                     class="extra"
-                                    size="mini"
+                                    size="small"
                                     type="textarea"
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
@@ -483,11 +483,11 @@
                                         placement="top"
                                         :content="t('dialog.avatar.info.id_tooltip')"
                                         :disabled="hideTooltips">
-                                        <el-dropdown trigger="click" size="mini" style="margin-left: 5px">
+                                        <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                                             <el-button
                                                 type="default"
                                                 :icon="Sort"
-                                                size="mini"
+                                                size="small"
                                                 circle
                                                 @click.stop></el-button>
                                             <template #dropdown>
@@ -560,13 +560,13 @@
                 <el-tab-pane name="JSON" :label="t('dialog.avatar.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         @click="refreshAvatarDialogTreeData"></el-button>
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Download"
                         circle
                         style="margin-left: 5px"

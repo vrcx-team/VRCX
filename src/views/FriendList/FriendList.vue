@@ -25,7 +25,7 @@
                             :content="t('view.friend_list.cancel_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
-                                size="mini"
+                                size="small"
                                 :icon="Loading"
                                 circle
                                 style="margin-left: 5px"
@@ -38,7 +38,7 @@
                             :content="t('view.friend_list.load_tooltip')"
                             :disabled="hideTooltips">
                             <el-button
-                                size="mini"
+                                size="small"
                                 icon="el-icon-refresh-left"
                                 circle
                                 style="margin-left: 5px"
@@ -101,7 +101,7 @@
                     width="55"
                     prop="$selected">
                     <template #default="{ row }">
-                        <el-button type="text" size="mini" @click.stop>
+                        <el-button type="text" size="small" @click.stop>
                             <el-checkbox
                                 v-model="row.$selected"
                                 @change="friendsListBulkUnfriendForceUpdate++"></el-checkbox>
@@ -253,7 +253,7 @@
                             type="text"
                             :icon="Close"
                             style="color: #f56c6c"
-                            size="mini"
+                            size="small"
                             @click.stop="confirmDeleteFriend(row.id)"></el-button>
                     </template>
                 </el-table-column>

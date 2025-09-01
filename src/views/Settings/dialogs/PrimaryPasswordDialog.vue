@@ -10,7 +10,7 @@
             v-model="enablePrimaryPasswordDialog.password"
             :placeholder="t('dialog.primary_password.password_placeholder')"
             type="password"
-            size="mini"
+            size="small"
             maxlength="32"
             show-password
             autofocus>
@@ -20,7 +20,7 @@
             :placeholder="t('dialog.primary_password.re_input_placeholder')"
             type="password"
             style="margin-top: 5px"
-            size="mini"
+            size="small"
             maxlength="32"
             show-password>
         </el-input>

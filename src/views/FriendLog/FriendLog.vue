@@ -72,13 +72,13 @@
                         style="color: #f56c6c"
                         type="text"
                         :icon="Close"
-                        size="mini"
+                        size="small"
                         @click="deleteFriendLog(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
                         :icon="Delete"
-                        size="mini"
+                        size="small"
                         @click="deleteFriendLogPrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>

@@ -75,13 +75,13 @@
                             style="color: #f56c6c"
                             type="text"
                             :icon="Close"
-                            size="mini"
+                            size="small"
                             @click="deletePlayerModeration(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
                             :icon="Close"
-                            size="mini"
+                            size="small"
                             @click="deletePlayerModerationPrompt(scope.row)"></el-button>
                     </template>
                 </template>

@@ -50,7 +50,7 @@
                             v-if="currentInstanceWorld.ref.$isLabs"
                             type="primary"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
                             >{{ t('dialog.world.tags.labs') }}</el-tag
                         >
@@ -58,7 +58,7 @@
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'"
                             type="success"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
                             >{{ t('dialog.world.tags.public') }}</el-tag
                         >
@@ -66,7 +66,7 @@
                             v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'"
                             type="danger"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
                             >{{ t('dialog.world.tags.private') }}</el-tag
                         >
@@ -75,7 +75,7 @@
                             class="x-tag-platform-pc"
                             type="info"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
                             >PC
                             <span
@@ -90,7 +90,7 @@
                             class="x-tag-platform-quest"
                             type="info"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
                             >Android
                             <span
@@ -105,7 +105,7 @@
                             class="x-tag-platform-ios"
                             type="info"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
                             >iOS
                             <span
@@ -119,7 +119,7 @@
                             v-if="currentInstanceWorld.avatarScalingDisabled"
                             type="warning"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px; margin-top: 5px"
                             >{{ t('dialog.world.tags.avatar_scaling_disabled') }}</el-tag
                         >
@@ -127,7 +127,7 @@
                             v-if="currentInstanceWorld.inCache"
                             type="info"
                             effect="plain"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px">
                             <span>{{ currentInstanceWorld.cacheSize }} {{ t('dialog.world.tags.cache') }}</span>
                         </el-tag>
@@ -161,7 +161,7 @@
                                     !currentInstanceWorldDescriptionExpanded
                                 "
                                 type="text"
-                                size="mini"
+                                size="small"
                                 @click="currentInstanceWorldDescriptionExpanded = true"
                                 >{{ !currentInstanceWorldDescriptionExpanded && 'Show more' }}</el-button
                             >
@@ -679,7 +679,7 @@
                                     <el-button
                                         type="text"
                                         icon="el-icon-turn-off-microphone"
-                                        size="mini"
+                                        size="small"
                                         style="color: red; margin-right: 5px"
                                         @click.stop="deleteChatboxUserBlacklist(scope.row.ref.id)"></el-button>
                                 </el-tooltip>
@@ -689,7 +689,7 @@
                                     <el-button
                                         type="text"
                                         icon="el-icon-microphone"
-                                        size="mini"
+                                        size="small"
                                         style="margin-right: 5px"
                                         @click.stop="addChatboxUserBlacklist(scope.row.ref)"></el-button>
                                 </el-tooltip>

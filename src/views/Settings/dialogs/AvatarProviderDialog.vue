@@ -16,7 +16,7 @@
                 <el-button slot="append" :icon="Delete" @click="removeAvatarProvider(provider)"></el-button>
             </el-input>
 
-            <el-button size="mini" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">
+            <el-button size="small" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">
                 {{ t('dialog.avatar_database_provider.add_provider') }}
             </el-button>
         </div>

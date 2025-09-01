@@ -76,7 +76,7 @@
                                 v-if="groupDialog.ref.isVerified"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.verified') }}
                             </el-tag>
@@ -84,7 +84,7 @@
                                 v-if="groupDialog.ref.privacy === 'private'"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.private') }}
                             </el-tag>
@@ -92,7 +92,7 @@
                                 v-if="groupDialog.ref.privacy === 'default'"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.public') }}
                             </el-tag>
@@ -100,7 +100,7 @@
                                 v-if="groupDialog.ref.joinState === 'open'"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.open') }}
                             </el-tag>
@@ -108,7 +108,7 @@
                                 v-else-if="groupDialog.ref.joinState === 'request'"
                                 type="warning"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.request') }}
                             </el-tag>
@@ -116,7 +116,7 @@
                                 v-else-if="groupDialog.ref.joinState === 'invite'"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.invite') }}
                             </el-tag>
@@ -124,7 +124,7 @@
                                 v-else-if="groupDialog.ref.joinState === 'closed'"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.closed') }}
                             </el-tag>
@@ -132,7 +132,7 @@
                                 v-if="groupDialog.inGroup"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.joined') }}
                             </el-tag>
@@ -140,7 +140,7 @@
                                 v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.banned') }}
                             </el-tag>
@@ -149,7 +149,7 @@
                                     v-if="groupDialog.ref.myMember.visibility === 'visible'"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.visible') }}
                                 </el-tag>
@@ -157,7 +157,7 @@
                                     v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.friends') }}
                                 </el-tag>
@@ -165,7 +165,7 @@
                                     v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.hidden') }}
                                 </el-tag>
@@ -173,7 +173,7 @@
                                     v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.subscribed') }}
                                 </el-tag>
@@ -423,7 +423,7 @@
                                 <InviteYourself :location="room.tag" style="margin-left: 5px" />
                                 <el-tooltip placement="top" content="Refresh player count" :disabled="hideTooltips">
                                     <el-button
-                                        size="mini"
+                                        size="small"
                                         :icon="Refresh"
                                         style="margin-left: 5px"
                                         circle
@@ -563,7 +563,7 @@
                                             <el-button
                                                 type="text"
                                                 :icon="Edit"
-                                                size="mini"
+                                                size="small"
                                                 style="margin-left: 5px"
                                                 @click="
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
@@ -576,7 +576,7 @@
                                             <el-button
                                                 type="text"
                                                 :icon="Delete"
-                                                size="mini"
+                                                size="small"
                                                 style="margin-left: 5px"
                                                 @click="confirmDeleteGroupPost(groupDialog.announcement)" />
                                         </el-tooltip>
@@ -671,7 +671,7 @@
                                         :disabled="hideTooltips">
                                         <el-button
                                             type="default"
-                                            size="mini"
+                                            size="small"
                                             :icon="Sort"
                                             circle
                                             style="margin-left: 5px"
@@ -690,7 +690,7 @@
                                         :disabled="hideTooltips">
                                         <el-button
                                             type="default"
-                                            size="mini"
+                                            size="small"
                                             :icon="Sort"
                                             circle
                                             style="margin-left: 5px"
@@ -766,7 +766,7 @@
                         <el-input
                             v-model="groupDialog.postsSearch"
                             clearable
-                            size="mini"
+                            size="small"
                             :placeholder="t('dialog.group.posts.search_placeholder')"
                             style="width: 89%; margin-bottom: 10px"
                             @input="updateGroupPostSearch" />
@@ -861,7 +861,7 @@
                                                 <el-button
                                                     type="text"
                                                     :icon="Edit"
-                                                    size="mini"
+                                                    size="small"
                                                     style="margin-left: 5px"
                                                     @click="showGroupPostEditDialog(groupDialog.id, post)" />
                                             </el-tooltip>
@@ -872,7 +872,7 @@
                                                 <el-button
                                                     type="text"
                                                     :icon="Delete"
-                                                    size="mini"
+                                                    size="small"
                                                     style="margin-left: 5px"
                                                     @click="confirmDeleteGroupPost(post)" />
                                             </el-tooltip>
@@ -896,14 +896,14 @@
                         <div style="margin-top: 10px">
                             <el-button
                                 type="default"
-                                size="mini"
+                                size="small"
                                 :icon="Refresh"
                                 :loading="isGroupMembersLoading"
                                 circle
                                 @click="loadAllGroupMembers" />
                             <el-button
                                 type="default"
-                                size="mini"
+                                size="small"
                                 :icon="Download"
                                 circle
                                 style="margin-left: 5px"
@@ -925,7 +925,7 @@
                                     size="small"
                                     style="margin-right: 5px"
                                     :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length">
-                                    <el-button size="mini" @click.stop>
+                                    <el-button size="small" @click.stop>
                                         <span
                                             >{{ t(groupDialog.memberSortOrder.name) }}
                                             <i class="el-icon-arrow-down el-icon--right"
@@ -947,7 +947,7 @@
                                     size="small"
                                     style="margin-right: 5px"
                                     :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length">
-                                    <el-button size="mini" @click.stop>
+                                    <el-button size="small" @click.stop>
                                         <span
                                             >{{ t(groupDialog.memberFilter.name) }}
                                             <i class="el-icon-arrow-down el-icon--right"
@@ -973,7 +973,7 @@
                             <el-input
                                 v-model="groupDialog.memberSearch"
                                 clearable
-                                size="mini"
+                                size="small"
                                 :placeholder="t('dialog.group.members.search')"
                                 style="margin-top: 10px; margin-bottom: 10px"
                                 @input="groupMembersSearch" />
@@ -1115,7 +1115,7 @@
                 <el-tab-pane :label="t('dialog.group.gallery.header')" lazy>
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         :loading="isGroupGalleryLoading"
                         circle
@@ -1164,13 +1164,13 @@
                 <el-tab-pane :label="t('dialog.group.json.header')" lazy>
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Refresh"
                         circle
                         @click="refreshGroupDialogTreeData()" />
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Download"
                         circle
                         style="margin-left: 5px"

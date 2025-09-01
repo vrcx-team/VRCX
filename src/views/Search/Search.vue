@@ -138,7 +138,7 @@
                         <el-dropdown
                             v-if="avatarRemoteDatabaseProviderList.length > 1"
                             trigger="click"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
                             @click.stop>
                             <el-button size="small"
@@ -166,7 +166,7 @@
                             <el-button
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
-                                size="mini"
+                                size="small"
                                 :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogAvatars"></el-button>
@@ -180,7 +180,7 @@
                     <div style="display: flex; align-items: center">
                         <el-radio-group
                             v-model="searchAvatarFilter"
-                            size="mini"
+                            size="small"
                             style="margin: 5px; display: block"
                             @change="searchAvatar">
                             <el-radio label="all">{{ t('view.search.avatar.all') }}</el-radio>
@@ -190,7 +190,7 @@
                         <el-divider direction="vertical"></el-divider>
                         <el-radio-group
                             v-model="searchAvatarFilterRemote"
-                            size="mini"
+                            size="small"
                             style="margin: 5px; display: block"
                             @change="searchAvatar">
                             <el-radio label="all">{{ t('view.search.avatar.all') }}</el-radio>
@@ -205,7 +205,7 @@
                     <el-radio-group
                         v-model="searchAvatarSort"
                         :disabled="searchAvatarFilterRemote !== 'local'"
-                        size="mini"
+                        size="small"
                         style="margin: 5px; display: block"
                         @change="searchAvatar">
                         <el-radio label="name">{{ t('view.search.avatar.sort_name') }}</el-radio>

@@ -36,7 +36,7 @@
                     <el-button
                         type="text"
                         :icon="Edit"
-                        size="mini"
+                        size="small"
                         @click.stop="showEditAndSendInviteDialog(scope.row)"></el-button>
                 </template>
             </el-table-column>

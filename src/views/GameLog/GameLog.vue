@@ -167,13 +167,13 @@
                             style="color: #f56c6c"
                             type="text"
                             :icon="Close"
-                            size="mini"
+                            size="small"
                             @click="deleteGameLogEntry(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
                             :icon="Delete"
-                            size="mini"
+                            size="small"
                             @click="deleteGameLogEntryPrompt(scope.row)"></el-button>
                     </template>
                     <el-tooltip placement="top" :content="t('dialog.previous_instances.info')" :disabled="hideTooltips">
@@ -181,7 +181,7 @@
                             v-if="scope.row.type === 'Location'"
                             type="text"
                             :icon="DataLine"
-                            size="mini"
+                            size="small"
                             @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     </el-tooltip>
                 </template>

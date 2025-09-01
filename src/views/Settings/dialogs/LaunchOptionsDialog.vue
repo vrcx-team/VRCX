@@ -8,7 +8,7 @@
         <div style="font-size: 12px">
             {{ t('dialog.launch_options.description') }} <br />
             {{ t('dialog.launch_options.example') }}
-            <el-tag size="mini"
+            <el-tag size="small"
                 >--fps=144 --enable-debug-gui --enable-sdk-log-levels --enable-udon-debug-logging
             </el-tag>
         </div>
@@ -16,7 +16,7 @@
         <el-input
             v-model="launchOptionsDialog.launchArguments"
             type="textarea"
-            size="mini"
+            size="small"
             show-word-limit
             :autosize="{ minRows: 2, maxRows: 5 }"
             placeholder=""

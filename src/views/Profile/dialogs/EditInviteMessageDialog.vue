@@ -10,7 +10,7 @@
             <el-input
                 v-model="message"
                 type="textarea"
-                size="mini"
+                size="small"
                 maxlength="64"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 5 }"

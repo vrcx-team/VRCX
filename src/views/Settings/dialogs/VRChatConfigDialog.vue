@@ -55,7 +55,7 @@
                     <el-input
                         v-model="VRChatConfigFile[value]"
                         :placeholder="item.default"
-                        size="mini"
+                        size="small"
                         :type="item.type ? item.type : 'text'"
                         :min="item.min"
                         :max="item.max"
@@ -64,7 +64,7 @@
                         <template #append>
                             <el-button
                                 v-if="item.folderBrowser"
-                                size="mini"
+                                size="small"
                                 :icon="FolderOpened"
                                 @click="openConfigFolderBrowser(value)"></el-button>
                         </template>

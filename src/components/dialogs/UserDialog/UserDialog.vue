@@ -144,7 +144,7 @@
                             <el-tag
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="name"
                                 :class="userDialog.ref.$trustClass"
                                 style="margin-right: 5px; margin-top: 5px">
@@ -154,7 +154,7 @@
                                 v-if="userDialog.isFriend && userDialog.friend"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-friend"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{
@@ -167,7 +167,7 @@
                                 v-if="userDialog.ref.$isTroll"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-troll"
                                 style="margin-right: 5px; margin-top: 5px">
                                 Nuisance
@@ -176,7 +176,7 @@
                                 v-if="userDialog.ref.$isProbableTroll"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-troll"
                                 style="margin-right: 5px; margin-top: 5px">
                                 Almost Nuisance
@@ -185,7 +185,7 @@
                                 v-if="userDialog.ref.$isModerator"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-vip"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.user.tags.vrchat_team') }}
@@ -194,7 +194,7 @@
                                 v-if="userDialog.ref.$platform === 'standalonewindows'"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-platform-pc"
                                 style="margin-right: 5px; margin-top: 5px">
                                 PC
@@ -203,7 +203,7 @@
                                 v-else-if="userDialog.ref.$platform === 'android'"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-platform-quest"
                                 style="margin-right: 5px; margin-top: 5px">
                                 Android
@@ -212,7 +212,7 @@
                                 v-else-if="userDialog.ref.$platform === 'ios'"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-platform-ios"
                                 style="margin-right: 5px; margin-top: 5px"
                                 >iOS</el-tag
@@ -221,7 +221,7 @@
                                 v-else-if="userDialog.ref.$platform"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-platform-other"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ userDialog.ref.$platform }}
@@ -230,7 +230,7 @@
                                 v-if="userDialog.ref.ageVerified && userDialog.ref.ageVerificationStatus"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="x-tag-age-verification"
                                 style="margin-right: 5px; margin-top: 5px">
                                 <template v-if="userDialog.ref.ageVerificationStatus === '18+'">
@@ -244,7 +244,7 @@
                                 v-if="userDialog.ref.$customTag"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 class="name"
                                 :style="{
                                     color: userDialog.ref.$customTagColour,
@@ -607,7 +607,7 @@
                                         :content="t('dialog.user.info.refresh_instance_info')"
                                         :disabled="hideTooltips">
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             :icon="Refresh"
                                             style="margin-left: 5px"
                                             circle
@@ -683,7 +683,7 @@
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
                                     :placeholder="t('dialog.user.info.note_placeholder')"
-                                    size="mini"
+                                    size="small"
                                     resize="none"
                                     @change="checkNote(userDialog.ref, userDialog.note)"
                                     @input="cleanNote(userDialog.note)"></el-input>
@@ -700,7 +700,7 @@
                                         v-if="userDialog.note"
                                         type="text"
                                         :icon="Delete"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="deleteNote(userDialog.id)"></el-button>
                                 </div>
@@ -716,7 +716,7 @@
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
                                     :placeholder="t('dialog.user.info.memo_placeholder')"
-                                    size="mini"
+                                    size="small"
                                     resize="none"
                                     @change="onUserMemoChange"></el-input>
                             </div>
@@ -832,7 +832,7 @@
                                     <el-button
                                         type="text"
                                         :icon="Edit"
-                                        size="mini"
+                                        size="small"
                                         style="margin-left: 5px"
                                         @click="showBioDialog"></el-button>
                                 </div>
@@ -1070,7 +1070,7 @@
                                 <span class="extra">
                                     <span v-text="userDialog.$homeLocationName"></span>
                                     <el-button
-                                        size="mini"
+                                        size="small"
                                         :icon="Delete"
                                         circle
                                         style="margin-left: 5px"
@@ -1088,8 +1088,8 @@
                                         placement="top"
                                         :content="t('dialog.user.info.id_tooltip')"
                                         :disabled="hideTooltips">
-                                        <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.stop>
-                                            <el-button type="default" :icon="Sort" size="mini" circle></el-button>
+                                        <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
+                                            <el-button type="default" :icon="Sort" size="small" circle></el-button>
                                             <template #dropdown>
                                                 <el-dropdown-menu>
                                                     <el-dropdown-item @click="copyUserId(userDialog.id)">{{
@@ -1118,7 +1118,7 @@
                             <el-button
                                 type="default"
                                 :loading="userDialog.isGroupsLoading"
-                                size="mini"
+                                size="small"
                                 :icon="Refresh"
                                 circle
                                 @click="getUserGroups(userDialog.id)">
@@ -1141,7 +1141,7 @@
                                     style="margin-right: 5px"
                                     :disabled="userDialog.isGroupsLoading"
                                     @click.stop>
-                                    <el-button size="mini">
+                                    <el-button size="small">
                                         <span
                                             >{{ t(userDialog.groupSorting.name) }}
                                             <i class="el-icon-arrow-down el-icon--right"></i
@@ -1245,7 +1245,7 @@
 
                                     <div style="margin-right: 3px; margin-left: 5px" @click.stop>
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             :icon="Download"
                                             style="
                                                 display: block;
@@ -1257,7 +1257,7 @@
                                             @click="moveGroupTop(group.id)">
                                         </el-button>
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             :icon="Download"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupBottom(group.id)">
@@ -1265,13 +1265,13 @@
                                     </div>
                                     <div style="margin-right: 10px" @click.stop>
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             icon="el-icon-top"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupUp(group.id)">
                                         </el-button>
                                         <el-button
-                                            size="mini"
+                                            size="small"
                                             icon="el-icon-bottom"
                                             style="display: block; padding: 7px; font-size: 9px; margin-left: 0"
                                             @click="moveGroupDown(group.id)">
@@ -1307,7 +1307,7 @@
                                         size="small"
                                         style="margin-right: 5px"
                                         @click.stop>
-                                        <el-button size="mini">
+                                        <el-button size="small">
                                             <span v-if="group.myMember.visibility === 'visible'">{{
                                                 t('dialog.group.tags.visible')
                                             }}</span>
@@ -1347,9 +1347,9 @@
                                     <!--//-         template(#content)-->
                                     <!--//-             span(v-if="group.myMember.isSubscribedToAnnouncements") {{ t('dialog.group.actions.unsubscribe') }}-->
                                     <!--//-             span(v-else) {{ t('dialog.group.actions.subscribe') }}-->
-                                    <!--//-         el-button(v-if="group.myMember.isSubscribedToAnnouncements" @click.stop="setGroupSubscription(group.id, false)" circle size="mini")-->
+                                    <!--//-         el-button(v-if="group.myMember.isSubscribedToAnnouncements" @click.stop="setGroupSubscription(group.id, false)" circle size="small")-->
                                     <!--//-             i.el-icon-chat-line-square-->
-                                    <!--//-         el-button(v-else circle @click.stop="setGroupSubscription(group.id, true)" size="mini")-->
+                                    <!--//-         el-button(v-else circle @click.stop="setGroupSubscription(group.id, true)" size="small")-->
                                     <!--//-             i.el-icon-chat-square(style="color:#f56c6c")-->
                                     <el-tooltip
                                         placement="right"
@@ -1357,7 +1357,7 @@
                                         :disabled="hideTooltips">
                                         <el-button
                                             v-if="shiftHeld"
-                                            size="mini"
+                                            size="small"
                                             :icon="Close"
                                             circle
                                             style="color: #f56c6c; margin-left: 5px"
@@ -1365,7 +1365,7 @@
                                         </el-button>
                                         <el-button
                                             v-else
-                                            size="mini"
+                                            size="small"
                                             :icon="Delete"
                                             circle
                                             style="margin-left: 5px"
@@ -1523,7 +1523,7 @@
                             <el-button
                                 type="default"
                                 :loading="userDialog.isWorldsLoading"
-                                size="mini"
+                                size="small"
                                 :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogWorlds()">
@@ -1540,7 +1540,7 @@
                                 style="margin-right: 5px"
                                 :disabled="userDialog.isWorldsLoading"
                                 @click.stop>
-                                <el-button size="mini">
+                                <el-button size="small">
                                     <span
                                         >{{ t(userDialog.worldSorting.name) }}
                                         <i class="el-icon-arrow-down el-icon--right"></i
@@ -1564,7 +1564,7 @@
                                 style="margin-right: 5px"
                                 :disabled="userDialog.isWorldsLoading"
                                 @click.stop>
-                                <el-button size="mini">
+                                <el-button size="small">
                                     <span
                                         >{{ t(userDialog.worldOrder.name) }}
                                         <i class="el-icon-arrow-down el-icon--right"></i
@@ -1670,7 +1670,7 @@
                                 v-if="userDialog.ref.id === currentUser.id"
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
-                                size="mini"
+                                size="small"
                                 :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogAvatars()">
@@ -1679,7 +1679,7 @@
                                 v-else
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
-                                size="mini"
+                                size="small"
                                 :icon="Refresh"
                                 circle
                                 @click="setUserDialogAvatarsRemote(userDialog.id)">
@@ -1697,7 +1697,7 @@
                                     style="margin-right: 5px"
                                     :disabled="userDialog.isWorldsLoading"
                                     @click.stop>
-                                    <el-button size="mini">
+                                    <el-button size="small">
                                         <span
                                             >{{ t(`dialog.user.avatars.sort_by_${userDialog.avatarSorting}`) }}
                                             <i class="el-icon-arrow-down el-icon--right"></i
@@ -1723,7 +1723,7 @@
                                     style="margin-right: 5px"
                                     :disabled="userDialog.isWorldsLoading"
                                     @click.stop>
-                                    <el-button size="mini">
+                                    <el-button size="small">
                                         <span
                                             >{{ t(`dialog.user.avatars.${userDialog.avatarReleaseStatus}`) }}
                                             <i class="el-icon-arrow-down el-icon--right"></i
@@ -1776,11 +1776,11 @@
                 </el-tab-pane>
 
                 <el-tab-pane name="JSON" :label="t('dialog.user.json.header')" lazy style="height: 50vh">
-                    <el-button type="default" size="mini" :icon="Refresh" circle @click="refreshUserDialogTreeData()">
+                    <el-button type="default" size="small" :icon="Refresh" circle @click="refreshUserDialogTreeData()">
                     </el-button>
                     <el-button
                         type="default"
-                        size="mini"
+                        size="small"
                         :icon="Download"
                         circle
                         style="margin-left: 5px"

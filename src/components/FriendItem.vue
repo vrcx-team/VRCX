@@ -40,7 +40,7 @@
             <el-button
                 ttype="text"
                 :icon="Close"
-                size="mini"
+                size="small"
                 style="margin-left: 5px"
                 @click.stop="$emit('confirm-delete-friend', friend.id)">
             </el-button>

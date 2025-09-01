@@ -5,7 +5,7 @@
                 <el-input
                     v-model="exportFriendsListCsv"
                     type="textarea"
-                    size="mini"
+                    size="small"
                     rows="15"
                     resize="none"
                     readonly
@@ -16,7 +16,7 @@
                 <el-input
                     v-model="exportFriendsListJson"
                     type="textarea"
-                    size="mini"
+                    size="small"
                     rows="15"
                     resize="none"
                     readonly

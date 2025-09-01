@@ -11,7 +11,7 @@
         <el-input
             v-model="discordNamesContent"
             type="textarea"
-            size="mini"
+            size="small"
             rows="15"
             resize="none"
             readonly

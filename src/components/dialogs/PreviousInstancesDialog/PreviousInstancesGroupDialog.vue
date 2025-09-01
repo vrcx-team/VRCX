@@ -40,20 +40,20 @@
                     <el-button
                         type="text"
                         :icon="DataLine"
-                        size="mini"
+                        size="small"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)" />
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
                         :icon="Close"
-                        size="mini"
+                        size="small"
                         @click="deleteGameLogGroupInstance(scope.row)" />
                     <el-button
                         v-else
                         type="text"
                         :icon="Close"
-                        size="mini"
+                        size="small"
                         @click="deleteGameLogGroupInstancePrompt(scope.row)" />
                 </template>
             </el-table-column>

@@ -13,12 +13,12 @@
                     <span v-else class="extra" v-once>{{ localFavFakeRef.authorName }}</span>
                 </div>
                 <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px">
+                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                         <el-tooltip
                             placement="left"
                             :content="t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
                             :disabled="hideTooltips">
-                            <el-button type="default" :icon="Back" size="mini" circle></el-button>
+                            <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </el-tooltip>
                         <template #dropdown>
                             <el-dropdown-menu>
@@ -34,7 +34,7 @@
                             </el-dropdown-menu>
                         </template>
 
-                        <el-button v-if="!isLocalFavorite" type="text" size="mini" @click.stop style="margin-left: 5px">
+                        <el-button v-if="!isLocalFavorite" type="text" size="small" @click.stop style="margin-left: 5px">
                             <el-checkbox v-model="isSelected"></el-checkbox>
                         </el-button>
                     </el-dropdown>
@@ -61,7 +61,7 @@
                             }}
                         </template>
                         <el-button
-                            size="mini"
+                            size="small"
                             :icon="Message"
                             style="margin-left: 5px"
                             @click.stop="newInstanceSelfInvite(favorite.id)"
@@ -74,7 +74,7 @@
                         :disabled="hideTooltips">
                         <el-button
                             v-if="shiftHeld"
-                            size="mini"
+                            size="small"
                             :icon="Close"
                             circle
                             style="color: #f56c6c; margin-left: 5px"
@@ -82,7 +82,7 @@
                         <el-button
                             v-else
                             :icon="Star"
-                            size="mini"
+                            size="small"
                             circle
                             style="margin-left: 5px"
                             type="default"
@@ -96,7 +96,7 @@
                     :disabled="hideTooltips">
                     <el-button
                         v-if="shiftHeld"
-                        size="mini"
+                        size="small"
                         :icon="Close"
                         circle
                         style="color: #f56c6c; margin-left: 5px"
@@ -104,7 +104,7 @@
                     <el-button
                         v-else
                         :icon="Star"
-                        size="mini"
+                        size="small"
                         circle
                         style="margin-left: 5px"
                         type="default"
@@ -124,7 +124,7 @@
                     <el-button
                         type="text"
                         :icon="Close"
-                        size="mini"
+                        size="small"
                         style="margin-left: 5px"
                         @click.stop="handleDeleteFavorite"></el-button>
                 </div>

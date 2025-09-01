@@ -11,7 +11,7 @@
             <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')" :disabled="hideTooltips">
                 <el-button
                     :disabled="currentUser.currentAvatar === favorite.id"
-                    size="mini"
+                    size="small"
                     :icon="Check"
                     circle
                     style="margin-left: 5px"
@@ -22,7 +22,7 @@
                     <el-button
                         type="default"
                         :icon="Star"
-                        size="mini"
+                        size="small"
                         circle
                         style="margin-left: 5px"
                         @click.stop="showFavoriteDialog('avatar', favorite.id)"></el-button>
@@ -33,7 +33,7 @@
                     <el-button
                         type="default"
                         :icon="StarFilled"
-                        size="mini"
+                        size="small"
                         circle
                         style="margin-left: 5px"
                         @click.stop="showFavoriteDialog('avatar', favorite.id)"></el-button>

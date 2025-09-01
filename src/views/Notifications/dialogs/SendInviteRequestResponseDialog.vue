@@ -32,7 +32,7 @@
                     <el-button
                         type="text"
                         :icon="Edit"
-                        size="mini"
+                        size="small"
                         @click.stop="showEditAndSendInviteResponseDialog(scope.row)">
                     </el-button>
                 </template>

@@ -13,7 +13,7 @@
         <el-input
             v-model="editAndSendInviteDialog.newMessage"
             type="textarea"
-            size="mini"
+            size="small"
             maxlength="64"
             show-word-limit
             :autosize="{ minRows: 2, maxRows: 5 }"

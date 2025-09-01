@@ -20,7 +20,7 @@
         <el-input
             v-model="groupLogsExportContent"
             type="textarea"
-            size="mini"
+            size="small"
             rows="15"
             resize="none"
             readonly

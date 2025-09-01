@@ -19,7 +19,7 @@
 
                 <el-radio-group
                     v-model="currentSharedFeedFilters[setting.key]"
-                    size="mini"
+                    size="small"
                     @change="saveSharedFeedFilters">
                     <el-radio-button v-for="option in setting.options" :key="option.label" :label="option.label">
                         {{ t(option.textKey) }}
@@ -36,7 +36,7 @@
                     <span class="toggle-name">{{ setting.name }}</span>
                     <el-radio-group
                         v-model="currentSharedFeedFilters[setting.key]"
-                        size="mini"
+                        size="small"
                         @change="saveSharedFeedFilters">
                         <el-radio-button v-for="option in setting.options" :key="option.label" :label="option.label">
                             {{ t(option.textKey) }}

@@ -23,14 +23,14 @@
         <el-input
             v-model="avatarImportDialog.input"
             type="textarea"
-            size="mini"
+            size="small"
             rows="10"
             resize="none"
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
                 <el-dropdown trigger="click" size="small">
-                    <el-button size="mini">
+                    <el-button size="small">
                         <span v-if="avatarImportDialog.avatarImportFavoriteGroup">
                             {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{
                                 avatarImportDialog.avatarImportFavoriteGroup.count
@@ -56,7 +56,7 @@
                     </template>
                 </el-dropdown>
                 <el-dropdown trigger="click" size="small" style="margin: 5px">
-                    <el-button size="mini">
+                    <el-button size="small">
                         <span v-if="avatarImportDialog.avatarImportLocalFavoriteGroup">
                             {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{
                                 getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup)
@@ -167,7 +167,7 @@
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
                 <template #default="{ row }">
-                    <el-button type="text" :icon="Close" size="mini" @click="deleteItemAvatarImport(row)"> </el-button>
+                    <el-button type="text" :icon="Close" size="small" @click="deleteItemAvatarImport(row)"> </el-button>
                 </template>
             </el-table-column>
         </DataTable>

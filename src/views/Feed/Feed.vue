@@ -40,7 +40,7 @@
                                 v-if="scope.row.previousLocation"
                                 :location="scope.row.previousLocation"
                                 style="display: inline-block" />
-                            <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
+                            <el-tag type="info" effect="plain" size="small" style="margin-left: 5px">{{
                                 timeToText(scope.row.time)
                             }}</el-tag>
                             <br />
@@ -59,7 +59,7 @@
                                     :location="scope.row.location"
                                     :hint="scope.row.worldName"
                                     :grouphint="scope.row.groupName" />
-                                <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
+                                <el-tag type="info" effect="plain" size="small" style="margin-left: 5px">{{
                                     timeToText(scope.row.time)
                                 }}</el-tag>
                             </template>

@@ -11,7 +11,7 @@
         <div v-else-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
             <el-button
                 type="default"
-                size="mini"
+                size="small"
                 :icon="Download"
                 circle
                 style="font-size: 14px; height: 50px; width: 50px"

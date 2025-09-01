@@ -8,7 +8,7 @@
             <h3 v-text="groupPostEditDialog.groupRef.name"></h3>
             <el-form :model="groupPostEditDialog" label-width="150px">
                 <el-form-item :label="t('dialog.group_post_edit.title')">
-                    <el-input v-model="groupPostEditDialog.title" size="mini"></el-input>
+                    <el-input v-model="groupPostEditDialog.title" size="small"></el-input>
                 </el-form-item>
                 <el-form-item :label="t('dialog.group_post_edit.message')">
                     <el-input
@@ -78,13 +78,13 @@
                                     style="height: 500px"
                                     @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" />
                             </el-popover>
-                            <el-button size="mini" style="vertical-align: top" @click="clearImageGallerySelect">
+                            <el-button size="small" style="vertical-align: top" @click="clearImageGallerySelect">
                                 {{ t('dialog.invite_message.clear_selected_image') }}
                             </el-button>
                         </div>
                     </template>
                     <template v-else>
-                        <el-button size="mini" style="margin-right: 5px" @click="showGallerySelectDialog">
+                        <el-button size="small" style="margin-right: 5px" @click="showGallerySelectDialog">
                             {{ t('dialog.invite_message.select_image') }}
                         </el-button>
                     </template>

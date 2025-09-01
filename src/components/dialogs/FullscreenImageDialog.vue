@@ -3,13 +3,13 @@
         <div>
             <div style="margin: 0 0 5px 5px">
                 <el-button
-                    size="mini"
+                    size="small"
                     :icon="Sort"
                     circle
                     @click="copyImageUrl(fullscreenImageDialog.imageUrl)"></el-button>
                 <el-button
                     type="default"
-                    size="mini"
+                    size="small"
                     :icon="Download"
                     circle
                     style="margin-left: 5px"

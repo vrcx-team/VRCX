@@ -23,7 +23,7 @@
                     </el-button>
                 </template>
             </el-input>
-            <el-button size="mini" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
+            <el-button size="small" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
                 {{ t('dialog.chatbox_blacklist.add_item') }}
             </el-button>
             <br />
