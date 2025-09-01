@@ -483,8 +483,9 @@
         </div>
         <DiscordNamesDialog :discord-names-dialog-v-model="discordNamesDialogVisible" :friends="friends" />
         <ExportFriendsListDialog
-            :is-export-friends-list-dialog-v-model="isExportFriendsListDialogVisible"
-            :friends="friends" />
+            :is-export-friends-list-dialog-visible="isExportFriendsListDialogVisible"
+            :friends="friends"
+            @update:isExportFriendsListDialogVisible="isExportFriendsListDialogVisible = $event" />
         <ExportAvatarsListDialog :is-export-avatars-list-dialog-v-model="isExportAvatarsListDialogVisible" />
     </div>
 </template>

@@ -124,7 +124,7 @@
 
     const tableProps = ref({
         stripe: true,
-        size: 'mini',
+        size: 'small',
         defaultSort: {
             prop: 'created',
             order: 'descending'

@@ -68,7 +68,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'timer',
                     order: 'descending'

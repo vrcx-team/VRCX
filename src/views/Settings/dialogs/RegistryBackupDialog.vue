@@ -104,7 +104,7 @@
         data: [],
         tableProps: {
             stripe: true,
-            size: 'mini',
+            size: 'small',
             defaultSort: {
                 prop: 'date',
                 order: 'descending'

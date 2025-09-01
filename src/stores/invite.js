@@ -25,7 +25,7 @@ export const useInviteStore = defineStore('Invite', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini'
+                size: 'small'
             },
             layout: 'table',
             visible: false
@@ -34,7 +34,7 @@ export const useInviteStore = defineStore('Invite', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini'
+                size: 'small'
             },
             layout: 'table',
             visible: false
@@ -43,7 +43,7 @@ export const useInviteStore = defineStore('Invite', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini'
+                size: 'small'
             },
             layout: 'table',
             visible: false
@@ -52,7 +52,7 @@ export const useInviteStore = defineStore('Invite', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini'
+                size: 'small'
             },
             layout: 'table',
             visible: false

@@ -69,7 +69,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             filter: [],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'created_at',
                     order: 'descending'

@@ -97,7 +97,7 @@
                 previousInstancesTable: {
                     data: [],
                     filters: [{ prop: 'displayName', value: '' }],
-                    tableProps: { stripe: true, size: 'mini', height: '400px' }
+                    tableProps: { stripe: true, size: 'small', height: '400px' }
                 }
             })
         }
@@ -110,7 +110,7 @@
         filters: [{ prop: 'worldName', value: '' }],
         tableProps: {
             stripe: true,
-            size: 'mini',
+            size: 'small',
             defaultSort: { prop: 'created_at', order: 'descending' }
         },
         pageSize: 10,

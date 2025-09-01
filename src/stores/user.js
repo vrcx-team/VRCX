@@ -263,7 +263,7 @@ export const useUserStore = defineStore('User', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'updated_at',
                     order: 'descending'

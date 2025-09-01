@@ -158,7 +158,7 @@
         data: [],
         tableProps: {
             stripe: true,
-            size: 'mini'
+            size: 'small'
         },
         layout: 'table'
     });

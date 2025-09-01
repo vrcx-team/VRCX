@@ -59,7 +59,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             ],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'created_at',
                     order: 'descending'

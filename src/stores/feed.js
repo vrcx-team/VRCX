@@ -25,7 +25,7 @@ export const useFeedStore = defineStore('Feed', () => {
             filter: [],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'created_at',
                     order: 'descending'

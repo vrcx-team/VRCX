@@ -90,7 +90,7 @@
         filters: [{ prop: 'groupName', value: '' }],
         tableProps: {
             stripe: true,
-            size: 'mini',
+            size: 'small',
             defaultSort: { prop: 'created_at', order: 'descending' }
         },
         pageSize: 10,

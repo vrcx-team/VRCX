@@ -914,7 +914,7 @@
 
     const groupInvitesModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -924,7 +924,7 @@
     });
     const groupJoinRequestsModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -934,7 +934,7 @@
     });
     const groupBlockedModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -945,7 +945,7 @@
     const groupLogsModerationTable = reactive({
         data: [],
         filters: [{ prop: ['description'], value: '' }],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -956,7 +956,7 @@
     const groupBansModerationTable = reactive({
         data: [],
         filters: [{ prop: ['$displayName'], value: '' }],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -966,7 +966,7 @@
     });
     const groupMemberModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,

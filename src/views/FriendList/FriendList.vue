@@ -92,7 +92,7 @@
             <DataTable
                 v-loading="friendsListLoading"
                 v-bind="friendsListTable"
-                :table-props="{ height: 'calc(100vh - 170px)', size: 'mini' }"
+                :table-props="{ height: 'calc(100vh - 170px)', size: 'small' }"
                 style="margin-top: 10px; cursor: pointer"
                 @row-click="selectFriendsListRow">
                 <el-table-column
@@ -304,7 +304,7 @@
     const friendsListSearchFilters = ref([]);
     const friendsListTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini', defaultSort: { prop: '$friendNumber', order: 'descending' } },
+        tableProps: { stripe: true, size: 'small', defaultSort: { prop: '$friendNumber', order: 'descending' } },
         pageSize: 100,
         paginationProps: { small: true, layout: 'sizes,prev,pager,next,total', pageSizes: [50, 100, 250, 500] }
     });
