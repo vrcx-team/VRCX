@@ -1,7 +1,7 @@
 import Noty from 'noty';
 import { storeToRefs } from 'pinia';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { miscRequest } from '../../api';
-import { $app } from '../../app';
 import {
     useAvatarStore,
     useInstanceStore,
@@ -156,14 +156,14 @@ function copyToClipboard(text, message = 'Copied successfully!') {
     navigator.clipboard
         .writeText(text)
         .then(() => {
-            $app.$message({
+            ElMessage({
                 message: message,
                 type: 'success'
             });
         })
         .catch((err) => {
             console.error('Copy failed:', err);
-            $app.$message.error('Copy failed!');
+            ElMessage.error('Copy failed!');
         });
 }
 
@@ -387,7 +387,7 @@ function openExternalLink(link) {
         return;
     }
 
-    $app.$confirm(`${link}`, 'Open External Link', {
+    ElMessageBox.confirm(`${link}`, 'Open External Link', {
         distinguishCancelAndClose: true,
         confirmButtonText: 'Open',
         cancelButtonText: 'Copy',
@@ -407,7 +407,7 @@ function openExternalLink(link) {
  * @param {string} text
  */
 function copyLink(text) {
-    $app.$message({
+    ElMessage({
         message: 'Link copied to clipboard',
         type: 'success'
     });

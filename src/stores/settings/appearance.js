@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import { $app } from '../../app';
+import { ElMessageBox } from 'element-plus';
+
 import { i18n, t } from '../../plugin';
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
@@ -673,7 +674,7 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         function promptMaxTableSizeDialog() {
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.change_table_size.description'),
                 t('prompt.change_table_size.header'),
                 {

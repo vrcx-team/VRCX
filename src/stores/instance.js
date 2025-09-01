@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { instanceRequest, userRequest, worldRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { watchState } from '../service/watchState';
@@ -893,7 +893,7 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     function removeAllQueuedInstances() {
         state.queuedInstances.forEach((ref) => {
-            $app.$message({
+            ElMessage({
                 message: `Removed instance ${ref.$worldName} from queue`,
                 type: 'info'
             });
@@ -921,7 +921,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     function applyQueuedInstance(instanceId) {
         state.queuedInstances.forEach((ref) => {
             if (ref.location !== instanceId) {
-                $app.$message({
+                ElMessage({
                     message: t('message.instance.removed_form_queue', {
                         worldName: ref.$worldName
                     }),
@@ -977,7 +977,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         const groupName = group?.name ?? '';
         const worldName = ref?.$worldName ?? '';
         const location = displayLocation(instanceId, worldName, groupName);
-        $app.$message({
+        ElMessage({
             message: `Instance ready to join ${location}`,
             type: 'success'
         });
@@ -1027,7 +1027,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         ref.queueSize = queueSize;
         ref.updatedAt = Date.now();
         if (!ref.$msgBox || ref.$msgBox.closed) {
-            ref.$msgBox = $app.$message({
+            ref.$msgBox = ElMessage({
                 message: '',
                 type: 'info',
                 duration: 0,

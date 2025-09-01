@@ -1,6 +1,7 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import {
     avatarRequest,
@@ -8,7 +9,6 @@ import {
     instanceRequest,
     userRequest
 } from '../api';
-import { $app } from '../app';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
 import { processBulk, request } from '../service/request';
@@ -820,7 +820,7 @@ export const useUserStore = defineStore('User', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                $app.$message({
+                ElMessage({
                     message: 'Failed to load user',
                     type: 'error'
                 });
@@ -1185,7 +1185,7 @@ export const useUserStore = defineStore('User', () => {
                             return;
                         }
                     }
-                    $app.$message({
+                    ElMessage({
                         message: 'Own avatar not found',
                         type: 'error'
                     });

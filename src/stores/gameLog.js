@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import { userRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
@@ -1399,7 +1399,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     async function disableGameLogDialog() {
         if (gameStore.isGameRunning) {
-            $app.$message({
+            ElMessage({
                 message:
                     'VRChat needs to be closed before this option can be changed',
                 type: 'error'
@@ -1407,7 +1407,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             return;
         }
         if (!advancedSettingsStore.gameLogDisabled) {
-            $app.$confirm('Continue? Disable GameLog', 'Confirm', {
+            ElMessageBox.confirm('Continue? Disable GameLog', 'Confirm', {
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
                 type: 'info',

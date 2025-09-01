@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
-import { $app } from '../../app';
+import { ElMessageBox } from 'element-plus';
+
 import { t } from '../../plugin';
 import configRepository from '../../service/config';
 import { sharedFeedFiltersDefaults } from '../../shared/constants';
@@ -441,7 +442,7 @@ export const useNotificationsSettingsStore = defineStore(
         }
 
         function promptNotificationTimeout() {
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.notification_timeout.description'),
                 t('prompt.notification_timeout.header'),
                 {

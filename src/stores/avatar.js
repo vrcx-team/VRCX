@@ -1,8 +1,8 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch, nextTick } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { avatarRequest, imageRequest } from '../api';
-import { $app } from '../app';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
 import webApiService from '../service/webapi';
@@ -277,12 +277,12 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 throw err;
             })
             .finally(() => {
-                $app.$nextTick(() => (D.loading = false));
+                nextTick(() => (D.loading = false));
             });
     }
 
     /**
-     * aka: `$app.methods.getAvatarGallery`
+     *
      * @param {string} avatarId
      * @returns {Promise<string[]>}
      */
@@ -370,7 +370,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     /**
-     * aka: `$app.methods.getAvatarHistory`
+     *
      * @returns {Promise<void>}
      */
     async function getAvatarHistory() {
@@ -428,16 +428,15 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function promptClearAvatarHistory() {
-        $app.$confirm('Continue? Clear Avatar History', 'Confirm', {
+        ElMessageBox.confirm('Continue? Clear Avatar History', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    clearAvatarHistory();
-                }
-            }
-        });
+            type: 'info'
+        })
+            .then(() => {
+                clearAvatarHistory();
+            })
+            .catch(() => {});
     }
 
     /**
@@ -511,7 +510,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             } catch (err) {
                 const msg = `Avatar search failed for ${search} with ${avatarProviderStore.avatarRemoteDatabaseProvider}\n${err}`;
                 console.error(msg);
-                $app.$message({
+                ElMessage({
                     message: msg,
                     type: 'error'
                 });
@@ -589,7 +588,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         } catch (err) {
             const msg = `Avatar lookup failed for ${authorId} with ${url}\n${err}`;
             console.error(msg);
-            $app.$message({
+            ElMessage({
                 message: msg,
                 type: 'error'
             });
@@ -598,22 +597,20 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     function selectAvatarWithConfirmation(id) {
-        $app.$confirm(`Continue? Select Avatar`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Select Avatar`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action !== 'confirm') {
-                    return;
-                }
+            type: 'info'
+        })
+            .then(() => {
                 selectAvatarWithoutConfirmation(id);
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function selectAvatarWithoutConfirmation(id) {
         if (userStore.currentUser.currentAvatar === id) {
-            $app.$message({
+            ElMessage({
                 message: 'Avatar already selected',
                 type: 'info'
             });
@@ -624,7 +621,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 avatarId: id
             })
             .then(() => {
-                $app.$message({
+                ElMessage({
                     message: 'Avatar changed',
                     type: 'success'
                 });
@@ -659,7 +656,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     ) {
         const fileId = extractFileId(currentAvatarImageUrl);
         if (!fileId) {
-            $app.$message({
+            ElMessage({
                 message: 'Sorry, the author is unknown',
                 type: 'error'
             });
@@ -682,13 +679,13 @@ export const useAvatarStore = defineStore('Avatar', () => {
             }
             if (!avatarId) {
                 if (avatarInfo.ownerId === refUserId) {
-                    $app.$message({
+                    ElMessage({
                         message:
                             "It's personal (own) avatar or not found in avatar database",
                         type: 'warning'
                     });
                 } else {
-                    $app.$message({
+                    ElMessage({
                         message: 'Avatar not found in avatar database',
                         type: 'warning'
                     });

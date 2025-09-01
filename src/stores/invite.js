@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { instanceRequest, inviteMessagesRequest } from '../api';
-import { $app } from '../app';
 import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
 import { useInstanceStore } from './instance';
@@ -163,7 +163,7 @@ export const useInviteStore = defineStore('Invite', () => {
         instanceStore.createNewInstance(worldId).then((args) => {
             const location = args?.json?.location;
             if (!location) {
-                $app.$message({
+                ElMessage({
                     message: 'Failed to create instance',
                     type: 'error'
                 });
@@ -186,7 +186,7 @@ export const useInviteStore = defineStore('Invite', () => {
                     worldId: L.worldId
                 })
                 .then((args) => {
-                    $app.$message({
+                    ElMessage({
                         message: 'Self invite sent',
                         type: 'success'
                     });

@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { instanceRequest, userRequest } from '../api';
 import { groupRequest } from '../api/';
-import { $app } from '../app';
 import removeConfusables, { removeWhitespace } from '../service/confusables';
 import { watchState } from '../service/watchState';
 import { compareByName, localeIncludes } from '../shared/utils';
@@ -347,7 +347,7 @@ export const useSearchStore = defineStore('Search', () => {
     }
 
     function promptOmniDirectDialog() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.direct_access_omni.description'),
             t('prompt.direct_access_omni.header'),
             {
@@ -360,7 +360,7 @@ export const useSearchStore = defineStore('Search', () => {
                     if (action === 'confirm' && instance.inputValue) {
                         const input = instance.inputValue.trim();
                         if (!directAccessParse(input)) {
-                            $app.$message({
+                            ElMessage({
                                 message: t(
                                     'prompt.direct_access_omni.message.error'
                                 ),

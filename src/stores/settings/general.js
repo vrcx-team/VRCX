@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
-import { $app } from '../../app';
+import { ElMessageBox } from 'element-plus';
+
 import { t } from '../../plugin';
 import configRepository from '../../service/config';
 import { useVrcxStore } from '../vrcx';
@@ -259,7 +260,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     }
 
     function promptProxySettings() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.proxy_settings.description'),
             t('prompt.proxy_settings.header'),
             {

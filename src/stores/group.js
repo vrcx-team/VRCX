@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch, nextTick } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import {
     groupRequest,
@@ -7,7 +8,6 @@ import {
     userRequest,
     worldRequest
 } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
 import { database } from '../service/database.js';
@@ -198,7 +198,7 @@ export const useGroupStore = defineStore('Group', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                $app.$message({
+                ElMessage({
                     message: 'Failed to load group',
                     type: 'error'
                 });
@@ -506,7 +506,7 @@ export const useGroupStore = defineStore('Group', () => {
                             });
                     }
                 }
-                $app.$nextTick(() => (D.isGetGroupDialogGroupLoading = false));
+                nextTick(() => (D.isGetGroupDialogGroupLoading = false));
                 return args;
             });
     }
@@ -566,16 +566,19 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function leaveGroupPrompt(groupId) {
-        $app.$confirm('Are you sure you want to leave this group?', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    leaveGroup(groupId);
-                }
+        ElMessageBox.confirm(
+            'Are you sure you want to leave this group?',
+            'Confirm',
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info'
             }
-        });
+        )
+            .then(() => {
+                leaveGroup(groupId);
+            })
+            .catch(() => {});
     }
 
     function updateGroupPostSearch() {
@@ -602,7 +605,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                $app.$message({
+                ElMessage({
                     message: 'Group visibility updated',
                     type: 'success'
                 });

@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import { friendRequest, userRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
@@ -736,7 +736,7 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     /**
-     * aka: `$app.refreshFriends`
+     *
      * @param ref
      */
     function refreshFriendsStatus(ref) {
@@ -1744,19 +1744,18 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     function confirmDeleteFriend(id) {
-        $app.$confirm('Continue? Unfriend', 'Confirm', {
+        ElMessageBox.confirm('Continue? Unfriend', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: async (action) => {
-                if (action === 'confirm') {
-                    const args = await friendRequest.deleteFriend({
-                        userId: id
-                    });
-                    handleFriendDelete(args);
-                }
-            }
-        });
+            type: 'info'
+        })
+            .then(async () => {
+                const args = await friendRequest.deleteFriend({
+                    userId: id
+                });
+                handleFriendDelete(args);
+            })
+            .catch(() => {});
     }
 
     async function saveSidebarSortOrder() {
@@ -1781,7 +1780,7 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         } catch (err) {
             if (!AppGlobal.dontLogMeOut) {
-                $app.$message({
+                ElMessage({
                     message: t('message.friend.load_failed'),
                     type: 'error'
                 });

@@ -1,5 +1,5 @@
 import Noty from 'noty';
-import { $app } from '../app.js';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { t } from '../plugin';
 import { statusCodes } from '../shared/constants/api.js';
 import { escapeTag } from '../shared/utils';
@@ -179,7 +179,7 @@ export function request(endpoint, options) {
                 }
             }
             if (status === 403 && endpoint === 'config') {
-                $app.$alert(
+                ElMessageBox.alert(
                     t('api.error.message.vpn_in_use'),
                     `403 ${t('api.error.message.login_error')}`
                 );
@@ -191,7 +191,7 @@ export function request(endpoint, options) {
                 status === 404 &&
                 endpoint.startsWith('avatars/')
             ) {
-                $app.$message({
+                ElMessage({
                     message: t('message.api_handler.avatar_private_or_deleted'),
                     type: 'error'
                 });

@@ -1,6 +1,7 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import {
     inventoryRequest,
@@ -8,7 +9,6 @@ import {
     vrcPlusIconRequest,
     vrcPlusImageRequest
 } from '../api';
-import { $app } from '../app';
 import { AppGlobal } from '../service/appConfig';
 import { watchState } from '../service/watchState';
 import {
@@ -290,7 +290,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            $app.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -298,7 +298,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            $app.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });

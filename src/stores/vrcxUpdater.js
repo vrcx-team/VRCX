@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
@@ -320,7 +320,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         const releases = [];
         if (typeof json !== 'object' || json.message) {
-            $app.$message({
+            ElMessage({
                 message: t('message.vrcx_updater.failed', {
                     message: json.message
                 }),
@@ -364,7 +364,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             state.pendingVRCXInstall = releaseName;
         } catch (err) {
             console.error(err);
-            $app.$message({
+            ElMessage({
                 message: `${t('message.vrcx_updater.failed_install')} ${err}`,
                 type: 'error'
             });

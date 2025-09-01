@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import { instanceRequest, userRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
@@ -548,7 +548,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                     userStore.lookupUser(ref);
                 }
             } else {
-                $app.$message({
+                ElMessage({
                     message: 'No user info available',
                     type: 'error'
                 });
@@ -557,7 +557,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     function promptPhotonOverlayMessageTimeout() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.overlay_message_timeout.description'),
             t('prompt.overlay_message_timeout.header'),
             {
@@ -586,7 +586,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     function promptPhotonLobbyTimeoutThreshold() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.photon_lobby_timeout.description'),
             t('prompt.photon_lobby_timeout.header'),
             {

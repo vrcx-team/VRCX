@@ -1,8 +1,8 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { authRequest } from '../api';
-import { $app } from '../app';
 import { useI18n } from 'vue-i18n';
 import configRepository from '../service/config';
 import { database } from '../service/database';
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('Auth', () => {
             password: '',
             rePassword: '',
             beforeClose(done) {
-                $app._data.enablePrimaryPassword = false;
+                // $app._data.enablePrimaryPassword = false;
                 done();
             }
         },
@@ -283,7 +283,7 @@ export const useAuthStore = defineStore('Auth', () => {
         if (advancedSettingsStore.enablePrimaryPassword) {
             state.enablePrimaryPasswordDialog.visible = true;
         } else {
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.primary_password.description'),
                 t('prompt.primary_password.header'),
                 {
@@ -415,7 +415,7 @@ export const useAuthStore = defineStore('Auth', () => {
             if (!advancedSettingsStore.enablePrimaryPassword) {
                 resolve(args.password);
             }
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.primary_password.description'),
                 t('prompt.primary_password.header'),
                 {
@@ -443,7 +443,7 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     function logout() {
-        $app.$confirm('Continue? Logout', 'Confirm', {
+        ElMessageBox.confirm('Continue? Logout', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -501,7 +501,7 @@ export const useAuthStore = defineStore('Auth', () => {
                             });
                     })
                     .catch((_) => {
-                        $app.$message({
+                        ElMessage({
                             message: 'Incorrect primary password',
                             type: 'error'
                         });
@@ -576,7 +576,7 @@ export const useAuthStore = defineStore('Auth', () => {
                         state.loginForm.saveCredentials &&
                         advancedSettingsStore.enablePrimaryPassword
                     ) {
-                        $app.$prompt(
+                        ElMessageBox.prompt(
                             t('prompt.primary_password.description'),
                             t('prompt.primary_password.header'),
                             {
@@ -649,36 +649,40 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         AppApi.FlashWindow();
         state.twoFactorAuthDialogVisible = true;
-        $app.$prompt(t('prompt.totp.description'), t('prompt.totp.header'), {
-            distinguishCancelAndClose: true,
-            cancelButtonText: t('prompt.totp.use_otp'),
-            confirmButtonText: t('prompt.totp.verify'),
-            inputPlaceholder: t('prompt.totp.input_placeholder'),
-            inputPattern: /^[0-9]{6}$/,
-            inputErrorMessage: t('prompt.totp.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm') {
-                    authRequest
-                        .verifyTOTP({
-                            code: instance.inputValue.trim()
-                        })
-                        .catch((err) => {
-                            clearCookiesTryLogin();
-                            throw err;
-                        })
-                        .then((args) => {
-                            userStore.getCurrentUser();
-                            return args;
-                        });
-                } else if (action === 'cancel') {
-                    promptOTP();
+        ElMessageBox.prompt(
+            t('prompt.totp.description'),
+            t('prompt.totp.header'),
+            {
+                distinguishCancelAndClose: true,
+                cancelButtonText: t('prompt.totp.use_otp'),
+                confirmButtonText: t('prompt.totp.verify'),
+                inputPlaceholder: t('prompt.totp.input_placeholder'),
+                inputPattern: /^[0-9]{6}$/,
+                inputErrorMessage: t('prompt.totp.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm') {
+                        authRequest
+                            .verifyTOTP({
+                                code: instance.inputValue.trim()
+                            })
+                            .catch((err) => {
+                                clearCookiesTryLogin();
+                                throw err;
+                            })
+                            .then((args) => {
+                                userStore.getCurrentUser();
+                                return args;
+                            });
+                    } else if (action === 'cancel') {
+                        promptOTP();
+                    }
+                },
+                beforeClose: (action, instance, done) => {
+                    state.twoFactorAuthDialogVisible = false;
+                    done();
                 }
-            },
-            beforeClose: (action, instance, done) => {
-                state.twoFactorAuthDialogVisible = false;
-                done();
             }
-        });
+        );
     }
 
     function promptOTP() {
@@ -686,36 +690,40 @@ export const useAuthStore = defineStore('Auth', () => {
             return;
         }
         state.twoFactorAuthDialogVisible = true;
-        $app.$prompt(t('prompt.otp.description'), t('prompt.otp.header'), {
-            distinguishCancelAndClose: true,
-            cancelButtonText: t('prompt.otp.use_totp'),
-            confirmButtonText: t('prompt.otp.verify'),
-            inputPlaceholder: t('prompt.otp.input_placeholder'),
-            inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
-            inputErrorMessage: t('prompt.otp.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm') {
-                    authRequest
-                        .verifyOTP({
-                            code: instance.inputValue.trim()
-                        })
-                        .catch((err) => {
-                            clearCookiesTryLogin();
-                            throw err;
-                        })
-                        .then((args) => {
-                            userStore.getCurrentUser();
-                            return args;
-                        });
-                } else if (action === 'cancel') {
-                    promptTOTP();
+        ElMessageBox.prompt(
+            t('prompt.otp.description'),
+            t('prompt.otp.header'),
+            {
+                distinguishCancelAndClose: true,
+                cancelButtonText: t('prompt.otp.use_totp'),
+                confirmButtonText: t('prompt.otp.verify'),
+                inputPlaceholder: t('prompt.otp.input_placeholder'),
+                inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
+                inputErrorMessage: t('prompt.otp.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm') {
+                        authRequest
+                            .verifyOTP({
+                                code: instance.inputValue.trim()
+                            })
+                            .catch((err) => {
+                                clearCookiesTryLogin();
+                                throw err;
+                            })
+                            .then((args) => {
+                                userStore.getCurrentUser();
+                                return args;
+                            });
+                    } else if (action === 'cancel') {
+                        promptTOTP();
+                    }
+                },
+                beforeClose: (action, instance, done) => {
+                    state.twoFactorAuthDialogVisible = false;
+                    done();
                 }
-            },
-            beforeClose: (action, instance, done) => {
-                state.twoFactorAuthDialogVisible = false;
-                done();
             }
-        });
+        );
     }
 
     function promptEmailOTP() {
@@ -724,7 +732,7 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         AppApi.FlashWindow();
         state.twoFactorAuthDialogVisible = true;
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.email_otp.description'),
             t('prompt.email_otp.header'),
             {

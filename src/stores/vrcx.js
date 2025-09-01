@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { worldRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
@@ -189,7 +189,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             }
         } else if (e.altKey && e.key === 'R') {
             refreshCustomCss();
-            $app.$message({
+            ElMessage({
                 message: 'Custom CSS refreshed',
                 type: 'success'
             });
@@ -229,7 +229,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         let msgBox;
         if (state.databaseVersion < databaseVersion) {
             if (state.databaseVersion) {
-                msgBox = $app.$message({
+                msgBox = ElMessage({
                     message:
                         'DO NOT CLOSE VRCX, database upgrade in progress...',
                     type: 'warning',
@@ -260,7 +260,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 msgBox?.close();
                 if (state.databaseVersion) {
                     // only display when database exists
-                    $app.$message({
+                    ElMessage({
                         message: 'Database upgrade complete',
                         type: 'success'
                     });
@@ -269,7 +269,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             } catch (err) {
                 console.error(err);
                 msgBox?.close();
-                $app.$message({
+                ElMessage({
                     message:
                         'Database upgrade failed, check console for details',
                     type: 'error',
@@ -601,7 +601,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 const regexAvatarId =
                     /avtr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
                 if (!avatarId.match(regexAvatarId) || avatarId.length !== 41) {
-                    $app.$message({
+                    ElMessage({
                         message: 'Invalid Avatar ID',
                         type: 'error'
                     });
@@ -699,7 +699,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 return;
             }
             // popup message about auto restore
-            $app.$alert(
+            ElMessageBox.alert(
                 t('dialog.registry_backup.restore_prompt'),
                 t('dialog.registry_backup.header')
             );

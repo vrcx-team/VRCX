@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { favoriteRequest } from '../api';
-import { $app } from '../app';
 import { database } from '../service/database';
 import { processBulk } from '../service/request';
 import { watchState } from '../service/watchState';
@@ -625,7 +625,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.applyFavorite`
+     *
      * @param {'friend' | 'world' | 'avatar'} type
      * @param {string} objectId
      * @param {boolean} sortTop
@@ -1187,9 +1187,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
     }
 
-    /**
-     * aka: `$app.methods.clearBulkFavoriteSelection`
-     */
     function clearBulkFavoriteSelection() {
         let ctx;
         for (ctx of state.favoriteFriends_) {
@@ -1216,7 +1213,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.getLocalWorldFavoriteGroupLength`
+     *
      * @param {string} group
      * @returns {*|number}
      */
@@ -1229,7 +1226,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.addLocalWorldFavorite`
+     *
      * @param {string} worldId
      * @param {string} group
      */
@@ -1271,7 +1268,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.hasLocalWorldFavorite`
+     *
      * @param {string} worldId
      * @param {string} group
      * @returns {boolean}
@@ -1290,7 +1287,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.addLocalAvatarFavorite`
+     *
      * @param {string} avatarId
      * @param {string} group
      */
@@ -1332,7 +1329,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.hasLocalAvatarFavorite`
+     *
      * @param {string} avatarId
      * @param {string} group
      * @returns {boolean}
@@ -1351,7 +1348,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.getLocalAvatarFavoriteGroupLength`
+     *
      * @param {string} group
      * @returns {*|number}
      */
@@ -1394,7 +1391,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.deleteLocalAvatarFavoriteGroup`
+     *
      * @param {string} group
      */
     function deleteLocalAvatarFavoriteGroup(group) {
@@ -1465,9 +1462,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         });
     }
 
-    /**
-     * aka: `$app.methods.sortLocalAvatarFavorites`
-     */
     function sortLocalAvatarFavorites() {
         state.localAvatarFavoriteGroups.sort();
         if (!appearanceSettingsStore.sortFavorites) {
@@ -1481,13 +1475,13 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.renameLocalAvatarFavoriteGroup`
+     *
      * @param {string} newName
      * @param {string} group
      */
     function renameLocalAvatarFavoriteGroup(newName, group) {
         if (state.localAvatarFavoriteGroups.includes(newName)) {
-            $app.$message({
+            ElMessage({
                 message: t('prompt.local_favorite_group_rename.message.error', {
                     name: newName
                 }),
@@ -1505,12 +1499,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.newLocalAvatarFavoriteGroup`
+     *
      * @param {string} group
      */
     function newLocalAvatarFavoriteGroup(group) {
         if (state.localAvatarFavoriteGroups.includes(group)) {
-            $app.$message({
+            ElMessage({
                 message: t('prompt.new_local_favorite_group.message.error', {
                     name: group
                 }),
@@ -1528,7 +1522,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.getLocalAvatarFavorites`
+     *
      * @returns {Promise<void>}
      */
     async function getLocalAvatarFavorites() {
@@ -1573,7 +1567,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.removeLocalAvatarFavorite`
+     *
      * @param {string} avatarId
      * @param {string} group
      */
@@ -1631,7 +1625,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.deleteLocalWorldFavoriteGroup`
+     *
      * @param {string} group
      */
     function deleteLocalWorldFavoriteGroup(group) {
@@ -1671,9 +1665,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         });
     }
 
-    /**
-     * aka: `$app.methods.sortLocalWorldFavorites`
-     */
     function sortLocalWorldFavorites() {
         state.localWorldFavoriteGroups.sort();
         if (!appearanceSettingsStore.sortFavorites) {
@@ -1687,13 +1678,13 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.renameLocalWorldFavoriteGroup`
+     *
      * @param {string} newName
      * @param {string} group
      */
     function renameLocalWorldFavoriteGroup(newName, group) {
         if (state.localWorldFavoriteGroups.includes(newName)) {
-            $app.$message({
+            ElMessage({
                 message: t('prompt.local_favorite_group_rename.message.error', {
                     name: newName
                 }),
@@ -1711,7 +1702,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.removeLocalWorldFavorite`
+     *
      * @param {string} worldId
      * @param {string} group
      */
@@ -1767,7 +1758,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.getLocalWorldFavorites`
+     *
      * @returns {Promise<void>}
      */
     async function getLocalWorldFavorites() {
@@ -1810,12 +1801,12 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.newLocalWorldFavoriteGroup`
+     *
      * @param {string} group
      */
     function newLocalWorldFavoriteGroup(group) {
         if (state.localWorldFavoriteGroups.includes(group)) {
-            $app.$message({
+            ElMessage({
                 message: t('prompt.new_local_favorite_group.message.error', {
                     name: group
                 }),
@@ -1833,7 +1824,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.deleteFavoriteNoConfirm`
+     *
      * @param {string} objectId
      */
     function deleteFavoriteNoConfirm(objectId) {

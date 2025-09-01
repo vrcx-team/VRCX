@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import { $app } from '../../app';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { t } from '../../plugin';
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
@@ -516,7 +516,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
     function cropPrintsChanged() {
         if (!state.cropInstancePrints) return;
-        $app.$confirm(
+        ElMessageBox.confirm(
             t(
                 'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'
             ),
@@ -531,20 +531,20 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 showInput: false,
                 callback: async (action) => {
                     if (action === 'confirm') {
-                        const msgBox = $app.$message({
+                        const msgBox = ElMessage({
                             message: 'Batch print cropping in progress...',
                             type: 'warning',
                             duration: 0
                         });
                         try {
                             await AppApi.CropAllPrints(state.ugcFolderPath);
-                            $app.$message({
+                            ElMessage({
                                 message: 'Batch print cropping complete',
                                 type: 'success'
                             });
                         } catch (err) {
                             console.error(err);
-                            $app.$message({
+                            ElMessage({
                                 message: `Batch print cropping failed: ${err}`,
                                 type: 'error'
                             });
@@ -558,7 +558,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function askDeleteAllScreenshotMetadata() {
-        $app.$confirm(
+        ElMessageBox.confirm(
             t(
                 'view.settings.advanced.advanced.delete_all_screenshot_metadata.ask'
             ),
@@ -581,7 +581,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function deleteAllScreenshotMetadata() {
-        $app.$confirm(
+        ElMessageBox.confirm(
             t(
                 'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm'
             ),
@@ -596,20 +596,20 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 showInput: false,
                 callback: async (action) => {
                     if (action === 'confirm') {
-                        const msgBox = $app.$message({
+                        const msgBox = ElMessage({
                             message: 'Batch metadata removal in progress...',
                             type: 'warning',
                             duration: 0
                         });
                         try {
                             await AppApi.DeleteAllScreenshotMetadata();
-                            $app.$message({
+                            ElMessage({
                                 message: 'Batch metadata removal complete',
                                 type: 'success'
                             });
                         } catch (err) {
                             console.error(err);
-                            $app.$message({
+                            ElMessage({
                                 message: `Batch metadata removal failed: ${err}`,
                                 type: 'error'
                             });
@@ -664,7 +664,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function promptAutoClearVRCXCacheFrequency() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.auto_clear_cache.description'),
             t('prompt.auto_clear_cache.header'),
             {

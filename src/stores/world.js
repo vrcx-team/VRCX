@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
-import { $app } from '../app';
 import { database } from '../service/database';
 import { watchState } from '../service/watchState';
 import {
@@ -78,7 +78,7 @@ export const useWorldStore = defineStore('World', () => {
     );
 
     /**
-     * aka: `$app.methods.showWorldDialog`
+     *
      * @param {string} tag
      * @param {string} shortName
      */
@@ -145,7 +145,7 @@ export const useWorldStore = defineStore('World', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                $app.$message({
+                ElMessage({
                     message: 'Failed to load world',
                     type: 'error'
                 });

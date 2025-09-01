@@ -148,7 +148,6 @@
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
-    import { $app } from '../../../app';
     import {
         useAppearanceSettingsStore,
         useAvatarStore,
