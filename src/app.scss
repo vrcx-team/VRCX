@@ -114,15 +114,15 @@
 //     -webkit-line-clamp: 2;
 // }
 
-// .el-dialog__body {
-//     padding: 20px;
-//     word-break: break-word;
-//     overflow-wrap: break-word;
-// }
+.el-dialog__body {
+    padding: 20px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
 
-// .el-dialog__footer > .el-button + .el-button {
-//     margin-left: 5px;
-// }
+.el-dialog__footer > .el-button + .el-button {
+    margin-left: 5px;
+}
 
 ::-webkit-scrollbar {
     width: 8px;
@@ -260,45 +260,45 @@ hr.x-vertical-divider {
     background: #f8f8f8;
 }
 
-// .x-menu-container > .el-menu {
-//     background: 0;
-//     border: 0;
-// }
+.x-menu-container > .el-menu {
+    background: 0;
+    border: 0;
+}
 
-// .el-menu-item i {
-//     color: #000;
-// }
+.el-menu-item i {
+    color: #000;
+}
 
-// .el-menu-item::before {
-//     content: '';
-//     position: absolute;
-//     left: -4px;
-//     top: 50%;
-//     height: 36px;
-//     width: 3px;
-//     translate: 0 -50%;
-//     border-radius: 4px;
-//     background: #303133;
-//     transition:
-//         background-color 0.4s,
-//         left 0.2s;
-// }
+.el-menu-item::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    height: 36px;
+    width: 3px;
+    translate: 0 -50%;
+    border-radius: 4px;
+    background: #303133;
+    transition:
+        background-color 0.4s,
+        left 0.2s;
+}
 
-// .el-menu-item.is-active::before {
-//     left: 2px;
-//     transition: left 0.2s cubic-bezier(0.175, 0.885, 0.32, 2.552);
-// }
+.el-menu-item.is-active::before {
+    left: 2px;
+    transition: left 0.2s cubic-bezier(0.175, 0.885, 0.32, 2.552);
+}
 
-// .el-menu-item.notify::after {
-//     position: absolute;
-//     top: 4px;
-//     right: 4px;
-//     width: 4px;
-//     height: 4px;
-//     content: '';
-//     background: #303133;
-//     border-radius: 50%;
-// }
+.el-menu-item.notify::after {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 4px;
+    height: 4px;
+    content: '';
+    background: #303133;
+    border-radius: 50%;
+}
 
 .pending-update {
     margin: 7px;
@@ -579,24 +579,24 @@ img.friends-list-avatar {
     padding: 2px 2px 0 2px;
 }
 
-// .x-dialog > .el-dialog {
-//     max-width: 100%;
-// }
+.x-dialog > .el-dialog {
+    max-width: 100%;
+}
 
-// .x-user-dialog > .el-dialog > .el-dialog__header,
-// .x-world-dialog > .el-dialog > .el-dialog__header,
-// .x-avatar-dialog > .el-dialog > .el-dialog__header,
-// .x-group-dialog > .el-dialog > .el-dialog__header {
-//     display: none;
-//     padding: 0;
-// }
+.x-user-dialog > .el-dialog > .el-dialog__header,
+.x-world-dialog > .el-dialog > .el-dialog__header,
+.x-avatar-dialog > .el-dialog > .el-dialog__header,
+.x-group-dialog > .el-dialog > .el-dialog__header {
+    display: none;
+    padding: 0;
+}
 
-// .x-user-dialog > .el-dialog > .el-dialog__body,
-// .x-world-dialog > .el-dialog > .el-dialog__body,
-// .x-avatar-dialog > .el-dialog > .el-dialog__body,
-// .x-group-dialog > .el-dialog > .el-dialog__body {
-//     padding: 20px;
-// }
+.x-user-dialog > .el-dialog > .el-dialog__body,
+.x-world-dialog > .el-dialog > .el-dialog__body,
+.x-avatar-dialog > .el-dialog > .el-dialog__body,
+.x-group-dialog > .el-dialog > .el-dialog__body {
+    padding: 20px;
+}
 
 // .el-popper.hex {
 //     min-width: auto;
@@ -709,12 +709,12 @@ i.x-status-icon.red {
 //     color: #c8c8c8;
 // }
 
-// .x-user-dialog .el-textarea__inner {
-//     padding: 0;
-//     background: none;
-//     border: 0;
-//     border-radius: 2px;
-// }
+.x-user-dialog .el-textarea__inner {
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 2px;
+}
 
 .options-container {
     margin-top: 30px;
@@ -847,11 +847,11 @@ i.x-status-icon.red {
 //     margin-right: 10px;
 // }
 
-// .el-dialog,
-// .el-message-box {
-//     border-radius: 28px;
-//     word-break: break-word;
-// }
+.el-dialog,
+.el-message-box {
+    border-radius: 28px;
+    word-break: break-word;
+}
 
 // .el-tabs__nav-wrap::after {
 //     background-color: #e4e7ed14;
@@ -935,9 +935,9 @@ i.x-status-icon.red {
 //     background: #f0f0f0;
 // }
 
-// .x-app > .x-container {
-//     padding-top: 15px;
-// }
+.x-app > .x-container {
+    padding-top: 15px;
+}
 
 // .el-collapse-item .el-tag--mini {
 //     line-height: 17px;
