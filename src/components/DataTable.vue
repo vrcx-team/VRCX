@@ -5,6 +5,8 @@
             v-loading="loading"
             :data="paginatedData"
             v-bind="mergedTableProps"
+            default-sort-prop="created_at"
+            default-sort-order="descending"
             @sort-change="handleSortChange"
             @selection-change="handleSelectionChange"
             @row-click="handleRowClick">
@@ -60,6 +62,10 @@
             layout: {
                 type: String,
                 default: 'table, pagination'
+            },
+            defaultSort: {
+                type: Object,
+                default: () => ({ prop: 'created_at', order: 'descending' })
             }
         },
         emits: [
@@ -67,7 +73,6 @@
             'update:pageSize',
             'size-change',
             'current-change',
-            'sort-change',
             'selection-change',
             'row-click',
             'filtered-data'
@@ -77,7 +82,10 @@
 
             const internalCurrentPage = ref(currentPage.value);
             const internalPageSize = ref(pageSize.value);
-            const sortData = ref({});
+            const sortData = ref({
+                prop: props.defaultSort?.prop || null,
+                order: props.defaultSort?.order || null
+            });
 
             const showPagination = computed(() => {
                 return props.layout.includes('pagination');
@@ -128,8 +136,20 @@
                         const bVal = b[prop];
                         let comparison = 0;
 
-                        if (aVal > bVal) comparison = 1;
-                        else if (aVal < bVal) comparison = -1;
+                        if (aVal == null && bVal == null) return 0;
+                        if (aVal == null) return 1;
+                        if (bVal == null) return -1;
+
+                        if (typeof aVal === 'number' && typeof bVal === 'number') {
+                            comparison = aVal - bVal;
+                        } else if (aVal instanceof Date && bVal instanceof Date) {
+                            comparison = aVal.getTime() - bVal.getTime();
+                        } else {
+                            const aStr = String(aVal).toLowerCase();
+                            const bStr = String(bVal).toLowerCase();
+                            if (aStr > bStr) comparison = 1;
+                            else if (aStr < bStr) comparison = -1;
+                        }
 
                         return order === 'descending' ? -comparison : comparison;
                     });
@@ -151,7 +171,6 @@
 
             const handleSortChange = ({ prop, order }) => {
                 sortData.value = { prop, order };
-                emit('sort-change', { prop, order });
             };
 
             const handleSelectionChange = (selection) => {
@@ -164,14 +183,10 @@
 
             const handleSizeChange = (size) => {
                 internalPageSize.value = size;
-                emit('update:pageSize', size);
-                emit('size-change', size);
             };
 
             const handleCurrentChange = (page) => {
                 internalCurrentPage.value = page;
-                emit('update:currentPage', page);
-                emit('current-change', page);
             };
 
             watch(currentPage, (newVal) => {
@@ -181,6 +196,19 @@
             watch(pageSize, (newVal) => {
                 internalPageSize.value = newVal;
             });
+
+            watch(
+                () => props.defaultSort,
+                (newSort) => {
+                    if (newSort) {
+                        sortData.value = {
+                            prop: newSort.prop,
+                            order: newSort.order
+                        };
+                    }
+                },
+                { immediate: true }
+            );
 
             return {
                 internalCurrentPage,

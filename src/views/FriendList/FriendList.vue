@@ -108,7 +108,7 @@
                         </el-button>
                     </template>
                 </el-table-column>
-                <el-table-column :label="t('table.friendList.no')" width="70" prop="$friendNumber" sortable="custom">
+                <el-table-column :label="t('table.friendList.no')" width="70" prop="$friendNumber" :sortable="true">
                     <template #default="{ row }">
                         <span>{{ row.$friendNumber ? row.$friendNumber : '' }}</span>
                     </template>
@@ -139,7 +139,7 @@
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="t('table.friendList.rank')" width="110" prop="$trustSortNum" sortable="custom">
+                <el-table-column :label="t('table.friendList.rank')" width="110" prop="$trustSortNum" :sortable="true">
                     <template #default="{ row }">
                         <span
                             v-if="randomUserColours"

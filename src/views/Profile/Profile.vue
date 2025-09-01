@@ -167,13 +167,13 @@
                 <el-table-column
                     :label="t('table.profile.invite_messages.slot')"
                     prop="slot"
-                    sortable="custom"
+                    :sortable="true"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
                 <el-table-column
                     :label="t('table.profile.invite_messages.cool_down')"
                     prop="updatedAt"
-                    sortable="custom"
+                    :sortable="true"
                     width="110"
                     align="right">
                     <template #default="scope">
@@ -224,13 +224,13 @@
                 <el-table-column
                     :label="t('table.profile.invite_messages.slot')"
                     prop="slot"
-                    sortable="custom"
+                    :sortable="true"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
                 <el-table-column
                     :label="t('table.profile.invite_messages.cool_down')"
                     prop="updatedAt"
-                    sortable="custom"
+                    :sortable="true"
                     width="110"
                     align="right">
                     <template #default="scope">
@@ -281,13 +281,13 @@
                 <el-table-column
                     :label="t('table.profile.invite_messages.slot')"
                     prop="slot"
-                    sortable="custom"
+                    :sortable="true"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
                 <el-table-column
                     :label="t('table.profile.invite_messages.cool_down')"
                     prop="updatedAt"
-                    sortable="custom"
+                    :sortable="true"
                     width="110"
                     align="right">
                     <template #default="scope">
@@ -338,13 +338,13 @@
                 <el-table-column
                     :label="t('table.profile.invite_messages.slot')"
                     prop="slot"
-                    sortable="custom"
+                    :sortable="true"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
                 <el-table-column
                     :label="t('table.profile.invite_messages.cool_down')"
                     prop="updatedAt"
-                    sortable="custom"
+                    :sortable="true"
                     width="110"
                     align="right">
                     <template #default="scope">
@@ -369,7 +369,7 @@
                 <el-table-column
                     :label="t('table.profile.previous_display_name.date')"
                     prop="updated_at"
-                    sortable="custom">
+                    :sortable="true">
                     <template #default="scope">
                         <span>{{ formatDateFilter(scope.row.updated_at, 'long') }}</span>
                     </template>

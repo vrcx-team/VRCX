@@ -762,7 +762,7 @@
                         :label="t('table.playerList.displayName')"
                         min-width="140"
                         prop="displayName"
-                        sortable="custom">
+                        :sortable="true">
                         <template #default="scope">
                             <span
                                 v-if="randomUserColours"
@@ -789,7 +789,7 @@
                         :label="t('table.playerList.rank')"
                         width="110"
                         prop="$trustSortNum"
-                        sortable="custom">
+                        :sortable="true">
                         <template #default="scope">
                             <span
                                 class="name"

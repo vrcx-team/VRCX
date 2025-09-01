@@ -29,7 +29,7 @@
         </div>
 
         <DataTable v-bind="friendLogTable">
-            <el-table-column :label="t('table.friendLog.date')" prop="created_at" sortable="custom" width="200">
+            <el-table-column :label="t('table.friendLog.date')" prop="created_at" :sortable="true" width="200">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>

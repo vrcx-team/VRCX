@@ -14,16 +14,12 @@
             v-bind="inviteResponseMessageTable"
             style="margin-top: 10px; cursor: pointer"
             @row-click="showSendInviteResponseConfirmDialog">
-            <el-table-column
-                :label="t('table.profile.invite_messages.slot')"
-                prop="slot"
-                sortable="custom"
-                width="70" />
+            <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" :sortable="true" width="70" />
             <el-table-column :label="t('table.profile.invite_messages.message')" prop="message" />
             <el-table-column
                 :label="t('table.profile.invite_messages.cool_down')"
                 prop="updatedAt"
-                sortable="custom"
+                :sortable="true"
                 width="110"
                 align="right">
                 <template #default="scope">
