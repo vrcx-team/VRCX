@@ -77,15 +77,14 @@
                                     <template #reference>
                                         <div style="display: inline-block; vertical-align: top; width: 160px">
                                             <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
-                                                <img
-                                                    v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl"
+                                                <img :src="scope.row.previousCurrentAvatarThumbnailImageUrl"
                                                     class="x-link"
                                                     style="
                                                         flex: none;
                                                         width: 160px;
                                                         height: 120px;
                                                         border-radius: 4px;
-                                                    " />
+                                                    " loading="lazy">
                                                 <br />
                                                 <AvatarInfo
                                                     :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
@@ -96,11 +95,10 @@
                                             </template>
                                         </div>
                                     </template>
-                                    <img
-                                        v-lazy="scope.row.previousCurrentAvatarImageUrl"
+                                    <img :src="scope.row.previousCurrentAvatarImageUrl"
                                         class="x-link"
                                         style="width: 500px; height: 375px"
-                                        @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)" />
+                                        @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)" loading="lazy">
                                 </el-popover>
                                 <span style="position: relative; margin: 0 10px">
                                     <el-icon><Right /></el-icon>
@@ -109,15 +107,14 @@
                                     <template #reference>
                                         <div style="display: inline-block; vertical-align: top; width: 160px">
                                             <template v-if="scope.row.currentAvatarThumbnailImageUrl">
-                                                <img
-                                                    v-lazy="scope.row.currentAvatarThumbnailImageUrl"
+                                                <img :src="scope.row.currentAvatarThumbnailImageUrl"
                                                     class="x-link"
                                                     style="
                                                         flex: none;
                                                         width: 160px;
                                                         height: 120px;
                                                         border-radius: 4px;
-                                                    " />
+                                                    " loading="lazy">
                                                 <br />
                                                 <AvatarInfo
                                                     :imageurl="scope.row.currentAvatarThumbnailImageUrl"
@@ -128,11 +125,10 @@
                                             </template>
                                         </div>
                                     </template>
-                                    <img
-                                        v-lazy="scope.row.currentAvatarImageUrl"
+                                    <img :src="scope.row.currentAvatarImageUrl"
                                         class="x-link"
                                         style="width: 500px; height: 375px"
-                                        @click="showFullscreenImageDialog(scope.row.currentAvatarImageUrl)" />
+                                        @click="showFullscreenImageDialog(scope.row.currentAvatarImageUrl)" loading="lazy">
                                 </el-popover>
                             </div>
                         </template>
@@ -450,3 +446,4 @@
             .replace(/<br> /g, '<br>');
     }
 </script>
+

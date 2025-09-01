@@ -10,7 +10,6 @@ import { i18n } from './plugin/i18n';
 import App from './App.vue';
 import { pinia } from './stores';
 import ElementPlus from 'element-plus';
-import VueLazyload from 'vue-lazyload';
 
 import './app.scss';
 import registerComponents from './plugin/components';
@@ -24,15 +23,6 @@ const $app = createApp(App);
 $app.use(pinia);
 $app.use(i18n);
 $app.use(ElementPlus);
-$app.use(VueLazyload, {
-    preLoad: 1,
-    observer: true,
-    observerOptions: {
-        rootMargin: '0px',
-        threshold: 0
-    },
-    attempt: 3
-});
 
 registerComponents($app);
 

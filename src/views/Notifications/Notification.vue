@@ -137,31 +137,27 @@
                     <template v-if="scope.row.details && scope.row.details.imageUrl">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
-                                <img
-                                    class="x-link"
+                                <img class="x-link"
                                     :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px" />
+                                    style="flex: none; height: 50px; border-radius: 4px" loading="lazy">
                             </template>
-                            <img
-                                v-lazy="scope.row.details.imageUrl"
+                            <img :src="scope.row.details.imageUrl"
                                 class="x-link"
                                 style="width: 500px"
-                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)" />
+                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)" loading="lazy">
                         </el-popover>
                     </template>
                     <template v-else-if="scope.row.imageUrl">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
-                                <img
-                                    class="x-link"
+                                <img class="x-link"
                                     :src="getSmallThumbnailUrl(scope.row.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px" />
+                                    style="flex: none; height: 50px; border-radius: 4px" loading="lazy">
                             </template>
-                            <img
-                                v-lazy="scope.row.imageUrl"
+                            <img :src="scope.row.imageUrl"
                                 class="x-link"
                                 style="width: 500px"
-                                @click="showFullscreenImageDialog(scope.row.imageUrl)" />
+                                @click="showFullscreenImageDialog(scope.row.imageUrl)" loading="lazy">
                         </el-popover>
                     </template>
                 </template>
@@ -674,3 +670,4 @@
         });
     }
 </script>
+

@@ -8,7 +8,7 @@
         <div v-if="moderateGroupDialog.visible">
             <div class="x-friend-item" style="cursor: default">
                 <div class="avatar">
-                    <img v-lazy="userImage(moderateGroupDialog.userObject)" />
+                    <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy">
                 </div>
                 <div class="detail">
                     <span
@@ -36,7 +36,7 @@
                         style="height: auto"
                         class="x-friend-item">
                         <div class="avatar">
-                            <img v-lazy="group.iconUrl" />
+                            <img :src="group.iconUrl" loading="lazy">
                         </div>
                         <div class="detail">
                             <span class="name" v-text="group.name"></span>
@@ -120,3 +120,4 @@
         }
     }
 </script>
+

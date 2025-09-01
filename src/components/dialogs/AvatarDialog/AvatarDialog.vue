@@ -9,16 +9,14 @@
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
                     <template #reference>
-                        <img
-                            v-lazy="avatarDialog.ref.thumbnailImageUrl"
+                        <img :src="avatarDialog.ref.thumbnailImageUrl"
                             class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
+                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" loading="lazy">
                     </template>
-                    <img
-                        v-lazy="avatarDialog.ref.imageUrl"
+                    <img :src="avatarDialog.ref.imageUrl"
                         class="x-link"
                         style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)" />
+                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)" loading="lazy">
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
@@ -403,10 +401,9 @@
                                 :autoplay="false"
                                 height="200px">
                                 <el-carousel-item v-for="imageUrl in avatarDialog.galleryImages" :key="imageUrl">
-                                    <img
-                                        :src="imageUrl"
+                                    <img :src="imageUrl"
                                         style="width: 100%; height: 100%; object-fit: contain"
-                                        @click="showFullscreenImageDialog(imageUrl)" />
+                                        @click="showFullscreenImageDialog(imageUrl)" loading="lazy">
                                     <div
                                         v-if="avatarDialog.ref.authorId === currentUser.id"
                                         style="position: absolute; bottom: 5px; left: 33.3%">
@@ -443,9 +440,8 @@
                                 class="x-friend-item"
                                 style="width: 100%; cursor: default">
                                 <div class="avatar">
-                                    <img
-                                        :src="getImageUrlFromImageId(listing.imageId)"
-                                        @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))" />
+                                    <img :src="getImageUrlFromImageId(listing.imageId)"
+                                        @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))" loading="lazy">
                                 </div>
                                 <div class="detail">
                                     <span class="name">{{ listing.displayName }}</span>
@@ -1333,3 +1329,4 @@
         });
     }
 </script>
+

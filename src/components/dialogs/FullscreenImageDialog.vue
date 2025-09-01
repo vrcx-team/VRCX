@@ -18,7 +18,7 @@
                         downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)
                     "></el-button>
             </div>
-            <img v-lazy="fullscreenImageDialog.imageUrl" style="width: 100%; height: 85vh; object-fit: contain" />
+            <img :src="fullscreenImageDialog.imageUrl" style="width: 100%; height: 85vh; object-fit: contain" loading="lazy">
         </div>
     </safe-dialog>
 </template>
@@ -79,3 +79,4 @@
         }
     }
 </script>
+

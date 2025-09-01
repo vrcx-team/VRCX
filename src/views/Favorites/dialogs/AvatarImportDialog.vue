@@ -126,13 +126,12 @@
                 <template #default="{ row }">
                     <el-popover placement="right" height="500px" trigger="hover">
                         <template #reference>
-                            <img v-lazy="row.thumbnailImageUrl" class="friends-list-avatar" />
+                            <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy">
                         </template>
-                        <img
-                            v-lazy="row.imageUrl"
+                        <img :src="row.imageUrl"
                             class="friends-list-avatar"
                             style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(row.imageUrl)" />
+                            @click="showFullscreenImageDialog(row.imageUrl)" loading="lazy">
                     </el-popover>
                 </template>
             </el-table-column>
@@ -363,3 +362,4 @@
         }
     }
 </script>
+

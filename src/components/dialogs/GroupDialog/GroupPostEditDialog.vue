@@ -63,20 +63,18 @@
                         <div style="display: inline-block; flex: none; margin-right: 5px">
                             <el-popover placement="right" width="500px" trigger="click">
                                 <template #reference>
-                                    <img
-                                        v-lazy="gallerySelectDialog.selectedImageUrl"
+                                    <img :src="gallerySelectDialog.selectedImageUrl"
                                         style="
                                             flex: none;
                                             width: 60px;
                                             height: 60px;
                                             border-radius: 4px;
                                             object-fit: cover;
-                                        " />
+                                        " loading="lazy">
                                 </template>
-                                <img
-                                    v-lazy="gallerySelectDialog.selectedImageUrl"
+                                <img :src="gallerySelectDialog.selectedImageUrl"
                                     style="height: 500px"
-                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" />
+                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" loading="lazy">
                             </el-popover>
                             <el-button size="small" style="vertical-align: top" @click="clearImageGallerySelect">
                                 {{ t('dialog.invite_message.clear_selected_image') }}
@@ -235,3 +233,4 @@
         D.selectedImageUrl = '';
     }
 </script>
+

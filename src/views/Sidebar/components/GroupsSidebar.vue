@@ -16,7 +16,7 @@
                     @click="showGroupDialog(ref.instance.ownerId)">
                     <template v-if="isAgeGatedInstancesVisible || !(ref.ageGate || ref.location?.includes('~ageGate'))">
                         <div class="avatar">
-                            <img v-lazy="getSmallGroupIconUrl(ref.group.iconUrl)" />
+                            <img :src="getSmallGroupIconUrl(ref.group.iconUrl)" loading="lazy" />
                         </div>
                         <div class="detail">
                             <span class="name">

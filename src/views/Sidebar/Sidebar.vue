@@ -31,7 +31,7 @@
                                     :traveling="item.ref.travelingToLocation"
                                     :link="false" />
                             </div>
-                            <img v-lazy="userImage(item.ref)" class="avatar" />
+                            <img :src="userImage(item.ref)" class="avatar" loading="lazy" />
                         </template>
                         <span v-else>
                             {{ t('side_panel.search_result_more') }}

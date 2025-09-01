@@ -5,7 +5,7 @@
             <div class="x-friend-list" style="margin-top: 10px">
                 <div class="x-friend-item" @click="showUserDialog(currentUser.id)">
                     <div class="avatar">
-                        <img v-lazy="userImage(currentUser, true)" />
+                        <img :src="userImage(currentUser, true)" loading="lazy" />
                     </div>
                     <div class="detail">
                         <span class="name" v-text="currentUser.displayName"></span>

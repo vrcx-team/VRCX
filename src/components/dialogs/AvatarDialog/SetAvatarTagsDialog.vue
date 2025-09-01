@@ -59,7 +59,7 @@
                     style="width: 350px"
                     @click="showAvatarDialog(avatar.id)">
                     <div class="avatar">
-                        <img v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl" />
+                        <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy">
                     </div>
                     <div class="detail">
                         <span class="name" v-text="avatar.name"></span>
@@ -273,3 +273,4 @@
 </script>
 
 <style scoped></style>
+

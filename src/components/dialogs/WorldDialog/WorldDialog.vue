@@ -9,16 +9,14 @@
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
                     <template #reference>
-                        <img
-                            :src="worldDialog.ref.thumbnailImageUrl"
+                        <img :src="worldDialog.ref.thumbnailImageUrl"
                             class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
+                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" loading="lazy">
                     </template>
-                    <img
-                        v-lazy="worldDialog.ref.imageUrl"
+                    <img :src="worldDialog.ref.imageUrl"
                         class="x-link"
                         style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)" />
+                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)" loading="lazy">
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
@@ -398,7 +396,7 @@
                                         @click="showUserDialog(room.$location.userId)">
                                         <template v-if="room.$location.user">
                                             <div class="avatar" :class="userStatusClass(room.$location.user)">
-                                                <img v-lazy="userImage(room.$location.user, true)" />
+                                                <img :src="userImage(room.$location.user, true)" loading="lazy">
                                             </div>
                                             <div class="detail">
                                                 <span
@@ -418,7 +416,7 @@
                                         class="x-friend-item x-friend-item-border"
                                         @click="showUserDialog(user.id)">
                                         <div class="avatar" :class="userStatusClass(user)">
-                                            <img v-lazy="userImage(user, true)" />
+                                            <img :src="userImage(user, true)" loading="lazy">
                                         </div>
                                         <div class="detail">
                                             <span
@@ -1442,3 +1440,4 @@
         D.visible = true;
     }
 </script>
+

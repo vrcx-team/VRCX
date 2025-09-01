@@ -13,12 +13,12 @@
             <!--                        <template #reference>-->
             <!--                            <img-->
             <!--                                class="x-link"-->
-            <!--                                v-lazy="gallerySelectDialog.selectedImageUrl"-->
+            <!--                                :src="gallerySelectDialog.selectedImageUrl"-->
             <!--                                style="flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover" />-->
             <!--                        </template>-->
             <!--                        <img-->
             <!--                            class="x-link"-->
-            <!--                            v-lazy="gallerySelectDialog.selectedImageUrl"-->
+            <!--                            :src="gallerySelectDialog.selectedImageUrl"-->
             <!--                            style="height: 500px"-->
             <!--                            @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" />-->
             <!--                    </el-popover>-->
@@ -151,3 +151,4 @@
         emit('closeInviteDialog');
     }
 </script>
+

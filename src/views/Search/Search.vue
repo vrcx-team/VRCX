@@ -32,7 +32,7 @@
                         @click="showUserDialog(user.id)">
                         <template>
                             <div class="avatar">
-                                <img v-lazy="userImage(user, true)" />
+                                <img :src="userImage(user, true)" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span class="name" v-text="user.displayName"></span>
@@ -100,7 +100,7 @@
                         @click="showWorldDialog(world.id)">
                         <template>
                             <div class="avatar">
-                                <img v-lazy="world.thumbnailImageUrl" />
+                                <img :src="world.thumbnailImageUrl" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span class="name" v-text="world.name"></span>
@@ -221,8 +221,8 @@
                         @click="showAvatarDialog(avatar.id)">
                         <template>
                             <div class="avatar">
-                                <img v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl" />
-                                <img v-else-if="avatar.imageUrl" v-lazy="avatar.imageUrl" />
+                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                                <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span class="name" v-text="avatar.name"></span>
@@ -274,7 +274,7 @@
                         @click="showGroupDialog(group.id)">
                         <template>
                             <div class="avatar">
-                                <img v-lazy="getSmallThumbnailUrl(group.iconUrl)" />
+                                <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span class="name">

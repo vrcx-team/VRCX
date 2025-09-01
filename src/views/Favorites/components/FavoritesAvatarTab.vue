@@ -39,7 +39,7 @@
                 <div class="x-friend-item">
                     <template v-if="favorite.name">
                         <div class="avatar">
-                            <img v-lazy="favorite.thumbnailImageUrl" />
+                            <img :src="favorite.thumbnailImageUrl" loading="lazy">
                         </div>
                         <div class="detail">
                             <span class="name" v-text="favorite.name" />
@@ -421,3 +421,4 @@
         });
     }
 </script>
+

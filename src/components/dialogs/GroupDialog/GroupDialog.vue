@@ -8,32 +8,28 @@
         <div class="group-banner-image">
             <el-popover placement="right" width="500px" trigger="click">
                 <template #reference>
-                    <img
-                        v-lazy="groupDialog.ref.bannerUrl"
+                    <img :src="groupDialog.ref.bannerUrl"
                         style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"
-                        class="x-link" />
+                        class="x-link" loading="lazy">
                 </template>
-                <img
-                    v-lazy="groupDialog.ref.bannerUrl"
+                <img :src="groupDialog.ref.bannerUrl"
                     style="width: 854px; height: 480px"
                     class="x-link"
-                    @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" />
+                    @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" loading="lazy">
             </el-popover>
         </div>
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
                     <template #reference>
-                        <img
-                            v-lazy="groupDialog.ref.iconUrl"
+                        <img :src="groupDialog.ref.iconUrl"
                             style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                            class="x-link" />
+                            class="x-link" loading="lazy">
                     </template>
-                    <img
-                        v-lazy="groupDialog.ref.iconUrl"
+                    <img :src="groupDialog.ref.iconUrl"
                         style="width: 500px; height: 500px"
                         class="x-link"
-                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)" />
+                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)" loading="lazy">
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
@@ -393,8 +389,7 @@
                     <div class="group-banner-image-info">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
-                                <img
-                                    v-lazy="groupDialog.ref.bannerUrl"
+                                <img :src="groupDialog.ref.bannerUrl"
                                     class="x-link"
                                     style="
                                         flex: none;
@@ -402,13 +397,12 @@
                                         aspect-ratio: 6/1;
                                         object-fit: cover;
                                         border-radius: 4px;
-                                    " />
+                                    " loading="lazy">
                             </template>
-                            <img
-                                v-lazy="groupDialog.ref.bannerUrl"
+                            <img :src="groupDialog.ref.bannerUrl"
                                 class="x-link"
                                 style="width: 854px; height: 480px"
-                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" />
+                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" loading="lazy">
                         </el-popover>
                     </div>
                     <div class="x-friend-list" style="max-height: none">
@@ -445,7 +439,7 @@
                                     class="x-friend-item x-friend-item-border"
                                     @click="showUserDialog(user.id)">
                                     <div class="avatar" :class="userStatusClass(user)">
-                                        <img v-lazy="userImage(user)" />
+                                        <img :src="userImage(user)" loading="lazy">
                                     </div>
                                     <div class="detail">
                                         <span
@@ -472,8 +466,7 @@
                                     style="display: inline-block; margin-right: 5px">
                                     <el-popover placement="right" width="500px" trigger="click">
                                         <template #reference>
-                                            <img
-                                                v-lazy="groupDialog.announcement.imageUrl"
+                                            <img :src="groupDialog.announcement.imageUrl"
                                                 class="x-link"
                                                 style="
                                                     flex: none;
@@ -481,13 +474,12 @@
                                                     height: 60px;
                                                     border-radius: 4px;
                                                     object-fit: cover;
-                                                " />
+                                                " loading="lazy">
                                         </template>
-                                        <img
-                                            v-lazy="groupDialog.announcement.imageUrl"
+                                        <img :src="groupDialog.announcement.imageUrl"
                                             class="x-link"
                                             style="height: 500px"
-                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)" />
+                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)" loading="lazy">
                                     </el-popover>
                                 </div>
                                 <pre
@@ -644,8 +636,7 @@
                                             <template #content>
                                                 <span v-text="link" />
                                             </template>
-                                            <img
-                                                :src="getFaviconUrl(link)"
+                                            <img :src="getFaviconUrl(link)"
                                                 style="
                                                     width: 16px;
                                                     height: 16px;
@@ -653,7 +644,7 @@
                                                     margin-right: 5px;
                                                     cursor: pointer;
                                                 "
-                                                @click.stop="openExternalLink(link)" />
+                                                @click.stop="openExternalLink(link)" loading="lazy">
                                         </el-tooltip>
                                     </template>
                                 </div>
@@ -781,8 +772,7 @@
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
                                         <el-popover placement="right" width="500px" trigger="click">
                                             <template #reference>
-                                                <img
-                                                    v-lazy="post.imageUrl"
+                                                <img :src="post.imageUrl"
                                                     class="x-link"
                                                     style="
                                                         flex: none;
@@ -790,13 +780,12 @@
                                                         height: 60px;
                                                         border-radius: 4px;
                                                         object-fit: cover;
-                                                    " />
+                                                    " loading="lazy">
                                             </template>
-                                            <img
-                                                v-lazy="post.imageUrl"
+                                            <img :src="post.imageUrl"
                                                 class="x-link"
                                                 style="height: 500px"
-                                                @click="showFullscreenImageDialog(post.imageUrl)" />
+                                                @click="showFullscreenImageDialog(post.imageUrl)" loading="lazy">
                                         </el-popover>
                                     </div>
                                     <pre
@@ -989,7 +978,7 @@
                                 class="x-friend-item x-friend-item-border"
                                 @click="showUserDialog(user.userId)">
                                 <div class="avatar">
-                                    <img v-lazy="userImage(user.user)" />
+                                    <img :src="userImage(user.user)" loading="lazy">
                                 </div>
                                 <div class="detail">
                                     <span
@@ -1050,7 +1039,7 @@
                                 class="infinite-list-item x-friend-item x-friend-item-border"
                                 @click="showUserDialog(user.userId)">
                                 <div class="avatar">
-                                    <img v-lazy="userImage(user.user)" />
+                                    <img :src="userImage(user.user)" loading="lazy">
                                 </div>
                                 <div class="detail">
                                     <span
@@ -1144,16 +1133,14 @@
                                         :key="image.id">
                                         <el-popover placement="top" width="700px" trigger="click">
                                             <template #reference>
-                                                <img
-                                                    v-lazy="image.imageUrl"
+                                                <img :src="image.imageUrl"
                                                     class="x-link"
-                                                    style="width: 100%; height: 100%; object-fit: contain" />
+                                                    style="width: 100%; height: 100%; object-fit: contain" loading="lazy">
                                             </template>
-                                            <img
-                                                v-lazy="image.imageUrl"
+                                            <img :src="image.imageUrl"
                                                 class="x-link"
                                                 style="height: 700px"
-                                                @click="showFullscreenImageDialog(image.imageUrl)" />
+                                                @click="showFullscreenImageDialog(image.imageUrl)" loading="lazy">
                                         </el-popover>
                                     </el-carousel-item>
                                 </el-carousel>
@@ -1842,3 +1829,4 @@
         };
     }
 </script>
+

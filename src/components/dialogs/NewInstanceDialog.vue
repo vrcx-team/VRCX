@@ -114,7 +114,7 @@
                                                 hasGroupPermission(group, 'group-instance-open-create'))
                                         ">
                                         <div class="avatar">
-                                            <img v-lazy="group.iconUrl" />
+                                            <img :src="group.iconUrl" loading="lazy">
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="group.name"></span>
@@ -254,7 +254,7 @@
                                     :value="currentUser.id"
                                     style="height: auto">
                                     <div class="avatar" :class="userStatusClass(currentUser)">
-                                        <img v-lazy="userImage(currentUser)" />
+                                        <img :src="userImage(currentUser)" loading="lazy">
                                     </div>
                                     <div class="detail">
                                         <span class="name" v-text="currentUser.displayName"></span>
@@ -271,7 +271,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar" :class="userStatusClass(friend.ref)">
-                                            <img v-lazy="userImage(friend.ref)" />
+                                            <img :src="userImage(friend.ref)" loading="lazy">
                                         </div>
                                         <div class="detail">
                                             <span
@@ -293,7 +293,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar" :class="userStatusClass(friend.ref)">
-                                            <img v-lazy="userImage(friend.ref)" />
+                                            <img :src="userImage(friend.ref)" loading="lazy">
                                         </div>
                                         <div class="detail">
                                             <span
@@ -315,7 +315,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar">
-                                            <img v-lazy="userImage(friend.ref)" />
+                                            <img :src="userImage(friend.ref)" loading="lazy">
                                         </div>
                                         <div class="detail">
                                             <span
@@ -337,7 +337,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar">
-                                            <img v-lazy="userImage(friend.ref)" />
+                                            <img :src="userImage(friend.ref)" loading="lazy">
                                         </div>
                                         <div class="detail">
                                             <span
@@ -371,7 +371,7 @@
                                     style="height: auto; width: 478px">
                                     <template v-if="group">
                                         <div class="avatar">
-                                            <img v-lazy="group.iconUrl" />
+                                            <img :src="group.iconUrl" loading="lazy">
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="group.name"></span></div
@@ -871,3 +871,4 @@
         copyToClipboard(newUrl);
     }
 </script>
+

@@ -117,13 +117,12 @@
                     <template #default="{ row }">
                         <el-popover placement="right" height="500px" trigger="hover">
                             <template #reference>
-                                <img v-lazy="userImage(row, true)" class="friends-list-avatar" />
+                                <img :src="userImage(row, true)" class="friends-list-avatar" loading="lazy">
                             </template>
-                            <img
-                                v-lazy="userImageFull(row)"
+                            <img :src="userImageFull(row)"
                                 class="friends-list-avatar"
                                 style="height: 500px; cursor: pointer"
-                                @click="showFullscreenImageDialog(userImageFull(row))" />
+                                @click="showFullscreenImageDialog(userImageFull(row))" loading="lazy">
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -188,8 +187,7 @@
                             <template #content>
                                 <span v-text="link"></span>
                             </template>
-                            <img
-                                :src="getFaviconUrl(link)"
+                            <img :src="getFaviconUrl(link)"
                                 style="
                                     width: 16px;
                                     height: 16px;
@@ -197,7 +195,7 @@
                                     margin-right: 5px;
                                     cursor: pointer;
                                 "
-                                @click.stop="openExternalLink(link)" />
+                                @click.stop="openExternalLink(link)" loading="lazy">
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -444,3 +442,4 @@
         return JSON.stringify(as).localeCompare(JSON.stringify(bs));
     }
 </script>
+

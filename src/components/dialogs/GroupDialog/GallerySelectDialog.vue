@@ -42,7 +42,7 @@
                         v-if="image.versions[image.versions.length - 1].file.url"
                         class="vrcplus-icon"
                         @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)">
-                        <img v-lazy="image.versions[image.versions.length - 1].file.url" class="avatar" /></div
+                        <img :src="image.versions[image.versions.length - 1].file.url" class="avatar" loading="lazy"></div
                 ></template>
             </div>
         </div>
@@ -130,3 +130,4 @@
         clearFile();
     }
 </script>
+

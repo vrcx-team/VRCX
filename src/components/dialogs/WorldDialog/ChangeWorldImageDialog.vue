@@ -32,7 +32,7 @@
                     style="cursor: pointer"
                     :class="{ 'current-image': compareCurrentImage(image) }"
                     @click="setWorldImage(image)">
-                    <img v-lazy="image.file.url" class="image" />
+                    <img :src="image.file.url" class="image" loading="lazy">
                 </div>
             </div>
         </div>
@@ -354,3 +354,4 @@
         return false;
     }
 </script>
+

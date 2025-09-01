@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="favorite.ref">
                 <div class="avatar" :class="userStatusClass(favorite.ref)">
-                    <img v-lazy="userImage(favorite.ref, true)" />
+                    <img :src="userImage(favorite.ref, true)" loading="lazy">
                 </div>
                 <div class="detail">
                     <span
@@ -119,3 +119,4 @@
         favoriteRequest.deleteFavorite({ objectId });
     }
 </script>
+

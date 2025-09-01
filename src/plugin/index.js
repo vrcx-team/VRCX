@@ -1,5 +1,5 @@
-import './ipc';
-// import './dayjs';
+// import './ipc';
+import './dayjs';
 // import './components';
 
 export { i18n } from './i18n';

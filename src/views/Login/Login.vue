@@ -108,7 +108,7 @@
                                 class="x-friend-item"
                                 @click="relogin(user)">
                                 <div class="avatar">
-                                    <img v-lazy="userImage(user.user)" />
+                                    <img :src="userImage(user.user)" loading="lazy">
                                 </div>
                                 <div class="detail">
                                     <span class="name" v-text="user.user.displayName"></span>
@@ -187,3 +187,4 @@
         }
     });
 </script>
+

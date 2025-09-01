@@ -13,7 +13,7 @@
         <div v-show="isFriendsGroupMe">
             <div class="x-friend-item" @click="showUserDialog(currentUser.id)">
                 <div class="avatar" :class="userStatusClass(currentUser)">
-                    <img v-lazy="userImage(currentUser)" />
+                    <img :src="userImage(currentUser)" loading="lazy" />
                 </div>
                 <div class="detail">
                     <span class="name" :style="{ color: currentUser.$userColour }">{{ currentUser.displayName }}</span>

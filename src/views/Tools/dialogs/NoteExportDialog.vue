@@ -45,12 +45,13 @@
                 <template #default="{ row }">
                     <el-popover placement="right" height="500px" trigger="hover">
                         <template #reference>
-                            <img v-lazy="userImage(row.ref)" class="friends-list-avatar" />
+                            <img :src="userImage(row.ref)" class="friends-list-avatar" loading="lazy" />
                         </template>
                         <img
-                            v-lazy="userImageFull(row.ref)"
+                            :src="userImageFull(row.ref)"
                             class="friends-list-avatar"
                             style="height: 500px; cursor: pointer"
+                            loading="lazy"
                             @click="showFullscreenImageDialog(userImageFull(row.ref))" />
                     </el-popover>
                 </template>

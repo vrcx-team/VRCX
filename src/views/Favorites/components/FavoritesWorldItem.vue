@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
                 <div class="avatar">
-                    <img v-lazy="smallThumbnail" />
+                    <img :src="smallThumbnail" loading="lazy">
                 </div>
                 <div class="detail">
                     <span class="name" v-once>{{ localFavFakeRef.name }}</span>
@@ -223,3 +223,4 @@
             });
     }
 </script>
+

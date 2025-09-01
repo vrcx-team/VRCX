@@ -41,7 +41,7 @@
                         :value="currentUser.id"
                         style="height: auto">
                         <div :class="['avatar', userStatusClass(currentUser)]">
-                            <img v-lazy="userImage(currentUser)" />
+                            <img :src="userImage(currentUser)" loading="lazy">
                         </div>
                         <div class="detail">
                             <span class="name">{{ currentUser.displayName }}</span>
@@ -61,7 +61,7 @@
                         style="height: auto">
                         <template v-if="friend.ref">
                             <div :class="['avatar', userStatusClass(friend.ref)]">
-                                <img v-lazy="userImage(friend.ref)" />
+                                <img :src="userImage(friend.ref)" loading="lazy">
                             </div>
                             <div class="detail">
                                 <span class="name" :style="{ color: friend.ref.$userColour }">{{
@@ -83,7 +83,7 @@
                         style="height: auto">
                         <template v-if="friend.ref">
                             <div :class="['avatar', userStatusClass(friend.ref)]">
-                                <img v-lazy="userImage(friend.ref)" />
+                                <img :src="userImage(friend.ref)" loading="lazy">
                             </div>
                             <div class="detail">
                                 <span class="name" :style="{ color: friend.ref.$userColour }">{{
@@ -105,7 +105,7 @@
                         style="height: auto">
                         <template v-if="friend.ref">
                             <div :class="['avatar', userStatusClass(friend.ref)]">
-                                <img v-lazy="userImage(friend.ref)" />
+                                <img :src="userImage(friend.ref)" loading="lazy">
                             </div>
                             <div class="detail">
                                 <span class="name" :style="{ color: friend.ref.$userColour }">{{
@@ -126,7 +126,7 @@
                         :value="friend.id"
                         style="height: auto">
                         <template v-if="friend.ref">
-                            <div class="avatar"><img v-lazy="userImage(friend.ref)" /></div>
+                            <div class="avatar"><img :src="userImage(friend.ref)" loading="lazy"></div>
                             <div class="detail">
                                 <span class="name" :style="{ color: friend.ref.$userColour }">{{
                                     friend.ref.displayName
@@ -284,3 +284,4 @@
         });
     }
 </script>
+

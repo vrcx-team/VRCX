@@ -4,7 +4,7 @@
             <div
                 class="avatar"
                 :class="isFriendActiveOrOffline ? undefined : userStatusClass(friend.ref, friend.pendingOffline)">
-                <img v-lazy="userImage(friend.ref, true)" />
+                <img :src="userImage(friend.ref, true)" loading="lazy" />
             </div>
             <div class="detail">
                 <span v-if="!hideNicknames && friend.$nickName" class="name" :style="{ color: friend.ref.$userColour }">

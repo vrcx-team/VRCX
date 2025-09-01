@@ -2,7 +2,7 @@
     <div @click="$emit('click')">
         <div class="x-friend-item">
             <div class="avatar">
-                <img v-lazy="smallThumbnail" />
+                <img :src="smallThumbnail" loading="lazy">
             </div>
             <div class="detail">
                 <span class="name" v-text="favorite.name"></span>
@@ -71,3 +71,4 @@
         return props.favorite.thumbnailImageUrl.replace('256', '128') || props.favorite.thumbnailImageUrl;
     });
 </script>
+
