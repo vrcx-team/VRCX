@@ -16,31 +16,34 @@
                     width="500px"
                     trigger="click">
                     <template #reference>
-                        <img class="x-link"
+                        <img
+                            class="x-link"
                             :src="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride"
-                            style="
-                                flex: none;
-                                height: 120px;
-                                width: 213.33px;
-                                border-radius: 12px;
-                                object-fit: cover;
-                            " loading="lazy">
+                            style="flex: none; height: 120px; width: 213.33px; border-radius: 12px; object-fit: cover"
+                            loading="lazy" />
                     </template>
-                    <img :src="userDialog.ref.profilePicOverride"
+                    <img
+                        :src="userDialog.ref.profilePicOverride"
                         class="x-link"
                         style="height: 400px"
-                        @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)" loading="lazy">
+                        @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
+                        loading="lazy" />
                 </el-popover>
                 <el-popover v-else-if="!userDialog.loading" placement="right" width="500px" trigger="click">
                     <template #reference
-                        ><img class="x-link"
+                        ><img
+                            class="x-link"
                             :src="userDialog.ref.currentAvatarThumbnailImageUrl"
-                            style="flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover" loading="lazy"></template>
+                            style="flex: none; height: 120px; width: 160px; border-radius: 12px; object-fit: cover"
+                            loading="lazy"
+                    /></template>
 
-                    <img :src="userDialog.ref.currentAvatarImageUrl"
+                    <img
+                        :src="userDialog.ref.currentAvatarImageUrl"
                         class="x-link"
                         style="height: 500px"
-                        @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)" loading="lazy">
+                        @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
+                        loading="lazy" />
                 </el-popover>
 
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
@@ -260,7 +263,8 @@
                                 </template>
                                 <el-popover placement="right" width="300px" trigger="click">
                                     <template #reference>
-                                        <img class="x-link x-user-badge"
+                                        <img
+                                            class="x-link x-user-badge"
                                             :src="badge.badgeImageUrl"
                                             style="
                                                 flex: none;
@@ -271,12 +275,15 @@
                                                 margin-top: 5px;
                                                 margin-right: 5px;
                                             "
-                                            :class="{ 'x-user-badge-hidden': badge.hidden }" loading="lazy">
+                                            :class="{ 'x-user-badge-hidden': badge.hidden }"
+                                            loading="lazy" />
                                     </template>
-                                    <img :src="badge.badgeImageUrl"
+                                    <img
+                                        :src="badge.badgeImageUrl"
                                         class="x-link"
                                         style="width: 300px"
-                                        @click="showFullscreenImageDialog(badge.badgeImageUrl)" loading="lazy">
+                                        @click="showFullscreenImageDialog(badge.badgeImageUrl)"
+                                        loading="lazy" />
                                     <br />
                                     <div style="display: block; width: 300px; word-break: normal">
                                         <span>{{ badge.badgeName }}</span>
@@ -318,7 +325,8 @@
                     <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 10px">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
-                                <img class="x-link"
+                                <img
+                                    class="x-link"
                                     :src="userImage(userDialog.ref, true, '256', true)"
                                     style="
                                         flex: none;
@@ -326,12 +334,15 @@
                                         height: 120px;
                                         border-radius: 12px;
                                         object-fit: cover;
-                                    " loading="lazy">
+                                    "
+                                    loading="lazy" />
                             </template>
-                            <img :src="userDialog.ref.userIcon"
+                            <img
+                                :src="userDialog.ref.userIcon"
                                 class="x-link"
                                 style="height: 500px"
-                                @click="showFullscreenImageDialog(userDialog.ref.userIcon)" loading="lazy">
+                                @click="showFullscreenImageDialog(userDialog.ref.userIcon)"
+                                loading="lazy" />
                         </el-popover>
                     </div>
 
@@ -624,7 +635,7 @@
                                     @click="showUserDialog(userDialog.$location.userId)">
                                     <template v-if="userDialog.$location.user">
                                         <div class="avatar" :class="userStatusClass(userDialog.$location.user)">
-                                            <img :src="userImage(userDialog.$location.user, true)" loading="lazy">
+                                            <img :src="userImage(userDialog.$location.user, true)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -642,7 +653,7 @@
                                     class="x-friend-item x-friend-item-border"
                                     @click="showUserDialog(user.id)">
                                     <div class="avatar" :class="userStatusClass(user)">
-                                        <img :src="userImage(user, true)" loading="lazy">
+                                        <img :src="userImage(user, true)" loading="lazy" />
                                     </div>
                                     <div class="detail">
                                         <span
@@ -777,12 +788,12 @@
                                                     <template #error></template>
                                                 </el-image>
                                             </template>
-                                            <img :src="userDialog.representedGroup.iconUrl"
+                                            <img
+                                                :src="userDialog.representedGroup.iconUrl"
                                                 class="x-link"
                                                 style="height: 500px"
-                                                @click="
-                                                    showFullscreenImageDialog(userDialog.representedGroup.iconUrl)
-                                                " loading="lazy">
+                                                @click="showFullscreenImageDialog(userDialog.representedGroup.iconUrl)"
+                                                loading="lazy" />
                                         </el-popover>
                                     </div>
                                     <span
@@ -831,7 +842,8 @@
                                         <template #content>
                                             <span v-text="link"></span>
                                         </template>
-                                        <img :src="getFaviconUrl(link)"
+                                        <img
+                                            :src="getFaviconUrl(link)"
                                             onerror="this.onerror=null;this.class='el-icon-error'"
                                             style="
                                                 width: 16px;
@@ -840,7 +852,8 @@
                                                 margin-right: 5px;
                                                 cursor: pointer;
                                             "
-                                            @click.stop="openExternalLink(link)" loading="lazy">
+                                            @click.stop="openExternalLink(link)"
+                                            loading="lazy" />
                                     </el-tooltip>
                                 </div>
                             </div>
@@ -1182,21 +1195,23 @@
                                         {{ t('dialog.group.actions.manage_selected') }}
                                         <i class="el-icon-arrow-down el-icon--right"></i>
                                     </el-button>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item @click="bulkSetVisibility('visible')">
-                                            {{ t('dialog.group.actions.visibility_everyone') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click="bulkSetVisibility('friends')">
-                                            {{ t('dialog.group.actions.visibility_friends') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click="bulkSetVisibility('hidden')">
-                                            {{ t('dialog.group.actions.visibility_hidden') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item divided @click="bulkLeaveGroups">
-                                            <i class="el-icon-delete"></i>
-                                            {{ t('dialog.user.groups.leave_group_tooltip') }}
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item @click="bulkSetVisibility('visible')">
+                                                {{ t('dialog.group.actions.visibility_everyone') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item @click="bulkSetVisibility('friends')">
+                                                {{ t('dialog.group.actions.visibility_friends') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item @click="bulkSetVisibility('hidden')">
+                                                {{ t('dialog.group.actions.visibility_hidden') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item divided @click="bulkLeaveGroups">
+                                                <i class="el-icon-delete"></i>
+                                                {{ t('dialog.user.groups.leave_group_tooltip') }}
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
                                 </el-dropdown>
 
                                 <!-- Select All button -->
@@ -1267,7 +1282,7 @@
                                         </el-button>
                                     </div>
                                     <div class="avatar">
-                                        <img :src="group.iconUrl" loading="lazy">
+                                        <img :src="group.iconUrl" loading="lazy" />
                                     </div>
                                     <div class="detail">
                                         <span class="name" v-text="group.name"></span>
@@ -1309,26 +1324,30 @@
                                             <span v-else>{{ group.myMember.visibility }}</span>
                                             <i class="el-icon-arrow-down el-icon--right" style="margin-left: 5px"></i>
                                         </el-button>
-                                        <el-dropdown-menu>
-                                            <el-dropdown-item @click="setGroupVisibility(group.id, 'visible')"
-                                                ><i
-                                                    v-if="group.myMember.visibility === 'visible'"
-                                                    class="el-icon-check"></i>
-                                                {{ t('dialog.group.actions.visibility_everyone') }}</el-dropdown-item
-                                            >
-                                            <el-dropdown-item @click="setGroupVisibility(group.id, 'friends')"
-                                                ><i
-                                                    v-if="group.myMember.visibility === 'friends'"
-                                                    class="el-icon-check"></i>
-                                                {{ t('dialog.group.actions.visibility_friends') }}</el-dropdown-item
-                                            >
-                                            <el-dropdown-item @click="setGroupVisibility(group.id, 'hidden')"
-                                                ><i
-                                                    v-if="group.myMember.visibility === 'hidden'"
-                                                    class="el-icon-check"></i>
-                                                {{ t('dialog.group.actions.visibility_hidden') }}</el-dropdown-item
-                                            >
-                                        </el-dropdown-menu>
+                                        <template #dropdown>
+                                            <el-dropdown-menu>
+                                                <el-dropdown-item @click="setGroupVisibility(group.id, 'visible')"
+                                                    ><i
+                                                        v-if="group.myMember.visibility === 'visible'"
+                                                        class="el-icon-check"></i>
+                                                    {{
+                                                        t('dialog.group.actions.visibility_everyone')
+                                                    }}</el-dropdown-item
+                                                >
+                                                <el-dropdown-item @click="setGroupVisibility(group.id, 'friends')"
+                                                    ><i
+                                                        v-if="group.myMember.visibility === 'friends'"
+                                                        class="el-icon-check"></i>
+                                                    {{ t('dialog.group.actions.visibility_friends') }}</el-dropdown-item
+                                                >
+                                                <el-dropdown-item @click="setGroupVisibility(group.id, 'hidden')"
+                                                    ><i
+                                                        v-if="group.myMember.visibility === 'hidden'"
+                                                        class="el-icon-check"></i>
+                                                    {{ t('dialog.group.actions.visibility_hidden') }}</el-dropdown-item
+                                                >
+                                            </el-dropdown-menu>
+                                        </template>
                                     </el-dropdown>
                                     <!--//- JSON is missing isSubscribedToAnnouncements, can't be implemented-->
                                     <!--//- el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")-->
@@ -1383,7 +1402,7 @@
                                         class="x-friend-item x-friend-item-border"
                                         @click="showGroupDialog(group.id)">
                                         <div class="avatar">
-                                            <img :src="group.iconUrl" loading="lazy">
+                                            <img :src="group.iconUrl" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="group.name"></span>
@@ -1425,7 +1444,7 @@
                                         class="x-friend-item x-friend-item-border"
                                         @click="showGroupDialog(group.id)">
                                         <div class="avatar">
-                                            <img :src="group.iconUrl" loading="lazy">
+                                            <img :src="group.iconUrl" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="group.name"></span>
@@ -1476,7 +1495,7 @@
                                         class="x-friend-item x-friend-item-border"
                                         @click="showGroupDialog(group.id)">
                                         <div class="avatar">
-                                            <img :src="group.iconUrl" loading="lazy">
+                                            <img :src="group.iconUrl" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="group.name"></span>
@@ -1582,7 +1601,7 @@
                             class="x-friend-item x-friend-item-border"
                             @click="showWorldDialog(world.id)">
                             <div class="avatar">
-                                <img :src="world.thumbnailImageUrl" loading="lazy">
+                                <img :src="world.thumbnailImageUrl" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span class="name" v-text="world.name"></span>
@@ -1634,7 +1653,7 @@
                                         class="x-friend-item x-friend-item-border"
                                         @click="showWorldDialog(world.id)">
                                         <div class="avatar">
-                                            <img :src="world.thumbnailImageUrl" loading="lazy">
+                                            <img :src="world.thumbnailImageUrl" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="world.name"></span>
@@ -1742,7 +1761,7 @@
                             class="x-friend-item x-friend-item-border"
                             @click="showAvatarDialog(avatar.id)">
                             <div class="avatar">
-                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy">
+                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span class="name" v-text="avatar.name"></span>
@@ -3066,4 +3085,3 @@
         clearInviteImageUpload();
     }
 </script>
-

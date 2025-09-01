@@ -320,13 +320,15 @@
                                     <i class="el-icon-arrow-down el-icon--right"></i
                                 ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="(obj, language) in messages"
-                                    :key="language"
-                                    @click="changeAppLanguage(language)"
-                                    v-text="obj.language" />
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="(obj, language) in messages"
+                                        :key="language"
+                                        @click="changeAppLanguage(language)"
+                                        v-text="obj.language" />
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <div class="options-container-item">
@@ -338,15 +340,17 @@
                                     <i class="el-icon-arrow-down el-icon--right"></i
                                 ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="(config, themeKey) in THEME_CONFIG"
-                                    :key="themeKey"
-                                    @click="saveThemeMode(themeKey)"
-                                    :class="{ 'is-active': themeMode === themeKey }">
-                                    {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="(config, themeKey) in THEME_CONFIG"
+                                        :key="themeKey"
+                                        @click="saveThemeMode(themeKey)"
+                                        :class="{ 'is-active': themeMode === themeKey }">
+                                        {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <div v-if="!isLinux" class="options-container-item">
@@ -422,13 +426,15 @@
                                     <i class="el-icon-arrow-down el-icon--right"></i
                                 ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="number in [10, 15, 20, 25, 50, 100]"
-                                    :key="number"
-                                    @click="handleSetTablePageSize(number)"
-                                    v-text="number" />
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="number in [10, 15, 20, 25, 50, 100]"
+                                        :key="number"
+                                        @click="handleSetTablePageSize(number)"
+                                        v-text="number" />
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <div class="options-container-item" />
@@ -598,7 +604,7 @@
                             :min="200"
                             :max="500"
                             style="display: inline-block; width: 300px"
-                            @change="setAsideWidth"></el-slider>
+                            @input="setAsideWidth"></el-slider>
                     </div>
                     <simple-switch
                         :label="t('view.settings.appearance.side_panel.group_by_instance')"
@@ -1007,13 +1013,15 @@
                                     >{{ getTTSVoiceName() }} <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
                                 ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="(voice, index) in TTSvoices"
-                                    :key="index"
-                                    :command="index"
-                                    v-text="voice.name" />
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="(voice, index) in TTSvoices"
+                                        :key="index"
+                                        :command="index"
+                                        v-text="voice.name" />
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <simple-switch
