@@ -58,10 +58,10 @@
                         <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
                         <br />
                         <el-radio-group
-                            :value="autoUpdateVRCX"
+                            :model-value="autoUpdateVRCX"
                             size="small"
                             style="margin-top: 5px"
-                            @input="setAutoUpdateVRCX">
+                            @change="setAutoUpdateVRCX">
                             <el-radio-button label="Off">{{
                                 t('view.settings.general.vrcx_updater.auto_update_off')
                             }}</el-radio-button>
@@ -120,7 +120,7 @@
                     <span class="header">{{ t('view.settings.general.favorites.header') }}</span>
                     <br />
                     <el-select
-                        :value="localFavoriteFriendsGroups"
+                        :model-value="localFavoriteFriendsGroups"
                         multiple
                         clearable
                         :placeholder="t('view.settings.general.favorites.group_placeholder')"
@@ -170,7 +170,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.alone_status') }}</span>
                         <el-select
-                            :value="autoStateChangeAloneStatus"
+                            :model-value="autoStateChangeAloneStatus"
                             :disabled="!autoStateChangeEnabled"
                             style="margin-top: 8px"
                             size="small"
@@ -192,7 +192,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.company_status') }}</span>
                         <el-select
-                            :value="autoStateChangeCompanyStatus"
+                            :model-value="autoStateChangeCompanyStatus"
                             :disabled="!autoStateChangeEnabled"
                             style="margin-top: 8px"
                             size="small"
@@ -214,7 +214,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.allowed_instance_types') }}</span>
                         <el-select
-                            :value="autoStateChangeInstanceTypes"
+                            :model-value="autoStateChangeInstanceTypes"
                             :disabled="!autoStateChangeEnabled"
                             multiple
                             clearable
@@ -239,7 +239,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.alone_condition') }}</span>
                         <el-radio-group
-                            :value="autoStateChangeNoFriends"
+                            :model-value="autoStateChangeNoFriends"
                             :disabled="!autoStateChangeEnabled"
                             @change="setAutoStateChangeNoFriends">
                             <el-radio :label="false">{{ t('view.settings.general.automation.alone') }}</el-radio>
@@ -258,10 +258,10 @@
                         </span>
                         <br />
                         <el-radio-group
-                            :value="autoAcceptInviteRequests"
+                            :model-value="autoAcceptInviteRequests"
                             size="small"
                             style="margin-top: 5px"
-                            @input="setAutoAcceptInviteRequests">
+                            @change="setAutoAcceptInviteRequests">
                             <el-radio-button label="Off">{{
                                 t('view.settings.general.automation.auto_invite_request_accept_off')
                             }}</el-radio-button>
@@ -385,7 +385,7 @@
                         @change="setIsAgeGatedInstancesVisible" />
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
-                        <el-radio-group :value="sortFavorites" @change="saveSortFavoritesOption">
+                        <el-radio-group :model-value="sortFavorites" @change="saveSortFavoritesOption">
                             <el-radio :label="false">{{
                                 t('view.settings.appearance.appearance.sort_favorite_by_name')
                             }}</el-radio>
@@ -397,7 +397,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.sort_instance_users_by') }}</span>
                         <el-radio-group
-                            :value="instanceUsersSortAlphabetical"
+                            :model-value="instanceUsersSortAlphabetical"
                             @change="setInstanceUsersSortAlphabetical">
                             <el-radio :label="false">{{
                                 t('view.settings.appearance.appearance.sort_instance_users_by_time')
@@ -439,7 +439,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.timedate.time_format') }}</span>
                         <el-radio-group
-                            :value="dtHour12"
+                            :model-value="dtHour12"
                             @change="
                                 setDtHour12();
                                 updateVRConfigVars();
@@ -464,7 +464,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.side_panel.sorting.header') }}</span>
                         <el-select
-                            :value="sidebarSortMethod1"
+                            :model-value="sidebarSortMethod1"
                             style="width: 170px"
                             :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
                             @change="
@@ -504,7 +504,7 @@
                         </el-select>
                         <el-icon><ArrowRight /></el-icon>
                         <el-select
-                            :value="sidebarSortMethod2"
+                            :model-value="sidebarSortMethod2"
                             :disabled="!sidebarSortMethod1"
                             style="width: 170px"
                             clearable
@@ -546,7 +546,7 @@
                         </el-select>
                         <el-icon><ArrowRight /></el-icon>
                         <el-select
-                            :value="sidebarSortMethod3"
+                            :model-value="sidebarSortMethod3"
                             :disabled="!sidebarSortMethod2"
                             style="width: 170px"
                             clearable
@@ -592,13 +592,13 @@
                             t('view.settings.appearance.side_panel.width')
                         }}</span>
                         <el-slider
-                            :value="asideWidth"
+                            :model-value="asideWidth"
                             :show-tooltip="false"
                             :marks="{ 300: '' }"
                             :min="200"
                             :max="500"
                             style="display: inline-block; width: 300px"
-                            @input="setAsideWidth"></el-slider>
+                            @change="setAsideWidth"></el-slider>
                     </div>
                     <simple-switch
                         :label="t('view.settings.appearance.side_panel.group_by_instance')"
@@ -662,7 +662,7 @@
                     <div class="options-container-item">
                         <div>
                             <el-color-picker
-                                :value="trustColor.untrusted"
+                                :model-value="trustColor.untrusted"
                                 size="small"
                                 :predefine="['#CCCCCC']"
                                 @change="updateTrustColor('untrusted', $event)">
@@ -673,7 +673,7 @@
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.basic"
+                                :model-value="trustColor.basic"
                                 size="small"
                                 :predefine="['#1778ff']"
                                 @change="updateTrustColor('basic', $event)">
@@ -684,7 +684,7 @@
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.known"
+                                :model-value="trustColor.known"
                                 size="small"
                                 :predefine="['#2bcf5c']"
                                 @change="updateTrustColor('known', $event)">
@@ -695,7 +695,7 @@
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.trusted"
+                                :model-value="trustColor.trusted"
                                 size="small"
                                 :predefine="['#ff7b42']"
                                 @change="updateTrustColor('trusted', $event)">
@@ -706,7 +706,7 @@
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.veteran"
+                                :model-value="trustColor.veteran"
                                 size="small"
                                 :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
                                 @change="updateTrustColor('veteran', $event)">
@@ -717,7 +717,7 @@
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.vip"
+                                :model-value="trustColor.vip"
                                 size="small"
                                 :predefine="['#ff2626']"
                                 @change="updateTrustColor('vip', $event)">
@@ -728,7 +728,7 @@
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.troll"
+                                :model-value="trustColor.troll"
                                 size="small"
                                 :predefine="['#782f2f']"
                                 @change="updateTrustColor('troll', $event)">
@@ -763,7 +763,7 @@
                         }}</span>
                         <br />
                         <el-radio-group
-                            :value="overlayToast"
+                            :model-value="overlayToast"
                             size="small"
                             :disabled="
                                 (!overlayNotifications || !openVR) &&
@@ -772,7 +772,7 @@
                                 !ovrtWristNotifications
                             "
                             style="margin-top: 5px"
-                            @input="
+                            @change="
                                 setOverlayToast($event);
                                 saveOpenVROption();
                             ">
@@ -832,8 +832,8 @@
                                 )
                             }}</span>
                             <el-slider
-                                :value="notificationOpacity"
-                                @input="setNotificationOpacity"
+                                :model-value="notificationOpacity"
+                                @change="setNotificationOpacity"
                                 :show-tooltip="false"
                                 :min="0"
                                 :max="100"
@@ -923,10 +923,10 @@
                         }}</span>
                         <br />
                         <el-radio-group
-                            :value="desktopToast"
+                            :model-value="desktopToast"
                             size="small"
                             style="margin-top: 5px"
-                            @input="
+                            @change="
                                 setDesktopToast($event);
                                 saveOpenVROption();
                             ">
@@ -976,10 +976,10 @@
                         }}</span>
                         <br />
                         <el-radio-group
-                            :value="notificationTTS"
+                            :model-value="notificationTTS"
                             size="small"
                             style="margin-top: 5px"
-                            @input="saveNotificationTTS">
+                            @change="saveNotificationTTS">
                             <el-radio-button label="Never">{{
                                 t('view.settings.notifications.notifications.conditions.never')
                             }}</el-radio-button>
@@ -1098,7 +1098,7 @@
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')
                         }}</span>
                         <el-radio-group
-                            :value="openVRAlways"
+                            :model-value="openVRAlways"
                             :disabled="!openVR"
                             @change="
                                 setOpenVRAlways();
@@ -1113,7 +1113,7 @@
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button')
                         }}</span>
                         <el-radio-group
-                            :value="overlaybutton"
+                            :model-value="overlaybutton"
                             :disabled="!openVR || !overlayWrist"
                             @change="
                                 setOverlaybutton();
@@ -1132,9 +1132,9 @@
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on')
                         }}</span>
                         <el-radio-group
-                            :value="overlayHand"
+                            :model-value="overlayHand"
                             size="small"
-                            @input="
+                            @change="
                                 setOverlayHand($event);
                                 saveOpenVROption();
                             ">
@@ -1636,10 +1636,10 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.advanced.photon.event_hud.filter') }}</span>
                         <el-radio-group
-                            :value="photonEventOverlayFilter"
+                            :model-value="photonEventOverlayFilter"
                             size="small"
                             :disabled="!openVR || !photonEventOverlay"
-                            @input="
+                            @change="
                                 setPhotonEventOverlayFilter($event);
                                 saveEventOverlay();
                             ">
@@ -1665,13 +1665,13 @@
                     </div>
                     <div class="options-container-item">
                         <el-select
-                            :value="photonEventTableTypeOverlayFilter"
+                            :model-value="photonEventTableTypeOverlayFilter"
                             multiple
                             clearable
                             collapse-tags
                             style="flex: 1"
                             placeholder="Filter"
-                            @input="
+                            @change="
                                 setPhotonEventTableTypeOverlayFilter($event);
                                 photonEventTableFilterChange();
                             ">
@@ -1693,10 +1693,10 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.advanced.photon.timeout_hud.filter') }}</span>
                         <el-radio-group
-                            :value="timeoutHudOverlayFilter"
+                            :model-value="timeoutHudOverlayFilter"
                             size="small"
                             :disabled="!openVR || !timeoutHudOverlay"
-                            @input="
+                            @change="
                                 setTimeoutHudOverlayFilter($event);
                                 saveEventOverlay();
                             ">

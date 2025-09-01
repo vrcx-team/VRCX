@@ -2,7 +2,6 @@
     <div v-show="isSideBarTabShow" id="aside" class="x-aside-container" :style="{ width: `${asideWidth}px` }">
         <div style="display: flex; align-items: baseline">
             <el-select
-                value=""
                 clearable
                 :placeholder="t('side_panel.search_placeholder')"
                 filterable
@@ -42,12 +41,7 @@
                 </el-option>
             </el-select>
             <el-tooltip placement="bottom" :content="t('side_panel.direct_access_tooltip')" :disabled="hideTooltips">
-                <el-button
-                    type="default"
-                    size="small"
-                    icon="el-icon-discover"
-                    circle
-                    @click="directAccessPaste"></el-button>
+                <el-button type="default" size="small" icon="Discover" circle @click="directAccessPaste"></el-button>
             </el-tooltip>
             <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')" :disabled="hideTooltips">
                 <el-button

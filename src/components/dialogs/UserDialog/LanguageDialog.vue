@@ -22,7 +22,6 @@
                 </el-tag>
             </div>
             <el-select
-                value=""
                 :disabled="languageDialog.loading || (currentUser.$languages && currentUser.$languages.length === 3)"
                 :placeholder="t('dialog.language.select_language')"
                 style="margin-top: 14px"

@@ -7,7 +7,7 @@
             ></el-tooltip>
         </div>
 
-        <el-switch class="switch" :value="value" @change="change" :disabled="disabled"></el-switch>
+        <el-switch class="switch" :model-value="value" @change="change" :disabled="disabled"></el-switch>
     </div>
 </template>
 
