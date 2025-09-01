@@ -31,30 +31,21 @@
                 </el-table-column>
                 <el-table-column :label="t('dialog.registry_backup.action')" width="90" align="right">
                     <template #default="scope">
-                        <el-tooltip
-                            placement="top"
-                            :content="t('dialog.registry_backup.restore')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('dialog.registry_backup.restore')">
                             <el-button
                                 type="text"
                                 :icon="Upload"
                                 size="small"
                                 @click="restoreVrcRegistryBackup(scope.row)"></el-button>
                         </el-tooltip>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('dialog.registry_backup.save_to_file')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('dialog.registry_backup.save_to_file')">
                             <el-button
                                 type="text"
                                 :icon="Download"
                                 size="small"
                                 @click="saveVrcRegistryBackupToFile(scope.row)"></el-button>
                         </el-tooltip>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('dialog.registry_backup.delete')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('dialog.registry_backup.delete')">
                             <el-button
                                 type="text"
                                 :icon="Delete"
@@ -90,9 +81,8 @@
     import configRepository from '../../../service/config';
     import { downloadAndSaveJson, removeFromArray, formatDateFilter } from '../../../shared/utils';
 
-    import { useAppearanceSettingsStore, useVrcxStore, useAdvancedSettingsStore } from '../../../stores';
+    import { useVrcxStore, useAdvancedSettingsStore } from '../../../stores';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { backupVrcRegistry } = useVrcxStore();
     const { isRegistryBackupDialogVisible } = storeToRefs(useVrcxStore());
     const { vrcRegistryAutoBackup, vrcRegistryAskRestore } = storeToRefs(useAdvancedSettingsStore());

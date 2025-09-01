@@ -3,7 +3,7 @@
         v-show="isVisible"
         placement="top"
         :content="t('dialog.user.info.launch_invite_tooltip')"
-        :disabled="hideTooltips">
+>
         <el-button @click="confirm" size="small" :icon="SwitchButton" circle />
     </el-tooltip>
 </template>
@@ -20,7 +20,6 @@
 
     const props = defineProps({
         location: String,
-        hideTooltips: Boolean
     });
 
     const isVisible = computed(() => {

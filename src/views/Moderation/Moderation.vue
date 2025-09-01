@@ -19,7 +19,7 @@
                 v-model="filters[1].value"
                 :placeholder="t('view.moderation.search_placeholder')"
                 class="filter-input" />
-            <el-tooltip placement="bottom" :content="t('view.moderation.refresh_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('view.moderation.refresh_tooltip')">
                 <el-button
                     type="default"
                     :loading="isPlayerModerationsLoading"
@@ -103,7 +103,6 @@
     import { formatDateFilter } from '../../shared/utils';
 
     const { t } = useI18n();
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { isPlayerModerationsLoading, playerModerationTable } = storeToRefs(useModerationStore());
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();

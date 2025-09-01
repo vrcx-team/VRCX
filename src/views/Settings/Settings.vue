@@ -377,13 +377,6 @@
                             saveOpenVROption();
                         " />
                     <simple-switch
-                        :label="t('view.settings.appearance.appearance.tooltips')"
-                        :value="!hideTooltips"
-                        @change="
-                            setHideTooltips();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
                         :label="t('view.settings.appearance.appearance.age_gated_instances')"
                         :value="isAgeGatedInstancesVisible"
                         @change="setIsAgeGatedInstancesVisible" />
@@ -2047,7 +2040,6 @@
         themeMode,
         displayVRCPlusIconsAsAvatar,
         hideNicknames,
-        hideTooltips,
         isAgeGatedInstancesVisible,
         sortFavorites,
         instanceUsersSortAlphabetical,
@@ -2070,7 +2062,6 @@
     const {
         setDisplayVRCPlusIconsAsAvatar,
         setHideNicknames,
-        setHideTooltips,
         setIsAgeGatedInstancesVisible,
         setInstanceUsersSortAlphabetical,
         setDtHour12,

@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
                 <div class="avatar">
-                    <img :src="smallThumbnail" loading="lazy">
+                    <img :src="smallThumbnail" loading="lazy" />
                 </div>
                 <div class="detail">
                     <span class="name" v-text="localFavFakeRef.name"></span>
@@ -11,7 +11,7 @@
                 </div>
                 <template v-if="editFavoritesMode">
                     <el-dropdown trigger="click" size="small" style="margin-left: 5px">
-                        <el-tooltip placement="top" :content="tooltipContent" :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="tooltipContent">
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </el-tooltip>
                         <template #dropdown>
@@ -50,8 +50,7 @@
                     <el-tooltip
                         v-if="favorite.ref.releaseStatus !== 'private' && !favorite.deleted"
                         placement="left"
-                        :content="t('view.favorite.select_avatar_tooltip')"
-                        :disabled="hideTooltips">
+                        :content="t('view.favorite.select_avatar_tooltip')">
                         <el-button
                             :disabled="currentUser.currentAvatar === favorite.id"
                             size="small"
@@ -60,10 +59,7 @@
                             style="margin-left: 5px"
                             @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
                     </el-tooltip>
-                    <el-tooltip
-                        placement="right"
-                        :content="t('view.favorite.unfavorite_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                         <el-button
                             v-if="shiftHeld"
                             size="small"
@@ -82,10 +78,7 @@
                     </el-tooltip>
                 </template>
                 <template v-else>
-                    <el-tooltip
-                        placement="left"
-                        :content="t('view.favorite.select_avatar_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')">
                         <el-button
                             :disabled="currentUser.currentAvatar === favorite.id"
                             size="small"
@@ -95,11 +88,7 @@
                             @click.stop="selectAvatarWithConfirmation(favorite.id)" />
                     </el-tooltip>
                 </template>
-                <el-tooltip
-                    v-if="isLocalFavorite"
-                    placement="right"
-                    :content="t('view.favorite.unfavorite_tooltip')"
-                    :disabled="hideTooltips">
+                <el-tooltip v-if="isLocalFavorite" placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                     <el-button
                         v-if="shiftHeld"
                         size="small"
@@ -148,13 +137,7 @@
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
-    import {
-        useAppearanceSettingsStore,
-        useAvatarStore,
-        useFavoriteStore,
-        useUiStore,
-        useUserStore
-    } from '../../../stores';
+    import { useAvatarStore, useFavoriteStore, useUiStore, useUserStore } from '../../../stores';
 
     const props = defineProps({
         favorite: Object,
@@ -166,7 +149,6 @@
 
     const { t } = useI18n();
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { favoriteAvatarGroups } = storeToRefs(useFavoriteStore());
     const { removeLocalAvatarFavorite, showFavoriteDialog } = useFavoriteStore();
     const { selectAvatarWithConfirmation } = useAvatarStore();
@@ -230,4 +212,3 @@
         }
     }
 </script>
-

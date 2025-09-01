@@ -29,7 +29,7 @@
                     <span style="color: #909399; font-size: 12px; margin-left: 10px"
                         >{{ group.count }}/{{ group.capacity }}</span
                     >
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
                             size="small"
                             :icon="Edit"
@@ -37,7 +37,7 @@
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)"></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
                         <el-button
                             size="small"
                             :icon="Delete"
@@ -95,7 +95,7 @@
 
     const emit = defineEmits(['change-favorite-group-name']);
 
-    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const { showUserDialog } = useUserStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(useFavoriteStore());

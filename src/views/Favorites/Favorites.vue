@@ -14,10 +14,7 @@
                 <span class="name">{{ t('view.favorite.edit_mode') }}</span>
                 <el-switch v-model="editFavoritesMode" style="margin-left: 5px"></el-switch>
             </div>
-            <el-tooltip
-                placement="bottom"
-                :content="t('view.favorite.refresh_favorites_tooltip')"
-                :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
                 <el-button
                     type="default"
                     :loading="isFavoriteLoading"
@@ -33,13 +30,11 @@
         <el-tabs v-model="currentTabName" v-loading="isFavoriteLoading" type="card" style="height: 100%">
             <el-tab-pane name="friend" :label="t('view.favorite.friends.header')">
                 <FavoritesFriendTab
-                    :hide-tooltips="hideTooltips"
                     :edit-favorites-mode="editFavoritesMode"
                     @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
             <el-tab-pane name="world" :label="t('view.favorite.worlds.header')" lazy>
                 <FavoritesWorldTab
-                    :hide-tooltips="hideTooltips"
                     :edit-favorites-mode="editFavoritesMode"
                     :refresh-local-world-favorites="refreshLocalWorldFavorites"
                     @change-favorite-group-name="changeFavoriteGroupName"
@@ -47,7 +42,6 @@
             </el-tab-pane>
             <el-tab-pane name="avatar" :label="t('view.favorite.avatars.header')" lazy>
                 <FavoritesAvatarTab
-                    :hide-tooltips="hideTooltips"
                     :edit-favorites-mode="editFavoritesMode"
                     :refreshing-local-favorites="refreshingLocalFavorites"
                     @change-favorite-group-name="changeFavoriteGroupName"
@@ -65,13 +59,12 @@
     import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
-    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
+    import { useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
     import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
     import FavoritesFriendTab from './components/FavoritesFriendTab.vue';
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
 
     const { t } = useI18n();
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const {
         favoriteFriends,
         favoriteWorlds,

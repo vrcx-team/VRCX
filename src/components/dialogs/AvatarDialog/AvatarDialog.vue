@@ -9,14 +9,18 @@
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
                     <template #reference>
-                        <img :src="avatarDialog.ref.thumbnailImageUrl"
+                        <img
+                            :src="avatarDialog.ref.thumbnailImageUrl"
                             class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" loading="lazy">
+                            style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                            loading="lazy" />
                     </template>
-                    <img :src="avatarDialog.ref.imageUrl"
+                    <img
+                        :src="avatarDialog.ref.imageUrl"
                         class="x-link"
                         style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)" loading="lazy">
+                        @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
+                        loading="lazy" />
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
@@ -229,8 +233,7 @@
                         <el-tooltip
                             v-if="avatarDialog.inCache"
                             placement="top"
-                            :content="t('dialog.avatar.actions.delete_cache_tooltip')"
-                            :disabled="hideTooltips">
+                            :content="t('dialog.avatar.actions.delete_cache_tooltip')">
                             <el-button
                                 :icon="Delete"
                                 circle
@@ -240,8 +243,7 @@
                         <el-tooltip
                             v-if="avatarDialog.isFavorite"
                             placement="top"
-                            :content="t('dialog.avatar.actions.favorite_tooltip')"
-                            :disabled="hideTooltips">
+                            :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <el-button
                                 type="warning"
                                 :icon="Star"
@@ -249,11 +251,7 @@
                                 style="margin-left: 5px"
                                 @click="avatarDialogCommand('Add Favorite')"></el-button>
                         </el-tooltip>
-                        <el-tooltip
-                            v-else
-                            placement="top"
-                            :content="t('dialog.avatar.actions.favorite_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip v-else placement="top" :content="t('dialog.avatar.actions.favorite_tooltip')">
                             <el-button
                                 type="default"
                                 :icon="StarFilled"
@@ -261,10 +259,7 @@
                                 style="margin-left: 5px"
                                 @click="avatarDialogCommand('Add Favorite')"></el-button>
                         </el-tooltip>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('dialog.avatar.actions.select')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('dialog.avatar.actions.select')">
                             <el-button
                                 type="default"
                                 :icon="Check"
@@ -401,9 +396,11 @@
                                 :autoplay="false"
                                 height="200px">
                                 <el-carousel-item v-for="imageUrl in avatarDialog.galleryImages" :key="imageUrl">
-                                    <img :src="imageUrl"
+                                    <img
+                                        :src="imageUrl"
                                         style="width: 100%; height: 100%; object-fit: contain"
-                                        @click="showFullscreenImageDialog(imageUrl)" loading="lazy">
+                                        @click="showFullscreenImageDialog(imageUrl)"
+                                        loading="lazy" />
                                     <div
                                         v-if="avatarDialog.ref.authorId === currentUser.id"
                                         style="position: absolute; bottom: 5px; left: 33.3%">
@@ -440,8 +437,10 @@
                                 class="x-friend-item"
                                 style="width: 100%; cursor: default">
                                 <div class="avatar">
-                                    <img :src="getImageUrlFromImageId(listing.imageId)"
-                                        @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))" loading="lazy">
+                                    <img
+                                        :src="getImageUrlFromImageId(listing.imageId)"
+                                        @click="showFullscreenImageDialog(getImageUrlFromImageId(listing.imageId))"
+                                        loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span class="name">{{ listing.displayName }}</span>
@@ -475,10 +474,7 @@
                                 <span class="name">{{ t('dialog.avatar.info.id') }}</span>
                                 <span class="extra"
                                     >{{ avatarDialog.id
-                                    }}<el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.avatar.info.id_tooltip')"
-                                        :disabled="hideTooltips">
+                                    }}<el-tooltip placement="top" :content="t('dialog.avatar.info.id_tooltip')">
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                                             <el-button
                                                 type="default"
@@ -533,7 +529,6 @@
                                 <span class="name"
                                     >{{ t('dialog.avatar.info.time_spent')
                                     }}<el-tooltip
-                                        v-if="!hideTooltips"
                                         placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')">
@@ -643,20 +638,12 @@
         formatDateFilter,
         textToHex
     } from '../../../shared/utils';
-    import {
-        useAppearanceSettingsStore,
-        useAvatarStore,
-        useFavoriteStore,
-        useGalleryStore,
-        useGameStore,
-        useUserStore
-    } from '../../../stores';
+    import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
     import PreviousImagesDialog from '../PreviousImagesDialog.vue';
     import ChangeAvatarImageDialog from './ChangeAvatarImageDialog.vue';
     import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
     import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog, sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { avatarDialog, cachedAvatarModerations, cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
@@ -1329,4 +1316,3 @@
         });
     }
 </script>
-

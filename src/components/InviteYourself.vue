@@ -2,11 +2,10 @@
     <el-tooltip
         v-if="!canOpenInstanceInGame()"
         placement="top"
-        :content="t('dialog.user.info.self_invite_tooltip')"
-        :disabled="hideTooltips">
+        :content="t('dialog.user.info.self_invite_tooltip')">
         <el-button v-show="isVisible" @click="confirmInvite" size="small" :icon="Message" circle />
     </el-tooltip>
-    <el-tooltip v-else placement="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')" :disabled="hideTooltips">
+    <el-tooltip v-else placement="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
         <el-button @click="openInstance" size="small" :icon="Message" circle />
     </el-tooltip>
 </template>

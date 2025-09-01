@@ -196,7 +196,7 @@
                             v-if="worldDialog.inCache"
                             placement="top"
                             :content="t('dialog.world.actions.delete_cache_tooltip')"
-                            :disabled="hideTooltips">
+                            >
                             <el-button
                                 :icon="Delete"
                                 circle
@@ -206,7 +206,7 @@
                         <el-tooltip
                             placement="top"
                             :content="t('dialog.world.actions.favorites_tooltip')"
-                            :disabled="hideTooltips">
+                            >
                             <el-button
                                 :type="worldDialog.isFavorite ? 'warning' : 'default'"
                                 :icon="worldDialog.isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'"
@@ -360,7 +360,7 @@
                                 <el-tooltip
                                     placement="top"
                                     :content="t('dialog.world.instances.refresh_instance_info')"
-                                    :disabled="hideTooltips">
+                                    >
                                     <el-button
                                         size="small"
                                         :icon="Refresh"
@@ -372,7 +372,7 @@
                                     v-if="instanceJoinHistory.get(room.$location.tag)"
                                     placement="top"
                                     :content="t('dialog.previous_instances.info')"
-                                    :disabled="hideTooltips">
+                                    >
                                     <el-button
                                         size="small"
                                         :icon="DataLine"
@@ -468,7 +468,7 @@
                                     <el-tooltip
                                         placement="top"
                                         :content="t('dialog.world.info.id_tooltip')"
-                                        :disabled="hideTooltips">
+                                        >
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
                                             <el-button type="default" :icon="Sort" size="small" circle />
                                             <template #dropdown>
@@ -667,8 +667,7 @@
                                 <span class="name">
                                     {{ t('dialog.world.info.last_visited') }}
                                     <el-tooltip
-                                        v-if="!hideTooltips"
-                                        placement="top"
+                                                                                placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')"
                                         ><i class="el-icon-warning"></i
@@ -678,16 +677,14 @@
                             </div>
                         </div>
                         <el-tooltip
-                            :disabled="hideTooltips"
-                            placement="top"
+                                                        placement="top"
                             :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.world.info.visit_count') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
-                                            placement="top"
+                                                                                        placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.world.info.accuracy_notice')"
                                             ><i class="el-icon-warning"></i
@@ -704,8 +701,7 @@
                                 <span class="name"
                                     >{{ t('dialog.world.info.time_spent') }}
                                     <el-tooltip
-                                        v-if="!hideTooltips"
-                                        placement="top"
+                                                                                placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')">
                                         <i class="el-icon-warning"></i>
@@ -837,7 +833,7 @@
     import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
     import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
 
-    const { hideTooltips, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
+    const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser, userDialog } = storeToRefs(useUserStore());
     const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());

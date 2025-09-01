@@ -221,7 +221,7 @@
                     <el-tooltip
                         placement="bottom"
                         :content="t('view.player_list.photon.status_tooltip')"
-                        :disabled="hideTooltips">
+                        >
                         <div
                             style="
                                 display: inline-block;
@@ -871,7 +871,7 @@
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
     import { photonEventTableTypeFilterList } from '../../shared/constants';
 
-    const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const {
         photonLoggingEnabled,
         photonEventIcon,

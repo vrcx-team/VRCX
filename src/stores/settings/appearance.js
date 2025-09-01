@@ -43,7 +43,6 @@ export const useAppearanceSettingsStore = defineStore(
             isDarkMode: false,
             displayVRCPlusIconsAsAvatar: false,
             hideNicknames: false,
-            hideTooltips: false,
             isAgeGatedInstancesVisible: false,
             sortFavorites: true,
             instanceUsersSortAlphabetical: false,
@@ -84,7 +83,6 @@ export const useAppearanceSettingsStore = defineStore(
                 themeMode,
                 displayVRCPlusIconsAsAvatar,
                 hideNicknames,
-                hideTooltips,
                 isAgeGatedInstancesVisible,
                 sortFavorites,
                 instanceUsersSortAlphabetical,
@@ -106,7 +104,6 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
-                configRepository.getBool('VRCX_hideTooltips', false),
                 configRepository.getBool(
                     'VRCX_isAgeGatedInstancesVisible',
                     true
@@ -175,7 +172,6 @@ export const useAppearanceSettingsStore = defineStore(
 
             state.displayVRCPlusIconsAsAvatar = displayVRCPlusIconsAsAvatar;
             state.hideNicknames = hideNicknames;
-            state.hideTooltips = hideTooltips;
             state.isAgeGatedInstancesVisible = isAgeGatedInstancesVisible;
             state.sortFavorites = sortFavorites;
             state.instanceUsersSortAlphabetical = instanceUsersSortAlphabetical;
@@ -223,7 +219,6 @@ export const useAppearanceSettingsStore = defineStore(
             () => state.displayVRCPlusIconsAsAvatar
         );
         const hideNicknames = computed(() => state.hideNicknames);
-        const hideTooltips = computed(() => state.hideTooltips);
         const isAgeGatedInstancesVisible = computed(
             () => state.isAgeGatedInstancesVisible
         );
@@ -456,10 +451,6 @@ export const useAppearanceSettingsStore = defineStore(
         function setHideNicknames() {
             state.hideNicknames = !state.hideNicknames;
             configRepository.setBool('VRCX_hideNicknames', state.hideNicknames);
-        }
-        function setHideTooltips() {
-            state.hideTooltips = !state.hideTooltips;
-            configRepository.setBool('VRCX_hideTooltips', state.hideTooltips);
         }
         function setIsAgeGatedInstancesVisible() {
             state.isAgeGatedInstancesVisible =
@@ -722,7 +713,6 @@ export const useAppearanceSettingsStore = defineStore(
             isDarkMode,
             displayVRCPlusIconsAsAvatar,
             hideNicknames,
-            hideTooltips,
             isAgeGatedInstancesVisible,
             sortFavorites,
             instanceUsersSortAlphabetical,
@@ -747,7 +737,6 @@ export const useAppearanceSettingsStore = defineStore(
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
             setHideNicknames,
-            setHideTooltips,
             setIsAgeGatedInstancesVisible,
             setSortFavorites,
             setInstanceUsersSortAlphabetical,

@@ -40,10 +40,10 @@
                     </div>
                 </el-option>
             </el-select>
-            <el-tooltip placement="bottom" :content="t('side_panel.direct_access_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('side_panel.direct_access_tooltip')">
                 <el-button type="default" size="small" icon="Discover" circle @click="directAccessPaste"></el-button>
             </el-tooltip>
-            <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')">
                 <el-button
                     type="default"
                     :loading="isRefreshFriendsLoading"
@@ -96,7 +96,7 @@
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
     const { refreshFriendsList, confirmDeleteFriend } = useFriendStore();
-    const { hideTooltips, asideWidth } = storeToRefs(useAppearanceSettingsStore());
+    const { asideWidth } = storeToRefs(useAppearanceSettingsStore());
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { quickSearchRemoteMethod, quickSearchChange, directAccessPaste } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());

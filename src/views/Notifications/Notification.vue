@@ -40,10 +40,7 @@
                         v-model="notificationTable.filters[1].value"
                         :placeholder="t('view.notification.search_placeholder')"
                         style="flex: none; width: 150px; margin: 0 10px" />
-                    <el-tooltip
-                        placement="bottom"
-                        :content="t('view.notification.refresh_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="bottom" :content="t('view.notification.refresh_tooltip')">
                         <el-button
                             type="default"
                             :loading="isNotificationsLoading"
@@ -89,11 +86,7 @@
                             @click="showWorldDialog(scope.row.location)"
                             v-text="t('view.notification.filters.' + scope.row.type)"></span>
                     </el-tooltip>
-                    <el-tooltip
-                        v-else-if="scope.row.link"
-                        placement="top"
-                        :content="scope.row.linkText"
-                        :disabled="hideTooltips">
+                    <el-tooltip v-else-if="scope.row.link" placement="top" :content="scope.row.linkText">
                         <span
                             class="x-link"
                             @click="openNotificationLink(scope.row.link)"
@@ -137,27 +130,35 @@
                     <template v-if="scope.row.details && scope.row.details.imageUrl">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
-                                <img class="x-link"
+                                <img
+                                    class="x-link"
                                     :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px" loading="lazy">
+                                    style="flex: none; height: 50px; border-radius: 4px"
+                                    loading="lazy" />
                             </template>
-                            <img :src="scope.row.details.imageUrl"
+                            <img
+                                :src="scope.row.details.imageUrl"
                                 class="x-link"
                                 style="width: 500px"
-                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)" loading="lazy">
+                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
+                                loading="lazy" />
                         </el-popover>
                     </template>
                     <template v-else-if="scope.row.imageUrl">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
-                                <img class="x-link"
+                                <img
+                                    class="x-link"
                                     :src="getSmallThumbnailUrl(scope.row.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px" loading="lazy">
+                                    style="flex: none; height: 50px; border-radius: 4px"
+                                    loading="lazy" />
                             </template>
-                            <img :src="scope.row.imageUrl"
+                            <img
+                                :src="scope.row.imageUrl"
                                 class="x-link"
                                 style="width: 500px"
-                                @click="showFullscreenImageDialog(scope.row.imageUrl)" loading="lazy">
+                                @click="showFullscreenImageDialog(scope.row.imageUrl)"
+                                loading="lazy" />
                         </el-popover>
                     </template>
                 </template>
@@ -212,7 +213,7 @@
                 <template #default="scope">
                     <template v-if="scope.row.senderUserId !== currentUser.id && !scope.row.$isExpired">
                         <template v-if="scope.row.type === 'friendRequest'">
-                            <el-tooltip placement="top" content="Accept" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Accept">
                                 <el-button
                                     type="text"
                                     :icon="Check"
@@ -222,7 +223,7 @@
                             </el-tooltip>
                         </template>
                         <template v-else-if="scope.row.type === 'invite'">
-                            <el-tooltip placement="top" content="Decline with message" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Decline with message">
                                 <el-button
                                     type="text"
                                     :icon="ChatLineSquare"
@@ -233,7 +234,7 @@
                         <template v-else-if="scope.row.type === 'requestInvite'">
                             <template
                                 v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)">
-                                <el-tooltip placement="top" content="Invite" :disabled="hideTooltips">
+                                <el-tooltip placement="top" content="Invite">
                                     <el-button
                                         type="text"
                                         :icon="Check"
@@ -242,7 +243,7 @@
                                         @click="acceptRequestInvite(scope.row)" />
                                 </el-tooltip>
                             </template>
-                            <el-tooltip placement="top" content="Decline with message" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Decline with message">
                                 <el-button
                                     type="text"
                                     :icon="ChatLineSquare"
@@ -254,7 +255,7 @@
 
                         <template v-if="scope.row.responses">
                             <template v-for="response in scope.row.responses" :key="response.text">
-                                <el-tooltip placement="top" :content="response.text" :disabled="hideTooltips">
+                                <el-tooltip placement="top" :content="response.text">
                                     <el-button
                                         v-if="response.icon === 'check'"
                                         type="text"
@@ -331,7 +332,7 @@
                                 !scope.row.type.includes('moderation.') &&
                                 !scope.row.type.includes('instance.')
                             ">
-                            <el-tooltip placement="top" content="Decline" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Decline">
                                 <el-button
                                     v-if="shiftHeld"
                                     style="color: #f56c6c; margin-left: 5px"
@@ -350,7 +351,7 @@
                         </template>
                     </template>
                     <template v-if="scope.row.type === 'group.queueReady'">
-                        <el-tooltip placement="top" content="Delete log" :disabled="hideTooltips">
+                        <el-tooltip placement="top" content="Delete log">
                             <el-button
                                 v-if="shiftHeld"
                                 style="color: #f56c6c; margin-left: 5px"
@@ -375,7 +376,7 @@
                             !scope.row.type.includes('group.') &&
                             !scope.row.type.includes('moderation.')
                         ">
-                        <el-tooltip placement="top" content="Delete log" :disabled="hideTooltips">
+                        <el-tooltip placement="top" content="Delete log">
                             <el-button
                                 v-if="shiftHeld"
                                 style="color: #f56c6c; margin-left: 5px"
@@ -433,7 +434,6 @@
     import configRepository from '../../service/config';
     import { database } from '../../service/database';
     import {
-        useAppearanceSettingsStore,
         useGalleryStore,
         useGameStore,
         useGroupStore,
@@ -448,7 +448,6 @@
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import Noty from 'noty';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
@@ -670,4 +669,3 @@
         });
     }
 </script>
-

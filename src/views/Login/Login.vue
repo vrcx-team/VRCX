@@ -2,7 +2,7 @@
     <div v-loading="loginForm.loading" class="x-login-container">
         <div class="x-login">
             <div style="position: fixed; top: 0; left: 0; margin: 5px">
-                <el-tooltip placement="top" :content="t('view.login.updater')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.login.updater')">
                     <el-button
                         type="default"
                         size="small"
@@ -10,7 +10,7 @@
                         circle
                         @click="showVRCXUpdateDialog"></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.login.proxy_settings')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.login.proxy_settings')">
                     <el-button
                         type="default"
                         size="small"
@@ -108,7 +108,7 @@
                                 class="x-friend-item"
                                 @click="relogin(user)">
                                 <div class="avatar">
-                                    <img :src="userImage(user.user)" loading="lazy">
+                                    <img :src="userImage(user.user)" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span class="name" v-text="user.user.displayName"></span>
@@ -154,17 +154,11 @@
     import { storeToRefs } from 'pinia';
     import { onBeforeUnmount, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import {
-        useAppearanceSettingsStore,
-        useAuthStore,
-        useGeneralSettingsStore,
-        useVRCXUpdaterStore
-    } from '../../stores';
+    import { useAuthStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
     import { AppGlobal } from '../../service/appConfig';
 
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
     const { toggleCustomEndpoint, relogin, deleteSavedLogin, login } = useAuthStore();
     const { promptProxySettings } = useGeneralSettingsStore();
@@ -187,4 +181,3 @@
         }
     });
 </script>
-

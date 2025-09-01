@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
                 <div class="avatar">
-                    <img :src="smallThumbnail" loading="lazy">
+                    <img :src="smallThumbnail" loading="lazy" />
                 </div>
                 <div class="detail">
                     <span class="name" v-once>{{ localFavFakeRef.name }}</span>
@@ -16,8 +16,7 @@
                     <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                         <el-tooltip
                             placement="left"
-                            :content="t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
-                            :disabled="hideTooltips">
+                            :content="t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')">
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </el-tooltip>
                         <template #dropdown>
@@ -34,7 +33,12 @@
                             </el-dropdown-menu>
                         </template>
 
-                        <el-button v-if="!isLocalFavorite" type="text" size="small" @click.stop style="margin-left: 5px">
+                        <el-button
+                            v-if="!isLocalFavorite"
+                            type="text"
+                            size="small"
+                            @click.stop
+                            style="margin-left: 5px">
                             <el-checkbox v-model="isSelected"></el-checkbox>
                         </el-button>
                     </el-dropdown>
@@ -52,7 +56,7 @@
                         :content="t('view.favorite.private')">
                         <el-icon><Warning /></el-icon>
                     </el-tooltip>
-                    <el-tooltip placement="left" :disabled="hideTooltips">
+                    <el-tooltip placement="left">
                         <template #content>
                             {{
                                 canOpenInstanceInGame()
@@ -70,8 +74,7 @@
                     <el-tooltip
                         v-if="!isLocalFavorite"
                         placement="right"
-                        :content="t('view.favorite.unfavorite_tooltip')"
-                        :disabled="hideTooltips">
+                        :content="t('view.favorite.unfavorite_tooltip')">
                         <el-button
                             v-if="shiftHeld"
                             size="small"
@@ -89,11 +92,7 @@
                             @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                     </el-tooltip>
                 </template>
-                <el-tooltip
-                    v-if="isLocalFavorite"
-                    placement="right"
-                    :content="t('view.favorite.unfavorite_tooltip')"
-                    :disabled="hideTooltips">
+                <el-tooltip v-if="isLocalFavorite" placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                     <el-button
                         v-if="shiftHeld"
                         size="small"
@@ -140,13 +139,7 @@
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
-    import {
-        useAppearanceSettingsStore,
-        useFavoriteStore,
-        useInviteStore,
-        useUiStore,
-        useGameStore
-    } from '../../../stores';
+    import { useFavoriteStore, useInviteStore, useUiStore, useGameStore } from '../../../stores';
 
     const props = defineProps({
         group: [Object, String],
@@ -156,7 +149,6 @@
     });
 
     const emit = defineEmits(['handle-select', 'remove-local-world-favorite', 'click']);
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
@@ -223,4 +215,3 @@
             });
     }
 </script>
-

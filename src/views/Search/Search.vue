@@ -7,7 +7,7 @@
                 style="flex: 1"
                 @input="updateSearchText"
                 @keyup.enter="search"></el-input>
-            <el-tooltip placement="bottom" :content="t('view.search.clear_results_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('view.search.clear_results_tooltip')">
                 <el-button
                     type="default"
                     :icon="Delete"
@@ -159,10 +159,7 @@
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
-                        <el-tooltip
-                            placement="bottom"
-                            :content="t('view.search.avatar.refresh_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="bottom" :content="t('view.search.avatar.refresh_tooltip')">
                             <el-button
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
@@ -344,7 +341,7 @@
         useWorldStore
     } from '../../stores';
 
-    const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider } = storeToRefs(useAvatarProviderStore());
     const { setAvatarProvider } = useAvatarProviderStore();
@@ -355,7 +352,6 @@
     const { cachedWorlds } = storeToRefs(useWorldStore());
     const { showWorldDialog } = useWorldStore();
     const { showGroupDialog, applyGroup } = useGroupStore();
-    const { cachedGroups } = storeToRefs(useGroupStore());
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch, moreSearchUser } = useSearchStore();

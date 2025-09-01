@@ -16,7 +16,7 @@
             <span>/</span>
             <span v-text="totalCacheSize"></span>
             <span>GB</span>
-            <el-tooltip placement="top" :content="t('dialog.config_json.refresh')" :disabled="hideTooltips">
+            <el-tooltip placement="top" :content="t('dialog.config_json.refresh')">
                 <el-button
                     type="default"
                     :loading="VRChatCacheSizeLoading"
@@ -194,9 +194,8 @@
     import { useI18n } from 'vue-i18n';
     import { VRChatCameraResolutions, VRChatScreenshotResolutions } from '../../../shared/constants';
     import { getVRChatResolution, openExternalLink } from '../../../shared/utils';
-    import { useAdvancedSettingsStore, useAppearanceSettingsStore, useGameStore } from '../../../stores';
+    import { useAdvancedSettingsStore, useGameStore } from '../../../stores';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { VRChatUsedCacheSize, VRChatTotalCacheSize, VRChatCacheSizeLoading } = storeToRefs(useGameStore());
     const { sweepVRChatCache, getVRChatCacheSize } = useGameStore();
     const { folderSelectorDialog } = useAdvancedSettingsStore();

@@ -94,7 +94,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.vrc_sdk_downloads.header') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -141,7 +141,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_messages') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -153,7 +153,7 @@
                             refreshInviteMessageTableData('message');
                         "></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -195,7 +195,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_response_messages') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -207,7 +207,7 @@
                             refreshInviteMessageTableData('response');
                         "></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -252,7 +252,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_request_messages') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -264,7 +264,7 @@
                             refreshInviteMessageTableData('request');
                         "></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -309,7 +309,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_request_response_messages') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -321,7 +321,7 @@
                             refreshInviteMessageTableData('requestResponse');
                         "></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -383,7 +383,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.config_json') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -392,7 +392,7 @@
                         style="margin-left: 5px"
                         @click="refreshConfigTreeData()"></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -415,7 +415,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.current_user_json') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -424,7 +424,7 @@
                         style="margin-left: 5px"
                         @click="refreshCurrentUserTreeData()"></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -450,7 +450,7 @@
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.feedback') }}</span>
-                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -459,7 +459,7 @@
                         style="margin-left: 5px"
                         @click="getCurrentUserFeedback()"></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')">
                     <el-button
                         type="default"
                         size="small"
@@ -512,18 +512,15 @@
     import ExportFriendsListDialog from './dialogs/ExportFriendsListDialog.vue';
     import ExportAvatarsListDialog from './dialogs/ExportAvatarsListDialog.vue';
     import {
-        useAppearanceSettingsStore,
         useSearchStore,
         useFriendStore,
         useUserStore,
         useAvatarStore,
         useInviteStore,
-        useGalleryStore,
         useUiStore
     } from '../../stores';
 
     const { friends } = storeToRefs(useFriendStore());
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { pastDisplayNameTable, currentUser } = storeToRefs(useUserStore());
     const { showUserDialog, lookupUser, getCurrentUser } = useUserStore();
     const { showAvatarDialog } = useAvatarStore();

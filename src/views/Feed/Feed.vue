@@ -2,10 +2,7 @@
     <div v-show="menuActiveIndex === 'feed'" class="x-container feed">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                <el-tooltip
-                    placement="bottom"
-                    :content="t('view.feed.favorites_only_tooltip')"
-                    :disabled="hideTooltips">
+                <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
                     <el-switch v-model="feedTable.vip" active-color="#13ce66" @change="feedTableLookup"></el-switch>
                 </el-tooltip>
             </div>
@@ -317,10 +314,9 @@
     import { Right } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { useGalleryStore, useAppearanceSettingsStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
+    import { useGalleryStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
     import { timeToText, statusClass, formatDateFilter } from '../../shared/utils';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { feedTable } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();

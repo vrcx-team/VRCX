@@ -39,7 +39,7 @@
                 <div class="x-friend-item">
                     <template v-if="favorite.name">
                         <div class="avatar">
-                            <img :src="favorite.thumbnailImageUrl" loading="lazy">
+                            <img :src="favorite.thumbnailImageUrl" loading="lazy" />
                         </div>
                         <div class="detail">
                             <span class="name" v-text="favorite.name" />
@@ -65,7 +65,7 @@
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         {{ group.count }}/{{ group.capacity }}
                     </span>
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
                             size="small"
                             :icon="Edit"
@@ -73,7 +73,7 @@
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)" />
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
                         <el-button
                             size="small"
                             :icon="Delete"
@@ -88,7 +88,6 @@
                         :key="favorite.id"
                         :favorite="favorite"
                         :group="group"
-                        :hide-tooltips="hideTooltips"
                         :edit-favorites-mode="editFavoritesMode"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         @handle-select="favorite.$selected = $event"
@@ -113,7 +112,7 @@
                     <span style="color: #909399; font-size: 12px; margin-left: 10px"
                         >{{ avatarHistoryArray.length }}/100</span
                     >
-                    <el-tooltip placement="right" content="Clear" :disabled="hideTooltips">
+                    <el-tooltip placement="right" content="Clear">
                         <el-button
                             size="small"
                             :icon="Delete"
@@ -128,7 +127,6 @@
                         :key="favorite.id"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         :favorite="favorite"
-                        :hide-tooltips="hideTooltips"
                         @click="showAvatarDialog(favorite.id)" />
                 </div>
                 <div
@@ -169,7 +167,7 @@
                     <span :style="{ color: '#909399', fontSize: '12px', marginLeft: '10px' }">{{
                         getLocalAvatarFavoriteGroupLength(group)
                     }}</span>
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
                             size="small"
                             :icon="Edit"
@@ -177,7 +175,7 @@
                             :style="{ marginLeft: '5px' }"
                             @click.stop="promptLocalAvatarFavoriteGroupRename(group)"></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')">
                         <el-button
                             size="small"
                             :icon="Delete"
@@ -194,7 +192,6 @@
                         :style="{ display: 'inline-block', width: '300px', marginRight: '15px' }"
                         :favorite="favorite"
                         :group="group"
-                        :hide-tooltips="hideTooltips"
                         :edit-favorites-mode="editFavoritesMode"
                         @handle-select="favorite.$selected = $event"
                         @click="showAvatarDialog(favorite.id)" />
@@ -243,7 +240,7 @@
 
     const emit = defineEmits(['change-favorite-group-name', 'refresh-local-avatar-favorites']);
 
-    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const { favoriteAvatars, favoriteAvatarGroups, localAvatarFavorites, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
@@ -421,4 +418,3 @@
         });
     }
 </script>
-

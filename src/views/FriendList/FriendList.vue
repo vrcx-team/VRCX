@@ -20,10 +20,7 @@
                     <span>{{ t('view.friend_list.load') }}</span>
                     <template v-if="friendsListLoading">
                         <span style="margin-left: 5px" v-text="friendsListLoadingProgress"></span>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('view.friend_list.cancel_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('view.friend_list.cancel_tooltip')">
                             <el-button
                                 size="small"
                                 :icon="Loading"
@@ -33,10 +30,7 @@
                         </el-tooltip>
                     </template>
                     <template v-else>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('view.friend_list.load_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('view.friend_list.load_tooltip')">
                             <el-button
                                 size="small"
                                 icon="el-icon-refresh-left"
@@ -50,10 +44,7 @@
 
             <div style="margin: 10px 0 0 10px; display: flex; align-items: center">
                 <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                    <el-tooltip
-                        placement="bottom"
-                        :content="t('view.friend_list.favorites_only_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
                         <el-switch
                             v-model="friendsListSearchFilterVIP"
                             active-color="#13ce66"
@@ -80,7 +71,7 @@
                         :label="type"
                         :value="type"></el-option>
                 </el-select>
-                <el-tooltip placement="top" :content="t('view.friend_list.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.friend_list.refresh_tooltip')">
                     <el-button
                         type="default"
                         :icon="Refresh"
@@ -117,12 +108,14 @@
                     <template #default="{ row }">
                         <el-popover placement="right" height="500px" trigger="hover">
                             <template #reference>
-                                <img :src="userImage(row, true)" class="friends-list-avatar" loading="lazy">
+                                <img :src="userImage(row, true)" class="friends-list-avatar" loading="lazy" />
                             </template>
-                            <img :src="userImageFull(row)"
+                            <img
+                                :src="userImageFull(row)"
                                 class="friends-list-avatar"
                                 style="height: 500px; cursor: pointer"
-                                @click="showFullscreenImageDialog(userImageFull(row))" loading="lazy">
+                                @click="showFullscreenImageDialog(userImageFull(row))"
+                                loading="lazy" />
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -187,7 +180,8 @@
                             <template #content>
                                 <span v-text="link"></span>
                             </template>
-                            <img :src="getFaviconUrl(link)"
+                            <img
+                                :src="getFaviconUrl(link)"
                                 style="
                                     width: 16px;
                                     height: 16px;
@@ -195,7 +189,8 @@
                                     margin-right: 5px;
                                     cursor: pointer;
                                 "
-                                @click.stop="openExternalLink(link)" loading="lazy">
+                                @click.stop="openExternalLink(link)"
+                                loading="lazy" />
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -295,7 +290,7 @@
 
     const { friends } = storeToRefs(useFriendStore());
     const { getAllUserStats, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
-    const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
@@ -442,4 +437,3 @@
         return JSON.stringify(as).localeCompare(JSON.stringify(bs));
     }
 </script>
-

@@ -188,7 +188,7 @@
                                 v-if="groupDialog.ref.myMember?.isRepresenting"
                                 placement="top"
                                 :content="t('dialog.group.actions.unrepresent_tooltip')"
-                                :disabled="hideTooltips">
+                                >
                                 <el-button
                                     type="warning"
                                     :icon="Star"
@@ -200,7 +200,7 @@
                                 v-else
                                 placement="top"
                                 :content="t('dialog.group.actions.represent_tooltip')"
-                                :disabled="hideTooltips">
+                                >
                                 <span>
                                     <el-button
                                         type="default"
@@ -216,7 +216,7 @@
                             <el-tooltip
                                 placement="top"
                                 :content="t('dialog.group.actions.cancel_join_request_tooltip')"
-                                :disabled="hideTooltips">
+                                >
                                 <span>
                                     <el-button
                                         type="default"
@@ -231,7 +231,7 @@
                             <el-tooltip
                                 placement="top"
                                 :content="t('dialog.group.actions.pending_request_tooltip')"
-                                :disabled="hideTooltips">
+                                >
                                 <span>
                                     <el-button
                                         type="default"
@@ -247,7 +247,7 @@
                                 v-if="groupDialog.ref.joinState === 'request'"
                                 placement="top"
                                 :content="t('dialog.group.actions.request_join_tooltip')"
-                                :disabled="hideTooltips">
+                                >
                                 <el-button
                                     type="default"
                                     :icon="Message"
@@ -259,7 +259,7 @@
                                 v-if="groupDialog.ref.joinState === 'invite'"
                                 placement="top"
                                 :content="t('dialog.group.actions.invite_required_tooltip')"
-                                :disabled="hideTooltips">
+                                >
                                 <span>
                                     <el-button
                                         type="default"
@@ -273,7 +273,7 @@
                                 v-if="groupDialog.ref.joinState === 'open'"
                                 placement="top"
                                 :content="t('dialog.group.actions.join_group_tooltip')"
-                                :disabled="hideTooltips">
+                                >
                                 <el-button
                                     type="default"
                                     :icon="Check"
@@ -415,7 +415,7 @@
                             <div style="margin: 5px 0">
                                 <Location :location="room.tag" style="display: inline-block" />
                                 <InviteYourself :location="room.tag" style="margin-left: 5px" />
-                                <el-tooltip placement="top" content="Refresh player count" :disabled="hideTooltips">
+                                <el-tooltip placement="top" content="Refresh player count" >
                                     <el-button
                                         size="small"
                                         :icon="Refresh"
@@ -551,7 +551,7 @@
                                         <el-tooltip
                                             placement="top"
                                             :content="t('dialog.group.posts.edit_tooltip')"
-                                            :disabled="hideTooltips">
+                                            >
                                             <el-button
                                                 type="text"
                                                 :icon="Edit"
@@ -564,7 +564,7 @@
                                         <el-tooltip
                                             placement="top"
                                             :content="t('dialog.group.posts.delete_tooltip')"
-                                            :disabled="hideTooltips">
+                                            >
                                             <el-button
                                                 type="text"
                                                 :icon="Delete"
@@ -606,16 +606,14 @@
                             </div>
                         </div>
                         <el-tooltip
-                            :disabled="hideTooltips"
-                            placement="top"
+                                                        placement="top"
                             :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.group.info.last_visited') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
-                                            placement="top"
+                                                                                        placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
                                             <i class="el-icon-warning"></i>
@@ -659,7 +657,7 @@
                                     <el-tooltip
                                         placement="top"
                                         :content="t('dialog.group.info.url_tooltip')"
-                                        :disabled="hideTooltips">
+                                        >
                                         <el-button
                                             type="default"
                                             size="small"
@@ -678,7 +676,7 @@
                                     <el-tooltip
                                         placement="top"
                                         :content="t('dialog.group.info.id_tooltip')"
-                                        :disabled="hideTooltips">
+                                        >
                                         <el-button
                                             type="default"
                                             size="small"
@@ -846,7 +844,7 @@
                                             <el-tooltip
                                                 placement="top"
                                                 :content="t('dialog.group.posts.edit_tooltip')"
-                                                :disabled="hideTooltips">
+                                                >
                                                 <el-button
                                                     type="text"
                                                     :icon="Edit"
@@ -857,7 +855,7 @@
                                             <el-tooltip
                                                 placement="top"
                                                 :content="t('dialog.group.posts.delete_tooltip')"
-                                                :disabled="hideTooltips">
+                                                >
                                                 <el-button
                                                     type="text"
                                                     :icon="Delete"
@@ -1241,7 +1239,6 @@
 
     const { t } = useI18n();
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());

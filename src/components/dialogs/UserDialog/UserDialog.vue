@@ -102,8 +102,7 @@
                             <el-tooltip
                                 v-if="userDialog.ref.pronouns"
                                 placement="top"
-                                :content="t('dialog.user.pronouns')"
-                                :disabled="hideTooltips">
+                                :content="t('dialog.user.pronouns')">
                                 <span
                                     class="x-grey"
                                     style="margin-right: 5px; font-family: monospace; font-size: 12px"
@@ -354,19 +353,14 @@
                             <el-tooltip
                                 v-if="userDialog.isFavorite"
                                 placement="top"
-                                :content="t('dialog.user.actions.unfavorite_tooltip')"
-                                :disabled="hideTooltips">
+                                :content="t('dialog.user.actions.unfavorite_tooltip')">
                                 <el-button
                                     type="warning"
                                     :icon="Star"
                                     circle
                                     @click="userDialogCommand('Add Favorite')"></el-button>
                             </el-tooltip>
-                            <el-tooltip
-                                v-else
-                                placement="top"
-                                :content="t('dialog.user.actions.favorite_tooltip')"
-                                :disabled="hideTooltips">
+                            <el-tooltip v-else placement="top" :content="t('dialog.user.actions.favorite_tooltip')">
                                 <el-button
                                     type="default"
                                     :icon="StarFilled"
@@ -604,11 +598,8 @@
                                         :location="userDialog.$location.tag"
                                         :shortname="userDialog.$location.shortName"
                                         style="margin-left: 5px" />
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.user.info.refresh_instance_info')"
-                                        :disabled="hideTooltips">
-                                        <el-button
+                                    <el-tooltip placement="top" :content="t('dialog.user.info.refresh_instance_info')"
+                                        ><el-button
                                             size="small"
                                             :icon="Refresh"
                                             style="margin-left: 5px"
@@ -743,9 +734,7 @@
                                         style="display: inline-block" />
                                     <el-tooltip
                                         v-if="
-                                            userDialog.ref.profilePicOverride &&
-                                            !userDialog.ref.currentAvatarImageUrl &&
-                                            !hideTooltips
+                                            userDialog.ref.profilePicOverride && !userDialog.ref.currentAvatarImageUrl
                                         "
                                         placement="top"
                                         :content="t('dialog.user.info.vrcplus_hides_avatar')">
@@ -864,7 +853,6 @@
                                     <span class="name">
                                         {{ t('dialog.user.info.last_seen') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
@@ -874,16 +862,12 @@
                                     <span class="extra">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
                                 </div>
                             </div>
-                            <el-tooltip
-                                :disabled="hideTooltips"
-                                placement="top"
-                                :content="t('dialog.user.info.open_previous_instance')">
+                            <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
                                 <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
                                     <div class="detail">
                                         <span class="name">
                                             {{ t('dialog.user.info.join_count') }}
                                             <el-tooltip
-                                                v-if="!hideTooltips"
                                                 placement="top"
                                                 style="margin-left: 5px"
                                                 :content="t('dialog.user.info.accuracy_notice')">
@@ -900,7 +884,6 @@
                                     <span class="name">
                                         {{ t('dialog.user.info.time_together') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
@@ -914,7 +897,7 @@
                         </template>
                         <template v-else>
                             <el-tooltip
-                                :disabled="hideTooltips || currentUser.id !== userDialog.id"
+                                :disabled="currentUser.id !== userDialog.id"
                                 placement="top"
                                 :content="t('dialog.user.info.open_previous_instance')">
                                 <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
@@ -922,7 +905,6 @@
                                         <span class="name">
                                             {{ t('dialog.user.info.play_time') }}
                                             <el-tooltip
-                                                v-if="!hideTooltips"
                                                 placement="top"
                                                 style="margin-left: 5px"
                                                 :content="t('dialog.user.info.accuracy_notice')">
@@ -946,7 +928,6 @@
                                         class="name">
                                         {{ t('dialog.user.info.online_for') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
@@ -956,7 +937,6 @@
                                     <span v-else class="name">
                                         {{ t('dialog.user.info.offline_for') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
@@ -1007,7 +987,6 @@
                                     <span v-if="userDialog.unFriended" class="name">
                                         {{ t('dialog.user.info.unfriended') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
@@ -1017,7 +996,6 @@
                                     <span v-else class="name">
                                         {{ t('dialog.user.info.friended') }}
                                         <el-tooltip
-                                            v-if="!hideTooltips"
                                             placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
@@ -1086,10 +1064,7 @@
                                 <span class="name">{{ t('dialog.user.info.id') }}</span>
                                 <span class="extra">
                                     {{ userDialog.id }}
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.user.info.id_tooltip')"
-                                        :disabled="hideTooltips">
+                                    <el-tooltip placement="top" :content="t('dialog.user.info.id_tooltip')">
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
                                             <el-button type="default" :icon="Sort" size="small" circle></el-button>
                                             <template #dropdown>
@@ -1351,7 +1326,7 @@
                                     </el-dropdown>
                                     <!--//- JSON is missing isSubscribedToAnnouncements, can't be implemented-->
                                     <!--//- el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")-->
-                                    <!--//-     el-tooltip(placement="top" :disabled="hideTooltips")-->
+                                    <!--//-     el-tooltip(placement="top")-->
                                     <!--//-         template(#content)-->
                                     <!--//-             span(v-if="group.myMember.isSubscribedToAnnouncements") {{ t('dialog.group.actions.unsubscribe') }}-->
                                     <!--//-             span(v-else) {{ t('dialog.group.actions.subscribe') }}-->
@@ -1361,8 +1336,7 @@
                                     <!--//-             i.el-icon-chat-square(style="color:#f56c6c")-->
                                     <el-tooltip
                                         placement="right"
-                                        :content="t('dialog.user.groups.leave_group_tooltip')"
-                                        :disabled="hideTooltips">
+                                        :content="t('dialog.user.groups.leave_group_tooltip')">
                                         <el-button
                                             v-if="shiftHeld"
                                             size="small"
@@ -1926,7 +1900,7 @@
 
     const { t } = useI18n();
 
-    const { hideTooltips, hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
+    const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { userDialog, languageDialog, currentUser, cachedUsers } = storeToRefs(useUserStore());
     const { showUserDialog, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =

@@ -2,13 +2,13 @@
     <div @click="$emit('click')">
         <div class="x-friend-item">
             <div class="avatar">
-                <img :src="smallThumbnail" loading="lazy">
+                <img :src="smallThumbnail" loading="lazy" />
             </div>
             <div class="detail">
                 <span class="name" v-text="favorite.name"></span>
                 <span class="extra" v-text="favorite.authorName"></span>
             </div>
-            <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')" :disabled="hideTooltips">
+            <el-tooltip placement="left" :content="t('view.favorite.select_avatar_tooltip')">
                 <el-button
                     :disabled="currentUser.currentAvatar === favorite.id"
                     size="small"
@@ -18,7 +18,7 @@
                     @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
             </el-tooltip>
             <template v-if="cachedFavoritesByObjectId.has(favorite.id)">
-                <el-tooltip placement="right" content="Favorite" :disabled="hideTooltips">
+                <el-tooltip placement="right" content="Unfavorite">
                     <el-button
                         type="default"
                         :icon="Star"
@@ -29,7 +29,7 @@
                 </el-tooltip>
             </template>
             <template v-else>
-                <el-tooltip placement="right" content="Favorite" :disabled="hideTooltips">
+                <el-tooltip placement="right" content="Favorite">
                     <el-button
                         type="default"
                         :icon="StarFilled"
@@ -48,11 +48,10 @@
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
+    import { useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { cachedFavoritesByObjectId } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { selectAvatarWithConfirmation } = useAvatarStore();
@@ -71,4 +70,3 @@
         return props.favorite.thumbnailImageUrl.replace('256', '128') || props.favorite.thumbnailImageUrl;
     });
 </script>
-

@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="favorite.ref">
                 <div class="avatar" :class="userStatusClass(favorite.ref)">
-                    <img :src="userImage(favorite.ref, true)" loading="lazy">
+                    <img :src="userImage(favorite.ref, true)" loading="lazy" />
                 </div>
                 <div class="detail">
                     <span
@@ -20,10 +20,7 @@
                 </div>
                 <template v-if="editFavoritesMode">
                     <el-dropdown trigger="click" size="small" style="margin-left: 5px">
-                        <el-tooltip
-                            placement="left"
-                            :content="t('view.favorite.move_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="left" :content="t('view.favorite.move_tooltip')">
                             <el-button type="default" :icon="Back" size="small" circle></el-button>
                         </el-tooltip>
                         <template #dropdown>
@@ -45,10 +42,7 @@
                     </el-button>
                 </template>
                 <template v-else>
-                    <el-tooltip
-                        placement="right"
-                        :content="t('view.favorite.unfavorite_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                         <el-button
                             v-if="shiftHeld"
                             size="small"
@@ -89,7 +83,7 @@
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { userImage, userStatusClass } from '../../../shared/utils';
-    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore } from '../../../stores';
+    import { useFavoriteStore, useUiStore } from '../../../stores';
 
     defineProps({
         favorite: { type: Object, required: true },
@@ -99,7 +93,6 @@
 
     defineEmits(['click']);
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
@@ -119,4 +112,3 @@
         favoriteRequest.deleteFavorite({ objectId });
     }
 </script>
-

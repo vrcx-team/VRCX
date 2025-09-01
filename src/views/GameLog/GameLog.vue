@@ -3,10 +3,7 @@
         <!-- 工具栏 -->
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                <el-tooltip
-                    placement="bottom"
-                    :content="t('view.feed.favorites_only_tooltip')"
-                    :disabled="hideTooltips">
+                <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
                     <el-switch
                         v-model="gameLogTable.vip"
                         active-color="#13ce66"
@@ -58,7 +55,7 @@
 
             <el-table-column :label="t('table.gameLog.type')" prop="type" width="120">
                 <template #default="scope">
-                    <el-tooltip placement="right" :show-after="500" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :show-after="500">
                         <template #content>
                             <span>{{ t('view.game_log.filters.' + scope.row.type) }}</span>
                         </template>
@@ -176,7 +173,7 @@
                             size="small"
                             @click="deleteGameLogEntryPrompt(scope.row)"></el-button>
                     </template>
-                    <el-tooltip placement="top" :content="t('dialog.previous_instances.info')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('dialog.previous_instances.info')">
                         <el-button
                             v-if="scope.row.type === 'Location'"
                             type="text"
@@ -197,17 +194,9 @@
     import { useI18n } from 'vue-i18n';
     import { database } from '../../service/database';
     import { removeFromArray, openExternalLink, formatDateFilter } from '../../shared/utils';
-    import {
-        useUserStore,
-        useUiStore,
-        useWorldStore,
-        useAppearanceSettingsStore,
-        useInstanceStore,
-        useGameLogStore
-    } from '../../stores';
+    import { useUserStore, useUiStore, useWorldStore, useInstanceStore, useGameLogStore } from '../../stores';
     import { useSharedFeedStore } from '../../stores';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showWorldDialog } = useWorldStore();
     const { lookupUser } = useUserStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();

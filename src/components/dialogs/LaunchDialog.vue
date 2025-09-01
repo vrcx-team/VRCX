@@ -7,7 +7,7 @@
                     size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" >
                     <el-button
                         size="small"
                         :icon="Sort"
@@ -28,7 +28,7 @@
                     size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" >
                     <el-button
                         size="small"
                         :icon="Sort"
@@ -43,7 +43,7 @@
                     size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" >
                     <el-button
                         size="small"
                         :icon="Sort"
@@ -130,7 +130,6 @@
     const { t } = useI18n();
 
     const { friends } = storeToRefs(useFriendStore());
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { lastLocation } = storeToRefs(useLocationStore());
     const { launchGame, tryOpenInstanceInVrc } = useLaunchStore();
     const { launchDialogData } = storeToRefs(useLaunchStore());
