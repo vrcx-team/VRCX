@@ -130,10 +130,17 @@ if (!gotTheLock) {
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         if (mainWindow && commandLine.length >= 2) {
-            mainWindow.webContents.send(
-                'launch-command',
-                commandLine.pop().trim().replace(strip_vrcx_prefix_regex, '')
-            );
+            try {
+                mainWindow.webContents.send(
+                    'launch-command',
+                    commandLine
+                        .pop()
+                        .trim()
+                        .replace(strip_vrcx_prefix_regex, '')
+                );
+            } catch (err) {
+                console.error('Error processing second-instance command:', err);
+            }
         }
     });
 

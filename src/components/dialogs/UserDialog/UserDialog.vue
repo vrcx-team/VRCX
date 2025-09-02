@@ -2048,7 +2048,7 @@
             return;
         }
         handleUserDialogTab(obj.name, userId);
-        userDialogLastActiveTab.value = obj.label;
+        userDialogLastActiveTab.value = obj.name;
     }
 
     function showPronounsDialog() {
