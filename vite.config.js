@@ -13,7 +13,8 @@ export default defineConfig(({ mode }) => ({
     },
     build: {
         outDir: 'build/html',
-        emptyOutDir: true
+        emptyOutDir: true,
+        modulePreload: { polyfill: false }
         // rollupOptions: {
         //     input: {
         // main app page

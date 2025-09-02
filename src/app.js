@@ -6,7 +6,7 @@
 
 import { createApp } from 'vue';
 import './bootstrap';
-import { i18n } from './plugin/i18n';
+import { i18n } from './plugin';
 import App from './App.vue';
 import { pinia } from './stores';
 import ElementPlus from 'element-plus';

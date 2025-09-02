@@ -5,9 +5,9 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 import Vue from 'vue';
-import { initNoty } from './plugin/noty';
-import './plugin/i18n.js';
-import InteropApi from './ipc-electron/interopApi.js';
+import { initNoty } from '../plugin/noty';
+import '../plugin/i18n.js';
+import InteropApi from '../ipc-electron/interopApi.js';
 import Vr from './Vr.vue';
 
 initNoty(true);
