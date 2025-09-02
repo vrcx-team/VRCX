@@ -1129,13 +1129,13 @@
                             <img
                                 v-if="device[1] !== 'connected'"
                                 class="tracker-device"
-                                src="images/headset_quest_status_off.png"
+                                src="./images/headset_quest_status_off.png"
                                 :class="trackingResultToClass(device[4])" />
                             <img
                                 v-else-if="device[2] === 'charging'"
-                                src="images/headset_quest_status_ready_charging.png" />
-                            <img v-else-if="device[3] < 20" src="images/headset_quest_status_ready_low.png" />
-                            <img v-else src="images/headset_quest_status_ready.png" />
+                                src="./images/headset_quest_status_ready_charging.png" />
+                            <img v-else-if="device[3] < 20" src="./images/headset_quest_status_ready_low.png" />
+                            <img v-else src="./images/headset_quest_status_ready.png" />
                             <span>{{ device[3] }}%</span>
                         </div>
                         <div
@@ -1145,55 +1145,57 @@
                             <img
                                 v-if="device[1] !== 'connected'"
                                 class="tracker-device"
-                                src="images/left_controller_status_off.png"
+                                src="./images/left_controller_status_off.png"
                                 :class="trackingResultToClass(device[4])" />
                             <img
                                 v-else-if="device[2] === 'charging'"
-                                src="images/left_controller_status_ready_charging.png" />
-                            <img v-else-if="device[3] < 20" src="images/left_controller_status_ready_low.png" />
-                            <img v-else src="images/left_controller_status_ready.png" />
+                                src="./images/left_controller_status_ready_charging.png" />
+                            <img v-else-if="device[3] < 20" src="./images/left_controller_status_ready_low.png" />
+                            <img v-else src="./images/left_controller_status_ready.png" />
                             <span>{{ device[3] }}%</span>
                         </div>
                         <div
                             v-else-if="device[0] === 'rightController'"
                             class="tracker-device"
                             :class="trackingResultToClass(device[4])">
-                            <img v-if="device[1] !== 'connected'" src="images/right_controller_status_off.png" />
+                            <img v-if="device[1] !== 'connected'" src="./images/right_controller_status_off.png" />
                             <img
                                 v-else-if="device[2] === 'charging'"
-                                src="images/right_controller_status_ready_charging.png" />
-                            <img v-else-if="device[3] < 20" src="images/right_controller_status_ready_low.png" />
-                            <img v-else src="images/right_controller_status_ready.png" />
+                                src="./images/right_controller_status_ready_charging.png" />
+                            <img v-else-if="device[3] < 20" src="./images/right_controller_status_ready_low.png" />
+                            <img v-else src="./images/right_controller_status_ready.png" />
                             <span>{{ device[3] }}%</span>
                         </div>
                         <div
                             v-else-if="device[0] === 'controller'"
                             class="tracker-device"
                             :class="trackingResultToClass(device[4])">
-                            <img v-if="device[1] !== 'connected'" src="images/controller_status_off.png" />
+                            <img v-if="device[1] !== 'connected'" src="./images/controller_status_off.png" />
                             <img
                                 v-else-if="device[2] === 'charging'"
-                                src="images/controller_status_ready_charging.png" />
-                            <img v-else-if="device[3] < 20" src="images/controller_status_ready_low.png" />
-                            <img v-else src="images/controller_status_ready.png" />
+                                src="./images/controller_status_ready_charging.png" />
+                            <img v-else-if="device[3] < 20" src="./images/controller_status_ready_low.png" />
+                            <img v-else src="./images/controller_status_ready.png" />
                             <span>{{ device[3] }}%</span>
                         </div>
                         <div
                             v-else-if="device[0] === 'tracker'"
                             class="tracker-device"
                             :class="trackingResultToClass(device[4])">
-                            <img v-if="device[1] !== 'connected'" src="images/tracker_status_off.png" />
-                            <img v-else-if="device[2] === 'charging'" src="images/tracker_status_ready_charging.png" />
-                            <img v-else-if="device[3] < 20" src="images/tracker_status_ready_low.png" />
-                            <img v-else src="images/tracker_status_ready.png" />
+                            <img v-if="device[1] !== 'connected'" src="./images/tracker_status_off.png" />
+                            <img
+                                v-else-if="device[2] === 'charging'"
+                                src="./images/tracker_status_ready_charging.png" />
+                            <img v-else-if="device[3] < 20" src="./images/tracker_status_ready_low.png" />
+                            <img v-else src="./images/tracker_status_ready.png" />
                             <span>{{ device[3] }}%</span>
                         </div>
                         <div
                             v-else-if="device[0] === 'base'"
                             class="tracker-device"
                             :class="trackingResultToClass(device[4])">
-                            <img v-if="device[1] !== 'connected'" src="images/base_status_off.png" />
-                            <img v-else src="images/base_status_ready.png" />
+                            <img v-if="device[1] !== 'connected'" src="./images/base_status_off.png" />
+                            <img v-else src="./images/base_status_ready.png" />
                             <span v-if="device[3] !== 100">{{ device[3] }}x</span>
                         </div>
                     </div>
