@@ -533,18 +533,14 @@ function createTray() {
             label: 'Open',
             type: 'normal',
             click: function () {
-                BrowserWindow.getAllWindows().forEach(function (win) {
-                    win.show();
-                });
+                mainWindow.show();
             }
         },
         {
             label: 'DevTools',
             type: 'normal',
             click: function () {
-                BrowserWindow.getAllWindows().forEach(function (win) {
-                    win.webContents.openDevTools();
-                });
+                mainWindow.webContents.openDevTools();
             }
         },
         {
@@ -560,9 +556,7 @@ function createTray() {
     tray.setContextMenu(contextMenu);
 
     tray.on('click', () => {
-        BrowserWindow.getAllWindows().forEach(function (win) {
-            win.show();
-        });
+        mainWindow.show();
     });
 }
 
