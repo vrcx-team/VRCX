@@ -587,7 +587,7 @@
         <SetAvatarTagsDialog :set-avatar-tags-dialog="setAvatarTagsDialog" />
         <SetAvatarStylesDialog :set-avatar-styles-dialog="setAvatarStylesDialog" />
         <ChangeAvatarImageDialog
-            :change-avatar-image-dialog-v-model="changeAvatarImageDialogVisible"
+            :change-avatar-image-dialog-visible="changeAvatarImageDialogVisible"
             :previous-images-file-id="previousImagesFileId"
             @refresh="displayPreviousImages" />
         <PreviousImagesDialog />
@@ -747,7 +747,7 @@
         console.log(tabName);
         if (tabName === '0') {
             tabName = avatarDialogLastActiveTab.value;
-            avatarDialogTabsRef.value.setCurrentName(tabName);
+            avatarDialogTabsRef.value = tabName;
         }
         handleAvatarDialogTab(tabName);
         avatarDialogLastActiveTab.value = tabName;

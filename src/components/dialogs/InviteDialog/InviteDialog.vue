@@ -155,7 +155,7 @@
             >
         </template>
         <SendInviteDialog
-            :send-invite-dialog-v-model="sendInviteDialogVisible"
+            :send-invite-dialog-visible="sendInviteDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />

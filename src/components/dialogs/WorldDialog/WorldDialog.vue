@@ -745,18 +745,18 @@
         </div>
 
         <!-- Nested -->
-        <WorldAllowedDomainsDialog v-model:world-allowed-domains-dialog="worldAllowedDomainsDialog" />
+        <WorldAllowedDomainsDialog :world-allowed-domains-dialog="worldAllowedDomainsDialog" />
         <SetWorldTagsDialog
-            :is-set-world-tags-dialog-v-model="isSetWorldTagsDialogVisible"
+            :is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
             :old-tags="worldDialog.ref?.tags"
             :world-id="worldDialog.id"
             :is-world-dialog-visible="worldDialog.visible" />
-        <PreviousInstancesWorldDialog v-model:previous-instances-world-dialog="previousInstancesWorldDialog" />
+        <PreviousInstancesWorldDialog :previous-instances-world-dialog="previousInstancesWorldDialog" />
         <NewInstanceDialog
             :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
             :last-location="lastLocation" />
         <ChangeWorldImageDialog
-            :change-world-image-dialog-v-model="changeWorldImageDialogVisible"
+            :change-world-image-dialog-visible="changeWorldImageDialogVisible"
             :previous-images-file-id="previousImagesFileId"
             :world-dialog="worldDialog"
             @refresh="displayPreviousImages" />
@@ -960,7 +960,7 @@
         let tabName = worldDialogTabsRef.value.currentName;
         if (tabName === '0') {
             tabName = worldDialogLastActiveTab.value;
-            worldDialogTabsRef.value.setCurrentName(tabName);
+            worldDialogTabsRef.value = tabName;
         }
         handleWorldDialogTab(tabName);
         worldDialogLastActiveTab.value = tabName;

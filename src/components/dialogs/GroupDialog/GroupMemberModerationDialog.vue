@@ -852,7 +852,7 @@
             }}</el-button>
         </div>
         <group-member-moderation-export-dialog
-            :is-group-logs-export-dialog-v-model="isGroupLogsExportDialogVisible"
+            :is-group-logs-export-dialog-visible="isGroupLogsExportDialogVisible"
             :group-logs-moderation-table="groupLogsModerationTable" />
     </el-dialog>
 </template>

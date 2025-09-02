@@ -1780,14 +1780,14 @@
             </el-tabs>
         </div>
         <SendInviteDialog
-            :send-invite-dialog-v-model="sendInviteDialogVisible"
+            :send-invite-dialog-visible="sendInviteDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteRequestDialog
-            :send-invite-request-dialog-v-model="sendInviteRequestDialogVisible"
+            :send-invite-request-dialog-visible="sendInviteRequestDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-        <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
+        <PreviousInstancesUserDialog :previous-instances-user-dialog="previousInstancesUserDialog" />
         <PreviousImagesDialog />
         <InviteGroupDialog />
         <SocialStatusDialog
@@ -2075,7 +2075,7 @@
         let tabName = userDialogTabsRef.value.currentName;
         if (tabName === '0') {
             tabName = userDialogLastActiveTab.value;
-            userDialogTabsRef.value.setCurrentName(tabName);
+            userDialogTabsRef.value = tabName;
         }
         handleUserDialogTab(tabName, userId);
         userDialogLastActiveTab.value = tabName;

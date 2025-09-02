@@ -481,12 +481,12 @@
                 </template>
             </el-tree>
         </div>
-        <DiscordNamesDialog :discord-names-dialog-v-model="discordNamesDialogVisible" :friends="friends" />
+        <DiscordNamesDialog :discord-names-dialog-visible="discordNamesDialogVisible" :friends="friends" />
         <ExportFriendsListDialog
             :is-export-friends-list-dialog-visible="isExportFriendsListDialogVisible"
             :friends="friends"
             @update:isExportFriendsListDialogVisible="isExportFriendsListDialogVisible = $event" />
-        <ExportAvatarsListDialog :is-export-avatars-list-dialog-v-model="isExportAvatarsListDialogVisible" />
+        <ExportAvatarsListDialog :is-export-avatars-list-dialog-visible="isExportAvatarsListDialogVisible" />
     </div>
 </template>
 

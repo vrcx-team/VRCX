@@ -35,7 +35,7 @@
                 <div class="x-friend-item">
                     <template v-if="favorite.name">
                         <div class="avatar">
-                            <img :src="favorite.thumbnailImageUrl" loading="lazy">
+                            <img :src="favorite.thumbnailImageUrl" loading="lazy" />
                         </div>
                         <div class="detail">
                             <span class="name" v-text="favorite.name"></span>
@@ -73,10 +73,7 @@
                             >{{ group.count }}/{{ group.capacity }}</span
                         >
                         <el-dropdown trigger="click" size="small" style="margin-left: 10px">
-                            <el-tooltip
-                                placement="top"
-                                :content="t('view.favorite.visibility_tooltip')"
-                                >
+                            <el-tooltip placement="top" :content="t('view.favorite.visibility_tooltip')">
                                 <el-button type="default" :icon="View" size="small" circle @click.stop />
                             </el-tooltip>
                             <template #dropdown>
@@ -93,10 +90,7 @@
                                     >
                                 </el-dropdown-menu>
                             </template>
-                            <el-tooltip
-                                placement="top"
-                                :content="t('view.favorite.rename_tooltip')"
-                                >
+                            <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                                 <el-button
                                     size="small"
                                     :icon="Edit"
@@ -104,10 +98,7 @@
                                     style="margin-left: 5px"
                                     @click.stop="changeFavoriteGroupName(group)" />
                             </el-tooltip>
-                            <el-tooltip
-                                placement="right"
-                                :content="t('view.favorite.clear_tooltip')"
-                                >
+                            <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
                                 <el-button
                                     size="small"
                                     :icon="Delete"
@@ -125,7 +116,7 @@
                         :group="group"
                         :favorite="favorite"
                         :edit-favorites-mode="editFavoritesMode"
-                                                @click="showWorldDialog(favorite.id)"
+                        @click="showWorldDialog(favorite.id)"
                         @handle-select="favorite.$selected = $event" />
                 </div>
                 <div
@@ -165,7 +156,7 @@
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
                         getLocalWorldFavoriteGroupLength(group)
                     }}</span>
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" >
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
                             size="small"
                             :icon="Edit"
@@ -173,7 +164,7 @@
                             style="margin-left: 10px"
                             @click.stop="promptLocalWorldFavoriteGroupRename(group)" />
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" >
+                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')">
                         <el-button
                             size="small"
                             :icon="Delete"
@@ -190,7 +181,7 @@
                         :group="group"
                         :favorite="favorite"
                         :edit-favorites-mode="editFavoritesMode"
-                                                @click="showWorldDialog(favorite.id)"
+                        @click="showWorldDialog(favorite.id)"
                         @remove-local-world-favorite="removeLocalWorldFavorite" />
                 </div>
                 <div
@@ -207,7 +198,7 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <WorldExportDialog :world-export-dialog-v-model="worldExportDialogVisible" />
+        <WorldExportDialog :world-export-dialog-visible="worldExportDialogVisible" />
     </div>
 </template>
 
@@ -455,4 +446,3 @@
 </script>
 
 <style scoped></style>
-

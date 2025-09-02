@@ -1168,10 +1168,10 @@
             </el-tabs>
         </div>
         <!--Nested-->
-        <GroupPostEditDialog v-model:dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
+        <GroupPostEditDialog dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
         <InviteGroupDialog />
         <PreviousInstancesGroupDialog
-            v-model:previous-instances-group-dialog="previousInstancesGroupDialog"
+            :previous-instances-group-dialog="previousInstancesGroupDialog"
             :current-user="currentUser" />
     </el-dialog>
 </template>

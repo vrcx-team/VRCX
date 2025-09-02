@@ -1870,13 +1870,13 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
-        <OpenSourceSoftwareNoticeDialog v-model:ossDialog="ossDialog" />
-        <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
+        <OpenSourceSoftwareNoticeDialog ossDialog="ossDialog" />
+        <NotificationPositionDialog isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <RegistryBackupDialog />
-        <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
-        <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
+        <YouTubeApiDialog isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
+        <FeedFiltersDialog feedFiltersDialogMode="feedFiltersDialogMode" />
         <ChangelogDialog />
-        <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
+        <AvatarProviderDialog isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
     </div>
 </template>
 

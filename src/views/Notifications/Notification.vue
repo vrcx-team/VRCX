@@ -398,10 +398,10 @@
         </DataTable>
         <SendInviteResponseDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-response-dialog-v-model="sendInviteResponseDialogVisible" />
+            :send-invite-response-dialog-visible="sendInviteResponseDialogVisible" />
         <SendInviteRequestResponseDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-request-response-dialog-v-model="sendInviteRequestResponseDialogVisible" />
+            :send-invite-request-response-dialog-visible="sendInviteRequestResponseDialogVisible" />
     </div>
 </template>
 
