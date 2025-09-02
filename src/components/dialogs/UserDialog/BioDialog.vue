@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         v-model="bioDialog.visible"
         :title="t('dialog.bio.header')"
@@ -44,7 +44,7 @@
                 {{ t('dialog.bio.update') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

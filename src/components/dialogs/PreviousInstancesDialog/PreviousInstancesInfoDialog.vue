@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="dialogRef"
         :visible="previousInstancesInfoDialogVisible"
         :title="t('dialog.previous_instances.info')"
@@ -54,7 +54,7 @@
                 </template>
             </el-table-column>
         </DataTable>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

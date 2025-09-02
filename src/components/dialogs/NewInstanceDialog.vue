@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="newInstanceDialogRef"
         v-model="newInstanceDialog.visible"
         :title="t('dialog.new_instance.header')"
@@ -33,7 +33,10 @@
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_access_type')">
-                        <el-radio-group v-model="newInstanceDialog.groupAccessType" size="small" @change="buildInstance">
+                        <el-radio-group
+                            v-model="newInstanceDialog.groupAccessType"
+                            size="small"
+                            @change="buildInstance">
                             <el-radio-button
                                 label="members"
                                 :disabled="
@@ -114,7 +117,7 @@
                                                 hasGroupPermission(group, 'group-instance-open-create'))
                                         ">
                                         <div class="avatar">
-                                            <img :src="group.iconUrl" loading="lazy">
+                                            <img :src="group.iconUrl" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="group.name"></span>
@@ -254,7 +257,7 @@
                                     :value="currentUser.id"
                                     style="height: auto">
                                     <div class="avatar" :class="userStatusClass(currentUser)">
-                                        <img :src="userImage(currentUser)" loading="lazy">
+                                        <img :src="userImage(currentUser)" loading="lazy" />
                                     </div>
                                     <div class="detail">
                                         <span class="name" v-text="currentUser.displayName"></span>
@@ -271,7 +274,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar" :class="userStatusClass(friend.ref)">
-                                            <img :src="userImage(friend.ref)" loading="lazy">
+                                            <img :src="userImage(friend.ref)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -293,7 +296,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar" :class="userStatusClass(friend.ref)">
-                                            <img :src="userImage(friend.ref)" loading="lazy">
+                                            <img :src="userImage(friend.ref)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -315,7 +318,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar">
-                                            <img :src="userImage(friend.ref)" loading="lazy">
+                                            <img :src="userImage(friend.ref)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -337,7 +340,7 @@
                                     style="height: auto">
                                     <template v-if="friend.ref">
                                         <div class="avatar">
-                                            <img :src="userImage(friend.ref)" loading="lazy">
+                                            <img :src="userImage(friend.ref)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -371,7 +374,7 @@
                                     style="height: auto; width: 478px">
                                     <template v-if="group">
                                         <div class="avatar">
-                                            <img :src="group.iconUrl" loading="lazy">
+                                            <img :src="group.iconUrl" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span class="name" v-text="group.name"></span></div
@@ -479,7 +482,7 @@
             </template>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -871,4 +874,3 @@
         copyToClipboard(newUrl);
     }
 </script>
-

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog ref="favoriteDialogRef" v-model="isVisible" :title="t('dialog.favorite.header')" width="300px">
+    <el-dialog ref="favoriteDialogRef" v-model="isVisible" :title="t('dialog.favorite.header')" width="300px">
         <div v-loading="loading">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
@@ -58,7 +58,7 @@
                 </el-button>
             </template>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

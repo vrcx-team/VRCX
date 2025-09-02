@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isNotificationPositionDialogVisible"
         :title="t('dialog.notification_position.header')"
@@ -42,7 +42,7 @@
                 </el-button>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

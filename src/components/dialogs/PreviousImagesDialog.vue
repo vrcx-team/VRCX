@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="previousImagesDialogVisible"
         :title="t('dialog.previous_images.header')"
@@ -15,16 +15,18 @@
                     trigger="click"
                     v-if="image.file">
                     <template #reference>
-                        <img :src="image.file.url" class="x-link" loading="lazy">
+                        <img :src="image.file.url" class="x-link" loading="lazy" />
                     </template>
-                    <img :src="image.file.url"
+                    <img
+                        :src="image.file.url"
                         class="x-link"
                         style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(image.file.url)" loading="lazy">
+                        @click="showFullscreenImageDialog(image.file.url)"
+                        loading="lazy" />
                 </el-popover>
             </div>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -41,4 +43,3 @@
         previousImagesDialogVisible.value = false;
     }
 </script>
-

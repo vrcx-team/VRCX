@@ -1,9 +1,5 @@
 <template>
-    <safe-dialog
-        ref="friendImportDialogRef"
-        v-model="isVisible"
-        :title="t('dialog.friend_import.header')"
-        width="650px">
+    <el-dialog ref="friendImportDialogRef" v-model="isVisible" :title="t('dialog.friend_import.header')" width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ t('dialog.friend_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -119,7 +115,7 @@
                 </template>
             </el-table-column>
         </DataTable>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

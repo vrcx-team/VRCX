@@ -1,9 +1,5 @@
 <template>
-    <safe-dialog
-        ref="avatarImportDialogRef"
-        v-model="isVisible"
-        :title="t('dialog.avatar_import.header')"
-        width="650px">
+    <el-dialog ref="avatarImportDialogRef" v-model="isVisible" :title="t('dialog.avatar_import.header')" width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ t('dialog.avatar_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -126,12 +122,14 @@
                 <template #default="{ row }">
                     <el-popover placement="right" height="500px" trigger="hover">
                         <template #reference>
-                            <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy">
+                            <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy" />
                         </template>
-                        <img :src="row.imageUrl"
+                        <img
+                            :src="row.imageUrl"
                             class="friends-list-avatar"
                             style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(row.imageUrl)" loading="lazy">
+                            @click="showFullscreenImageDialog(row.imageUrl)"
+                            loading="lazy" />
                     </el-popover>
                 </template>
             </el-table-column>
@@ -170,7 +168,7 @@
                 </template>
             </el-table-column>
         </DataTable>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -362,4 +360,3 @@
         }
     }
 </script>
-

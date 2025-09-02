@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="sendInviteResponseConfirmDialog.visible"
         :title="t('dialog.invite_response_message.header')"
@@ -18,7 +18,7 @@
                 t('dialog.invite_response_message.confirm')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

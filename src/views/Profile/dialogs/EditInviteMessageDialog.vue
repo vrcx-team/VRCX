@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="editInviteMessageDialog.visible"
         :title="t('dialog.edit_invite_message.header')"
@@ -23,7 +23,7 @@
                 t('dialog.edit_invite_message.save')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

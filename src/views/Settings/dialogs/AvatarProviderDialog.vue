@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isAvatarProviderDialogVisible"
         :title="t('dialog.avatar_database_provider.header')"
@@ -20,7 +20,7 @@
                 {{ t('dialog.avatar_database_provider.add_provider') }}
             </el-button>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         v-model="pronounsDialog.visible"
         :title="t('dialog.pronouns.header')"
@@ -21,7 +21,7 @@
                 {{ t('dialog.pronouns.update') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

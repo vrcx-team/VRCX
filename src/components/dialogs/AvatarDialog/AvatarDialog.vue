@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="avatarDialogRef"
         class="x-dialog x-avatar-dialog"
         v-model="avatarDialog.visible"
@@ -591,7 +591,7 @@
             :previous-images-file-id="previousImagesFileId"
             @refresh="displayPreviousImages" />
         <PreviousImagesDialog />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

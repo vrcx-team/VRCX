@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="setAvatarStylesDialog"
         class="x-dialog"
         v-model="setAvatarStylesDialog.visible"
@@ -57,7 +57,7 @@
                 t('dialog.set_avatar_styles.save')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

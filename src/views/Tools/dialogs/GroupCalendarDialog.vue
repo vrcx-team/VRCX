@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="visible"
         :title="t('dialog.group_calendar.header')"
@@ -103,7 +103,7 @@
                 </div>
             </transition>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

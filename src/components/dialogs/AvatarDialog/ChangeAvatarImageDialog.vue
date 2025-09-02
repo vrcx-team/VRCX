@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="changeAvatarImageDialogVisible"
         :title="t('dialog.change_content_image.avatar')"
@@ -31,11 +31,11 @@
                     style="cursor: pointer"
                     :class="{ 'current-image': compareCurrentImage(image) }"
                     @click="setAvatarImage(image)">
-                    <img :src="image.file.url" class="image" loading="lazy">
+                    <img :src="image.file.url" class="image" loading="lazy" />
                 </div>
             </div>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -358,4 +358,3 @@
         );
     }
 </script>
-

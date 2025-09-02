@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="inviteGroupDialogRef"
         v-model="inviteGroupDialog.visible"
         :title="t('dialog.invite_to_group.header')"
@@ -26,7 +26,7 @@
                         style="height: auto"
                         class="x-friend-item">
                         <div class="avatar">
-                            <img :src="group.iconUrl" loading="lazy">
+                            <img :src="group.iconUrl" loading="lazy" />
                         </div>
                         <div class="detail">
                             <span class="name" v-text="group.name"></span>
@@ -50,7 +50,7 @@
                         class="x-friend-item">
                         <template v-if="inviteGroupDialog.userObject.id">
                             <div class="avatar" :class="userStatusClass(inviteGroupDialog.userObject)">
-                                <img :src="userImage(inviteGroupDialog.userObject)" loading="lazy">
+                                <img :src="userImage(inviteGroupDialog.userObject)" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span
@@ -72,7 +72,7 @@
                         class="x-friend-item">
                         <template v-if="friend.ref">
                             <div class="avatar" :class="userStatusClass(friend.ref)">
-                                <img :src="userImage(friend.ref)" loading="lazy">
+                                <img :src="userImage(friend.ref)" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span
@@ -94,7 +94,7 @@
                         class="x-friend-item">
                         <template v-if="friend.ref">
                             <div class="avatar" :class="userStatusClass(friend.ref)">
-                                <img :src="userImage(friend.ref)" loading="lazy">
+                                <img :src="userImage(friend.ref)" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span
@@ -116,7 +116,7 @@
                         class="x-friend-item">
                         <template v-if="friend.ref">
                             <div class="avatar">
-                                <img :src="userImage(friend.ref)" loading="lazy">
+                                <img :src="userImage(friend.ref)" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span
@@ -138,7 +138,7 @@
                         class="x-friend-item">
                         <template v-if="friend.ref">
                             <div class="avatar">
-                                <img :src="userImage(friend.ref)" loading="lazy">
+                                <img :src="userImage(friend.ref)" loading="lazy" />
                             </div>
                             <div class="detail">
                                 <span
@@ -161,7 +161,7 @@
                 {{ t('dialog.invite_to_group.invite') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -279,4 +279,3 @@
         });
     }
 </script>
-

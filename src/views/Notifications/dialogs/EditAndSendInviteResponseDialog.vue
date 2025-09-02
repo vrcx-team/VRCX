@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         v-model="editAndSendInviteResponseDialog.visible"
         :title="t('dialog.edit_send_invite_response_message.header')"
@@ -26,7 +26,7 @@
                 t('dialog.edit_send_invite_response_message.send')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

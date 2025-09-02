@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="previousInstancesGroupDialogRef"
         v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
@@ -58,7 +58,7 @@
                 </template>
             </el-table-column>
         </DataTable>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

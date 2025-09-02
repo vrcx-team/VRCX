@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         v-model="socialStatusDialog.visible"
         :title="t('dialog.social_status.header')"
@@ -53,7 +53,7 @@
                 {{ t('dialog.social_status.update') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

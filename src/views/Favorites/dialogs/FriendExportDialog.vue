@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         v-model="isDialogVisible"
         class="x-dialog"
         :title="t('dialog.friend_export.header')"
@@ -40,7 +40,7 @@
             readonly
             style="margin-top: 15px"
             @click="handleCopyFriendExportData"></el-input>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog v-model="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
+    <el-dialog v-model="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
@@ -78,7 +78,7 @@
             readonly
             style="margin-top: 15px"
             @click="handleCopyAvatarExportData"></el-input>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

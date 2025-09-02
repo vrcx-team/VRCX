@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="groupDialogRef"
         v-model="groupDialog.visible"
         :show-close="false"
@@ -8,28 +8,36 @@
         <div class="group-banner-image">
             <el-popover placement="right" width="500px" trigger="click">
                 <template #reference>
-                    <img :src="groupDialog.ref.bannerUrl"
+                    <img
+                        :src="groupDialog.ref.bannerUrl"
                         style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"
-                        class="x-link" loading="lazy">
+                        class="x-link"
+                        loading="lazy" />
                 </template>
-                <img :src="groupDialog.ref.bannerUrl"
+                <img
+                    :src="groupDialog.ref.bannerUrl"
                     style="width: 854px; height: 480px"
                     class="x-link"
-                    @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" loading="lazy">
+                    @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
+                    loading="lazy" />
             </el-popover>
         </div>
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
                     <template #reference>
-                        <img :src="groupDialog.ref.iconUrl"
+                        <img
+                            :src="groupDialog.ref.iconUrl"
                             style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                            class="x-link" loading="lazy">
+                            class="x-link"
+                            loading="lazy" />
                     </template>
-                    <img :src="groupDialog.ref.iconUrl"
+                    <img
+                        :src="groupDialog.ref.iconUrl"
                         style="width: 500px; height: 500px"
                         class="x-link"
-                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)" loading="lazy">
+                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
+                        loading="lazy" />
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
@@ -187,8 +195,7 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.myMember?.isRepresenting"
                                 placement="top"
-                                :content="t('dialog.group.actions.unrepresent_tooltip')"
-                                >
+                                :content="t('dialog.group.actions.unrepresent_tooltip')">
                                 <el-button
                                     type="warning"
                                     :icon="Star"
@@ -196,11 +203,7 @@
                                     style="margin-left: 5px"
                                     @click="clearGroupRepresentation(groupDialog.id)"></el-button>
                             </el-tooltip>
-                            <el-tooltip
-                                v-else
-                                placement="top"
-                                :content="t('dialog.group.actions.represent_tooltip')"
-                                >
+                            <el-tooltip v-else placement="top" :content="t('dialog.group.actions.represent_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
@@ -215,8 +218,7 @@
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'requested'">
                             <el-tooltip
                                 placement="top"
-                                :content="t('dialog.group.actions.cancel_join_request_tooltip')"
-                                >
+                                :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
@@ -228,10 +230,7 @@
                             </el-tooltip>
                         </template>
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'invited'">
-                            <el-tooltip
-                                placement="top"
-                                :content="t('dialog.group.actions.pending_request_tooltip')"
-                                >
+                            <el-tooltip placement="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
@@ -246,8 +245,7 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.joinState === 'request'"
                                 placement="top"
-                                :content="t('dialog.group.actions.request_join_tooltip')"
-                                >
+                                :content="t('dialog.group.actions.request_join_tooltip')">
                                 <el-button
                                     type="default"
                                     :icon="Message"
@@ -258,8 +256,7 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.joinState === 'invite'"
                                 placement="top"
-                                :content="t('dialog.group.actions.invite_required_tooltip')"
-                                >
+                                :content="t('dialog.group.actions.invite_required_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
@@ -272,8 +269,7 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.joinState === 'open'"
                                 placement="top"
-                                :content="t('dialog.group.actions.join_group_tooltip')"
-                                >
+                                :content="t('dialog.group.actions.join_group_tooltip')">
                                 <el-button
                                     type="default"
                                     :icon="Check"
@@ -389,7 +385,8 @@
                     <div class="group-banner-image-info">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
-                                <img :src="groupDialog.ref.bannerUrl"
+                                <img
+                                    :src="groupDialog.ref.bannerUrl"
                                     class="x-link"
                                     style="
                                         flex: none;
@@ -397,12 +394,15 @@
                                         aspect-ratio: 6/1;
                                         object-fit: cover;
                                         border-radius: 4px;
-                                    " loading="lazy">
+                                    "
+                                    loading="lazy" />
                             </template>
-                            <img :src="groupDialog.ref.bannerUrl"
+                            <img
+                                :src="groupDialog.ref.bannerUrl"
                                 class="x-link"
                                 style="width: 854px; height: 480px"
-                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" loading="lazy">
+                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
+                                loading="lazy" />
                         </el-popover>
                     </div>
                     <div class="x-friend-list" style="max-height: none">
@@ -415,7 +415,7 @@
                             <div style="margin: 5px 0">
                                 <Location :location="room.tag" style="display: inline-block" />
                                 <InviteYourself :location="room.tag" style="margin-left: 5px" />
-                                <el-tooltip placement="top" content="Refresh player count" >
+                                <el-tooltip placement="top" content="Refresh player count">
                                     <el-button
                                         size="small"
                                         :icon="Refresh"
@@ -439,7 +439,7 @@
                                     class="x-friend-item x-friend-item-border"
                                     @click="showUserDialog(user.id)">
                                     <div class="avatar" :class="userStatusClass(user)">
-                                        <img :src="userImage(user)" loading="lazy">
+                                        <img :src="userImage(user)" loading="lazy" />
                                     </div>
                                     <div class="detail">
                                         <span
@@ -466,7 +466,8 @@
                                     style="display: inline-block; margin-right: 5px">
                                     <el-popover placement="right" width="500px" trigger="click">
                                         <template #reference>
-                                            <img :src="groupDialog.announcement.imageUrl"
+                                            <img
+                                                :src="groupDialog.announcement.imageUrl"
                                                 class="x-link"
                                                 style="
                                                     flex: none;
@@ -474,12 +475,15 @@
                                                     height: 60px;
                                                     border-radius: 4px;
                                                     object-fit: cover;
-                                                " loading="lazy">
+                                                "
+                                                loading="lazy" />
                                         </template>
-                                        <img :src="groupDialog.announcement.imageUrl"
+                                        <img
+                                            :src="groupDialog.announcement.imageUrl"
                                             class="x-link"
                                             style="height: 500px"
-                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)" loading="lazy">
+                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
+                                            loading="lazy" />
                                     </el-popover>
                                 </div>
                                 <pre
@@ -548,10 +552,7 @@
                                         <Timer :epoch="Date.parse(groupDialog.announcement.updatedAt)" />
                                     </el-tooltip>
                                     <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                        <el-tooltip
-                                            placement="top"
-                                            :content="t('dialog.group.posts.edit_tooltip')"
-                                            >
+                                        <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
                                             <el-button
                                                 type="text"
                                                 :icon="Edit"
@@ -561,10 +562,7 @@
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
                                                 " />
                                         </el-tooltip>
-                                        <el-tooltip
-                                            placement="top"
-                                            :content="t('dialog.group.posts.delete_tooltip')"
-                                            >
+                                        <el-tooltip placement="top" :content="t('dialog.group.posts.delete_tooltip')">
                                             <el-button
                                                 type="text"
                                                 :icon="Delete"
@@ -605,15 +603,13 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
-                        <el-tooltip
-                                                        placement="top"
-                            :content="t('dialog.user.info.open_previous_instance')">
+                        <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.group.info.last_visited') }}
                                         <el-tooltip
-                                                                                        placement="top"
+                                            placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.user.info.accuracy_notice')">
                                             <i class="el-icon-warning"></i>
@@ -634,7 +630,8 @@
                                             <template #content>
                                                 <span v-text="link" />
                                             </template>
-                                            <img :src="getFaviconUrl(link)"
+                                            <img
+                                                :src="getFaviconUrl(link)"
                                                 style="
                                                     width: 16px;
                                                     height: 16px;
@@ -642,7 +639,8 @@
                                                     margin-right: 5px;
                                                     cursor: pointer;
                                                 "
-                                                @click.stop="openExternalLink(link)" loading="lazy">
+                                                @click.stop="openExternalLink(link)"
+                                                loading="lazy" />
                                         </el-tooltip>
                                     </template>
                                 </div>
@@ -654,10 +652,7 @@
                                 <span class="name">{{ t('dialog.group.info.url') }}</span>
                                 <span class="extra"
                                     >{{ groupDialog.ref.$url }}
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.group.info.url_tooltip')"
-                                        >
+                                    <el-tooltip placement="top" :content="t('dialog.group.info.url_tooltip')">
                                         <el-button
                                             type="default"
                                             size="small"
@@ -673,10 +668,7 @@
                                 <span class="name">{{ t('dialog.group.info.id') }}</span>
                                 <span class="extra"
                                     >{{ groupDialog.id }}
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.group.info.id_tooltip')"
-                                        >
+                                    <el-tooltip placement="top" :content="t('dialog.group.info.id_tooltip')">
                                         <el-button
                                             type="default"
                                             size="small"
@@ -770,7 +762,8 @@
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
                                         <el-popover placement="right" width="500px" trigger="click">
                                             <template #reference>
-                                                <img :src="post.imageUrl"
+                                                <img
+                                                    :src="post.imageUrl"
                                                     class="x-link"
                                                     style="
                                                         flex: none;
@@ -778,12 +771,15 @@
                                                         height: 60px;
                                                         border-radius: 4px;
                                                         object-fit: cover;
-                                                    " loading="lazy">
+                                                    "
+                                                    loading="lazy" />
                                             </template>
-                                            <img :src="post.imageUrl"
+                                            <img
+                                                :src="post.imageUrl"
                                                 class="x-link"
                                                 style="height: 500px"
-                                                @click="showFullscreenImageDialog(post.imageUrl)" loading="lazy">
+                                                @click="showFullscreenImageDialog(post.imageUrl)"
+                                                loading="lazy" />
                                         </el-popover>
                                     </div>
                                     <pre
@@ -841,10 +837,7 @@
                                         </el-tooltip>
                                         <template
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                            <el-tooltip
-                                                placement="top"
-                                                :content="t('dialog.group.posts.edit_tooltip')"
-                                                >
+                                            <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
                                                 <el-button
                                                     type="text"
                                                     :icon="Edit"
@@ -854,8 +847,7 @@
                                             </el-tooltip>
                                             <el-tooltip
                                                 placement="top"
-                                                :content="t('dialog.group.posts.delete_tooltip')"
-                                                >
+                                                :content="t('dialog.group.posts.delete_tooltip')">
                                                 <el-button
                                                     type="text"
                                                     :icon="Delete"
@@ -976,7 +968,7 @@
                                 class="x-friend-item x-friend-item-border"
                                 @click="showUserDialog(user.userId)">
                                 <div class="avatar">
-                                    <img :src="userImage(user.user)" loading="lazy">
+                                    <img :src="userImage(user.user)" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span
@@ -1037,7 +1029,7 @@
                                 class="infinite-list-item x-friend-item x-friend-item-border"
                                 @click="showUserDialog(user.userId)">
                                 <div class="avatar">
-                                    <img :src="userImage(user.user)" loading="lazy">
+                                    <img :src="userImage(user.user)" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span
@@ -1131,14 +1123,18 @@
                                         :key="image.id">
                                         <el-popover placement="top" width="700px" trigger="click">
                                             <template #reference>
-                                                <img :src="image.imageUrl"
+                                                <img
+                                                    :src="image.imageUrl"
                                                     class="x-link"
-                                                    style="width: 100%; height: 100%; object-fit: contain" loading="lazy">
+                                                    style="width: 100%; height: 100%; object-fit: contain"
+                                                    loading="lazy" />
                                             </template>
-                                            <img :src="image.imageUrl"
+                                            <img
+                                                :src="image.imageUrl"
                                                 class="x-link"
                                                 style="height: 700px"
-                                                @click="showFullscreenImageDialog(image.imageUrl)" loading="lazy">
+                                                @click="showFullscreenImageDialog(image.imageUrl)"
+                                                loading="lazy" />
                                         </el-popover>
                                     </el-carousel-item>
                                 </el-carousel>
@@ -1177,7 +1173,7 @@
         <PreviousInstancesGroupDialog
             v-model:previous-instances-group-dialog="previousInstancesGroupDialog"
             :current-user="currentUser" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -1826,4 +1822,3 @@
         };
     }
 </script>
-

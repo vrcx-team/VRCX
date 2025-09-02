@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         v-model="isVisible"
         :title="t('dialog.set_world_tags.header')"
         width="400px"
@@ -81,7 +81,7 @@
                 </el-button>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

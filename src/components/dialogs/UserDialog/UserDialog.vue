@@ -1,8 +1,8 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="userDialogRef"
         class="x-dialog x-user-dialog"
-        v-model:visible="userDialog.visible"
+        v-model="userDialog.visible"
         :show-close="false"
         width="770px">
         <div v-loading="userDialog.loading">
@@ -1797,7 +1797,7 @@
         <BioDialog :bio-dialog="bioDialog" />
         <PronounsDialog :pronouns-dialog="pronounsDialog" />
         <ModerateGroupDialog />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

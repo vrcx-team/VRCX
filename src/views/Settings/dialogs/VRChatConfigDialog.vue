@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isVRChatConfigDialogVisible"
         :title="t('dialog.config_json.header')"
@@ -183,7 +183,7 @@
                 </div>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

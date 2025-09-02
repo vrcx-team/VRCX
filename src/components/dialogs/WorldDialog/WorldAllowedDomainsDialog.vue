@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         v-model="isVisible"
         :title="t('dialog.allowed_video_player_domains.header')"
         width="600px"
@@ -27,7 +27,7 @@
                 {{ t('dialog.allowed_video_player_domains.save') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

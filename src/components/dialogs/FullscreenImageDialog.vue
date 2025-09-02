@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog class="x-dialog" v-model="fullscreenImageDialog.visible" append-to-body width="97vw">
+    <el-dialog class="x-dialog" v-model="fullscreenImageDialog.visible" append-to-body width="97vw">
         <div>
             <div style="margin: 0 0 5px 5px">
                 <el-button
@@ -18,9 +18,12 @@
                         downloadAndSaveImage(fullscreenImageDialog.imageUrl, fullscreenImageDialog.fileName)
                     "></el-button>
             </div>
-            <img :src="fullscreenImageDialog.imageUrl" style="width: 100%; height: 85vh; object-fit: contain" loading="lazy">
+            <img
+                :src="fullscreenImageDialog.imageUrl"
+                style="width: 100%; height: 85vh; object-fit: contain"
+                loading="lazy" />
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -79,4 +82,3 @@
         }
     }
 </script>
-

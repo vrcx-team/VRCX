@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="worldDialogRef"
         class="x-dialog x-world-dialog"
         v-model="isDialogVisible"
@@ -9,14 +9,18 @@
             <div style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click">
                     <template #reference>
-                        <img :src="worldDialog.ref.thumbnailImageUrl"
+                        <img
+                            :src="worldDialog.ref.thumbnailImageUrl"
                             class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 12px" loading="lazy">
+                            style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                            loading="lazy" />
                     </template>
-                    <img :src="worldDialog.ref.imageUrl"
+                    <img
+                        :src="worldDialog.ref.imageUrl"
                         class="x-link"
                         style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)" loading="lazy">
+                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
+                        loading="lazy" />
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
@@ -195,18 +199,14 @@
                         <el-tooltip
                             v-if="worldDialog.inCache"
                             placement="top"
-                            :content="t('dialog.world.actions.delete_cache_tooltip')"
-                            >
+                            :content="t('dialog.world.actions.delete_cache_tooltip')">
                             <el-button
                                 :icon="Delete"
                                 circle
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
                                 @click="deleteVRChatCache(worldDialog.ref)" />
                         </el-tooltip>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('dialog.world.actions.favorites_tooltip')"
-                            >
+                        <el-tooltip placement="top" :content="t('dialog.world.actions.favorites_tooltip')">
                             <el-button
                                 :type="worldDialog.isFavorite ? 'warning' : 'default'"
                                 :icon="worldDialog.isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'"
@@ -359,8 +359,7 @@
                                     style="margin-left: 5px" />
                                 <el-tooltip
                                     placement="top"
-                                    :content="t('dialog.world.instances.refresh_instance_info')"
-                                    >
+                                    :content="t('dialog.world.instances.refresh_instance_info')">
                                     <el-button
                                         size="small"
                                         :icon="Refresh"
@@ -371,8 +370,7 @@
                                 <el-tooltip
                                     v-if="instanceJoinHistory.get(room.$location.tag)"
                                     placement="top"
-                                    :content="t('dialog.previous_instances.info')"
-                                    >
+                                    :content="t('dialog.previous_instances.info')">
                                     <el-button
                                         size="small"
                                         :icon="DataLine"
@@ -396,7 +394,7 @@
                                         @click="showUserDialog(room.$location.userId)">
                                         <template v-if="room.$location.user">
                                             <div class="avatar" :class="userStatusClass(room.$location.user)">
-                                                <img :src="userImage(room.$location.user, true)" loading="lazy">
+                                                <img :src="userImage(room.$location.user, true)" loading="lazy" />
                                             </div>
                                             <div class="detail">
                                                 <span
@@ -416,7 +414,7 @@
                                         class="x-friend-item x-friend-item-border"
                                         @click="showUserDialog(user.id)">
                                         <div class="avatar" :class="userStatusClass(user)">
-                                            <img :src="userImage(user, true)" loading="lazy">
+                                            <img :src="userImage(user, true)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -465,10 +463,7 @@
                                     <span class="extra" style="display: inline">
                                         {{ worldDialog.id }}
                                     </span>
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.world.info.id_tooltip')"
-                                        >
+                                    <el-tooltip placement="top" :content="t('dialog.world.info.id_tooltip')">
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
                                             <el-button type="default" :icon="Sort" size="small" circle />
                                             <template #dropdown>
@@ -667,7 +662,7 @@
                                 <span class="name">
                                     {{ t('dialog.world.info.last_visited') }}
                                     <el-tooltip
-                                                                                placement="top"
+                                        placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')"
                                         ><i class="el-icon-warning"></i
@@ -676,15 +671,13 @@
                                 <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
                             </div>
                         </div>
-                        <el-tooltip
-                                                        placement="top"
-                            :content="t('dialog.user.info.open_previous_instance')">
+                        <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.world.info.visit_count') }}
                                         <el-tooltip
-                                                                                        placement="top"
+                                            placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.world.info.accuracy_notice')"
                                             ><i class="el-icon-warning"></i
@@ -701,7 +694,7 @@
                                 <span class="name"
                                     >{{ t('dialog.world.info.time_spent') }}
                                     <el-tooltip
-                                                                                placement="top"
+                                        placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')">
                                         <i class="el-icon-warning"></i>
@@ -768,7 +761,7 @@
             :world-dialog="worldDialog"
             @refresh="displayPreviousImages" />
         <PreviousImagesDialog />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -1436,4 +1429,3 @@
         D.visible = true;
     }
 </script>
-

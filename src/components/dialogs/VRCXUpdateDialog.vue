@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="VRCXUpdateDialogRef"
         class="x-dialog"
         v-model="VRCXUpdateDialog.visible"
@@ -59,7 +59,7 @@
                 {{ t('dialog.vrcx_updater.install') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

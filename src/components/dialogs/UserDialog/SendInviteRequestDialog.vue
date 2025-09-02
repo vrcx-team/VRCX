@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="sendInviteRequestDialogVisible"
         @update:visible="$emit('update:sendInviteRequestDialogVisible', $event)"
@@ -60,7 +60,7 @@
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

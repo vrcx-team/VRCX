@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isYouTubeApiDialogVisible"
         :title="t('dialog.youtube_api.header')"
@@ -28,7 +28,7 @@
                 </el-button>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

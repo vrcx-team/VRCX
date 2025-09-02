@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isScreenshotMetadataDialogVisible"
         :title="t('dialog.screenshot_metadata.header')"
@@ -152,7 +152,7 @@
                 <br />
             </span>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

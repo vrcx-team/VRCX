@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         v-model="languageDialog.visible"
         :title="t('dialog.language.header')"
@@ -39,7 +39,7 @@
                 </el-option>
             </el-select>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="setAvatarTagsDialog"
         class="x-dialog"
         v-model="setAvatarTagsDialog.visible"
@@ -59,7 +59,7 @@
                     style="width: 350px"
                     @click="showAvatarDialog(avatar.id)">
                     <div class="avatar">
-                        <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy">
+                        <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
                     </div>
                     <div class="detail">
                         <span class="name" v-text="avatar.name"></span>
@@ -90,7 +90,7 @@
                 t('dialog.set_avatar_tags.save')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -273,4 +273,3 @@
 </script>
 
 <style scoped></style>
-

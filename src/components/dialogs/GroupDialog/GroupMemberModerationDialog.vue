@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         v-model="groupMemberModeration.visible"
         :title="t('dialog.group_member_moderation.header')"
@@ -120,12 +120,17 @@
                                 <template #default="scope">
                                     <el-popover placement="right" height="500px" trigger="hover">
                                         <template #reference>
-                                            <img :src="userImage(scope.row.user)" class="friends-list-avatar" loading="lazy">
+                                            <img
+                                                :src="userImage(scope.row.user)"
+                                                class="friends-list-avatar"
+                                                loading="lazy" />
                                         </template>
-                                        <img :src="userImageFull(scope.row.user)"
+                                        <img
+                                            :src="userImageFull(scope.row.user)"
                                             class="friends-list-avatar"
                                             style="height: 500px; cursor: pointer"
-                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))" loading="lazy">
+                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                            loading="lazy" />
                                     </el-popover>
                                 </template>
                             </el-table-column>
@@ -232,12 +237,17 @@
                                 <template #default="scope">
                                     <el-popover placement="right" height="500px" trigger="hover">
                                         <template #reference>
-                                            <img :src="userImage(scope.row.user)" class="friends-list-avatar" loading="lazy">
+                                            <img
+                                                :src="userImage(scope.row.user)"
+                                                class="friends-list-avatar"
+                                                loading="lazy" />
                                         </template>
-                                        <img :src="userImageFull(scope.row.user)"
+                                        <img
+                                            :src="userImageFull(scope.row.user)"
                                             class="friends-list-avatar"
                                             style="height: 500px; cursor: pointer"
-                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))" loading="lazy">
+                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                            loading="lazy" />
                                     </el-popover>
                                 </template>
                             </el-table-column>
@@ -343,13 +353,17 @@
                                         <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <template #reference>
-                                                    <img :src="userImage(scope.row.user)"
-                                                        class="friends-list-avatar" loading="lazy">
+                                                    <img
+                                                        :src="userImage(scope.row.user)"
+                                                        class="friends-list-avatar"
+                                                        loading="lazy" />
                                                 </template>
-                                                <img :src="userImageFull(scope.row.user)"
+                                                <img
+                                                    :src="userImageFull(scope.row.user)"
                                                     class="friends-list-avatar"
                                                     style="height: 500px; cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))" loading="lazy">
+                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                                    loading="lazy" />
                                             </el-popover>
                                         </template>
                                     </el-table-column>
@@ -424,13 +438,17 @@
                                         <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <template #reference>
-                                                    <img :src="userImage(scope.row.user)"
-                                                        class="friends-list-avatar" loading="lazy">
+                                                    <img
+                                                        :src="userImage(scope.row.user)"
+                                                        class="friends-list-avatar"
+                                                        loading="lazy" />
                                                 </template>
-                                                <img :src="userImageFull(scope.row.user)"
+                                                <img
+                                                    :src="userImageFull(scope.row.user)"
                                                     class="friends-list-avatar"
                                                     style="height: 500px; cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))" loading="lazy">
+                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                                    loading="lazy" />
                                             </el-popover>
                                         </template>
                                     </el-table-column>
@@ -531,13 +549,17 @@
                                         <template #default="scope">
                                             <el-popover placement="right" height="500px" trigger="hover">
                                                 <template #reference>
-                                                    <img :src="userImage(scope.row.user)"
-                                                        class="friends-list-avatar" loading="lazy">
+                                                    <img
+                                                        :src="userImage(scope.row.user)"
+                                                        class="friends-list-avatar"
+                                                        loading="lazy" />
                                                 </template>
-                                                <img :src="userImageFull(scope.row.user)"
+                                                <img
+                                                    :src="userImageFull(scope.row.user)"
                                                     class="friends-list-avatar"
                                                     style="height: 500px; cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))" loading="lazy">
+                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                                    loading="lazy" />
                                             </el-popover>
                                         </template>
                                     </el-table-column>
@@ -832,7 +854,7 @@
         <group-member-moderation-export-dialog
             :is-group-logs-export-dialog-v-model="isGroupLogsExportDialogVisible"
             :group-logs-moderation-table="groupLogsModerationTable" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -1934,4 +1956,3 @@
         await getGroupMembers();
     }
 </script>
-

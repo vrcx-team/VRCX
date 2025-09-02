@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="sendInviteDialogVisible"
         :title="t('dialog.invite_message.header')"
@@ -84,7 +84,7 @@
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -151,4 +151,3 @@
         emit('closeInviteDialog');
     }
 </script>
-

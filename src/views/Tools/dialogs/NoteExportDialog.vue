@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isNoteExportDialogVisible"
         :title="t('dialog.note_export.header')"
@@ -87,7 +87,7 @@
                 </template>
             </el-table-column>
         </DataTable>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

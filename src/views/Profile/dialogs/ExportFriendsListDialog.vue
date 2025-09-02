@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog :title="t('dialog.export_friends_list.header')" v-model="isVisible" width="650px">
+    <el-dialog :title="t('dialog.export_friends_list.header')" v-model="isVisible" width="650px">
         <el-tabs type="card">
             <el-tab-pane :label="t('dialog.export_friends_list.csv')">
                 <el-input
@@ -24,7 +24,7 @@
                     @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
         </el-tabs>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

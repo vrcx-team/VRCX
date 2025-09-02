@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog v-model="isVisible" :title="t('dialog.export_own_avatars.header')" width="650px">
+    <el-dialog v-model="isVisible" :title="t('dialog.export_own_avatars.header')" width="650px">
         <el-input
             v-model="exportAvatarsListCsv"
             v-loading="loading"
@@ -10,7 +10,7 @@
             readonly
             style="margin-top: 15px"
             @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

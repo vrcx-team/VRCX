@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="moderateGroupDialogRef"
         v-model="moderateGroupDialog.visible"
         :title="t('dialog.moderate_group.header')"
@@ -8,7 +8,7 @@
         <div v-if="moderateGroupDialog.visible">
             <div class="x-friend-item" style="cursor: default">
                 <div class="avatar">
-                    <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy">
+                    <img :src="userImage(moderateGroupDialog.userObject)" loading="lazy" />
                 </div>
                 <div class="detail">
                     <span
@@ -36,7 +36,7 @@
                         style="height: auto"
                         class="x-friend-item">
                         <div class="avatar">
-                            <img :src="group.iconUrl" loading="lazy">
+                            <img :src="group.iconUrl" loading="lazy" />
                         </div>
                         <div class="detail">
                             <span class="name" v-text="group.name"></span>
@@ -57,7 +57,7 @@
                 {{ t('dialog.moderate_group.moderation_tools') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -120,4 +120,3 @@
         }
     }
 </script>
-

@@ -1,5 +1,5 @@
 <!--<template>-->
-<!--    <safe-dialog-->
+<!--    <el-dialog-->
 <!--        class="x-dialog"-->
 <!--        :visible="sendBoopDialog.visible"-->
 <!--        :title="t('dialog.boop_dialog.header')"-->
@@ -162,7 +162,7 @@
 <!--                t('dialog.boop_dialog.send')-->
 <!--            }}</el-button>-->
 <!--        </template>-->
-<!--    </safe-dialog>-->
+<!--    </el-dialog>-->
 <!--</template>-->
 
 <!--<script setup>-->
@@ -275,4 +275,3 @@
 <!--        }-->
 <!--    }-->
 <!--</script>-->
-

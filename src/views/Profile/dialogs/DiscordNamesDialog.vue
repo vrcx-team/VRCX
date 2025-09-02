@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="discordNamesDialogVisible"
         :title="t('dialog.discord_names.header')"
@@ -16,7 +16,7 @@
             resize="none"
             readonly
             style="margin-top: 15px" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

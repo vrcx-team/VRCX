@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isLaunchOptionsDialogVisible"
         :title="t('dialog.launch_options.header')"
@@ -52,7 +52,7 @@
                 </el-button>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

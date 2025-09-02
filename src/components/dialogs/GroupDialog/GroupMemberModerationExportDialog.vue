@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isGroupLogsExportDialogVisible"
         :title="t('dialog.group_member_moderation.export_logs')"
@@ -26,7 +26,7 @@
             readonly
             style="margin-top: 15px"
             @click="handleCopyGroupLogsExportContent" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

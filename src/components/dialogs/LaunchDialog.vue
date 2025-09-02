@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
+    <el-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
         <el-form :model="launchDialog" label-width="100px">
             <el-form-item :label="t('dialog.launch.url')">
                 <el-input
@@ -7,7 +7,7 @@
                     size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" >
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
                         :icon="Sort"
@@ -28,7 +28,7 @@
                     size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" >
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
                         :icon="Sort"
@@ -43,7 +43,7 @@
                     size="small"
                     style="width: 260px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" >
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
                         :icon="Sort"
@@ -103,7 +103,7 @@
             </template>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         :visible="!!feedFiltersDialogMode"
         :title="dialogTitle"
         width="550px"
@@ -54,7 +54,7 @@
                 t('dialog.shared_feed_filters.close')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="changeLogDialog.visible"
         :title="t('dialog.change_log.header')"
@@ -29,7 +29,7 @@
                 {{ t('dialog.change_log.close') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="galleryDialogVisible"
         :title="t('dialog.gallery_icons.header')"
@@ -58,7 +58,10 @@
                             v-if="image.versions[image.versions.length - 1].file.url"
                             @click="setProfilePicOverride(image.id)"
                             :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }">
-                            <img class="avatar" :src="image.versions[image.versions.length - 1].file.url" loading="lazy">
+                            <img
+                                class="avatar"
+                                :src="image.versions[image.versions.length - 1].file.url"
+                                loading="lazy" />
                         </div>
                         <div style="float: right; margin-top: 5px">
                             <el-button
@@ -129,7 +132,10 @@
                             v-if="image.versions[image.versions.length - 1].file.url"
                             @click="setVRCPlusIcon(image.id)"
                             :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }">
-                            <img class="avatar" :src="image.versions[image.versions.length - 1].file.url" loading="lazy">
+                            <img
+                                class="avatar"
+                                :src="image.versions[image.versions.length - 1].file.url"
+                                loading="lazy" />
                         </div>
                         <div style="float: right; margin-top: 5px">
                             <el-button
@@ -192,7 +198,7 @@
                                 :value="styleName"
                                 style="height: auto">
                                 <div class="avatar" style="width: 200px; height: 200px">
-                                    <img :src="`${emojiAnimationStyleUrl}${fileName}`" loading="lazy">
+                                    <img :src="`${emojiAnimationStyleUrl}${fileName}`" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span class="name" v-text="styleName" style="margin-right: 100px"></span>
@@ -258,7 +264,10 @@
                                     "></div>
                             </template>
                             <template v-else>
-                                <img class="avatar" :src="image.versions[image.versions.length - 1].file.url" loading="lazy">
+                                <img
+                                    class="avatar"
+                                    :src="image.versions[image.versions.length - 1].file.url"
+                                    loading="lazy" />
                             </template>
                         </div>
                         <div style="display: inline-block; margin: 5px">
@@ -338,7 +347,10 @@
                             v-if="image.versions[image.versions.length - 1].file.url"
                             style="overflow: hidden"
                             @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
-                            <img class="avatar" :src="image.versions[image.versions.length - 1].file.url" loading="lazy">
+                            <img
+                                class="avatar"
+                                :src="image.versions[image.versions.length - 1].file.url"
+                                loading="lazy" />
                         </div>
                         <div style="float: right; margin-top: 5px">
                             <el-button
@@ -413,7 +425,7 @@
                         class="vrcplus-icon"
                         style="overflow: hidden"
                         @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
-                        <img class="avatar" :src="image.files.image" loading="lazy">
+                        <img class="avatar" :src="image.files.image" loading="lazy" />
                     </div>
                     <div style="margin-top: 5px; width: 208px">
                         <span class="x-ellipsis" v-if="image.note" v-text="image.note" style="display: block"></span>
@@ -483,7 +495,7 @@
                     :key="item.id"
                     style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                     <div class="vrcplus-icon" style="overflow: hidden; cursor: default">
-                        <img class="avatar" :src="item.imageUrl" loading="lazy">
+                        <img class="avatar" :src="item.imageUrl" loading="lazy" />
                     </div>
                     <div style="margin-top: 5px; width: 208px">
                         <span class="x-ellipsis" v-text="item.name" style="display: block"></span>
@@ -513,7 +525,7 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -1056,4 +1068,3 @@
         // inventoryItemsCreated: 0
     }
 </script>
-

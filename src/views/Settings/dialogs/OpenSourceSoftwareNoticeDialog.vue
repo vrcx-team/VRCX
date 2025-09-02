@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="ossDialog"
         :title="t('dialog.open_source.header')"
@@ -15,7 +15,7 @@
                 <pre style="font-size: 12px; white-space: pre-line">{{ lib.licenseText }}</pre>
             </div>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

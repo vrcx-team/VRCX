@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         v-model="groupPostEditDialog.visible"
         :title="t('dialog.group_post_edit.header')"
         width="650px"
@@ -63,18 +63,22 @@
                         <div style="display: inline-block; flex: none; margin-right: 5px">
                             <el-popover placement="right" width="500px" trigger="click">
                                 <template #reference>
-                                    <img :src="gallerySelectDialog.selectedImageUrl"
+                                    <img
+                                        :src="gallerySelectDialog.selectedImageUrl"
                                         style="
                                             flex: none;
                                             width: 60px;
                                             height: 60px;
                                             border-radius: 4px;
                                             object-fit: cover;
-                                        " loading="lazy">
+                                        "
+                                        loading="lazy" />
                                 </template>
-                                <img :src="gallerySelectDialog.selectedImageUrl"
+                                <img
+                                    :src="gallerySelectDialog.selectedImageUrl"
                                     style="height: 500px"
-                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" loading="lazy">
+                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
+                                    loading="lazy" />
                             </el-popover>
                             <el-button size="small" style="vertical-align: top" @click="clearImageGallerySelect">
                                 {{ t('dialog.invite_message.clear_selected_image') }}
@@ -104,7 +108,7 @@
             :gallery-select-dialog="gallerySelectDialog"
             :gallery-table="galleryTable"
             @refresh-gallery-table="refreshGalleryTable" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -233,4 +237,3 @@
         D.selectedImageUrl = '';
     }
 </script>
-

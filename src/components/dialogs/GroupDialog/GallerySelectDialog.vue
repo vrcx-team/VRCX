@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         v-model="gallerySelectDialog.visible"
         :title="t('dialog.gallery_select.header')"
@@ -42,11 +42,14 @@
                         v-if="image.versions[image.versions.length - 1].file.url"
                         class="vrcplus-icon"
                         @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)">
-                        <img :src="image.versions[image.versions.length - 1].file.url" class="avatar" loading="lazy"></div
+                        <img
+                            :src="image.versions[image.versions.length - 1].file.url"
+                            class="avatar"
+                            loading="lazy" /></div
                 ></template>
             </div>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -130,4 +133,3 @@
         clearFile();
     }
 </script>
-

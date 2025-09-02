@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
         :visible="isRegistryBackupDialogVisible"
         :title="t('dialog.registry_backup.header')"
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>

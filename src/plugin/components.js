@@ -1,6 +1,5 @@
 import AvatarInfo from '../components/AvatarInfo.vue';
 import CountdownTimer from '../components/CountdownTimer.vue';
-import SafeDialog from '../components/dialogs/SafeDialog.vue';
 import DisplayName from '../components/DisplayName.vue';
 import InstanceInfo from '../components/InstanceInfo.vue';
 import InviteYourself from '../components/InviteYourself.vue';
@@ -13,7 +12,6 @@ import Timer from '../components/Timer.vue';
 import DataTable from '../components/DataTable.vue';
 
 export default function registerComponents(app) {
-    app.component('SafeDialog', SafeDialog);
     app.component('SimpleSwitch', SimpleSwitch);
     app.component('Location', Location);
     app.component('Timer', Timer);
