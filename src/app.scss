@@ -885,12 +885,12 @@ i.x-status-icon.red {
     overflow-y: auto;
 }
 
-// .x-aside-container .el-tabs,
-// .x-aside-container .el-tabs__nav-wrap,
-// .x-aside-container .el-tabs__item {
-//     padding: 0 !important;
-//     font-size: 13px;
-// }
+.x-aside-container .el-tabs,
+.x-aside-container .el-tabs__nav-wrap,
+.x-aside-container .el-tabs__item {
+    padding: 0 !important;
+    font-size: 13px;
+}
 
 // .el-tabs__header {
 //     padding: 0 1px;

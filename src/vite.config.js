@@ -17,7 +17,8 @@ export default defineConfig(() => ({
         port: 9000
     },
     build: {
-        outDir: 'build/html',
+        target: 'esnext',
+        outDir: '../build/html',
         emptyOutDir: true,
         modulePreload: { polyfill: false },
         rollupOptions: {
