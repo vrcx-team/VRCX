@@ -111,7 +111,7 @@ export const useInviteStore = defineStore('Invite', () => {
     /**
      *
      * @param {string} messageType
-     * @param {string} inviteMessage
+     * @param {any} inviteMessage
      */
     function showEditInviteMessageDialog(messageType, inviteMessage) {
         const D = state.editInviteMessageDialog;
