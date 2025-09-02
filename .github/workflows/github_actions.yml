@@ -13,7 +13,6 @@ jobs:
         outputs:
             version: ${{ steps.version.outputs.version }}
             date: ${{ steps.version.outputs.date }}
-
         steps:
             - uses: actions/checkout@v4
             - id: version
@@ -27,10 +26,8 @@ jobs:
     build_dotnet_windows:
         runs-on: windows-latest
         needs: set_version
-
         steps:
             - uses: actions/checkout@v4
-
             - name: Setup .NET 9
               uses: actions/setup-dotnet@v4
               with:
@@ -40,9 +37,9 @@ jobs:
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
             - name: Build Cef .NET Application
-              run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+              run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
             - name: Build Cef .NET Application
-              run: dotnet build DBMerger\DBMerger.csproj -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+              run: dotnet build DBMerger\DBMerger.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
             - name: Upload Cef dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
@@ -52,10 +49,8 @@ jobs:
     build_dotnet_linux:
         runs-on: ubuntu-latest
         needs: set_version
-
         steps:
             - uses: actions/checkout@v4
-
             - name: Setup .NET 9
               uses: actions/setup-dotnet@v4
               with:
@@ -64,21 +59,26 @@ jobs:
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
-            - name: Build Electron .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
-            - name: Upload Electron dotnet artifacts
+            - name: Build Electron x64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+            - name: Upload Electron x64 dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: Electron-Release-Linux
+                  name: Electron-Release-Linux-x64
+                  path: build/Electron
+            - name: Build Electron arm64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
+            - name: Upload Electron arm64 dotnet artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Electron-Release-Linux-arm64
                   path: build/Electron
 
     build_dotnet_macos:
         runs-on: macos-latest
         needs: set_version
-
         steps:
             - uses: actions/checkout@v4
-
             - name: Setup .NET 9
               uses: actions/setup-dotnet@v4
               with:
@@ -87,21 +87,26 @@ jobs:
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
-            - name: Build Electron .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
-            - name: Upload Electron dotnet artifacts
+            - name: Build Electron x64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+            - name: Upload Electron x64 .NET artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: Electron-Release-macOS
+                  name: Electron-Release-macOS-x64
+                  path: build/Electron
+            - name: Build Electron arm64 .NET Application
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
+            - name: Upload Electron arm64 dotnet artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Electron-Release-macOS-arm64
                   path: build/Electron
 
     build_node:
         runs-on: ubuntu-latest
         needs: [set_version, build_dotnet_linux]
-
         steps:
             - uses: actions/checkout@v4
-
             - name: Set version
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
@@ -122,26 +127,37 @@ jobs:
 
             - name: Build Electron-html
               run: npm run prod-linux
-            - name: Download Electron dotnet artifacts
+            - name: Download Electron x64 dotnet artifacts
               uses: actions/download-artifact@v4
               with:
-                  name: Electron-Release-Linux
+                  name: Electron-Release-Linux-x64
                   path: build/Electron
-            - name: Build AppImage
+            - name: Build x64 AppImage
               run: npm run build-electron
-            - name: Upload Electron AppImage artifacts
+            - name: Upload Electron x64 AppImage artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: Electron-AppImage
-                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}.AppImage'
+                  name: Electron-AppImage-x64
+                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage'
+
+            - name: Download Electron arm64 dotnet artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: Electron-Release-Linux-arm64
+                  path: build/Electron
+            - name: Build arm64 AppImage
+              run: npm run build-electron-arm64
+            - name: Upload Electron arm64 AppImage artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Electron-AppImage-arm64
+                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.AppImage'
 
     build_macos:
         runs-on: macos-latest
         needs: [set_version, build_dotnet_macos]
-
         steps:
             - uses: actions/checkout@v4
-
             - name: Set version
               run: |
                   echo "${{ needs.set_version.outputs.version }}" > Version
@@ -155,18 +171,36 @@ jobs:
             - name: Build Electron-html
               run: npm run prod-linux --arch=x64
 
-            - name: Download Electron dotnet artifacts
+            - name: Download x64 Electron dotnet artifacts
               uses: actions/download-artifact@v4
               with:
-                  name: Electron-Release-macOS
+                  name: Electron-Release-macOS-x64
                   path: build/Electron
-            - name: Build macOS .dmg
+            - name: Build x64 macOS .dmg
               run: npm run build-electron
-            - name: Upload Electron macOS artifacts
+            - name: Upload x64 Electron macOS artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: Electron-MacDmg
-                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}.dmg'
+                  name: Electron-MacDmg-x64
+                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.dmg'
+
+            - name: Restore dependencies
+              run: npm ci --arch=arm64
+            - name: Build Electron-html
+              run: npm run prod-linux --arch=arm64
+
+            - name: Download arm64 Electron dotnet artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: Electron-Release-macOS-arm64
+                  path: build/Electron
+            - name: Build arm64 macOS .dmg
+              run: npm run build-electron-arm64
+            - name: Upload arm64 Electron macOS artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Electron-MacDmg-arm64
+                  path: 'build/VRCX_${{ needs.set_version.outputs.version }}_arm64.dmg'
 
     create_setup:
         runs-on: ubuntu-latest
@@ -179,7 +213,6 @@ jobs:
                 build_node,
                 build_macos
             ]
-
         steps:
             - uses: actions/checkout@v4
 
