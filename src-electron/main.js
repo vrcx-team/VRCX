@@ -16,16 +16,11 @@ const https = require('https');
 
 //app.disableHardwareAcceleration();
 
-if (process.platform === 'linux') {
+const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
+if (fs.existsSync(bundledDotNetPath)) {
     // Include bundled .NET runtime
-    const bundledDotNetPath = path.join(
-        process.resourcesPath,
-        'dotnet-runtime'
-    );
-    if (fs.existsSync(bundledDotNetPath)) {
-        process.env.DOTNET_ROOT = bundledDotNetPath;
-        process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
-    }
+    process.env.DOTNET_ROOT = bundledDotNetPath;
+    process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
 } else if (process.platform === 'darwin') {
     const dotnetPath = path.join('/usr/local/share/dotnet');
     const dotnetPathArm = path.join('/usr/local/share/dotnet/x64');
@@ -153,6 +148,10 @@ if (!gotTheLock) {
         }
     });
 }
+
+ipcMain.handle('getArch', () => {
+    return process.arch.toString();
+});
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -812,6 +811,10 @@ function isDotNetInstalled() {
     const result = spawnSync(dotnetPath, ['--list-runtimes'], {
         encoding: 'utf-8'
     });
+    if (result.error) {
+        console.error('Error checking .NET runtimes:', result.error);
+        return false;
+    }
     return result.stdout?.includes('.NETCore.App 9.0');
 }
 

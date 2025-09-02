@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('interopApi', {
 const validChannels = ['launch-command'];
 
 contextBridge.exposeInMainWorld('electron', {
+    getArch: () => ipcRenderer.invoke('getArch'),
     openFileDialog: () => ipcRenderer.invoke('dialog:openFile'),
     openDirectoryDialog: () => ipcRenderer.invoke('dialog:openDirectory'),
     onWindowPositionChanged: (callback) =>
@@ -48,7 +49,6 @@ contextBridge.exposeInMainWorld('electron', {
     ipcRenderer: {
         on(channel, func) {
             if (validChannels.includes(channel)) {
-                console.log('contextBridge', channel, func);
                 ipcRenderer.on(channel, (event, ...args) => func(...args));
             }
         }
