@@ -917,7 +917,7 @@
                 "change_capacity": "更改人数上限",
                 "change_recommended_capacity": "更改推荐人数",
                 "change_preview": "更改 YouTube 预览",
-                "change_tags": "更改标签",
+                "change_warnings_settings_tags": "更改内容警告设置&标签",
                 "change_image": "更改图片",
                 "change_allowed_video_player_domains": "更改允许在视频播放器使用的域名",
                 "download_package": "下载 Unity Package",
