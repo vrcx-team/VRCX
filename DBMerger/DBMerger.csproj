@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<OutputPath>..\build\Cef\</OutputPath>
+		<OutputPath>..\build\DBMerger\</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
