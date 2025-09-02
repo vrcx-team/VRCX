@@ -1,5 +1,5 @@
 <template>
-    <el-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
+    <el-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="500px">
         <el-form :model="launchDialog" label-width="100px">
             <el-form-item :label="t('dialog.launch.url')">
                 <el-input
@@ -74,6 +74,13 @@
                     type="default"
                     size="small"
                     :disabled="!launchDialog.secureOrShortName"
+                    @click="handleSelfInvite(launchDialog.location, launchDialog.shortName)">
+                    {{ t('dialog.launch.self_invite') }}
+                </el-button>
+                <el-button
+                    type="default"
+                    size="small"
+                    :disabled="!launchDialog.secureOrShortName"
                     @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
                     {{ t('dialog.launch.launch') }}
                 </el-button>
@@ -110,7 +117,7 @@
     import { Sort } from '@element-plus/icons-vue';
 
     import { ref, computed, nextTick, watch } from 'vue';
-    import { ElMessage } from 'element-plus';
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { instanceRequest, worldRequest } from '../../api';
@@ -211,7 +218,7 @@
     }
     function handleLaunchGame(location, shortName, desktop) {
         if (isGameRunning.value) {
-            proxy.$confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
+            ElMessageBox.confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
                 confirmButtonText: t('dialog.launch.confirm_yes'),
                 cancelButtonText: t('dialog.launch.confirm_no'),
                 type: 'warning',
@@ -231,24 +238,17 @@
         tryOpenInstanceInVrc(location, shortName);
         isVisible.value = false;
     }
-    function selfInvite(location, shortName) {
+    async function handleSelfInvite(location, shortName) {
         const L = parseLocation(location);
-        if (!L.isRealInstance) {
-            return;
-        }
-        instanceRequest
-            .selfInvite({
-                instanceId: L.instanceId,
-                worldId: L.worldId,
-                shortName
-            })
-            .then((args) => {
-                proxy.$message({
-                    message: 'Self invite sent',
-                    type: 'success'
-                });
-                return args;
-            });
+        await instanceRequest.selfInvite({
+            instanceId: L.instanceId,
+            worldId: L.worldId,
+            shortName
+        });
+        ElMessage({
+            message: 'Self invite sent',
+            type: 'success'
+        });
     }
     function getConfig() {
         configRepository.getBool('launchAsDesktop').then((value) => (launchDialog.value.desktop = value));
