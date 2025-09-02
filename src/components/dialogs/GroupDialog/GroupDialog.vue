@@ -4,7 +4,6 @@
         :visible.sync="groupDialog.visible"
         :show-close="false"
         width="770px"
-        top="10vh"
         class="x-dialog x-group-dialog">
         <div class="group-banner-image">
             <el-popover placement="right" width="500px" trigger="click">
@@ -37,7 +36,17 @@
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
                         <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
-                        <span class="dialog-title" style="margin-right: 5px" v-text="groupDialog.ref.name"></span>
+                        <el-popover placement="top" trigger="click">
+                            <span
+                                slot="reference"
+                                class="dialog-title"
+                                style="margin-right: 5px; cursor: pointer"
+                                v-text="groupDialog.ref.name"
+                                @click="copyToClipboard(groupDialog.ref.name)"></span>
+                            <span style="display: block; text-align: center; font-family: monospace">{{
+                                textToHex(groupDialog.ref.name)
+                            }}</span>
+                        </el-popover>
                         <span
                             class="group-discriminator x-grey"
                             style="font-family: monospace; font-size: 12px; margin-right: 5px">
@@ -318,7 +327,10 @@
                                                 {{ t('dialog.group.actions.create_post') }}
                                             </el-dropdown-item>
                                         </template>
-                                        <el-dropdown-item icon="el-icon-s-operation" command="Moderation Tools">
+                                        <el-dropdown-item
+                                            :disabled="!hasGroupModerationPermission(groupDialog.ref)"
+                                            icon="el-icon-s-operation"
+                                            command="Moderation Tools">
                                             {{ t('dialog.group.actions.moderation_tools') }}
                                         </el-dropdown-item>
                                         <template
@@ -400,9 +412,7 @@
                         <div v-for="room in groupDialog.instances" :key="room.tag" style="width: 100%">
                             <div style="margin: 5px 0">
                                 <Location :location="room.tag" style="display: inline-block" />
-                                <el-tooltip placement="top" content="Invite yourself" :disabled="hideTooltips">
-                                    <InviteYourself :location="room.tag" style="margin-left: 5px" />
-                                </el-tooltip>
+                                <InviteYourself :location="room.tag" style="margin-left: 5px" />
                                 <el-tooltip placement="top" content="Refresh player count" :disabled="hideTooltips">
                                     <el-button
                                         size="mini"
@@ -598,6 +608,26 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
+                        <el-tooltip
+                            :disabled="hideTooltips"
+                            placement="top"
+                            :content="t('dialog.user.info.open_previous_instance')">
+                            <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
+                                <div class="detail">
+                                    <span class="name">
+                                        {{ t('dialog.group.info.last_visited') }}
+                                        <el-tooltip
+                                            v-if="!hideTooltips"
+                                            placement="top"
+                                            style="margin-left: 5px"
+                                            :content="t('dialog.user.info.accuracy_notice')">
+                                            <i class="el-icon-warning"></i>
+                                        </el-tooltip>
+                                    </span>
+                                    <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
+                                </div>
+                            </div>
+                        </el-tooltip>
                         <div class="x-friend-item" style="cursor: default">
                             <div class="detail">
                                 <span class="name">{{ t('dialog.group.info.links') }}</span>
@@ -1152,15 +1182,10 @@
         </div>
         <!--Nested-->
         <GroupPostEditDialog :dialog-data.sync="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
-        <GroupMemberModerationDialog
-            :is-group-members-loading.sync="isGroupMembersLoading"
-            :group-member-moderation="groupMemberModeration"
-            @close-dialog="closeMemberModerationDialog"
-            @group-members-search="groupMembersSearch"
-            @load-all-group-members="loadAllGroupMembers"
-            @set-group-member-filter="setGroupMemberFilter"
-            @set-group-member-sort-order="setGroupMemberSortOrder" />
         <InviteGroupDialog />
+        <PreviousInstancesGroupDialog
+            :previous-instances-group-dialog.sync="previousInstancesGroupDialog"
+            :current-user="currentUser" />
     </safe-dialog>
 </template>
 
@@ -1179,13 +1204,16 @@
         downloadAndSaveJson,
         getFaviconUrl,
         hasGroupPermission,
+        hasGroupModerationPermission,
         languageClass,
         openExternalLink,
         refreshInstancePlayerCount,
         removeFromArray,
         userImage,
         userStatusClass,
-        formatDateFilter
+        formatDateFilter,
+        textToHex,
+        debounce
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -1195,8 +1223,8 @@
         useUserStore
     } from '../../../stores';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
-    import GroupMemberModerationDialog from './GroupMemberModerationDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
+    import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
 
     const { t } = useI18n();
 
@@ -1212,7 +1240,8 @@
         setGroupVisibility,
         applyGroupMember,
         handleGroupMember,
-        handleGroupMemberProps
+        handleGroupMemberProps,
+        showGroupMemberModerationDialog
     } = useGroupStore();
 
     const { lastLocation } = storeToRefs(useLocationStore());
@@ -1225,8 +1254,6 @@
     const groupDialogRef = ref(null);
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
-    const groupMembersSearchTimer = ref(null);
-    const groupMembersSearchPending = ref(false);
     const groupDialogGalleryCurrentName = ref('0');
     const groupDialogTabCurrentName = ref('0');
     const isGroupGalleryLoading = ref(false);
@@ -1245,12 +1272,11 @@
         postId: '',
         groupId: ''
     });
-    const groupMemberModeration = reactive({
+
+    const previousInstancesGroupDialog = ref({
         visible: false,
-        loading: false,
-        id: '',
-        groupRef: {},
-        auditLogTypes: []
+        openFlg: false,
+        groupRef: {}
     });
 
     let loadMoreGroupMembersParams = ref({
@@ -1285,6 +1311,14 @@
         inviteGroupDialog.value.visible = true;
     }
 
+    function showPreviousInstancesGroupDialog(groupRef) {
+        const D = previousInstancesGroupDialog.value;
+        D.groupRef = groupRef;
+        D.visible = true;
+        D.openFlg = true;
+        nextTick(() => (D.openFlg = false));
+    }
+
     function setGroupRepresentation(groupId) {
         handleGroupRepresentationChange(groupId, true);
     }
@@ -1292,42 +1326,23 @@
         handleGroupRepresentationChange(groupId, false);
     }
 
-    function closeMemberModerationDialog() {
-        groupMemberModeration.visible = false;
-    }
-
     function groupMembersSearch() {
-        if (groupMembersSearchTimer.value) {
-            groupMembersSearchPending.value = true;
-        } else {
-            groupMembersSearchExecute();
-            groupMembersSearchTimer.value = setTimeout(() => {
-                if (groupMembersSearchPending.value) {
-                    groupMembersSearchExecute();
-                }
-                groupMembersSearchTimer.value = null;
-            }, 500);
+        if (groupDialog.value.memberSearch.length < 3) {
+            groupDialog.value.memberSearchResults = [];
+            isGroupMembersLoading.value = false;
+            return;
         }
+        debounce(groupMembersSearchDebounced, 200)();
     }
 
-    function groupMembersSearchExecute() {
-        try {
-            groupMembersSearchDebounce();
-        } catch (err) {
-            console.error(err);
-        }
-        groupMembersSearchTimer.value = null;
-        groupMembersSearchPending.value = false;
-    }
-
-    function groupMembersSearchDebounce() {
+    function groupMembersSearchDebounced() {
         const D = groupDialog.value;
         const search = D.memberSearch;
         D.memberSearchResults = [];
         if (!search || search.length < 3) {
             return;
         }
-        isGroupMembersLoading.value = false;
+        isGroupMembersLoading.value = true;
         groupRequest
             .getGroupMembersSearch({
                 groupId: D.id,
@@ -1539,28 +1554,6 @@
         });
     }
 
-    function showGroupMemberModerationDialog(groupId) {
-        if (groupId !== groupDialog.value.id) {
-            return;
-        }
-        const D = groupMemberModeration;
-        D.id = groupId;
-
-        D.groupRef = {};
-        D.auditLogTypes = [];
-        groupRequest.getCachedGroup({ groupId }).then((args) => {
-            D.groupRef = args.ref;
-            if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
-                groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
-                    if (groupMemberModeration.id !== args.params.groupId) {
-                        return;
-                    }
-                    groupMemberModeration.auditLogTypes = args.json;
-                });
-            }
-        });
-        D.visible = true;
-    }
     function joinGroup(id) {
         if (!id) {
             return null;

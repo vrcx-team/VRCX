@@ -628,6 +628,7 @@
                         :label="t('view.settings.appearance.user_dialog.vrcx_memos')"
                         :value="!hideUserMemos"
                         @change="setHideUserMemos" />
+                    <!-- redirect to tools tab -->
                     <div class="options-container-item">
                         <span class="name">{{
                             t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes')
@@ -641,6 +642,7 @@
                             >{{ t('view.settings.appearance.user_dialog.export_notes') }}</el-button
                         >
                     </div>
+                    <!-- redirect to tools tab end -->
                 </div>
                 <!--//- Appearance | Friend Log-->
                 <div class="options-container">
@@ -1189,20 +1191,40 @@
                     <div class="options-container-item">
                         <span>{{ t('view.settings.discord_presence.discord_presence.description') }}</span>
                     </div>
+                    <div class="options-container-item" @click="showVRChatConfig" style="cursor: pointer">
+                        <span>{{ t('view.settings.discord_presence.discord_presence.enable_tooltip') }}</span>
+                    </div>
+                    <br />
                     <simple-switch
                         :label="t('view.settings.discord_presence.discord_presence.enable')"
                         :value="discordActive"
-                        :tooltip="t('view.settings.discord_presence.discord_presence.enable_tooltip')"
                         @change="
                             setDiscordActive();
                             saveDiscordOption();
                         " />
+                    <simple-switch
+                        :label="t('view.settings.discord_presence.discord_presence.world_integration')"
+                        :value="discordWorldIntegration"
+                        :disabled="!discordActive"
+                        @change="
+                            setDiscordWorldIntegration();
+                            saveDiscordOption();
+                        "
+                        :tooltip="t('view.settings.discord_presence.discord_presence.world_integration_tooltip')" />
                     <simple-switch
                         :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')"
                         :value="discordInstance"
                         :disabled="!discordActive"
                         @change="
                             setDiscordInstance();
+                            saveDiscordOption();
+                        " />
+                    <simple-switch
+                        :label="t('view.settings.discord_presence.discord_presence.show_current_platform')"
+                        :value="discordShowPlatform"
+                        :disabled="!discordActive || !discordInstance"
+                        @change="
+                            setDiscordShowPlatform();
                             saveDiscordOption();
                         " />
                     <simple-switch
@@ -1229,11 +1251,22 @@
                             setDiscordHideImage();
                             saveDiscordOption();
                         " />
+                    <simple-switch
+                        :label="
+                            t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')
+                        "
+                        :value="discordWorldNameAsDiscordStatus"
+                        :disabled="!discordActive"
+                        @change="
+                            setDiscordWorldNameAsDiscordStatus();
+                            saveDiscordOption();
+                        " />
                 </div>
             </el-tab-pane>
 
             <!--//- "Pictures" Tab-->
             <el-tab-pane lazy :label="t('view.settings.category.pictures')">
+                <!-- redirect to tools tab -->
                 <div class="options-container" style="margin-top: 0">
                     <span class="header">{{ t('view.settings.category.pictures') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
@@ -1244,6 +1277,7 @@
                         </el-button-group>
                     </div>
                 </div>
+                <!-- redirect to tools tab end -->
 
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.pictures.pictures.open_folder') }}</span>
@@ -1492,6 +1526,11 @@
                             :value="enableAppLauncherAutoClose"
                             :long-label="true"
                             @change="setEnableAppLauncherAutoClose" />
+                        <simple-switch
+                            :label="t('view.settings.advanced.advanced.app_launcher.run_process_once')"
+                            :value="enableAppLauncherRunProcessOnce"
+                            :long-label="true"
+                            @change="setEnableAppLauncherRunProcessOnce" />
                     </div>
                 </template>
 
@@ -1810,9 +1849,7 @@
             </el-tab-pane>
         </el-tabs>
         <OpenSourceSoftwareNoticeDialog :ossDialog.sync="ossDialog" />
-        <NoteExportDialog :isNoteExportDialogVisible.sync="isNoteExportDialogVisible" />
         <NotificationPositionDialog :isNotificationPositionDialogVisible.sync="isNotificationPositionDialogVisible" />
-        <ScreenshotMetadataDialog :screenshotMetadataDialog="screenshotMetadataDialog" />
         <RegistryBackupDialog />
         <YouTubeApiDialog :isYouTubeApiDialogVisible.sync="isYouTubeApiDialogVisible" />
         <FeedFiltersDialog :feedFiltersDialogMode.sync="feedFiltersDialogMode" />
@@ -1851,9 +1888,7 @@
     } from '../../stores';
     import { photonEventTableTypeFilterList } from '../../shared/constants';
     import OpenSourceSoftwareNoticeDialog from './dialogs/OpenSourceSoftwareNoticeDialog.vue';
-    import NoteExportDialog from './dialogs/NoteExportDialog.vue';
     import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
-    import ScreenshotMetadataDialog from './dialogs/ScreenshotMetadataDialog.vue';
     import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
     import ChangelogDialog from './dialogs/ChangelogDialog.vue';
@@ -1881,9 +1916,16 @@
     const { cachedGroups } = storeToRefs(useGroupStore());
     const { cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
     const { showConsole } = useVrcxStore();
-    const { discordActive, discordInstance, discordHideInvite, discordJoinButton, discordHideImage } = storeToRefs(
-        useDiscordPresenceSettingsStore()
-    );
+    const {
+        discordActive,
+        discordInstance,
+        discordHideInvite,
+        discordJoinButton,
+        discordHideImage,
+        discordShowPlatform,
+        discordWorldIntegration,
+        discordWorldNameAsDiscordStatus
+    } = storeToRefs(useDiscordPresenceSettingsStore());
     const { disableGameLogDialog } = useGameLogStore();
     const {
         setDiscordActive,
@@ -1891,6 +1933,9 @@
         setDiscordHideInvite,
         setDiscordJoinButton,
         setDiscordHideImage,
+        setDiscordShowPlatform,
+        setDiscordWorldIntegration,
+        setDiscordWorldNameAsDiscordStatus,
         saveDiscordOption
     } = useDiscordPresenceSettingsStore();
     const {
@@ -2079,6 +2124,7 @@
         avatarRemoteDatabase,
         enableAppLauncher,
         enableAppLauncherAutoClose,
+        enableAppLauncherRunProcessOnce,
         screenshotHelper,
         screenshotHelperModifyFilename,
         screenshotHelperCopyToClipboard,
@@ -2104,6 +2150,7 @@
         setAvatarRemoteDatabase,
         setEnableAppLauncher,
         setEnableAppLauncherAutoClose,
+        setEnableAppLauncherRunProcessOnce,
         setScreenshotHelper,
         setScreenshotHelperModifyFilename,
         setScreenshotHelperCopyToClipboard,
@@ -2132,20 +2179,10 @@
     ]);
 
     const ossDialog = ref(false);
-    const isNoteExportDialogVisible = ref(false);
     const feedFiltersDialogMode = ref('');
     const isNotificationPositionDialogVisible = ref(false);
 
     const isYouTubeApiDialogVisible = ref(false);
-    const screenshotMetadataDialog = ref({
-        visible: false,
-        loading: false,
-        search: '',
-        searchType: 'Player Name',
-        searchTypes: ['Player Name', 'Player ID', 'World  Name', 'World  ID'],
-        metadata: {},
-        isUploading: false
-    });
 
     const zoomLevel = ref(100);
 
@@ -2177,16 +2214,18 @@
         feedFiltersDialogMode.value = 'wrist';
     }
 
+    // redirect to tools tab
     function showNoteExportDialog() {
-        isNoteExportDialogVisible.value = true;
+        menuActiveIndex.value = 'tools';
     }
 
     function showNotificationPositionDialog() {
         isNotificationPositionDialogVisible.value = true;
     }
 
+    // redirect to tools tab
     function showScreenshotMetadataDialog() {
-        screenshotMetadataDialog.value.visible = true;
+        menuActiveIndex.value = 'tools';
     }
 
     function openVrcxAppDataFolder() {

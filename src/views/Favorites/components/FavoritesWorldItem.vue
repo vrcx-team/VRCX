@@ -51,10 +51,14 @@
                         :content="$t('view.favorite.private')">
                         <i class="el-icon-warning" style="color: #e6a23c; margin-left: 5px"></i>
                     </el-tooltip>
-                    <el-tooltip
-                        placement="left"
-                        :content="$t('view.favorite.self_invite_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="left" :disabled="hideTooltips">
+                        <template #content>
+                            {{
+                                isGameRunning
+                                    ? $t('dialog.world.actions.new_instance_and_open_in_vrchat')
+                                    : $t('dialog.world.actions.new_instance_and_self_invite')
+                            }}
+                        </template>
                         <el-button
                             size="mini"
                             icon="el-icon-message"
@@ -132,7 +136,13 @@
     import { storeToRefs } from 'pinia';
     import { computed, getCurrentInstance } from 'vue';
     import { favoriteRequest } from '../../../api';
-    import { useAppearanceSettingsStore, useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
+    import {
+        useAppearanceSettingsStore,
+        useFavoriteStore,
+        useInviteStore,
+        useUiStore,
+        useGameStore
+    } from '../../../stores';
 
     const props = defineProps({
         group: [Object, String],
@@ -149,6 +159,7 @@
     const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
+    const { isGameRunning } = storeToRefs(useGameStore());
 
     const isSelected = computed({
         get: () => props.favorite.$selected,

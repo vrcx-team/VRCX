@@ -798,7 +798,7 @@
                 "instance_hard_closed": "hard closed",
                 "close_instance": "インスタンスを閉じる",
                 "instance_age_gated": "年齢制限あり",
-                "open_previouse_instance": "前回のインスタンスを開く"
+                "open_previous_instance": "前回のインスタンスを開く"
             },
             "groups": {
                 "header": "グループ",
@@ -1058,7 +1058,8 @@
                 "role_description": "説明:",
                 "role_updated_at": "更新日:",
                 "role_created_at": "作成日:",
-                "role_permissions": "権限:"
+                "role_permissions": "権限:",
+                "last_visited": "最終訪問"
             },
             "posts": {
                 "header": "投稿",

@@ -186,6 +186,9 @@
                 "message": "訊息",
                 "boop": "戳",
                 "groupChange": "群組變更",
+                "event": {
+                    "announcement": "活動通知"
+                },
                 "group": {
                     "announcement": "公告",
                     "informative": "資訊",
@@ -298,6 +301,7 @@
                 "notifications": "通知",
                 "wrist_overlay": "手腕疊層",
                 "discord_presence": "Discord 遊戲動態",
+                "pictures": "照片",
                 "advanced": "進階"
             },
             "general": {
@@ -327,7 +331,8 @@
                     "disable_gpu_acceleration_tooltip": "僅在你確切知道自己在做什麼的情況下更改此選項，可能會導致 SteamVR 疊層無法正常運作，但可能可以解決 UI 問題，需要重新啟動 VRCX",
                     "disable_vr_overlay_gpu_acceleration": "停用 VR 疊層 GPU 加速",
                     "disable_vr_overlay_gpu_acceleration_tooltip": "VR 疊層 GPU 加速可能會導致 VRCX 崩潰或造成 VRAM 記憶體洩漏，需要重新啟動 VRCX",
-                    "proxy": "代理設定"
+                    "proxy": "代理設定",
+                    "startup_linux": "在啟動 VRCX.desktop 檔案中加入「--startup/」命令，以在系統啟動時最小化啟動 VRCX"
                 },
                 "favorites": {
                     "header": "VRCX 最愛好友",
@@ -374,6 +379,9 @@
                     "theme_mode_system": "系統",
                     "theme_mode_light": "淺色",
                     "theme_mode_dark": "深色",
+                    "theme_mode_blue": "藍色",
+                    "theme_mode_darkblue": "深藍",
+                    "theme_mode_amoled": "黑暗",
                     "theme_mode_darkvanillaold": "Dark Vanilla (舊版)",
                     "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Pink",
@@ -452,6 +460,7 @@
                         "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
                         "ovrtoolkit_wrist_notifications": "OVR Toolkit 手腕通知",
                         "user_images": "玩家照片（較慢）",
+                        "notification_opacity": "通知不透明度",
                         "notification_timeout": "通知時長"
                     },
                     "conditions": {
@@ -495,7 +504,7 @@
                     "display_overlay_on_left": "左手",
                     "display_overlay_on_right": "右手",
                     "display_overlay_on_both": "雙手",
-                    "grey_background": "Grey Background",
+                    "grey_background": "灰色背景",
                     "minimal_feed_icons": "迷你動態圖示",
                     "show_vr_devices": "顯示 VR 裝置",
                     "show_cpu_usage": "顯示 CPU 使用率",
@@ -514,6 +523,23 @@
                     "join_button": "加入按鈕（僅限公開房間）",
                     "show_details_in_private": "顯示在私人房間時的世界資訊",
                     "show_images": "顯示世界圖片"
+                },
+                "rpc": {
+                    "vr": "VR 模式",
+                    "desktop": "桌面模式",
+                    "join_button": "加入",
+                    "powered_by_vrcx": "由 VRCX 提供",
+                    "private_world": "私人世界"
+                }
+            },
+            "pictures": {
+                "pictures": {
+                    "header": "照片",
+                    "open_folder": "開啟資料夾",
+                    "vrc_photos": "VRChat 照片",
+                    "steam_screenshots": "Steam 截圖",
+                    "auto_delete_old_prints": "自動刪除舊拍立得",
+                    "auto_delete_prints_from_vrc": "達到拍立得上限時，從 VRC 刪除舊拍立得"
                 }
             },
             "advanced": {
@@ -550,7 +576,18 @@
                     },
                     "save_instance_stickers_to_file": {
                         "header": "將房間貼紙保存到檔案",
+                        "description": "將放置的貼紙儲存至你的 VRChat 圖片資料夾"
+                    },
+                    "save_instance_emoji_to_file": {
+                        "header": "保存房間內的表情符號",
                         "description": "將放置的貼紙保存到你的 VRChat 圖片資料夾"
+                    },
+                    "delete_all_screenshot_metadata": {
+                        "button": "刪除截圖後設資料",
+                        "ask": "您確定要刪除 VRChat 圖片資料夾中所有的 VRC & VRCX 螢幕截圖 metadata？",
+                        "confirm": "刪除所有螢幕截圖後設資料是非常具破壞性的動作，且無法撤銷！這包括您 VRChat 圖片資料夾中的所有列印、子資料夾和其他不相關的圖片，如果這些照片對您來說很珍貴，請在繼續之前先做備份。",
+                        "confirm_yes": "確定",
+                        "confirm_no": "稍等一下"
                     },
                     "remote_database": {
                         "header": "遠端角色資料庫",
@@ -691,7 +728,9 @@
             "pronouns": "代稱",
             "tags": {
                 "friend_no": "第 {number} 位好友",
-                "vrchat_team": "VRChat 團隊"
+                "vrchat_team": "VRChat 團隊",
+                "18_plus_verified": "18+ 已驗證",
+                "age_verified": "年齡已驗證"
             },
             "badges": {
                 "assigned": "給予",
@@ -784,7 +823,7 @@
                 "instance_hard_closed": "強制關閉",
                 "close_instance": "關閉房間",
                 "instance_age_gated": "年齡限制",
-                "open_previouse_instance": "開啟上個房間"
+                "open_previous_instance": "開啟上個房間"
             },
             "groups": {
                 "header": "群組",
@@ -844,6 +883,7 @@
                 "private": "私人",
                 "avatar_scaling_disabled": "角色縮放關閉",
                 "focus_view_disabled": "焦點檢視已停用",
+                "stickers_disabled": "貼紙已停用",
                 "future_proofing": "可未來更新",
                 "labs": "社區實驗室",
                 "cache": "快取",
@@ -869,7 +909,7 @@
                 "change_capacity": "變更最大玩家上限",
                 "change_recommended_capacity": "變更建立人數",
                 "change_preview": "變更 YouTube 預覽",
-                "change_tags": "變更標籤",
+                "change_warnings_settings_tags": "變更內容警告、設定和標籤",
                 "change_image": "變更圖片",
                 "change_allowed_video_player_domains": "變更允許的影片播放器網域",
                 "download_package": "下載 Unity Package",
@@ -956,11 +996,12 @@
                 "rename": "重新命名",
                 "change_description": "變更敘述",
                 "change_content_tags": "變更世界內容標籤",
+                "change_styles_author_tags": "變更樣式和作者標籤",
                 "change_image": "變更圖片",
                 "download_package": "下載 Unity Package",
                 "delete": "刪除",
                 "delete_impostor": "刪除投影替身",
-                "regenerate_impostor": "Regenerate Impostor",
+                "regenerate_impostor": "重新建立投影替身",
                 "create_impostor": "建立投影替身"
             },
             "info": {
@@ -975,7 +1016,9 @@
                 "platform": "平台",
                 "time_spent": "停留時長",
                 "memo": "備註",
-                "memo_placeholder": "點擊新增備忘錄"
+                "memo_placeholder": "點擊新增備忘錄",
+                "listings": "列表",
+                "gallery": "相簿"
             },
             "json": {
                 "header": "原始資料",
@@ -1011,6 +1054,9 @@
                 "unsubscribe": "取消訂閱公告",
                 "subscribe": "訂閱公告",
                 "invite_to_group": "邀請到群組",
+                "manage_selected": "管理選取的群組",
+                "select_all": "全部選擇",
+                "deselect_all": "全部取消選擇",
                 "visibility_everyone": "能見度：所有人",
                 "visibility_friends": "能見度：好友",
                 "visibility_hidden": "能見度：隱藏",
@@ -1039,7 +1085,8 @@
                 "role_description": "敘述：",
                 "role_updated_at": "更新時間：",
                 "role_created_at": "創建時間：",
-                "role_permissions": "權限："
+                "role_permissions": "權限：",
+                "last_visited": "上次造訪"
             },
             "posts": {
                 "header": "貼文",
@@ -1146,6 +1193,7 @@
             "content_pedestals": "分享座",
             "content_prints": "拍立得",
             "content_drones": "無人機",
+            "content_items": "物件",
             "world_id": "世界 ID",
             "instance_id": "房間 ID",
             "instance_id_placeholder": "亂數",
@@ -1212,6 +1260,7 @@
             "header": "設定世界標籤",
             "avatar_scaling_disabled": "關閉角色縮放",
             "focus_view_disabled": "焦點檢視已停用",
+            "stickers_disabled": "貼紙已停用",
             "enable_debugging": "為其他人啟用世界偵錯",
             "author_tags": "作者標籤(使用逗號分隔每個標籤)",
             "content_tags": "內容警告標籤",
@@ -1237,6 +1286,16 @@
             "select_none": "取消選取",
             "cancel": "取消",
             "save": "儲存"
+        },
+        "set_avatar_styles": {
+            "header": "設定角色風格",
+            "primary_style": "主風格",
+            "secondary_style": "次級風格",
+            "select_style": "選擇風格",
+            "save_success": "成功更改角色風格",
+            "save_failed": "無法更改變身風格",
+            "cancel": "取消",
+            "save": "保存"
         },
         "vrcx_updater": {
             "header": "VRCX 更新器",
@@ -1422,6 +1481,7 @@
             "emojis": "表情符號",
             "stickers": "貼紙",
             "prints": "拍立得",
+            "inventory": "物品庫",
             "refresh": "重新整理",
             "upload": "上傳",
             "clear": "清除",
@@ -1432,7 +1492,8 @@
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "選擇一個 1024x1024 PNG spritesheet 來當作動態表情符號，可用的幀格大小： 4、16 或 64 (最大 FPS 64、最大畫格 64)",
             "note": "備註",
-            "crop_print_border": "裁剪拍立得邊框"
+            "crop_print_border": "裁剪拍立得邊框",
+            "consume_bundle": "消費"
         },
         "change_content_image": {
             "avatar": "變更角色圖片",
@@ -1480,6 +1541,7 @@
             "last_screenshot": "最後一張螢幕截圖",
             "copy_image": "複製圖片",
             "open_folder": "開啟資料夾",
+            "delete_metadata": "刪除後設資料",
             "upload": "上傳"
         },
         "registry_backup": {
@@ -1494,6 +1556,7 @@
             "date": "日期",
             "action": "操作",
             "auto_backup": "每週自動備份",
+            "ask_to_restore": "當沒有 VRC 登錄設定時，要求還原",
             "restore_prompt": "VRCX 已注意到 VRC 註冊表設定的自動備份已啟用，但這台電腦沒有任何備份，如果你想從備份還原，可以從這裡還原。"
         },
         "group_member_moderation": {
@@ -1571,6 +1634,9 @@
             "header": "允許影片播放器網域",
             "add_domain": "新增網域",
             "save": "保存"
+        },
+        "group_calendar": {
+            "header": "群組行事曆"
         }
     },
     "confirm": {
@@ -1618,6 +1684,15 @@
             "uploaded": "相簿圖片已上傳",
             "failed": "上傳相簿圖片失敗"
         },
+        "avatar_gallery": {
+            "uploaded": "角色圖庫圖片上傳成功",
+            "failed": "上傳角色圖庫圖片失敗",
+            "deleted": "角色圖庫圖片刪除成功",
+            "not_found": "角色圖庫fileId未找到",
+            "already_first": "已是第一張圖片",
+            "already_last": "已是最後一張圖片",
+            "reordered": "成功重新排列角色圖庫圖片"
+        },
         "world": {
             "image_changed": "世界圖片已變更",
             "image_invalid": "目前的場景圖片無效"
@@ -1630,6 +1705,10 @@
         },
         "friend": {
             "load_failed": "載入好友清單失敗，正在登出"
+        },
+        "screenshot_metadata": {
+            "deleted": "刪除截圖後設資料",
+            "delete_failed": "刪除截圖後設資料失敗"
         }
     },
     "prompt": {
@@ -1886,6 +1965,7 @@
             "rank": "階級",
             "language": "語言",
             "bioLink": "社交連結",
+            "note": "備註",
             "date": "時間",
             "user": "玩家",
             "type": "種類",
@@ -1913,7 +1993,7 @@
             "action": "動作"
         },
         "friendList": {
-            "no": "No.",
+            "no": "不。",
             "avatar": "角色",
             "displayName": "顯示名稱",
             "rank": "階級",

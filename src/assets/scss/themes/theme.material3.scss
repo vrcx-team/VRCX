@@ -117,6 +117,12 @@ body {
     user-select: none;
     font-family: var(--md-sys-typescale-body-small-font);
     font-variant-numeric: tabular-nums;
+
+    --group-calendar-event-bg: rgba(var(--md-sys-color-primary), 0.05);
+    --group-calendar-badge-following: rgb(
+        var(--md-sys-color-primary-container)
+    );
+    --group-calendar-badge-normal: rgb(var(--md-sys-color-secondary));
 }
 
 ::selection {
@@ -1122,8 +1128,14 @@ input[type='number'],
     color: rgb(var(--md-sys-color-error));
     border-color: rgb(var(--md-sys-color-error));
 }
-.el-tag.el-tag--info {
+
+.el-tag,
+.el-tag.el-tag--success,
+.el-tag.el-tag--info,
+.el-tag.el-tag--warning,
+.el-tag.el-tag--danger {
     border-color: rgb(var(--md-sys-color-outline));
+    background-color: transparent;
 }
 
 /* Friend */
@@ -1633,8 +1645,42 @@ img.x-link.el-popover__reference {
     border-top: 1px solid rgb(var(--md-sys-color-outline-variant));
     margin-top: 8px;
 }
-.el-popper .popper__arrow {
-    display: none;
+
+.el-popover {
+    background: var(--md-sys-color-surface-3) !important;
+    border-color: rgb(var(--md-sys-color-outline-variant)) !important;
+}
+
+.el-popper[x-placement^='top'] .popper__arrow {
+    border-top-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-popper[x-placement^='top'] .popper__arrow::after {
+    border-top-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-popper[x-placement^='bottom'] .popper__arrow {
+    border-bottom-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-popper[x-placement^='bottom'] .popper__arrow::after {
+    border-bottom-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-popper[x-placement^='left'] .popper__arrow {
+    border-left-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-popper[x-placement^='left'] .popper__arrow::after {
+    border-left-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-popper[x-placement^='right'] .popper__arrow {
+    border-right-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-popper[x-placement^='right'] .popper__arrow::after {
+    border-right-color: var(--md-sys-color-surface-3) !important;
 }
 
 /* Status icon */
@@ -2106,4 +2152,43 @@ div.x-friend-list
     > div.el-textarea.el-input--mini
     > span.el-input__count {
     background-color: var(--md-sys-color-surface-3) !important;
+}
+
+.el-calendar {
+    background: var(--md-sys-color-surface-3) !important;
+}
+
+.el-calendar__title {
+    color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+.el-card {
+    background: var(--md-sys-color-surface-2) !important;
+    border-color: rgb(var(--md-sys-color-outline-variant)) !important;
+}
+
+.el-descriptions__body {
+    background: var(--md-sys-color-surface-3) !important;
+    color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+.el-timeline-item__tail {
+    border-left-color: rgb(var(--md-sys-color-outline-variant)) !important;
+}
+
+.el-timeline-item__node {
+    background-color: rgb(var(--md-sys-color-outline)) !important;
+}
+
+.x-dialog .top-content {
+    height: 640px !important ;
+}
+
+// Group Calendar Dialog borders
+.search-container {
+    border-bottom: 1px solid rgba(var(--md-sys-color-outline), 0.5) !important;
+}
+
+.group-header {
+    border-bottom: 2px solid rgba(var(--md-sys-color-outline), 0.5) !important;
 }

@@ -304,13 +304,58 @@ const gameLog = {
         return ref;
     },
 
-    async getLastSeen(input, inCurrentWorld) {
-        if (inCurrentWorld) {
-            var count = 2;
-        } else {
-            var count = 1;
-        }
+    async getLastGroupVisit(groupName) {
         var ref = {
+            created_at: '',
+            groupName: ''
+        };
+        await sqliteService.execute(
+            (row) => {
+                ref = {
+                    created_at: row[0],
+                    groupName: row[1]
+                };
+            },
+            `SELECT created_at, group_name FROM gamelog_location WHERE group_name = @groupName ORDER BY id DESC LIMIT 1`,
+            {
+                '@groupName': groupName
+            }
+        );
+        return ref;
+    },
+
+    async getPreviousInstancesByGroupId(groupId) {
+        const data = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                let time = 0;
+                if (dbRow[2]) {
+                    time = dbRow[2];
+                }
+                var ref = data.get(dbRow[1]);
+                if (typeof ref !== 'undefined') {
+                    time += ref.time;
+                }
+                var row = {
+                    created_at: dbRow[0],
+                    location: dbRow[1],
+                    time,
+                    worldName: dbRow[3],
+                    groupName: dbRow[4]
+                };
+                data.set(row.location, row);
+            },
+            `SELECT created_at, location, time, world_name, group_name FROM gamelog_location WHERE location LIKE '%${groupId}%' ORDER BY id DESC`,
+            {
+                '@groupId': groupId
+            }
+        );
+        return data;
+    },
+
+    async getLastSeen(input, inCurrentWorld) {
+        const count = inCurrentWorld ? 2 : 1;
+        let ref = {
             created_at: '',
             userId: ''
         };

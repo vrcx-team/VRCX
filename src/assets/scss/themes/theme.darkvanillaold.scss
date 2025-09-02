@@ -18,6 +18,10 @@
     --theme-text-muted: #906d92;
     --theme-text-rgb: 238, 204, 224;
     --theme-text-muted-rgb: 144, 109, 146;
+
+    --group-calendar-event-bg: rgba(var(--theme-text-muted-rgb), 0.1);
+    --group-calendar-badge-following: var(--theme-text-muted);
+    --group-calendar-badge-normal: var(--theme-text);
 }
 
 div.options-container[style='margin-top: 45px; border-top: 1px solid rgb(238, 238, 238); padding-top: 30px;']:after {
@@ -184,7 +188,11 @@ a {
     color: var(--theme-text) !important;
 }
 
-.el-tag.el-tag--info {
+.el-tag,
+.el-tag.el-tag--success,
+.el-tag.el-tag--info,
+.el-tag.el-tag--warning,
+.el-tag.el-tag--danger {
     background: var(--farback) !important;
 }
 
@@ -367,4 +375,30 @@ div.x-friend-list
     > div.el-textarea.el-input--mini
     > span.el-input__count {
     background-color: var(--mid) !important;
+}
+
+.el-calendar {
+    background-color: var(--mid) !important;
+}
+
+.el-calendar__title {
+    color: var(--theme-text) !important;
+}
+
+.el-card {
+    background-color: var(--top) !important;
+    border-color: var(--top-border) !important;
+}
+
+.el-descriptions__body {
+    background-color: var(--top) !important;
+    color: var(--theme-text) !important;
+}
+
+.el-timeline-item__tail {
+    border-left-color: var(--theme-text-muted) !important;
+}
+
+.el-timeline-item__node {
+    background-color: var(--theme-text-muted) !important;
 }

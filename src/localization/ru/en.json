@@ -783,7 +783,7 @@
                 "instance_hard_closed": "жёстко закрыт",
                 "close_instance": "Закрыть инстанс",
                 "instance_age_gated": "ограничение по возросту",
-                "open_previouse_instance": "Открыть предыдущий инстанс"
+                "open_previous_instance": "Открыть предыдущий инстанс"
             },
             "groups": {
                 "header": "Группы",
@@ -1039,7 +1039,8 @@
                 "role_description": "Описание:",
                 "role_updated_at": "Обновлена:",
                 "role_created_at": "Создана:",
-                "role_permissions": "Права доступа:"
+                "role_permissions": "Права доступа:",
+                "last_visited": "Последний визит"
             },
             "posts": {
                 "header": "Объявления",

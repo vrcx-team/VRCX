@@ -19,6 +19,8 @@ contextBridge.exposeInMainWorld('interopApi', {
     }
 });
 
+const validChannels = ['launch-command'];
+
 contextBridge.exposeInMainWorld('electron', {
     openFileDialog: () => ipcRenderer.invoke('dialog:openFile'),
     openDirectoryDialog: () => ipcRenderer.invoke('dialog:openDirectory'),
@@ -31,8 +33,24 @@ contextBridge.exposeInMainWorld('electron', {
     desktopNotification: (title, body, icon) =>
         ipcRenderer.invoke('notification:showNotification', title, body, icon),
     restartApp: () => ipcRenderer.invoke('app:restart'),
-    getWristOverlayWindow: () => ipcRenderer.invoke('app:getWristOverlayWindow'),
+    getWristOverlayWindow: () =>
+        ipcRenderer.invoke('app:getWristOverlayWindow'),
     getHmdOverlayWindow: () => ipcRenderer.invoke('app:getHmdOverlayWindow'),
-    updateVr: (active, hmdOverlay, wristOverlay, menuButton, overlayHand) => 
-        ipcRenderer.invoke('app:updateVr', active, hmdOverlay, wristOverlay, menuButton, overlayHand)
+    updateVr: (active, hmdOverlay, wristOverlay, menuButton, overlayHand) =>
+        ipcRenderer.invoke(
+            'app:updateVr',
+            active,
+            hmdOverlay,
+            wristOverlay,
+            menuButton,
+            overlayHand
+        ),
+    ipcRenderer: {
+        on(channel, func) {
+            if (validChannels.includes(channel)) {
+                console.log('contextBridge', channel, func);
+                ipcRenderer.on(channel, (event, ...args) => func(...args));
+            }
+        }
+    }
 });

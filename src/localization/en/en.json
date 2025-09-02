@@ -12,6 +12,7 @@
         "notification": "Notification",
         "friend_list": "Friend List",
         "charts": "Charts",
+        "tools": "Tools",
         "profile": "Profile",
         "settings": "Settings"
     },
@@ -129,12 +130,11 @@
             "copy": "Copy",
             "clear": "Clear",
             "bulk_unfavorite": "Bulk Unfavorite",
-            "refresh_tooltip": "Refresh all favorites",
+            "refresh_favorites_tooltip": "Refresh VRChat favorites",
             "export": "Export",
             "import": "Import",
             "move_tooltip": "Move",
             "copy_tooltip": "Copy",
-            "self_invite_tooltip": "Self Invite",
             "unfavorite_tooltip": "Unfavorite",
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
@@ -381,7 +381,7 @@
                     "theme_mode_dark": "Dark",
                     "theme_mode_blue": "Blue",
                     "theme_mode_darkblue": "Dark Blue",
-                    "theme_mode_amoled" : "Amoled",
+                    "theme_mode_amoled": "Amoled",
                     "theme_mode_darkvanillaold": "Dark Vanilla (old)",
                     "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Pink",
@@ -516,13 +516,17 @@
             "discord_presence": {
                 "discord_presence": {
                     "header": "Discord Presence",
-                    "description": "* Only active while VRChat is running.",
+                    "description": "* Only active whilst in an instance.",
                     "enable": "Enable",
                     "enable_tooltip": "Recommended to disable Rich Presence in VRChat config.json to stop it from conflicting",
-                    "instance_type_player_count": "Instance type/player count",
+                    "instance_type_player_count": "Instance type & player count",
                     "join_button": "Join button (public only)",
-                    "show_details_in_private": "Show world details in private",
-                    "show_images": "Show world images"
+                    "show_details_in_private": "Show world details while in private",
+                    "show_images": "Show world images",
+                    "show_current_platform": "Show current platform",
+                    "world_integration": "World integration",
+                    "world_integration_tooltip": "Show \"Watching/Listening to\" for Popcorn Palace, PyPyDance, VRDancing and LS Media",
+                    "display_world_name_as_discord_status": "Display world name as Discord status"
                 },
                 "rpc": {
                     "vr": "VR",
@@ -627,7 +631,8 @@
                         "folder": "Auto-Launch Folder",
                         "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
                         "enable": "Enable",
-                        "auto_close": "Auto close apps"
+                        "auto_close": "Auto close apps",
+                        "run_process_once": "Open single instance of app"
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
@@ -747,6 +752,7 @@
                 "request_invite": "Request Invite",
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
+                "group_moderation": "Group Moderation",
                 "send_boop": "Send Boop",
                 "manage_gallery_inventory_icon": "Manage VRC+ Images & Inventory",
                 "accept_friend_request": "Accept Friend Request",
@@ -779,6 +785,7 @@
                 "header": "Info",
                 "launch_invite_tooltip": "Launch/Invite",
                 "self_invite_tooltip": "Invite Yourself",
+                "open_in_vrchat_tooltip": "Open in VRChat",
                 "refresh_instance_info": "Refresh Instance Info",
                 "instance_queue": "Queue:",
                 "instance_users": "Users:",
@@ -823,7 +830,7 @@
                 "instance_hard_closed": "hard closed",
                 "close_instance": "Close Instance",
                 "instance_age_gated": "age gated",
-                "open_previouse_instance": "Open Previous Instance"
+                "open_previous_instance": "Open Previous Instances"
             },
             "groups": {
                 "header": "Groups",
@@ -900,6 +907,7 @@
                 "share": "Share",
                 "new_instance": "New Instance",
                 "new_instance_and_self_invite": "New Instance and Self Invite",
+                "new_instance_and_open_in_vrchat": "New Instance and Open in VRChat",
                 "make_home": "Make Home",
                 "reset_home": "Reset Home",
                 "show_previous_instances": "Show Previous Instances",
@@ -1085,7 +1093,8 @@
                 "role_description": "Description:",
                 "role_updated_at": "Updated At:",
                 "role_created_at": "Created At:",
-                "role_permissions": "Permissions:"
+                "role_permissions": "Permissions:",
+                "last_visited": "Last Visited"
             },
             "posts": {
                 "header": "Posts",
@@ -1314,7 +1323,8 @@
             "start_as_desktop": "Start as Desktop (No VR)",
             "info": "Info",
             "invite": "Invite",
-            "launch": "Launch"
+            "launch": "Launch",
+            "open_ingame": "Open in Game"
         },
         "export_friends_list": {
             "header": "Export Friends List",
@@ -1407,9 +1417,10 @@
             "header": "Invite To Group",
             "description": "Don't spam invite users, you'll get rate limited.",
             "choose_group_placeholder": "Choose Group",
-            "groups": "Groups",
+            "groups_with_invite_permission": "Groups with Invite Permission",
             "choose_friends_placeholder": "Choose Friends",
-            "selected_users": "Selected Users"
+            "selected_users": "Selected Users",
+            "invite": "Invite"
         },
         "note_export": {
             "header": "Note Export",
@@ -1554,7 +1565,8 @@
             "name": "Name",
             "date": "Date",
             "action": "Action",
-            "auto_backup": "Weekly Auto Backup",
+            "auto_backup": "Auto backup every 3 days (deletes after 2 weeks)",
+            "ask_to_restore": "Ask to restore when no VRC registry settings are present",
             "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "group_member_moderation": {
@@ -1599,6 +1611,7 @@
             "select_user": "Select User",
             "selected_users": "Selected Users",
             "select_all": "Select All",
+            "user_isnt_in_group": "User isn't in group",
             "cancel": "Cancel",
             "choose_roles_placeholder": "Choose Roles",
             "selected_roles": "Selected Roles",
@@ -1632,6 +1645,15 @@
             "header": "Allowed Video Player Domains",
             "add_domain": "Add Domain",
             "save": "Save"
+        },
+        "group_calendar": {
+            "header": "Group Calendar"
+        },
+        "moderate_group": {
+            "header": "Moderate Group Member",
+            "choose_group_placeholder": "Choose Group",
+            "groups_with_moderation_permission": "Groups with Moderation Permission",
+            "moderation_tools": "Moderation Tools"
         }
     },
     "confirm": {

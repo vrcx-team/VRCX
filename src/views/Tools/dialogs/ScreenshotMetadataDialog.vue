@@ -1,12 +1,11 @@
 <template>
     <safe-dialog
         class="x-dialog"
-        :visible.sync="screenshotMetadataDialog.visible"
+        :visible="isScreenshotMetadataDialogVisible"
         :title="t('dialog.screenshot_metadata.header')"
         width="1050px"
-        top="10vh">
+        @close="closeDialog">
         <div
-            v-if="screenshotMetadataDialog.visible"
             v-loading="screenshotMetadataDialog.loading"
             style="-webkit-app-region: drag"
             @dragover.prevent
@@ -170,7 +169,7 @@
 
 <script setup>
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref, watch } from 'vue';
+    import { getCurrentInstance, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { vrcPlusImageRequest } from '../../../api';
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
@@ -191,17 +190,19 @@
     const { fullscreenImageDialog } = storeToRefs(useGalleryStore());
 
     const props = defineProps({
-        screenshotMetadataDialog: {
-            type: Object,
+        isScreenshotMetadataDialogVisible: {
+            type: Boolean,
             required: true
         }
     });
 
+    const emit = defineEmits(['close']);
+
     watch(
-        () => props.screenshotMetadataDialog.visible,
+        () => props.isScreenshotMetadataDialogVisible,
         (newVal) => {
             if (newVal) {
-                if (!props.screenshotMetadataDialog.metadata.filePath) {
+                if (!screenshotMetadataDialog.metadata.filePath) {
                     getAndDisplayLastScreenshot();
                 }
                 window.addEventListener('keyup', handleComponentKeyup);
@@ -211,15 +212,31 @@
         }
     );
 
+    const screenshotMetadataDialog = reactive({
+        // visible: false,
+        loading: false,
+        search: '',
+        searchType: 'Player Name',
+        searchTypes: ['Player Name', 'Player ID', 'World  Name', 'World  ID'],
+        searchIndex: null,
+        searchResults: null,
+        metadata: {},
+        isUploading: false
+    });
+
     const screenshotMetadataSearchInputs = ref(0);
     const screenshotMetadataCarouselRef = ref(null);
 
     const handleComponentKeyup = (event) => {
         const carouselNavigation = { ArrowLeft: 0, ArrowRight: 2 }[event.key];
-        if (typeof carouselNavigation !== 'undefined' && props.screenshotMetadataDialog?.visible) {
+        if (typeof carouselNavigation !== 'undefined' && props.isScreenshotMetadataDialogVisible) {
             screenshotMetadataCarouselChange(carouselNavigation);
         }
     };
+
+    function closeDialog() {
+        emit('close');
+    }
 
     function handleDrop(event) {
         if (currentlyDroppingFile.value === null) {
@@ -302,12 +319,12 @@
                 message: t('message.screenshot_metadata.deleted'),
                 type: 'success'
             });
-            const D = props.screenshotMetadataDialog;
+            const D = screenshotMetadataDialog;
             getAndDisplayScreenshot(D.metadata.filePath, true);
         });
     }
     function uploadScreenshotToGallery() {
-        const D = props.screenshotMetadataDialog;
+        const D = screenshotMetadataDialog;
         if (D.metadata.fileSizeBytes > 10000000) {
             $message({
                 message: t('message.file.too_large'),
@@ -342,7 +359,7 @@
             });
     }
     function screenshotMetadataSearch() {
-        const D = props.screenshotMetadataDialog;
+        const D = screenshotMetadataDialog;
 
         // Don't search if user is still typing
         screenshotMetadataSearchInputs.value++;
@@ -390,7 +407,7 @@
     }
 
     function screenshotMetadataCarouselChange(index) {
-        const D = props.screenshotMetadataDialog;
+        const D = screenshotMetadataDialog;
         const searchIndex = D.searchIndex;
 
         if (searchIndex !== null) {
@@ -422,7 +439,7 @@
     }
 
     function screenshotMetadataResetSearch() {
-        const D = props.screenshotMetadataDialog;
+        const D = screenshotMetadataDialog;
 
         D.search = '';
         D.searchIndex = null;
@@ -430,7 +447,7 @@
     }
 
     function screenshotMetadataCarouselChangeSearch(index) {
-        const D = props.screenshotMetadataDialog;
+        const D = screenshotMetadataDialog;
         let searchIndex = D.searchIndex;
         const filesArr = D.searchResults;
 
@@ -480,7 +497,7 @@
     async function displayScreenshotMetadata(json, needsCarouselFiles = true) {
         let time;
         let date;
-        const D = props.screenshotMetadataDialog;
+        const D = screenshotMetadataDialog;
         D.metadata.author = {};
         D.metadata.world = {};
         D.metadata.players = [];

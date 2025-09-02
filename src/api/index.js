@@ -3,6 +3,7 @@
  * Export all API requests from here
  */
 
+import { request } from '../service/request';
 import userRequest from './user';
 import worldRequest from './world';
 import instanceRequest from './instance';
@@ -23,6 +24,7 @@ import inventoryRequest from './inventory';
 import propRequest from './prop';
 
 window.request = {
+    request,
     userRequest,
     worldRequest,
     instanceRequest,
@@ -44,6 +46,7 @@ window.request = {
 };
 
 export {
+    request,
     userRequest,
     worldRequest,
     instanceRequest,

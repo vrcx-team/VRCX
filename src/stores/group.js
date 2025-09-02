@@ -10,8 +10,13 @@ import {
 import { $app } from '../app';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
+import { database } from '../service/database.js';
 import { groupDialogFilterOptions } from '../shared/constants/';
-import { replaceBioSymbols, convertFileUrlToImageUrl } from '../shared/utils';
+import {
+    replaceBioSymbols,
+    convertFileUrlToImageUrl,
+    hasGroupPermission
+} from '../shared/utils';
 import { useGameStore } from './game';
 import { useInstanceStore } from './instance';
 import { useUserStore } from './user';
@@ -41,6 +46,7 @@ export const useGroupStore = defineStore('Group', () => {
             memberSearchResults: [],
             instances: [],
             memberRoles: [],
+            lastVisit: '',
             memberFilter: {
                 name: 'dialog.group.members.filters.everyone',
                 id: null
@@ -61,6 +67,21 @@ export const useGroupStore = defineStore('Group', () => {
             userId: '',
             userIds: [],
             userObject: {}
+        },
+        moderateGroupDialog: {
+            visible: false,
+            groupId: '',
+            groupName: '',
+            userId: '',
+            userObject: {}
+        },
+        groupMemberModeration: {
+            visible: false,
+            loading: false,
+            id: '',
+            groupRef: {},
+            auditLogTypes: [],
+            openWithUserId: ''
         },
         cachedGroups: new Map(),
         inGameGroupOrder: [],
@@ -86,6 +107,20 @@ export const useGroupStore = defineStore('Group', () => {
         get: () => state.inviteGroupDialog,
         set: (value) => {
             state.inviteGroupDialog = value;
+        }
+    });
+
+    const moderateGroupDialog = computed({
+        get: () => state.moderateGroupDialog,
+        set: (value) => {
+            state.moderateGroupDialog = value;
+        }
+    });
+
+    const groupMemberModeration = computed({
+        get: () => state.groupMemberModeration,
+        set: (value) => {
+            state.groupMemberModeration = value;
         }
     });
 
@@ -122,6 +157,8 @@ export const useGroupStore = defineStore('Group', () => {
         (isLoggedIn) => {
             state.groupDialog.visible = false;
             state.inviteGroupDialog.visible = false;
+            state.moderateGroupDialog.visible = false;
+            state.groupMemberModeration.visible = false;
             state.currentUserGroupsInit = false;
             state.cachedGroups.clear();
             state.currentUserGroups.clear();
@@ -148,6 +185,7 @@ export const useGroupStore = defineStore('Group', () => {
         D.postsFiltered = [];
         D.instances = [];
         D.memberRoles = [];
+        D.lastVisit = '';
         D.memberSearch = '';
         D.memberSearchResults = [];
         D.galleries = {};
@@ -180,6 +218,11 @@ export const useGroupStore = defineStore('Group', () => {
                             D.ownerDisplayName = args1.ref.displayName;
                             return args1;
                         });
+                    database.getLastGroupVisit(D.ref.name).then((r) => {
+                        if (D.id === args.ref.id) {
+                            D.lastVisit = r.created_at;
+                        }
+                    });
                     instanceStore.applyGroupDialogInstances();
                     getGroupDialogGroup(groupId);
                 }
@@ -1023,11 +1066,41 @@ export const useGroupStore = defineStore('Group', () => {
         );
     }
 
+    function showModerateGroupDialog(userId) {
+        const D = state.moderateGroupDialog;
+        D.userId = userId;
+        D.userObject = {};
+        D.visible = true;
+    }
+
+    function showGroupMemberModerationDialog(groupId, userId = '') {
+        const D = state.groupMemberModeration;
+        D.id = groupId;
+        D.openWithUserId = userId;
+
+        D.groupRef = {};
+        D.auditLogTypes = [];
+        groupRequest.getCachedGroup({ groupId }).then((args) => {
+            D.groupRef = args.ref;
+            if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
+                groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
+                    if (D.id !== args.params.groupId) {
+                        return;
+                    }
+                    D.auditLogTypes = args.json;
+                });
+            }
+        });
+        D.visible = true;
+    }
+
     return {
         state,
         groupDialog,
         currentUserGroups,
         inviteGroupDialog,
+        moderateGroupDialog,
+        groupMemberModeration,
         cachedGroups,
         inGameGroupOrder,
         groupInstances,
@@ -1052,6 +1125,8 @@ export const useGroupStore = defineStore('Group', () => {
         handleGroupPermissions,
         handleGroupMemberProps,
         handleGroupList,
-        handleGroupRepresented
+        handleGroupRepresented,
+        showModerateGroupDialog,
+        showGroupMemberModerationDialog
     };
 });

@@ -48,6 +48,7 @@ if (!isDotNetInstalled()) {
     });
 }
 
+const VRCX_URI_PREFIX = 'vrcx';
 let isOverlayActive = false;
 let appIsQuitting = false;
 
@@ -58,6 +59,15 @@ const noInstall = args.includes('--no-install');
 const x11 = args.includes('--x11');
 const noDesktop = args.includes('--no-desktop');
 const startup = args.includes('--startup');
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX, process.execPath, [
+            path.resolve(process.argv[1])
+        ]);
+    } else {
+        app.setAsDefaultProtocolClient(VRCX_URI_PREFIX);
+    }
+}
 
 const homePath = getHomePath();
 tryRelaunchWithArgs(args);
@@ -97,7 +107,6 @@ interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
 interopApi.getDotNetObject('LogWatcher').Init();
 
-interopApi.getDotNetObject('IPCServer').Init();
 interopApi.getDotNetObject('SystemMonitorElectron').Init();
 interopApi.getDotNetObject('AppApiVrElectron').Init();
 
@@ -105,12 +114,38 @@ ipcMain.handle('callDotNetMethod', (event, className, methodName, args) => {
     return interopApi.callMethod(className, methodName, args);
 });
 
+/** @type {BrowserWindow} */
 let mainWindow = undefined;
 
 const VRCXStorage = interopApi.getDotNetObject('VRCXStorage');
 const hasAskedToMoveAppImage =
     VRCXStorage.Get('VRCX_HasAskedToMoveAppImage') === 'true';
 let isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+
+const gotTheLock = app.requestSingleInstanceLock();
+const strip_vrcx_prefix_regex = new RegExp('^' + VRCX_URI_PREFIX + '://');
+
+if (!gotTheLock) {
+    app.quit();
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        if (mainWindow && commandLine.length >= 2) {
+            mainWindow.webContents.send(
+                'launch-command',
+                commandLine.pop().trim().replace(strip_vrcx_prefix_regex, '')
+            );
+        }
+    });
+
+    app.on('open-url', (event, url) => {
+        if (mainWindow && url) {
+            mainWindow.webContents.send(
+                'launch-command',
+                url.replace(strip_vrcx_prefix_regex, '')
+            );
+        }
+    });
+}
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -837,8 +872,12 @@ app.whenReady().then(() => {
     createTray();
 
     if (process.platform === 'linux') {
-        createWristOverlayWindowOffscreen();
-        createHmdOverlayWindowOffscreen();
+        try {
+            createWristOverlayWindowOffscreen();
+            createHmdOverlayWindowOffscreen();
+        } catch (err) {
+            console.error('Error creating overlay windows:', err);
+        }
     }
 
     installVRCX();
@@ -874,8 +913,6 @@ function disposeOverlay() {
 
 app.on('before-quit', function () {
     disposeOverlay();
-
-    mainWindow.webContents.send('windowClosed');
 });
 
 app.on('window-all-closed', function () {

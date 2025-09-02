@@ -485,23 +485,26 @@ async function getBundleDateSize(ref) {
             fileSize
         };
 
-        // update avatar dialog
-        if (avatarDialog.value.id === ref.id) {
-            avatarDialog.value.bundleSizes[platform] = bundleSizes[platform];
-            avatarDialog.value.lastUpdated = createdAt;
-            avatarDialog.value.fileAnalysis = buildTreeData(bundleJson);
-        }
-        // update world dialog
-        if (worldDialog.value.id === ref.id) {
-            worldDialog.value.bundleSizes[platform] = bundleSizes[platform];
-            worldDialog.value.lastUpdated = createdAt;
-            worldDialog.value.fileAnalysis = buildTreeData(bundleJson);
-        }
-        // update player list
-        if (currentInstanceLocation.value.worldId === ref.id) {
-            currentInstanceWorld.value.bundleSizes[platform] =
-                bundleSizes[platform];
-            currentInstanceWorld.value.lastUpdated = createdAt;
+        if (unityPackage.variant === 'standard') {
+            if (avatarDialog.value.id === ref.id) {
+                // update avatar dialog
+                avatarDialog.value.bundleSizes[platform] =
+                    bundleSizes[platform];
+                avatarDialog.value.lastUpdated = createdAt;
+                avatarDialog.value.fileAnalysis = buildTreeData(bundleJson);
+            }
+            // update world dialog
+            if (worldDialog.value.id === ref.id) {
+                worldDialog.value.bundleSizes[platform] = bundleSizes[platform];
+                worldDialog.value.lastUpdated = createdAt;
+                worldDialog.value.fileAnalysis = buildTreeData(bundleJson);
+            }
+            // update player list
+            if (currentInstanceLocation.value.worldId === ref.id) {
+                currentInstanceWorld.value.bundleSizes[platform] =
+                    bundleSizes[platform];
+                currentInstanceWorld.value.lastUpdated = createdAt;
+            }
         }
     }
 

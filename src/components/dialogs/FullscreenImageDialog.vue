@@ -1,5 +1,5 @@
 <template>
-    <safe-dialog class="x-dialog" :visible.sync="fullscreenImageDialog.visible" append-to-body top="1vh" width="97vw">
+    <safe-dialog class="x-dialog" :visible.sync="fullscreenImageDialog.visible" append-to-body width="97vw">
         <div>
             <div style="margin: 0 0 5px 5px">
                 <el-button

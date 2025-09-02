@@ -697,7 +697,13 @@
                             <span v-text="scope.row.photonId"></span>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('table.playerList.icon')" prop="isMaster" width="70" align="center">
+                    <el-table-column
+                        :label="t('table.playerList.icon')"
+                        prop="isMaster"
+                        width="80"
+                        align="center"
+                        sortable
+                        :sort-method="sortInstanceIcon">
                         <template #default="scope">
                             <el-tooltip v-if="scope.row.isMaster" placement="left" content="Instance Master">
                                 <span>👑</span>
@@ -708,6 +714,22 @@
                             <el-tooltip v-if="scope.row.isFriend" placement="left" content="Friend">
                                 <span>💚</span>
                             </el-tooltip>
+                            <el-tooltip v-if="scope.row.isBlocked" placement="left" content="Blocked">
+                                <i class="el-icon el-icon-circle-close" style="color: red"></i>
+                            </el-tooltip>
+                            <el-tooltip v-if="scope.row.isMuted" placement="left" content="Muted">
+                                <i class="el-icon el-icon-turn-off-microphone" style="color: orange"></i>
+                            </el-tooltip>
+                            <el-tooltip
+                                v-if="scope.row.isAvatarInteractionDisabled"
+                                placement="left"
+                                content="Avatar Interaction Disabled
+                                    ">
+                                <i class="el-icon el-icon-thumb" style="color: orange"></i>
+                            </el-tooltip>
+                            <el-tooltip v-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
+                                <i class="el-icon el-icon-chat-line-round" style="color: orange"></i>
+                            </el-tooltip>
                             <el-tooltip v-if="scope.row.timeoutTime" placement="left" content="Timeout">
                                 <span style="color: red">🔴{{ scope.row.timeoutTime }}s</span>
                             </el-tooltip>
@@ -715,17 +737,13 @@
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="80">
                         <template #default="scope">
-                            <template v-if="scope.row.ref.last_platform">
-                                <span v-if="scope.row.ref.last_platform === 'standalonewindows'" style="color: #409eff"
+                            <template v-if="scope.row.ref.$platform">
+                                <span v-if="scope.row.ref.$platform === 'standalonewindows'" style="color: #409eff"
                                     >PC</span
                                 >
-                                <span v-else-if="scope.row.ref.last_platform === 'android'" style="color: #67c23a"
-                                    >A</span
-                                >
-                                <span v-else-if="scope.row.ref.last_platform === 'ios'" style="color: #c7c7ce"
-                                    >iOS</span
-                                >
-                                <span v-else>{{ scope.row.ref.last_platform }}</span>
+                                <span v-else-if="scope.row.ref.$platform === 'android'" style="color: #67c23a">A</span>
+                                <span v-else-if="scope.row.ref.$platform === 'ios'" style="color: #c7c7ce">iOS</span>
+                                <span v-else>{{ scope.row.ref.$platform }}</span>
                             </template>
                             <template v-if="scope.row.inVRMode !== null">
                                 <span v-if="scope.row.inVRMode">VR</span>
@@ -916,5 +934,20 @@
         chatboxUserBlacklist.value.set(user.id, user.displayName);
         await saveChatboxUserBlacklist();
         getCurrentInstanceUserList();
+    }
+
+    function sortInstanceIcon(a, b) {
+        const getValue = (item) => {
+            let value = 0;
+            if (item.isMaster) value += 1000;
+            if (item.isModerator) value += 500;
+            if (item.isFriend) value += 200;
+            if (item.isBlocked) value -= 100;
+            if (item.isMuted) value -= 50;
+            if (item.isAvatarInteractionDisabled) value -= 20;
+            if (item.isChatBoxMuted) value -= 10;
+            return value;
+        };
+        return getValue(b) - getValue(a);
     }
 </script>

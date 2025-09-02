@@ -186,7 +186,8 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 continue;
             }
             if (
-                !LINUX &&
+                WINDOWS &&
+                asset.name.endsWith('.exe') &&
                 (asset.content_type === 'application/x-msdownload' ||
                     asset.content_type === 'application/x-msdos-program')
             ) {
@@ -195,15 +196,19 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                     hashString = asset.digest.replace('sha256:', '');
                 }
                 size = asset.size;
-                continue;
+                break;
             }
-            if (LINUX && asset.content_type === 'application/octet-stream') {
+            if (
+                LINUX &&
+                asset.name.endsWith('.AppImage') &&
+                asset.content_type === 'application/octet-stream'
+            ) {
                 downloadUrl = asset.browser_download_url;
                 if (asset.digest && asset.digest.startsWith('sha256:')) {
                     hashString = asset.digest.replace('sha256:', '');
                 }
                 size = asset.size;
-                continue;
+                break;
             }
         }
         return { downloadUrl, hashString, size };

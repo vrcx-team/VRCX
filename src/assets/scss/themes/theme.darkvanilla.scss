@@ -556,11 +556,41 @@ div.options-container[style='margin-top: 45px; border-top: 1px solid rgb(238, 23
     color: #ddd;
 }
 
-.el-popper[x-placement^='top'] .popper__arrow,
-.el-popper[x-placement^='left'] .popper__arrow,
-.el-popper[x-placement^='right'] .popper__arrow,
+.el-popover {
+    background-color: var(--dv_bg-top) !important;
+    border-color: var(--dv_bg-mid) !important;
+}
+
+.el-popper[x-placement^='top'] .popper__arrow {
+    border-top-color: var(--dv_bg-top) !important;
+}
+
+.el-popper[x-placement^='top'] .popper__arrow::after {
+    border-top-color: var(--dv_bg-top) !important;
+}
+
 .el-popper[x-placement^='bottom'] .popper__arrow {
-    display: none;
+    border-bottom-color: var(--dv_bg-top) !important;
+}
+
+.el-popper[x-placement^='bottom'] .popper__arrow::after {
+    border-bottom-color: var(--dv_bg-top) !important;
+}
+
+.el-popper[x-placement^='left'] .popper__arrow {
+    border-left-color: var(--dv_bg-top) !important;
+}
+
+.el-popper[x-placement^='left'] .popper__arrow::after {
+    border-left-color: var(--dv_bg-top) !important;
+}
+
+.el-popper[x-placement^='right'] .popper__arrow {
+    border-right-color: var(--dv_bg-top) !important;
+}
+
+.el-popper[x-placement^='right'] .popper__arrow::after {
+    border-right-color: var(--dv_bg-top) !important;
 }
 
 img.x-link,
@@ -575,8 +605,11 @@ img.friends-list-avatar {
     border-radius: var(--dv_md-rounded);
 }
 
+.el-tag,
+.el-tag.el-tag--success,
 .el-tag.el-tag--info,
-.el-tag--plain.el-tag--success {
+.el-tag.el-tag--warning,
+.el-tag.el-tag--danger {
     background-color: var(--dv_bg-bot);
 }
 
@@ -756,4 +789,45 @@ div.x-friend-list
     > div.el-textarea.el-input--mini
     > span.el-input__count {
     background-color: var(--mid) !important;
+}
+
+:root {
+    --group-calendar-event-bg: rgba(var(--dv_bright-rgb), 0.1);
+    --group-calendar-badge-following: var(--dv_muted);
+    --group-calendar-badge-normal: var(--dv_bright);
+}
+
+.el-calendar {
+    background-color: var(--dv_bg-top) !important;
+}
+
+.el-calendar__title {
+    color: var(--dv_bright) !important;
+}
+
+.el-card {
+    background-color: var(--dv_bg-mid) !important;
+    border-color: var(--dv_bg-bot) !important;
+}
+
+.el-descriptions__body {
+    background-color: var(--dv_bg-top) !important;
+    color: var(--dv_bright) !important;
+}
+
+.el-timeline-item__tail {
+    border-left-color: var(--dv_muted) !important;
+}
+
+.el-timeline-item__node {
+    background-color: var(--dv_muted) !important;
+}
+
+// Group Calendar Dialog borders
+.search-container {
+    border-bottom: 1px solid var(--dv_muted) !important;
+}
+
+.group-header {
+    border-bottom: 2px solid var(--dv_muted) !important;
 }

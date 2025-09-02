@@ -524,6 +524,7 @@ export const useUserStore = defineStore('User', () => {
                 $customTagColour: '',
                 $friendNumber: 0,
                 $platform: '',
+                $moderations: {},
                 //
                 ...json
             };
@@ -594,6 +595,7 @@ export const useUserStore = defineStore('User', () => {
             }
             Object.assign(ref, json);
         }
+        ref.$moderations = moderationStore.getUserModerations(ref.id);
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
         appearanceSettingsStore.applyUserTrustLevel(ref);
         applyUserLanguage(ref);
@@ -846,8 +848,6 @@ export const useUserStore = defineStore('User', () => {
                                     D.isBlock = true;
                                 } else if (ref.type === 'mute') {
                                     D.isMute = true;
-                                } else if (ref.type === 'hideAvatar') {
-                                    D.isHideAvatar = true;
                                 } else if (ref.type === 'interactOff') {
                                     D.isInteractOff = true;
                                 } else if (ref.type === 'muteChat') {

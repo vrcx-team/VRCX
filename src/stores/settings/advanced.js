@@ -25,6 +25,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         avatarRemoteDatabase: true,
         enableAppLauncher: true,
         enableAppLauncherAutoClose: true,
+        enableAppLauncherRunProcessOnce: true,
         screenshotHelper: true,
         screenshotHelperModifyFilename: false,
         screenshotHelperCopyToClipboard: false,
@@ -42,7 +43,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         folderSelectorDialogVisible: false,
         isVRChatConfigDialogVisible: false,
         saveInstanceEmoji: false,
-        vrcRegistryAutoBackup: true
+        vrcRegistryAutoBackup: true,
+        vrcRegistryAskRestore: true
     });
 
     async function initAdvancedSettings() {
@@ -57,6 +59,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             avatarRemoteDatabase,
             enableAppLauncher,
             enableAppLauncherAutoClose,
+            enableAppLauncherRunProcessOnce,
             screenshotHelper,
             screenshotHelperModifyFilename,
             screenshotHelperCopyToClipboard,
@@ -70,7 +73,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             autoDeleteOldPrints,
             notificationOpacity,
             saveInstanceEmoji,
-            vrcRegistryAutoBackup
+            vrcRegistryAutoBackup,
+            vrcRegistryAskRestore
         ] = await Promise.all([
             configRepository.getBool('enablePrimaryPassword', false),
             configRepository.getBool('VRCX_relaunchVRChatAfterCrash', false),
@@ -82,6 +86,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_avatarRemoteDatabase', true),
             configRepository.getBool('VRCX_enableAppLauncher', true),
             configRepository.getBool('VRCX_enableAppLauncherAutoClose', true),
+            configRepository.getBool(
+                'VRCX_enableAppLauncherRunProcessOnce',
+                true
+            ),
             configRepository.getBool('VRCX_screenshotHelper', true),
             configRepository.getBool(
                 'VRCX_screenshotHelperModifyFilename',
@@ -104,7 +112,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_autoDeleteOldPrints', false),
             configRepository.getFloat('VRCX_notificationOpacity', 100),
             configRepository.getBool('VRCX_saveInstanceEmoji', false),
-            configRepository.getBool('VRCX_vrcRegistryAutoBackup', true)
+            configRepository.getBool('VRCX_vrcRegistryAutoBackup', true),
+            configRepository.getBool('VRCX_vrcRegistryAskRestore', true)
         ]);
 
         state.enablePrimaryPassword = enablePrimaryPassword;
@@ -117,6 +126,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.avatarRemoteDatabase = avatarRemoteDatabase;
         state.enableAppLauncher = enableAppLauncher;
         state.enableAppLauncherAutoClose = enableAppLauncherAutoClose;
+        state.enableAppLauncherRunProcessOnce = enableAppLauncherRunProcessOnce;
         state.screenshotHelper = screenshotHelper;
         state.screenshotHelperModifyFilename = screenshotHelperModifyFilename;
         state.screenshotHelperCopyToClipboard = screenshotHelperCopyToClipboard;
@@ -131,6 +141,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.notificationOpacity = notificationOpacity;
         state.saveInstanceEmoji = saveInstanceEmoji;
         state.vrcRegistryAutoBackup = vrcRegistryAutoBackup;
+        state.vrcRegistryAskRestore = vrcRegistryAskRestore;
 
         handleSetAppLauncherSettings();
     }
@@ -162,6 +173,9 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const enableAppLauncher = computed(() => state.enableAppLauncher);
     const enableAppLauncherAutoClose = computed(
         () => state.enableAppLauncherAutoClose
+    );
+    const enableAppLauncherRunProcessOnce = computed(
+        () => state.enableAppLauncherRunProcessOnce
     );
     const screenshotHelper = computed(() => state.screenshotHelper);
     ``;
@@ -203,6 +217,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         set: (value) => (state.saveInstanceEmoji = value)
     });
     const vrcRegistryAutoBackup = computed(() => state.vrcRegistryAutoBackup);
+    const vrcRegistryAskRestore = computed(() => state.vrcRegistryAskRestore);
 
     /**
      * @param {boolean} value
@@ -272,6 +287,15 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setBool(
             'VRCX_enableAppLauncherAutoClose',
             state.enableAppLauncherAutoClose
+        );
+        handleSetAppLauncherSettings();
+    }
+    async function setEnableAppLauncherRunProcessOnce() {
+        state.enableAppLauncherRunProcessOnce =
+            !state.enableAppLauncherRunProcessOnce;
+        await configRepository.setBool(
+            'VRCX_enableAppLauncherRunProcessOnce',
+            state.enableAppLauncherRunProcessOnce
         );
         handleSetAppLauncherSettings();
     }
@@ -376,6 +400,14 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         );
     }
 
+    async function setVrcRegistryAskRestore() {
+        state.vrcRegistryAskRestore = !state.vrcRegistryAskRestore;
+        await configRepository.setBool(
+            'VRCX_vrcRegistryAskRestore',
+            state.vrcRegistryAskRestore
+        );
+    }
+
     async function getSqliteTableSizes() {
         const [
             gps,
@@ -427,7 +459,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     function handleSetAppLauncherSettings() {
         AppApi.SetAppLauncherSettings(
             state.enableAppLauncher,
-            state.enableAppLauncherAutoClose
+            state.enableAppLauncherAutoClose,
+            state.enableAppLauncherRunProcessOnce
         );
     }
 
@@ -665,6 +698,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         avatarRemoteDatabase,
         enableAppLauncher,
         enableAppLauncherAutoClose,
+        enableAppLauncherRunProcessOnce,
         screenshotHelper,
         screenshotHelperModifyFilename,
         screenshotHelperCopyToClipboard,
@@ -682,6 +716,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         isVRChatConfigDialogVisible,
         saveInstanceEmoji,
         vrcRegistryAutoBackup,
+        vrcRegistryAskRestore,
 
         setEnablePrimaryPasswordConfigRepository,
         setRelaunchVRChatAfterCrash,
@@ -693,6 +728,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setAvatarRemoteDatabase,
         setEnableAppLauncher,
         setEnableAppLauncherAutoClose,
+        setEnableAppLauncherRunProcessOnce,
         setScreenshotHelper,
         setScreenshotHelperModifyFilename,
         setScreenshotHelperCopyToClipboard,
@@ -717,6 +753,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         promptAutoClearVRCXCacheFrequency,
         setSaveInstanceEmoji,
         setVrcRegistryAutoBackup,
+        setVrcRegistryAskRestore,
         askDeleteAllScreenshotMetadata
     };
 });

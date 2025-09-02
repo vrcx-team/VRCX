@@ -7,12 +7,7 @@ import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
 import { failedGetRequests } from '../service/request';
 import { watchState } from '../service/watchState';
-import {
-    debounce,
-    parseLocation,
-    refreshCustomCss,
-    removeFromArray
-} from '../shared/utils';
+import { debounce, parseLocation, refreshCustomCss } from '../shared/utils';
 import { useAvatarStore } from './avatar';
 import { useAvatarProviderStore } from './avatarProvider';
 import { useFavoriteStore } from './favorite';
@@ -70,6 +65,12 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function init() {
         if (LINUX) {
+            window.electron.ipcRenderer.on('launch-command', (command) => {
+                if (command) {
+                    eventLaunchCommand(command);
+                }
+            });
+
             window.electron.onWindowPositionChanged((event, position) => {
                 state.locationX = position.x;
                 state.locationY = position.y;
@@ -86,10 +87,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 state.windowState = newState.windowState;
                 debounce(saveVRCXWindowOption, 300)();
             });
-
-            // window.electron.onWindowClosed((event) => {
-            //    window.$app.saveVRCXWindowOption();
-            // });
         }
 
         state.databaseVersion = await configRepository.getInt(
@@ -363,6 +360,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 break;
             case 'External': {
                 const displayName = data.DisplayName ?? '';
+                const notify = data.notify ?? true;
                 entry = {
                     created_at: new Date().toJSON(),
                     type: 'External',
@@ -372,7 +370,9 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     location: locationStore.lastLocation.location
                 };
                 database.addGamelogExternalToDatabase(entry);
-                notificationStore.queueGameLogNoty(entry);
+                if (notify) {
+                    notificationStore.queueGameLogNoty(entry);
+                }
                 gameLogStore.addGameLog(entry);
                 break;
             }
@@ -673,7 +673,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     async function checkAutoBackupRestoreVrcRegistry() {
-        if (!advancedSettingsStore.vrcRegistryAutoBackup) {
+        if (
+            !advancedSettingsStore.vrcRegistryAutoBackup ||
+            !advancedSettingsStore.vrcRegistryAskRestore
+        ) {
             return;
         }
 
@@ -707,7 +710,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 lastBackupDate
             );
         } else {
-            await autoBackupVrcRegistry();
+            await tryAutoBackupVrcRegistry();
         }
     }
 
@@ -715,7 +718,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         state.isRegistryBackupDialogVisible = true;
     }
 
-    async function autoBackupVrcRegistry() {
+    async function tryAutoBackupVrcRegistry() {
+        if (!advancedSettingsStore.vrcRegistryAutoBackup) {
+            return;
+        }
         const date = new Date();
         const lastBackupDate = await configRepository.getString(
             'VRCX_VRChatRegistryLastBackupDate'
@@ -724,7 +730,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             const lastBackup = new Date(lastBackupDate);
             const diff = date.getTime() - lastBackup.getTime();
             const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-            if (diffDays < 7) {
+            if (diffDays < 3) {
                 return;
             }
         }
@@ -735,12 +741,16 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             backupsJson = JSON.stringify([]);
         }
         const backups = JSON.parse(backupsJson);
-        backups.forEach((backup) => {
-            if (backup.name === 'Auto Backup') {
-                // remove old auto backup
-                removeFromArray(backups, backup);
+        for (let i = backups.length - 1; i >= 0; i--) {
+            const backupDate = new Date(backups[i].date);
+            // remove backups older than 2 weeks
+            if (
+                backups[i].name === 'Auto Backup' &&
+                backupDate.getTime() < date.getTime() - 1209600000 // 2 weeks in milliseconds
+            ) {
+                backups.splice(i, 1);
             }
-        });
+        }
         await configRepository.setString(
             'VRCX_VRChatRegistryBackups',
             JSON.stringify(backups)
@@ -762,10 +772,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         maxTableSize,
         showConsole,
         clearVRCXCache,
-        startupLaunchCommand,
         eventVrcxMessage,
+        eventLaunchCommand,
         showRegistryBackupDialog,
         checkAutoBackupRestoreVrcRegistry,
+        tryAutoBackupVrcRegistry,
         processScreenshot,
         ipcEvent,
         dragEnterCef,

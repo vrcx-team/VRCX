@@ -168,6 +168,13 @@
         if (!D.groupId || !D.postId) {
             return;
         }
+        if (!D.title || !D.text) {
+            proxy.$message({
+                message: 'Title and text are required',
+                type: 'warning'
+            });
+            return;
+        }
         const params = {
             groupId: D.groupId,
             postId: D.postId,
@@ -192,6 +199,13 @@
     }
     function createGroupPost() {
         const D = groupPostEditDialog.value;
+        if (!D.title || !D.text) {
+            proxy.$message({
+                message: 'Title and text are required',
+                type: 'warning'
+            });
+            return;
+        }
         const params = {
             groupId: D.groupId,
             title: D.title,

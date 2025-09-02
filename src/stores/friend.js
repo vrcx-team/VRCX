@@ -270,6 +270,8 @@ export const useFriendStore = defineStore('Friend', () => {
         (isLoggedIn) => {
             state.friends.clear();
             state.friendNumber = 0;
+            state.friendLog.clear();
+            state.friendLogTable.data = [];
             groupStore.groupInstances = [];
             state.vipFriends_ = [];
             state.onlineFriends_ = [];
@@ -440,6 +442,34 @@ export const useFriendStore = defineStore('Friend', () => {
         if (typeof ref !== 'undefined') {
             location = ref.location;
             $location_at = ref.$location_at;
+
+            // wtf, fetch user if offline in an instance
+            if (
+                ctx.state !== 'online' &&
+                isRealInstance(ref.location) &&
+                ref.$lastFetch < Date.now() - 10000 // 10 seconds
+            ) {
+                console.log(
+                    `Fetching offline friend in an instance ${ctx.name}`
+                );
+                userRequest.getUser({
+                    userId: id
+                });
+            }
+            // wtf, fetch user if online in an offline location
+            if (
+                ctx.state === 'online' &&
+                ref.location === 'offline' &&
+                ref.$lastFetch < Date.now() - 10000 // 10 seconds
+            ) {
+                console.log(
+                    `Fetching online friend in an offline location ${ctx.name}`
+                );
+                userRequest.getUser({
+                    userId: id
+                });
+                return;
+            }
         }
         if (typeof stateInput === 'undefined' || ctx.state === stateInput) {
             // this is should be: undefined -> user
@@ -488,20 +518,6 @@ export const useFriendStore = defineStore('Friend', () => {
                 } else {
                     state.sortOfflineFriends = true;
                 }
-            }
-            // wtf, fetch user if offline in an instance
-            if (
-                ctx.state !== 'online' &&
-                typeof ref !== 'undefined' &&
-                isRealInstance(ref.location) &&
-                ref.$lastFetch < Date.now() - 10000 // 10 seconds
-            ) {
-                console.log(
-                    `Fetching offline friend in an instance ${ctx.name}`
-                );
-                userRequest.getUser({
-                    userId: id
-                });
             }
         } else if (
             ctx.state === 'online' &&
@@ -1114,9 +1130,14 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         friendRequest
             .getFriendStatus({
-                userId: id
+                userId: id,
+                currentUserId: userStore.currentUser.id
             })
             .then((args) => {
+                if (args.params.currentUserId !== userStore.currentUser.id) {
+                    // safety check for delayed response
+                    return;
+                }
                 handleFriendStatus(args);
                 if (args.json.isFriend && !state.friendLog.has(id)) {
                     if (state.friendNumber === 0) {
@@ -1193,9 +1214,14 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         friendRequest
             .getFriendStatus({
-                userId: id
+                userId: id,
+                currentUserId: userStore.currentUser.id
             })
             .then((args) => {
+                if (args.params.currentUserId !== userStore.currentUser.id) {
+                    // safety check for delayed response
+                    return;
+                }
                 handleFriendStatus(args);
                 if (!args.json.isFriend && state.friendLog.has(id)) {
                     const friendLogHistory = {

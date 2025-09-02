@@ -4,7 +4,6 @@
         :visible="galleryDialogVisible"
         :title="t('dialog.gallery_icons.header')"
         width="97vw"
-        top="5vh"
         append-to-body
         @close="closeGalleryDialog">
         <el-tabs type="card" ref="galleryTabs">

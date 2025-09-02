@@ -61,6 +61,14 @@ export interface VrcxUser extends GetUserResponse {
     $customTagColour: string;
     $friendNumber: number;
     $lastFetch: number;
+    $moderations: moderations;
+}
+
+export interface moderations {
+    isBlocked: boolean;
+    isMuted: boolean;
+    isAvatarInteractionDisabled: boolean;
+    isChatBoxMuted: boolean;
 }
 
 export interface VrcxCurrentUser extends GetCurrentUserResponse {

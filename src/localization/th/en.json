@@ -802,7 +802,7 @@
                 "instance_hard_closed": "ปิดถาวร",
                 "close_instance": "ปิดอินสแตนซ์",
                 "instance_age_gated": "จำกัดอายุ",
-                "open_previouse_instance": "เปิดอินสแตนซ์ก่อนหน้า"
+                "open_previous_instance": "เปิดอินสแตนซ์ก่อนหน้า"
             },
             "groups": {
                 "header": "กลุ่ม",
@@ -1064,7 +1064,8 @@
                 "role_description": "คำอธิบาย:",
                 "role_updated_at": "อัปเดตเมื่อ:",
                 "role_created_at": "สร้างเมื่อ:",
-                "role_permissions": "สิทธิ์:"
+                "role_permissions": "สิทธิ์:",
+                "last_visited": "เข้าชมล่าสุด"
             },
             "posts": {
                 "header": "โพสต์",

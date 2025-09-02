@@ -76,18 +76,19 @@ const friendReq = {
     },
 
     /**
-     * @param {{ userId: string }} params
-     * @returns {Promise<{json: any, params: { userId: string }}>}
+     * currentUserId for own reference
+     * @param {{ userId: string, currentUserId: string }} params
+     * @returns {Promise<{json: any, params: { userId: string, currentUserId: string }}>}
      */
     getFriendStatus(params) {
         return request(`user/${params.userId}/friendStatus`, {
             method: 'GET'
         }).then((json) => {
-            console.log('getFriendStatus', json);
             const args = {
                 json,
                 params
             };
+            console.log('getFriendStatus', args);
             return args;
         });
     },

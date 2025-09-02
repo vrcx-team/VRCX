@@ -5,7 +5,9 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9-windows10.0.19041.0</TargetFramework>
-    <Platform>x64</Platform>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
@@ -93,10 +95,10 @@
   <ItemGroup>
     <PackageReference Include="CefSharp.OffScreen.NETCore" Version="138.0.340" />
     <PackageReference Include="CefSharp.WinForms.NETCore" Version="138.0.340" />
-    <PackageReference Include="DiscordRichPresence" Version="1.5.0.51" />
+    <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="6.0.2" />
+    <PackageReference Include="NLog" Version="6.0.3" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
@@ -104,10 +106,10 @@
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-	<PackageReference Include="System.Drawing.Common" Version="9.0.7" />
-	<PackageReference Include="System.Management" Version="9.0.7" />
+	<PackageReference Include="System.Drawing.Common" Version="9.0.8" />
+	<PackageReference Include="System.Management" Version="9.0.8" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Text.Json" Version="9.0.7" />
+    <PackageReference Include="System.Text.Json" Version="9.0.8" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="Websocket.Client" Version="5.2.0" />
   </ItemGroup>

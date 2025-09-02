@@ -1188,60 +1188,17 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     }
 
     /**
-     * aka: `$app.methods.bulkCopyFavoriteSelection`
-     * @param {'friend'|'world'|'avatar'} type
-     */
-    function bulkCopyFavoriteSelection(type) {
-        let idList = '';
-        switch (type) {
-            case 'friend':
-                for (const ctx of state.favoriteFriends) {
-                    if (ctx.$selected) {
-                        idList += `${ctx.id}\n`;
-                    }
-                }
-                state.friendImportDialogInput = idList;
-                showFriendImportDialog();
-                break;
-
-            case 'world':
-                for (const ctx of state.favoriteWorlds) {
-                    if (ctx.$selected) {
-                        idList += `${ctx.id}\n`;
-                    }
-                }
-                state.worldImportDialogInput = idList;
-                showWorldImportDialog();
-                break;
-
-            case 'avatar':
-                for (const ctx of state.favoriteAvatars) {
-                    if (ctx.$selected) {
-                        idList += `${ctx.id}\n`;
-                    }
-                }
-                state.avatarImportDialogInput = idList;
-                showAvatarImportDialog();
-                break;
-
-            default:
-                break;
-        }
-        console.log('Favorite selection\n', idList);
-    }
-
-    /**
      * aka: `$app.methods.clearBulkFavoriteSelection`
      */
     function clearBulkFavoriteSelection() {
         let ctx;
-        for (ctx of state.favoriteFriends) {
+        for (ctx of state.favoriteFriends_) {
             ctx.$selected = false;
         }
-        for (ctx of state.favoriteWorlds) {
+        for (ctx of state.favoriteWorlds_) {
             ctx.$selected = false;
         }
-        for (ctx of state.favoriteAvatars) {
+        for (ctx of state.favoriteAvatars_) {
             ctx.$selected = false;
         }
     }
@@ -1967,7 +1924,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         showWorldImportDialog,
         showAvatarImportDialog,
         showFriendImportDialog,
-        bulkCopyFavoriteSelection,
         getLocalWorldFavoriteGroupLength,
         addLocalWorldFavorite,
         hasLocalWorldFavorite,

@@ -5,7 +5,9 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net9</TargetFramework>
-		<Platform>x64</Platform>
+		<Configurations>Debug;Release</Configurations>
+		<Platforms>x64</Platforms>
+		<PlatformTarget>x64</PlatformTarget>
 		<ApplicationRevision>0</ApplicationRevision>
 		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 		<AssemblyTitle>DBMerger</AssemblyTitle>
@@ -43,7 +45,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="6.0.2" />
+		<PackageReference Include="NLog" Version="6.0.3" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
 	</ItemGroup>

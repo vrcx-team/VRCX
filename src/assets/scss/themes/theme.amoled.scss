@@ -13,22 +13,22 @@ $--theme-saturation: 0%;
 
 // AMOLED background tones
 // #0f0f0f
-$--theme-bg-1: hsl($--theme-hue, $--theme-saturation, 6%); 
-$--theme-bg-2: hsl($--theme-hue, $--theme-saturation, 6%); 
-$--theme-bg-3: hsl($--theme-hue, $--theme-saturation, 6%); 
-$--theme-bg-4: hsl($--theme-hue, $--theme-saturation, 7%); 
+$--theme-bg-1: hsl($--theme-hue, $--theme-saturation, 6%);
+$--theme-bg-2: hsl($--theme-hue, $--theme-saturation, 6%);
+$--theme-bg-3: hsl($--theme-hue, $--theme-saturation, 6%);
+$--theme-bg-4: hsl($--theme-hue, $--theme-saturation, 7%);
 $--theme-bg-5: hsl($--theme-hue, $--theme-saturation, 9%);
 
-$--theme-border-1: hsl($--theme-hue, $--theme-saturation, 8%);   
-$--theme-border-2: hsla($--theme-hue, $--theme-saturation, 6%, 0.5); 
-$--theme-border-3: hsl($--theme-hue, $--theme-saturation, 12%);  
+$--theme-border-1: hsl($--theme-hue, $--theme-saturation, 8%);
+$--theme-border-2: hsla($--theme-hue, $--theme-saturation, 6%, 0.5);
+$--theme-border-3: hsl($--theme-hue, $--theme-saturation, 12%);
 
-$--theme-text-1: hsl($--theme-hue, $--theme-saturation, 85%); 
-$--theme-text-2: hsl($--theme-hue, $--theme-saturation, 70%); 
-$--theme-text-3: hsl($--theme-hue, $--theme-saturation, 68%); 
-$--theme-text-4: hsl($--theme-hue, $--theme-saturation, 38%); 
+$--theme-text-1: hsl($--theme-hue, $--theme-saturation, 85%);
+$--theme-text-2: hsl($--theme-hue, $--theme-saturation, 70%);
+$--theme-text-3: hsl($--theme-hue, $--theme-saturation, 68%);
+$--theme-text-4: hsl($--theme-hue, $--theme-saturation, 38%);
 
-$--theme-primary: #B18FFF;
+$--theme-primary: #b18fff;
 $--theme-success: #67c23a;
 $--theme-warning: #e6a23c;
 $--theme-danger: #f56c6c;
@@ -101,6 +101,8 @@ $--select-dropdown-background: $--theme-bg-4;
 $--select-dropdown-border: 1px solid $--theme-border-1;
 
 $--dropdown-menu-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+$--box-shadow-base: 0 1px 2px hsla($--theme-hue, $--theme-saturation, 0%, 0.1);
+$--box-shadow-dark: 0 1px 3px hsla($--theme-hue, $--theme-saturation, 0%, 0.15);
 
 $--tree-font-color: $--theme-text-2;
 $--tree-node-hover-background-color: hsl(
@@ -128,12 +130,20 @@ $--message-danger-font-color: #ff4d4f;
 
 $--pagination-hover-color: $--theme-text-4;
 
+$--calendar-selected-background-color: rgba($--theme-primary, 0.1);
+$--card-background-color: $--theme-bg-4;
+
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 @import '~element-ui/packages/theme-chalk/src/index';
 
-@import '_theme.dark_styles';
+:root {
+    --group-calendar-event-bg: #{$--calendar-selected-background-color};
+    --group-calendar-badge-following: #{darken($--theme-primary, 20%)};
+    --group-calendar-badge-normal: #{$--theme-info};
+}
 
+@import '_theme.dark_styles';
 
 .el-table tr,
 .el-table td.el-table__cell,
@@ -146,7 +156,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     border: 1px solid hsl($--theme-hue, $--theme-saturation, 12%);
 }
 
-.el-tree{
+.el-tree {
     background: hsl($--theme-hue, $--theme-saturation, 9%);
 }
 
@@ -170,7 +180,6 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     color: $--color-primary;
 }
 
-
 .x-friend-item:hover,
 .x-change-image-item:hover {
     color: $--color-primary;
@@ -178,7 +187,74 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 // Tag background variants
 @each $type in success, warning, danger {
-  .el-tag--plain.el-tag--#{$type} {
-    background-color: hsl($--theme-hue, $--theme-saturation, 9%);
-  }
+    .el-tag--plain.el-tag--#{$type} {
+        background-color: hsl($--theme-hue, $--theme-saturation, 9%);
+    }
+}
+
+.el-calendar {
+    background-color: $--theme-bg-4 !important;
+}
+
+.el-calendar__title {
+    color: $--theme-text-1 !important;
+}
+
+.el-card {
+    background-color: $--theme-bg-5 !important;
+    border-color: $--theme-border-1 !important;
+}
+
+.el-descriptions__body {
+    background-color: $--theme-bg-4 !important;
+    color: $--theme-text-1 !important;
+}
+
+.el-timeline-item__tail {
+    border-left-color: #{darken($--theme-primary, 20%)} !important;
+}
+
+.el-timeline-item__node {
+    background-color: #{darken($--theme-primary, 20%)} !important;
+}
+
+.el-popper[x-placement^='top'] .popper__arrow {
+    border-top-color: $--theme-bg-4 !important;
+}
+
+.el-popper[x-placement^='top'] .popper__arrow::after {
+    border-top-color: $--theme-bg-4 !important;
+}
+
+.el-popper[x-placement^='bottom'] .popper__arrow {
+    border-bottom-color: $--theme-bg-4 !important;
+}
+
+.el-popper[x-placement^='bottom'] .popper__arrow::after {
+    border-bottom-color: $--theme-bg-4 !important;
+}
+
+.el-popper[x-placement^='left'] .popper__arrow {
+    border-left-color: $--theme-bg-4 !important;
+}
+
+.el-popper[x-placement^='left'] .popper__arrow::after {
+    border-left-color: $--theme-bg-4 !important;
+}
+
+.el-popper[x-placement^='right'] .popper__arrow {
+    border-right-color: $--theme-bg-4 !important;
+}
+
+.el-popper[x-placement^='right'] .popper__arrow::after {
+    border-right-color: $--theme-bg-4 !important;
+}
+
+// Group Calendar Dialog borders
+.search-container {
+    border-bottom-color: $--border-color-light !important;
+}
+
+.group-header {
+    border-bottom-color: $--border-color-light !important;
 }

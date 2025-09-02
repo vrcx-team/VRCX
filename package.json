@@ -32,40 +32,41 @@
     "homepage": "https://github.com/vrcx-team/VRCX#readme",
     "devDependencies": {
         "@electron/rebuild": "^4.0.1",
-        "@eslint/js": "^9.32.0",
+        "@eslint/js": "^9.33.0",
         "@fontsource/noto-sans-jp": "^5.2.6",
         "@fontsource/noto-sans-kr": "^5.2.6",
         "@fontsource/noto-sans-sc": "^5.2.6",
         "@fontsource/noto-sans-tc": "^5.2.6",
-        "@prettier/plugin-pug": "^3.4.0",
+        "@prettier/plugin-pug": "^3.4.2",
         "@types/jest": "^30.0.0",
-        "@types/node": "^24.1.0",
+        "@types/node": "^24.3.0",
         "animate.css": "^4.1.1",
         "concurrently": "^9.2.0",
-        "copy-webpack-plugin": "^13.0.0",
+        "copy-webpack-plugin": "^13.0.1",
         "cross-env": "^10.0.0",
         "css-loader": "^7.1.2",
         "dayjs": "^1.11.13",
         "echarts": "^6.0.0",
-        "electron": "^37.2.5",
+        "electron": "^37.3.0",
         "electron-builder": "^26.0.12",
         "element-ui": "^2.15.14",
         "esbuild-jest": "^0.5.0",
         "esbuild-loader": "^4.3.0",
-        "eslint": "^9.32.0",
+        "eslint": "^9.33.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-vue": "^9.33.0",
         "globals": "^16.3.0",
-        "html-webpack-plugin": "^5.6.3",
+        "html-webpack-plugin": "^5.6.4",
         "jest": "^30.0.5",
-        "mini-css-extract-plugin": "^2.9.2",
+        "mini-css-extract-plugin": "^2.9.4",
         "noty": "^3.2.0-beta-deprecated",
         "pinia": "^2.3.1",
         "prettier": "^3.6.2",
         "pug": "^3.0.3",
         "pug-plain-loader": "^1.1.0",
         "raw-loader": "^4.0.2",
-        "sass": "^1.89.2",
+        "remixicon": "^4.6.0",
+        "sass": "^1.90.0",
         "sass-loader": "^16.0.5",
         "vue": "^2.7.16",
         "vue-data-tables": "^3.4.5",
@@ -76,10 +77,10 @@
         "vue-loader": "^15.11.1",
         "vue-markdown": "^2.2.4",
         "vue-marquee-text-component": "^1.2.0",
-        "webpack": "^5.101.0",
+        "webpack": "^5.101.2",
         "webpack-cli": "^6.0.1",
         "webpack-dev-server": "^5.2.2",
-        "worker-timers": "^8.0.23",
+        "worker-timers": "^8.0.24",
         "yargs": "^18.0.0"
     },
     "build": {
@@ -125,11 +126,11 @@
             },
             {
                 "from": "src-electron/libs/linux/libopenvr_api.so",
-                "to": "dotnet-runtime/shared/Microsoft.NETCore.App/9.0.7/libopenvr_api.so"
+                "to": "bin/libopenvr_api.so"
             },
             {
                 "from": "src-electron/libs/linux/libopenvr_api.so",
-                "to": "dotnet-runtime/shared/Microsoft.NETCore.App/9.0.7/openvr_api.so"
+                "to": "app.asar.unpacked/build/Electron/openvr_api.so"
             }
         ],
         "directories": {
@@ -168,6 +169,6 @@
     },
     "dependencies": {
         "hazardous": "^0.3.0",
-        "node-api-dotnet": "^0.9.13"
+        "node-api-dotnet": "^0.9.15"
     }
 }

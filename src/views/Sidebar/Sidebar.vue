@@ -85,6 +85,7 @@
 </template>
 
 <script setup>
+    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { userImage } from '../../shared/utils';
@@ -110,3 +111,16 @@
         return !(menuActiveIndex.value === 'friendList' || menuActiveIndex.value === 'charts');
     });
 </script>
+
+<style scoped>
+    .group-calendar-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+        border: none;
+        z-index: 5;
+        width: 40px;
+        height: 40px;
+    }
+</style>

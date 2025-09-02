@@ -4,8 +4,7 @@
         class="x-dialog x-user-dialog"
         :visible.sync="userDialog.visible"
         :show-close="false"
-        width="770px"
-        top="10vh">
+        width="770px">
         <div v-loading="userDialog.loading">
             <div style="display: flex">
                 <el-popover
@@ -86,7 +85,8 @@
                                     slot="reference"
                                     class="dialog-title"
                                     style="margin-left: 5px; margin-right: 5px; cursor: pointer"
-                                    v-text="userDialog.ref.displayName"></span>
+                                    v-text="userDialog.ref.displayName"
+                                    @click="copyUserDisplayName(userDialog.ref.displayName)"></span>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
                                     textToHex(userDialog.ref.displayName)
                                 }}</span>
@@ -447,6 +447,9 @@
                                     <el-dropdown-item icon="el-icon-message" command="Invite To Group">{{
                                         t('dialog.user.actions.invite_to_group')
                                     }}</el-dropdown-item>
+                                    <el-dropdown-item icon="el-icon-s-operation" command="Group Moderation">{{
+                                        t('dialog.user.actions.group_moderation')
+                                    }}</el-dropdown-item>
                                     <!--//- el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!currentUser.isBoopingEnabled") {{ t('dialog.user.actions.send_boop') }}-->
                                     <el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author" divided>{{
                                         t('dialog.user.actions.show_avatar_author')
@@ -550,7 +553,7 @@
             </div>
 
             <el-tabs ref="userDialogTabsRef" @tab-click="userDialogTabClick">
-                <el-tab-pane :label="t('dialog.user.info.header')">
+                <el-tab-pane name="Info" :label="t('dialog.user.info.header')">
                     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                         <div
                             v-if="userDialog.ref.location"
@@ -564,15 +567,10 @@
                             <div style="flex: none">
                                 <template v-if="isRealInstance(userDialog.$location.tag)">
                                     <Launch :location="userDialog.$location.tag" />
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.user.info.self_invite_tooltip')"
-                                        :disabled="hideTooltips">
-                                        <InviteYourself
-                                            :location="userDialog.$location.tag"
-                                            :shortname="userDialog.$location.shortName"
-                                            style="margin-left: 5px" />
-                                    </el-tooltip>
+                                    <InviteYourself
+                                        :location="userDialog.$location.tag"
+                                        :shortname="userDialog.$location.shortName"
+                                        style="margin-left: 5px" />
                                     <el-tooltip
                                         placement="top"
                                         :content="t('dialog.user.info.refresh_instance_info')"
@@ -843,7 +841,7 @@
                             <el-tooltip
                                 :disabled="hideTooltips"
                                 placement="top"
-                                :content="t('dialog.user.info.open_previouse_instance')">
+                                :content="t('dialog.user.info.open_previous_instance')">
                                 <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
                                     <div class="detail">
                                         <span class="name">
@@ -882,7 +880,7 @@
                             <el-tooltip
                                 :disabled="hideTooltips || currentUser.id !== userDialog.id"
                                 placement="top"
-                                :content="t('dialog.user.info.open_previouse_instance')">
+                                :content="t('dialog.user.info.open_previous_instance')">
                                 <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
                                     <div class="detail">
                                         <span class="name">
@@ -1087,7 +1085,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.groups.header')" lazy>
+                <el-tab-pane name="Groups" :label="t('dialog.user.groups.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <el-button
@@ -1490,7 +1488,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.worlds.header')" lazy>
+                <el-tab-pane name="Worlds" :label="t('dialog.user.worlds.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <el-button
@@ -1572,7 +1570,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.favorite_worlds.header')" lazy>
+                <el-tab-pane name="Favorite Worlds" :label="t('dialog.user.favorite_worlds.header')" lazy>
                     <el-button
                         v-if="userFavoriteWorlds && userFavoriteWorlds.length > 0"
                         type="default"
@@ -1630,7 +1628,7 @@
                     </el-tabs>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.avatars.header')" lazy>
+                <el-tab-pane name="Avatars" :label="t('dialog.user.avatars.header')" lazy>
                     <div style="display: flex; align-items: center; justify-content: space-between">
                         <div style="display: flex; align-items: center">
                             <el-button
@@ -1738,7 +1736,7 @@
                     </div>
                 </el-tab-pane>
 
-                <el-tab-pane :label="t('dialog.user.json.header')" lazy style="height: 50vh">
+                <el-tab-pane name="JSON" :label="t('dialog.user.json.header')" lazy style="height: 50vh">
                     <el-button
                         type="default"
                         size="mini"
@@ -1782,6 +1780,7 @@
         <LanguageDialog />
         <BioDialog :bio-dialog="bioDialog" />
         <PronounsDialog :pronouns-dialog="pronounsDialog" />
+        <ModerateGroupDialog />
     </safe-dialog>
 </template>
 
@@ -1855,6 +1854,7 @@
     import PronounsDialog from './PronounsDialog.vue';
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
     import SocialStatusDialog from './SocialStatusDialog.vue';
+    import ModerateGroupDialog from '../ModerateGroupDialog.vue';
 
     const { t } = useI18n();
 
@@ -1880,7 +1880,8 @@
         leaveGroup,
         leaveGroupPrompt,
         setGroupVisibility,
-        handleGroupList
+        handleGroupList,
+        showModerateGroupDialog
     } = useGroupStore();
     const { currentUserGroups, inviteGroupDialog, inGameGroupOrder } = storeToRefs(useGroupStore());
     const { lastLocation, lastLocationDestination } = storeToRefs(useLocationStore());
@@ -1888,19 +1889,22 @@
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
     const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-    const { clearInviteImageUpload, showGalleryDialog, checkPreviousImageAvailable, showFullscreenImageDialog } =
-        useGalleryStore();
+    const { clearInviteImageUpload, checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
-    const { shiftHeld } = storeToRefs(useUiStore());
+    const { shiftHeld, menuActiveIndex } = storeToRefs(useUiStore());
 
     watch(
         () => userDialog.value.loading,
         () => {
             if (userDialog.value.visible) {
-                nextTick(() => adjustDialogZ(userDialogRef.value.$el));
+                nextTick(() => {
+                    if (userDialogTabsRef.value?.$el) {
+                        adjustDialogZ(userDialogTabsRef.value.$el);
+                    }
+                });
                 !userDialog.value.loading && toggleLastActiveTab(userDialog.value.id);
             }
         }
@@ -1914,7 +1918,7 @@
     const userDialogGroupAllSelected = ref(false);
     const userDialogGroupEditSelectedGroupIds = ref([]); // selected groups in edit mode
 
-    const userDialogLastActiveTab = ref('');
+    const userDialogLastActiveTab = ref('Info');
     const userDialogLastGroup = ref('');
     const userDialogLastAvatar = ref('');
     const userDialogLastWorld = ref('');
@@ -1996,40 +2000,55 @@
         userDialog.value.note = note.replace(/[\r\n]/g, '');
     }
 
-    function toggleLastActiveTab(userId) {
-        if (userDialogTabsRef.value.currentName === '0') {
-            userDialogLastActiveTab.value = t('dialog.user.info.header');
-        } else if (userDialogTabsRef.value.currentName === '1') {
-            userDialogLastActiveTab.value = t('dialog.user.groups.header');
+    function handleUserDialogTab(name, userId) {
+        if (name === 'Groups') {
             if (userDialogLastGroup.value !== userId) {
                 userDialogLastGroup.value = userId;
                 getUserGroups(userId);
             }
-        } else if (userDialogTabsRef.value.currentName === '2') {
-            userDialogLastActiveTab.value = t('dialog.user.worlds.header');
+        } else if (name === 'Avatars') {
+            setUserDialogAvatars(userId);
+            if (userDialogLastAvatar.value !== userId) {
+                userDialogLastAvatar.value = userId;
+                if (userId === currentUser.value.id) {
+                    refreshUserDialogAvatars();
+                } else {
+                    setUserDialogAvatarsRemote(userId);
+                }
+            }
+        } else if (name === 'Worlds') {
             setUserDialogWorlds(userId);
             if (userDialogLastWorld.value !== userId) {
                 userDialogLastWorld.value = userId;
                 refreshUserDialogWorlds();
             }
-        } else if (userDialogTabsRef.value.currentName === '3') {
-            userDialogLastActiveTab.value = t('dialog.user.favorite_worlds.header');
+        } else if (name === 'Favorite Worlds') {
             if (userDialogLastFavoriteWorld.value !== userId) {
                 userDialogLastFavoriteWorld.value = userId;
                 getUserFavoriteWorlds(userId);
             }
-        } else if (userDialogTabsRef.value.currentName === '4') {
-            userDialogLastActiveTab.value = t('dialog.user.avatars.header');
-            setUserDialogAvatars(userId);
-            userDialogLastAvatar.value = userId;
-            if (userId === currentUser.value.id) {
-                refreshUserDialogAvatars();
-            }
-            setUserDialogAvatarsRemote(userId);
-        } else if (userDialogTabsRef.value.currentName === '5') {
-            userDialogLastActiveTab.value = t('dialog.user.json.header');
+        } else if (name === 'JSON') {
             refreshUserDialogTreeData();
         }
+    }
+
+    function toggleLastActiveTab(userId) {
+        let tabName = userDialogTabsRef.value.currentName;
+        if (tabName === '0') {
+            tabName = userDialogLastActiveTab.value;
+            userDialogTabsRef.value.setCurrentName(tabName);
+        }
+        handleUserDialogTab(tabName, userId);
+        userDialogLastActiveTab.value = tabName;
+    }
+
+    function userDialogTabClick(obj) {
+        const userId = userDialog.value.id;
+        if (userDialogLastActiveTab.value === obj.name) {
+            return;
+        }
+        handleUserDialogTab(obj.name, userId);
+        userDialogLastActiveTab.value = obj.label;
     }
 
     function showPronounsDialog() {
@@ -2294,11 +2313,15 @@
         } else if (command === 'Previous Instances') {
             showPreviousInstancesUserDialog(D.ref);
         } else if (command === 'Manage Gallery') {
-            showGalleryDialog();
+            // redirect to tools tab
+            userDialog.value.visible = false;
+            menuActiveIndex.value = 'tools';
         } else if (command === 'Invite To Group') {
             showInviteGroupDialog('', D.id);
             // } else if (command === 'Send Boop') {
             //     this.showSendBoopDialog(D.id);
+        } else if (command === 'Group Moderation') {
+            showModerateGroupDialog(D.id);
         } else if (command === 'Hide Avatar') {
             if (D.isHideAvatar) {
                 setPlayerModeration(D.id, 0);
@@ -2392,8 +2415,6 @@
             D.isBlock = true;
         } else if (ref.type === 'mute') {
             D.isMute = true;
-        } else if (ref.type === 'hideAvatar') {
-            D.isHideAvatar = true;
         } else if (ref.type === 'interactOff') {
             D.isInteractOff = true;
         } else if (ref.type === 'muteChat') {
@@ -2536,6 +2557,7 @@
     }
 
     async function getUserGroups(userId) {
+        exitEditModeCurrentUserGroups();
         userDialog.value.isGroupsLoading = true;
         userGroups.value = {
             groups: [],
@@ -2740,43 +2762,6 @@
         userDialog.value.isFavoriteWorldsLoading = false;
     }
 
-    function userDialogTabClick(obj) {
-        const userId = userDialog.value.id;
-        if (userDialogLastActiveTab.value === obj.label) {
-            return;
-        }
-        if (obj.label === t('dialog.user.groups.header')) {
-            if (userDialogLastGroup.value !== userId) {
-                userDialogLastGroup.value = userId;
-                getUserGroups(userId);
-            }
-        } else if (obj.label === t('dialog.user.avatars.header')) {
-            setUserDialogAvatars(userId);
-            if (userDialogLastAvatar.value !== userId) {
-                userDialogLastAvatar.value = userId;
-                if (userId === currentUser.value.id) {
-                    refreshUserDialogAvatars();
-                } else {
-                    setUserDialogAvatarsRemote(userId);
-                }
-            }
-        } else if (obj.label === t('dialog.user.worlds.header')) {
-            setUserDialogWorlds(userId);
-            if (userDialogLastWorld.value !== userId) {
-                userDialogLastWorld.value = userId;
-                refreshUserDialogWorlds();
-            }
-        } else if (obj.label === t('dialog.user.favorite_worlds.header')) {
-            if (userDialogLastFavoriteWorld.value !== userId) {
-                userDialogLastFavoriteWorld.value = userId;
-                getUserFavoriteWorlds(userId);
-            }
-        } else if (obj.label === t('dialog.user.json.header')) {
-            refreshUserDialogTreeData();
-        }
-        userDialogLastActiveTab.value = obj.label;
-    }
-
     function checkNote(ref, note) {
         if (ref.note !== note) {
             addNote(ref.id, note);
@@ -2857,9 +2842,6 @@
         userRequest.saveCurrentUser({
             allowAvatarCopying: !currentUser.value.allowAvatarCopying
         });
-        //     .then((args) => {
-        //     return args;
-        // });
     }
 
     function resetHome() {

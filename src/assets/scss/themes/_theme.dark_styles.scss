@@ -296,6 +296,8 @@ div.x-friend-list
 }
 
 .el-popover {
+    text-align: left;
+    word-break: break-word;
     color: $--theme-text-2;
     background-color: $--theme-bg-4;
     border-color: hsl($--theme-hue, $--theme-saturation, 37%);
@@ -339,9 +341,34 @@ div.x-friend-list
     background-color: hsl($--theme-hue, $--theme-saturation, 24%);
 }
 
+.el-tag {
+    background-color: $--theme-bg-5;
+    border-color: $--theme-border-2;
+    color: $--theme-primary;
+}
+
+.el-tag.el-tag--success {
+    background-color: $--theme-bg-5;
+    border-color: $--theme-border-2;
+    color: $--theme-success;
+}
+
 .el-tag.el-tag--info {
-    background-color: $--theme-border-2;
-    border-color: hsl($--theme-hue, $--theme-saturation, 14%);
+    background-color: $--theme-bg-5;
+    border-color: $--theme-border-2;
+    color: $--theme-info;
+}
+
+.el-tag.el-tag--warning {
+    background-color: $--theme-bg-5;
+    border-color: $--theme-border-2;
+    color: $--theme-warning;
+}
+
+.el-tag.el-tag--danger {
+    background-color: $--theme-bg-5;
+    border-color: $--theme-border-2;
+    color: $--theme-danger;
 }
 
 .el-table__expanded-cell:hover {
@@ -510,4 +537,8 @@ div.x-friend-list
 
 .el-color-picker__trigger {
     border: none;
+}
+
+.el-tooltip__popper {
+    box-shadow: $--box-shadow-dark !important;
 }

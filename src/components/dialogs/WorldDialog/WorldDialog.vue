@@ -22,13 +22,25 @@
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
-                            <i
-                                v-show="
-                                    currentUser.$homeLocation && currentUser.$homeLocation.worldId === worldDialog.id
-                                "
-                                class="el-icon-s-home"
-                                style="margin-right: 5px" />
-                            <span class="dialog-title" v-text="worldDialog.ref.name" />
+                            <el-popover placement="top" trigger="click">
+                                <span
+                                    slot="reference"
+                                    class="dialog-title"
+                                    style="margin-right: 5px; cursor: pointer"
+                                    @click="copyToClipboard(worldDialog.ref.name)">
+                                    <i
+                                        v-if="
+                                            currentUser.$homeLocation &&
+                                            currentUser.$homeLocation.worldId === worldDialog.id
+                                        "
+                                        class="el-icon-s-home"
+                                        style="margin-right: 5px" />
+                                    {{ worldDialog.ref.name }}
+                                </span>
+                                <span style="display: block; text-align: center; font-family: monospace">{{
+                                    textToHex(worldDialog.ref.name)
+                                }}</span>
+                            </el-popover>
                         </div>
                         <div style="margin-top: 5px">
                             <span
@@ -220,7 +232,11 @@
                                     {{ t('dialog.world.actions.new_instance') }}
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-message" command="New Instance and Self Invite">
-                                    {{ t('dialog.world.actions.new_instance_and_self_invite') }}
+                                    {{
+                                        isGameRunning
+                                            ? t('dialog.world.actions.new_instance_and_open_in_vrchat')
+                                            : t('dialog.world.actions.new_instance_and_self_invite')
+                                    }}
                                 </el-dropdown-item>
                                 <el-dropdown-item
                                     v-if="
@@ -308,8 +324,8 @@
                     </div>
                 </div>
             </div>
-            <el-tabs>
-                <el-tab-pane :label="t('dialog.world.instances.header')">
+            <el-tabs ref="worldDialogTabsRef" @tab-click="worldDialogTabClick">
+                <el-tab-pane name="Instances" :label="t('dialog.world.instances.header')">
                     <div class="">
                         <i class="el-icon-user" />
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
@@ -336,15 +352,10 @@
                                     :currentuserid="currentUser.id"
                                     :worlddialogshortname="worldDialog.$location.shortName" />
                                 <Launch :location="room.tag" style="margin-left: 5px" />
-                                <el-tooltip
-                                    placement="top"
-                                    :content="t('dialog.world.instances.self_invite_tooltip')"
-                                    :disabled="hideTooltips">
-                                    <InviteYourself
-                                        :location="room.$location.tag"
-                                        :shortname="room.$location.shortName"
-                                        style="margin-left: 5px" />
-                                </el-tooltip>
+                                <InviteYourself
+                                    :location="room.$location.tag"
+                                    :shortname="room.$location.shortName"
+                                    style="margin-left: 5px" />
                                 <el-tooltip
                                     placement="top"
                                     :content="t('dialog.world.instances.refresh_instance_info')"
@@ -425,7 +436,7 @@
                         </template>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.world.info.header')" lazy>
+                <el-tab-pane name="Info" :label="t('dialog.world.info.header')" lazy>
                     <div class="x-friend-list" style="max-height: none">
                         <div class="x-friend-item" style="width: 100%; cursor: default">
                             <div class="detail">
@@ -670,7 +681,7 @@
                         <el-tooltip
                             :disabled="hideTooltips"
                             placement="top"
-                            :content="t('dialog.user.info.open_previouse_instance')">
+                            :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
@@ -708,13 +719,13 @@
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
+                <el-tab-pane name="JSON" :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
                         size="mini"
                         icon="el-icon-refresh"
                         circle
-                        @click="refreshWorldDialogTreeData()"></el-button>
+                        @click="refreshWorldDialogTreeData"></el-button>
                     <el-button
                         type="default"
                         size="mini"
@@ -785,7 +796,9 @@
         openFolderGeneric,
         deleteVRChatCache,
         commaNumber,
-        formatDateFilter
+        formatDateFilter,
+        textToHex,
+        copyToClipboard
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -914,19 +927,46 @@
     });
 
     const worldDialogRef = ref(null);
+    const worldDialogTabsRef = ref(null);
+    const worldDialogLastActiveTab = ref('Instances');
 
     watch(
         () => worldDialog.value.loading,
-        (newVal) => {
-            if (newVal) {
+        () => {
+            if (worldDialog.value.visible) {
                 nextTick(() => {
                     if (worldDialogRef.value?.$el) {
                         adjustDialogZ(worldDialogRef.value.$el);
                     }
                 });
+                !worldDialog.value.loading && toggleLastActiveTab();
             }
         }
     );
+
+    function handleWorldDialogTab(tabName) {
+        if (tabName === 'JSON') {
+            refreshWorldDialogTreeData();
+        }
+    }
+
+    function toggleLastActiveTab() {
+        let tabName = worldDialogTabsRef.value.currentName;
+        if (tabName === '0') {
+            tabName = worldDialogLastActiveTab.value;
+            worldDialogTabsRef.value.setCurrentName(tabName);
+        }
+        handleWorldDialogTab(tabName);
+        worldDialogLastActiveTab.value = tabName;
+    }
+
+    function worldDialogTabClick(obj) {
+        if (worldDialogLastActiveTab.value === obj.name) {
+            return;
+        }
+        handleWorldDialogTab(obj.name);
+        worldDialogLastActiveTab.value = obj.name;
+    }
 
     function displayPreviousImages(command) {
         previousImagesFileId.value = '';
