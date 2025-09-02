@@ -31,13 +31,14 @@
                                         class="dialog-title"
                                         style="margin-right: 5px; cursor: pointer"
                                         @click="copyToClipboard(worldDialog.ref.name)">
-                                        <i
+                                        <el-icon
                                             v-if="
                                                 currentUser.$homeLocation &&
                                                 currentUser.$homeLocation.worldId === worldDialog.id
                                             "
-                                            class="el-icon-s-home"
-                                            style="margin-right: 5px" />
+                                            style="margin-right: 5px"
+                                            ><HomeFilled
+                                        /></el-icon>
                                         {{ worldDialog.ref.name }}
                                     </span>
                                 </template>
@@ -209,7 +210,7 @@
                         <el-tooltip placement="top" :content="t('dialog.world.actions.favorites_tooltip')">
                             <el-button
                                 :type="worldDialog.isFavorite ? 'warning' : 'default'"
-                                :icon="worldDialog.isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'"
+                                :icon="worldDialog.isFavorite ? StarFilled : Star"
                                 circle
                                 style="margin-left: 5px"
                                 @click="worldDialogCommand('Add Favorite')" />
@@ -328,15 +329,15 @@
             <el-tabs ref="worldDialogTabsRef" @tab-click="worldDialogTabClick">
                 <el-tab-pane name="Instances" :label="t('dialog.world.instances.header')">
                     <div class="">
-                        <i class="el-icon-user" />
+                        <el-icon><User /></el-icon>
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
-                        <i class="el-icon-user-solid" style="margin-left: 10px" />
+                        <el-icon style="margin-left: 10px"><UserFilled /></el-icon>
                         {{
                             t('dialog.world.instances.private_count', {
                                 count: worldDialog.ref.privateOccupants
                             })
                         }}
-                        <i class="el-icon-check" style="margin-left: 10px" />
+                        <el-icon style="margin-left: 10px"><Check /></el-icon>
                         {{
                             t('dialog.world.instances.capacity_count', {
                                 count: worldDialog.ref.recommendedCapacity,
@@ -422,7 +423,9 @@
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName" />
                                             <span v-if="user.location === 'traveling'" class="extra">
-                                                <i class="el-icon-loading" style="margin-right: 5px" />
+                                                <el-icon class="is-loading" style="margin-right: 5px"
+                                                    ><Loading
+                                                /></el-icon>
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
@@ -613,7 +616,7 @@
                                             {{ timeInLab }}
                                         </span>
                                     </template>
-                                    <i class="el-icon-arrow-down" />
+                                    <el-icon><ArrowDown /></el-icon>
                                 </el-tooltip>
                                 <span class="extra">
                                     {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
@@ -665,7 +668,7 @@
                                         placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')"
-                                        ><i class="el-icon-warning"></i
+                                        ><el-icon><Warning /></el-icon
                                     ></el-tooltip>
                                 </span>
                                 <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
@@ -680,7 +683,7 @@
                                             placement="top"
                                             style="margin-left: 5px"
                                             :content="t('dialog.world.info.accuracy_notice')"
-                                            ><i class="el-icon-warning"></i
+                                            ><el-icon><Warning /></el-icon
                                         ></el-tooltip>
                                     </span>
                                     <span class="extra">
@@ -697,7 +700,7 @@
                                         placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')">
-                                        <i class="el-icon-warning"></i>
+                                        <el-icon><Warning /></el-icon>
                                     </el-tooltip>
                                 </span>
                                 <span class="extra">
@@ -781,7 +784,15 @@
         Download,
         View,
         DataLine,
-        Sort
+        Sort,
+        Warning,
+        Star,
+        StarFilled,
+        User,
+        Check,
+        Loading,
+        ArrowDown,
+        UserFilled
     } from '@element-plus/icons-vue';
 
     import { ElMessage, ElMessageBox } from 'element-plus';

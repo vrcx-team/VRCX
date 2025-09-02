@@ -1424,13 +1424,13 @@
                     <span class="header">{{ t('view.settings.advanced.advanced.header') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
-                            <el-button size="small" icon="el-icon-s-operation" @click="showVRChatConfig()"
+                            <el-button size="small" :icon="Operation" @click="showVRChatConfig()"
                                 >VRChat config.json</el-button
                             >
-                            <el-button size="small" icon="el-icon-s-operation" @click="showLaunchOptions()">{{
+                            <el-button size="small" :icon="Operation" @click="showLaunchOptions()">{{
                                 t('view.settings.advanced.advanced.launch_options')
                             }}</el-button>
-                            <el-button size="small" icon="el-icon-goods" @click="showRegistryBackupDialog()">{{
+                            <el-button size="small" :icon="Goods" @click="showRegistryBackupDialog()">{{
                                 t('view.settings.advanced.advanced.vrc_registry_backup')
                             }}</el-button>
                         </el-button-group>
@@ -1893,7 +1893,9 @@
         User,
         Tickets,
         Refresh,
-        ArrowDown
+        ArrowDown,
+        Operation,
+        Goods
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';

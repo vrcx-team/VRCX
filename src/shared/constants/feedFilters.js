@@ -153,7 +153,7 @@ function feedFiltersOptions() {
             name: 'Video Play',
             options: getOptions(['Off', 'On']),
             tooltip: 'Requires VRCX YouTube API option enabled',
-            tooltipIcon: 'el-icon-warning'
+            tooltipWarning: true
         },
         {
             key: 'Event',

@@ -14,8 +14,10 @@
                         placement="top"
                         style="margin-left: 5px"
                         :content="setting.tooltip">
-                        <i :class="setting.tooltipIcon || 'el-icon-info'"></i> </el-tooltip
-                ></span>
+                        <el-icon v-if="setting.tooltipWarning"><Warning /></el-icon>
+                        <el-icon v-else><InfoFilled /></el-icon>
+                    </el-tooltip>
+                </span>
 
                 <el-radio-group
                     v-model="currentSharedFeedFilters[setting.key]"
@@ -58,6 +60,7 @@
 </template>
 
 <script setup>
+    import { InfoFilled, Warning } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';

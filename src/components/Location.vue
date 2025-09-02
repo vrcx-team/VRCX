@@ -5,17 +5,18 @@
             <span
                 :class="{ 'x-link': link && location !== 'private' && location !== 'offline' }"
                 @click="handleShowWorldDialog">
-                <i v-if="isTraveling" class="el-icon el-icon-loading" style="display: inline-block"></i>
+                <el-icon class="is-loading" v-if="isTraveling" style="display: inline-block"><Loading /></el-icon>
                 <span>{{ text }}</span>
             </span>
             <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
             <span v-if="region" class="flags" :class="region" style="display: inline-block; margin-left: 5px"></span>
-            <i v-if="strict" class="el-icon el-icon-lock" style="display: inline-block; margin-left: 5px"></i>
+            <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
         </span>
     </div>
 </template>
 
 <script setup>
+    import { Loading, Lock } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';

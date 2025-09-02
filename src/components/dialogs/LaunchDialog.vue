@@ -20,7 +20,7 @@
                 <template #label>
                     <span>{{ t('dialog.launch.short_url') }}</span>
                     <el-tooltip placement="top" style="margin-left: 5px" :content="t('dialog.launch.short_url_notice')">
-                        <i class="el-icon-warning" />
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                 </template>
                 <el-input
@@ -114,7 +114,7 @@
 </template>
 
 <script setup>
-    import { Sort } from '@element-plus/icons-vue';
+    import { Sort, Warning } from '@element-plus/icons-vue';
 
     import { ref, computed, nextTick, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';

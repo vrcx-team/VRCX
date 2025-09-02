@@ -47,9 +47,9 @@
             <span style="margin-left: 5px"
                 >{{ setAvatarTagsDialog.selectedCount }} / {{ setAvatarTagsDialog.ownAvatars.length }}</span
             >
-            <span v-if="setAvatarTagsDialog.loading" style="margin-left: 5px">
-                <i class="el-icon-loading"></i>
-            </span>
+            <el-icon v-if="setAvatarTagsDialog.loading" class="is-loading" style="margin-left: 5px"
+                ><Loading
+            /></el-icon>
             <br />
             <div class="x-friend-list" style="margin-top: 10px; min-height: 60px; max-height: 280px">
                 <div
@@ -94,6 +94,7 @@
 </template>
 
 <script setup>
+    import { Loading } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
 
     import { watch } from 'vue';

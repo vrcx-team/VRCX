@@ -26,6 +26,10 @@
     background: #c0c4cc;
 }
 
+.el-icon.is-loading {
+    animation: rotating 2s linear infinite;
+}
+
 .noty_layout {
     word-break: break-all;
 }

@@ -37,8 +37,9 @@
                                 ">
                                 <el-button size="small" @click.stop>
                                     <span
-                                        >{{ t(memberSortOrder.name) }} <i class="el-icon-arrow-down el-icon--right"></i
-                                    ></span>
+                                        >{{ t(memberSortOrder.name) }}
+                                        <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                    </span>
                                 </el-button>
                                 <template #dropdown>
                                     <el-dropdown-menu>
@@ -65,7 +66,8 @@
                                 ">
                                 <el-button size="small" @click.stop>
                                     <span
-                                        >{{ t(memberFilter.name) }} <i class="el-icon-arrow-down el-icon--right"></i
+                                        >{{ t(memberFilter.name) }}
+                                        <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
                                     ></span>
                                 </el-button>
                                 <template #dropdown>
@@ -743,7 +745,7 @@
                     <template #content>
                         <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
                     </template>
-                    <i class="el-icon el-icon-warning" style="display: inline-block" />
+                    <el-icon style="display: inline-block"><Warning /></el-icon>
                 </el-tooltip>
                 <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 5px"></span>
             </el-tag>
@@ -844,7 +846,7 @@
                 >{{ t('dialog.group_member_moderation.unban') }}</el-button
             >
             <span v-if="progressCurrent" style="margin-top: 10px">
-                <i class="el-icon-loading" style="margin-left: 5px; margin-right: 5px"></i>
+                <el-icon class="is-loading" style="margin-left: 5px; margin-right: 5px"><Loading /></el-icon>
                 {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
             </span>
             <el-button v-if="progressCurrent" style="margin-left: 5px" @click="progressTotal = 0">{{
@@ -858,9 +860,8 @@
 </template>
 
 <script setup>
+    import { Refresh, Delete, ArrowDown, Warning, Loading } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
-
-    import { Refresh, Delete } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
     import { reactive, ref, watch } from 'vue';

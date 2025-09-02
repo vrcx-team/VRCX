@@ -1,10 +1,6 @@
 <template>
-    <el-tooltip
-        v-show="isVisible"
-        placement="top"
-        :content="t('dialog.user.info.launch_invite_tooltip')"
->
-        <el-button @click="confirm" size="small" :icon="SwitchButton" circle />
+    <el-tooltip v-show="isVisible" placement="top" :content="t('dialog.user.info.launch_invite_tooltip')"
+        ><el-button @click="confirm" size="small" :icon="SwitchButton" circle />
     </el-tooltip>
 </template>
 
@@ -19,7 +15,7 @@
     const { t } = useI18n();
 
     const props = defineProps({
-        location: String,
+        location: String
     });
 
     const isVisible = computed(() => {

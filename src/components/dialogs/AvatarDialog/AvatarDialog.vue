@@ -532,7 +532,7 @@
                                         placement="top"
                                         style="margin-left: 5px"
                                         :content="t('dialog.world.info.accuracy_notice')">
-                                        <i class="el-icon-warning"></i> </el-tooltip
+                                        <el-icon><Warning /></el-icon></el-tooltip
                                 ></span>
 
                                 <span v-if="timeSpent === 0" class="extra">-</span>
@@ -614,7 +614,8 @@
         Upload,
         Back,
         Right,
-        Sort
+        Sort,
+        Warning
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';

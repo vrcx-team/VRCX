@@ -155,7 +155,7 @@
                 {{ t('view.favorite.avatars.refresh') }}
             </el-button>
             <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
-                <el-icon><Loading /></el-icon>
+                <el-icon class="is-loading"><Loading /></el-icon>
                 <span>{{ t('view.favorite.avatars.cancel_refresh') }}</span>
             </el-button>
             <el-collapse-item

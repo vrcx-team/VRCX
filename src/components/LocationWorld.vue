@@ -1,16 +1,17 @@
 <template>
     <span>
         <span @click="showLaunchDialog" class="x-link">
-            <i v-if="isUnlocked" class="el-icon el-icon-unlock" style="display: inline-block; margin-right: 5px"></i>
+            <el-icon v-if="isUnlocked" style="display: inline-block; margin-right: 5px"><Unlock /></el-icon>
             <span>#{{ instanceName }} {{ accessTypeName }}</span>
         </span>
         <span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>
         <span class="flags" :class="region" style="display: inline-block; margin-left: 5px"></span>
-        <i v-if="strict" class="el-icon el-icon-lock" style="display: inline-block; margin-left: 5px"></i>
+        <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
     </span>
 </template>
 
 <script setup>
+    import { Lock, Unlock } from '@element-plus/icons-vue';
     import { ref, watch } from 'vue';
     import { getGroupName, parseLocation } from '../shared/utils';
     import { useGroupStore, useLaunchStore } from '../stores';

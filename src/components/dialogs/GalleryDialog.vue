@@ -272,7 +272,7 @@
                         </div>
                         <div style="display: inline-block; margin: 5px">
                             <span v-if="image.loopStyle === 'pingpong'">
-                                <i class="el-icon-refresh el-icon--left"></i>
+                                <el-icon style="margin-right: 5px"><Refresh /></el-icon>
                             </span>
                             <span style="margin-right: 5px">{{ image.animationStyle }}</span>
                             <span v-if="image.framesOverTime" style="margin-right: 5px"
