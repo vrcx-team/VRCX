@@ -116,15 +116,7 @@
     import { instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
     import { adjustDialogZ, checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
-    import {
-        useAppearanceSettingsStore,
-        useFriendStore,
-        useInviteStore,
-        useInstanceStore,
-        useLaunchStore,
-        useLocationStore,
-        useGameStore
-    } from '../../stores';
+    import { useFriendStore, useInviteStore, useInstanceStore, useLaunchStore, useLocationStore } from '../../stores';
     import InviteDialog from './InviteDialog/InviteDialog.vue';
 
     const { t } = useI18n();
@@ -133,9 +125,9 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { launchGame, tryOpenInstanceInVrc } = useLaunchStore();
     const { launchDialogData } = storeToRefs(useLaunchStore());
+
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { canOpenInstanceInGame } = useInviteStore();
-    const { isGameRunning } = storeToRefs(useGameStore());
 
     const launchDialogRef = ref(null);
 

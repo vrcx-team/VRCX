@@ -234,8 +234,8 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item :icon="Message" command="New Instance and Self Invite">
                                         {{
-                                            isGameRunning
-                                                ? t('dialog.world.actions.new_instance_and_open_in_vrchat')
+                                            canOpenInstanceInGame()
+                                                ? t('dialog.world.actions.new_instance_and_open_ingame')
                                                 : t('dialog.world.actions.new_instance_and_self_invite')
                                         }}
                                     </el-dropdown-item>

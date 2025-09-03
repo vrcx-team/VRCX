@@ -415,13 +415,11 @@
                 >
                 <template v-if="canOpenInstanceInGame()">
                     <el-button
-                        type="default"
                         size="small"
                         @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
                         >{{ t('dialog.new_instance.launch') }}</el-button
                     >
                     <el-button
-                        type="primary"
                         size="small"
                         @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
                         {{ t('dialog.new_instance.open_ingame') }}
@@ -460,7 +458,6 @@
             >
             <template v-if="canOpenInstanceInGame()">
                 <el-button
-                    type="default"
                     size="small"
                     @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
                     >{{ t('dialog.new_instance.launch') }}</el-button

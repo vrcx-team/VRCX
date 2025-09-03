@@ -28,8 +28,8 @@
     });
 
     const { t } = useI18n();
-
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { isGameRunning } = storeToRefs(useGameStore());
+    const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
 
     const { canOpenInstanceInGame } = useInviteStore();
     const { tryOpenInstanceInVrc } = useLaunchStore();

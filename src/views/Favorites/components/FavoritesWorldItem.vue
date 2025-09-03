@@ -157,6 +157,7 @@
     const { canOpenInstanceInGame } = useInviteStore();
 
     const { t } = useI18n();
+    const { canOpenInstanceInGame } = useInviteStore();
 
     const isSelected = computed({
         get: () => props.favorite.$selected,
