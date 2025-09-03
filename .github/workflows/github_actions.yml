@@ -37,9 +37,7 @@ jobs:
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
             - name: Build Cef .NET Application
-              run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
-            - name: Build Cef .NET Application
-              run: dotnet build DBMerger\DBMerger.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+              run: dotnet build Dotnet\VRCX-Cef.csproj -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
             - name: Upload Cef dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
@@ -60,7 +58,7 @@ jobs:
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
             - name: Build Electron x64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m --self-contained
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
             - name: Upload Electron x64 dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
@@ -88,7 +86,7 @@ jobs:
                   echo "${{ needs.set_version.outputs.version }}" > Version
                   cat Version
             - name: Build Electron x64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
+              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a x64 --self-contained
             - name: Upload Electron x64 .NET artifacts
               uses: actions/upload-artifact@v4
               with:
