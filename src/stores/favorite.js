@@ -1526,43 +1526,47 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @returns {Promise<void>}
      */
     async function getLocalAvatarFavorites() {
-        let ref;
-        let i;
-        state.localAvatarFavoriteGroups = [];
-        state.localAvatarFavoritesList = [];
-        state.localAvatarFavorites = {};
+        const localGroups = new Set();
+        const localListSet = new Set();
+        const localFavorites = Object.create(null);
+
         const avatarCache = await database.getAvatarCache();
-        for (i = 0; i < avatarCache.length; ++i) {
-            ref = avatarCache[i];
+        for (let i = 0; i < avatarCache.length; ++i) {
+            const ref = avatarCache[i];
             if (!avatarStore.cachedAvatars.has(ref.id)) {
                 avatarStore.applyAvatar(ref);
             }
         }
+
         const favorites = await database.getAvatarFavorites();
-        for (i = 0; i < favorites.length; ++i) {
+        for (let i = 0; i < favorites.length; ++i) {
             const favorite = favorites[i];
-            if (!state.localAvatarFavoritesList.includes(favorite.avatarId)) {
-                state.localAvatarFavoritesList.push(favorite.avatarId);
+
+            localListSet.add(favorite.avatarId);
+
+            if (!localFavorites[favorite.groupName]) {
+                localFavorites[favorite.groupName] = [];
             }
-            if (!state.localAvatarFavorites[favorite.groupName]) {
-                state.localAvatarFavorites[favorite.groupName] = [];
-            }
-            if (!state.localAvatarFavoriteGroups.includes(favorite.groupName)) {
-                state.localAvatarFavoriteGroups.push(favorite.groupName);
-            }
-            ref = avatarStore.cachedAvatars.get(favorite.avatarId);
+            localGroups.add(favorite.groupName);
+
+            let ref = avatarStore.cachedAvatars.get(favorite.avatarId);
             if (typeof ref === 'undefined') {
-                ref = {
-                    id: favorite.avatarId
-                };
+                ref = { id: favorite.avatarId };
             }
-            state.localAvatarFavorites[favorite.groupName].unshift(ref);
+            localFavorites[favorite.groupName].push(ref);
         }
-        if (state.localAvatarFavoriteGroups.length === 0) {
+
+        let groupsArr = Array.from(localGroups);
+        if (groupsArr.length === 0) {
             // default group
-            state.localAvatarFavorites.Favorites = [];
-            state.localAvatarFavoriteGroups.push('Favorites');
+            localFavorites.Favorites = [];
+            groupsArr = ['Favorites'];
         }
+
+        state.localAvatarFavoriteGroups = groupsArr;
+        state.localAvatarFavoritesList = Array.from(localListSet);
+        state.localAvatarFavorites = localFavorites;
+
         sortLocalAvatarFavorites();
     }
 
@@ -1762,9 +1766,10 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @returns {Promise<void>}
      */
     async function getLocalWorldFavorites() {
-        state.localWorldFavoriteGroups = [];
-        state.localWorldFavoritesList = [];
-        state.localWorldFavorites = {};
+        const localGroups = new Set();
+        const localListSet = new Set();
+        const localFavorites = Object.create(null);
+
         const worldCache = await database.getWorldCache();
         for (let i = 0; i < worldCache.length; ++i) {
             const ref = worldCache[i];
@@ -1772,31 +1777,36 @@ export const useFavoriteStore = defineStore('Favorite', () => {
                 worldStore.applyWorld(ref);
             }
         }
+
         const favorites = await database.getWorldFavorites();
         for (let i = 0; i < favorites.length; ++i) {
             const favorite = favorites[i];
-            if (!state.localWorldFavoritesList.includes(favorite.worldId)) {
-                state.localWorldFavoritesList.push(favorite.worldId);
+
+            localListSet.add(favorite.worldId);
+
+            if (!localFavorites[favorite.groupName]) {
+                localFavorites[favorite.groupName] = [];
             }
-            if (!state.localWorldFavorites[favorite.groupName]) {
-                state.localWorldFavorites[favorite.groupName] = [];
-            }
-            if (!state.localWorldFavoriteGroups.includes(favorite.groupName)) {
-                state.localWorldFavoriteGroups.push(favorite.groupName);
-            }
+            localGroups.add(favorite.groupName);
+
             let ref = worldStore.cachedWorlds.get(favorite.worldId);
             if (typeof ref === 'undefined') {
-                ref = {
-                    id: favorite.worldId
-                };
+                ref = { id: favorite.worldId };
             }
-            state.localWorldFavorites[favorite.groupName].unshift(ref);
+            localFavorites[favorite.groupName].push(ref);
         }
-        if (state.localWorldFavoriteGroups.length === 0) {
+
+        let groupsArr = Array.from(localGroups);
+        if (groupsArr.length === 0) {
+            localFavorites.Favorites = [];
             // default group
-            state.localWorldFavorites.Favorites = [];
-            state.localWorldFavoriteGroups.push('Favorites');
+            groupsArr = ['Favorites'];
         }
+
+        state.localWorldFavoriteGroups = groupsArr;
+        state.localWorldFavoritesList = Array.from(localListSet);
+        state.localWorldFavorites = localFavorites;
+
         sortLocalWorldFavorites();
     }
 
