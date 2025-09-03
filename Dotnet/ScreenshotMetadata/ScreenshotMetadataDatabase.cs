@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 
 namespace VRCX
 {
@@ -16,27 +16,20 @@ namespace VRCX
     // Couldn't be me... oh wait
     internal class ScreenshotMetadataDatabase
     {
-        private readonly SqliteConnection _sqlite;
+        private readonly SQLiteConnection _sqlite;
 
         public ScreenshotMetadataDatabase(string databaseLocation)
         {
-            _sqlite = new SqliteConnection($"Data Source=\"{databaseLocation}\";Mode=ReadWriteCreate;Cache=Shared;");
+            _sqlite = new SQLiteConnection($"Data Source=\"{databaseLocation}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000;PRAGMA journal_mode=WAL;PRAGMA optimize=0x10002;", true);
             _sqlite.Open();
-            using var command = _sqlite.CreateCommand();
-            command.CommandText = @"PRAGMA locking_mode=NORMAL;
-                                    PRAGMA busy_timeout=5000;
-                                    PRAGMA journal_mode=WAL;
-                                    PRAGMA optimize=0x10002;";
-            command.ExecuteNonQuery();
-            
-            var createCommand = _sqlite.CreateCommand();
-            createCommand.CommandText = @"CREATE TABLE IF NOT EXISTS cache (
+            using var cmd = new SQLiteCommand(_sqlite);
+            cmd.CommandText = @"CREATE TABLE IF NOT EXISTS cache (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                                     file_path TEXT NOT NULL UNIQUE,
                                     metadata TEXT,
                                     cached_at INTEGER NOT NULL
                                 );";
-            createCommand.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
         }
 
         public void AddMetadataCache(string filePath, string metadata)
@@ -53,7 +46,7 @@ namespace VRCX
                 CachedAt = DateTimeOffset.Now
             };
             const string sql = "INSERT OR REPLACE INTO cache (file_path, metadata, cached_at) VALUES (@FilePath, @Metadata, @CachedAt);";
-            using var command = new SqliteCommand(sql, _sqlite);
+            using var command = new SQLiteCommand(sql, _sqlite);
             command.Parameters.AddWithValue("@FilePath", cache.FilePath);
             command.Parameters.AddWithValue("@Metadata", cache.Metadata);
             command.Parameters.AddWithValue("@CachedAt", cache.CachedAt.Ticks);
@@ -63,12 +56,12 @@ namespace VRCX
         public void BulkAddMetadataCache(IEnumerable<MetadataCache> cache)
         {
             using var transaction = _sqlite.BeginTransaction();
-            using var command = _sqlite.CreateCommand();
+            using var command = new SQLiteCommand(_sqlite);
             const string sql = "INSERT OR REPLACE INTO cache (file_path, metadata, cached_at) VALUES (@FilePath, @Metadata, @CachedAt);";
             command.CommandText = sql;
-            var filePathParam = command.Parameters.Add("@FilePath", SqliteType.Text);
-            var metadataParam = command.Parameters.Add("@Metadata", SqliteType.Text);
-            var cachedAtParam = command.Parameters.Add("@CachedAt", SqliteType.Integer);
+            var filePathParam = command.Parameters.Add("@FilePath", System.Data.DbType.String);
+            var metadataParam = command.Parameters.Add("@Metadata", System.Data.DbType.String);
+            var cachedAtParam = command.Parameters.Add("@CachedAt", System.Data.DbType.Int64);
             foreach (var item in cache)
             {
                 var isFileCached = IsFileCached(item.FilePath);
@@ -86,8 +79,7 @@ namespace VRCX
         public int IsFileCached(string filePath)
         {
             const string sql = "SELECT id FROM cache WHERE file_path = @FilePath;";
-            using var command = _sqlite.CreateCommand();
-            command.CommandText = sql;
+            using var command = new SQLiteCommand(sql, _sqlite);
             command.Parameters.AddWithValue("@FilePath", filePath);
             using var reader = command.ExecuteReader();
             var result = new List<int>();
@@ -105,8 +97,7 @@ namespace VRCX
         public string? GetMetadata(string filePath)
         {
             const string sql = "SELECT id, file_path, metadata, cached_at FROM cache WHERE file_path = @FilePath;";
-            using var command = _sqlite.CreateCommand();
-            command.CommandText = sql;
+            using var command = new SQLiteCommand(sql, _sqlite);
             command.Parameters.AddWithValue("@FilePath", filePath);
             using var reader = command.ExecuteReader();
             var result = new List<MetadataCache>();
@@ -130,8 +121,7 @@ namespace VRCX
         public string? GetMetadataById(int id)
         {
             const string sql = "SELECT id, file_path, metadata, cached_at FROM cache WHERE id = @Id;";
-            using var command = _sqlite.CreateCommand();
-            command.CommandText = sql;
+            using var command = new SQLiteCommand(sql, _sqlite);
             command.Parameters.AddWithValue("@Id", id);
             using var reader = command.ExecuteReader();
             var result = new List<MetadataCache>();

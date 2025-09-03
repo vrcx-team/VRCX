@@ -87,7 +87,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.8" />
     <PackageReference Include="Microsoft.JavaScript.NodeApi" Version="0.9.15" />
     <PackageReference Include="Microsoft.JavaScript.NodeApi.Generator" Version="0.9.15" />
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
@@ -95,6 +94,8 @@
     <PackageReference Include="NLog" Version="6.0.3" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.8" />
     <PackageReference Include="System.Management" Version="9.0.8" />
     <PackageReference Include="System.Text.Json" Version="9.0.8" />

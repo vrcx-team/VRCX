@@ -1,17 +1,18 @@
-#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
+using System.IO;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Text.Json;
-using Microsoft.Data.Sqlite;
 
 namespace VRCX
 {
     public class SQLite
     {
         public static SQLite Instance;
-        private readonly ReaderWriterLockSlim _connectionLock;
-        private SqliteConnection _connection;
+        private readonly ReaderWriterLockSlim m_ConnectionLock;
+        private SQLiteConnection m_Connection;
 
         static SQLite()
         {
@@ -20,7 +21,7 @@ namespace VRCX
 
         public SQLite()
         {
-            _connectionLock = new ReaderWriterLockSlim();
+            m_ConnectionLock = new ReaderWriterLockSlim();
         }
 
         public void Init()
@@ -33,24 +34,18 @@ namespace VRCX
             if (!string.IsNullOrEmpty(jsonDataSource))
                 dataSource = jsonDataSource;
 
-            _connection = new SqliteConnection($"Data Source=\"{dataSource}\";Mode=ReadWriteCreate;Cache=Shared;");
-            _connection.Open();
-            using var command = _connection.CreateCommand();
-            command.CommandText = @"PRAGMA locking_mode=NORMAL;
-                                    PRAGMA busy_timeout=5000;
-                                    PRAGMA journal_mode=WAL;
-                                    PRAGMA optimize=0x10002;";
-            command.ExecuteNonQuery();
+            m_Connection = new SQLiteConnection($"Data Source=\"{dataSource}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000;PRAGMA journal_mode=WAL;PRAGMA optimize=0x10002;", true);
+
+            m_Connection.Open();
         }
 
         public void Exit()
         {
-            _connection.Close();
-            _connection.Dispose();
+            m_Connection.Close();
+            m_Connection.Dispose();
         }
         
-        // for Electron
-        public string ExecuteJson(string sql, IDictionary<string, object>? args = null)
+        public string ExecuteJson(string sql, IDictionary<string, object> args = null)
         {
             var result = Execute(sql, args);
             if (result.Item1 != null)
@@ -68,17 +63,17 @@ namespace VRCX
             });
         }
 
-        public Tuple<string?, object[][]?> Execute(string sql, IDictionary<string, object>? args = null)
+        public Tuple<string, object[]> Execute(string sql, IDictionary<string, object> args = null)
         {
-            _connectionLock.EnterReadLock();
+            m_ConnectionLock.EnterReadLock();
             try
             {
-                using var command = new SqliteCommand(sql, _connection);
+                using var command = new SQLiteCommand(sql, m_Connection);
                 if (args != null)
                 {
                     foreach (var arg in args)
                     {
-                        command.Parameters.Add(new SqliteParameter(arg.Key, arg.Value));
+                        command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                     }
                 }
 
@@ -93,37 +88,37 @@ namespace VRCX
                     }
                     result.Add(values);
                 }
-                return new Tuple<string?, object[][]?>(null, result.ToArray());
+                return new Tuple<string, object[]>(null, result.ToArray());
             }
             catch (Exception ex)
             {
-                return new Tuple<string?, object[][]?>(ex.Message, null);
+                return new Tuple<string, object[]>(ex.Message, null);
             }
             finally
             {
-                _connectionLock.ExitReadLock();
+                m_ConnectionLock.ExitReadLock();
             }
         }
 
-        public int ExecuteNonQuery(string sql, IDictionary<string, object>? args = null)
+        public int ExecuteNonQuery(string sql, IDictionary<string, object> args = null)
         {
             int result = -1;
-            _connectionLock.EnterWriteLock();
+            m_ConnectionLock.EnterWriteLock();
             try
             {
-                using var command = new SqliteCommand(sql, _connection);
+                using var command = new SQLiteCommand(sql, m_Connection);
                 if (args != null)
                 {
                     foreach (var arg in args)
                     {
-                        command.Parameters.Add(new SqliteParameter(arg.Key, arg.Value));
+                        command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                     }
                 }
                 result = command.ExecuteNonQuery();
             }
             finally
             {
-                _connectionLock.ExitWriteLock();
+                m_ConnectionLock.ExitWriteLock();
             }
 
             return result;
