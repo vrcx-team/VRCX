@@ -1092,7 +1092,7 @@ const gameLog = {
             (row) => {
                 userId = row[0];
             },
-            `SELECT user_id FROM gamelog_join_leave WHERE display_name = @displayName AND user_id != "" ORDER BY id DESC LIMIT 1`,
+            `SELECT user_id FROM gamelog_join_leave WHERE display_name = @displayName AND user_id != '' ORDER BY id DESC LIMIT 1`,
             {
                 '@displayName': displayName
             }
