@@ -164,6 +164,6 @@
     }
 
     .transparent {
-        background-color: transparent;
+        color: transparent;
     }
 </style>
