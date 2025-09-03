@@ -65,7 +65,7 @@ jobs:
                   name: Electron-Release-Linux-x64
                   path: build/Electron
             - name: Build Electron arm64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
+              run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
             - name: Upload Electron arm64 dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
@@ -93,7 +93,7 @@ jobs:
                   name: Electron-Release-macOS-x64
                   path: build/Electron
             - name: Build Electron arm64 .NET Application
-              run: dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
+              run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
             - name: Upload Electron arm64 dotnet artifacts
               uses: actions/upload-artifact@v4
               with:
