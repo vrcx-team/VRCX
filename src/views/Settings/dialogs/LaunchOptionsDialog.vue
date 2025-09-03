@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isLaunchOptionsDialogVisible"
+        :model-value="isLaunchOptionsDialogVisible"
         :title="t('dialog.launch_options.header')"
         width="600px"
         @close="closeDialog">

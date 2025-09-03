@@ -1,7 +1,7 @@
 <!--<template>-->
 <!--    <el-dialog-->
 <!--        class="x-dialog"-->
-<!--        :visible="sendBoopDialog.visible"-->
+<!--        :model-value="sendBoopDialog.visible"-->
 <!--        :title="t('dialog.boop_dialog.header')"-->
 <!--        width="450px"-->
 <!--        @close="closeDialog">-->

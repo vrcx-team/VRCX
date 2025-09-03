@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="changeWorldImageDialogVisible"
+        :model-value="changeWorldImageDialogVisible"
         :title="t('dialog.change_content_image.world')"
         width="850px"
         append-to-body

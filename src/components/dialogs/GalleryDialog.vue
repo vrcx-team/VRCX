@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="galleryDialogVisible"
+        :model-value="galleryDialogVisible"
         :title="t('dialog.gallery_icons.header')"
         width="97vw"
         append-to-body

@@ -1167,8 +1167,7 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
-        <!--Nested-->
-        <GroupPostEditDialog dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
+        <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
         <InviteGroupDialog />
         <PreviousInstancesGroupDialog
             :previous-instances-group-dialog="previousInstancesGroupDialog"

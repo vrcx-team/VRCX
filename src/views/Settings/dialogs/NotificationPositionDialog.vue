@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isNotificationPositionDialogVisible"
+        :model-value="isNotificationPositionDialogVisible"
         :title="t('dialog.notification_position.header')"
         width="400px"
         @close="closeDialog">

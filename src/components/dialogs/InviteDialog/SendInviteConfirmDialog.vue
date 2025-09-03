@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="visible"
+        :model-value="visible"
         :title="t('dialog.invite_message.header')"
         width="400px"
         append-to-body
@@ -51,10 +51,10 @@
         }
     });
 
-    const emit = defineEmits(['update:visible', 'closeInviteDialog']);
+    const emit = defineEmits(['update:model-value', 'closeInviteDialog']);
 
     function cancelInviteConfirm() {
-        emit('update:visible', false);
+        emit('update:model-value', false);
     }
 
     function sendInviteConfirm() {

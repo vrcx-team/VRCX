@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="sendInviteResponseDialogVisible"
+        :model-value="sendInviteResponseDialogVisible"
         :title="t('dialog.invite_response_message.header')"
         width="800px"
         append-to-body

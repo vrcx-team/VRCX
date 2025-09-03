@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="discordNamesDialogVisible"
+        :model-value="discordNamesDialogVisible"
         :title="t('dialog.discord_names.header')"
         width="650px"
         @close="closeDialog">

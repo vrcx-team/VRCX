@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isAvatarProviderDialogVisible"
+        :model-value="isAvatarProviderDialogVisible"
         :title="t('dialog.avatar_database_provider.header')"
         width="600px"
         @close="closeDialog">

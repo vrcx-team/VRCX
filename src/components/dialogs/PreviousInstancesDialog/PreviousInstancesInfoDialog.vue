@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         ref="dialogRef"
-        :visible="previousInstancesInfoDialogVisible"
+        :model-value="previousInstancesInfoDialogVisible"
         :title="t('dialog.previous_instances.info')"
         width="800px"
         :fullscreen="fullscreen"

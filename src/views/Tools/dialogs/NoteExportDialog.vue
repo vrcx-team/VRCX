@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isNoteExportDialogVisible"
+        :model-value="isNoteExportDialogVisible"
         :title="t('dialog.note_export.header')"
         width="1000px"
         @close="closeDialog">

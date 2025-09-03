@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        :visible="!!feedFiltersDialogMode"
+        :model-value="!!feedFiltersDialogMode"
         :title="dialogTitle"
         width="550px"
         destroy-on-close

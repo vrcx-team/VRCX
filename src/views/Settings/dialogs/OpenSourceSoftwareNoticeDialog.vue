@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="ossDialog"
+        :model-value="ossDialog"
         :title="t('dialog.open_source.header')"
         width="650px"
         @close="closeDialog">

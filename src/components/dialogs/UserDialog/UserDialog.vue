@@ -251,7 +251,7 @@
                                 >{{ userDialog.ref.$customTag }}</el-tag
                             >
                             <br />
-                            <el-tooltip
+                            <!-- <el-tooltip
                                 v-show="!userDialog.loading"
                                 v-for="badge in userDialog.ref.badges"
                                 :key="badge.badgeId"
@@ -314,7 +314,7 @@
                                         </template>
                                     </div>
                                 </el-popover>
-                            </el-tooltip>
+                            </el-tooltip> -->
                         </div>
                         <div style="margin-top: 5px">
                             <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>

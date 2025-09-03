@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="visible"
+        :model-value="visible"
         :title="t('dialog.group_calendar.header')"
         :show-close="false"
         width="90vw"

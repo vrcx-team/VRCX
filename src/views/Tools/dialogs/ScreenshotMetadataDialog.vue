@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isScreenshotMetadataDialogVisible"
+        :model-value="isScreenshotMetadataDialogVisible"
         :title="t('dialog.screenshot_metadata.header')"
         width="1050px"
         @close="closeDialog">

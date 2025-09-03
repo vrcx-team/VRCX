@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isYouTubeApiDialogVisible"
+        :model-value="isYouTubeApiDialogVisible"
         :title="t('dialog.youtube_api.header')"
         width="400px"
         @close="closeDialog">
@@ -46,7 +46,7 @@
 
     const { t } = useI18n();
 
-    const props = defineProps({
+    defineProps({
         isYouTubeApiDialogVisible: {
             type: Boolean,
             default: false

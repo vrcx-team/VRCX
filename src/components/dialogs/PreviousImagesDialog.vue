@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="previousImagesDialogVisible"
+        :model-value="previousImagesDialogVisible"
         :title="t('dialog.previous_images.header')"
         width="800px"
         append-to-body

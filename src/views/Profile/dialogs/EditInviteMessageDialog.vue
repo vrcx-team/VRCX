@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="editInviteMessageDialog.visible"
+        :model-value="editInviteMessageDialog.visible"
         :title="t('dialog.edit_invite_message.header')"
         width="400px"
         @close="closeDialog">

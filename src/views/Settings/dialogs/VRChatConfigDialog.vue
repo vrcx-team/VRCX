@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isVRChatConfigDialogVisible"
+        :model-value="isVRChatConfigDialogVisible"
         :title="t('dialog.config_json.header')"
         width="420px"
         @close="closeDialog">

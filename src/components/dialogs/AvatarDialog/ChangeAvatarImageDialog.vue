@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="changeAvatarImageDialogVisible"
+        :model-value="changeAvatarImageDialogVisible"
         :title="t('dialog.change_content_image.avatar')"
         width="850px"
         append-to-body

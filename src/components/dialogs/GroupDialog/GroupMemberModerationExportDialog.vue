@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isGroupLogsExportDialogVisible"
+        :model-value="isGroupLogsExportDialogVisible"
         :title="t('dialog.group_member_moderation.export_logs')"
         width="650px"
         append-to-body

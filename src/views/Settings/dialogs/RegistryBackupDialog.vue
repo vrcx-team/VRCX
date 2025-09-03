@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="isRegistryBackupDialogVisible"
+        :model-value="isRegistryBackupDialogVisible"
         :title="t('dialog.registry_backup.header')"
         width="600px"
         @close="closeDialog"

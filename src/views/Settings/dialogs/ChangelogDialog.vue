@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :visible="changeLogDialog.visible"
+        :model-value="changeLogDialog.visible"
         :title="t('dialog.change_log.header')"
         width="800px"
         append-to-body
@@ -19,13 +19,13 @@
                 style="height: 62vh; overflow-y: auto; margin-top: 10px"></vue-markdown>
         </div>
         <template #footer>
-            <el-button type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
+            <el-button @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
                 {{ t('dialog.change_log.github') }}
             </el-button>
-            <el-button type="small" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
+            <el-button @click="openExternalLink('https://patreon.com/Natsumi_VRCX')">
                 {{ t('dialog.change_log.donate') }}
             </el-button>
-            <el-button type="small" @click="closeDialog">
+            <el-button @click="closeDialog">
                 {{ t('dialog.change_log.close') }}
             </el-button>
         </template>
