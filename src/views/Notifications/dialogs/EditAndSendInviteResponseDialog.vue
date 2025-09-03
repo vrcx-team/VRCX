@@ -19,7 +19,7 @@
             style="margin-top: 10px">
         </el-input>
         <template #footer>
-            <el-button type="small" @click="cancelEditAndSendInviteResponse">{{
+            <el-button @click="cancelEditAndSendInviteResponse">{{
                 t('dialog.edit_send_invite_response_message.cancel')
             }}</el-button>
             <el-button type="primary" size="small" @click="saveEditAndSendInviteResponse">{{

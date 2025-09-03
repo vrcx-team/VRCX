@@ -11,9 +11,7 @@
         </div>
 
         <template #footer>
-            <el-button type="small" @click="cancelInviteResponseConfirm">{{
-                t('dialog.invite_response_message.cancel')
-            }}</el-button>
+            <el-button @click="cancelInviteResponseConfirm">{{ t('dialog.invite_response_message.cancel') }}</el-button>
             <el-button type="primary" size="small" @click="sendInviteResponseConfirm">{{
                 t('dialog.invite_response_message.confirm')
             }}</el-button>

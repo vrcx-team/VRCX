@@ -16,11 +16,9 @@
                         </el-tooltip>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <template
-                                    v-for="groupAPI in favoriteAvatarGroups"
-                                    :key="groupAPI.name"
-                                    v-if="isLocalFavorite || groupAPI.name !== group.name">
+                                <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
                                     <el-dropdown-item
+                                        v-if="isLocalFavorite || groupAPI.name !== group.name"
                                         style="display: block; margin: 10px 0"
                                         :disabled="groupAPI.count >= groupAPI.capacity"
                                         @click="handleDropdownItemClick(groupAPI)">

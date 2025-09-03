@@ -21,7 +21,7 @@
             style="margin-top: 10px"></el-input>
 
         <template #footer>
-            <el-button type="small" @click="cancelEditAndSendInvite">
+            <el-button @click="cancelEditAndSendInvite">
                 {{ t('dialog.edit_send_invite_message.cancel') }}
             </el-button>
             <el-button type="primary" size="small" @click="saveEditAndSendInvite">

@@ -158,11 +158,8 @@
                 <el-icon class="is-loading"><Loading /></el-icon>
                 <span>{{ t('view.favorite.avatars.cancel_refresh') }}</span>
             </el-button>
-            <el-collapse-item
-                v-for="group in localAvatarFavoriteGroups"
-                v-if="localAvatarFavorites[group]"
-                :key="group">
-                <template #title>
+            <el-collapse-item v-for="group in localAvatarFavoriteGroups" :key="group">
+                <template #title v-if="localAvatarFavorites[group]">
                     <span :style="{ fontWeight: 'bold', fontSize: '14px', marginLeft: '10px' }">{{ group }}</span>
                     <span :style="{ color: '#909399', fontSize: '12px', marginLeft: '10px' }">{{
                         getLocalAvatarFavoriteGroupLength(group)

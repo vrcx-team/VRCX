@@ -12,7 +12,7 @@
                 v-model="urlList[index]"
                 size="small"
                 style="margin-top: 5px">
-                <el-button slot="append" :icon="Delete" @click="urlList.splice(index, 1)"></el-button>
+                <el-button :icon="Delete" @click="urlList.splice(index, 1)"></el-button>
             </el-input>
             <el-button size="small" style="margin-top: 5px" @click="urlList.push('')">
                 {{ t('dialog.allowed_video_player_domains.add_domain') }}

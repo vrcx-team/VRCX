@@ -43,10 +43,8 @@
         </DataTable>
 
         <template #footer>
-            <el-button type="small" @click="cancelSendInviteRequest">{{
-                t('dialog.invite_request_message.cancel')
-            }}</el-button>
-            <el-button type="small" @click="refreshInviteMessageTableData('request')">{{
+            <el-button @click="cancelSendInviteRequest">{{ t('dialog.invite_request_message.cancel') }}</el-button>
+            <el-button @click="refreshInviteMessageTableData('request')">{{
                 t('dialog.invite_request_message.refresh')
             }}</el-button>
         </template>

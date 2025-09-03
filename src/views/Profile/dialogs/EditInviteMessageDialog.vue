@@ -18,7 +18,7 @@
                 style="margin-top: 10px"></el-input>
         </div>
         <template #footer>
-            <el-button type="small" @click="closeDialog">{{ t('dialog.edit_invite_message.cancel') }}</el-button>
+            <el-button @click="closeDialog">{{ t('dialog.edit_invite_message.cancel') }}</el-button>
             <el-button type="primary" size="small" @click="saveEditInviteMessage">{{
                 t('dialog.edit_invite_message.save')
             }}</el-button>
@@ -72,7 +72,7 @@
                         });
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        $message.success('Invite message updated');
+                        ElMessage.success('Invite message updated');
                     }
                     return args;
                 });

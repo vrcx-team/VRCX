@@ -20,7 +20,7 @@
             v-model="avatarImportDialog.input"
             type="textarea"
             size="small"
-            rows="10"
+            :rows="10"
             resize="none"
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">

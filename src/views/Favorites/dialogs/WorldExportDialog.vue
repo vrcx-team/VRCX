@@ -73,7 +73,7 @@
             v-model="worldExportContent"
             type="textarea"
             size="small"
-            rows="15"
+            :rows="15"
             resize="none"
             readonly
             style="margin-top: 15px"

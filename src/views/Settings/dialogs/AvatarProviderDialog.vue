@@ -13,7 +13,7 @@
                 size="small"
                 style="margin-top: 5px"
                 @change="saveAvatarProviderList">
-                <el-button slot="append" :icon="Delete" @click="removeAvatarProvider(provider)"></el-button>
+                <el-button :icon="Delete" @click="removeAvatarProvider(provider)"></el-button>
             </el-input>
 
             <el-button size="small" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">

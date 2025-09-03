@@ -47,7 +47,7 @@
         </template>
 
         <el-skeleton v-else animated class="skeleton" :throttle="100">
-            <template slot="template">
+            <template #template>
                 <div>
                     <el-skeleton-item variant="circle" />
                     <div>

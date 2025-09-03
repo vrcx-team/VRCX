@@ -78,16 +78,16 @@
                             </el-tooltip>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item
-                                        v-for="visibility in worldGroupVisibilityOptions"
-                                        v-if="group.visibility !== visibility"
-                                        :key="visibility"
-                                        style="display: block; margin: 10px 0"
-                                        @click="changeWorldGroupVisibility(group.name, visibility)"
-                                        >{{
-                                            visibility.charAt(0).toUpperCase() + visibility.slice(1)
-                                        }}</el-dropdown-item
-                                    >
+                                    <template v-for="visibility in worldGroupVisibilityOptions" :key="visibility">
+                                        <el-dropdown-item
+                                            v-if="group.visibility !== visibility"
+                                            style="display: block; margin: 10px 0"
+                                            @click="changeWorldGroupVisibility(group.name, visibility)"
+                                            >{{
+                                                visibility.charAt(0).toUpperCase() + visibility.slice(1)
+                                            }}</el-dropdown-item
+                                        >
+                                    </template>
                                 </el-dropdown-menu>
                             </template>
                             <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
@@ -150,8 +150,8 @@
             <span>{{ t('view.favorite.worlds.cancel_refresh') }}</span>
         </el-button>
         <el-collapse style="border: 0">
-            <el-collapse-item v-for="group in localWorldFavoriteGroups" v-if="localWorldFavorites[group]" :key="group">
-                <template #title>
+            <el-collapse-item v-for="group in localWorldFavoriteGroups" :key="group">
+                <template #title v-if="localWorldFavorites[group]">
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
                         getLocalWorldFavoriteGroupLength(group)

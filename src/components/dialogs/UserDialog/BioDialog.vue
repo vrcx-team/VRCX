@@ -23,11 +23,8 @@
                 v-model="bioDialog.bioLinks[index]"
                 size="small"
                 style="margin-top: 5px">
-                <img
-                    slot="prepend"
-                    :src="getFaviconUrl(link)"
-                    style="width: 16px; height: 16px; vertical-align: middle" />
-                <el-button slot="append" :icon="Delete" @click="bioDialog.bioLinks.splice(index, 1)" />
+                <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
+                <el-button :icon="Delete" @click="bioDialog.bioLinks.splice(index, 1)" />
             </el-input>
 
             <el-button

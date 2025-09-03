@@ -67,10 +67,10 @@
         </DataTable>
 
         <template #footer>
-            <el-button type="small" @click="cancelSendInvite">
+            <el-button @click="cancelSendInvite">
                 {{ t('dialog.invite_message.cancel') }}
             </el-button>
-            <el-button type="small" @click="refreshInviteMessageTableData('message')">
+            <el-button @click="refreshInviteMessageTableData('message')">
                 {{ t('dialog.invite_message.refresh') }}
             </el-button>
         </template>
