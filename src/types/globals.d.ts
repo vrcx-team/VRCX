@@ -7,6 +7,7 @@ declare global {
 
     interface Window {
         $app: any;
+        $pinia: any;
         AppApi: AppApi;
         AppApiVr: AppApiVr;
         WebApi: WebApi;

@@ -1,16 +1,16 @@
 <template>
     <div>
-        <span v-if="!text" style="color: transparent">-</span>
+        <span v-if="!text" class="transparent">-</span>
         <span v-show="text">
             <span
                 :class="{ 'x-link': link && location !== 'private' && location !== 'offline' }"
                 @click="handleShowWorldDialog">
-                <el-icon class="is-loading" v-if="isTraveling" style="display: inline-block"><Loading /></el-icon>
+                <el-icon :class="['is-loading', 'inline-block']" v-if="isTraveling"><Loading /></el-icon>
                 <span>{{ text }}</span>
             </span>
             <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
-            <span v-if="region" class="flags" :class="region" style="display: inline-block; margin-left: 5px"></span>
-            <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
+            <span v-if="region" :class="['flags', 'inline-block', 'mr-5', region]"></span>
+            <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
         </span>
     </div>
 </template>
@@ -153,3 +153,17 @@
         showGroupDialog(L.groupId);
     }
 </script>
+
+<style scoped>
+    .inline-block {
+        display: inline-block;
+    }
+
+    .ml-5 {
+        margin-left: 5px;
+    }
+
+    .transparent {
+        background-color: transparent;
+    }
+</style>

@@ -7,6 +7,7 @@
             v-bind="mergedTableProps"
             default-sort-prop="created_at"
             default-sort-order="descending"
+            lazy
             @sort-change="handleSortChange"
             @selection-change="handleSelectionChange"
             @row-click="handleRowClick">

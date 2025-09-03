@@ -1,7 +1,9 @@
 <template>
-    <el-tooltip v-show="isVisible" placement="top" :content="t('dialog.user.info.launch_invite_tooltip')"
-        ><el-button @click="confirm" size="small" :icon="SwitchButton" circle />
-    </el-tooltip>
+    <div v-if="isVisible">
+        <el-tooltip placement="top" :content="t('dialog.user.info.launch_invite_tooltip')"
+            ><el-button @click="confirm" size="small" :icon="SwitchButton" circle />
+        </el-tooltip>
+    </div>
 </template>
 
 <script setup>
