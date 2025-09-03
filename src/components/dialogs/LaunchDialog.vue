@@ -1,5 +1,5 @@
 <template>
-    <el-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="500px">
+    <el-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
         <el-form :model="launchDialog" label-width="100px">
             <el-form-item :label="t('dialog.launch.url')">
                 <el-input
@@ -70,13 +70,6 @@
                 {{ t('dialog.launch.invite') }}
             </el-button>
             <template v-if="canOpenInstanceInGame()">
-                <el-button
-                    type="default"
-                    size="small"
-                    :disabled="!launchDialog.secureOrShortName"
-                    @click="handleSelfInvite(launchDialog.location, launchDialog.shortName)">
-                    {{ t('dialog.launch.self_invite') }}
-                </el-button>
                 <el-button
                     type="default"
                     size="small"
@@ -217,38 +210,12 @@
             });
     }
     function handleLaunchGame(location, shortName, desktop) {
-        if (isGameRunning.value) {
-            ElMessageBox.confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
-                confirmButtonText: t('dialog.launch.confirm_yes'),
-                cancelButtonText: t('dialog.launch.confirm_no'),
-                type: 'warning',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        launchGame(location, shortName, desktop);
-                        isVisible.value = false;
-                    }
-                }
-            });
-            return;
-        }
         launchGame(location, shortName, desktop);
         isVisible.value = false;
     }
     function handleAttachGame(location, shortName) {
         tryOpenInstanceInVrc(location, shortName);
         isVisible.value = false;
-    }
-    async function handleSelfInvite(location, shortName) {
-        const L = parseLocation(location);
-        await instanceRequest.selfInvite({
-            instanceId: L.instanceId,
-            worldId: L.worldId,
-            shortName
-        });
-        ElMessage({
-            message: 'Self invite sent',
-            type: 'success'
-        });
     }
     function getConfig() {
         configRepository.getBool('launchAsDesktop').then((value) => (launchDialog.value.desktop = value));
