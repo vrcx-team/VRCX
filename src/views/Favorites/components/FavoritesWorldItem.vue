@@ -1,16 +1,16 @@
 <template>
-    <div @click="$emit('click')" :style="{ display: 'inline-block', width: '300px', marginRight: '15px' }">
+    <div class="fav-world-item" @click="$emit('click')">
         <div class="x-friend-item">
             <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
-                <div class="avatar">
-                    <img :src="smallThumbnail" loading="lazy" />
+                <div class="avatar" v-once>
+                    <img :src="smallThumbnail" loading="lazy" decoding="async" fetchpriority="low" />
                 </div>
-                <div class="detail">
-                    <span class="name" v-once>{{ localFavFakeRef.name }}</span>
-                    <span v-if="localFavFakeRef.occupants" class="extra" v-once
-                        >{{ localFavFakeRef.authorName }} ({{ localFavFakeRef.occupants }})</span
-                    >
-                    <span v-else class="extra" v-once>{{ localFavFakeRef.authorName }}</span>
+                <div class="detail" v-once>
+                    <span class="name">{{ localFavFakeRef.name }}</span>
+                    <span v-if="localFavFakeRef.occupants" class="extra">
+                        {{ localFavFakeRef.authorName }} ({{ localFavFakeRef.occupants }})
+                    </span>
+                    <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
                 </div>
                 <template v-if="editFavoritesMode">
                     <el-dropdown trigger="click" size="small" style="margin-left: 5px">
@@ -112,8 +112,8 @@
             </template>
             <template v-else>
                 <div class="avatar"></div>
-                <div class="detail">
-                    <span v-once>{{ favorite.name || favorite.id }}</span>
+                <div class="detail" v-once>
+                    <span>{{ favorite.name || favorite.id }}</span>
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
@@ -215,3 +215,11 @@
             });
     }
 </script>
+
+<style scoped>
+    .fav-world-item {
+        display: inline-block;
+        width: 300px;
+        margin-right: 15px;
+    }
+</style>
