@@ -54,8 +54,8 @@
                     <el-tooltip placement="left" :disabled="hideTooltips">
                         <template #content>
                             {{
-                                isGameRunning
-                                    ? $t('dialog.world.actions.new_instance_and_open_in_vrchat')
+                                canOpenInstanceInGame()
+                                    ? $t('dialog.world.actions.new_instance_and_open_ingame')
                                     : $t('dialog.world.actions.new_instance_and_self_invite')
                             }}
                         </template>
@@ -160,6 +160,7 @@
     const { newInstanceSelfInvite } = useInviteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
     const { isGameRunning } = storeToRefs(useGameStore());
+    const { canOpenInstanceInGame } = useInviteStore();
 
     const isSelected = computed({
         get: () => props.favorite.$selected,

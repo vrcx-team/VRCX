@@ -410,12 +410,28 @@
                     @click="showInviteDialog(newInstanceDialog.location)"
                     >{{ t('dialog.new_instance.invite') }}</el-button
                 >
-                <el-button
-                    type="primary"
-                    size="small"
-                    @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
-                    >{{ t('dialog.new_instance.launch') }}</el-button
-                >
+                <template v-if="canOpenInstanceInGame()">
+                    <el-button
+                        type="default"
+                        size="small"
+                        @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
+                        >{{ t('dialog.new_instance.launch') }}</el-button
+                    >
+                    <el-button
+                        type="primary"
+                        size="small"
+                        @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
+                        {{ t('dialog.new_instance.open_ingame') }}
+                    </el-button>
+                </template>
+                <template v-else>
+                    <el-button
+                        type="primary"
+                        size="small"
+                        @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
+                        >{{ t('dialog.new_instance.launch') }}</el-button
+                    >
+                </template>
             </template>
             <template v-else>
                 <el-button type="primary" size="small" @click="handleCreateNewInstance">{{
@@ -439,12 +455,28 @@
                 @click="showInviteDialog(newInstanceDialog.location)"
                 >{{ t('dialog.new_instance.invite') }}</el-button
             >
-            <el-button
-                type="primary"
-                size="small"
-                @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
-                >{{ t('dialog.new_instance.launch') }}</el-button
-            >
+            <template v-if="canOpenInstanceInGame()">
+                <el-button
+                    type="default"
+                    size="small"
+                    @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
+                    >{{ t('dialog.new_instance.launch') }}</el-button
+                >
+                <el-button
+                    type="primary"
+                    size="small"
+                    @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
+                    {{ t('dialog.new_instance.open_ingame') }}
+                </el-button>
+            </template>
+            <template v-else>
+                <el-button
+                    type="primary"
+                    size="small"
+                    @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
+                    >{{ t('dialog.new_instance.launch') }}</el-button
+                >
+            </template>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
     </safe-dialog>
@@ -472,7 +504,8 @@
         useInstanceStore,
         useLaunchStore,
         useLocationStore,
-        useUserStore
+        useUserStore,
+        useInviteStore
     } from '../../stores';
     import InviteDialog from './InviteDialog/InviteDialog.vue';
 
@@ -494,6 +527,8 @@
     const { showLaunchDialog } = useLaunchStore();
     const { createNewInstance } = useInstanceStore();
     const { currentUser } = storeToRefs(useUserStore());
+    const { tryOpenInstanceInVrc } = useLaunchStore();
+    const { canOpenInstanceInGame } = useInviteStore();
 
     const newInstanceDialogRef = ref(null);
 
@@ -571,6 +606,11 @@
                 }
                 D.visible = true;
             });
+    }
+
+    function handleAttachGame(location, shortName) {
+        tryOpenInstanceInVrc(location, shortName);
+        closeInviteDialog();
     }
 
     async function initNewInstanceDialog(tag) {

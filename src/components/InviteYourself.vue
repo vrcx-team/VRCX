@@ -1,6 +1,6 @@
 <template>
     <el-tooltip
-        v-if="!isGameRunning || isLinux || gameLogDisabled"
+        v-if="!canOpenInstanceInGame()"
         placement="top"
         :content="t('dialog.user.info.self_invite_tooltip')"
         :disabled="hideTooltips">
@@ -18,9 +18,8 @@
     import { instanceRequest } from '../api';
     import { checkCanInviteSelf, parseLocation } from '../shared/utils';
     import { useAppearanceSettingsStore } from '../stores/settings/appearance';
-    import { useGameStore } from '../stores/game';
     import { useLaunchStore } from '../stores/launch';
-    import { useAdvancedSettingsStore } from '../stores/settings/advanced';
+    import { useInviteStore } from '../stores/invite';
 
     const props = defineProps({
         location: String,
@@ -30,16 +29,13 @@
     const { t } = useI18n();
 
     const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
-    const { isGameRunning } = storeToRefs(useGameStore());
-    const { gameLogDisabled } = storeToRefs(useAdvancedSettingsStore());
 
+    const { canOpenInstanceInGame } = useInviteStore();
     const { tryOpenInstanceInVrc } = useLaunchStore();
 
     const { proxy } = getCurrentInstance();
 
     const isVisible = computed(() => checkCanInviteSelf(props.location));
-
-    const isLinux = computed(() => LINUX);
 
     function confirmInvite() {
         const L = parseLocation(props.location);

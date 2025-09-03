@@ -66,7 +66,7 @@
                 @click="showInviteDialog(launchDialog.location)">
                 {{ t('dialog.launch.invite') }}
             </el-button>
-            <template v-if="isGameRunning">
+            <template v-if="canOpenInstanceInGame()">
                 <el-button
                     type="default"
                     size="small"
@@ -106,7 +106,7 @@
     import {
         useAppearanceSettingsStore,
         useFriendStore,
-        useGameStore,
+        useInviteStore,
         useInstanceStore,
         useLaunchStore,
         useLocationStore
@@ -122,7 +122,7 @@
     const { launchGame, tryOpenInstanceInVrc } = useLaunchStore();
     const { launchDialogData } = storeToRefs(useLaunchStore());
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
-    const { isGameRunning } = storeToRefs(useGameStore());
+    const { canOpenInstanceInGame } = useInviteStore();
 
     const launchDialogRef = ref(null);
 
