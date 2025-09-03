@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-    import { onMounted, computed, defineAsyncComponent } from 'vue';
+    import { onMounted, computed } from 'vue';
     import * as ElementPlusLocale from 'element-plus/es/locale/lang/en';
 
     import { createGlobalStores } from './stores';
@@ -104,6 +104,8 @@
     import Moderation from './views/Moderation/Moderation.vue';
     import Notification from './views/Notifications/Notification.vue';
     import FriendList from './views/FriendList/FriendList.vue';
+    import Charts from './views/Charts/Charts.vue';
+    import Tools from './views/Tools/Tools.vue';
     import Profile from './views/Profile/Profile.vue';
     import Settings from './views/Settings/Settings.vue';
 
@@ -111,30 +113,20 @@
     import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
+    import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
     import GalleryDialog from './components/dialogs/GalleryDialog.vue';
     import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
+    import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import LaunchDialog from './components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
+    import FriendImportDialog from './views/Favorites/dialogs/FriendImportDialog.vue';
+    import WorldImportDialog from './views/Favorites/dialogs/WorldImportDialog.vue';
+    import AvatarImportDialog from './views/Favorites/dialogs/AvatarImportDialog.vue';
     import ChooseFavoriteGroupDialog from './components/dialogs/ChooseFavoriteGroupDialog.vue';
+    import EditInviteMessageDialog from './views/Profile/dialogs/EditInviteMessageDialog.vue';
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
-
-    const Charts = defineAsyncComponent(() => import('./views/Charts/Charts.vue'));
-    const Tools = defineAsyncComponent(() => import('./views/Tools/Tools.vue'));
-
-    const GroupMemberModerationDialog = defineAsyncComponent(
-        () => import('./components/dialogs/GroupDialog/GroupMemberModerationDialog.vue')
-    );
-    const PreviousInstancesInfoDialog = defineAsyncComponent(
-        () => import('./components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue')
-    );
-    const FriendImportDialog = defineAsyncComponent(() => import('./views/Favorites/dialogs/FriendImportDialog.vue'));
-    const WorldImportDialog = defineAsyncComponent(() => import('./views/Favorites/dialogs/WorldImportDialog.vue'));
-    const AvatarImportDialog = defineAsyncComponent(() => import('./views/Favorites/dialogs/AvatarImportDialog.vue'));
-    const EditInviteMessageDialog = defineAsyncComponent(
-        () => import('./views/Profile/dialogs/EditInviteMessageDialog.vue')
-    );
 
     // import { utils } from './shared/utils/_utils';
 
@@ -146,6 +138,7 @@
     // Vue.prototype.utils = utils;
 
     const currentLocale = computed(() => {
+        // TODO: Implement dynamic locale switching based on current locale
         return ElementPlusLocale.default || ElementPlusLocale;
     });
 
