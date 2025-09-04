@@ -79,6 +79,7 @@
                             <span>💚</span>
                         </el-tooltip>
                     </template>
+                    <span v-else></span>
                 </template>
             </el-table-column>
 
@@ -177,7 +178,7 @@
                         <el-button
                             v-if="scope.row.type === 'Location'"
                             type="text"
-                            :icon="DataLine"
+                            :icon="List"
                             size="small"
                             @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     </el-tooltip>
@@ -189,7 +190,7 @@
 
 <script setup>
     import { ElMessageBox } from 'element-plus';
-    import { Close, Delete, DataLine } from '@element-plus/icons-vue';
+    import { Close, Delete, List } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { database } from '../../service/database';

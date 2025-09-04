@@ -2079,22 +2079,16 @@
     }
 
     function toggleLastActiveTab(userId) {
-        let tabName = userDialogTabsRef.value.currentName;
-        if (tabName === '0') {
-            tabName = userDialogLastActiveTab.value;
-            userDialogTabsRef.value = tabName;
-        }
-        handleUserDialogTab(tabName, userId);
-        userDialogLastActiveTab.value = tabName;
+        handleUserDialogTab(userDialogLastActiveTab.value, userId);
     }
 
     function userDialogTabClick(obj) {
-        const userId = userDialog.value.id;
-        if (userDialogLastActiveTab.value === obj.name) {
+        if (obj.props.name === userDialogLastActiveTab.value) {
             return;
         }
-        handleUserDialogTab(obj.name, userId);
-        userDialogLastActiveTab.value = obj.name;
+        const userId = userDialog.value.id;
+        handleUserDialogTab(obj.props.name, userId);
+        userDialogLastActiveTab.value = obj.props.name;
     }
 
     function showPronounsDialog() {

@@ -41,7 +41,7 @@
                 </el-option>
             </el-select>
             <el-tooltip placement="bottom" :content="t('side_panel.direct_access_tooltip')">
-                <el-button type="default" size="small" icon="Discover" circle @click="directAccessPaste"></el-button>
+                <el-button type="default" size="small" :icon="Compass" circle @click="directAccessPaste"></el-button>
             </el-tooltip>
             <el-tooltip placement="bottom" :content="t('side_panel.refresh_tooltip')">
                 <el-button
@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-    import { Refresh } from '@element-plus/icons-vue';
+    import { Refresh, Compass } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
