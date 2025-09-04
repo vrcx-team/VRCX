@@ -1329,7 +1329,11 @@
             "info": "Info",
             "invite": "Invite",
             "launch": "Launch",
-            "open_ingame": "Open in-game"
+            "open_ingame": "Open in-game",
+            "self_invite": "Self invite",
+            "game_running_warning": "Are you sure you want to launch a second VRChat instance?",
+            "confirm_yes": "Yes",
+            "confirm_no": "No"
         },
         "export_friends_list": {
             "header": "Export Friends List",
