@@ -20,7 +20,9 @@
                         <el-icon><WarningFilled /></el-icon> {{ t('side_panel.pending_offline') }}
                     </span>
                     <template v-else-if="isGroupByInstance">
-                        <el-icon v-if="isFriendTraveling" class="is-loading"><Loading /></el-icon>
+                        <el-icon v-if="isFriendTraveling" class="is-loading" style="margin-right: 3px"
+                            ><Loading
+                        /></el-icon>
                         <Timer
                             class="extra"
                             :epoch="epoch"

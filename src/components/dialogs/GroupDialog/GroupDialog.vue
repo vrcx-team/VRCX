@@ -447,7 +447,7 @@
                                             :style="{ color: user.$userColour }"
                                             v-text="user.displayName" />
                                         <span v-if="user.location === 'traveling'" class="extra">
-                                            <el-icon class="is-loading" style="margin-right: 5px"><Loading /></el-icon>
+                                            <el-icon class="is-loading" style="margin-right: 3px"><Loading /></el-icon>
                                             <Timer :epoch="user.$travelingToTime" />
                                         </span>
                                         <span v-else class="extra">

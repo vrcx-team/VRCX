@@ -5,7 +5,9 @@
             <span
                 :class="{ 'x-link': link && location !== 'private' && location !== 'offline' }"
                 @click="handleShowWorldDialog">
-                <el-icon :class="['is-loading', 'inline-block']" v-if="isTraveling"><Loading /></el-icon>
+                <el-icon :class="['is-loading', 'inline-block']" style="margin-right: 3px" v-if="isTraveling"
+                    ><Loading
+                /></el-icon>
                 <span>{{ text }}</span>
             </span>
             <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
