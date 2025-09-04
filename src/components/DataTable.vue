@@ -109,11 +109,7 @@
 
                 if (filters.value && Array.isArray(filters.value) && filters.value.length > 0) {
                     filters.value.forEach((filter) => {
-                        if (
-                            filter.value !== undefined &&
-                            filter.value !== '' &&
-                            (!Array.isArray(filter.value) || filter.value.length > 0)
-                        ) {
+                        if (filter.value && (!Array.isArray(filter.value) || filter.value.length > 0)) {
                             result = result.filter((row) => {
                                 const cellValue = row[filter.prop];
                                 if (cellValue === undefined || cellValue === null) return false;

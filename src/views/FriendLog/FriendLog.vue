@@ -49,7 +49,7 @@
             <el-table-column :label="t('table.friendLog.user')" prop="displayName">
                 <template #default="scope">
                     <span v-if="scope.row.type === 'DisplayName'">
-                        {{ scope.row.previousDisplayName }} <el-icon><ArrowRight /></el-icon>&nbsp;
+                        {{ scope.row.previousDisplayName }} <el-icon><Right /></el-icon>&nbsp;
                     </span>
                     <span
                         class="x-link"
@@ -58,7 +58,7 @@
                         v-text="scope.row.displayName || scope.row.userId"></span>
                     <template v-if="scope.row.type === 'TrustLevel'">
                         <span>
-                            ({{ scope.row.previousTrustLevel }} <el-icon><ArrowRight /></el-icon>
+                            ({{ scope.row.previousTrustLevel }} <el-icon><Right /></el-icon>
                             {{ scope.row.trustLevel }})</span
                         >
                     </template>
@@ -73,12 +73,14 @@
                         type="text"
                         :icon="Close"
                         size="small"
+                        class="button-pd-0"
                         @click="deleteFriendLog(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
                         :icon="Delete"
                         size="small"
+                        class="button-pd-0"
                         @click="deleteFriendLogPrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>
@@ -88,7 +90,7 @@
 
 <script setup>
     import { ElMessageBox } from 'element-plus';
-    import { Close, Delete, ArrowRight } from '@element-plus/icons-vue';
+    import { Close, Delete, Right } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { watch } from 'vue';
     import { useI18n } from 'vue-i18n';
@@ -132,3 +134,9 @@
         database.deleteFriendLogHistory(row.rowId);
     }
 </script>
+
+<style scoped>
+    .button-pd-0 {
+        padding: 0 !important;
+    }
+</style>
