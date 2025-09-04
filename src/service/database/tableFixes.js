@@ -23,7 +23,7 @@ const tableFixes = {
                 time: dbRow[6]
             };
             travelingList.unshift(row);
-        }, 'SELECT * FROM gamelog_join_leave WHERE type = "OnPlayerLeft" AND location = "traveling"');
+        }, "SELECT * FROM gamelog_join_leave WHERE type = 'OnPlayerLeft' AND location = 'traveling'");
         travelingList.forEach(async (travelingEntry) => {
             await sqliteService.execute(
                 (dbRow) => {
@@ -44,7 +44,7 @@ const tableFixes = {
                         }
                     );
                 },
-                'SELECT * FROM gamelog_join_leave WHERE type = "OnPlayerJoined" AND display_name = @displayName AND created_at <= @created_at ORDER BY created_at DESC LIMIT 1',
+                "SELECT * FROM gamelog_join_leave WHERE type = 'OnPlayerJoined' AND display_name = @displayName AND created_at <= @created_at ORDER BY created_at DESC LIMIT 1",
                 {
                     '@displayName': travelingEntry.displayName,
                     '@created_at': travelingEntry.created_at
@@ -134,7 +134,7 @@ const tableFixes = {
                 id: dbRow[0],
                 displayName: dbRow[1]
             });
-        }, 'SELECT id, display_name FROM gamelog_join_leave WHERE display_name LIKE "% (%"');
+        }, "SELECT id, display_name FROM gamelog_join_leave WHERE display_name LIKE '% (%'");
         return badEntries;
     },
 
