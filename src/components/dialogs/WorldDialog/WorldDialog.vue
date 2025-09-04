@@ -252,7 +252,7 @@
                                     <el-dropdown-item v-else :icon="HomeFilled" command="Make Home" divided>
                                         {{ t('dialog.world.actions.make_home') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item :icon="Tickets" command="Previous Instances">
+                                    <el-dropdown-item :icon="DataLine" command="Previous Instances">
                                         {{ t('dialog.world.actions.show_previous_instances') }}
                                     </el-dropdown-item>
                                     <template v-if="currentUser.id !== worldDialog.ref.authorId">
@@ -468,7 +468,7 @@
                                     </span>
                                     <el-tooltip placement="top" :content="t('dialog.world.info.id_tooltip')">
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
-                                            <el-button type="default" :icon="Sort" size="small" circle />
+                                            <el-button type="default" :icon="CopyDocument" size="small" circle />
                                             <template #dropdown>
                                                 <el-dropdown-menu>
                                                     <el-dropdown-item @click="copyWorldId()">
@@ -664,11 +664,8 @@
                             <div class="detail">
                                 <span class="name">
                                     {{ t('dialog.world.info.last_visited') }}
-                                    <el-tooltip
-                                        placement="top"
-                                        style="margin-left: 5px"
-                                        :content="t('dialog.world.info.accuracy_notice')"
-                                        ><el-icon><Warning /></el-icon
+                                    <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')"
+                                        ><el-icon style="margin-left: 3px"><Warning /></el-icon
                                     ></el-tooltip>
                                 </span>
                                 <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
@@ -679,11 +676,8 @@
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.world.info.visit_count') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.world.info.accuracy_notice')"
-                                            ><el-icon><Warning /></el-icon
+                                        <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')"
+                                            ><el-icon style="margin-left: 3px"><Warning /></el-icon
                                         ></el-tooltip>
                                     </span>
                                     <span class="extra">
@@ -696,11 +690,8 @@
                             <div class="detail">
                                 <span class="name"
                                     >{{ t('dialog.world.info.time_spent') }}
-                                    <el-tooltip
-                                        placement="top"
-                                        style="margin-left: 5px"
-                                        :content="t('dialog.world.info.accuracy_notice')">
-                                        <el-icon><Warning /></el-icon>
+                                    <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')">
+                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                     </el-tooltip>
                                 </span>
                                 <span class="extra">
@@ -777,14 +768,13 @@
         Flag,
         Message,
         MagicStick,
-        Tickets,
         Picture,
         Upload,
         Edit,
         Download,
         View,
         DataLine,
-        Sort,
+        CopyDocument,
         Warning,
         Star,
         StarFilled,

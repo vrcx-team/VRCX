@@ -608,11 +608,8 @@
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.group.info.last_visited') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon><Warning /></el-icon>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
@@ -656,7 +653,7 @@
                                         <el-button
                                             type="default"
                                             size="small"
-                                            :icon="Sort"
+                                            :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
                                             @click="copyToClipboard(groupDialog.ref.$url)" /> </el-tooltip
@@ -672,7 +669,7 @@
                                         <el-button
                                             type="default"
                                             size="small"
-                                            :icon="Sort"
+                                            :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
                                             @click="copyToClipboard(groupDialog.id)" /> </el-tooltip
@@ -1193,7 +1190,7 @@
         CircleCheck,
         CircleClose,
         Edit,
-        Sort,
+        CopyDocument,
         Download,
         Operation,
         Loading,

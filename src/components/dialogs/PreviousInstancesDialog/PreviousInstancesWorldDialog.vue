@@ -45,6 +45,7 @@
                         type="text"
                         :icon="DataLine"
                         size="small"
+                        class="button-pd-0"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     <el-button
                         v-if="shiftHeld"
@@ -52,12 +53,14 @@
                         type="text"
                         :icon="Close"
                         size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogWorldInstance(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
                         :icon="Close"
                         size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogWorldInstancePrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>
@@ -171,3 +174,9 @@
         }
     );
 </script>
+
+<style scoped>
+    .button-pd-0 {
+        padding: 0;
+    }
+</style>

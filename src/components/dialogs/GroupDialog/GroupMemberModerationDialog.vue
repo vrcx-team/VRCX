@@ -745,7 +745,7 @@
                     <template #content>
                         <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
                     </template>
-                    <el-icon style="display: inline-block"><Warning /></el-icon>
+                    <el-icon style="margin-left: 3px; display: inline-block"><Warning /></el-icon>
                 </el-tooltip>
                 <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 5px"></span>
             </el-tag>

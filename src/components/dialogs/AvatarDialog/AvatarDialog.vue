@@ -478,7 +478,7 @@
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px">
                                             <el-button
                                                 type="default"
-                                                :icon="Sort"
+                                                :icon="CopyDocument"
                                                 size="small"
                                                 circle
                                                 @click.stop></el-button>
@@ -528,11 +528,8 @@
                             <div class="detail">
                                 <span class="name"
                                     >{{ t('dialog.avatar.info.time_spent')
-                                    }}<el-tooltip
-                                        placement="top"
-                                        style="margin-left: 5px"
-                                        :content="t('dialog.world.info.accuracy_notice')">
-                                        <el-icon><Warning /></el-icon></el-tooltip
+                                    }}<el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')">
+                                        <el-icon style="margin-left: 3px"><Warning /></el-icon></el-tooltip
                                 ></span>
 
                                 <span v-if="timeSpent === 0" class="extra">-</span>
@@ -614,7 +611,7 @@
         Upload,
         Back,
         Right,
-        Sort,
+        CopyDocument,
         Warning
     } from '@element-plus/icons-vue';
 

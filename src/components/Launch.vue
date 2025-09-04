@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isVisible">
+    <div v-if="isVisible" :class="['mr-5', 'inline-block']">
         <el-tooltip placement="top" :content="t('dialog.user.info.launch_invite_tooltip')"
             ><el-button @click="confirm" size="small" :icon="SwitchButton" circle />
         </el-tooltip>
@@ -28,3 +28,12 @@
         launchStore.showLaunchDialog(props.location);
     }
 </script>
+
+<style scoped>
+    .mr-5 {
+        margin-right: 5px;
+    }
+    .inline-block {
+        display: inline-block;
+    }
+</style>

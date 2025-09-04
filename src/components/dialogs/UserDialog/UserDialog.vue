@@ -469,7 +469,7 @@
                                         <el-dropdown-item :icon="UserFilled" command="Show Fallback Avatar Details">{{
                                             t('dialog.user.actions.show_fallback_avatar')
                                         }}</el-dropdown-item>
-                                        <el-dropdown-item :icon="Tickets" command="Previous Instances">{{
+                                        <el-dropdown-item :icon="DataLine" command="Previous Instances">{{
                                             t('dialog.user.actions.show_previous_instances')
                                         }}</el-dropdown-item>
                                         <el-dropdown-item
@@ -842,11 +842,8 @@
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.user.info.last_seen') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon><Warning /></el-icon>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span class="extra">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
@@ -859,9 +856,8 @@
                                             {{ t('dialog.user.info.join_count') }}
                                             <el-tooltip
                                                 placement="top"
-                                                style="margin-left: 5px"
                                                 :content="t('dialog.user.info.accuracy_notice')">
-                                                <el-icon><Warning /></el-icon>
+                                                <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                             </el-tooltip>
                                         </span>
                                         <span v-if="userDialog.joinCount === 0" class="extra">-</span>
@@ -873,11 +869,8 @@
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.user.info.time_together') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon><Warning /></el-icon>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span v-if="userDialog.timeSpent === 0" class="extra">-</span>
@@ -896,9 +889,8 @@
                                             {{ t('dialog.user.info.play_time') }}
                                             <el-tooltip
                                                 placement="top"
-                                                style="margin-left: 5px"
                                                 :content="t('dialog.user.info.accuracy_notice')">
-                                                <el-icon><Warning /></el-icon>
+                                                <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                             </el-tooltip>
                                         </span>
                                         <span v-if="userDialog.timeSpent === 0" class="extra">-</span>
@@ -917,20 +909,14 @@
                                         v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for"
                                         class="name">
                                         {{ t('dialog.user.info.online_for') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon><Warning /></el-icon>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span v-else class="name">
                                         {{ t('dialog.user.info.offline_for') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon><Warning /></el-icon>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span class="extra">{{ userOnlineFor(userDialog) }}</span>
@@ -976,20 +962,14 @@
                                 <div class="detail">
                                     <span v-if="userDialog.unFriended" class="name">
                                         {{ t('dialog.user.info.unfriended') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon><Warning /></el-icon>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span v-else class="name">
                                         {{ t('dialog.user.info.friended') }}
-                                        <el-tooltip
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon><Warning /></el-icon>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
@@ -1056,7 +1036,11 @@
                                     {{ userDialog.id }}
                                     <el-tooltip placement="top" :content="t('dialog.user.info.id_tooltip')">
                                         <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
-                                            <el-button type="default" :icon="Sort" size="small" circle></el-button>
+                                            <el-button
+                                                type="default"
+                                                :icon="CopyDocument"
+                                                size="small"
+                                                circle></el-button>
                                             <template #dropdown>
                                                 <el-dropdown-menu>
                                                     <el-dropdown-item @click="copyUserId(userDialog.id)">{{
@@ -1807,12 +1791,12 @@
         Message,
         Close,
         Plus,
-        Tickets,
+        DataLine,
         CircleCheck,
         CircleClose,
         User,
         Flag,
-        Sort,
+        CopyDocument,
         Setting,
         Download,
         CaretBottom,

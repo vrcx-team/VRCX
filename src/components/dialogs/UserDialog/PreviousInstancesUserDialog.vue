@@ -42,11 +42,13 @@
                         type="text"
                         :icon="SwitchButton"
                         size="small"
+                        class="button-pd-0"
                         @click="showLaunchDialog(scope.row.location)"></el-button>
                     <el-button
                         type="text"
                         :icon="DataLine"
                         size="small"
+                        class="button-pd-0"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     <el-button
                         v-if="shiftHeld"
@@ -54,12 +56,14 @@
                         type="text"
                         :icon="Close"
                         size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogUserInstance(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
                         :icon="Close"
                         size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogUserInstancePrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>
@@ -185,3 +189,9 @@
         });
     }
 </script>
+
+<style scoped>
+    .button-pd-0 {
+        padding: 0;
+    }
+</style>

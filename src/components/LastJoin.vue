@@ -1,6 +1,6 @@
 <template>
-    <span v-if="lastJoin">
-        <el-tooltip placement="top" style="margin-left: 5px">
+    <span v-if="lastJoin" :class="['inline-block', 'ml-5']">
+        <el-tooltip placement="top" class="ml-5">
             <template #content>
                 <span>{{ t('dialog.user.info.last_join') }} <Timer :epoch="lastJoin" /></span>
             </template>
@@ -33,3 +33,12 @@
     watch(() => props.location, parse, { immediate: true });
     watch(() => props.currentlocation, parse);
 </script>
+
+<style scoped>
+    .ml-5 {
+        margin-left: 5px;
+    }
+    .inline-block {
+        display: inline-block;
+    }
+</style>

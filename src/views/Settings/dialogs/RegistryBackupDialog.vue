@@ -36,6 +36,7 @@
                                 type="text"
                                 :icon="Upload"
                                 size="small"
+                                class="button-pd-0"
                                 @click="restoreVrcRegistryBackup(scope.row)"></el-button>
                         </el-tooltip>
                         <el-tooltip placement="top" :content="t('dialog.registry_backup.save_to_file')">
@@ -43,6 +44,7 @@
                                 type="text"
                                 :icon="Download"
                                 size="small"
+                                class="button-pd-0"
                                 @click="saveVrcRegistryBackupToFile(scope.row)"></el-button>
                         </el-tooltip>
                         <el-tooltip placement="top" :content="t('dialog.registry_backup.delete')">
@@ -50,6 +52,7 @@
                                 type="text"
                                 :icon="Delete"
                                 size="small"
+                                class="button-pd-0"
                                 @click="deleteVrcRegistryBackup(scope.row)"></el-button>
                         </el-tooltip>
                     </template>
@@ -277,3 +280,9 @@
         isRegistryBackupDialogVisible.value = false;
     }
 </script>
+
+<style scoped>
+    .button-pd-0 {
+        padding: 0;
+    }
+</style>

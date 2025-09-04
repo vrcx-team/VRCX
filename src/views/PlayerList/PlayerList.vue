@@ -705,7 +705,7 @@
                     <el-table-column
                         :label="t('table.playerList.icon')"
                         prop="isMaster"
-                        width="80"
+                        width="90"
                         align="center"
                         sortable
                         :sort-method="sortInstanceIcon">
@@ -741,7 +741,7 @@
                             <span v-else></span>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="80">
+                    <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="90">
                         <template #default="scope">
                             <template v-if="scope.row.ref.$platform">
                                 <span v-if="scope.row.ref.$platform === 'standalonewindows'" style="color: #409eff"

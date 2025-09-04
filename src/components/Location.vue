@@ -9,7 +9,7 @@
                 <span>{{ text }}</span>
             </span>
             <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
-            <span v-if="region" :class="['flags', 'inline-block', 'mr-5', region]"></span>
+            <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
             <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
         </span>
     </div>
