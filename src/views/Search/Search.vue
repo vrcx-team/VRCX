@@ -151,9 +151,9 @@
                                         v-for="provider in avatarRemoteDatabaseProviderList"
                                         :key="provider"
                                         @click="setAvatarProvider(provider)">
-                                        <i
-                                            v-if="provider === avatarRemoteDatabaseProvider"
-                                            class="el-icon-check el-icon--left"></i>
+                                        <el-icon v-if="provider === avatarRemoteDatabaseProvider" class="el-icon--left"
+                                            ><Check
+                                        /></el-icon>
                                         {{ provider }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
@@ -315,7 +315,7 @@
 </template>
 
 <script setup>
-    import { Delete, Back, Right, Refresh, ArrowDown } from '@element-plus/icons-vue';
+    import { Delete, Back, Right, Refresh, ArrowDown, Check } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -30,13 +30,14 @@
                                 line-clamp: 1;
                             "
                             @click="showWorldDialog(currentInstanceWorld.ref.id)">
-                            <i
-                                v-show="
+                            <el-icon
+                                v-if="
                                     currentUser.$homeLocation &&
                                     currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id
                                 "
-                                class="el-icon-s-home"
-                                style="margin-right: 5px"></i>
+                                style="margin-right: 5px"
+                                ><HomeFilled
+                            /></el-icon>
                             {{ currentInstanceWorld.ref.name }}
                         </span>
                     </div>
@@ -720,20 +721,20 @@
                                 <span>💚</span>
                             </el-tooltip>
                             <el-tooltip v-else-if="scope.row.isBlocked" placement="left" content="Blocked">
-                                <i class="el-icon el-icon-circle-close" style="color: red"></i>
+                                <el-icon style="color: red"><CircleClose /></el-icon>
                             </el-tooltip>
                             <el-tooltip v-else-if="scope.row.isMuted" placement="left" content="Muted">
-                                <i class="el-icon el-icon-turn-off-microphone" style="color: orange"></i>
+                                <el-icon style="color: orange"><Mute /></el-icon>
                             </el-tooltip>
                             <el-tooltip
                                 v-else-if="scope.row.isAvatarInteractionDisabled"
                                 placement="left"
                                 content="Avatar Interaction Disabled
                                     ">
-                                <i class="el-icon el-icon-thumb" style="color: orange"></i>
+                                <el-icon style="color: orange"><Pointer /></el-icon>
                             </el-tooltip>
                             <el-tooltip v-else-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
-                                <i class="el-icon el-icon-chat-line-round" style="color: orange"></i>
+                                <el-icon style="color: orange"><ChatLineRound /></el-icon>
                             </el-tooltip>
                             <el-tooltip v-else-if="scope.row.timeoutTime" placement="left" content="Timeout">
                                 <span style="color: red">🔴{{ scope.row.timeoutTime }}s</span>
@@ -855,7 +856,16 @@
 </template>
 
 <script setup>
-    import { Mute, Microphone, Download, ArrowRight } from '@element-plus/icons-vue';
+    import {
+        Mute,
+        Microphone,
+        Download,
+        ArrowRight,
+        HomeFilled,
+        CircleClose,
+        Pointer,
+        ChatLineRound
+    } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -80,9 +80,11 @@
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">
-                                    <i
+                                    <el-icon
                                         class="el-icon-arrow-right"
-                                        :class="{ rotate: !groupCollapsed[group.groupId] }"></i>
+                                        :class="{ rotate: !groupCollapsed[group.groupId] }"
+                                        ><ArrowRight
+                                    /></el-icon>
                                     {{ group.groupName }}
                                 </div>
                                 <div class="events-row" v-show="!groupCollapsed[group.groupId]">
@@ -107,6 +109,7 @@
 </template>
 
 <script setup>
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { ref, watch, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';

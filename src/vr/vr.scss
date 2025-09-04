@@ -20,6 +20,10 @@
     손등 18px -> 나나 24
 */
 
+.el-icon.is-loading {
+    animation: rotating 2s linear infinite;
+}
+
 body {
     margin: 0;
 }

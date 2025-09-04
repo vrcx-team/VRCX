@@ -17,10 +17,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <i
-                                            v-if="feed.isTraveling"
-                                            class="el-icon-loading"
-                                            style="margin-right: 5px"></i>
+                                        <el-icon v-if="feed.isTraveling" style="margin-right: 5px"><Loading /></el-icon>
                                         <span class="name" v-text="feed.displayName"></span>
                                         <VrLocation
                                             :location="feed.location"
@@ -249,7 +246,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         📃 <span class="name" v-text="feed.previousDisplayName"></span>
-                                        <i class="el-icon-right"></i>
+                                        <el-icon><Right /></el-icon>
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -262,7 +259,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         🤝 <span class="name" v-text="feed.displayName"></span>
-                                        {{ feed.previousTrustLevel }} <i class="el-icon-right"></i>
+                                        {{ feed.previousTrustLevel }} <el-icon><Right /></el-icon>
                                         {{ feed.trustLevel }}
                                     </span>
                                 </div>
@@ -1288,7 +1285,7 @@
                                     :class="statusClass(feed.previousStatus)"
                                     style="margin-left: 10px; width: 20px; height: 20px"></i>
                                 <span>
-                                    <i class="el-icon-right"></i>
+                                    <el-icon><Right /></el-icon>
                                 </span>
                                 <i
                                     class="x-user-status"
@@ -1373,7 +1370,7 @@
 </template>
 
 <script setup>
-    import { ArrowRight, Download } from '@element-plus/icons-vue';
+    import { ArrowRight, Download, Loading, Right } from '@element-plus/icons-vue';
     import '@fontsource/noto-sans-kr';
     import '@fontsource/noto-sans-jp';
     import '@fontsource/noto-sans-sc';
