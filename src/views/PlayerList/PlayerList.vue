@@ -27,7 +27,7 @@
                                 text-overflow: ellipsis;
                                 display: -webkit-box;
                                 -webkit-box-orient: vertical;
-                                -webkit-line-clamp: 1;
+                                line-clamp: 1;
                             "
                             @click="showWorldDialog(currentInstanceWorld.ref.id)">
                             <i
@@ -713,31 +713,32 @@
                             <el-tooltip v-if="scope.row.isMaster" placement="left" content="Instance Master">
                                 <span>👑</span>
                             </el-tooltip>
-                            <el-tooltip v-if="scope.row.isModerator" placement="left" content="Moderator">
+                            <el-tooltip v-else-if="scope.row.isModerator" placement="left" content="Moderator">
                                 <span>⚔️</span>
                             </el-tooltip>
-                            <el-tooltip v-if="scope.row.isFriend" placement="left" content="Friend">
+                            <el-tooltip v-else-if="scope.row.isFriend" placement="left" content="Friend">
                                 <span>💚</span>
                             </el-tooltip>
-                            <el-tooltip v-if="scope.row.isBlocked" placement="left" content="Blocked">
+                            <el-tooltip v-else-if="scope.row.isBlocked" placement="left" content="Blocked">
                                 <i class="el-icon el-icon-circle-close" style="color: red"></i>
                             </el-tooltip>
-                            <el-tooltip v-if="scope.row.isMuted" placement="left" content="Muted">
+                            <el-tooltip v-else-if="scope.row.isMuted" placement="left" content="Muted">
                                 <i class="el-icon el-icon-turn-off-microphone" style="color: orange"></i>
                             </el-tooltip>
                             <el-tooltip
-                                v-if="scope.row.isAvatarInteractionDisabled"
+                                v-else-if="scope.row.isAvatarInteractionDisabled"
                                 placement="left"
                                 content="Avatar Interaction Disabled
                                     ">
                                 <i class="el-icon el-icon-thumb" style="color: orange"></i>
                             </el-tooltip>
-                            <el-tooltip v-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
+                            <el-tooltip v-else-if="scope.row.isChatBoxMuted" placement="left" content="Chatbox Muted">
                                 <i class="el-icon el-icon-chat-line-round" style="color: orange"></i>
                             </el-tooltip>
-                            <el-tooltip v-if="scope.row.timeoutTime" placement="left" content="Timeout">
+                            <el-tooltip v-else-if="scope.row.timeoutTime" placement="left" content="Timeout">
                                 <span style="color: red">🔴{{ scope.row.timeoutTime }}s</span>
                             </el-tooltip>
+                            <span v-else></span>
                         </template>
                     </el-table-column>
                     <el-table-column :label="t('table.playerList.platform')" prop="inVRMode" width="80">
@@ -819,7 +820,7 @@
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
                                 <el-tooltip
-                                    v-for="(link, index) in scope.row.ref.bioLinks.filter(Boolean)"
+                                    v-for="(link, index) in scope.row.ref.bioLinks?.filter(Boolean)"
                                     :key="index">
                                     <template #content>
                                         <span v-text="link"></span>
