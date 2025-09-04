@@ -77,7 +77,7 @@
                     style="margin-bottom: 15px"
                     @command="(row) => searchWorld(row)">
                     <el-button size="small"
-                        >{{ t('view.search.world.category') }} <i class="el-icon-arrow-down el-icon--right"></i
+                        >{{ t('view.search.world.category') }} <el-icon class="el-icon--right"><ArrowDown /></el-icon
                     ></el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
@@ -143,7 +143,7 @@
                             @click.stop>
                             <el-button size="small"
                                 >{{ t('view.search.avatar.search_provider') }}
-                                <i class="el-icon-arrow-down el-icon--right"></i
+                                <el-icon class="el-icon--right"><ArrowDown /></el-icon
                             ></el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
@@ -315,7 +315,7 @@
 </template>
 
 <script setup>
-    import { Delete, Back, Right, Refresh } from '@element-plus/icons-vue';
+    import { Delete, Back, Right, Refresh, ArrowDown } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';

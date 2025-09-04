@@ -11,9 +11,11 @@
                     {{ friendExportFavoriteGroup.displayName }} ({{ friendExportFavoriteGroup.count }}/{{
                         friendExportFavoriteGroup.capacity
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
-                <span v-else>All Favorites <i class="el-icon-arrow-down el-icon--right"></i></span>
+                <span v-else
+                    >All Favorites <el-icon class="el-icon--right"><ArrowDown /></el-icon
+                ></span>
             </el-button>
             <template #dropdown>
                 <el-dropdown-menu>
@@ -44,6 +46,7 @@
 </template>
 
 <script setup>
+    import { ArrowDown } from '@element-plus/icons-vue';
     import { ref, computed, watch } from 'vue';
     import { ElMessage } from 'element-plus';
 

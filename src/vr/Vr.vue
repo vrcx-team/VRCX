@@ -68,7 +68,7 @@
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
-                                            <i class="el-icon-right"></i>
+                                            <el-icon><ArrowRight /></el-icon>
                                             <i class="x-user-status" :class="statusClass(feed.status)"></i>
                                         </template>
                                         <template v-else>
@@ -628,7 +628,7 @@
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
-                                            <i class="el-icon-right"></i>
+                                            <el-icon><ArrowRight /></el-icon>
                                             <i class="x-user-status" :class="statusClass(feed.status)"></i>
                                         </template>
                                         <template v-else>
@@ -1266,7 +1266,7 @@
                         <template v-if="feed.type === 'ChangeAvatar'">
                             <span style="margin-left: 10px; color: #a3a3a3">ChangeAvatar</span>
                             <span v-if="!feed.inCache" style="color: #aaa; margin-left: 10px"
-                                ><i class="el-icon-download"></i
+                                ><el-icon><Download /></el-icon
                             ></span>
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
                             <span
@@ -1330,7 +1330,7 @@
                                 >iOS</span
                             >
                             <span v-if="!feed.inCache" style="color: #aaa; margin-left: 10px"
-                                ><i class="el-icon-download"></i
+                                ><el-icon><Download /></el-icon
                             ></span>
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
                         </template>
@@ -1373,6 +1373,7 @@
 </template>
 
 <script setup>
+    import { ArrowRight, Download } from '@element-plus/icons-vue';
     import '@fontsource/noto-sans-kr';
     import '@fontsource/noto-sans-jp';
     import '@fontsource/noto-sans-sc';

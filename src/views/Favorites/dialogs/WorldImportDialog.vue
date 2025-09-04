@@ -11,7 +11,7 @@
                 <div v-if="worldImportDialog.progress">
                     {{ t('dialog.world_import.process_progress') }}
                     {{ worldImportDialog.progress }} / {{ worldImportDialog.progressTotal }}
-                    <i class="el-icon-loading" style="margin: 0 5px"></i>
+                    <el-icon style="margin: 0 5px"><Loading /></el-icon>
                 </div>
                 <el-button v-if="worldImportDialog.loading" size="small" @click="cancelWorldImport">
                     {{ t('dialog.world_import.cancel') }}
@@ -37,11 +37,11 @@
                             ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{
                                 worldImportDialog.worldImportFavoriteGroup.capacity
                             }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.world_import.select_vrchat_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
                     <template #dropdown>
@@ -62,11 +62,11 @@
                         <span v-if="worldImportDialog.worldImportLocalFavoriteGroup">
                             {{ worldImportDialog.worldImportLocalFavoriteGroup }}
                             ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.world_import.select_local_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
                     <template #dropdown>
@@ -108,7 +108,7 @@
             </div>
         </div>
         <span v-if="worldImportDialog.importProgress" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.world_import.import_progress') }}
             {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
         </span>
@@ -172,7 +172,7 @@
 </template>
 
 <script setup>
-    import { Close } from '@element-plus/icons-vue';
+    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
 
     import { ref, watch, computed } from 'vue';

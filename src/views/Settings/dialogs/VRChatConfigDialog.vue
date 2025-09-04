@@ -79,7 +79,7 @@
                     <el-button size="small">
                         <span>
                             <span v-text="getVRChatCameraResolution()"></span>
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
                     <template #dropdown>
@@ -104,7 +104,7 @@
                     <el-button size="small">
                         <span>
                             <span v-text="getVRChatSpoutResolution()"></span>
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
                     <template #dropdown>
@@ -132,7 +132,7 @@
                     <el-button size="small">
                         <span>
                             <span v-text="getVRChatScreenshotResolution()"></span>
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
                     <template #dropdown>
@@ -184,7 +184,7 @@
 
 <script setup>
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { Refresh, Delete, FolderOpened, FolderDelete } from '@element-plus/icons-vue';
+    import { Refresh, Delete, FolderOpened, FolderDelete, ArrowDown } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

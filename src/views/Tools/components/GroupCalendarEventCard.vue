@@ -45,12 +45,13 @@
             </div>
         </div>
         <div v-if="isFollowing" class="following-badge">
-            <i class="el-icon-check"></i>
+            <el-icon><Check /></el-icon>
         </div>
     </el-card>
 </template>
 
 <script setup>
+    import { Check } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';

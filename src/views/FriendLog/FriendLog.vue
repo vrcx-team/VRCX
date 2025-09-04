@@ -49,7 +49,7 @@
             <el-table-column :label="t('table.friendLog.user')" prop="displayName">
                 <template #default="scope">
                     <span v-if="scope.row.type === 'DisplayName'">
-                        {{ scope.row.previousDisplayName }} <i class="el-icon-right"></i>&nbsp;
+                        {{ scope.row.previousDisplayName }} <el-icon><ArrowRight /></el-icon>&nbsp;
                     </span>
                     <span
                         class="x-link"
@@ -58,7 +58,7 @@
                         v-text="scope.row.displayName || scope.row.userId"></span>
                     <template v-if="scope.row.type === 'TrustLevel'">
                         <span>
-                            ({{ scope.row.previousTrustLevel }} <i class="el-icon-right"></i>
+                            ({{ scope.row.previousTrustLevel }} <el-icon><ArrowRight /></el-icon>
                             {{ scope.row.trustLevel }})</span
                         >
                     </template>
@@ -88,7 +88,7 @@
 
 <script setup>
     import { ElMessageBox } from 'element-plus';
-    import { Close, Delete } from '@element-plus/icons-vue';
+    import { Close, Delete, ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { watch } from 'vue';
     import { useI18n } from 'vue-i18n';

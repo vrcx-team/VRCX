@@ -70,7 +70,7 @@
                     </el-tooltip>
                     <el-tooltip :content="t('view.charts.instance_activity.next_day')" placement="top">
                         <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
-                            ><i class="el-icon-arrow-right el-icon--right"></i
+                            ><el-icon class="el-icon--right"><ArrowRight /></el-icon
                         ></el-button>
                     </el-tooltip>
                 </el-button-group>
@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-    import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft } from '@element-plus/icons-vue';
+    import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
     import { ref, onActivated, onDeactivated, watch, computed, onMounted, nextTick, onBeforeMount } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';

@@ -6,7 +6,7 @@
                 <div v-if="avatarImportDialog.progress">
                     {{ t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }} /
                     {{ avatarImportDialog.progressTotal }}
-                    <i class="el-icon-loading" style="margin: 0 5px"></i>
+                    <el-icon style="margin: 0 5px"><Loading /></el-icon>
                 </div>
                 <el-button v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport">
                     {{ t('dialog.avatar_import.cancel') }}
@@ -31,11 +31,11 @@
                             {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{
                                 avatarImportDialog.avatarImportFavoriteGroup.count
                             }}/{{ avatarImportDialog.avatarImportFavoriteGroup.capacity }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.avatar_import.select_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
                     <template #dropdown>
@@ -57,11 +57,11 @@
                             {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{
                                 getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup)
                             }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.avatar_import.select_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
                     <template #dropdown>
@@ -103,7 +103,7 @@
             </div>
         </div>
         <span v-if="avatarImportDialog.importProgress" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.avatar_import.import_progress') }}
             {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
         </span>
@@ -172,7 +172,7 @@
 </template>
 
 <script setup>
-    import { Close } from '@element-plus/icons-vue';
+    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
 
     import { ref, computed, watch } from 'vue';

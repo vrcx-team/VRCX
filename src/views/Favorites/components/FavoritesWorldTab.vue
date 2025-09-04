@@ -146,7 +146,7 @@
             >{{ t('view.favorite.worlds.refresh') }}</el-button
         >
         <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
-            <i class="el-icon-loading" style="margin-right: 5px" />
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             <span>{{ t('view.favorite.worlds.cancel_refresh') }}</span>
         </el-button>
         <el-collapse style="border: 0">
@@ -203,7 +203,7 @@
 </template>
 
 <script setup>
-    import { View, Edit, Delete } from '@element-plus/icons-vue';
+    import { View, Edit, Delete, Loading } from '@element-plus/icons-vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';

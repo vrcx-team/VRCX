@@ -6,7 +6,7 @@
                 <div v-if="friendImportDialog.progress">
                     {{ t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }} /
                     {{ friendImportDialog.progressTotal }}
-                    <i class="el-icon-loading" style="margin: 0 5px"></i>
+                    <el-icon style="margin: 0 5px"><Loading /></el-icon>
                 </div>
                 <el-button v-if="friendImportDialog.loading" size="small" @click="cancelFriendImport">
                     {{ t('dialog.friend_import.cancel') }}
@@ -31,11 +31,11 @@
                             {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{
                                 friendImportDialog.friendImportFavoriteGroup.count
                             }}/{{ friendImportDialog.friendImportFavoriteGroup.capacity }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else
                             >{{ t('dialog.friend_import.select_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon
                         ></span>
                     </el-button>
                     <template #dropdown>
@@ -74,7 +74,7 @@
             </div>
         </div>
         <span v-if="friendImportDialog.importProgress" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{
                 friendImportDialog.importProgressTotal
             }}
@@ -119,7 +119,7 @@
 </template>
 
 <script setup>
-    import { Close } from '@element-plus/icons-vue';
+    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
 
     import { ref, computed, watch } from 'vue';

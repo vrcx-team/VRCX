@@ -317,7 +317,7 @@
                             <el-button size="small">
                                 <span
                                     >{{ messages[appLanguage]?.language }}
-                                    <i class="el-icon-arrow-down el-icon--right"></i
+                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
                                 ></span>
                             </el-button>
                             <template #dropdown>
@@ -337,7 +337,7 @@
                             <el-button size="small">
                                 <span
                                     >{{ t(`view.settings.appearance.appearance.theme_mode_${themeMode}`) }}
-                                    <i class="el-icon-arrow-down el-icon--right"></i
+                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
                                 ></span>
                             </el-button>
                             <template #dropdown>
@@ -416,7 +416,7 @@
                             <el-button size="small">
                                 <span
                                     >{{ t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }}
-                                    <i class="el-icon-arrow-down el-icon--right"></i
+                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
                                 ></span>
                             </el-button>
                             <template #dropdown>
@@ -1407,7 +1407,7 @@
                         placement="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <i class="el-icon-info" />
+                        <el-icon><InfoFilled /></el-icon>
                     </el-tooltip>
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
@@ -1893,7 +1893,6 @@
         User,
         Tickets,
         Refresh,
-        ArrowDown,
         Operation,
         Goods,
         Document,
@@ -1908,7 +1907,8 @@
         Rank,
         VideoPlay,
         Files,
-        Paperclip
+        Paperclip,
+        ArrowDown
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';

@@ -26,7 +26,7 @@
             {{ t('dialog.note_export.cancel') }}
         </el-button>
         <span v-if="loading" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
         </span>
 
@@ -91,7 +91,7 @@
 </template>
 
 <script setup>
-    import { Close } from '@element-plus/icons-vue';
+    import { Close, Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

@@ -15,11 +15,11 @@
                     {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{
                         worldExportFavoriteGroup.capacity
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
                 <span v-else>
                     All Favorites
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
             </el-button>
             <template #dropdown>
@@ -44,11 +44,11 @@
                     {{ worldExportLocalFavoriteGroup }} ({{
                         getLocalWorldFavoriteGroupLength(worldExportLocalFavoriteGroup)
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
                 <span v-else>
                     Select Group
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
             </el-button>
             <template #dropdown>
@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+    import { ArrowDown } from '@element-plus/icons-vue';
     import { ref, computed, watch } from 'vue';
     import { ElMessage } from 'element-plus';
 

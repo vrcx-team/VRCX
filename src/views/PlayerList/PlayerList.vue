@@ -272,7 +272,7 @@
                                             v-text="scope.row.avatar.name"></span>
                                         &nbsp;
                                         <span v-if="!scope.row.inCache" style="color: #aaa"
-                                            ><i class="el-icon-download"></i>&nbsp;</span
+                                            ><el-icon><Download /></el-icon>&nbsp;</span
                                         >
                                         <span
                                             v-if="scope.row.avatar.releaseStatus === 'public'"
@@ -315,7 +315,7 @@
                                                     :class="statusClass(scope.row.previousStatus)"></i>
                                             </el-tooltip>
                                             <span>
-                                                <i class="el-icon-right"></i>
+                                                <el-icon><ArrowRight /></el-icon>
                                             </span>
                                             <el-tooltip placement="top">
                                                 <template #content>
@@ -357,7 +357,7 @@
                                             @click="showGroupDialog(scope.row.previousGroupId)"
                                             v-text="scope.row.previousGroupId"></span>
                                         <span>
-                                            <i class="el-icon-right"></i>
+                                            <el-icon><ArrowRight /></el-icon>
                                         </span>
                                         <span
                                             v-if="scope.row.groupName"
@@ -401,7 +401,7 @@
                                             v-text="scope.row.avatar.name"></span>
                                         &nbsp;
                                         <span v-if="!scope.row.inCache" style="color: #aaa"
-                                            ><i class="el-icon-download"></i>&nbsp;</span
+                                            ><el-icon><Download /></el-icon>&nbsp;</span
                                         >
                                         <span
                                             v-if="scope.row.avatar.releaseStatus === 'public'"
@@ -473,7 +473,7 @@
                                             v-text="scope.row.avatar.name"></span>
                                         &nbsp;
                                         <span v-if="!scope.row.inCache" style="color: #aaa"
-                                            ><i class="el-icon-download"></i>&nbsp;</span
+                                            ><el-icon><Download /></el-icon>&nbsp;</span
                                         >
                                         <span
                                             v-if="scope.row.avatar.releaseStatus === 'public'"
@@ -516,7 +516,7 @@
                                                     :class="statusClass(scope.row.previousStatus)"></i>
                                             </el-tooltip>
                                             <span>
-                                                <i class="el-icon-right"></i>
+                                                <el-icon><ArrowRight /></el-icon>
                                             </span>
                                             <el-tooltip placement="top">
                                                 <template #content>
@@ -558,7 +558,7 @@
                                             @click="showGroupDialog(scope.row.previousGroupId)"
                                             v-text="scope.row.previousGroupId"></span>
                                         <span>
-                                            <i class="el-icon-right"></i>
+                                            <el-icon><ArrowRight /></el-icon>
                                         </span>
                                         <span
                                             v-if="scope.row.groupName"
@@ -602,7 +602,7 @@
                                             v-text="scope.row.avatar.name"></span>
                                         &nbsp;
                                         <span v-if="!scope.row.inCache" style="color: #aaa"
-                                            ><i class="el-icon-download"></i>&nbsp;</span
+                                            ><el-icon><Download /></el-icon>&nbsp;</span
                                         >
                                         <span
                                             v-if="scope.row.avatar.releaseStatus === 'public'"
@@ -854,7 +854,7 @@
 </template>
 
 <script setup>
-    import { Mute, Microphone } from '@element-plus/icons-vue';
+    import { Mute, Microphone, Download, ArrowRight } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
