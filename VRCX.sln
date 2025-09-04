@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VRCX-Electron", "Dotnet\VRC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBMerger", "DBMerger\DBMerger.csproj", "{9BE1DD2F-CABC-4CF9-A53E-C62923760887}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRCX-Electron-arm64", "Dotnet\VRCX-Electron-arm64.csproj", "{F7207BF2-5BFF-4E47-9D1C-C662F5A28271}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -28,6 +30,10 @@ Global
 		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Debug|x64.Build.0 = Debug|x64
 		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.ActiveCfg = Release|x64
 		{9BE1DD2F-CABC-4CF9-A53E-C62923760887}.Release|x64.Build.0 = Release|x64
+		{F7207BF2-5BFF-4E47-9D1C-C662F5A28271}.Debug|x64.ActiveCfg = Debug|x64
+		{F7207BF2-5BFF-4E47-9D1C-C662F5A28271}.Debug|x64.Build.0 = Debug|x64
+		{F7207BF2-5BFF-4E47-9D1C-C662F5A28271}.Release|x64.ActiveCfg = Release|x64
+		{F7207BF2-5BFF-4E47-9D1C-C662F5A28271}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

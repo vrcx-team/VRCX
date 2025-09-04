@@ -8,7 +8,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>x64;ARM64</Platforms>
+    <Platforms>ARM64</Platforms>
+    <PlatformTarget>ARM64</PlatformTarget>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <AssemblyTitle>VRCX</AssemblyTitle>
@@ -33,15 +34,9 @@
   <PropertyGroup>
     <DefineConstants>LINUX</DefineConstants>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
+    
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebugType>pdbonly</DebugType>
