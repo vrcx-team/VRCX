@@ -54,14 +54,14 @@
                 >
                 <el-button
                     size="small"
-                    icon="el-icon-chat-dot-round"
+                    :icon="ChatDotRound"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
                     @click="showDiscordNamesDialog()"
                     >{{ t('view.profile.profile.discord_names') }}</el-button
                 >
                 <el-button
                     size="small"
-                    icon="el-icon-printer"
+                    :icon="Printer"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
                     @click="showExportFriendsListDialog()"
                     >{{ t('view.profile.profile.export_friend_list') }}</el-button
@@ -493,7 +493,7 @@
 <script setup>
     import { ElMessage, ElMessageBox } from 'element-plus';
 
-    import { SwitchButton, Picture, User, Refresh, Delete, Edit } from '@element-plus/icons-vue';
+    import { SwitchButton, Picture, User, Refresh, Delete, Edit, ChatDotRound, Printer } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';

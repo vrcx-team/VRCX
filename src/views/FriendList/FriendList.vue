@@ -33,7 +33,7 @@
                         <el-tooltip placement="top" :content="t('view.friend_list.load_tooltip')">
                             <el-button
                                 size="small"
-                                icon="el-icon-refresh-left"
+                                :icon="RefreshLeft"
                                 circle
                                 style="margin-left: 5px"
                                 @click="friendsListLoadUsers"></el-button>
@@ -257,7 +257,7 @@
 
 <script setup>
     import { ElMessageBox } from 'element-plus';
-    import { Loading, Refresh, Close } from '@element-plus/icons-vue';
+    import { Loading, Refresh, Close, RefreshLeft } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';

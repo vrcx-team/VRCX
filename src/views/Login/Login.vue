@@ -14,7 +14,7 @@
                     <el-button
                         type="default"
                         size="small"
-                        icon="el-icon-connection"
+                        :icon="Connection"
                         style="margin-left: 5px"
                         circle
                         @click="promptProxySettings"></el-button>
@@ -150,7 +150,7 @@
 </template>
 
 <script setup>
-    import { Download, Delete } from '@element-plus/icons-vue';
+    import { Download, Delete, Connection } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { onBeforeUnmount, ref } from 'vue';
     import { useI18n } from 'vue-i18n';

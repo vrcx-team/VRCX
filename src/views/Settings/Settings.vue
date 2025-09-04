@@ -47,7 +47,7 @@
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.general.vrcx_updater.header') }}</span>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-document" @click="showChangeLogDialog">{{
+                        <el-button size="small" :icon="Document" @click="showChangeLogDialog">{{
                             t('view.settings.general.vrcx_updater.change_log')
                         }}</el-button>
                         <el-button size="small" :icon="Upload" @click="showVRCXUpdateDialog()">{{
@@ -110,7 +110,7 @@
                         :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
                         @change="setDisableVrOverlayGpuAcceleration" />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-connection" @click="promptProxySettings">{{
+                        <el-button size="small" :icon="Connection" @click="promptProxySettings">{{
                             t('view.settings.general.application.proxy')
                         }}</el-button>
                     </div>
@@ -407,7 +407,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-notebook-1"
+                            :icon="Notebook"
                             style="margin-right: 10px"
                             @click="promptMaxTableSizeDialog"
                             >{{ t('view.settings.appearance.appearance.table_max_size') }}</el-button
@@ -635,7 +635,7 @@
                         <br />
                         <el-button
                             size="small"
-                            icon="el-icon-document-copy"
+                            :icon="DocumentCopy"
                             style="margin-top: 5px"
                             @click="showNoteExportDialog"
                             >{{ t('view.settings.appearance.user_dialog.export_notes') }}</el-button
@@ -746,7 +746,7 @@
                 <div class="options-container" style="margin-top: 0">
                     <span class="header">{{ t('view.settings.notifications.notifications.header') }}</span>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog">{{
+                        <el-button size="small" :icon="ChatSquare" @click="showNotyFeedFiltersDialog">{{
                             t('view.settings.notifications.notifications.notification_filter')
                         }}</el-button>
                     </div>
@@ -814,7 +814,7 @@
                         <div class="options-container-item">
                             <el-button
                                 size="small"
-                                icon="el-icon-rank"
+                                :icon="Rank"
                                 :disabled="!overlayNotifications || !openVR"
                                 @click="showNotificationPositionDialog"
                                 >{{
@@ -842,7 +842,7 @@
                         <div class="options-container-item">
                             <el-button
                                 size="small"
-                                icon="el-icon-time"
+                                :icon="Timer"
                                 :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
                                 @click="promptNotificationTimeout"
                                 >{{
@@ -1040,7 +1040,7 @@
                             style="width: 175px; display: inline-block"></el-input>
                         <el-button
                             size="small"
-                            icon="el-icon-video-play"
+                            :icon="VideoPlay"
                             style="margin-left: 10px"
                             @click="testNotificationTTS"
                             >{{ t('view.settings.notifications.notifications.text_to_speech.play') }}</el-button
@@ -1057,7 +1057,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-notebook-2"
+                            :icon="Files"
                             :disabled="!openVR || !overlayWrist"
                             @click="showWristFeedFiltersDialog"
                             >{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}</el-button
@@ -1288,7 +1288,7 @@
                     <span class="header">{{ t('view.settings.category.pictures') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group
-                            ><el-button size="small" icon="el-icon-picture" @click="showScreenshotMetadataDialog()">{{
+                            ><el-button size="small" :icon="Picture" @click="showScreenshotMetadataDialog()">{{
                                 t('view.settings.advanced.advanced.screenshot_metadata')
                             }}</el-button>
                         </el-button-group>
@@ -1566,7 +1566,7 @@
                         :long-label="true"
                         @change="changeYouTubeApi('VRCX_youtubeAPI')" />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog">{{
+                        <el-button size="small" :icon="CaretRight" @click="showYouTubeApiDialog">{{
                             t('view.settings.advanced.advanced.youtube_api.youtube_api_key')
                         }}</el-button>
                     </div>
@@ -1608,7 +1608,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-paperclip"
+                            :icon="Paperclip"
                             @click="
                                 openExternalLink('https://github.com/vrcx-team/VRCX/wiki/Launch-parameters-&-VRCX.json')
                             "
@@ -1616,7 +1616,7 @@
                         >
                         <el-button
                             size="small"
-                            icon="el-icon-paperclip"
+                            :icon="Paperclip"
                             @click="openExternalLink('https://github.com/Myrkie/open-in-vrcx')"
                             >{{ t('view.settings.advanced.advanced.launch_commands.website_userscript') }}</el-button
                         >
@@ -1658,7 +1658,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-time"
+                            :icon="Timer"
                             :disabled="!openVR"
                             @click="promptPhotonOverlayMessageTimeout"
                             >{{ t('view.settings.advanced.photon.event_hud.message_timeout') }}</el-button
@@ -1715,7 +1715,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-time"
+                            :icon="Timer"
                             :disabled="!openVR"
                             @click="promptPhotonLobbyTimeoutThreshold"
                             >{{ t('view.settings.advanced.photon.timeout_hud.timeout_threshold') }}</el-button
@@ -1727,10 +1727,10 @@
                     <span class="header">{{ t('view.settings.advanced.advanced.cache_debug.header') }}</span>
                     <br />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-delete-solid" @click="clearVRCXCache">{{
+                        <el-button size="small" :icon="DeleteFilled" @click="clearVRCXCache">{{
                             t('view.settings.advanced.advanced.cache_debug.clear_cache')
                         }}</el-button>
-                        <el-button size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency">{{
+                        <el-button size="small" :icon="Timer" @click="promptAutoClearVRCXCacheFrequency">{{
                             t('view.settings.advanced.advanced.cache_debug.auto_clear_cache')
                         }}</el-button>
                     </div>
@@ -1895,7 +1895,20 @@
         Refresh,
         ArrowDown,
         Operation,
-        Goods
+        Goods,
+        Document,
+        Connection,
+        ChatSquare,
+        Picture,
+        CaretRight,
+        DeleteFilled,
+        Timer,
+        Notebook,
+        DocumentCopy,
+        Rank,
+        VideoPlay,
+        Files,
+        Paperclip
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';

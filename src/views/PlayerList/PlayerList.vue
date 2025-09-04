@@ -4,14 +4,18 @@
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
                 <el-popover placement="right" width="500px" trigger="click" style="height: 120px">
                     <template #reference>
-                        <img :src="currentInstanceWorld.ref.thumbnailImageUrl"
+                        <img
+                            :src="currentInstanceWorld.ref.thumbnailImageUrl"
                             class="x-link"
-                            style="flex: none; width: 160px; height: 120px; border-radius: 4px" loading="lazy">
+                            style="flex: none; width: 160px; height: 120px; border-radius: 4px"
+                            loading="lazy" />
                     </template>
-                    <img :src="currentInstanceWorld.ref.imageUrl"
+                    <img
+                        :src="currentInstanceWorld.ref.imageUrl"
                         class="x-link"
                         style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)" loading="lazy">
+                        @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
+                        loading="lazy" />
                 </el-popover>
                 <div style="margin-left: 10px; display: flex; flex-direction: column; min-width: 320px; width: 100%">
                     <div>
@@ -218,10 +222,7 @@
                     <el-button style="margin-left: 10px" @click="showChatboxBlacklistDialog">{{
                         t('view.player_list.photon.chatbox_blacklist')
                     }}</el-button>
-                    <el-tooltip
-                        placement="bottom"
-                        :content="t('view.player_list.photon.status_tooltip')"
-                        >
+                    <el-tooltip placement="bottom" :content="t('view.player_list.photon.status_tooltip')">
                         <div
                             style="
                                 display: inline-block;
@@ -417,10 +418,12 @@
                                         <span v-if="scope.row.imageUrl">
                                             <el-tooltip placement="right">
                                                 <template #content>
-                                                    <img :src="scope.row.imageUrl"
+                                                    <img
+                                                        :src="scope.row.imageUrl"
                                                         class="friends-list-avatar"
                                                         style="height: 500px; cursor: pointer"
-                                                        @click="showFullscreenImageDialog(scope.row.imageUrl)" loading="lazy">
+                                                        @click="showFullscreenImageDialog(scope.row.imageUrl)"
+                                                        loading="lazy" />
                                                 </template>
                                                 <span v-text="scope.row.fileId"></span>
                                             </el-tooltip>
@@ -616,10 +619,12 @@
                                         <span v-if="scope.row.imageUrl">
                                             <el-tooltip placement="right">
                                                 <template #content>
-                                                    <img :src="scope.row.imageUrl"
+                                                    <img
+                                                        :src="scope.row.imageUrl"
                                                         class="friends-list-avatar"
                                                         style="height: 500px; cursor: pointer"
-                                                        @click="showFullscreenImageDialog(scope.row.imageUrl)" loading="lazy">
+                                                        @click="showFullscreenImageDialog(scope.row.imageUrl)"
+                                                        loading="lazy" />
                                                 </template>
                                                 <span v-text="scope.row.fileId"></span>
                                             </el-tooltip>
@@ -647,12 +652,17 @@
                             <template v-if="userImage(scope.row.ref)">
                                 <el-popover placement="right" height="500px" trigger="hover">
                                     <template #reference>
-                                        <img :src="userImage(scope.row.ref)" class="friends-list-avatar" loading="lazy">
+                                        <img
+                                            :src="userImage(scope.row.ref)"
+                                            class="friends-list-avatar"
+                                            loading="lazy" />
                                     </template>
-                                    <img :src="userImageFull(scope.row.ref)"
+                                    <img
+                                        :src="userImageFull(scope.row.ref)"
                                         class="friends-list-avatar"
                                         style="height: 500px; cursor: pointer"
-                                        @click="showFullscreenImageDialog(userImageFull(scope.row.ref))" loading="lazy">
+                                        @click="showFullscreenImageDialog(userImageFull(scope.row.ref))"
+                                        loading="lazy" />
                                 </el-popover>
                             </template>
                         </template>
@@ -673,7 +683,7 @@
                                 <el-tooltip placement="left" content="Unblock chatbox messages">
                                     <el-button
                                         type="text"
-                                        icon="el-icon-turn-off-microphone"
+                                        :icon="Mute"
                                         size="small"
                                         style="color: red; margin-right: 5px"
                                         @click.stop="deleteChatboxUserBlacklist(scope.row.ref.id)"></el-button>
@@ -683,7 +693,7 @@
                                 <el-tooltip placement="left" content="Block chatbox messages">
                                     <el-button
                                         type="text"
-                                        icon="el-icon-microphone"
+                                        :icon="Microphone"
                                         size="small"
                                         style="margin-right: 5px"
                                         @click.stop="addChatboxUserBlacklist(scope.row.ref)"></el-button>
@@ -814,7 +824,8 @@
                                     <template #content>
                                         <span v-text="link"></span>
                                     </template>
-                                    <img :src="getFaviconUrl(link)"
+                                    <img
+                                        :src="getFaviconUrl(link)"
                                         style="
                                             width: 16px;
                                             height: 16px;
@@ -822,7 +833,8 @@
                                             margin-right: 5px;
                                             cursor: pointer;
                                         "
-                                        @click.stop="openExternalLink(link)" loading="lazy">
+                                        @click.stop="openExternalLink(link)"
+                                        loading="lazy" />
                                 </el-tooltip>
                             </div>
                         </template>
@@ -842,6 +854,7 @@
 </template>
 
 <script setup>
+    import { Mute, Microphone } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
@@ -947,4 +960,3 @@
         return getValue(b) - getValue(a);
     }
 </script>
-

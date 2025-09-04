@@ -40,13 +40,9 @@
 
             <div style="margin-top: 10px">
                 <span style="margin-right: 5px">{{ t('dialog.config_json.delete_old_cache') }}</span>
-                <el-button
-                    size="small"
-                    style="margin-left: 5px"
-                    icon="el-icon-folder-delete"
-                    @click="sweepVRChatCache"
-                    >{{ t('dialog.config_json.sweep_cache') }}</el-button
-                >
+                <el-button size="small" style="margin-left: 5px" :icon="FolderDelete" @click="sweepVRChatCache">{{
+                    t('dialog.config_json.sweep_cache')
+                }}</el-button>
             </div>
 
             <div v-for="(item, value) in VRChatConfigList" :key="value" style="display: block; margin-top: 10px">
@@ -188,7 +184,7 @@
 
 <script setup>
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { Refresh, Delete, FolderOpened } from '@element-plus/icons-vue';
+    import { Refresh, Delete, FolderOpened, FolderDelete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
