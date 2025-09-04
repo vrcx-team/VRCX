@@ -64,6 +64,9 @@ jobs:
               with:
                   name: Electron-Release-Linux-x64
                   path: build/Electron
+            - name: Cleanup
+              run: |
+                  rm -R build/Electron
             - name: Build Electron arm64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
             - name: Upload Electron arm64 dotnet artifacts
@@ -92,6 +95,9 @@ jobs:
               with:
                   name: Electron-Release-macOS-x64
                   path: build/Electron
+            - name: Cleanup
+              run: |
+                  rm -R build/Electron
             - name: Build Electron arm64 .NET Application
               run: dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m -a arm64 --self-contained
             - name: Upload Electron arm64 dotnet artifacts
@@ -181,6 +187,10 @@ jobs:
               with:
                   name: Electron-MacDmg-x64
                   path: 'build/VRCX_${{ needs.set_version.outputs.version }}_x64.dmg'
+
+            - name: Cleanup
+              run: |
+                  rm -R build/Electron
 
             - name: Restore dependencies
               run: npm ci --arch=arm64
