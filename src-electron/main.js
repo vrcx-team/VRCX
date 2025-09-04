@@ -69,7 +69,12 @@ tryRelaunchWithArgs(args);
 tryCopyFromWinePrefix();
 
 const rootDir = app.getAppPath();
-require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
+const armPath = path.join(rootDir, 'build/Electron/VRCX-Electron-arm64.cjs');
+if (fs.existsSync(armPath)) {
+    require(armPath);
+} else {
+    require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
+}
 
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
