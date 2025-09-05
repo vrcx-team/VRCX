@@ -71,42 +71,41 @@
                         >
                         <span style="color: #909399; font-size: 12px; margin-left: 10px"
                             >{{ group.count }}/{{ group.capacity }}</span
-                        >
-                        <el-dropdown trigger="click" size="small" style="margin-left: 10px">
-                            <el-tooltip placement="top" :content="t('view.favorite.visibility_tooltip')">
+                        ><el-tooltip placement="top" :content="t('view.favorite.visibility_tooltip')">
+                            <el-dropdown trigger="click" size="small" style="margin-left: 10px">
                                 <el-button type="default" :icon="View" size="small" circle @click.stop />
-                            </el-tooltip>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <template v-for="visibility in worldGroupVisibilityOptions" :key="visibility">
-                                        <el-dropdown-item
-                                            v-if="group.visibility !== visibility"
-                                            style="display: block; margin: 10px 0"
-                                            @click="changeWorldGroupVisibility(group.name, visibility)"
-                                            >{{
-                                                visibility.charAt(0).toUpperCase() + visibility.slice(1)
-                                            }}</el-dropdown-item
-                                        >
-                                    </template>
-                                </el-dropdown-menu>
-                            </template>
-                            <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
-                                <el-button
-                                    size="small"
-                                    :icon="Edit"
-                                    circle
-                                    style="margin-left: 5px"
-                                    @click.stop="changeFavoriteGroupName(group)" />
-                            </el-tooltip>
-                            <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
-                                <el-button
-                                    size="small"
-                                    :icon="Delete"
-                                    circle
-                                    style="margin-left: 5px"
-                                    @click.stop="clearFavoriteGroup(group)" />
-                            </el-tooltip>
-                        </el-dropdown>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <template v-for="visibility in worldGroupVisibilityOptions" :key="visibility">
+                                            <el-dropdown-item
+                                                v-if="group.visibility !== visibility"
+                                                style="display: block; margin: 10px 0"
+                                                @click="changeWorldGroupVisibility(group.name, visibility)"
+                                                >{{
+                                                    visibility.charAt(0).toUpperCase() + visibility.slice(1)
+                                                }}</el-dropdown-item
+                                            >
+                                        </template>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </el-tooltip>
+                        <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
+                            <el-button
+                                size="small"
+                                :icon="Edit"
+                                circle
+                                style="margin-left: 5px"
+                                @click.stop="changeFavoriteGroupName(group)" />
+                        </el-tooltip>
+                        <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
+                            <el-button
+                                size="small"
+                                :icon="Delete"
+                                circle
+                                style="margin-left: 5px"
+                                @click.stop="clearFavoriteGroup(group)" />
+                        </el-tooltip>
                     </div>
                 </template>
                 <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
