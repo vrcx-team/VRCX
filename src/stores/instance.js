@@ -516,6 +516,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         ) {
             params.ageGate = true;
         }
+        if (D.displayName) {
+            params.displayName = D.displayName;
+        }
         try {
             const args = await instanceRequest.createInstance(params);
             return args;

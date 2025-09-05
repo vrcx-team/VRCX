@@ -1227,7 +1227,8 @@
             "group": "Group",
             "legacy": "Legacy",
             "roles": "Roles",
-            "open_ingame": "Open in-game"
+            "open_ingame": "Open in-game",
+            "display_name": "Display Name (VRC+)"
         },
         "launch_options": {
             "header": "VRChat Launch Options",

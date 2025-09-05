@@ -91,6 +91,14 @@
                             @click="$event.target.tagName === 'INPUT' && $event.target.select()"
                             @change="buildInstance"></el-input>
                     </el-form-item>
+                    <el-form-item :label="t('dialog.new_instance.display_name')">
+                        <el-input
+                            :disabled="!isLocalUserVrcplusSupporter"
+                            v-model="newInstanceDialog.displayName"
+                            size="small"
+                            @click="$event.target.tagName === 'INPUT' && $event.target.select()"
+                            @change="buildInstance"></el-input>
+                    </el-form-item>
                     <el-form-item
                         v-if="newInstanceDialog.accessType === 'group'"
                         :label="t('dialog.new_instance.group_id')">
@@ -483,7 +491,7 @@
 </template>
 
 <script setup>
-    import { ref, watch, nextTick } from 'vue';
+    import { ref, watch, nextTick, computed } from 'vue';
     import { ElMessage } from 'element-plus';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
@@ -550,6 +558,7 @@
         strict: false,
         location: '',
         shortName: '',
+        displayName: '',
         url: '',
         secureOrShortName: '',
         lastSelectedGroupId: '',
@@ -573,6 +582,8 @@
             initNewInstanceDialog(value);
         }
     );
+
+    const isLocalUserVrcplusSupporter = computed(() => currentUser.value.$isVRCPlus);
 
     initializeNewInstanceDialog();
 
@@ -633,6 +644,9 @@
         D.strict = false;
         D.shortName = '';
         D.secureOrShortName = '';
+        if (!isLocalUserVrcplusSupporter.value) {
+            D.displayName = '';
+        }
         const args = await groupRequest.getGroupPermissions({ userId: currentUser.value.id });
         handleGroupPermissions(args);
         buildInstance();
@@ -672,10 +686,23 @@
         configRepository
             .getBool('instanceDialogAgeGate', false)
             .then((value) => (newInstanceDialog.value.ageGate = value));
+
+        configRepository
+            .getString('instanceDialogDisplayName', '')
+            .then((value) => (newInstanceDialog.value.displayName = value));
     }
     function saveNewInstanceDialog() {
-        const { accessType, region, instanceName, userId, groupId, groupAccessType, queueEnabled, ageGate } =
-            newInstanceDialog.value;
+        const {
+            accessType,
+            region,
+            instanceName,
+            userId,
+            groupId,
+            groupAccessType,
+            queueEnabled,
+            ageGate,
+            displayName
+        } = newInstanceDialog.value;
 
         configRepository.setString('instanceDialogAccessType', accessType);
         configRepository.setString('instanceRegion', region);
@@ -685,6 +712,7 @@
         configRepository.setString('instanceDialogGroupAccessType', groupAccessType);
         configRepository.setBool('instanceDialogQueueEnabled', queueEnabled);
         configRepository.setBool('instanceDialogAgeGate', ageGate);
+        configRepository.setString('instanceDialogDisplayName', displayName);
     }
     function newInstanceTabClick(tab) {
         if (tab === '1') {
