@@ -13,10 +13,12 @@
                 <a class="x-link" @click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')">Patreon</a>,
                 <a class="x-link" @click="openExternalLink('https://ko-fi.com/natsumi_sama')">Ko-fi</a>.
             </span>
-            <vue-markdown
-                :source="changeLogDialog.changeLog"
-                :linkify="false"
-                style="height: 62vh; overflow-y: auto; margin-top: 10px"></vue-markdown>
+            <VueShowdown
+                :markdown="changeLogDialog.changeLog"
+                flavor="github"
+                :options="showdownOptions"
+                @click="handleLinkClick"
+                style="height: 62vh; overflow-y: auto; margin-top: 10px" />
         </div>
         <template #footer>
             <el-button @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')">
@@ -37,8 +39,9 @@
     import { useI18n } from 'vue-i18n';
     import { openExternalLink } from '../../../shared/utils';
     import { useVRCXUpdaterStore } from '../../../stores';
+    import { defineAsyncComponent } from 'vue';
 
-    const VueMarkdown = () => import('vue-markdown');
+    const VueShowdown = defineAsyncComponent(() => import('vue-showdown').then((module) => module.VueShowdown));
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
 
@@ -46,8 +49,31 @@
 
     const { t } = useI18n();
 
+    const showdownOptions = {
+        emoji: true,
+        openLinksInNewWindow: false,
+        simplifiedAutoLink: true,
+        excludeTrailingPunctuationFromURLs: true,
+        literalMidWordUnderscores: true,
+        strikethrough: true,
+        tables: true,
+        tablesHeaderId: false,
+        ghCodeBlocks: true,
+        tasklists: true
+    };
+
     function closeDialog() {
         changeLogDialog.value.visible = false;
+    }
+
+    function handleLinkClick(event) {
+        const target = event.target.closest('a');
+        if (target && target.href) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            openExternalLink(target.href);
+        }
     }
 </script>
 
