@@ -380,8 +380,8 @@
                     </div>
                 </div>
             </div>
-            <el-tabs v-model="groupDialogTabCurrentName" @tab-click="groupDialogTabClick">
-                <el-tab-pane :label="t('dialog.group.info.header')">
+            <el-tabs v-model="groupDialogLastActiveTab" @tab-click="groupDialogTabClick">
+                <el-tab-pane name="Info" :label="t('dialog.group.info.header')">
                     <div class="group-banner-image-info">
                         <el-popover placement="right" width="500px" trigger="click">
                             <template #reference>
@@ -736,7 +736,7 @@
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.posts.header')" lazy>
+                <el-tab-pane name="Posts" :label="t('dialog.group.posts.header')" lazy>
                     <template v-if="groupDialog.visible">
                         <span style="margin-right: 10px"
                             >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
@@ -859,7 +859,7 @@
                         </div>
                     </template>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.members.header')" lazy>
+                <el-tab-pane name="Members" :label="t('dialog.group.members.header')" lazy>
                     <template v-if="groupDialog.visible">
                         <span
                             v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')"
@@ -1088,7 +1088,7 @@
                         </ul>
                     </template>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.gallery.header')" lazy>
+                <el-tab-pane name="Photos" :label="t('dialog.group.gallery.header')" lazy>
                     <el-button
                         type="default"
                         size="small"
@@ -1139,7 +1139,7 @@
                         </template>
                     </el-tabs>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.json.header')" lazy>
+                <el-tab-pane name="JSON" :label="t('dialog.group.json.header')" lazy>
                     <el-button
                         type="default"
                         size="small"
@@ -1255,6 +1255,7 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
 
+    const groupDialogLastActiveTab = ref('Info');
     const groupDialogRef = ref(null);
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
@@ -1304,7 +1305,7 @@
         () => groupDialog.value.isGetGroupDialogGroupLoading,
         (val) => {
             if (val) {
-                getCurrentTabData();
+                loadLastActiveTab();
             }
         }
     );
@@ -1589,14 +1590,27 @@
                 return args;
             });
     }
-    function groupDialogTabClick(obj) {
-        if (obj.label === t('dialog.group.members.header')) {
+
+    function handleGroupDialogTab(tabName) {
+        if (tabName === 'Members') {
             getGroupDialogGroupMembers();
-        } else if (obj.label === t('dialog.group.gallery.header')) {
+        } else if (tabName === 'Photos') {
             getGroupGalleries();
-        } else if (obj.label === t('dialog.group.json.header')) {
+        } else if (tabName === 'JSON') {
             refreshGroupDialogTreeData();
         }
+    }
+
+    function loadLastActiveTab() {
+        handleGroupDialogTab(groupDialogLastActiveTab.value);
+    }
+
+    function groupDialogTabClick(obj) {
+        if (obj.props.name === groupDialogTabCurrentName.value) {
+            return;
+        }
+        handleGroupDialogTab(obj.props.name);
+        groupDialogTabCurrentName.value = obj.props.name;
     }
 
     function showGroupPostEditDialog(groupId, post) {
@@ -1715,16 +1729,6 @@
                 isGroupMembersDone.value = true;
                 throw err;
             });
-    }
-
-    function getCurrentTabData() {
-        if (groupDialogTabCurrentName.value === '2') {
-            getGroupDialogGroupMembers();
-        } else if (groupDialogTabCurrentName.value === '3') {
-            getGroupGalleries();
-        } else if (groupDialogTabCurrentName.value === '4') {
-            refreshGroupDialogTreeData();
-        }
     }
 
     async function getGroupGalleries() {

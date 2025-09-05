@@ -368,7 +368,7 @@
                     </div>
                 </div>
             </div>
-            <el-tabs ref="avatarDialogTabsRef" @tab-click="avatarDialogTabClick">
+            <el-tabs v-model="avatarDialogLastActiveTab" @tab-click="avatarDialogTabClick">
                 <el-tab-pane name="Info" :label="t('dialog.avatar.info.header')">
                     <div class="x-friend-list" style="max-height: unset">
                         <div
@@ -559,10 +559,7 @@
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)"></el-button>
-                    <el-tree
-                        v-if="Object.keys(avatarDialog.fileAnalysis).length > 0"
-                        :data="avatarDialog.fileAnalysis"
-                        style="margin-top: 5px; font-size: 12px">
+                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
@@ -570,7 +567,11 @@
                             </span>
                         </template>
                     </el-tree>
-                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
+                    <br />
+                    <el-tree
+                        v-if="avatarDialog.fileAnalysis.length > 0"
+                        :data="avatarDialog.fileAnalysis"
+                        style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
@@ -657,7 +658,6 @@
     defineEmits(['openPreviousImagesDialog']);
 
     const avatarDialogRef = ref(null);
-    const avatarDialogTabsRef = ref(null);
     const avatarDialogLastActiveTab = ref('Info');
     const changeAvatarImageDialogVisible = ref(false);
     const previousImagesFileId = ref('');
@@ -729,34 +729,27 @@
                     }
                 });
                 handleDialogOpen();
-                !avatarDialog.value.loading && toggleLastActiveTab();
+                !avatarDialog.value.loading && loadLastActiveTab();
             }
         }
     );
 
-    function handleAvatarDialogTab(name) {
-        if (name === 'JSON') {
+    function handleAvatarDialogTab(tabName) {
+        if (tabName === 'JSON') {
             refreshAvatarDialogTreeData();
         }
     }
 
-    function toggleLastActiveTab() {
-        let tabName = avatarDialogTabsRef.value.currentName;
-        console.log(tabName);
-        if (tabName === '0') {
-            tabName = avatarDialogLastActiveTab.value;
-            avatarDialogTabsRef.value = tabName;
-        }
-        handleAvatarDialogTab(tabName);
-        avatarDialogLastActiveTab.value = tabName;
+    function loadLastActiveTab() {
+        handleAvatarDialogTab(avatarDialogLastActiveTab.value);
     }
 
     function avatarDialogTabClick(obj) {
-        if (avatarDialogLastActiveTab.value === obj.name) {
+        if (obj.props.name === avatarDialogLastActiveTab.value) {
             return;
         }
-        handleAvatarDialogTab(obj.name);
-        avatarDialogLastActiveTab.value = obj.name;
+        handleAvatarDialogTab(obj.props.name);
+        avatarDialogLastActiveTab.value = obj.props.name;
     }
 
     function getImageUrlFromImageId(imageId) {
@@ -764,7 +757,6 @@
     }
 
     function handleDialogOpen() {
-        avatarDialog.value.fileAnalysis = {};
         memo.value = '';
         treeData.value = [];
         getAvatarTimeSpent();

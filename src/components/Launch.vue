@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isVisible" :class="['mr-5', 'inline-block']">
+    <div v-if="isVisible" class="inline-block">
         <el-tooltip placement="top" :content="t('dialog.user.info.launch_invite_tooltip')"
             ><el-button @click="confirm" size="small" :icon="SwitchButton" circle />
         </el-tooltip>
@@ -30,9 +30,6 @@
 </script>
 
 <style scoped>
-    .mr-5 {
-        margin-right: 5px;
-    }
     .inline-block {
         display: inline-block;
     }

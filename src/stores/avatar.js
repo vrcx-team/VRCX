@@ -53,7 +53,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             cacheSize: '',
             cacheLocked: false,
             cachePath: '',
-            fileAnalysis: {}
+            fileAnalysis: []
         },
         cachedAvatarModerations: new Map(),
         avatarHistory: new Set(),
@@ -212,7 +212,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
-        D.fileAnalysis = {};
+        D.fileAnalysis = [];
         D.isQuestFallback = false;
         D.isPC = false;
         D.isQuest = false;

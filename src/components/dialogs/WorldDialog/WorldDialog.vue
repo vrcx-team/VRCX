@@ -326,7 +326,7 @@
                     </div>
                 </div>
             </div>
-            <el-tabs ref="worldDialogTabsRef" v-model="worldDialogLastActiveTab" @tab-click="worldDialogTabClick">
+            <el-tabs v-model="worldDialogLastActiveTab" @tab-click="worldDialogTabClick">
                 <el-tab-pane name="Instances" :label="t('dialog.world.instances.header')">
                     <div class="">
                         <el-icon><User /></el-icon>
@@ -715,22 +715,23 @@
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)"></el-button>
+                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
+                        <template #default="{ data }">
+                            <span>
+                                <span style="font-weight: bold; margin-right: 5px" v-text="data.key"></span>
+                                <span v-if="!data.children" v-text="data.value"></span>
+                            </span>
+                        </template>
+                    </el-tree>
+                    <br />
                     <el-tree
-                        v-if="Object.keys(worldDialog.fileAnalysis).length > 0"
+                        v-if="worldDialog.fileAnalysis.length > 0"
                         :data="worldDialog.fileAnalysis"
                         style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
                                 <span v-if="!scope.data.children" v-text="scope.data.value"></span>
-                            </span>
-                        </template>
-                    </el-tree>
-                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
-                        <template #default="{ data }">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="data.key"></span>
-                                <span v-if="!data.children" v-text="data.value"></span>
                             </span>
                         </template>
                     </el-tree>
@@ -934,7 +935,6 @@
     });
 
     const worldDialogRef = ref(null);
-    const worldDialogTabsRef = ref(null);
     const worldDialogLastActiveTab = ref('Instances');
 
     watch(
@@ -946,7 +946,8 @@
                         adjustDialogZ(worldDialogRef.value.$el);
                     }
                 });
-                !worldDialog.value.loading && toggleLastActiveTab();
+                handleDialogOpen();
+                !worldDialog.value.loading && loadLastActiveTab();
             }
         }
     );
@@ -957,16 +958,20 @@
         }
     }
 
-    function toggleLastActiveTab() {
+    function loadLastActiveTab() {
         handleWorldDialogTab(worldDialogLastActiveTab.value);
     }
 
     function worldDialogTabClick(obj) {
-        if (worldDialogLastActiveTab.value === obj.props.name) {
+        if (obj.props.name === worldDialogLastActiveTab.value) {
             return;
         }
         handleWorldDialogTab(obj.props.name);
         worldDialogLastActiveTab.value = obj.props.name;
+    }
+
+    function handleDialogOpen() {
+        treeData.value = [];
     }
 
     function displayPreviousImages(command) {

@@ -569,7 +569,7 @@
                 </div>
             </div>
 
-            <el-tabs ref="userDialogTabsRef" v-model="userDialogLastActiveTab" @tab-click="userDialogTabClick">
+            <el-tabs v-model="userDialogLastActiveTab" @tab-click="userDialogTabClick">
                 <el-tab-pane name="Info" :label="t('dialog.user.info.header')">
                     <template v-if="isFriendOnline(userDialog.friend) || currentUser.id === userDialog.id">
                         <div
@@ -1935,12 +1935,11 @@
                         adjustDialogZ(userDialogRef.value.$el);
                     }
                 });
-                !userDialog.value.loading && toggleLastActiveTab(userDialog.value.id);
+                !userDialog.value.loading && loadLastActiveTab();
             }
         }
     );
 
-    const userDialogTabsRef = ref(null);
     const userDialogRef = ref(null);
 
     const userDialogGroupEditMode = ref(false); // whether edit mode is active
@@ -2030,13 +2029,14 @@
         userDialog.value.note = note.replace(/[\r\n]/g, '');
     }
 
-    function handleUserDialogTab(name, userId) {
-        if (name === 'Groups') {
+    function handleUserDialogTab(tabName) {
+        const userId = userDialog.value.id;
+        if (tabName === 'Groups') {
             if (userDialogLastGroup.value !== userId) {
                 userDialogLastGroup.value = userId;
                 getUserGroups(userId);
             }
-        } else if (name === 'Avatars') {
+        } else if (tabName === 'Avatars') {
             setUserDialogAvatars(userId);
             if (userDialogLastAvatar.value !== userId) {
                 userDialogLastAvatar.value = userId;
@@ -2046,32 +2046,31 @@
                     setUserDialogAvatarsRemote(userId);
                 }
             }
-        } else if (name === 'Worlds') {
+        } else if (tabName === 'Worlds') {
             setUserDialogWorlds(userId);
             if (userDialogLastWorld.value !== userId) {
                 userDialogLastWorld.value = userId;
                 refreshUserDialogWorlds();
             }
-        } else if (name === 'Favorite Worlds') {
+        } else if (tabName === 'Favorite Worlds') {
             if (userDialogLastFavoriteWorld.value !== userId) {
                 userDialogLastFavoriteWorld.value = userId;
                 getUserFavoriteWorlds(userId);
             }
-        } else if (name === 'JSON') {
+        } else if (tabName === 'JSON') {
             refreshUserDialogTreeData();
         }
     }
 
-    function toggleLastActiveTab(userId) {
-        handleUserDialogTab(userDialogLastActiveTab.value, userId);
+    function loadLastActiveTab() {
+        handleUserDialogTab(userDialogLastActiveTab.value);
     }
 
     function userDialogTabClick(obj) {
         if (obj.props.name === userDialogLastActiveTab.value) {
             return;
         }
-        const userId = userDialog.value.id;
-        handleUserDialogTab(obj.props.name, userId);
+        handleUserDialogTab(obj.props.name);
         userDialogLastActiveTab.value = obj.props.name;
     }
 

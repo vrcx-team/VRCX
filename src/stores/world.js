@@ -42,7 +42,7 @@ export const useWorldStore = defineStore('World', () => {
             cacheSize: '',
             cacheLocked: false,
             cachePath: '',
-            fileAnalysis: {},
+            fileAnalysis: [],
             lastVisit: '',
             visitCount: 0,
             timeSpent: 0,
@@ -100,7 +100,7 @@ export const useWorldStore = defineStore('World', () => {
         D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
-        D.fileAnalysis = {};
+        D.fileAnalysis = [];
         D.rooms = [];
         D.lastVisit = '';
         D.visitCount = 0;

@@ -6,7 +6,7 @@
         width="650px"
         append-to-body>
         <el-tabs v-model="newInstanceDialog.selectedTab" type="card" @tab-click="newInstanceTabClick">
-            <el-tab-pane :label="t('dialog.new_instance.normal')">
+            <el-tab-pane name="Normal" :label="t('dialog.new_instance.normal')">
                 <el-form :model="newInstanceDialog" label-width="150px">
                     <el-form-item :label="t('dialog.new_instance.access_type')">
                         <el-radio-group v-model="newInstanceDialog.accessType" size="small" @change="buildInstance">
@@ -176,7 +176,7 @@
                     </template>
                 </el-form>
             </el-tab-pane>
-            <el-tab-pane :label="t('dialog.new_instance.legacy')">
+            <el-tab-pane name="Legacy" :label="t('dialog.new_instance.legacy')">
                 <el-form :model="newInstanceDialog" label-width="150px">
                     <el-form-item :label="t('dialog.new_instance.access_type')">
                         <el-radio-group
@@ -404,7 +404,7 @@
                 </el-form>
             </el-tab-pane>
         </el-tabs>
-        <template v-if="newInstanceDialog.selectedTab === '0'" #footer>
+        <template v-if="newInstanceDialog.selectedTab === 'Normal'" #footer>
             <template v-if="newInstanceDialog.instanceCreated">
                 <el-button size="small" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                     t('dialog.new_instance.copy_url')
@@ -448,7 +448,7 @@
                 }}</el-button>
             </template>
         </template>
-        <template v-else-if="newInstanceDialog.selectedTab === '1'" #footer>
+        <template v-else-if="newInstanceDialog.selectedTab === 'Legacy'" #footer>
             <el-button size="small" @click="copyInstanceUrl(newInstanceDialog.location)">{{
                 t('dialog.new_instance.copy_url')
             }}</el-button>
@@ -542,7 +542,7 @@
     const newInstanceDialog = ref({
         visible: false,
         // loading: false,
-        selectedTab: '0',
+        selectedTab: 'Normal',
         instanceCreated: false,
         queueEnabled: false,
         worldId: '',
@@ -714,8 +714,8 @@
         configRepository.setBool('instanceDialogAgeGate', ageGate);
         configRepository.setString('instanceDialogDisplayName', displayName);
     }
-    function newInstanceTabClick(tab) {
-        if (tab === '1') {
+    function newInstanceTabClick(obj) {
+        if (obj.props.name === 'Normal') {
             buildInstance();
         } else {
             buildLegacyInstance();

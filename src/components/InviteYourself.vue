@@ -1,10 +1,15 @@
 <template>
-    <el-tooltip v-if="!canOpenInstanceInGame()" placement="top" :content="t('dialog.user.info.self_invite_tooltip')">
-        <el-button v-show="isVisible" @click="confirmInvite" size="small" :icon="Message" circle />
-    </el-tooltip>
-    <el-tooltip v-else placement="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
-        <el-button @click="openInstance" size="small" :icon="Message" circle />
-    </el-tooltip>
+    <div v-if="isVisible" :class="['inline-block']">
+        <el-tooltip
+            v-if="!canOpenInstanceInGame()"
+            placement="top"
+            :content="t('dialog.user.info.self_invite_tooltip')">
+            <el-button v-show="isVisible" @click="confirmInvite" size="small" :icon="Message" circle />
+        </el-tooltip>
+        <el-tooltip v-else placement="top" :content="t('dialog.user.info.open_in_vrchat_tooltip')">
+            <el-button @click="openInstance" size="small" :icon="Message" circle />
+        </el-tooltip>
+    </div>
 </template>
 
 <script setup>
@@ -55,3 +60,9 @@
         tryOpenInstanceInVrc(L.tag, props.shortname);
     }
 </script>
+
+<style scoped>
+    .inline-block {
+        display: inline-block;
+    }
+</style>
