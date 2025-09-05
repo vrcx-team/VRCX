@@ -126,6 +126,7 @@ const gotTheLock = app.requestSingleInstanceLock();
 const strip_vrcx_prefix_regex = new RegExp('^' + VRCX_URI_PREFIX + '://');
 
 if (!gotTheLock) {
+    console.log('Another instance is already running. Exiting.');
     app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {

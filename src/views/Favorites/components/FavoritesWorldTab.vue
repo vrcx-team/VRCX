@@ -280,15 +280,13 @@
     }
 
     function userFavoriteWorldsStatusForFavTab(visibility) {
-        let style = '';
         if (visibility === 'public') {
-            style = '';
-        } else if (visibility === 'friends') {
-            style = 'success';
-        } else {
-            style = 'info';
+            return 'primary';
         }
-        return style;
+        if (visibility === 'friends') {
+            return 'success';
+        }
+        return 'info';
     }
 
     function changeWorldGroupVisibility(name, visibility) {

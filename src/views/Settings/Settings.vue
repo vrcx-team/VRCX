@@ -1532,15 +1532,10 @@
                         <el-button size="small" :icon="Folder" style="margin-top: 5px" @click="openShortcutFolder()">{{
                             t('view.settings.advanced.advanced.app_launcher.folder')
                         }}</el-button>
-                        <el-tooltip
-                            placement="top"
-                            style="margin-left: 5px"
-                            :content="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')">
-                            <el-icon><InfoFilled /></el-icon>
-                        </el-tooltip>
                         <simple-switch
                             :label="t('view.settings.advanced.advanced.remote_database.enable')"
                             :value="enableAppLauncher"
+                            :tooltip="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')"
                             :long-label="true"
                             @change="setEnableAppLauncher" />
                         <simple-switch
@@ -1736,15 +1731,10 @@
                     </div>
 
                     <simple-switch
-                        :label="t('view.settings.advanced.advanced.cache_debug.disable_gamelog')"
+                        :label="`${t('view.settings.advanced.advanced.cache_debug.disable_gamelog')} ${t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')}`"
                         :value="gameLogDisabled"
                         :long-label="true"
                         @change="disableGameLogDialog()" />
-                    <div class="options-container-item">
-                        <span class="name" style="margin-left: 15px">{{
-                            t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')
-                        }}</span>
-                    </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.user_cache') }}

@@ -104,24 +104,30 @@
                 ...paginationProps.value
             }));
 
+            const applyFilter = function (row, filter) {
+                if (Array.isArray(filter.prop)) {
+                    return filter.prop.some((propItem) => applyFilter(row, { prop: propItem, value: filter.value }));
+                }
+
+                const cellValue = row[filter.prop];
+                if (cellValue === undefined || cellValue === null) return false;
+
+                if (Array.isArray(filter.value)) {
+                    return filter.value.some((val) =>
+                        String(cellValue).toLowerCase().includes(String(val).toLowerCase())
+                    );
+                } else {
+                    return String(cellValue).toLowerCase().includes(String(filter.value).toLowerCase());
+                }
+            };
+
             const filteredData = computed(() => {
                 let result = [...data.value];
 
                 if (filters.value && Array.isArray(filters.value) && filters.value.length > 0) {
                     filters.value.forEach((filter) => {
                         if (filter.value && (!Array.isArray(filter.value) || filter.value.length > 0)) {
-                            result = result.filter((row) => {
-                                const cellValue = row[filter.prop];
-                                if (cellValue === undefined || cellValue === null) return false;
-
-                                if (Array.isArray(filter.value)) {
-                                    return filter.value.some((val) =>
-                                        String(cellValue).toLowerCase().includes(String(val).toLowerCase())
-                                    );
-                                } else {
-                                    return String(cellValue).toLowerCase().includes(String(filter.value).toLowerCase());
-                                }
-                            });
+                            result = result.filter((row) => applyFilter(row, filter));
                         }
                     });
                 }
@@ -233,6 +239,6 @@
     .pagination-wrapper {
         margin-top: 16px;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-around;
     }
 </style>

@@ -5,12 +5,12 @@
                 <el-input
                     v-model="launchDialog.url"
                     size="small"
-                    style="width: 260px"
+                    style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
-                        :icon="Sort"
+                        :icon="CopyDocument"
                         style="margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.url)" />
@@ -19,20 +19,20 @@
             <el-form-item v-if="launchDialog.shortUrl">
                 <template #label>
                     <span>{{ t('dialog.launch.short_url') }}</span>
-                    <el-tooltip placement="top" style="margin-left: 5px" :content="t('dialog.launch.short_url_notice')">
-                        <el-icon><Warning /></el-icon>
+                    <el-tooltip placement="top" :content="t('dialog.launch.short_url_notice')">
+                        <el-icon style="display: inline-block; margin-left: 5px"><Warning /></el-icon>
                     </el-tooltip>
                 </template>
                 <el-input
                     v-model="launchDialog.shortUrl"
                     size="small"
-                    style="width: 260px"
+                    style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
-                        :icon="Sort"
-                        style="margin-left: 5px"
+                        :icon="CopyDocument"
+                        style="display: inline-block; margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.shortUrl)" />
                 </el-tooltip>
@@ -41,13 +41,13 @@
                 <el-input
                     v-model="launchDialog.location"
                     size="small"
-                    style="width: 260px"
+                    style="width: 230px"
                     @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
                 <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
                         size="small"
-                        :icon="Sort"
-                        style="margin-left: 5px"
+                        :icon="CopyDocument"
+                        style="display: inline-block; margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.location)" />
                 </el-tooltip>
@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-    import { Sort, Warning } from '@element-plus/icons-vue';
+    import { CopyDocument, Warning } from '@element-plus/icons-vue';
 
     import { ref, computed, nextTick, watch } from 'vue';
     import { ElMessage, ElMessageBox } from 'element-plus';
@@ -115,7 +115,6 @@
     import configRepository from '../../service/config';
     import { adjustDialogZ, checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
     import {
-        useAppearanceSettingsStore,
         useFriendStore,
         useInviteStore,
         useInstanceStore,

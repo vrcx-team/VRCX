@@ -30,24 +30,22 @@
                         :key="user.id"
                         class="x-friend-item"
                         @click="showUserDialog(user.id)">
-                        <template>
-                            <div class="avatar">
-                                <img :src="userImage(user, true)" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="user.displayName"></span>
-                                <span
-                                    v-if="randomUserColours"
-                                    class="extra"
-                                    :class="user.$trustClass"
-                                    v-text="user.$trustLevel"></span>
-                                <span
-                                    v-else
-                                    class="extra"
-                                    :style="{ color: user.$userColour }"
-                                    v-text="user.$trustLevel"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img :src="userImage(user, true)" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name" v-text="user.displayName"></span>
+                            <span
+                                v-if="randomUserColours"
+                                class="extra"
+                                :class="user.$trustClass"
+                                v-text="user.$trustLevel"></span>
+                            <span
+                                v-else
+                                class="extra"
+                                :style="{ color: user.$userColour }"
+                                v-text="user.$trustLevel"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchUserResults.length" style="margin-top: 15px">
@@ -98,18 +96,16 @@
                         :key="world.id"
                         class="x-friend-item"
                         @click="showWorldDialog(world.id)">
-                        <template>
-                            <div class="avatar">
-                                <img :src="world.thumbnailImageUrl" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="world.name"></span>
-                                <span v-if="world.occupants" class="extra"
-                                    >{{ world.authorName }} ({{ world.occupants }})</span
-                                >
-                                <span v-else class="extra" v-text="world.authorName"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img :src="world.thumbnailImageUrl" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name" v-text="world.name"></span>
+                            <span v-if="world.occupants" class="extra"
+                                >{{ world.authorName }} ({{ world.occupants }})</span
+                            >
+                            <span v-else class="extra" v-text="world.authorName"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchWorldResults.length" style="margin-top: 15px">
@@ -216,27 +212,25 @@
                         :key="avatar.id"
                         class="x-friend-item"
                         @click="showAvatarDialog(avatar.id)">
-                        <template>
-                            <div class="avatar">
-                                <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
-                                <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="avatar.name"></span>
-                                <span
-                                    v-if="avatar.releaseStatus === 'public'"
-                                    class="extra"
-                                    style="color: #67c23a"
-                                    v-text="avatar.releaseStatus"></span>
-                                <span
-                                    v-else-if="avatar.releaseStatus === 'private'"
-                                    class="extra"
-                                    style="color: #f56c6c"
-                                    v-text="avatar.releaseStatus"></span>
-                                <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                                <span class="extra" v-text="avatar.authorName"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                            <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name" v-text="avatar.name"></span>
+                            <span
+                                v-if="avatar.releaseStatus === 'public'"
+                                class="extra"
+                                style="color: #67c23a"
+                                v-text="avatar.releaseStatus"></span>
+                            <span
+                                v-else-if="avatar.releaseStatus === 'private'"
+                                class="extra"
+                                style="color: #f56c6c"
+                                v-text="avatar.releaseStatus"></span>
+                            <span v-else class="extra" v-text="avatar.releaseStatus"></span>
+                            <span class="extra" v-text="avatar.authorName"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchAvatarPage.length" style="margin-top: 15px">
@@ -269,28 +263,26 @@
                         :key="group.id"
                         class="x-friend-item"
                         @click="showGroupDialog(group.id)">
-                        <template>
-                            <div class="avatar">
-                                <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
-                            </div>
-                            <div class="detail">
-                                <span class="name">
-                                    <span v-text="group.name"></span>
-                                    <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
-                                    <span
-                                        style="
-                                            margin-left: 5px;
-                                            color: #909399;
-                                            font-weight: normal;
-                                            font-family: monospace;
-                                            font-size: 12px;
-                                        "
-                                        >{{ group.shortCode }}.{{ group.discriminator }}</span
-                                    >
-                                </span>
-                                <span class="extra" v-text="group.description"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name">
+                                <span v-text="group.name"></span>
+                                <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
+                                <span
+                                    style="
+                                        margin-left: 5px;
+                                        color: #909399;
+                                        font-weight: normal;
+                                        font-family: monospace;
+                                        font-size: 12px;
+                                    "
+                                    >{{ group.shortCode }}.{{ group.discriminator }}</span
+                                >
+                            </span>
+                            <span class="extra" v-text="group.description"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchGroupResults.length" style="margin-top: 15px">

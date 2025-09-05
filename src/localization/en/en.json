@@ -617,7 +617,7 @@
                     "launch_commands": {
                         "header": "Launch Commands (Deep Links)",
                         "docs": "Launch Command Docs",
-                        "show_confirmation_on_switch_avatar_enable": "Show confirmation diaglog before switching avatars",
+                        "show_confirmation_on_switch_avatar_enable": "Show confirmation dialog before switching avatars",
                         "show_confirmation_on_switch_avatar_tooltip": "When disabled VRCX will not come to the front when switching avatars and ask for confirmation",
                         "website_userscript": "VRC Website Userscript"
                     },

@@ -1397,7 +1397,6 @@
         appType: location.href.substr(-1),
         appLanguage: 'en',
         currentCulture: 'en-nz',
-        isRunningUnderWine: false,
         currentTime: new Date().toJSON(),
         cpuUsageEnabled: false,
         cpuUsage: '0',

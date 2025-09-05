@@ -6,7 +6,7 @@
                     v-model="exportFriendsListCsv"
                     type="textarea"
                     size="small"
-                    rows="15"
+                    :rows="15"
                     resize="none"
                     readonly
                     style="margin-top: 15px"
@@ -17,7 +17,7 @@
                     v-model="exportFriendsListJson"
                     type="textarea"
                     size="small"
-                    rows="15"
+                    :rows="15"
                     resize="none"
                     readonly
                     style="margin-top: 15px"

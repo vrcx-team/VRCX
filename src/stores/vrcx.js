@@ -47,7 +47,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const { t } = useI18n();
 
     const state = reactive({
-        isRunningUnderWine: false,
         databaseVersion: 0,
         clearVRCXCacheFrequency: 172800,
         proxyServer: '',
@@ -174,6 +173,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     });
 
+    const proxyServer = computed({
+        get: () => state.proxyServer,
+        set: async (value) => {
+            state.proxyServer = value;
+        }
+    });
+
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
     // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
     document.body.addEventListener('drop', function (e) {
@@ -193,13 +199,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 message: 'Custom CSS refreshed',
                 type: 'success'
             });
-        }
-    });
-
-    const isRunningUnderWine = computed({
-        get: () => state.isRunningUnderWine,
-        set: (value) => {
-            state.isRunningUnderWine = value;
         }
     });
 
@@ -765,7 +764,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     return {
         // state,
 
-        isRunningUnderWine,
+        proxyServer,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,
         ipcEnabled,

@@ -139,7 +139,7 @@
     import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
-    import { useFavoriteStore, useInviteStore, useUiStore, useGameStore } from '../../../stores';
+    import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
 
     const props = defineProps({
         group: [Object, String],
@@ -153,9 +153,6 @@
     const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
-    const { isGameRunning } = storeToRefs(useGameStore());
-    const { canOpenInstanceInGame } = useInviteStore();
-
     const { t } = useI18n();
     const { canOpenInstanceInGame } = useInviteStore();
 

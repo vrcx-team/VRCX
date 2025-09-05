@@ -182,7 +182,6 @@ declare global {
         CopyImageToClipboard(path: string): Promise<void>;
         FlashWindow(): Promise<void>;
         SetUserAgent(): Promise<void>;
-        IsRunningUnderWine(): Promise<boolean>;
 
         // Common Functions
         MD5File(blob: string): Promise<string>;
@@ -357,7 +356,6 @@ declare global {
         GetUptime(): Promise<number>;
         CurrentCulture(): Promise<string>;
         CustomVrScript(): Promise<string>;
-        IsRunningUnderWine(): Promise<boolean>;
         GetExecuteVrFeedFunctionQueue(): Promise<Map<string, string>>;
         GetExecuteVrOverlayFunctionQueue(): Promise<Map<string, string>>;
     };

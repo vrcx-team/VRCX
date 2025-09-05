@@ -1,57 +1,55 @@
 <template>
     <div v-show="menuActiveIndex === 'notification'" v-loading="isNotificationsLoading" class="x-container">
-        <DataTable v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
-            <template #tool>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <el-select
-                        v-model="notificationTable.filters[0].value"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.notification.filter_placeholder')"
-                        @change="saveTableFilters">
-                        <el-option
-                            v-for="type in [
-                                'requestInvite',
-                                'invite',
-                                'requestInviteResponse',
-                                'inviteResponse',
-                                'friendRequest',
-                                'ignoredFriendRequest',
-                                'message',
-                                'boop',
-                                'event.announcement',
-                                'groupChange',
-                                'group.announcement',
-                                'group.informative',
-                                'group.invite',
-                                'group.joinRequest',
-                                'group.transfer',
-                                'group.queueReady',
-                                'moderation.warning.group',
-                                'moderation.report.closed',
-                                'instance.closed'
-                            ]"
-                            :key="type"
-                            :label="t('view.notification.filters.' + type)"
-                            :value="type" />
-                    </el-select>
-                    <el-input
-                        v-model="notificationTable.filters[1].value"
-                        :placeholder="t('view.notification.search_placeholder')"
-                        style="flex: none; width: 150px; margin: 0 10px" />
-                    <el-tooltip placement="bottom" :content="t('view.notification.refresh_tooltip')">
-                        <el-button
-                            type="default"
-                            :loading="isNotificationsLoading"
-                            :icon="Refresh"
-                            circle
-                            style="flex: none"
-                            @click="refreshNotifications()" />
-                    </el-tooltip>
-                </div>
-            </template>
+        <div style="margin: 0 0 10px; display: flex; align-items: center">
+            <el-select
+                v-model="notificationTable.filters[0].value"
+                multiple
+                clearable
+                style="flex: 1"
+                :placeholder="t('view.notification.filter_placeholder')"
+                @change="saveTableFilters">
+                <el-option
+                    v-for="type in [
+                        'requestInvite',
+                        'invite',
+                        'requestInviteResponse',
+                        'inviteResponse',
+                        'friendRequest',
+                        'ignoredFriendRequest',
+                        'message',
+                        'boop',
+                        'event.announcement',
+                        'groupChange',
+                        'group.announcement',
+                        'group.informative',
+                        'group.invite',
+                        'group.joinRequest',
+                        'group.transfer',
+                        'group.queueReady',
+                        'moderation.warning.group',
+                        'moderation.report.closed',
+                        'instance.closed'
+                    ]"
+                    :key="type"
+                    :label="t('view.notification.filters.' + type)"
+                    :value="type" />
+            </el-select>
+            <el-input
+                v-model="notificationTable.filters[1].value"
+                :placeholder="t('view.notification.search_placeholder')"
+                style="flex: none; width: 150px; margin: 0 10px" />
+            <el-tooltip placement="bottom" :content="t('view.notification.refresh_tooltip')">
+                <el-button
+                    type="default"
+                    :loading="isNotificationsLoading"
+                    :icon="Refresh"
+                    circle
+                    style="flex: none"
+                    @click="refreshNotifications()" />
+            </el-tooltip>
+        </div>
 
+        <DataTable v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
             <el-table-column :label="t('table.notification.date')" prop="created_at" :sortable="true" width="120">
                 <template #default="scope">
                     <el-tooltip placement="right">
