@@ -36,43 +36,22 @@
                 </div>
             </div>
             <div style="margin-top: 10px">
-                <el-button
-                    size="small"
-                    type="danger"
-                    plain
-                    icon="el-icon-switch-button"
+                <el-button size="small" type="danger" plain icon="el-icon-switch-button"
+                    style="margin-left: 0; margin-right: 5px; margin-top: 10px" @click="logout()">{{
+                        t('view.profile.profile.logout') }}</el-button>
+                <el-button size="small" icon="el-icon-picture-outline"
+                    style="margin-left: 0; margin-right: 5px; margin-top: 10px" @click="showGalleryDialog()">{{
+                        t('view.profile.profile.manage_gallery_inventory_icon') }}</el-button>
+                <el-button size="small" icon="el-icon-chat-dot-round"
+                    style="margin-left: 0; margin-right: 5px; margin-top: 10px" @click="showDiscordNamesDialog()">{{
+                        t('view.profile.profile.discord_names') }}</el-button>
+                <el-button size="small" icon="el-icon-printer"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="logout()"
-                    >{{ t('view.profile.profile.logout') }}</el-button
-                >
-                <el-button
-                    size="small"
-                    icon="el-icon-picture-outline"
-                    style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showGalleryDialog()"
-                    >{{ t('view.profile.profile.manage_gallery_inventory_icon') }}</el-button
-                >
-                <el-button
-                    size="small"
-                    icon="el-icon-chat-dot-round"
-                    style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showDiscordNamesDialog()"
-                    >{{ t('view.profile.profile.discord_names') }}</el-button
-                >
-                <el-button
-                    size="small"
-                    icon="el-icon-printer"
-                    style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showExportFriendsListDialog()"
-                    >{{ t('view.profile.profile.export_friend_list') }}</el-button
-                >
-                <el-button
-                    size="small"
-                    icon="el-icon-user"
-                    style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showExportAvatarsListDialog()"
-                    >{{ t('view.profile.profile.export_own_avatars') }}</el-button
-                >
+                    @click="showExportFriendsListDialog()">{{ t('view.profile.profile.export_friend_list')
+                    }}</el-button>
+                <el-button size="small" icon="el-icon-user" style="margin-left: 0; margin-right: 5px; margin-top: 10px"
+                    @click="showExportAvatarsListDialog()">{{ t('view.profile.profile.export_own_avatars')
+                    }}</el-button>
             </div>
         </div>
 
@@ -95,20 +74,12 @@
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.vrc_sdk_downloads.header') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px"
                         @click="getConfig"></el-button>
                 </el-tooltip>
             </div>
             <div class="x-friend-list" style="margin-top: 10px">
-                <div
-                    v-for="(link, item) in cachedConfig.downloadUrls"
-                    :key="item"
-                    class="x-friend-item"
+                <div v-for="(link, item) in cachedConfig.downloadUrls" :key="item" class="x-friend-item"
                     placement="top">
                     <div class="detail" @click="openExternalLink(link)">
                         <span class="name" v-text="item"></span>
@@ -142,50 +113,29 @@
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_messages') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
-                        @click="
-                            inviteMessageTable.visible = true;
-                            refreshInviteMessageTableData('message');
-                        "></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px" @click="
+                        inviteMessageTable.visible = true;
+                    refreshInviteMessageTableData('message');
+                    "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-delete"
-                        circle
-                        style="margin-left: 5px"
+                    <el-button type="default" size="mini" icon="el-icon-delete" circle style="margin-left: 5px"
                         @click="inviteMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
             <data-tables v-if="inviteMessageTable.visible" v-bind="inviteMessageTable" style="margin-top: 10px">
-                <el-table-column
-                    :label="t('table.profile.invite_messages.slot')"
-                    prop="slot"
-                    sortable="custom"
+                <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" sortable="custom"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
-                <el-table-column
-                    :label="t('table.profile.invite_messages.cool_down')"
-                    prop="updatedAt"
-                    sortable="custom"
-                    width="110"
-                    align="right">
+                <el-table-column :label="t('table.profile.invite_messages.cool_down')" prop="updatedAt"
+                    sortable="custom" width="110" align="right">
                     <template #default="scope">
                         <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.action')" width="60" align="right">
                     <template #default="scope">
-                        <el-button
-                            type="text"
-                            icon="el-icon-edit"
-                            size="mini"
+                        <el-button type="text" icon="el-icon-edit" size="mini"
                             @click="showEditInviteMessageDialog('message', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -196,53 +146,30 @@
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_response_messages') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
-                        @click="
-                            inviteResponseMessageTable.visible = true;
-                            refreshInviteMessageTableData('response');
-                        "></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px" @click="
+                        inviteResponseMessageTable.visible = true;
+                    refreshInviteMessageTableData('response');
+                    "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-delete"
-                        circle
-                        style="margin-left: 5px"
+                    <el-button type="default" size="mini" icon="el-icon-delete" circle style="margin-left: 5px"
                         @click="inviteResponseMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
-                v-if="inviteResponseMessageTable.visible"
-                v-bind="inviteResponseMessageTable"
+            <data-tables v-if="inviteResponseMessageTable.visible" v-bind="inviteResponseMessageTable"
                 style="margin-top: 10px">
-                <el-table-column
-                    :label="t('table.profile.invite_messages.slot')"
-                    prop="slot"
-                    sortable="custom"
+                <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" sortable="custom"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
-                <el-table-column
-                    :label="t('table.profile.invite_messages.cool_down')"
-                    prop="updatedAt"
-                    sortable="custom"
-                    width="110"
-                    align="right">
+                <el-table-column :label="t('table.profile.invite_messages.cool_down')" prop="updatedAt"
+                    sortable="custom" width="110" align="right">
                     <template #default="scope">
                         <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.action')" width="60" align="right">
                     <template #default="scope">
-                        <el-button
-                            type="text"
-                            icon="el-icon-edit"
-                            size="mini"
+                        <el-button type="text" icon="el-icon-edit" size="mini"
                             @click="showEditInviteMessageDialog('response', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -253,53 +180,30 @@
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_request_messages') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
-                        @click="
-                            inviteRequestMessageTable.visible = true;
-                            refreshInviteMessageTableData('request');
-                        "></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px" @click="
+                        inviteRequestMessageTable.visible = true;
+                    refreshInviteMessageTableData('request');
+                    "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-delete"
-                        circle
-                        style="margin-left: 5px"
+                    <el-button type="default" size="mini" icon="el-icon-delete" circle style="margin-left: 5px"
                         @click="inviteRequestMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
-                v-if="inviteRequestMessageTable.visible"
-                v-bind="inviteRequestMessageTable"
+            <data-tables v-if="inviteRequestMessageTable.visible" v-bind="inviteRequestMessageTable"
                 style="margin-top: 10px">
-                <el-table-column
-                    :label="t('table.profile.invite_messages.slot')"
-                    prop="slot"
-                    sortable="custom"
+                <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" sortable="custom"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
-                <el-table-column
-                    :label="t('table.profile.invite_messages.cool_down')"
-                    prop="updatedAt"
-                    sortable="custom"
-                    width="110"
-                    align="right">
+                <el-table-column :label="t('table.profile.invite_messages.cool_down')" prop="updatedAt"
+                    sortable="custom" width="110" align="right">
                     <template #default="scope">
                         <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.action')" width="60" align="right">
                     <template #default="scope">
-                        <el-button
-                            type="text"
-                            icon="el-icon-edit"
-                            size="mini"
+                        <el-button type="text" icon="el-icon-edit" size="mini"
                             @click="showEditInviteMessageDialog('request', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -310,53 +214,30 @@
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.invite_request_response_messages') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
-                        @click="
-                            inviteRequestResponseMessageTable.visible = true;
-                            refreshInviteMessageTableData('requestResponse');
-                        "></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px" @click="
+                        inviteRequestResponseMessageTable.visible = true;
+                    refreshInviteMessageTableData('requestResponse');
+                    "></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-delete"
-                        circle
-                        style="margin-left: 5px"
+                    <el-button type="default" size="mini" icon="el-icon-delete" circle style="margin-left: 5px"
                         @click="inviteRequestResponseMessageTable.visible = false"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
-                v-if="inviteRequestResponseMessageTable.visible"
-                v-bind="inviteRequestResponseMessageTable"
+            <data-tables v-if="inviteRequestResponseMessageTable.visible" v-bind="inviteRequestResponseMessageTable"
                 style="margin-top: 10px">
-                <el-table-column
-                    :label="t('table.profile.invite_messages.slot')"
-                    prop="slot"
-                    sortable="custom"
+                <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" sortable="custom"
                     width="70"></el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
-                <el-table-column
-                    :label="t('table.profile.invite_messages.cool_down')"
-                    prop="updatedAt"
-                    sortable="custom"
-                    width="110"
-                    align="right">
+                <el-table-column :label="t('table.profile.invite_messages.cool_down')" prop="updatedAt"
+                    sortable="custom" width="110" align="right">
                     <template #default="scope">
                         <countdown-timer :datetime="scope.row.updatedAt" :hours="1"></countdown-timer>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.profile.invite_messages.action')" width="60" align="right">
                     <template #default="scope">
-                        <el-button
-                            type="text"
-                            icon="el-icon-edit"
-                            size="mini"
+                        <el-button type="text" icon="el-icon-edit" size="mini"
                             @click="showEditInviteMessageDialog('requestResponse', scope.row)"></el-button>
                     </template>
                 </el-table-column>
@@ -366,16 +247,13 @@
         <div class="options-container">
             <span class="header">{{ t('view.profile.past_display_names') }}</span>
             <data-tables v-bind="pastDisplayNameTable" style="margin-top: 10px">
-                <el-table-column
-                    :label="t('table.profile.previous_display_name.date')"
-                    prop="updated_at"
+                <el-table-column :label="t('table.profile.previous_display_name.date')" prop="updated_at"
                     sortable="custom">
                     <template #default="scope">
                         <span>{{ formatDateFilter(scope.row.updated_at, 'long') }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column
-                    :label="t('table.profile.previous_display_name.name')"
+                <el-table-column :label="t('table.profile.previous_display_name.name')"
                     prop="displayName"></el-table-column>
             </data-tables>
         </div>
@@ -384,22 +262,12 @@
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.config_json') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
-                        @click="refreshConfigTreeData()"></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px"
+                        @click="refreshConfigTreeDataOrData()"></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-delete"
-                        circle
-                        style="margin-left: 5px"
-                        @click="configTreeData = []"></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-delete" circle style="margin-left: 5px"
+                        @click="configTreeData = []; configData = {}"></el-button>
                 </el-tooltip>
             </div>
             <el-tree v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top: 10px; font-size: 12px">
@@ -410,33 +278,23 @@
                     </span>
                 </template>
             </el-tree>
+            <MonacoEditor v-else-if="Object.keys(configData).length > 0"
+                style="margin-top: 10px; font-size: 12px; min-height: 50vh;" :value="formatJSON(configData)" />
         </div>
 
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.current_user_json') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
-                        @click="refreshCurrentUserTreeData()"></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px"
+                        @click="refreshCurrentUserTreeDataOrData()"></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-delete"
-                        circle
-                        style="margin-left: 5px"
-                        @click="currentUserTreeData = []"></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-delete" circle style="margin-left: 5px"
+                        @click="currentUserTreeData = []; currentUserData = {}"></el-button>
                 </el-tooltip>
             </div>
-            <el-tree
-                v-if="currentUserTreeData.length > 0"
-                :data="currentUserTreeData"
+            <el-tree v-if="currentUserTreeData.length > 0" :data="currentUserTreeData"
                 style="margin-top: 10px; font-size: 12px">
                 <template #default="scope">
                     <span>
@@ -445,33 +303,23 @@
                     </span>
                 </template>
             </el-tree>
+            <MonacoEditor v-else-if="currentUserData.length > 0"
+                style="margin-top: 10px; font-size: 12px; min-height: 50vh;" :value="formatJSON(currentUserData)" />
         </div>
 
         <div class="options-container">
             <div class="header-bar">
                 <span class="header">{{ t('view.profile.feedback') }}</span>
                 <el-tooltip placement="top" :content="t('view.profile.refresh_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
-                        circle
-                        style="margin-left: 5px"
+                    <el-button type="default" size="mini" icon="el-icon-refresh" circle style="margin-left: 5px"
                         @click="getCurrentUserFeedback()"></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
-                    <el-button
-                        type="default"
-                        size="mini"
-                        icon="el-icon-delete"
-                        circle
-                        style="margin-left: 5px"
-                        @click="currentUserFeedbackData = []"></el-button>
+                    <el-button type="default" size="mini" icon="el-icon-delete" circle style="margin-left: 5px"
+                        @click="currentUserFeedbackTreeData = []; currentUserFeedbackData = {}"></el-button>
                 </el-tooltip>
             </div>
-            <el-tree
-                v-if="currentUserFeedbackData.length > 0"
-                :data="currentUserFeedbackData"
+            <el-tree v-if="currentUserFeedbackTreeData.length > 0" :data="currentUserFeedbackTreeData"
                 style="margin-top: 10px; font-size: 12px">
                 <template #default="scope">
                     <span>
@@ -480,209 +328,258 @@
                     </span>
                 </template>
             </el-tree>
+            <MonacoEditor v-else-if="Object.keys(currentUserFeedbackData).length > 0"
+                style="margin-top: 10px; font-size: 12px; min-height: 50vh;"
+                :value="formatJSON(currentUserFeedbackData)" :options="MONACO_EDITOR_OPTIONS" />
         </div>
         <DiscordNamesDialog :discord-names-dialog-visible.sync="discordNamesDialogVisible" :friends="friends" />
-        <ExportFriendsListDialog
-            :is-export-friends-list-dialog-visible.sync="isExportFriendsListDialogVisible"
+        <ExportFriendsListDialog :is-export-friends-list-dialog-visible.sync="isExportFriendsListDialogVisible"
             :friends="friends" />
         <ExportAvatarsListDialog :is-export-avatars-list-dialog-visible.sync="isExportAvatarsListDialogVisible" />
     </div>
 </template>
 
 <script setup>
-    import { storeToRefs } from 'pinia';
-    import { ref, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
-    import { authRequest, miscRequest, userRequest } from '../../api';
-    import {
-        parseAvatarUrl,
-        buildTreeData,
-        openExternalLink,
-        userImage,
-        parseUserUrl,
-        formatDateFilter
-    } from '../../shared/utils';
-    import { useAuthStore } from '../../stores';
-    import DiscordNamesDialog from './dialogs/DiscordNamesDialog.vue';
-    import ExportFriendsListDialog from './dialogs/ExportFriendsListDialog.vue';
-    import ExportAvatarsListDialog from './dialogs/ExportAvatarsListDialog.vue';
-    import {
-        useAppearanceSettingsStore,
-        useSearchStore,
-        useFriendStore,
-        useUserStore,
-        useAvatarStore,
-        useInviteStore,
-        useGalleryStore,
-        useUiStore
-    } from '../../stores';
+import { storeToRefs } from 'pinia';
+import { ref, getCurrentInstance, watch } from 'vue';
+import { useI18n } from 'vue-i18n-bridge';
+import { authRequest, miscRequest, userRequest } from '../../api';
+import {
+    parseAvatarUrl,
+    buildTreeData,
+    formatJSON,
+    openExternalLink,
+    userImage,
+    parseUserUrl,
+    formatDateFilter
+} from '../../shared/utils';
+import { useAuthStore } from '../../stores';
+import DiscordNamesDialog from './dialogs/DiscordNamesDialog.vue';
+import ExportFriendsListDialog from './dialogs/ExportFriendsListDialog.vue';
+import ExportAvatarsListDialog from './dialogs/ExportAvatarsListDialog.vue';
+import MonacoEditor from '../../components/MonacoEditor.vue';
+import {
+    useAppearanceSettingsStore,
+    useSearchStore,
+    useFriendStore,
+    useUserStore,
+    useAvatarStore,
+    useInviteStore,
+    useGalleryStore,
+    useUiStore
+} from '../../stores';
 
-    const { friends } = storeToRefs(useFriendStore());
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
-    const { pastDisplayNameTable, currentUser } = storeToRefs(useUserStore());
-    const { showUserDialog, lookupUser, getCurrentUser } = useUserStore();
-    const { showAvatarDialog } = useAvatarStore();
-    const { showEditInviteMessageDialog, refreshInviteMessageTableData } = useInviteStore();
-    const {
-        inviteMessageTable,
-        inviteResponseMessageTable,
-        inviteRequestMessageTable,
-        inviteRequestResponseMessageTable
-    } = storeToRefs(useInviteStore());
-    const { menuActiveIndex } = storeToRefs(useUiStore());
-    const { directAccessWorld } = useSearchStore();
-    const { logout } = useAuthStore();
-    const { cachedConfig } = storeToRefs(useAuthStore());
+const { friends } = storeToRefs(useFriendStore());
+const { hideTooltips, useVscodeLikeEditorToShowJSON } = storeToRefs(useAppearanceSettingsStore());
+const { pastDisplayNameTable, currentUser } = storeToRefs(useUserStore());
+const { showUserDialog, lookupUser, getCurrentUser } = useUserStore();
+const { showAvatarDialog } = useAvatarStore();
+const { showEditInviteMessageDialog, refreshInviteMessageTableData } = useInviteStore();
+const {
+    inviteMessageTable,
+    inviteResponseMessageTable,
+    inviteRequestMessageTable,
+    inviteRequestResponseMessageTable
+} = storeToRefs(useInviteStore());
+const { menuActiveIndex } = storeToRefs(useUiStore());
+const { directAccessWorld } = useSearchStore();
+const { logout } = useAuthStore();
+const { cachedConfig } = storeToRefs(useAuthStore());
 
-    const { t } = useI18n();
+const { t } = useI18n();
 
-    const { $prompt, $message } = getCurrentInstance().proxy;
+const { $prompt, $message } = getCurrentInstance().proxy;
 
-    const vrchatCredit = ref(null);
-    const configTreeData = ref([]);
-    const currentUserTreeData = ref([]);
-    const currentUserFeedbackData = ref([]);
+const vrchatCredit = ref(null);
+const configTreeData = ref([]);
+const configData = ref({});
+const currentUserTreeData = ref([]);
+const currentUserData = ref({});
+const currentUserFeedbackTreeData = ref([]);
+const currentUserFeedbackData = ref({});
 
-    const discordNamesDialogVisible = ref(false);
-    const isExportFriendsListDialogVisible = ref(false);
-    const isExportAvatarsListDialogVisible = ref(false);
+const discordNamesDialogVisible = ref(false);
+const isExportFriendsListDialogVisible = ref(false);
+const isExportAvatarsListDialogVisible = ref(false);
 
-    const visits = ref(0);
+const visits = ref(0);
 
-    // redirect to tools tab
-    function showGalleryDialog() {
-        menuActiveIndex.value = 'tools';
-    }
+const MONACO_EDITOR_OPTIONS = {
+    automaticLayout: true,
+    formatOnType: true,
+    formatOnPaste: true,
+    readOnly: true
+}
 
-    function getVisits() {
-        miscRequest.getVisits().then((args) => {
-            visits.value = args.json;
-        });
-    }
+// redirect to tools tab
+function showGalleryDialog() {
+    menuActiveIndex.value = 'tools';
+}
 
-    function getVRChatCredits() {
-        miscRequest.getVRChatCredits().then((args) => (vrchatCredit.value = args.json?.balance));
-    }
+function getVisits() {
+    miscRequest.getVisits().then((args) => {
+        visits.value = args.json;
+    });
+}
 
-    function showDiscordNamesDialog() {
-        discordNamesDialogVisible.value = true;
-    }
+function getVRChatCredits() {
+    miscRequest.getVRChatCredits().then((args) => (vrchatCredit.value = args.json?.balance));
+}
 
-    function showExportFriendsListDialog() {
-        isExportFriendsListDialogVisible.value = true;
-    }
+function showDiscordNamesDialog() {
+    discordNamesDialogVisible.value = true;
+}
 
-    function showExportAvatarsListDialog() {
-        isExportAvatarsListDialogVisible.value = true;
-    }
-    function promptUsernameDialog() {
-        $prompt(t('prompt.direct_access_username.description'), t('prompt.direct_access_username.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.direct_access_username.ok'),
-            cancelButtonText: t('prompt.direct_access_username.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_username.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    lookupUser({
-                        displayName: instance.inputValue
-                    });
-                }
+function showExportFriendsListDialog() {
+    isExportFriendsListDialogVisible.value = true;
+}
+
+function showExportAvatarsListDialog() {
+    isExportAvatarsListDialogVisible.value = true;
+}
+function promptUsernameDialog() {
+    $prompt(t('prompt.direct_access_username.description'), t('prompt.direct_access_username.header'), {
+        distinguishCancelAndClose: true,
+        confirmButtonText: t('prompt.direct_access_username.ok'),
+        cancelButtonText: t('prompt.direct_access_username.cancel'),
+        inputPattern: /\S+/,
+        inputErrorMessage: t('prompt.direct_access_username.input_error'),
+        callback: (action, instance) => {
+            if (action === 'confirm' && instance.inputValue) {
+                lookupUser({
+                    displayName: instance.inputValue
+                });
             }
-        });
-    }
-    function promptUserIdDialog() {
-        $prompt(t('prompt.direct_access_user_id.description'), t('prompt.direct_access_user_id.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.direct_access_user_id.ok'),
-            cancelButtonText: t('prompt.direct_access_user_id.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_user_id.input_error'),
-            callback: (action, instance) => {
-                instance.inputValue = instance.inputValue.trim();
-                if (action === 'confirm' && instance.inputValue) {
-                    const testUrl = instance.inputValue.substring(0, 15);
-                    if (testUrl === 'https://vrchat.') {
-                        const userId = parseUserUrl(instance.inputValue);
-                        if (userId) {
-                            showUserDialog(userId);
-                        } else {
-                            $message({
-                                message: t('prompt.direct_access_user_id.message.error'),
-                                type: 'error'
-                            });
-                        }
+        }
+    });
+}
+function promptUserIdDialog() {
+    $prompt(t('prompt.direct_access_user_id.description'), t('prompt.direct_access_user_id.header'), {
+        distinguishCancelAndClose: true,
+        confirmButtonText: t('prompt.direct_access_user_id.ok'),
+        cancelButtonText: t('prompt.direct_access_user_id.cancel'),
+        inputPattern: /\S+/,
+        inputErrorMessage: t('prompt.direct_access_user_id.input_error'),
+        callback: (action, instance) => {
+            instance.inputValue = instance.inputValue.trim();
+            if (action === 'confirm' && instance.inputValue) {
+                const testUrl = instance.inputValue.substring(0, 15);
+                if (testUrl === 'https://vrchat.') {
+                    const userId = parseUserUrl(instance.inputValue);
+                    if (userId) {
+                        showUserDialog(userId);
                     } else {
-                        showUserDialog(instance.inputValue);
-                    }
-                }
-            }
-        });
-    }
-    function promptWorldDialog() {
-        $prompt(t('prompt.direct_access_world_id.description'), t('prompt.direct_access_world_id.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.direct_access_world_id.ok'),
-            cancelButtonText: t('prompt.direct_access_world_id.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_world_id.input_error'),
-            callback: (action, instance) => {
-                instance.inputValue = instance.inputValue.trim();
-                if (action === 'confirm' && instance.inputValue) {
-                    if (!directAccessWorld(instance.inputValue)) {
                         $message({
-                            message: t('prompt.direct_access_world_id.message.error'),
+                            message: t('prompt.direct_access_user_id.message.error'),
                             type: 'error'
                         });
                     }
+                } else {
+                    showUserDialog(instance.inputValue);
                 }
             }
-        });
-    }
-    function promptAvatarDialog() {
-        $prompt(t('prompt.direct_access_avatar_id.description'), t('prompt.direct_access_avatar_id.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.direct_access_avatar_id.ok'),
-            cancelButtonText: t('prompt.direct_access_avatar_id.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_avatar_id.input_error'),
-            callback: (action, instance) => {
-                instance.inputValue = instance.inputValue.trim();
-                if (action === 'confirm' && instance.inputValue) {
-                    const testUrl = instance.inputValue.substring(0, 15);
-                    if (testUrl === 'https://vrchat.') {
-                        const avatarId = parseAvatarUrl(instance.inputValue);
-                        if (avatarId) {
-                            showAvatarDialog(avatarId);
-                        } else {
-                            $message({
-                                message: t('prompt.direct_access_avatar_id.message.error'),
-                                type: 'error'
-                            });
-                        }
+        }
+    });
+}
+function promptWorldDialog() {
+    $prompt(t('prompt.direct_access_world_id.description'), t('prompt.direct_access_world_id.header'), {
+        distinguishCancelAndClose: true,
+        confirmButtonText: t('prompt.direct_access_world_id.ok'),
+        cancelButtonText: t('prompt.direct_access_world_id.cancel'),
+        inputPattern: /\S+/,
+        inputErrorMessage: t('prompt.direct_access_world_id.input_error'),
+        callback: (action, instance) => {
+            instance.inputValue = instance.inputValue.trim();
+            if (action === 'confirm' && instance.inputValue) {
+                if (!directAccessWorld(instance.inputValue)) {
+                    $message({
+                        message: t('prompt.direct_access_world_id.message.error'),
+                        type: 'error'
+                    });
+                }
+            }
+        }
+    });
+}
+function promptAvatarDialog() {
+    $prompt(t('prompt.direct_access_avatar_id.description'), t('prompt.direct_access_avatar_id.header'), {
+        distinguishCancelAndClose: true,
+        confirmButtonText: t('prompt.direct_access_avatar_id.ok'),
+        cancelButtonText: t('prompt.direct_access_avatar_id.cancel'),
+        inputPattern: /\S+/,
+        inputErrorMessage: t('prompt.direct_access_avatar_id.input_error'),
+        callback: (action, instance) => {
+            instance.inputValue = instance.inputValue.trim();
+            if (action === 'confirm' && instance.inputValue) {
+                const testUrl = instance.inputValue.substring(0, 15);
+                if (testUrl === 'https://vrchat.') {
+                    const avatarId = parseAvatarUrl(instance.inputValue);
+                    if (avatarId) {
+                        showAvatarDialog(avatarId);
                     } else {
-                        showAvatarDialog(instance.inputValue);
+                        $message({
+                            message: t('prompt.direct_access_avatar_id.message.error'),
+                            type: 'error'
+                        });
                     }
+                } else {
+                    showAvatarDialog(instance.inputValue);
                 }
             }
-        });
+        }
+    });
+}
+async function getConfig() {
+    await authRequest.getConfig();
+}
+
+
+// fix: when page switched, `useVscodeLikeEditorToShowJSON` option will not update
+watch(useVscodeLikeEditorToShowJSON, async () => {
+    if (configTreeData.value.length > 0 || Object.keys(configData.value).length > 0) {
+        await refreshConfigTreeDataOrData();
     }
-    async function getConfig() {
-        await authRequest.getConfig();
+
+    if (currentUserTreeData.value.length > 0 || Object.keys(currentUserData.value).length > 0) {
+        await refreshCurrentUserTreeDataOrData();
     }
-    async function refreshConfigTreeData() {
-        await getConfig();
+
+    if (currentUserFeedbackTreeData.value.length > 0 || Object.keys(currentUserFeedbackData.value).length > 0) {
+        getCurrentUserFeedback();
+    }
+})
+
+async function refreshConfigTreeDataOrData() {
+    await getConfig();
+    if (useVscodeLikeEditorToShowJSON.value) {
+        configTreeData.value = [];
+        configData.value = cachedConfig.value;
+    } else {
+        configData.value = {};
         configTreeData.value = buildTreeData(cachedConfig.value);
     }
-    async function refreshCurrentUserTreeData() {
-        await getCurrentUser();
+}
+async function refreshCurrentUserTreeDataOrData() {
+    await getCurrentUser();
+    if (useVscodeLikeEditorToShowJSON.value) {
+        currentUserTreeData.value = [];
+        currentUserData.value = currentUser.value;
+    } else {
+        currentUserData.value = {};
         currentUserTreeData.value = buildTreeData(currentUser.value);
     }
-    function getCurrentUserFeedback() {
-        userRequest.getUserFeedback({ userId: currentUser.value.id }).then((args) => {
-            if (args.params.userId === currentUser.value.id) {
-                currentUserFeedbackData.value = buildTreeData(args.json);
+}
+function getCurrentUserFeedback() {
+    userRequest.getUserFeedback({ userId: currentUser.value.id }).then((args) => {
+        if (args.params.userId === currentUser.value.id) {
+            if (useVscodeLikeEditorToShowJSON.value) {
+                currentUserFeedbackTreeData.value = [];
+                currentUserFeedbackData.value = args.json;
+            } else {
+                currentUserFeedbackData.value = {};
+                currentUserFeedbackTreeData.value = buildTreeData(args.json);
             }
-        });
-    }
+        }
+    });
+}
 </script>

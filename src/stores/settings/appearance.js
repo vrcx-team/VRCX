@@ -40,6 +40,7 @@ export const useAppearanceSettingsStore = defineStore(
             appLanguage: 'en',
             themeMode: '',
             isDarkMode: false,
+            useVscodeLikeEditorToShowJSON: false,
             displayVRCPlusIconsAsAvatar: false,
             hideNicknames: false,
             hideTooltips: false,
@@ -87,6 +88,7 @@ export const useAppearanceSettingsStore = defineStore(
                 isAgeGatedInstancesVisible,
                 sortFavorites,
                 instanceUsersSortAlphabetical,
+                useVscodeLikeEditorToShowJSON,
                 tablePageSize,
                 dtHour12,
                 dtIsoFormat,
@@ -115,6 +117,8 @@ export const useAppearanceSettingsStore = defineStore(
                     'VRCX_instanceUsersSortAlphabetical',
                     false
                 ),
+                configRepository.getBool('VRCX_useVscodeLikeEditorToShowJSON', false),
+                configRepository.getInt('VRCX_maxTableSize'),
                 configRepository.getInt('VRCX_tablePageSize', 15),
                 configRepository.getBool('VRCX_dtHour12', false),
                 configRepository.getBool('VRCX_dtIsoFormat', false),
@@ -178,6 +182,7 @@ export const useAppearanceSettingsStore = defineStore(
             state.isAgeGatedInstancesVisible = isAgeGatedInstancesVisible;
             state.sortFavorites = sortFavorites;
             state.instanceUsersSortAlphabetical = instanceUsersSortAlphabetical;
+            state.useVscodeLikeEditorToShowJSON = useVscodeLikeEditorToShowJSON;
 
             setTablePageSize(tablePageSize);
             handleSetTablePageSize(state.tablePageSize);
@@ -229,6 +234,9 @@ export const useAppearanceSettingsStore = defineStore(
         const sortFavorites = computed(() => state.sortFavorites);
         const instanceUsersSortAlphabetical = computed(
             () => state.instanceUsersSortAlphabetical
+        );
+        const useVscodeLikeEditorToShowJSON = computed(
+            () => state.useVscodeLikeEditorToShowJSON
         );
         const tablePageSize = computed(() => state.tablePageSize);
         const dtHour12 = computed(() => state.dtHour12);
@@ -480,6 +488,15 @@ export const useAppearanceSettingsStore = defineStore(
                 state.instanceUsersSortAlphabetical
             );
         }
+        function setUseVscodeLikeEditorToShowJSON() {
+            state.useVscodeLikeEditorToShowJSON =
+                !state.useVscodeLikeEditorToShowJSON;
+            configRepository.setBool(
+                'VRCX_useVscodeLikeEditorToShowJSON',
+                state.useVscodeLikeEditorToShowJSON
+            );
+        }
+
         /**
          * @param {number} size
          */
@@ -725,6 +742,7 @@ export const useAppearanceSettingsStore = defineStore(
             isAgeGatedInstancesVisible,
             sortFavorites,
             instanceUsersSortAlphabetical,
+            useVscodeLikeEditorToShowJSON,
             tablePageSize,
             dtHour12,
             dtIsoFormat,
@@ -750,6 +768,7 @@ export const useAppearanceSettingsStore = defineStore(
             setIsAgeGatedInstancesVisible,
             setSortFavorites,
             setInstanceUsersSortAlphabetical,
+            setUseVscodeLikeEditorToShowJSON,
             setTablePageSize,
             setDtHour12,
             setDtIsoFormat,

@@ -170,7 +170,9 @@
         }
     },
     "dependencies": {
+        "@guolao/vue-monaco-editor": "^1.5.5",
         "hazardous": "^0.3.0",
         "node-api-dotnet": "^0.9.15"
-    }
+    },
+    "version": "2025.08.17"
 }

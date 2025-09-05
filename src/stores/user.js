@@ -216,6 +216,7 @@ export const useUserStore = defineStore('User', () => {
             },
             avatarSorting: 'update',
             avatarReleaseStatus: 'all',
+            data: {},
             treeData: [],
             memo: '',
             $avatarInfo: {
@@ -714,7 +715,11 @@ export const useUserStore = defineStore('User', () => {
                 D.outgoingRequest = true;
             }
             // refresh user dialog JSON tab
-            refreshUserDialogTreeData();
+            if (appearanceSettingsStore.useVscodeLikeEditorToShowJSON) {
+                refreshUserDialogData()
+            } else {
+                refreshUserDialogTreeData();
+            }
         }
         if (hasPropChanged) {
             if (
@@ -748,6 +753,7 @@ export const useUserStore = defineStore('User', () => {
         const D = state.userDialog;
         D.id = userId;
         D.treeData = [];
+        D.data = {}
         D.memo = '';
         D.note = '';
         D.noteSaving = false;
@@ -1207,6 +1213,18 @@ export const useUserStore = defineStore('User', () => {
         D.treeData = buildTreeData(D.ref);
     }
 
+    function refreshUserDialogData() {
+        const D = state.userDialog;
+        if (D.id === state.currentUser.id) {
+            D.data = {
+                ...state.currentUser,
+                ...D.ref
+            }
+            return;
+        }
+        D.data = D.ref
+    }
+
     async function lookupUser(ref) {
         let ctx;
         if (ref.userId) {
@@ -1362,7 +1380,7 @@ export const useUserStore = defineStore('User', () => {
             props.currentAvatarThumbnailImageUrl[0] &&
             props.currentAvatarThumbnailImageUrl[1] &&
             props.currentAvatarThumbnailImageUrl[0] ===
-                props.currentAvatarThumbnailImageUrl[1]
+            props.currentAvatarThumbnailImageUrl[1]
         ) {
             imageMatches = true;
         }
@@ -2002,6 +2020,7 @@ export const useUserStore = defineStore('User', () => {
         sortUserDialogAvatars,
         refreshUserDialogAvatars,
         refreshUserDialogTreeData,
+        refreshUserDialogData,
         lookupUser,
         updateAutoStateChange,
         addCustomTag,

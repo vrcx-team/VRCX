@@ -398,7 +398,8 @@
                     "sort_instance_users_by_time": "time",
                     "sort_instance_users_by_alphabet": "alphabetical",
                     "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:"
+                    "page_size": "Page Size:",
+                    "use_vscode_like_editor_to_show_json": "Use VS Code like editor to show JSON"
                 },
                 "timedate": {
                     "header": "Time/Date",

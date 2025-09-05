@@ -393,7 +393,8 @@
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
                     "table_max_size": "最大显示记录",
-                    "page_size": "页面大小："
+                    "page_size": "页面大小：",
+                    "use_vscode_like_editor_to_show_json": "使用类似于 VS Code 的编辑器显示 JSON"
                 },
                 "timedate": {
                     "header": "时间 / 日期",

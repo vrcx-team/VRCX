@@ -332,6 +332,25 @@ function buildTreeData(json) {
 }
 
 /**
+ * 
+ * @param {any} obj 
+ * @returns {string}
+ */
+function formatJSON(obj) {
+    try {
+        return JSON.stringify(obj, null, 4)
+    } catch (e) {
+        return JSON.stringify(
+            {
+                error: e.message,
+                stack: e.stack
+            },
+            null, 4
+        )
+    }
+}
+
+/**
  *
  * @param {string} text
  * @returns {string}
@@ -541,6 +560,7 @@ export {
     extractFileVersion,
     extractVariantVersion,
     buildTreeData,
+    formatJSON,
     replaceBioSymbols,
     openExternalLink,
     copyLink,
