@@ -16,7 +16,7 @@ if (WINDOWS) {
     window.AppApi = InteropApi.AppApiElectron;
     window.WebApi = InteropApi.WebApi;
     window.VRCXStorage = InteropApi.VRCXStorage;
-    window.SQLite = InteropApi.SQLiteLegacy;
+    window.SQLite = InteropApi.SQLite;
     window.LogWatcher = InteropApi.LogWatcher;
     window.Discord = InteropApi.Discord;
     window.AssetBundleManager = InteropApi.AssetBundleManager;

@@ -964,7 +964,7 @@ const gameLog = {
                 SELECT DISTINCT location, world_name, group_name
                 FROM gamelog_location
             )
-            SELECT gamelog_join_leave.created_at, strftime("%s", gamelog_join_leave.created_at) * 1000 created_at_ts, gamelog_join_leave.location, gamelog_join_leave.time, grouped_locations.world_name, grouped_locations.group_name, gamelog_join_leave.id, gamelog_join_leave.type
+            SELECT gamelog_join_leave.created_at, strftime('%s', gamelog_join_leave.created_at) * 1000 created_at_ts, gamelog_join_leave.location, gamelog_join_leave.time, grouped_locations.world_name, grouped_locations.group_name, gamelog_join_leave.id, gamelog_join_leave.type
             FROM gamelog_join_leave
             INNER JOIN grouped_locations ON gamelog_join_leave.location = grouped_locations.location
             WHERE user_id = @userId OR display_name = @displayName
@@ -1092,7 +1092,7 @@ const gameLog = {
             (row) => {
                 userId = row[0];
             },
-            `SELECT user_id FROM gamelog_join_leave WHERE display_name = @displayName AND user_id != "" ORDER BY id DESC LIMIT 1`,
+            `SELECT user_id FROM gamelog_join_leave WHERE display_name = @displayName AND user_id != '' ORDER BY id DESC LIMIT 1`,
             {
                 '@displayName': displayName
             }
@@ -1140,7 +1140,7 @@ const gameLog = {
                      *
                 FROM
                     gamelog_join_leave
-                WHERE type = "OnPlayerLeft"
+                WHERE type = 'OnPlayerLeft'
                     AND (
                         strftime('%Y-%m-%dT%H:%M:%SZ', created_at, '-' || (time * 1.0 / 1000) || ' seconds') BETWEEN @utc_start_date AND @utc_end_date
                         OR created_at BETWEEN @utc_start_date AND @utc_end_date

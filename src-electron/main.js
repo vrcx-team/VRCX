@@ -16,16 +16,11 @@ const https = require('https');
 
 //app.disableHardwareAcceleration();
 
-if (process.platform === 'linux') {
+const bundledDotNetPath = path.join(process.resourcesPath, 'dotnet-runtime');
+if (fs.existsSync(bundledDotNetPath)) {
     // Include bundled .NET runtime
-    const bundledDotNetPath = path.join(
-        process.resourcesPath,
-        'dotnet-runtime'
-    );
-    if (fs.existsSync(bundledDotNetPath)) {
-        process.env.DOTNET_ROOT = bundledDotNetPath;
-        process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
-    }
+    process.env.DOTNET_ROOT = bundledDotNetPath;
+    process.env.PATH = `${bundledDotNetPath}:${process.env.PATH}`;
 } else if (process.platform === 'darwin') {
     const dotnetPath = path.join('/usr/local/share/dotnet');
     const dotnetPathArm = path.join('/usr/local/share/dotnet/x64');
@@ -74,7 +69,12 @@ tryRelaunchWithArgs(args);
 tryCopyFromWinePrefix();
 
 const rootDir = app.getAppPath();
-require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
+const armPath = path.join(rootDir, 'build/Electron/VRCX-Electron-arm64.cjs');
+if (fs.existsSync(armPath)) {
+    require(armPath);
+} else {
+    require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
+}
 
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();
@@ -101,7 +101,7 @@ const version = getVersion();
 interopApi.getDotNetObject('ProgramElectron').PreInit(version, args);
 interopApi.getDotNetObject('VRCXStorage').Load();
 interopApi.getDotNetObject('ProgramElectron').Init();
-interopApi.getDotNetObject('SQLiteLegacy').Init();
+interopApi.getDotNetObject('SQLite').Init();
 interopApi.getDotNetObject('AppApiElectron').Init();
 interopApi.getDotNetObject('Discord').Init();
 interopApi.getDotNetObject('WebApi').Init();
@@ -130,10 +130,17 @@ if (!gotTheLock) {
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         if (mainWindow && commandLine.length >= 2) {
-            mainWindow.webContents.send(
-                'launch-command',
-                commandLine.pop().trim().replace(strip_vrcx_prefix_regex, '')
-            );
+            try {
+                mainWindow.webContents.send(
+                    'launch-command',
+                    commandLine
+                        .pop()
+                        .trim()
+                        .replace(strip_vrcx_prefix_regex, '')
+                );
+            } catch (err) {
+                console.error('Error processing second-instance command:', err);
+            }
         }
     });
 
@@ -146,6 +153,10 @@ if (!gotTheLock) {
         }
     });
 }
+
+ipcMain.handle('getArch', () => {
+    return process.arch.toString();
+});
 
 ipcMain.handle('applyWindowSettings', (event, position, size, state) => {
     if (position) {
@@ -527,18 +538,14 @@ function createTray() {
             label: 'Open',
             type: 'normal',
             click: function () {
-                BrowserWindow.getAllWindows().forEach(function (win) {
-                    win.show();
-                });
+                mainWindow.show();
             }
         },
         {
             label: 'DevTools',
             type: 'normal',
             click: function () {
-                BrowserWindow.getAllWindows().forEach(function (win) {
-                    win.webContents.openDevTools();
-                });
+                mainWindow.webContents.openDevTools();
             }
         },
         {
@@ -554,9 +561,7 @@ function createTray() {
     tray.setContextMenu(contextMenu);
 
     tray.on('click', () => {
-        BrowserWindow.getAllWindows().forEach(function (win) {
-            win.show();
-        });
+        mainWindow.show();
     });
 }
 
@@ -805,6 +810,10 @@ function isDotNetInstalled() {
     const result = spawnSync(dotnetPath, ['--list-runtimes'], {
         encoding: 'utf-8'
     });
+    if (result.error) {
+        console.error('Error checking .NET runtimes:', result.error);
+        return false;
+    }
     return result.stdout?.includes('.NETCore.App 9.0');
 }
 

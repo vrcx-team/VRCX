@@ -7,11 +7,13 @@ import { parseLocation } from '../shared/utils';
 import { useInstanceStore } from './instance';
 import { useGameStore } from './game';
 import { useLaunchStore } from './launch';
+import { useAdvancedSettingsStore } from './settings/advanced';
 
 export const useInviteStore = defineStore('Invite', () => {
     const instanceStore = useInstanceStore();
     const gameStore = useGameStore();
     const launchStore = useLaunchStore();
+    const advancedSettingsStore = useAdvancedSettingsStore();
     const state = reactive({
         editInviteMessageDialog: {
             visible: false,
@@ -111,7 +113,7 @@ export const useInviteStore = defineStore('Invite', () => {
     /**
      *
      * @param {string} messageType
-     * @param {string} inviteMessage
+     * @param {any} inviteMessage
      */
     function showEditInviteMessageDialog(messageType, inviteMessage) {
         const D = state.editInviteMessageDialog;
@@ -149,6 +151,14 @@ export const useInviteStore = defineStore('Invite', () => {
             });
     }
 
+    function canOpenInstanceInGame() {
+        return (
+            !LINUX &&
+            gameStore.isGameRunning &&
+            !advancedSettingsStore.selfInviteOverride
+        );
+    }
+
     function newInstanceSelfInvite(worldId) {
         instanceStore.createNewInstance(worldId).then((args) => {
             const location = args?.json?.location;
@@ -164,7 +174,7 @@ export const useInviteStore = defineStore('Invite', () => {
             if (!L.isRealInstance) {
                 return;
             }
-            if (gameStore.isGameRunning && !LINUX) {
+            if (canOpenInstanceInGame()) {
                 const secureOrShortName =
                     args.json.shortName || args.json.secureName;
                 launchStore.tryOpenInstanceInVrc(location, secureOrShortName);
@@ -194,6 +204,7 @@ export const useInviteStore = defineStore('Invite', () => {
         inviteRequestResponseMessageTable,
         showEditInviteMessageDialog,
         refreshInviteMessageTableData,
-        newInstanceSelfInvite
+        newInstanceSelfInvite,
+        canOpenInstanceInGame
     };
 });

@@ -1,6 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<OutputPath>..\build\Cef\</OutputPath>
+		<OutputPath>..\build\DBMerger\</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -35,13 +35,6 @@
 	<PropertyGroup>
 		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
 		<SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
-		<CopySQLiteInteropFiles>true</CopySQLiteInteropFiles>
-		<CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
-		<CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
 	</PropertyGroup>
 
 	<ItemGroup>

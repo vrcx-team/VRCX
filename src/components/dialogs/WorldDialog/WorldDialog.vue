@@ -233,8 +233,8 @@
                                 </el-dropdown-item>
                                 <el-dropdown-item icon="el-icon-message" command="New Instance and Self Invite">
                                     {{
-                                        isGameRunning
-                                            ? t('dialog.world.actions.new_instance_and_open_in_vrchat')
+                                        canOpenInstanceInGame()
+                                            ? t('dialog.world.actions.new_instance_and_open_ingame')
                                             : t('dialog.world.actions.new_instance_and_self_invite')
                                     }}
                                 </el-dropdown-item>
@@ -826,7 +826,7 @@
     const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());
     const { showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
-    const { newInstanceSelfInvite } = useInviteStore();
+    const { newInstanceSelfInvite, canOpenInstanceInGame } = useInviteStore();
     const { showFavoriteDialog } = useFavoriteStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());

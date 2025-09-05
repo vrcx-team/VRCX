@@ -18,7 +18,7 @@
                     @click.stop="selectAvatarWithConfirmation(favorite.id)"></el-button>
             </el-tooltip>
             <template v-if="cachedFavoritesByObjectId.has(favorite.id)">
-                <el-tooltip placement="right" content="Unfavorite" :disabled="hideTooltips">
+                <el-tooltip placement="right" content="Favorite" :disabled="hideTooltips">
                     <el-button
                         type="default"
                         icon="el-icon-star-on"

@@ -14,6 +14,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const { t } = useI18n();
 
     const state = reactive({
+        arch: 'x64',
         appVersion: '',
         autoUpdateVRCX: 'Auto Download',
         latestAppVersion: '',
@@ -40,6 +41,12 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     });
 
     async function initVRCXUpdaterSettings() {
+        if (!WINDOWS) {
+            const arch = await window.electron.getArch();
+            console.log('Architecture:', arch);
+            state.arch = arch;
+        }
+
         const [autoUpdateVRCX, vrcxId] = await Promise.all([
             configRepository.getString('VRCX_autoUpdateVRCX', 'Auto Download'),
             configRepository.getString('VRCX_id', '')
@@ -200,7 +207,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             }
             if (
                 LINUX &&
-                asset.name.endsWith('.AppImage') &&
+                asset.name.endsWith(`${state.arch}.AppImage`) &&
                 asset.content_type === 'application/octet-stream'
             ) {
                 downloadUrl = asset.browser_download_url;

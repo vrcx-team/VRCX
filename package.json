@@ -13,8 +13,10 @@
         "test:coverage": "jest --coverage",
         "prod": "cross-env PLATFORM=windows webpack --config webpack.config.js --mode production",
         "prod-linux": "cross-env PLATFORM=linux webpack --config webpack.config.js --mode production",
-        "build-electron": "node ./src-electron/download-dotnet-runtime.js && node ./src-electron/patch-package-version.js && electron-builder --x64 --publish never",
-        "postbuild-electron": "node ./src-electron/patch-node-api-dotnet.js && node ./src-electron/rename-builds.js",
+        "build-electron": "node ./src-electron/download-dotnet-runtime.js --arch=x64 && node ./src-electron/patch-package-version.js && electron-builder --x64 --publish never",
+        "build-electron-arm64": "node ./src-electron/download-dotnet-runtime.js --arch=arm64 && node ./src-electron/patch-package-version.js && electron-builder --arm64 --publish never",
+        "postbuild-electron": "node ./src-electron/patch-node-api-dotnet.js --arch=x64 && node ./src-electron/rename-builds.js --arch=x64",
+        "postbuild-electron-arm64": "node ./src-electron/patch-node-api-dotnet.js --arch=arm64 && node ./src-electron/rename-builds.js --arch=arm64",
         "start-electron": "electron ."
     },
     "repository": {

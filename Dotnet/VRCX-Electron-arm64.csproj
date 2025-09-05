@@ -8,7 +8,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>x64;ARM64</Platforms>
+    <Platforms>ARM64</Platforms>
+    <PlatformTarget>ARM64</PlatformTarget>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <AssemblyTitle>VRCX</AssemblyTitle>
@@ -33,15 +34,9 @@
   <PropertyGroup>
     <DefineConstants>LINUX</DefineConstants>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
+    
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebugType>pdbonly</DebugType>
@@ -89,7 +84,7 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="SourceGear.sqlite3" Version="3.50.4.2" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.8" />
     <PackageReference Include="System.Management" Version="9.0.8" />
     <PackageReference Include="System.Text.Json" Version="9.0.8" />

@@ -66,7 +66,7 @@
                 @click="showInviteDialog(launchDialog.location)">
                 {{ t('dialog.launch.invite') }}
             </el-button>
-            <template v-if="isGameRunning">
+            <template v-if="canOpenInstanceInGame()">
                 <el-button
                     type="default"
                     size="small"
@@ -83,6 +83,13 @@
                 </el-button>
             </template>
             <template v-else>
+                <el-button
+                    type="default"
+                    size="small"
+                    :disabled="!launchDialog.secureOrShortName"
+                    @click="selfInvite(launchDialog.location, launchDialog.shortName)">
+                    {{ t('dialog.launch.self_invite') }}
+                </el-button>
                 <el-button
                     type="primary"
                     size="small"
@@ -106,10 +113,11 @@
     import {
         useAppearanceSettingsStore,
         useFriendStore,
-        useGameStore,
+        useInviteStore,
         useInstanceStore,
         useLaunchStore,
-        useLocationStore
+        useLocationStore,
+        useGameStore
     } from '../../stores';
     import InviteDialog from './InviteDialog/InviteDialog.vue';
 
@@ -122,6 +130,7 @@
     const { launchGame, tryOpenInstanceInVrc } = useLaunchStore();
     const { launchDialogData } = storeToRefs(useLaunchStore());
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
+    const { canOpenInstanceInGame } = useInviteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
 
     const launchDialogRef = ref(null);
@@ -197,12 +206,45 @@
             });
     }
     function handleLaunchGame(location, shortName, desktop) {
+        if (isGameRunning.value) {
+            proxy.$confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
+                confirmButtonText: t('dialog.launch.confirm_yes'),
+                cancelButtonText: t('dialog.launch.confirm_no'),
+                type: 'warning',
+                callback: (action) => {
+                    if (action === 'confirm') {
+                        launchGame(location, shortName, desktop);
+                        isVisible.value = false;
+                    }
+                }
+            });
+            return;
+        }
         launchGame(location, shortName, desktop);
         isVisible.value = false;
     }
     function handleAttachGame(location, shortName) {
         tryOpenInstanceInVrc(location, shortName);
         isVisible.value = false;
+    }
+    function selfInvite(location, shortName) {
+        const L = parseLocation(location);
+        if (!L.isRealInstance) {
+            return;
+        }
+        instanceRequest
+            .selfInvite({
+                instanceId: L.instanceId,
+                worldId: L.worldId,
+                shortName
+            })
+            .then((args) => {
+                proxy.$message({
+                    message: 'Self invite sent',
+                    type: 'success'
+                });
+                return args;
+            });
     }
     function getConfig() {
         configRepository.getBool('launchAsDesktop').then((value) => (launchDialog.value.desktop = value));

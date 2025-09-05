@@ -30,6 +30,7 @@ declare global {
             ) => Promise<any>;
         };
         electron: {
+            getArch: () => Promise<string>;
             openFileDialog: () => Promise<string>;
             openDirectoryDialog: () => Promise<string>;
             desktopNotification: (
@@ -63,7 +64,7 @@ declare global {
                 overlayHand: int
             ) => Promise<void>;
             ipcRenderer: {
-                on(channel: String, func: (...args: unknown[]) => void) 
+                on(channel: String, func: (...args: unknown[]) => void);
             };
         };
         __APP_GLOBALS__: AppGlobals;

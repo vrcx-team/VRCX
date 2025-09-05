@@ -13,6 +13,9 @@ try {
         // Remove time part from version
         version = version.substring(0, index).replaceAll('-', '.');
     }
+    if (!version || version === 'Nightly Build') {
+        version = new Date().toISOString().split('T')[0].replaceAll('-', '.');
+    }
 } catch (err) {
     console.error('Error reading Version file:', err);
     process.exit(1);

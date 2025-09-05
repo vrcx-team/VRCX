@@ -1478,6 +1478,15 @@
                             setAutoSweepVRChatCache();
                             saveOpenVROption();
                         " />
+                    <span class="sub-header">{{ t('view.settings.advanced.advanced.self_invite.header') }}</span>
+                    <simple-switch
+                        :label="t('view.settings.advanced.advanced.self_invite.description')"
+                        :value="selfInviteOverride"
+                        :long-label="true"
+                        @change="
+                            setSelfInviteOverride();
+                            saveOpenVROption();
+                        " />
                     <!--//- Advanced | Disable local world database-->
                 </div>
 
@@ -2118,6 +2127,7 @@
         relaunchVRChatAfterCrash,
         vrcQuitFix,
         autoSweepVRChatCache,
+        selfInviteOverride,
         saveInstancePrints,
         cropInstancePrints,
         saveInstanceStickers,
@@ -2144,6 +2154,7 @@
         setRelaunchVRChatAfterCrash,
         setVrcQuitFix,
         setAutoSweepVRChatCache,
+        setSelfInviteOverride,
         setSaveInstancePrints,
         setCropInstancePrints,
         setSaveInstanceStickers,

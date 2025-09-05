@@ -19,6 +19,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         relaunchVRChatAfterCrash: false,
         vrcQuitFix: true,
         autoSweepVRChatCache: false,
+        selfInviteOverride: false,
         saveInstancePrints: false,
         cropInstancePrints: false,
         saveInstanceStickers: false,
@@ -53,6 +54,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             relaunchVRChatAfterCrash,
             vrcQuitFix,
             autoSweepVRChatCache,
+            selfInviteOverride,
             saveInstancePrints,
             cropInstancePrints,
             saveInstanceStickers,
@@ -80,6 +82,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_relaunchVRChatAfterCrash', false),
             configRepository.getBool('VRCX_vrcQuitFix', true),
             configRepository.getBool('VRCX_autoSweepVRChatCache', false),
+            configRepository.getBool('VRCX_selfInviteOverride', false),
             configRepository.getBool('VRCX_saveInstancePrints', false),
             configRepository.getBool('VRCX_cropInstancePrints', false),
             configRepository.getBool('VRCX_saveInstanceStickers', false),
@@ -120,6 +123,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.relaunchVRChatAfterCrash = relaunchVRChatAfterCrash;
         state.vrcQuitFix = vrcQuitFix;
         state.autoSweepVRChatCache = autoSweepVRChatCache;
+        state.selfInviteOverride = selfInviteOverride;
         state.saveInstancePrints = saveInstancePrints;
         state.cropInstancePrints = cropInstancePrints;
         state.saveInstanceStickers = saveInstanceStickers;
@@ -166,6 +170,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     );
     const vrcQuitFix = computed(() => state.vrcQuitFix);
     const autoSweepVRChatCache = computed(() => state.autoSweepVRChatCache);
+    const selfInviteOverride = computed(() => state.selfInviteOverride);
     const saveInstancePrints = computed(() => state.saveInstancePrints);
     const cropInstancePrints = computed(() => state.cropInstancePrints);
     const saveInstanceStickers = computed(() => state.saveInstanceStickers);
@@ -241,6 +246,13 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         configRepository.setBool(
             'VRCX_autoSweepVRChatCache',
             state.autoSweepVRChatCache
+        );
+    }
+    function setSelfInviteOverride() {
+        state.selfInviteOverride = !state.selfInviteOverride;
+        configRepository.setBool(
+            'VRCX_selfInviteOverride',
+            state.selfInviteOverride
         );
     }
     function setSaveInstancePrints() {
@@ -692,6 +704,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         relaunchVRChatAfterCrash,
         vrcQuitFix,
         autoSweepVRChatCache,
+        selfInviteOverride,
         saveInstancePrints,
         cropInstancePrints,
         saveInstanceStickers,
@@ -722,6 +735,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setRelaunchVRChatAfterCrash,
         setVrcQuitFix,
         setAutoSweepVRChatCache,
+        setSelfInviteOverride,
         setSaveInstancePrints,
         setCropInstancePrints,
         setSaveInstanceStickers,

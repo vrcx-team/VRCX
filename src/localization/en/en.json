@@ -569,6 +569,10 @@
                         "header": "Automatically Manage Cache When Closing VRChat",
                         "description": "Auto delete old versions from cache"
                     },
+                    "self_invite": {
+                        "header": "Self Invite",
+                        "description": "Self invite instead of opening instance in VRChat"
+                    },
                     "save_instance_prints_to_file": {
                         "header": "Save Instance Prints To File",
                         "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
@@ -907,7 +911,7 @@
                 "share": "Share",
                 "new_instance": "New Instance",
                 "new_instance_and_self_invite": "New Instance and Self Invite",
-                "new_instance_and_open_in_vrchat": "New Instance and Open in VRChat",
+                "new_instance_and_open_ingame": "New Instance and Open In-game",
                 "make_home": "Make Home",
                 "reset_home": "Reset Home",
                 "show_previous_instances": "Show Previous Instances",
@@ -1222,7 +1226,8 @@
             "normal": "Normal",
             "group": "Group",
             "legacy": "Legacy",
-            "roles": "Roles"
+            "roles": "Roles",
+            "open_ingame": "Open in-game"
         },
         "launch_options": {
             "header": "VRChat Launch Options",
@@ -1324,7 +1329,11 @@
             "info": "Info",
             "invite": "Invite",
             "launch": "Launch",
-            "open_ingame": "Open in Game"
+            "open_ingame": "Open in-game",
+            "self_invite": "Self invite",
+            "game_running_warning": "Are you sure you want to launch a second VRChat instance?",
+            "confirm_yes": "Yes",
+            "confirm_no": "No"
         },
         "export_friends_list": {
             "header": "Export Friends List",

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { getArchAndPlatform } = require('./utils');
 
 function patchFile(filePath) {
     if (!fs.existsSync(filePath)) {
@@ -30,22 +31,30 @@ managedHostPath = managedHostPath.indexOf('app.asar.unpacked') < 0 ?
     return false;
 }
 
-// Paths to patch
-let platformName = '';
-switch (process.platform) {
-    case 'win32':
-        platformName = 'win';
-        break;
-    case 'darwin':
-        platformName = 'mac';
-        break;
-    case 'linux':
-        platformName = 'linux';
-        break;
+function patchNodeApiDotNet(arch, platform) {
+    let platformName = '';
+    switch (platform) {
+        case 'win32':
+            platformName = 'win';
+            break;
+        case 'darwin':
+            platformName = 'mac';
+            break;
+        case 'linux':
+            platformName = 'linux';
+            break;
+    }
+    if (arch === 'arm64') {
+        platformName += '-arm64';
+    }
+
+    const postBuildPath = path.join(
+        __dirname,
+        `./../build/${platformName}-unpacked/resources/app.asar.unpacked/node_modules/node-api-dotnet/init.js`
+    );
+    console.log('Patching post-build init.js...');
+    patchFile(postBuildPath);
 }
-const postBuildPath = path.join(
-    __dirname,
-    `./../build/${platformName}-unpacked/resources/app.asar.unpacked/node_modules/node-api-dotnet/init.js`
-);
-console.log('Patching post-build init.js...');
-patchFile(postBuildPath);
+
+const { arch, platform } = getArchAndPlatform();
+patchNodeApiDotNet(arch, platform);
