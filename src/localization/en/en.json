@@ -1118,7 +1118,6 @@
                 "load_more": "Load more...",
                 "sort_by": "Sort By:",
                 "sorting": {
-                    "user_id": "User ID (Ascending)",
                     "joined_at_asc": "Joined At (Ascending)",
                     "joined_at_desc": "Joined At (Descending)"
                 },

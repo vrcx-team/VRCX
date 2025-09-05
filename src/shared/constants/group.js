@@ -6,10 +6,6 @@ const groupDialogSortingOptions = {
     joinedAtAsc: {
         name: 'dialog.group.members.sorting.joined_at_asc',
         value: 'joinedAt:asc'
-    },
-    userId: {
-        name: 'dialog.group.members.sorting.user_id',
-        value: ''
     }
 };
 

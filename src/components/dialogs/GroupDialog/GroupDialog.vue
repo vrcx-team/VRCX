@@ -1636,7 +1636,7 @@
         D.members = [];
         isGroupMembersDone.value = false;
         loadMoreGroupMembersParams.value = {
-            sort: '',
+            sort: 'joinedAt:desc',
             roleId: '',
             n: 100,
             offset: 0,

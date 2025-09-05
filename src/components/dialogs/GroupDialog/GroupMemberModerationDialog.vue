@@ -900,7 +900,7 @@
         n: 100,
         offset: 0,
         groupId: '',
-        sort: '',
+        sort: 'joinedAt:desc',
         roleId: ''
     });
 
@@ -1843,7 +1843,7 @@
         members.value = [];
         isGroupMembersDone.value = false;
         loadMoreGroupMembersParams.value = {
-            sort: '',
+            sort: 'joinedAt:desc',
             roleId: '',
             n: 100,
             offset: 0,
