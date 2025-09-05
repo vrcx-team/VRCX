@@ -356,14 +356,14 @@
                                 :content="t('dialog.user.actions.unfavorite_tooltip')">
                                 <el-button
                                     type="warning"
-                                    :icon="Star"
+                                    :icon="StarFilled"
                                     circle
                                     @click="userDialogCommand('Add Favorite')"></el-button>
                             </el-tooltip>
                             <el-tooltip v-else placement="top" :content="t('dialog.user.actions.favorite_tooltip')">
                                 <el-button
                                     type="default"
-                                    :icon="StarFilled"
+                                    :icon="Star"
                                     circle
                                     @click="userDialogCommand('Add Favorite')"></el-button>
                             </el-tooltip>
