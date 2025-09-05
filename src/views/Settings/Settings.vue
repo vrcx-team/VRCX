@@ -383,6 +383,10 @@
                         :label="t('view.settings.appearance.appearance.age_gated_instances')"
                         :value="isAgeGatedInstancesVisible"
                         @change="setIsAgeGatedInstancesVisible" />
+                    <simple-switch
+                        :label="t('view.settings.appearance.appearance.use_vscode_like_editor_to_show_json')"
+                        :value="useVscodeLikeEditorToShowJSON"
+                        @change="setUseVscodeLikeEditorToShowJSON" />
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
                         <el-radio-group :value="sortFavorites" @change="saveSortFavoritesOption">
@@ -2018,6 +2022,7 @@
         isAgeGatedInstancesVisible,
         sortFavorites,
         instanceUsersSortAlphabetical,
+        useVscodeLikeEditorToShowJSON,
         tablePageSize,
         dtHour12,
         dtIsoFormat,
@@ -2040,6 +2045,7 @@
         setHideTooltips,
         setIsAgeGatedInstancesVisible,
         setInstanceUsersSortAlphabetical,
+        setUseVscodeLikeEditorToShowJSON,
         setDtHour12,
         setDtIsoFormat,
         setSidebarSortMethod1,

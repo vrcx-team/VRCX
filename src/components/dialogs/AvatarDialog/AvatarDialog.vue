@@ -562,7 +562,9 @@
                         size="mini"
                         icon="el-icon-refresh"
                         circle
-                        @click="refreshAvatarDialogTreeData"></el-button>
+                        @click="
+                            useVscodeLikeEditorToShowJSON ? refreshAvatarDialogData() : refreshAvatarDialogTreeData()
+                        "></el-button>
                     <el-button
                         type="default"
                         size="mini"
@@ -571,7 +573,7 @@
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)"></el-button>
                     <el-tree
-                        v-if="Object.keys(avatarDialog.fileAnalysis).length > 0"
+                        v-if="!useVscodeLikeEditorToShowJSON && Object.keys(avatarDialog.fileAnalysis).length > 0"
                         :data="avatarDialog.fileAnalysis"
                         style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
@@ -581,7 +583,14 @@
                             </span>
                         </template>
                     </el-tree>
-                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
+                    <MonacoEditor
+                        v-else-if="Object.keys(avatarDialog.fileAnalysis).length > 0"
+                        style="margin-top: 5px; font-size: 12px; min-height: 50vh"
+                        :value="formatJSON(avatarDialog.fileAnalysis)" />
+                    <el-tree
+                        v-if="!useVscodeLikeEditorToShowJSON"
+                        :data="treeData"
+                        style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
@@ -589,6 +598,10 @@
                             </span>
                         </template>
                     </el-tree>
+                    <MonacoEditor
+                        v-else
+                        style="margin-top: 5px; font-size: 12px; min-height: 50vh"
+                        :value="formatJSON(data)" />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -624,7 +637,8 @@
         timeToText,
         moveArrayItem,
         formatDateFilter,
-        textToHex
+        textToHex,
+        formatJSON
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -638,8 +652,9 @@
     import ChangeAvatarImageDialog from './ChangeAvatarImageDialog.vue';
     import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
     import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
+    import MonacoEditor from '../../MonacoEditor.vue';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { hideTooltips, useVscodeLikeEditorToShowJSON } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog, sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const { avatarDialog, cachedAvatarModerations, cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
@@ -664,6 +679,7 @@
     const previousImagesFileId = ref('');
 
     const treeData = ref([]);
+    const data = ref({});
     const timeSpent = ref(0);
     const memo = ref('');
     const setAvatarTagsDialog = reactive({
@@ -737,7 +753,11 @@
 
     function handleAvatarDialogTab(name) {
         if (name === 'JSON') {
-            refreshAvatarDialogTreeData();
+            if (useVscodeLikeEditorToShowJSON) {
+                refreshAvatarDialogData();
+            } else {
+                refreshAvatarDialogTreeData();
+            }
         }
     }
 
@@ -1108,6 +1128,10 @@
 
     function refreshAvatarDialogTreeData() {
         treeData.value = buildTreeData(avatarDialog.value.ref);
+    }
+
+    function refreshAvatarDialogData() {
+        data.value = avatarDialog.value.ref;
     }
 
     function showSetAvatarTagsDialog(avatarId) {

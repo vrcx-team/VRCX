@@ -1742,7 +1742,7 @@
                         size="mini"
                         icon="el-icon-refresh"
                         circle
-                        @click="refreshUserDialogTreeData()">
+                        @click="useVscodeLikeEditorToShowJSON ? refreshUserDialogData() : refreshUserDialogTreeData()">
                     </el-button>
                     <el-button
                         type="default"
@@ -1752,7 +1752,10 @@
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(userDialog.id, userDialog.ref)">
                     </el-button>
-                    <el-tree :data="userDialog.treeData" style="margin-top: 5px; font-size: 12px">
+                    <el-tree
+                        v-if="!useVscodeLikeEditorToShowJSON"
+                        :data="userDialog.treeData"
+                        style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key"></span>
@@ -1760,6 +1763,10 @@
                             </span>
                         </template>
                     </el-tree>
+                    <MonacoEditor
+                        v-else
+                        :value="formatJSON(userDialog.data)"
+                        style="margin-top: 5px; font-size: 12px; min-height: 50vh" />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -1826,7 +1833,8 @@
         userOnlineForTimestamp,
         userStatusClass,
         textToHex,
-        formatDateFilter
+        formatDateFilter,
+        formatJSON
     } from '../../../shared/utils';
     import {
         useAdvancedSettingsStore,
@@ -1855,17 +1863,25 @@
     import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
     import SocialStatusDialog from './SocialStatusDialog.vue';
     import ModerateGroupDialog from '../ModerateGroupDialog.vue';
+    import MonacoEditor from '../../MonacoEditor.vue';
 
     const { t } = useI18n();
 
     const { proxy } = getCurrentInstance();
     const { $message, $confirm } = proxy;
 
-    const { hideTooltips, hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
+    const { hideTooltips, hideUserNotes, hideUserMemos, useVscodeLikeEditorToShowJSON } =
+        storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { userDialog, languageDialog, currentUser, cachedUsers } = storeToRefs(useUserStore());
-    const { showUserDialog, applyUser, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
-        useUserStore();
+    const {
+        showUserDialog,
+        applyUser,
+        sortUserDialogAvatars,
+        refreshUserDialogAvatars,
+        refreshUserDialogTreeData,
+        refreshUserDialogData
+    } = useUserStore();
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();
     const { showAvatarDialog, lookupAvatars, showAvatarAuthorDialog } = useAvatarStore();
@@ -2028,7 +2044,11 @@
                 getUserFavoriteWorlds(userId);
             }
         } else if (name === 'JSON') {
-            refreshUserDialogTreeData();
+            if (useVscodeLikeEditorToShowJSON.value) {
+                refreshUserDialogData();
+            } else {
+                refreshUserDialogTreeData();
+            }
         }
     }
 

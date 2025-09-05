@@ -825,8 +825,8 @@
                                         <DisplayName :userid="post.authorId" style="margin-right: 5px" />
                                         <span v-if="post.editorId" style="margin-right: 5px"
                                             >({{ t('dialog.group.posts.edited_by') }}
-                                            <DisplayName :userid="post.editorId" />)</span
-                                        >
+                                            <DisplayName :userid="post.editorId" />)
+                                        </span>
                                         <el-tooltip placement="bottom">
                                             <template slot="content">
                                                 <span
@@ -1161,7 +1161,9 @@
                         size="mini"
                         icon="el-icon-refresh"
                         circle
-                        @click="refreshGroupDialogTreeData()" />
+                        @click="
+                            useVscodeLikeEditorToShowJSON ? refreshGroupDialogData() : refreshGroupDialogTreeData()
+                        " />
                     <el-button
                         type="default"
                         size="mini"
@@ -1169,7 +1171,10 @@
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)" />
-                    <el-tree :data="groupDialog.treeData" style="margin-top: 5px; font-size: 12px">
+                    <el-tree
+                        v-if="!useVscodeLikeEditorToShowJSON"
+                        :data="groupDialog.treeData"
+                        style="margin-top: 5px; font-size: 12px">
                         <template slot-scope="scope">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key" />
@@ -1177,6 +1182,10 @@
                             </span>
                         </template>
                     </el-tree>
+                    <MonacoEditor
+                        v-else
+                        :value="formatJSON(groupDialog.data)"
+                        style="margin-top: 5px; font-size: 12px; min-height: 50vh" />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -1213,7 +1222,8 @@
         userStatusClass,
         formatDateFilter,
         textToHex,
-        debounce
+        debounce,
+        formatJSON
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -1225,10 +1235,11 @@
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
+    import MonacoEditor from '../../MonacoEditor.vue';
 
     const { t } = useI18n();
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { hideTooltips, useVscodeLikeEditorToShowJSON } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());
@@ -1591,7 +1602,11 @@
         } else if (obj.label === t('dialog.group.gallery.header')) {
             getGroupGalleries();
         } else if (obj.label === t('dialog.group.json.header')) {
-            refreshGroupDialogTreeData();
+            if (useVscodeLikeEditorToShowJSON) {
+                refreshGroupDialogData();
+            } else {
+                refreshGroupDialogTreeData();
+            }
         }
     }
 
@@ -1719,7 +1734,11 @@
         } else if (groupDialogTabCurrentName.value === '3') {
             getGroupGalleries();
         } else if (groupDialogTabCurrentName.value === '4') {
-            refreshGroupDialogTreeData();
+            if (useVscodeLikeEditorToShowJSON) {
+                refreshGroupDialogData();
+            } else {
+                refreshGroupDialogTreeData();
+            }
         }
     }
 
@@ -1777,6 +1796,21 @@
         updateGroupDialogData({
             ...groupDialog.value,
             treeData
+        });
+    }
+
+    function refreshGroupDialogData() {
+        const D = groupDialog.value;
+        const data = {
+            group: D.ref,
+            posts: D.posts,
+            instances: D.instances,
+            members: D.members,
+            galleries: D.galleries
+        };
+        updateGroupDialogData({
+            ...groupDialog.value,
+            data
         });
     }
 

@@ -34,6 +34,7 @@ export const useGroupStore = defineStore('Group', () => {
             loading: false,
             isGetGroupDialogGroupLoading: false,
             treeData: [],
+            data: {},
             id: '',
             inGroup: false,
             ownerDisplayName: '',
@@ -180,6 +181,7 @@ export const useGroupStore = defineStore('Group', () => {
         D.inGroup = false;
         D.ownerDisplayName = '';
         D.treeData = [];
+        D.data = {};
         D.announcement = {};
         D.posts = [];
         D.postsFiltered = [];

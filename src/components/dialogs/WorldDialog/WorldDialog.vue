@@ -725,7 +725,7 @@
                         size="mini"
                         icon="el-icon-refresh"
                         circle
-                        @click="refreshWorldDialogTreeData"></el-button>
+                        @click="refreshWorldDialogTreeDataOrData()"></el-button>
                     <el-button
                         type="default"
                         size="mini"
@@ -734,7 +734,7 @@
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)"></el-button>
                     <el-tree
-                        v-if="Object.keys(worldDialog.fileAnalysis).length > 0"
+                        v-if="!useVscodeLikeEditorToShowJSON && Object.keys(worldDialog.fileAnalysis).length > 0"
                         :data="worldDialog.fileAnalysis"
                         style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
@@ -744,7 +744,14 @@
                             </span>
                         </template>
                     </el-tree>
-                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
+                    <MonacoEditor
+                        v-else-if="Object.keys(worldDialog.fileAnalysis).length > 0"
+                        style="margin-top: 5px; font-size: 12px; min-height: 50vh"
+                        :value="formatJSON(worldDialog.fileAnalysis)" />
+                    <el-tree
+                        v-if="Object.keys(treeData).length > 0"
+                        :data="treeData"
+                        style="margin-top: 5px; font-size: 12px">
                         <template #default="{ data }">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="data.key"></span>
@@ -752,6 +759,10 @@
                             </span>
                         </template>
                     </el-tree>
+                    <MonacoEditor
+                        v-else-if="Object.keys(data).length > 0"
+                        style="margin-top: 5px; font-size: 12px; min-height: 50vh"
+                        :value="formatJSON(data)" />
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -798,7 +809,8 @@
         commaNumber,
         formatDateFilter,
         textToHex,
-        copyToClipboard
+        copyToClipboard,
+        formatJSON
     } from '../../../shared/utils';
     import {
         useAppearanceSettingsStore,
@@ -817,10 +829,12 @@
     import ChangeWorldImageDialog from './ChangeWorldImageDialog.vue';
     import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
     import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
+    import MonacoEditor from '../../MonacoEditor.vue';
 
     const { proxy } = getCurrentInstance();
 
-    const { hideTooltips, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
+    const { hideTooltips, isAgeGatedInstancesVisible, useVscodeLikeEditorToShowJSON } =
+        storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser, userDialog } = storeToRefs(useUserStore());
     const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());
@@ -836,6 +850,7 @@
     const { t } = useI18n();
 
     const treeData = ref([]);
+    const data = ref({});
     const worldAllowedDomainsDialog = ref({
         visible: false,
         worldId: '',
@@ -946,7 +961,7 @@
 
     function handleWorldDialogTab(tabName) {
         if (tabName === 'JSON') {
-            refreshWorldDialogTreeData();
+            refreshWorldDialogTreeDataOrData();
         }
     }
 
@@ -1358,8 +1373,21 @@
         D.openFlg = true;
         nextTick(() => (D.openFlg = false));
     }
-    function refreshWorldDialogTreeData() {
-        treeData.value = buildTreeData(worldDialog.value.ref);
+
+    // normally, you cannot change settings while dialog is showing
+    // watch(useVscodeLikeEditorToShowJSON, () => {
+    //     if (treeData.value.length > 0 || dataString.value.length > 0) {
+    //         refreshWorldDialogTreeDataOrData()
+    //     }
+    // })
+    function refreshWorldDialogTreeDataOrData() {
+        if (useVscodeLikeEditorToShowJSON.value) {
+            treeData.value = [];
+            data.value = worldDialog.value.ref;
+        } else {
+            data.value = {};
+            treeData.value = buildTreeData(worldDialog.value.ref);
+        }
     }
     function copyWorldId() {
         navigator.clipboard

@@ -390,7 +390,7 @@
                         icon="el-icon-refresh"
                         circle
                         style="margin-left: 5px"
-                        @click="refreshConfigTreeData()"></el-button>
+                        @click="refreshConfigTreeDataOrData()"></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
@@ -399,7 +399,10 @@
                         icon="el-icon-delete"
                         circle
                         style="margin-left: 5px"
-                        @click="configTreeData = []"></el-button>
+                        @click="
+                            configTreeData = [];
+                            configData = {};
+                        "></el-button>
                 </el-tooltip>
             </div>
             <el-tree v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top: 10px; font-size: 12px">
@@ -410,6 +413,10 @@
                     </span>
                 </template>
             </el-tree>
+            <MonacoEditor
+                v-else-if="Object.keys(configData).length > 0"
+                style="margin-top: 10px; font-size: 12px; min-height: 50vh"
+                :value="formatJSON(configData)" />
         </div>
 
         <div class="options-container">
@@ -422,7 +429,7 @@
                         icon="el-icon-refresh"
                         circle
                         style="margin-left: 5px"
-                        @click="refreshCurrentUserTreeData()"></el-button>
+                        @click="refreshCurrentUserTreeDataOrData()"></el-button>
                 </el-tooltip>
                 <el-tooltip placement="top" :content="t('view.profile.clear_results_tooltip')" :disabled="hideTooltips">
                     <el-button
@@ -431,7 +438,10 @@
                         icon="el-icon-delete"
                         circle
                         style="margin-left: 5px"
-                        @click="currentUserTreeData = []"></el-button>
+                        @click="
+                            currentUserTreeData = [];
+                            currentUserData = {};
+                        "></el-button>
                 </el-tooltip>
             </div>
             <el-tree
@@ -445,6 +455,10 @@
                     </span>
                 </template>
             </el-tree>
+            <MonacoEditor
+                v-else-if="currentUserData.length > 0"
+                style="margin-top: 10px; font-size: 12px; min-height: 50vh"
+                :value="formatJSON(currentUserData)" />
         </div>
 
         <div class="options-container">
@@ -466,12 +480,15 @@
                         icon="el-icon-delete"
                         circle
                         style="margin-left: 5px"
-                        @click="currentUserFeedbackData = []"></el-button>
+                        @click="
+                            currentUserFeedbackTreeData = [];
+                            currentUserFeedbackData = {};
+                        "></el-button>
                 </el-tooltip>
             </div>
             <el-tree
-                v-if="currentUserFeedbackData.length > 0"
-                :data="currentUserFeedbackData"
+                v-if="currentUserFeedbackTreeData.length > 0"
+                :data="currentUserFeedbackTreeData"
                 style="margin-top: 10px; font-size: 12px">
                 <template #default="scope">
                     <span>
@@ -480,6 +497,11 @@
                     </span>
                 </template>
             </el-tree>
+            <MonacoEditor
+                v-else-if="Object.keys(currentUserFeedbackData).length > 0"
+                style="margin-top: 10px; font-size: 12px; min-height: 50vh"
+                :value="formatJSON(currentUserFeedbackData)"
+                :options="MONACO_EDITOR_OPTIONS" />
         </div>
         <DiscordNamesDialog :discord-names-dialog-visible.sync="discordNamesDialogVisible" :friends="friends" />
         <ExportFriendsListDialog
@@ -491,12 +513,13 @@
 
 <script setup>
     import { storeToRefs } from 'pinia';
-    import { ref, getCurrentInstance } from 'vue';
+    import { ref, getCurrentInstance, watch } from 'vue';
     import { useI18n } from 'vue-i18n-bridge';
     import { authRequest, miscRequest, userRequest } from '../../api';
     import {
         parseAvatarUrl,
         buildTreeData,
+        formatJSON,
         openExternalLink,
         userImage,
         parseUserUrl,
@@ -506,6 +529,7 @@
     import DiscordNamesDialog from './dialogs/DiscordNamesDialog.vue';
     import ExportFriendsListDialog from './dialogs/ExportFriendsListDialog.vue';
     import ExportAvatarsListDialog from './dialogs/ExportAvatarsListDialog.vue';
+    import MonacoEditor from '../../components/MonacoEditor.vue';
     import {
         useAppearanceSettingsStore,
         useSearchStore,
@@ -518,7 +542,7 @@
     } from '../../stores';
 
     const { friends } = storeToRefs(useFriendStore());
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
+    const { hideTooltips, useVscodeLikeEditorToShowJSON } = storeToRefs(useAppearanceSettingsStore());
     const { pastDisplayNameTable, currentUser } = storeToRefs(useUserStore());
     const { showUserDialog, lookupUser, getCurrentUser } = useUserStore();
     const { showAvatarDialog } = useAvatarStore();
@@ -540,14 +564,24 @@
 
     const vrchatCredit = ref(null);
     const configTreeData = ref([]);
+    const configData = ref({});
     const currentUserTreeData = ref([]);
-    const currentUserFeedbackData = ref([]);
+    const currentUserData = ref({});
+    const currentUserFeedbackTreeData = ref([]);
+    const currentUserFeedbackData = ref({});
 
     const discordNamesDialogVisible = ref(false);
     const isExportFriendsListDialogVisible = ref(false);
     const isExportAvatarsListDialogVisible = ref(false);
 
     const visits = ref(0);
+
+    const MONACO_EDITOR_OPTIONS = {
+        automaticLayout: true,
+        formatOnType: true,
+        formatOnPaste: true,
+        readOnly: true
+    };
 
     // redirect to tools tab
     function showGalleryDialog() {
@@ -670,18 +704,52 @@
     async function getConfig() {
         await authRequest.getConfig();
     }
-    async function refreshConfigTreeData() {
+
+    // fix: when page switched, `useVscodeLikeEditorToShowJSON` option will not update
+    watch(useVscodeLikeEditorToShowJSON, async () => {
+        if (configTreeData.value.length > 0 || Object.keys(configData.value).length > 0) {
+            await refreshConfigTreeDataOrData();
+        }
+
+        if (currentUserTreeData.value.length > 0 || Object.keys(currentUserData.value).length > 0) {
+            await refreshCurrentUserTreeDataOrData();
+        }
+
+        if (currentUserFeedbackTreeData.value.length > 0 || Object.keys(currentUserFeedbackData.value).length > 0) {
+            getCurrentUserFeedback();
+        }
+    });
+
+    async function refreshConfigTreeDataOrData() {
         await getConfig();
-        configTreeData.value = buildTreeData(cachedConfig.value);
+        if (useVscodeLikeEditorToShowJSON.value) {
+            configTreeData.value = [];
+            configData.value = cachedConfig.value;
+        } else {
+            configData.value = {};
+            configTreeData.value = buildTreeData(cachedConfig.value);
+        }
     }
-    async function refreshCurrentUserTreeData() {
+    async function refreshCurrentUserTreeDataOrData() {
         await getCurrentUser();
-        currentUserTreeData.value = buildTreeData(currentUser.value);
+        if (useVscodeLikeEditorToShowJSON.value) {
+            currentUserTreeData.value = [];
+            currentUserData.value = currentUser.value;
+        } else {
+            currentUserData.value = {};
+            currentUserTreeData.value = buildTreeData(currentUser.value);
+        }
     }
     function getCurrentUserFeedback() {
         userRequest.getUserFeedback({ userId: currentUser.value.id }).then((args) => {
             if (args.params.userId === currentUser.value.id) {
-                currentUserFeedbackData.value = buildTreeData(args.json);
+                if (useVscodeLikeEditorToShowJSON.value) {
+                    currentUserFeedbackTreeData.value = [];
+                    currentUserFeedbackData.value = args.json;
+                } else {
+                    currentUserFeedbackData.value = {};
+                    currentUserFeedbackTreeData.value = buildTreeData(args.json);
+                }
             }
         });
     }
