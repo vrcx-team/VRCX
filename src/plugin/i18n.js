@@ -27,4 +27,6 @@ const i18n = createI18n({
     silentFallbackWarn: true
 });
 
-export { i18n };
+const t = i18n.global.t;
+
+export { i18n, t };

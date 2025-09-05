@@ -2,9 +2,4 @@
 import './dayjs';
 // import './components';
 
-export { i18n } from './i18n';
-function t() {
-    return '';
-}
-
-export { t };
+export { i18n, t } from './i18n';
