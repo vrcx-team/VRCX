@@ -12,10 +12,12 @@ const imageReq = {
             const fileVersion = json.versions[json.versions.length - 1].version;
             request(`file/${fileId}/${fileVersion}/signature/finish`, {
                 method: 'PUT'
-            }).catch(err => console.error('Failed to finish signature:', err));
+            }).catch((err) =>
+                console.error('Failed to finish signature:', err)
+            );
             request(`file/${fileId}/${fileVersion}/file/finish`, {
                 method: 'PUT'
-            }).catch(err => console.error('Failed to finish file:', err));
+            }).catch((err) => console.error('Failed to finish file:', err));
         } catch (error) {
             console.error('Failed to cleanup avatar upload:', error);
         }
@@ -143,10 +145,12 @@ const imageReq = {
             const fileVersion = json.versions[json.versions.length - 1].version;
             request(`file/${fileId}/${fileVersion}/signature/finish`, {
                 method: 'PUT'
-            }).catch(err => console.error('Failed to finish signature:', err));
+            }).catch((err) =>
+                console.error('Failed to finish signature:', err)
+            );
             request(`file/${fileId}/${fileVersion}/file/finish`, {
                 method: 'PUT'
-            }).catch(err => console.error('Failed to finish file:', err));
+            }).catch((err) => console.error('Failed to finish file:', err));
         } catch (error) {
             console.error('Failed to cleanup world upload:', error);
         }
