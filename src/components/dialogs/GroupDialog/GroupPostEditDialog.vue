@@ -191,7 +191,7 @@
             params.imageId = gallerySelectDialog.value.selectedFileId;
         }
         groupRequest.editGroupPost(params).then((args) => {
-            handleGroupPost();
+            handleGroupPost(args);
             ElMessage({
                 message: 'Group post edited',
                 type: 'success'

@@ -326,7 +326,7 @@
                     </div>
                 </div>
             </div>
-            <el-tabs ref="worldDialogTabsRef" @tab-click="worldDialogTabClick">
+            <el-tabs ref="worldDialogTabsRef" v-model="worldDialogLastActiveTab" @tab-click="worldDialogTabClick">
                 <el-tab-pane name="Instances" :label="t('dialog.world.instances.header')">
                     <div class="">
                         <el-icon><User /></el-icon>
@@ -958,21 +958,15 @@
     }
 
     function toggleLastActiveTab() {
-        let tabName = worldDialogTabsRef.value.currentName;
-        if (tabName === '0') {
-            tabName = worldDialogLastActiveTab.value;
-            worldDialogTabsRef.value = tabName;
-        }
-        handleWorldDialogTab(tabName);
-        worldDialogLastActiveTab.value = tabName;
+        handleWorldDialogTab(worldDialogLastActiveTab.value);
     }
 
     function worldDialogTabClick(obj) {
-        if (worldDialogLastActiveTab.value === obj.name) {
+        if (worldDialogLastActiveTab.value === obj.props.name) {
             return;
         }
-        handleWorldDialogTab(obj.name);
-        worldDialogLastActiveTab.value = obj.name;
+        handleWorldDialogTab(obj.props.name);
+        worldDialogLastActiveTab.value = obj.props.name;
     }
 
     function displayPreviousImages(command) {
