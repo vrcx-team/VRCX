@@ -34,21 +34,32 @@
                                     v-model.lazy="barWidth"
                                     :max="50"
                                     :min="1"
-                                    @change="changeBarWidth"></el-slider>
+                                    @change="
+                                        (value) => changeBarWidth(value, () => handleEchartsRerender())
+                                    "></el-slider>
                             </div>
                         </div>
                         <div>
                             <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
-                            <el-switch v-model="isDetailVisible" @change="changeIsDetailInstanceVisible"> </el-switch>
+                            <el-switch
+                                v-model="isDetailVisible"
+                                @change="(value) => changeIsDetailInstanceVisible(value, () => handleSettingsChange())">
+                            </el-switch>
                         </div>
                         <div v-if="isDetailVisible">
                             <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
-                            <el-switch v-model="isSoloInstanceVisible" @change="changeIsSoloInstanceVisible">
+                            <el-switch
+                                v-model="isSoloInstanceVisible"
+                                @change="(value) => changeIsSoloInstanceVisible(value, () => handleSettingsChange())">
                             </el-switch>
                         </div>
                         <div v-if="isDetailVisible">
                             <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
-                            <el-switch v-model="isNoFriendInstanceVisible" @change="changeIsNoFriendInstanceVisible">
+                            <el-switch
+                                v-model="isNoFriendInstanceVisible"
+                                @change="
+                                    (value) => changeIsNoFriendInstanceVisible(value, () => handleSettingsChange())
+                                ">
                             </el-switch>
                         </div>
                     </div>
@@ -115,16 +126,16 @@
 
 <script setup>
     import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-    import { ref, onDeactivated, watch, computed, onMounted, nextTick, onBeforeMount, onActivated } from 'vue';
+    import { ref, onDeactivated, watch, computed, onMounted, onBeforeMount, onActivated, nextTick } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import configRepository from '../../../service/config';
-    import { database } from '../../../service/database';
-    import { getWorldName, parseLocation, timeToText } from '../../../shared/utils';
+    import { parseLocation, timeToText } from '../../../shared/utils';
     import * as echarts from 'echarts';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
+    import { useInstanceActivitySettings } from '../composables/useInstanceActivitySettings';
+    import { useInstanceActivityData } from '../composables/useInstanceActivityData';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
@@ -133,22 +144,35 @@
     const { currentUser } = storeToRefs(useUserStore());
     const { t } = useI18n();
 
+    const {
+        barWidth,
+        isDetailVisible,
+        isSoloInstanceVisible,
+        isNoFriendInstanceVisible,
+        initializeSettings,
+        changeBarWidth,
+        changeIsDetailInstanceVisible,
+        changeIsSoloInstanceVisible,
+        changeIsNoFriendInstanceVisible,
+        handleChangeSettings
+    } = useInstanceActivitySettings();
+
+    const {
+        activityData,
+        activityDetailData,
+        allDateOfActivity,
+        worldNameArray,
+        getAllDateOfActivity,
+        getWorldNameData,
+        getActivityData
+    } = useInstanceActivityData();
+
     // echarts and observer
     const echartsInstance = ref(null);
     const resizeObserver = ref(null);
     const intersectionObservers = ref([]);
     const selectedDate = ref(dayjs().toDate());
-    // data
-    const activityData = ref([]);
-    const activityDetailData = ref([]);
-    const allDateOfActivity = ref(new Set());
-    const worldNameArray = ref([]);
     const isLoading = ref(true);
-    // settings
-    const barWidth = ref(25);
-    const isDetailVisible = ref(true);
-    const isSoloInstanceVisible = ref(true);
-    const isNoFriendInstanceVisible = ref(true);
 
     const activityChartRef = ref(null);
     const activityDetailChartRef = ref(null);
@@ -230,30 +254,14 @@
         }
     });
 
-    function created() {
-        configRepository.getInt('VRCX_InstanceActivityBarWidth', 25).then((value) => {
-            barWidth.value = value;
-        });
-        configRepository.getBool('VRCX_InstanceActivityDetailVisible', true).then((value) => {
-            isDetailVisible.value = value;
-        });
-        configRepository.getBool('VRCX_InstanceActivitySoloInstanceVisible', true).then((value) => {
-            isSoloInstanceVisible.value = value;
-        });
-        configRepository.getBool('VRCX_InstanceActivityNoFriendInstanceVisible', true).then((value) => {
-            isNoFriendInstanceVisible.value = value;
-        });
-    }
-
     onBeforeMount(() => {
-        // ensure created is called before mounted
-        created();
+        initializeSettings();
     });
 
     onMounted(async () => {
         try {
             getAllDateOfActivity();
-            await getActivityData();
+            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, handleIntersectionObserver);
             await getWorldNameData();
             initEcharts();
         } catch (error) {
@@ -264,7 +272,7 @@
 
     async function reloadData() {
         isLoading.value = true;
-        await getActivityData();
+        await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, handleIntersectionObserver);
         getWorldNameData();
         // possibility past 24:00
         getAllDateOfActivity();
@@ -472,44 +480,12 @@
     // echarts - end
 
     // settings - start
-    function changeBarWidth(value) {
-        barWidth.value = value;
+    function handleEchartsRerender() {
         initEcharts();
-        configRepository.setInt('VRCX_InstanceActivityBarWidth', value).finally(() => {
-            handleChangeSettings();
-        });
+        handleSettingsChange();
     }
-    function changeIsDetailInstanceVisible(value) {
-        isDetailVisible.value = value;
-        configRepository.setBool('VRCX_InstanceActivityDetailVisible', value).finally(() => {
-            handleChangeSettings();
-        });
-    }
-    function changeIsSoloInstanceVisible(value) {
-        isSoloInstanceVisible.value = value;
-        configRepository.setBool('VRCX_InstanceActivitySoloInstanceVisible', value).finally(() => {
-            handleChangeSettings();
-        });
-    }
-    function changeIsNoFriendInstanceVisible(value) {
-        isNoFriendInstanceVisible.value = value;
-        configRepository.setBool('VRCX_InstanceActivityNoFriendInstanceVisible', value).finally(() => {
-            handleChangeSettings();
-        });
-    }
-    function handleChangeSettings() {
-        nextTick(() => {
-            if (activityDetailChartRef.value) {
-                activityDetailChartRef.value.forEach((child) => {
-                    requestAnimationFrame(() => {
-                        if (child.echartsInstance) {
-                            child.initEcharts();
-                        }
-                    });
-                });
-            }
-        });
-        //rerender detail chart
+    function handleSettingsChange() {
+        handleChangeSettings(activityDetailChartRef);
     }
     // settings - end
 
@@ -550,150 +526,7 @@
     }
     // options - end
 
-    // data - start
-    async function getWorldNameData() {
-        worldNameArray.value = await Promise.all(
-            activityData.value.map(async (item) => {
-                try {
-                    return await getWorldName(item.location);
-                } catch {
-                    console.error('getWorldName failed location', item.location);
-                    return 'Unknown world';
-                }
-            })
-        );
-    }
-    async function getAllDateOfActivity() {
-        const utcDateStrings = (await database.getDateOfInstanceActivity()) || [];
-        const uniqueDates = new Set();
-
-        for (const utcString of utcDateStrings) {
-            const formattedDate = dayjs.utc(utcString).tz().format('YYYY-MM-DD');
-            uniqueDates.add(formattedDate);
-        }
-
-        allDateOfActivity.value = uniqueDates;
-    }
-    async function getActivityData() {
-        const localStartDate = dayjs.tz(selectedDate.value).startOf('day').toISOString();
-        const localEndDate = dayjs.tz(selectedDate.value).endOf('day').toISOString();
-        const dbData = await database.getInstanceActivity(localStartDate, localEndDate);
-
-        const transformData = (item) => ({
-            ...item,
-            joinTime: dayjs(item.created_at).subtract(item.time, 'millisecond'),
-            leaveTime: dayjs(item.created_at),
-            time: item.time < 0 ? 0 : item.time,
-            isFriend: item.user_id === currentUser.value.id ? null : friends.value.has(item.user_id),
-            isFavorite: item.user_id === currentUser.value.id ? null : localFavoriteFriends.value.has(item.user_id)
-        });
-
-        activityData.value = dbData.currentUserData.map(transformData);
-
-        const transformAndSort = (arr) => {
-            return arr.map(transformData).sort((a, b) => {
-                const timeDiff = Math.abs(a.joinTime.diff(b.joinTime, 'second'));
-                // recording delay, under 3s is considered the same time entry, beautify the chart
-                return timeDiff < 3 ? a.leaveTime - b.leaveTime : a.joinTime - b.joinTime;
-            });
-        };
-
-        const filterByLocation = (innerArray, locationSet) => {
-            return innerArray.every((innerObject) => locationSet.has(innerObject.location));
-        };
-        const locationSet = new Set(activityData.value.map((item) => item.location));
-
-        const preSplitActivityDetailData = Array.from(dbData.detailData.values())
-            .map(transformAndSort)
-            .filter((innerArray) => filterByLocation(innerArray, locationSet));
-
-        activityDetailData.value = handleSplitActivityDetailData(preSplitActivityDetailData, currentUser.value.id);
-
-        if (activityDetailData.value.length) {
-            nextTick(() => {
-                handleIntersectionObserver();
-            });
-        }
-    }
-    function handleSplitActivityDetailData(activityDetailData, currentUserId) {
-        function countTargetIdOccurrences(innerArray, targetId) {
-            let count = 0;
-            for (const obj of innerArray) {
-                if (obj.user_id === targetId) {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        function areIntervalsOverlapping(objA, objB) {
-            const isObj1EndTimeBeforeObj2StartTime = objA.leaveTime.isBefore(objB.joinTime, 'second');
-            const isObj2EndTimeBeforeObj1StartTime = objB.leaveTime.isBefore(objA.joinTime, 'second');
-            return !(isObj1EndTimeBeforeObj2StartTime || isObj2EndTimeBeforeObj1StartTime);
-        }
-
-        function buildOverlapGraph(innerArray) {
-            const numObjects = innerArray.length;
-            const adjacencyList = Array.from({ length: numObjects }, () => []);
-
-            for (let i = 0; i < numObjects; i++) {
-                for (let j = i + 1; j < numObjects; j++) {
-                    if (areIntervalsOverlapping(innerArray[i], innerArray[j])) {
-                        adjacencyList[i].push(j);
-                        adjacencyList[j].push(i);
-                    }
-                }
-            }
-            return adjacencyList;
-        }
-
-        function depthFirstSearch(nodeIndex, visited, graph, component) {
-            visited[nodeIndex] = true;
-            component.push(nodeIndex);
-            for (const neighborIndex of graph[nodeIndex]) {
-                if (!visited[neighborIndex]) {
-                    depthFirstSearch(neighborIndex, visited, graph, component);
-                }
-            }
-        }
-
-        function findConnectedComponents(graph, numNodes) {
-            const visited = new Array(numNodes).fill(false);
-            const components = [];
-
-            for (let i = 0; i < numNodes; i++) {
-                if (!visited[i]) {
-                    const component = [];
-                    depthFirstSearch(i, visited, graph, component);
-                    components.push(component);
-                }
-            }
-            return components;
-        }
-
-        function processOuterArrayWithTargetId(outerArray, targetId) {
-            let i = 0;
-            while (i < outerArray.length) {
-                let currentInnerArray = outerArray[i];
-                let targetIdCount = countTargetIdOccurrences(currentInnerArray, targetId);
-                if (targetIdCount > 1) {
-                    let graph = buildOverlapGraph(currentInnerArray);
-                    let connectedComponents = findConnectedComponents(graph, currentInnerArray.length);
-                    let newInnerArrays = connectedComponents.map((componentIndices) => {
-                        return componentIndices.map((index) => currentInnerArray[index]);
-                    });
-                    outerArray.splice(i, 1, ...newInnerArrays);
-                    i += newInnerArrays.length;
-                } else {
-                    i += 1;
-                }
-            }
-            return outerArray.sort((a, b) => a[0].joinTime - b[0].joinTime);
-        }
-
-        return processOuterArrayWithTargetId(activityDetailData, currentUserId);
-    }
-    // data - end
+    // data - moved to useInstanceActivityData composable
 
     // intersection observer - start
     function handleIntersectionObserver() {
