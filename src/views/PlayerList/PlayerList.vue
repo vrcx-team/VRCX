@@ -83,8 +83,7 @@
                             >PC
                             <span
                                 v-if="currentInstanceWorld.bundleSizes['standalonewindows']"
-                                class="x-grey"
-                                style="margin-left: 5px; border-left: inherit; padding-left: 5px"
+                                :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']"
                                 >{{ currentInstanceWorld.bundleSizes['standalonewindows'].fileSize }}</span
                             >
                         </el-tag>
@@ -98,8 +97,7 @@
                             >Android
                             <span
                                 v-if="currentInstanceWorld.bundleSizes['android']"
-                                class="x-grey"
-                                style="margin-left: 5px; border-left: inherit; padding-left: 5px"
+                                :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']"
                                 >{{ currentInstanceWorld.bundleSizes['android'].fileSize }}</span
                             >
                         </el-tag>
@@ -113,8 +111,7 @@
                             >iOS
                             <span
                                 v-if="currentInstanceWorld.bundleSizes['ios']"
-                                class="x-grey"
-                                style="margin-left: 5px; border-left: inherit; padding-left: 5px"
+                                :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']"
                                 >{{ currentInstanceWorld.bundleSizes['ios'].fileSize }}</span
                             >
                         </el-tag>

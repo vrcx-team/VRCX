@@ -88,8 +88,7 @@
                                 style="margin-right: 5px; margin-top: 5px">
                                 PC<span
                                     v-if="worldDialog.bundleSizes['standalonewindows']"
-                                    class="x-grey"
-                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
                                     {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
                                 </span>
                             </el-tag>
@@ -103,8 +102,7 @@
                                 style="margin-right: 5px; margin-top: 5px">
                                 Android<span
                                     v-if="worldDialog.bundleSizes['android']"
-                                    class="x-grey"
-                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
                                     {{ worldDialog.bundleSizes['android'].fileSize }}
                                 </span>
                             </el-tag>
@@ -118,8 +116,7 @@
                                 style="margin-right: 5px; margin-top: 5px">
                                 iOS<span
                                     v-if="worldDialog.bundleSizes['ios']"
-                                    class="x-grey"
-                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
                                     {{ worldDialog.bundleSizes['ios'].fileSize }}
                                 </span>
                             </el-tag>
