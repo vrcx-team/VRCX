@@ -217,6 +217,7 @@
                                     :icon="Check"
                                     style="color: #67c23a"
                                     size="small"
+                                    class="button-pd-0"
                                     @click="acceptFriendRequestNotification(scope.row)" />
                             </el-tooltip>
                         </template>
@@ -226,6 +227,7 @@
                                     type="text"
                                     :icon="ChatLineSquare"
                                     size="small"
+                                    class="button-pd-0"
                                     @click="showSendInviteResponseDialog(scope.row)" />
                             </el-tooltip>
                         </template>
@@ -238,6 +240,7 @@
                                         :icon="Check"
                                         style="color: #67c23a"
                                         size="small"
+                                        class="button-pd-0"
                                         @click="acceptRequestInvite(scope.row)" />
                                 </el-tooltip>
                             </template>
@@ -246,7 +249,7 @@
                                     type="text"
                                     :icon="ChatLineSquare"
                                     size="small"
-                                    style="margin-left: 5px"
+                                    :class="['button-pd-0', 'ml-5']"
                                     @click="showSendInviteRequestResponseDialog(scope.row)" />
                             </el-tooltip>
                         </template>
@@ -259,7 +262,7 @@
                                         type="text"
                                         :icon="Check"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -268,7 +271,7 @@
                                         type="text"
                                         :icon="Close"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -277,7 +280,7 @@
                                         type="text"
                                         :icon="CircleClose"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -286,7 +289,7 @@
                                         type="text"
                                         :icon="Bell"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -302,7 +305,7 @@
                                         type="text"
                                         :icon="ChatLineSquare"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -311,7 +314,7 @@
                                         type="text"
                                         :icon="CollectionTag"
                                         size="small"
-                                        style="margin-left: 5px"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -337,13 +340,14 @@
                                     type="text"
                                     :icon="Close"
                                     size="small"
+                                    class="button-pd-0"
                                     @click="hideNotification(scope.row)" />
                                 <el-button
                                     v-else
                                     type="text"
                                     :icon="Close"
                                     size="small"
-                                    style="margin-left: 5px"
+                                    :class="['button-pd-0', 'ml-5']"
                                     @click="hideNotificationPrompt(scope.row)" />
                             </el-tooltip>
                         </template>
@@ -356,13 +360,14 @@
                                 type="text"
                                 :icon="Close"
                                 size="small"
+                                class="button-pd-0"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
                                 :icon="Delete"
                                 size="small"
-                                style="margin-left: 5px"
+                                :class="['button-pd-0', 'ml-5']"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
                         </el-tooltip>
                     </template>
@@ -381,13 +386,14 @@
                                 type="text"
                                 :icon="Close"
                                 size="small"
+                                class="button-pd-0"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
                                 :icon="Delete"
                                 size="small"
-                                style="margin-left: 5px"
+                                :class="['button-pd-0', 'ml-5']"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
                         </el-tooltip>
                     </template>
@@ -667,3 +673,12 @@
         });
     }
 </script>
+
+<style lang="scss" scoped>
+    .button-pd-0 {
+        padding: 0;
+    }
+    .ml-5 {
+        margin-left: 5px;
+    }
+</style>

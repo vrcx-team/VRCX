@@ -57,7 +57,7 @@
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-                <el-dropdown trigger="click" size="small" style="margin: 5px" @click.stop>
+                <el-dropdown trigger="click" size="small" @click.stop>
                     <el-button size="small">
                         <span v-if="worldImportDialog.worldImportLocalFavoriteGroup">
                             {{ worldImportDialog.worldImportLocalFavoriteGroup }}

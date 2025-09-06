@@ -207,7 +207,7 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <AvatarExportDialog :avatar-export-dialog-visible="avatarExportDialogVisible" />
+        <AvatarExportDialog v-model="avatarExportDialogVisible" />
     </div>
 </template>
 

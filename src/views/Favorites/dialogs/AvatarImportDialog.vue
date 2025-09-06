@@ -25,7 +25,7 @@
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small">
+                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.stop>
                     <el-button size="small">
                         <span v-if="avatarImportDialog.avatarImportFavoriteGroup">
                             {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{
@@ -51,7 +51,7 @@
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-                <el-dropdown trigger="click" size="small" style="margin: 5px">
+                <el-dropdown trigger="click" size="small">
                     <el-button size="small">
                         <span v-if="avatarImportDialog.avatarImportLocalFavoriteGroup">
                             {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{

@@ -585,7 +585,7 @@
         <SetAvatarTagsDialog :set-avatar-tags-dialog="setAvatarTagsDialog" />
         <SetAvatarStylesDialog :set-avatar-styles-dialog="setAvatarStylesDialog" />
         <ChangeAvatarImageDialog
-            :change-avatar-image-dialog-visible="changeAvatarImageDialogVisible"
+            v-model:changeAvatarImageDialogVisible="changeAvatarImageDialogVisible"
             :previous-images-file-id="previousImagesFileId"
             @refresh="displayPreviousImages" />
         <PreviousImagesDialog />

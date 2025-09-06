@@ -59,7 +59,7 @@
     const props = defineProps({
         changeAvatarImageDialogVisible: {
             type: Boolean,
-            default: false
+            required: true
         },
         previousImagesFileId: {
             type: String,

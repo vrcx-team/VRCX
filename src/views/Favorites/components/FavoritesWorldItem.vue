@@ -36,16 +36,10 @@
                                 </template>
                             </el-dropdown-menu>
                         </template>
-
-                        <el-button
-                            v-if="!isLocalFavorite"
-                            type="text"
-                            size="small"
-                            @click.stop
-                            style="margin-left: 5px">
-                            <el-checkbox v-model="isSelected"></el-checkbox>
-                        </el-button>
                     </el-dropdown>
+                    <el-button v-if="!isLocalFavorite" type="text" size="small" @click.stop style="margin-left: 5px">
+                        <el-checkbox v-model="isSelected"></el-checkbox>
+                    </el-button>
                 </template>
                 <template v-else>
                     <el-tooltip
