@@ -14,11 +14,15 @@
                 </div>
                 <template v-if="editFavoritesMode">
                     <el-dropdown trigger="click" size="small" style="margin-left: 5px">
-                        <el-tooltip
-                            placement="left"
-                            :content="t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')">
-                            <el-button type="default" :icon="Back" size="small" circle></el-button>
-                        </el-tooltip>
+                        <div>
+                            <el-tooltip
+                                placement="left"
+                                :content="
+                                    t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
+                                ">
+                                <el-button type="default" :icon="Back" size="small" circle></el-button>
+                            </el-tooltip>
+                        </div>
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
