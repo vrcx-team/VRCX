@@ -17,7 +17,6 @@ namespace VRCX
 
         public abstract void RestartApplication(bool isUpgrade);
         public abstract bool CheckForUpdateExe();
-        public abstract void ExecuteAppFunction(string function, string json);
         public abstract void ExecuteVrFeedFunction(string function, string json);
         public abstract void ExecuteVrOverlayFunction(string function, string json);
         public abstract void FocusWindow();

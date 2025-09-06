@@ -51,10 +51,6 @@ namespace VRCX
             return false;
         }
 
-        public override void ExecuteAppFunction(string function, string json)
-        {
-        }
-
         public override void ExecuteVrFeedFunction(string function, string json)
         {
             Program.VRCXVRInstance.ExecuteVrFeedFunction(function, json);

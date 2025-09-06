@@ -171,7 +171,6 @@ declare global {
         ): Promise<void>;
         RestartApplication(isUpgrade: boolean): Promise<void>;
         CheckForUpdateExe(): Promise<boolean>;
-        ExecuteAppFunction(key: string, json: string): Promise<void>;
         ExecuteVrFeedFunction(key: string, json: string): Promise<void>;
         ExecuteVrOverlayFunction(key: string, json: string): Promise<void>;
         FocusWindow(): Promise<void>;
