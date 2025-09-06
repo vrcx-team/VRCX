@@ -102,12 +102,15 @@
                 <el-divider>·</el-divider>
             </div>
         </transition>
-        <InstanceActivityDetail
-            v-for="arr in filteredActivityDetailData"
-            :key="arr[0].location + arr[0].created_at"
-            ref="activityDetailChartRef"
-            :activity-detail-data="arr"
-            :bar-width="barWidth" />
+        <template v-if="echarts && isDetailVisible && activityData.length !== 0">
+            <InstanceActivityDetail
+                v-for="arr in filteredActivityDetailData"
+                :key="arr[0].location + arr[0].created_at"
+                ref="activityDetailChartRef"
+                :activity-detail-data="arr"
+                :bar-width="barWidth"
+                :echarts="echarts" />
+        </template>
     </div>
 </template>
 
@@ -119,7 +122,7 @@
     import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { database } from '../../../service/database';
-    import { getWorldName, loadEcharts, parseLocation, timeToText } from '../../../shared/utils';
+    import { getWorldName, parseLocation, timeToText } from '../../../shared/utils';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
@@ -217,12 +220,12 @@
         }
     );
 
-    onActivated(() => {
-        // first time also call activated
-        if (!echartsInstance.value) {
-            reloadData();
-        }
-    });
+    // onActivated(() => {
+    //     // first time also call activated
+    //     if (!echartsInstance.value) {
+    //         reloadData();
+    //     }
+    // });
 
     onDeactivated(() => {
         // prevent resize animation when switch tab
@@ -264,18 +267,15 @@
     onMounted(async () => {
         try {
             getAllDateOfActivity();
-            const [echartsModule] = await Promise.all([
-                // lazy load echarts
-                loadEcharts().catch((error) => {
-                    console.error('lazy load echarts failed', error);
-                    return null;
+            await Promise.all([
+                import('echarts').then((module) => {
+                    echarts.value = module;
                 }),
                 getActivityData()
             ]);
-            if (echartsModule) {
-                echarts.value = echartsModule;
-            }
-            if (echartsModule) {
+
+            if (echarts.value) {
+                await getWorldNameData();
                 initEcharts();
             } else {
                 isLoading.value = false;
@@ -291,6 +291,11 @@
         getWorldNameData();
         // possibility past 24:00
         getAllDateOfActivity();
+        if (echartsInstance.value) {
+            echartsInstance.value.setOption(activityData.value.length ? getNewOption() : {}, { notMerge: true });
+        } else if (echarts.value) {
+            initEcharts();
+        }
     }
 
     // echarts - start
@@ -299,6 +304,11 @@
         const chartDom = activityChartRef.value;
 
         const afterInit = () => {
+            if (!echartsInstance.value) {
+                console.error('ECharts instance not initialized');
+                return;
+            }
+
             echartsInstance.value.resize({
                 height: chartsHeight,
                 animation: {
@@ -327,7 +337,8 @@
 
             const options = activityData.value.length ? getNewOption() : {};
 
-            echartsInstance.value.setOption(options, { lazyUpdate: true });
+            echartsInstance.value.clear();
+            echartsInstance.value.setOption(options, { notMerge: true });
             echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
             isLoading.value = false;
         };
@@ -339,33 +350,11 @@
             resizeObserver.value.observe(chartDom);
         };
 
-        const loadEchartsWithTimeout = () => {
-            const timeout = 5000;
-            let time = 0;
-            const timer = setInterval(() => {
-                if (echarts.value) {
-                    initEchartsInstance();
-                    afterInit();
-                    clearInterval(timer);
-                    return;
-                }
-                time += 100;
-                if (time >= timeout) {
-                    clearInterval(timer);
-                    console.error('echarts init timeout');
-                }
-            }, 100);
-        };
-
-        if (!echartsInstance.value) {
-            if (!echarts.value) {
-                loadEchartsWithTimeout();
-            } else {
-                initEchartsInstance();
-                afterInit();
-            }
-        } else {
+        initEchartsInstance();
+        if (echartsInstance.value) {
             afterInit();
+        } else {
+            isLoading.value = false;
         }
     }
     function getNewOption() {
@@ -494,7 +483,6 @@
             ],
             backgroundColor: 'transparent'
         };
-
         return echartsOption;
     }
     // echarts - end
@@ -588,10 +576,6 @@
                 }
             })
         );
-
-        if (worldNameArray.value) {
-            initEcharts();
-        }
     }
     async function getAllDateOfActivity() {
         const utcDateStrings = (await database.getDateOfInstanceActivity()) || [];

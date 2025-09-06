@@ -35,12 +35,15 @@
             type: Number,
             required: true,
             default: 10
+        },
+        echarts: {
+            type: Object,
+            required: true
         }
     });
 
     const activityDetailChartRef = ref(null);
 
-    const echarts = ref(null);
     const isLoading = ref(true);
     const echartsInstance = ref(null);
     const usersFirstActivity = ref(null);
@@ -99,14 +102,14 @@
     }
 
     async function initEcharts(isFirstLoad = false) {
-        if (!echarts.value) {
-            echarts.value = await loadEcharts();
+        if (!props.echarts) {
+            return;
         }
 
         const chartsHeight = props.activityDetailData.length * (props.barWidth + 10) + 200;
         const chartDom = activityDetailChartRef.value;
         if (!echartsInstance.value) {
-            echartsInstance.value = echarts.value.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
+            echartsInstance.value = props.echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
                 height: chartsHeight,
                 useDirtyRect: props.activityDetailData.length > 80
             });
