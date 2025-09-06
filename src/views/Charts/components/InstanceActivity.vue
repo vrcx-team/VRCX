@@ -85,10 +85,10 @@
             </div>
         </div>
         <div style="position: relative">
-            <el-statistic :title="t('view.charts.instance_activity.online_time')">
-                <template #formatter>
-                    <span :style="isDarkMode ? 'color:rgb(120,120,120)' : ''">{{ totalOnlineTime }}</span>
-                </template>
+            <el-statistic
+                :title="t('view.charts.instance_activity.online_time')"
+                :formatter="(val) => timeToText(val, true)"
+                :value="totalOnlineTime">
             </el-statistic>
         </div>
 
@@ -102,27 +102,27 @@
                 <el-divider>·</el-divider>
             </div>
         </transition>
-        <template v-if="echarts && isDetailVisible && activityData.length !== 0">
+        <!-- <template v-if="isDetailVisible && activityData.length !== 0">
             <InstanceActivityDetail
                 v-for="arr in filteredActivityDetailData"
                 :key="arr[0].location + arr[0].created_at"
                 ref="activityDetailChartRef"
                 :activity-detail-data="arr"
-                :bar-width="barWidth"
-                :echarts="echarts" />
-        </template>
+                :bar-width="barWidth" />
+        </template> -->
     </div>
 </template>
 
 <script setup>
     import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-    import { ref, onActivated, onDeactivated, watch, computed, onMounted, nextTick, onBeforeMount } from 'vue';
+    import { ref, onDeactivated, watch, computed, onMounted, nextTick, onBeforeMount, onActivated } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { database } from '../../../service/database';
     import { getWorldName, parseLocation, timeToText } from '../../../shared/utils';
+    import * as echarts from 'echarts';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
 
@@ -134,7 +134,6 @@
     const { t } = useI18n();
 
     // echarts and observer
-    const echarts = ref(null);
     const echartsInstance = ref(null);
     const resizeObserver = ref(null);
     const intersectionObservers = ref([]);
@@ -155,10 +154,7 @@
     const activityDetailChartRef = ref(null);
 
     const totalOnlineTime = computed(() => {
-        return timeToText(
-            activityData.value?.reduce((acc, item) => acc + item.time, 0),
-            true
-        );
+        return activityData.value?.reduce((acc, item) => acc + item.time, 0);
     });
 
     const allDateOfActivityArray = computed(() => {
@@ -220,12 +216,12 @@
         }
     );
 
-    // onActivated(() => {
-    //     // first time also call activated
-    //     if (!echartsInstance.value) {
-    //         reloadData();
-    //     }
-    // });
+    onActivated(() => {
+        // first time also call activated
+        if (echartsInstance.value) {
+            reloadData();
+        }
+    });
 
     onDeactivated(() => {
         // prevent resize animation when switch tab
@@ -235,16 +231,6 @@
     });
 
     function created() {
-        resizeObserver.value = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                echartsInstance.value.resize({
-                    width: entry.contentRect.width,
-                    animation: {
-                        duration: 300
-                    }
-                });
-            }
-        });
         configRepository.getInt('VRCX_InstanceActivityBarWidth', 25).then((value) => {
             barWidth.value = value;
         });
@@ -267,21 +253,12 @@
     onMounted(async () => {
         try {
             getAllDateOfActivity();
-            await Promise.all([
-                import('echarts').then((module) => {
-                    echarts.value = module;
-                }),
-                getActivityData()
-            ]);
-
-            if (echarts.value) {
-                await getWorldNameData();
-                initEcharts();
-            } else {
-                isLoading.value = false;
-            }
+            await getActivityData();
+            await getWorldNameData();
+            initEcharts();
         } catch (error) {
             console.error('error in mounted', error);
+            isLoading.value = false;
         }
     });
 
@@ -293,8 +270,6 @@
         getAllDateOfActivity();
         if (echartsInstance.value) {
             echartsInstance.value.setOption(activityData.value.length ? getNewOption() : {}, { notMerge: true });
-        } else if (echarts.value) {
-            initEcharts();
         }
     }
 
@@ -344,18 +319,27 @@
         };
 
         const initEchartsInstance = () => {
-            echartsInstance.value = echarts.value.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
+            echartsInstance.value = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
                 height: chartsHeight
             });
-            resizeObserver.value.observe(chartDom);
+            // resizeObserver.value = new ResizeObserver((entries) => {
+            //     for (const entry of entries) {
+            //         echartsInstance.value.resize({
+            //             width: entry.contentRect.width,
+            //             animation: {
+            //                 duration: 300
+            //             }
+            //         });
+            //     }
+            // });
+            // resizeObserver.value.observe(chartDom);
         };
 
-        initEchartsInstance();
-        if (echartsInstance.value) {
-            afterInit();
-        } else {
-            isLoading.value = false;
+        if (!echartsInstance.value) {
+            initEchartsInstance();
         }
+        afterInit();
+        isLoading.value = false;
     }
     function getNewOption() {
         const getTooltip = (params) => {
@@ -540,14 +524,16 @@
             const newIdx = isNext ? idx - 1 : idx + 1;
 
             if (newIdx >= 0 && newIdx < allDateOfActivityArray.value.length) {
-                selectedDate.value = allDateOfActivityArray.value[newIdx];
+                selectedDate.value = allDateOfActivityArray.value[newIdx].toDate();
                 reloadData();
                 return;
             }
         }
-        selectedDate.value = isNext
-            ? allDateOfActivityArray.value[0]
-            : allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1];
+        selectedDate.value = (
+            isNext
+                ? allDateOfActivityArray.value[0]
+                : allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1]
+        ).toDate();
         reloadData();
     }
     function getDatePickerDisabledDate(time) {
@@ -782,7 +768,7 @@
         & > div:first-child {
             > div {
                 width: 160px;
-                padding-left: 20px;
+                margin-left: 20px;
             }
         }
     }

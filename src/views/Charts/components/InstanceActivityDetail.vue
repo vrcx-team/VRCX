@@ -15,11 +15,12 @@
 </template>
 
 <script setup>
-    import { ref, watch, computed, onDeactivated, onMounted } from 'vue';
+    import { ref, watch, computed, onDeactivated, onMounted, nextTick } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
 
-    import { loadEcharts, timeToText } from '../../../shared/utils';
+    import { timeToText } from '../../../shared/utils';
+    import * as echarts from 'echarts';
     import { useUserStore, useAppearanceSettingsStore } from '../../../stores';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
@@ -35,10 +36,6 @@
             type: Number,
             required: true,
             default: 10
-        },
-        echarts: {
-            type: Object,
-            required: true
         }
     });
 
@@ -79,8 +76,9 @@
 
     initResizeObserver();
 
-    onMounted(() => {
-        initEcharts(true);
+    onMounted(async () => {
+        await nextTick();
+        initEcharts();
     });
 
     onDeactivated(() => {
@@ -101,15 +99,11 @@
         });
     }
 
-    async function initEcharts(isFirstLoad = false) {
-        if (!props.echarts) {
-            return;
-        }
-
+    async function initEcharts() {
         const chartsHeight = props.activityDetailData.length * (props.barWidth + 10) + 200;
         const chartDom = activityDetailChartRef.value;
         if (!echartsInstance.value) {
-            echartsInstance.value = props.echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
+            echartsInstance.value = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
                 height: chartsHeight,
                 useDirtyRect: props.activityDetailData.length > 80
             });
@@ -123,7 +117,7 @@
             }
         });
 
-        echartsInstance.value.setOption(isFirstLoad ? {} : getNewOption(), { lazyUpdate: true });
+        echartsInstance.value.setOption(getNewOption(), { lazyUpdate: true });
         echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
 
         setTimeout(() => {
@@ -324,6 +318,7 @@
             backgroundColor: 'rgba(0, 0, 0, 0)'
         };
 
+        console.log(echartsOption);
         return echartsOption;
     }
 
