@@ -4,11 +4,9 @@
             <span class="header">{{ t('view.charts.header') }}</span>
         </div>
         <keep-alive>
-            <div>
-                <InstanceActivity v-if="menuActiveIndex === 'charts'" />
-                <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
-            </div>
+            <InstanceActivity v-if="menuActiveIndex === 'charts'" />
         </keep-alive>
+        <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
     </div>
 </template>
 

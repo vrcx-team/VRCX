@@ -24,43 +24,43 @@
                 <el-tooltip :content="t('view.charts.instance_activity.refresh')" placement="top"
                     ><el-button :icon="Refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
                 ></el-tooltip>
-                <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
-                    <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
-                        <div class="settings">
+
+                <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
+                    <div class="settings">
+                        <div>
+                            <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
                             <div>
-                                <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
-                                <div>
-                                    <el-slider
-                                        v-model.lazy="barWidth"
-                                        :max="50"
-                                        :min="1"
-                                        @change="changeBarWidth"></el-slider>
-                                </div>
-                            </div>
-                            <div>
-                                <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
-                                <el-switch v-model="isDetailVisible" @change="changeIsDetailInstanceVisible">
-                                </el-switch>
-                            </div>
-                            <div v-if="isDetailVisible">
-                                <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
-                                <el-switch v-model="isSoloInstanceVisible" @change="changeIsSoloInstanceVisible">
-                                </el-switch>
-                            </div>
-                            <div v-if="isDetailVisible">
-                                <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
-                                <el-switch
-                                    v-model="isNoFriendInstanceVisible"
-                                    @change="changeIsNoFriendInstanceVisible">
-                                </el-switch>
+                                <el-slider
+                                    v-model.lazy="barWidth"
+                                    :max="50"
+                                    :min="1"
+                                    @change="changeBarWidth"></el-slider>
                             </div>
                         </div>
+                        <div>
+                            <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
+                            <el-switch v-model="isDetailVisible" @change="changeIsDetailInstanceVisible"> </el-switch>
+                        </div>
+                        <div v-if="isDetailVisible">
+                            <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
+                            <el-switch v-model="isSoloInstanceVisible" @change="changeIsSoloInstanceVisible">
+                            </el-switch>
+                        </div>
+                        <div v-if="isDetailVisible">
+                            <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
+                            <el-switch v-model="isNoFriendInstanceVisible" @change="changeIsNoFriendInstanceVisible">
+                            </el-switch>
+                        </div>
+                    </div>
 
-                        <template #reference>
-                            <el-button :icon="Setting" circle></el-button>
-                        </template>
-                    </el-popover>
-                </el-tooltip>
+                    <template #reference>
+                        <div>
+                            <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
+                                <el-button :icon="Setting" circle></el-button>
+                            </el-tooltip>
+                        </div>
+                    </template>
+                </el-popover>
                 <el-button-group style="margin-right: 10px">
                     <el-tooltip :content="t('view.charts.instance_activity.previous_day')" placement="top">
                         <el-button
@@ -79,6 +79,7 @@
                     type="date"
                     :clearable="false"
                     align="right"
+                    :default-value="dayjs().toDate()"
                     :disabled-date="getDatePickerDisabledDate"
                     @change="reloadData"></el-date-picker>
             </div>
@@ -134,7 +135,7 @@
     const echartsInstance = ref(null);
     const resizeObserver = ref(null);
     const intersectionObservers = ref([]);
-    const selectedDate = ref(dayjs());
+    const selectedDate = ref(dayjs().toDate());
     // data
     const activityData = ref([]);
     const activityDetailData = ref([]);
@@ -276,7 +277,6 @@
             }
             if (echartsModule) {
                 initEcharts();
-                getWorldNameData();
             } else {
                 isLoading.value = false;
             }
