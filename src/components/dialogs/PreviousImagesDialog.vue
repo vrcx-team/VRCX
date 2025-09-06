@@ -15,14 +15,9 @@
                     trigger="click"
                     v-if="image.file">
                     <template #reference>
-                        <img :src="image.file.url" class="x-link" loading="lazy" />
+                        <img :src="image.file.url" :class="['x-link', 'img-size']" loading="lazy" />
                     </template>
-                    <img
-                        :src="image.file.url"
-                        class="x-link"
-                        style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(image.file.url)"
-                        loading="lazy" />
+                    <img :src="image.file.url" @click="showFullscreenImageDialog(image.file.url)" loading="lazy" />
                 </el-popover>
             </div>
         </div>
@@ -43,3 +38,10 @@
         previousImagesDialogVisible.value = false;
     }
 </script>
+
+<style lang="scss" scoped>
+    .img-size {
+        width: 250px;
+        height: 187.5px;
+    }
+</style>

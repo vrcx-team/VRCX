@@ -32,7 +32,7 @@
                     style="cursor: pointer"
                     :class="{ 'current-image': compareCurrentImage(image) }"
                     @click="setWorldImage(image)">
-                    <img :src="image.file.url" class="image" loading="lazy" />
+                    <img :src="image.file.url" class="img-size" loading="lazy" />
                 </div>
             </div>
         </div>
@@ -354,3 +354,10 @@
         return false;
     }
 </script>
+
+<style lang="scss" scoped>
+    .img-size {
+        width: 250px;
+        height: 187.5px;
+    }
+</style>

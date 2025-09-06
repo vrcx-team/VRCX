@@ -1663,6 +1663,10 @@
             "choose_group_placeholder": "Choose Group",
             "groups_with_moderation_permission": "Groups with Moderation Permission",
             "moderation_tools": "Moderation Tools"
+        },
+        "fullscreen_image": {
+            "download_and_save_image": "Download and save image",
+            "copy_image_to_clipboard": "Copy image to clipboard"
         }
     },
     "confirm": {

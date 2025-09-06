@@ -31,7 +31,7 @@
                     style="cursor: pointer"
                     :class="{ 'current-image': compareCurrentImage(image) }"
                     @click="setAvatarImage(image)">
-                    <img :src="image.file.url" class="image" loading="lazy" />
+                    <img :src="image.file.url" class="img-size" loading="lazy" />
                 </div>
             </div>
         </div>
@@ -358,3 +358,10 @@
         );
     }
 </script>
+
+<style lang="scss" scoped>
+    .img-size {
+        width: 250px;
+        height: 187.5px;
+    }
+</style>
