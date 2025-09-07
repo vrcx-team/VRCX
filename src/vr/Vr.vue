@@ -1446,28 +1446,28 @@
         setDatetimeFormat();
 
         nextTick(() => {
-            window.$app.configUpdate = configUpdate;
-            window.$app.updateOnlineFriendCount = updateOnlineFriendCount;
-            window.$app.nowPlayingUpdate = nowPlayingUpdate;
-            window.$app.lastLocationUpdate = lastLocationUpdate;
-            window.$app.wristFeedUpdate = wristFeedUpdate;
-            window.$app.refreshCustomScript = refreshCustomScript;
-            window.$app.playNoty = playNoty;
-            window.$app.statusClass = statusClass;
-            window.$app.notyClear = notyClear;
-            window.$app.addEntryHudFeed = addEntryHudFeed;
-            window.$app.updateHudFeedTag = updateHudFeedTag;
-            window.$app.updateHudTimeout = updateHudTimeout;
-            window.$app.setDatetimeFormat = setDatetimeFormat;
-            window.$app.setAppLanguage = setAppLanguage;
-            window.$app.trackingResultToClass = trackingResultToClass;
-            window.$app.updateFeedLength = updateFeedLength;
-            window.$app.updateStatsLoop = updateStatsLoop;
-            window.$app.updateVrElectronLoop = updateVrElectronLoop;
-            window.$app.cleanHudFeedLoop = cleanHudFeedLoop;
-            window.$app.cleanHudFeed = cleanHudFeed;
+            window.$vr.configUpdate = configUpdate;
+            window.$vr.updateOnlineFriendCount = updateOnlineFriendCount;
+            window.$vr.nowPlayingUpdate = nowPlayingUpdate;
+            window.$vr.lastLocationUpdate = lastLocationUpdate;
+            window.$vr.wristFeedUpdate = wristFeedUpdate;
+            window.$vr.refreshCustomScript = refreshCustomScript;
+            window.$vr.playNoty = playNoty;
+            window.$vr.statusClass = statusClass;
+            window.$vr.notyClear = notyClear;
+            window.$vr.addEntryHudFeed = addEntryHudFeed;
+            window.$vr.updateHudFeedTag = updateHudFeedTag;
+            window.$vr.updateHudTimeout = updateHudTimeout;
+            window.$vr.setDatetimeFormat = setDatetimeFormat;
+            window.$vr.setAppLanguage = setAppLanguage;
+            window.$vr.trackingResultToClass = trackingResultToClass;
+            window.$vr.updateFeedLength = updateFeedLength;
+            window.$vr.updateStatsLoop = updateStatsLoop;
+            window.$vr.updateVrElectronLoop = updateVrElectronLoop;
+            window.$vr.cleanHudFeedLoop = cleanHudFeedLoop;
+            window.$vr.cleanHudFeed = cleanHudFeed;
 
-            window.$app.vrState = vrState;
+            window.$vr.vrState = vrState;
 
             AppApiVr.VrInit();
         });

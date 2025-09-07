@@ -846,7 +846,7 @@ namespace VRCX
             if (_wristOverlay == null) return;
             // if (_wristOverlay.IsLoading)
             //     Restart();
-            _wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
+            _wristOverlay.ExecuteScriptAsync($"$vr.{function}", json);
         }
 
         public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
@@ -859,7 +859,7 @@ namespace VRCX
             if (_hmdOverlay == null) return;
             // if (_hmdOverlay.IsLoading)
             //     Restart();
-            _hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
+            _hmdOverlay.ExecuteScriptAsync($"$vr.{function}", json);
         }
     }
 }
