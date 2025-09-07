@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="newInstanceDialogRef"
+        :z-index="newInstanceDialogIndex"
         v-model="newInstanceDialog.visible"
         :title="t('dialog.new_instance.header')"
         width="650px"
@@ -498,7 +498,7 @@
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         copyToClipboard,
         getLaunchURL,
         hasGroupPermission,
@@ -537,7 +537,7 @@
     const { tryOpenInstanceInVrc } = useLaunchStore();
     const { canOpenInstanceInGame } = useInviteStore();
 
-    const newInstanceDialogRef = ref(null);
+    const newInstanceDialogIndex = ref(2000);
 
     const newInstanceDialog = ref({
         visible: false,
@@ -627,7 +627,9 @@
         if (!isRealInstance(tag)) {
             return;
         }
-        nextTick(() => adjustDialogZ(newInstanceDialogRef.value.$el));
+        nextTick(() => {
+            newInstanceDialogIndex.value = getNextDialogIndex();
+        });
         const D = newInstanceDialog.value;
         const L = parseLocation(tag);
         if (D.worldId === L.worldId) {

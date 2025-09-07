@@ -1,5 +1,9 @@
 <template>
-    <el-dialog ref="avatarImportDialogRef" v-model="isVisible" :title="t('dialog.avatar_import.header')" width="650px">
+    <el-dialog
+        :z-index="avatarImportDialogIndex"
+        v-model="isVisible"
+        :title="t('dialog.avatar_import.header')"
+        width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ t('dialog.avatar_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -179,7 +183,7 @@
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { avatarRequest, favoriteRequest } from '../../../api';
-    import { adjustDialogZ, removeFromArray } from '../../../shared/utils';
+    import { getNextDialogIndex, removeFromArray } from '../../../shared/utils';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const emit = defineEmits(['update:avatarImportDialogInput']);
@@ -213,7 +217,7 @@
         layout: 'table'
     });
 
-    const avatarImportDialogRef = ref(null);
+    const avatarImportDialogIndex = ref(2000);
 
     const isVisible = computed({
         get() {
@@ -228,7 +232,7 @@
         () => avatarImportDialogVisible.value,
         (value) => {
             if (value) {
-                adjustDialogZ(avatarImportDialogRef.value.$el);
+                avatarImportDialogIndex.value = getNextDialogIndex();
                 clearAvatarImportTable();
                 resetAvatarImport();
                 if (avatarImportDialogInput.value) {

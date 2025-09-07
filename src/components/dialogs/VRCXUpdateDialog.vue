@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="VRCXUpdateDialogRef"
+        :z-index="VRCXUpdateDialogIndex"
         class="x-dialog"
         v-model="VRCXUpdateDialog.visible"
         :title="t('dialog.vrcx_updater.header')"
@@ -67,7 +67,7 @@
     import { nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { branches } from '../../shared/constants';
-    import { adjustDialogZ } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils';
     import { useVRCXUpdaterStore } from '../../stores';
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
@@ -85,14 +85,14 @@
 
     const { t } = useI18n();
 
-    const VRCXUpdateDialogRef = ref(null);
+    const VRCXUpdateDialogIndex = ref(2000);
 
     watch(
         () => VRCXUpdateDialog,
         (newVal) => {
             if (newVal.value.visible) {
                 nextTick(() => {
-                    adjustDialogZ(VRCXUpdateDialogRef.value.$el);
+                    VRCXUpdateDialogIndex.value = getNextDialogIndex();
                 });
             }
         }

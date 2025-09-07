@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="userDialogRef"
+        :z-index="userDialogIndex"
         class="x-dialog x-user-dialog"
         v-model="userDialog.visible"
         :show-close="false"
@@ -1834,7 +1834,7 @@
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         checkCanInvite,
         compareByMemberCount,
         compareByName,
@@ -1928,16 +1928,14 @@
         () => {
             if (userDialog.value.visible) {
                 nextTick(() => {
-                    if (userDialogRef.value?.$el) {
-                        adjustDialogZ(userDialogRef.value.$el);
-                    }
+                    userDialogIndex.value = getNextDialogIndex();
                 });
                 !userDialog.value.loading && loadLastActiveTab();
             }
         }
     );
 
-    const userDialogRef = ref(null);
+    const userDialogIndex = ref(2000);
 
     const userDialogGroupEditMode = ref(false); // whether edit mode is active
     const userDialogGroupEditGroups = ref([]); // editable group list

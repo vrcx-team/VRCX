@@ -1,5 +1,9 @@
 <template>
-    <el-dialog ref="friendImportDialogRef" v-model="isVisible" :title="t('dialog.friend_import.header')" width="650px">
+    <el-dialog
+        :z-index="friendImportDialogIndex"
+        v-model="isVisible"
+        :title="t('dialog.friend_import.header')"
+        width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="font-size: 12px">{{ t('dialog.friend_import.description') }}</div>
             <div style="display: flex; align-items: center">
@@ -126,7 +130,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest, userRequest } from '../../../api';
-    import { adjustDialogZ, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { getNextDialogIndex, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -159,7 +163,7 @@
         layout: 'table'
     });
 
-    const friendImportDialogRef = ref(null);
+    const friendImportDialogIndex = ref(2000);
 
     const isVisible = computed({
         get() {
@@ -174,7 +178,7 @@
         () => friendImportDialogVisible.value,
         (value) => {
             if (value) {
-                adjustDialogZ(friendImportDialogRef.value.$el);
+                friendImportDialogIndex.value = getNextDialogIndex();
                 clearFriendImportTable();
                 resetFriendImport();
                 if (friendImportDialogInput.value) {

@@ -1,5 +1,5 @@
 <template>
-    <el-dialog ref="favoriteDialogRef" v-model="isVisible" :title="t('dialog.favorite.header')" width="300px">
+    <el-dialog :z-index="favoriteDialogIndex" v-model="isVisible" :title="t('dialog.favorite.header')" width="300px">
         <div v-loading="loading">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
@@ -69,7 +69,7 @@
     import { computed, nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../api';
-    import { adjustDialogZ } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils';
     import { useFavoriteStore, useUserStore } from '../../stores';
 
     const { t } = useI18n();
@@ -96,7 +96,7 @@
     } = favoriteStore;
     const { currentUser } = storeToRefs(useUserStore());
 
-    const favoriteDialogRef = ref(null);
+    const favoriteDialogIndex = ref(2000);
     const groups = ref([]);
     const loading = ref(false);
 
@@ -111,11 +111,12 @@
 
     watch(
         () => favoriteDialog.value.visible,
-        async (value) => {
+        (value) => {
             if (value) {
                 initFavoriteDialog();
-                await nextTick();
-                adjustDialogZ(favoriteDialogRef.value.$el);
+                nextTick(() => {
+                    favoriteDialogIndex.value = getNextDialogIndex();
+                });
             }
         }
     );

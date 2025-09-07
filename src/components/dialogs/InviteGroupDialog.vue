@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="inviteGroupDialogRef"
+        :z-index="inviteGroupDialogIndex"
         v-model="inviteGroupDialog.visible"
         :title="t('dialog.invite_to_group.header')"
         width="450px"
@@ -170,7 +170,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { groupRequest, userRequest } from '../../api';
-    import { adjustDialogZ, hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
+    import { getNextDialogIndex, hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
     import { useFriendStore, useGroupStore } from '../../stores';
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
@@ -189,7 +189,7 @@
         }
     );
 
-    const inviteGroupDialogRef = ref(null);
+    const inviteGroupDialogIndex = ref(2000);
 
     const groupsWithInvitePermission = computed(() => {
         return Array.from(currentUserGroups.value.values()).filter((group) =>
@@ -198,7 +198,9 @@
     });
 
     function initDialog() {
-        nextTick(() => adjustDialogZ(inviteGroupDialogRef.value.$el));
+        nextTick(() => {
+            inviteGroupDialogIndex.value = getNextDialogIndex();
+        });
         const D = inviteGroupDialog.value;
         if (D.groupId) {
             groupRequest

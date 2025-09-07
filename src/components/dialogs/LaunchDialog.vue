@@ -1,5 +1,5 @@
 <template>
-    <el-dialog ref="launchDialogRef" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
+    <el-dialog :z-index="launchDialogIndex" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
         <el-form :model="launchDialog" label-width="100px">
             <el-form-item :label="t('dialog.launch.url')">
                 <el-input
@@ -113,7 +113,13 @@
     import { useI18n } from 'vue-i18n';
     import { instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
-    import { adjustDialogZ, checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
+    import {
+        getNextDialogIndex,
+        checkCanInvite,
+        getLaunchURL,
+        isRealInstance,
+        parseLocation
+    } from '../../shared/utils';
     import {
         useFriendStore,
         useInviteStore,
@@ -135,7 +141,7 @@
     const { canOpenInstanceInGame } = useInviteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
 
-    const launchDialogRef = ref(null);
+    const launchDialogIndex = ref(2000);
 
     const launchDialog = ref({
         loading: false,
@@ -260,7 +266,9 @@
         if (!isRealInstance(tag)) {
             return;
         }
-        nextTick(() => adjustDialogZ(launchDialogRef.value.$el));
+        nextTick(() => {
+            launchDialogIndex.value = getNextDialogIndex();
+        });
         const D = launchDialog.value;
         D.tag = tag;
         D.secureOrShortName = shortName;

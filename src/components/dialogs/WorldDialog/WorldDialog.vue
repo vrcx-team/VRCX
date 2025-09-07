@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="worldDialogRef"
+        :z-index="worldDialogIndex"
         class="x-dialog x-world-dialog"
         v-model="isDialogVisible"
         :show-close="false"
@@ -791,7 +791,7 @@
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { database } from '../../../service/database.js';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         buildTreeData,
         downloadAndSaveJson,
         extractFileId,
@@ -932,7 +932,7 @@
         return platforms.join(', ');
     });
 
-    const worldDialogRef = ref(null);
+    const worldDialogIndex = ref(2000);
     const worldDialogLastActiveTab = ref('Instances');
 
     watch(
@@ -940,9 +940,7 @@
         () => {
             if (worldDialog.value.visible) {
                 nextTick(() => {
-                    if (worldDialogRef.value?.$el) {
-                        adjustDialogZ(worldDialogRef.value.$el);
-                    }
+                    worldDialogIndex.value = getNextDialogIndex();
                 });
                 handleDialogOpen();
                 !worldDialog.value.loading && loadLastActiveTab();

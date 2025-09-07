@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="previousInstancesGroupDialogRef"
+        :z-index="previousInstancesGroupDialogIndex"
         v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
@@ -71,7 +71,7 @@
         compareByCreatedAt,
         timeToText,
         removeFromArray,
-        adjustDialogZ,
+        getNextDialogIndex,
         formatDateFilter
     } from '../../../shared/utils';
     import { database } from '../../../service/database';
@@ -82,7 +82,7 @@
     const { shiftHeld } = useUiStore();
     const { t } = useI18n();
 
-    const previousInstancesGroupDialogRef = ref(null);
+    const previousInstancesGroupDialogIndex = ref(2000);
     const loading = ref(false);
 
     const previousInstancesGroupDialogTable = reactive({
@@ -117,7 +117,7 @@
         () => {
             if (props.previousInstancesGroupDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(previousInstancesGroupDialogRef.value.$el);
+                    previousInstancesGroupDialogIndex.value = getNextDialogIndex();
                 });
                 refreshPreviousInstancesGroupTable();
             }

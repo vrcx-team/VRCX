@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="groupDialogRef"
+        :z-index="groupDialogIndex"
         v-model="groupDialog.visible"
         :show-close="false"
         width="770px"
@@ -1193,7 +1193,7 @@
     import { groupRequest } from '../../../api';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         buildTreeData,
         copyToClipboard,
         downloadAndSaveJson,
@@ -1210,13 +1210,7 @@
         textToHex,
         debounce
     } from '../../../shared/utils';
-    import {
-        useAppearanceSettingsStore,
-        useGalleryStore,
-        useGroupStore,
-        useLocationStore,
-        useUserStore
-    } from '../../../stores';
+    import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
@@ -1242,7 +1236,7 @@
     const { showFullscreenImageDialog } = useGalleryStore();
 
     const groupDialogLastActiveTab = ref('Info');
-    const groupDialogRef = ref(null);
+    const groupDialogIndex = ref(2000);
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
     const groupDialogGalleryCurrentName = ref('0');
@@ -1282,7 +1276,9 @@
         () => groupDialog.value.loading,
         () => {
             if (groupDialog.value.visible) {
-                nextTick(() => adjustDialogZ(groupDialogRef.value.$el));
+                nextTick(() => {
+                    groupDialogIndex.value = getNextDialogIndex();
+                });
             }
         }
     );

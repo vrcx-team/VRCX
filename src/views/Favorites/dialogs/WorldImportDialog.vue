@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="worldImportDialogRef"
+        :z-index="worldImportDialogIndex"
         v-model="isVisible"
         :title="t('dialog.world_import.header')"
         width="650px"
@@ -179,7 +179,7 @@
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { favoriteRequest, worldRequest } from '../../../api';
-    import { adjustDialogZ, removeFromArray } from '../../../shared/utils';
+    import { getNextDialogIndex, removeFromArray } from '../../../shared/utils';
     import { useFavoriteStore, useGalleryStore, useUserStore, useWorldStore } from '../../../stores';
 
     const { showUserDialog } = useUserStore();
@@ -193,7 +193,7 @@
 
     const { t } = useI18n();
 
-    const worldImportDialogRef = ref(null);
+    const worldImportDialogIndex = ref(2000);
 
     const worldImportDialog = ref({
         loading: false,
@@ -230,7 +230,7 @@
         () => worldImportDialogVisible.value,
         (visible) => {
             if (visible) {
-                adjustDialogZ(worldImportDialogRef.value.$el);
+                worldImportDialogIndex.value = getNextDialogIndex();
                 clearWorldImportTable();
                 resetWorldImport();
                 if (worldImportDialogInput.value) {

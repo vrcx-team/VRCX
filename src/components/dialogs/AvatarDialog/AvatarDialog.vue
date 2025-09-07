@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="avatarDialogRef"
+        :z-index="avatarDialogIndex"
         class="x-dialog x-avatar-dialog"
         v-model="avatarDialog.visible"
         :show-close="false"
@@ -613,7 +613,7 @@
     import { avatarModerationRequest, avatarRequest, favoriteRequest, imageRequest, miscRequest } from '../../../api';
     import { database } from '../../../service/database';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         buildTreeData,
         commaNumber,
         copyToClipboard,
@@ -648,7 +648,7 @@
     const { t } = useI18n();
     defineEmits(['openPreviousImagesDialog']);
 
-    const avatarDialogRef = ref(null);
+    const avatarDialogIndex = ref(2000);
     const avatarDialogLastActiveTab = ref('Info');
     const changeAvatarImageDialogVisible = ref(false);
     const previousImagesFileId = ref('');
@@ -715,9 +715,7 @@
         () => {
             if (avatarDialog.value.visible) {
                 nextTick(() => {
-                    if (avatarDialogRef.value?.$el) {
-                        adjustDialogZ(avatarDialogRef.value.$el);
-                    }
+                    avatarDialogIndex.value = getNextDialogIndex();
                 });
                 handleDialogOpen();
                 !avatarDialog.value.loading && loadLastActiveTab();

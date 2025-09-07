@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="moderateGroupDialogRef"
+        :z-index="moderateGroupDialogIndex"
         v-model="moderateGroupDialog.visible"
         :title="t('dialog.moderate_group.header')"
         width="450px"
@@ -61,24 +61,16 @@
 </template>
 
 <script setup>
-    import { ref, watch, getCurrentInstance, nextTick, computed } from 'vue';
+    import { ref, watch, nextTick, computed } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { groupRequest, userRequest } from '../../api';
-    import {
-        adjustDialogZ,
-        hasGroupPermission,
-        hasGroupModerationPermission,
-        userImage,
-        userStatusClass
-    } from '../../shared/utils';
+    import { getNextDialogIndex, hasGroupModerationPermission, userImage } from '../../shared/utils';
     import { useGroupStore } from '../../stores';
 
     const { currentUserGroups, moderateGroupDialog } = storeToRefs(useGroupStore());
-    const { applyGroup, showGroupMemberModerationDialog } = useGroupStore();
+    const { showGroupMemberModerationDialog } = useGroupStore();
     const { t } = useI18n();
-
-    const { proxy } = getCurrentInstance();
 
     const groupsWithModerationPermission = computed(() => {
         return Array.from(currentUserGroups.value.values()).filter((group) => hasGroupModerationPermission(group));
@@ -95,10 +87,12 @@
         }
     );
 
-    const moderateGroupDialogRef = ref(null);
+    const moderateGroupDialogIndex = ref(2000);
 
     function initDialog() {
-        nextTick(() => adjustDialogZ(moderateGroupDialogRef.value.$el));
+        nextTick(() => {
+            moderateGroupDialogIndex.value = getNextDialogIndex();
+        });
         const D = moderateGroupDialog.value;
         if (D.groupId) {
             groupRequest

@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="previousInstancesWorldDialogRef"
+        :z-index="previousInstancesWorldDialogIndex"
         v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
@@ -73,11 +73,11 @@
 
     import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { computed, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         compareByCreatedAt,
         parseLocation,
         removeFromArray,
@@ -116,7 +116,7 @@
         }
     });
     const loading = ref(false);
-    const previousInstancesWorldDialogRef = ref(null);
+    const previousInstancesWorldDialogIndex = ref(2000);
 
     const isVisible = computed({
         get: () => props.previousInstancesWorldDialog.visible,
@@ -168,7 +168,7 @@
         () => {
             if (props.previousInstancesWorldDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(previousInstancesWorldDialogRef.value.$el);
+                    previousInstancesWorldDialogIndex.value = getNextDialogIndex();
                 });
                 refreshPreviousInstancesWorldTable();
             }

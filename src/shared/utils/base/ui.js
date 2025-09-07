@@ -224,17 +224,18 @@ function HSVtoRGB(h, s, v) {
     return `#${decColor.toString(16).substr(1)}`;
 }
 
-function adjustDialogZ(el) {
-    let z = 0;
-    document.querySelectorAll('.v-modal,.el-dialog__wrapper').forEach((v) => {
+function getNextDialogIndex() {
+    let z = 2000;
+    document.querySelectorAll('.el-overlay,.el-modal-dialog').forEach((v) => {
+        if (v.style.display === 'none') {
+            return;
+        }
         const _z = Number(v.style.zIndex) || 0;
-        if (_z && _z > z && v !== el) {
+        if (_z > z) {
             z = _z;
         }
     });
-    if (z) {
-        el.style.zIndex = z + 1;
-    }
+    return z + 1;
 }
 
 export {
@@ -247,5 +248,5 @@ export {
     refreshCustomScript,
     HueToHex,
     HSVtoRGB,
-    adjustDialogZ
+    getNextDialogIndex
 };

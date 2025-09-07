@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="dialogRef"
+        :z-index="previousInstancesInfoDialogIndex"
         :model-value="previousInstancesInfoDialogVisible"
         :title="t('dialog.previous_instances.info')"
         width="800px"
@@ -63,7 +63,7 @@
     import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         compareByCreatedAt,
         parseLocation,
         timeToText,
@@ -77,7 +77,7 @@
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
     const { t } = useI18n();
 
-    const dialogRef = ref(null);
+    const previousInstancesInfoDialogIndex = ref(2000);
 
     const loading = ref(false);
     const location = ref({
@@ -141,7 +141,7 @@
     );
 
     function init() {
-        adjustDialogZ(dialogRef.value.$el);
+        previousInstancesInfoDialogIndex.value = getNextDialogIndex();
         loading.value = true;
         location.value = parseLocation(previousInstancesInfoDialogInstanceId.value);
     }

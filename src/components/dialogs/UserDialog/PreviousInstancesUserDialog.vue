@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        ref="previousInstancesUserDialogRef"
+        :z-index="previousInstancesUserDialogIndex"
         v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
@@ -80,7 +80,7 @@
     import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         compareByCreatedAt,
         parseLocation,
         removeFromArray,
@@ -130,7 +130,7 @@
     const { shiftHeld } = storeToRefs(useUiStore());
     const { t } = useI18n();
 
-    const previousInstancesUserDialogRef = ref(null);
+    const previousInstancesUserDialogIndex = ref(2000);
 
     const isVisible = computed({
         get: () => props.previousInstancesUserDialog.visible,
@@ -161,7 +161,7 @@
         () => {
             if (props.previousInstancesUserDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(previousInstancesUserDialogRef.value.$el);
+                    previousInstancesUserDialogIndex.value = getNextDialogIndex();
                 });
                 refreshPreviousInstancesUserTable();
             }
