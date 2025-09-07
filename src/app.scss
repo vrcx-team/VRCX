@@ -970,6 +970,18 @@ i.x-status-icon.red {
     border-radius: 4px;
 }
 
+// expand table cell on hover, TODO: replace with a better solution
+.el-table .cell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+}
+
+.el-table__row:hover .el-table__cell .cell {
+    display: revert;
+    -webkit-line-clamp: unset;
+}
+
 // .el-carousel__mask {
 //     // looks bad
 //     display: none;

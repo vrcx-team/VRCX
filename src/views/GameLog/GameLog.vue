@@ -166,12 +166,14 @@
                             type="text"
                             :icon="Close"
                             size="small"
+                            class="small-button"
                             @click="deleteGameLogEntry(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
                             :icon="Delete"
                             size="small"
+                            class="small-button"
                             @click="deleteGameLogEntryPrompt(scope.row)"></el-button>
                     </template>
                     <el-tooltip placement="top" :content="t('dialog.previous_instances.info')">
@@ -180,6 +182,7 @@
                             type="text"
                             :icon="DataLine"
                             size="small"
+                            class="small-button"
                             @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     </el-tooltip>
                 </template>
@@ -233,3 +236,10 @@
             .catch(() => {});
     }
 </script>
+
+<style scoped>
+    .small-button {
+        padding: 0;
+        height: 18px;
+    }
+</style>
