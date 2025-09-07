@@ -70,7 +70,7 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <FriendExportDialog v-model="friendExportDialogVisible" />
+        <FriendExportDialog v-model:friendExportDialogVisible="friendExportDialogVisible" />
     </div>
 </template>
 
