@@ -222,6 +222,7 @@
                             :content="t('dialog.avatar.actions.delete_cache_tooltip')">
                             <el-button
                                 :icon="Delete"
+                                size="large"
                                 circle
                                 :disabled="isGameRunning && avatarDialog.cacheLocked"
                                 @click="deleteVRChatCache(avatarDialog.ref)"></el-button>
@@ -233,6 +234,7 @@
                             <el-button
                                 type="warning"
                                 :icon="Star"
+                                size="large"
                                 circle
                                 style="margin-left: 5px"
                                 @click="avatarDialogCommand('Add Favorite')"></el-button>
@@ -241,6 +243,7 @@
                             <el-button
                                 type="default"
                                 :icon="StarFilled"
+                                size="large"
                                 circle
                                 style="margin-left: 5px"
                                 @click="avatarDialogCommand('Add Favorite')"></el-button>
@@ -249,6 +252,7 @@
                             <el-button
                                 type="default"
                                 :icon="Check"
+                                size="large"
                                 circle
                                 :disabled="currentUser.currentAvatar === avatarDialog.id"
                                 style="margin-left: 5px"
@@ -262,6 +266,7 @@
                             <el-button
                                 :type="avatarDialog.isBlocked ? 'danger' : 'default'"
                                 :icon="MoreFilled"
+                                size="large"
                                 circle></el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>

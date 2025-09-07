@@ -181,6 +181,7 @@
                                 <el-button
                                     type="warning"
                                     :icon="Star"
+                                    size="large"
                                     circle
                                     style="margin-left: 5px"
                                     @click="clearGroupRepresentation(groupDialog.id)"></el-button>
@@ -190,6 +191,7 @@
                                     <el-button
                                         type="default"
                                         :icon="StarFilled"
+                                        size="large"
                                         circle
                                         style="margin-left: 5px"
                                         :disabled="groupDialog.ref.privacy === 'private'"
@@ -205,6 +207,7 @@
                                     <el-button
                                         type="default"
                                         :icon="Close"
+                                        size="large"
                                         circle
                                         style="margin-left: 5px"
                                         @click="cancelGroupRequest(groupDialog.id)"></el-button>
@@ -217,6 +220,7 @@
                                     <el-button
                                         type="default"
                                         :icon="Check"
+                                        size="large"
                                         circle
                                         style="margin-left: 5px"
                                         @click="joinGroup(groupDialog.id)"></el-button>
@@ -231,6 +235,7 @@
                                 <el-button
                                     type="default"
                                     :icon="Message"
+                                    size="large"
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
@@ -243,6 +248,7 @@
                                     <el-button
                                         type="default"
                                         :icon="Message"
+                                        size="large"
                                         disabled
                                         circle
                                         style="margin-left: 5px"></el-button>
@@ -255,6 +261,7 @@
                                 <el-button
                                     type="default"
                                     :icon="Check"
+                                    size="large"
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
@@ -268,6 +275,7 @@
                             <el-button
                                 :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
                                 :icon="MoreFilled"
+                                size="large"
                                 circle></el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>

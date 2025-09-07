@@ -353,6 +353,7 @@
                                 <el-button
                                     type="warning"
                                     :icon="StarFilled"
+                                    size="large"
                                     circle
                                     @click="userDialogCommand('Add Favorite')"></el-button>
                             </el-tooltip>
@@ -360,6 +361,7 @@
                                 <el-button
                                     type="default"
                                     :icon="Star"
+                                    size="large"
                                     circle
                                     @click="userDialogCommand('Add Favorite')"></el-button>
                             </el-tooltip>
@@ -374,6 +376,7 @@
                                           : 'default'
                                 "
                                 :icon="MoreFilled"
+                                size="large"
                                 circle
                                 style="margin-left: 5px"></el-button>
                             <template #dropdown>

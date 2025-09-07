@@ -199,6 +199,7 @@
                             :content="t('dialog.world.actions.delete_cache_tooltip')">
                             <el-button
                                 :icon="Delete"
+                                size="large"
                                 circle
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
                                 @click="deleteVRChatCache(worldDialog.ref)" />
@@ -207,6 +208,7 @@
                             <el-button
                                 :type="worldDialog.isFavorite ? 'warning' : 'default'"
                                 :icon="worldDialog.isFavorite ? StarFilled : Star"
+                                size="large"
                                 circle
                                 style="margin-left: 5px"
                                 @click="worldDialogCommand('Add Favorite')" />
@@ -216,7 +218,7 @@
                             size="small"
                             style="margin-left: 5px"
                             @command="worldDialogCommand">
-                            <el-button type="default" :icon="MoreFilled" circle />
+                            <el-button type="default" :icon="MoreFilled" size="large" circle />
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item :icon="Refresh" command="Refresh">
