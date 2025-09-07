@@ -29,7 +29,11 @@
                         :model="loginForm"
                         :rules="loginForm.rules"
                         @submit.prevent="handleLogin()">
-                        <el-form-item :label="t('view.login.field.username')" prop="username" required>
+                        <el-form-item
+                            :label="t('view.login.field.username')"
+                            prop="username"
+                            required
+                            style="display: block">
                             <el-input
                                 v-model="loginForm.username"
                                 name="username"
@@ -40,7 +44,7 @@
                             :label="t('view.login.field.password')"
                             prop="password"
                             required
-                            style="margin-top: 10px">
+                            style="display: block; margin-top: 10px">
                             <el-input
                                 v-model="loginForm.password"
                                 type="password"
