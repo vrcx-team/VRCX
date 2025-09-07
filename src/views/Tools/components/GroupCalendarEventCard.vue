@@ -6,7 +6,7 @@
                 <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
                     {{ groupName }}
                 </div>
-                <el-popover placement="right" width="500" trigger="hover">
+                <el-popover placement="right" :width="500" trigger="hover">
                     <el-descriptions :title="event.title" size="small" :column="2" class="event-title-popover">
                         <template #extra>
                             <div>

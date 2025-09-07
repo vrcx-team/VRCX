@@ -106,14 +106,14 @@
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.avatar')" width="70" prop="photo">
                     <template #default="{ row }">
-                        <el-popover placement="right" height="500px" trigger="hover">
+                        <el-popover placement="right" :width="500" trigger="hover">
                             <template #reference>
                                 <img :src="userImage(row, true)" class="friends-list-avatar" loading="lazy" />
                             </template>
                             <img
                                 :src="userImageFull(row)"
-                                class="friends-list-avatar"
-                                style="height: 500px; cursor: pointer"
+                                :class="['friends-list-avatar', 'x-popover-image']"
+                                style="cursor: pointer"
                                 @click="showFullscreenImageDialog(userImageFull(row))"
                                 loading="lazy" />
                         </el-popover>

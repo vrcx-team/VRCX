@@ -43,14 +43,14 @@
         <DataTable v-loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
                 <template #default="{ row }">
-                    <el-popover placement="right" height="500px" trigger="hover">
+                    <el-popover placement="right" :width="500" trigger="hover">
                         <template #reference>
                             <img :src="userImage(row.ref)" class="friends-list-avatar" loading="lazy" />
                         </template>
                         <img
                             :src="userImageFull(row.ref)"
-                            class="friends-list-avatar"
-                            style="height: 500px; cursor: pointer"
+                            :class="['friends-list-avatar', 'x-popover-image']"
+                            style="cursor: pointer"
                             loading="lazy"
                             @click="showFullscreenImageDialog(userImageFull(row.ref))" />
                     </el-popover>

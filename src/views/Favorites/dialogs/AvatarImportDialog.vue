@@ -120,14 +120,14 @@
         <DataTable v-loading="avatarImportDialog.loading" v-bind="avatarImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
                 <template #default="{ row }">
-                    <el-popover placement="right" height="500px" trigger="hover">
+                    <el-popover placement="right" :width="500" trigger="hover">
                         <template #reference>
                             <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy" />
                         </template>
                         <img
                             :src="row.imageUrl"
-                            class="friends-list-avatar"
-                            style="height: 500px; cursor: pointer"
+                            :class="['friends-list-avatar', 'x-popover-image']"
+                            style="cursor: pointer"
                             @click="showFullscreenImageDialog(row.imageUrl)"
                             loading="lazy" />
                     </el-popover>

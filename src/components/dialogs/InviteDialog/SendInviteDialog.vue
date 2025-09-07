@@ -9,7 +9,7 @@
         <template v-if="currentUser.$isVRCPlus">
             <!--            <template v-if="gallerySelectDialog.selectedFileId">-->
             <!--                <div style="display: inline-block; flex: none; margin-right: 5px">-->
-            <!--                    <el-popover placement="right" width="500px" trigger="click">-->
+            <!--                    <el-popover placement="right" :width="500px" trigger="click">-->
             <!--                        <template #reference>-->
             <!--                            <img-->
             <!--                                class="x-link"-->

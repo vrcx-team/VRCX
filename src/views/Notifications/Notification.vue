@@ -126,7 +126,7 @@
             <el-table-column :label="t('table.notification.photo')" width="100" prop="photo">
                 <template #default="scope">
                     <template v-if="scope.row.details && scope.row.details.imageUrl">
-                        <el-popover placement="right" width="500px" trigger="click">
+                        <el-popover placement="right" :width="500" trigger="click">
                             <template #reference>
                                 <img
                                     class="x-link"
@@ -136,14 +136,13 @@
                             </template>
                             <img
                                 :src="scope.row.details.imageUrl"
-                                class="x-link"
-                                style="width: 500px"
+                                :class="['x-link', 'x-popover-image']"
                                 @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
                                 loading="lazy" />
                         </el-popover>
                     </template>
                     <template v-else-if="scope.row.imageUrl">
-                        <el-popover placement="right" width="500px" trigger="click">
+                        <el-popover placement="right" :width="500" trigger="click">
                             <template #reference>
                                 <img
                                     class="x-link"
@@ -153,8 +152,7 @@
                             </template>
                             <img
                                 :src="scope.row.imageUrl"
-                                class="x-link"
-                                style="width: 500px"
+                                :class="['x-link', 'x-popover-image']"
                                 @click="showFullscreenImageDialog(scope.row.imageUrl)"
                                 loading="lazy" />
                         </el-popover>

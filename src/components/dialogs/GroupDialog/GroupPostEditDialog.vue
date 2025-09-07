@@ -61,7 +61,7 @@
                 <el-form-item :label="t('dialog.group_post_edit.image')">
                     <template v-if="gallerySelectDialog.selectedFileId">
                         <div style="display: inline-block; flex: none; margin-right: 5px">
-                            <el-popover placement="right" width="500px" trigger="click">
+                            <el-popover placement="right" :width="500" trigger="click">
                                 <template #reference>
                                     <img
                                         :src="gallerySelectDialog.selectedImageUrl"
@@ -76,7 +76,7 @@
                                 </template>
                                 <img
                                     :src="gallerySelectDialog.selectedImageUrl"
-                                    style="height: 500px"
+                                    :class="['x-link', 'x-popover-image']"
                                     @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
                                     loading="lazy" />
                             </el-popover>

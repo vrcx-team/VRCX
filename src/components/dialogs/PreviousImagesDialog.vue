@@ -11,13 +11,17 @@
                 <el-popover
                     class="x-change-image-item"
                     placement="right"
-                    width="500px"
+                    :width="500"
                     trigger="click"
                     v-if="image.file">
                     <template #reference>
                         <img :src="image.file.url" :class="['x-link', 'img-size']" loading="lazy" />
                     </template>
-                    <img :src="image.file.url" @click="showFullscreenImageDialog(image.file.url)" loading="lazy" />
+                    <img
+                        :src="image.file.url"
+                        @click="showFullscreenImageDialog(image.file.url)"
+                        class="x-popover-image"
+                        loading="lazy" />
                 </el-popover>
             </div>
         </div>

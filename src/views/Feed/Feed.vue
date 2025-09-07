@@ -70,7 +70,7 @@
                         </template>
                         <template v-else-if="scope.row.type === 'Avatar'">
                             <div style="display: flex; align-items: center">
-                                <el-popover placement="right" width="500px" trigger="click">
+                                <el-popover placement="right" :width="500" trigger="click">
                                     <template #reference>
                                         <div style="display: inline-block; vertical-align: top; width: 160px">
                                             <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
@@ -91,15 +91,14 @@
                                     </template>
                                     <img
                                         :src="scope.row.previousCurrentAvatarImageUrl"
-                                        class="x-link"
-                                        style="width: 500px; height: 375px"
+                                        :class="['x-link', 'x-popover-image']"
                                         @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)"
                                         loading="lazy" />
                                 </el-popover>
                                 <span style="position: relative; margin: 0 10px">
                                     <el-icon><Right /></el-icon>
                                 </span>
-                                <el-popover placement="right" width="500px" trigger="click">
+                                <el-popover placement="right" :width="500" trigger="click">
                                     <template #reference>
                                         <div style="display: inline-block; vertical-align: top; width: 160px">
                                             <template v-if="scope.row.currentAvatarThumbnailImageUrl">
@@ -120,8 +119,7 @@
                                     </template>
                                     <img
                                         :src="scope.row.currentAvatarImageUrl"
-                                        class="x-link"
-                                        style="width: 500px; height: 375px"
+                                        :class="['x-link', 'x-popover-image']"
                                         @click="showFullscreenImageDialog(scope.row.currentAvatarImageUrl)"
                                         loading="lazy" />
                                 </el-popover>

@@ -2,7 +2,7 @@
     <div v-show="menuActiveIndex === 'playerList'" class="x-container" style="padding-top: 5px">
         <div style="display: flex; flex-direction: column; height: 100%">
             <div v-if="currentInstanceWorld.ref.id" style="display: flex">
-                <el-popover placement="right" width="500px" trigger="click" style="height: 120px">
+                <el-popover placement="right" :width="500" trigger="click" style="height: 120px">
                     <template #reference>
                         <img
                             :src="currentInstanceWorld.ref.thumbnailImageUrl"
@@ -12,8 +12,7 @@
                     </template>
                     <img
                         :src="currentInstanceWorld.ref.imageUrl"
-                        class="x-link"
-                        style="width: 500px; height: 375px"
+                        :class="['x-link', 'x-popover-image']"
                         @click="showFullscreenImageDialog(currentInstanceWorld.ref.imageUrl)"
                         loading="lazy" />
                 </el-popover>
@@ -648,7 +647,7 @@
                     <el-table-column :label="t('table.playerList.avatar')" width="70" prop="photo">
                         <template #default="scope">
                             <template v-if="userImage(scope.row.ref)">
-                                <el-popover placement="right" height="500px" trigger="hover">
+                                <el-popover placement="right" :width="500" trigger="hover">
                                     <template #reference>
                                         <img
                                             :src="userImage(scope.row.ref)"
@@ -657,8 +656,8 @@
                                     </template>
                                     <img
                                         :src="userImageFull(scope.row.ref)"
-                                        class="friends-list-avatar"
-                                        style="height: 500px; cursor: pointer"
+                                        :class="['friends-list-avatar', 'x-popover-image']"
+                                        style="cursor: pointer"
                                         @click="showFullscreenImageDialog(userImageFull(scope.row.ref))"
                                         loading="lazy" />
                                 </el-popover>

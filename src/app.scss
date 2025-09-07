@@ -659,37 +659,37 @@ i.x-status-icon.red {
 
 .x-tag-friend {
     color: rgb(255, 208, 0);
-    border-color: rgb(255, 208, 0);
+    border-color: rgb(255, 208, 0) !important;
 }
 
 .x-tag-vrcplus {
     color: rgb(255, 208, 0);
-    border-color: rgb(255, 208, 0);
+    border-color: rgb(255, 208, 0) !important;
 }
 
 .x-tag-platform-pc {
     color: #409eff;
-    border-color: #409eff;
+    border-color: #409eff !important;
 }
 
 .x-tag-platform-quest {
     color: #67c23a;
-    border-color: #67c23a;
+    border-color: #67c23a !important;
 }
 
 .x-tag-platform-ios {
     color: #c7c7ce;
-    border-color: #c7c7ce;
+    border-color: #c7c7ce !important;
 }
 
 .x-tag-platform-other {
     color: #ff4177;
-    border-color: #ff4177;
+    border-color: #ff4177 !important;
 }
 
 .x-tag-age-verification {
     color: #5c70ec;
-    border-color: #5c70ec;
+    border-color: #5c70ec !important;
 }
 
 .x-tag-border-left {
@@ -700,6 +700,11 @@ i.x-status-icon.red {
 
 .x-grey {
     color: #909399;
+}
+
+.x-popover-image {
+    max-width: 100%;
+    max-height: 100%;
 }
 
 // .el-tree-node {
@@ -869,10 +874,6 @@ i.x-status-icon.red {
 
 .dialog-title {
     font-weight: bold;
-}
-
-.group-banner-image {
-    display: none;
 }
 
 .vrc-instance-queue-message {

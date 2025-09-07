@@ -13,7 +13,7 @@
                         (userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride)
                     "
                     placement="right"
-                    width="500px"
+                    :width="500"
                     trigger="click">
                     <template #reference>
                         <img
@@ -24,12 +24,11 @@
                     </template>
                     <img
                         :src="userDialog.ref.profilePicOverride"
-                        class="x-link"
-                        style="height: 400px"
+                        :class="['x-link', 'x-popover-image']"
                         @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)"
                         loading="lazy" />
                 </el-popover>
-                <el-popover v-else-if="!userDialog.loading" placement="right" width="500px" trigger="click">
+                <el-popover v-else-if="!userDialog.loading" placement="right" :width="500" trigger="click">
                     <template #reference
                         ><img
                             class="x-link"
@@ -40,8 +39,7 @@
 
                     <img
                         :src="userDialog.ref.currentAvatarImageUrl"
-                        class="x-link"
-                        style="height: 500px"
+                        :class="['x-link', 'x-popover-image']"
                         @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)"
                         loading="lazy" />
                 </el-popover>
@@ -251,70 +249,69 @@
                                 >{{ userDialog.ref.$customTag }}</el-tag
                             >
                             <br />
-                            <!-- <el-tooltip
-                                v-show="!userDialog.loading"
-                                v-for="badge in userDialog.ref.badges"
-                                :key="badge.badgeId"
-                                placement="top">
+                            <el-tooltip v-for="badge in userDialog.ref.badges" :key="badge.badgeId" placement="top">
                                 <template #content>
                                     <span>{{ badge.badgeName }}</span>
                                     <span v-if="badge.hidden">&nbsp;(Hidden)</span>
                                 </template>
-                                <el-popover placement="right" width="300px" trigger="click">
-                                    <template #reference>
-                                        <img
-                                            class="x-link x-user-badge"
-                                            :src="badge.badgeImageUrl"
-                                            style="
-                                                flex: none;
-                                                height: 32px;
-                                                width: 32px;
-                                                border-radius: 3px;
-                                                object-fit: cover;
-                                                margin-top: 5px;
-                                                margin-right: 5px;
-                                            "
-                                            :class="{ 'x-user-badge-hidden': badge.hidden }"
-                                            loading="lazy" />
-                                    </template>
-                                    <img
-                                        :src="badge.badgeImageUrl"
-                                        class="x-link"
-                                        style="width: 300px"
-                                        @click="showFullscreenImageDialog(badge.badgeImageUrl)"
-                                        loading="lazy" />
-                                    <br />
-                                    <div style="display: block; width: 300px; word-break: normal">
-                                        <span>{{ badge.badgeName }}</span>
-                                        <br />
-                                        <span class="x-grey" style="font-size: 12px">{{ badge.badgeDescription }}</span>
-                                        <br />
-                                        <span
-                                            v-if="badge.assignedAt"
-                                            class="x-grey"
-                                            style="font-family: monospace; font-size: 12px">
-                                            {{ t('dialog.user.badges.assigned') }}:
-                                            {{ formatDateFilter(badge.assignedAt, 'long') }}
-                                        </span>
-                                        <template v-if="userDialog.id === currentUser.id">
-                                            <br />
-                                            <el-checkbox
-                                                v-model="badge.hidden"
-                                                style="margin-top: 5px"
-                                                @change="toggleBadgeVisibility(badge)">
-                                                {{ t('dialog.user.badges.hidden') }}
-                                            </el-checkbox>
-                                            <br />
-                                            <el-checkbox
-                                                v-model="badge.showcased"
-                                                style="margin-top: 5px"
-                                                @change="toggleBadgeShowcased(badge)">
-                                                {{ t('dialog.user.badges.showcased') }}
-                                            </el-checkbox>
+                                <div style="display: inline-block">
+                                    <el-popover placement="bottom" :width="300" trigger="click">
+                                        <template #reference>
+                                            <img
+                                                class="x-link x-user-badge"
+                                                :src="badge.badgeImageUrl"
+                                                style="
+                                                    flex: none;
+                                                    height: 32px;
+                                                    width: 32px;
+                                                    border-radius: 3px;
+                                                    object-fit: cover;
+                                                    margin-top: 5px;
+                                                    margin-right: 5px;
+                                                "
+                                                :class="{ 'x-user-badge-hidden': badge.hidden }"
+                                                loading="lazy" />
                                         </template>
-                                    </div>
-                                </el-popover>
-                            </el-tooltip> -->
+                                        <img
+                                            :src="badge.badgeImageUrl"
+                                            :class="['x-link', 'x-popover-image']"
+                                            @click="showFullscreenImageDialog(badge.badgeImageUrl)"
+                                            loading="lazy" />
+                                        <br />
+                                        <div style="display: block; width: 300px; word-break: normal">
+                                            <span>{{ badge.badgeName }}</span>
+                                            <br />
+                                            <span class="x-grey" style="font-size: 12px">{{
+                                                badge.badgeDescription
+                                            }}</span>
+                                            <br />
+                                            <span
+                                                v-if="badge.assignedAt"
+                                                class="x-grey"
+                                                style="font-family: monospace; font-size: 12px">
+                                                {{ t('dialog.user.badges.assigned') }}:
+                                                {{ formatDateFilter(badge.assignedAt, 'long') }}
+                                            </span>
+                                            <template v-if="userDialog.id === currentUser.id">
+                                                <br />
+                                                <el-checkbox
+                                                    v-model="badge.hidden"
+                                                    style="margin-top: 5px"
+                                                    @change="toggleBadgeVisibility(badge)">
+                                                    {{ t('dialog.user.badges.hidden') }}
+                                                </el-checkbox>
+                                                <br />
+                                                <el-checkbox
+                                                    v-model="badge.showcased"
+                                                    style="margin-top: 5px"
+                                                    @change="toggleBadgeShowcased(badge)">
+                                                    {{ t('dialog.user.badges.showcased') }}
+                                                </el-checkbox>
+                                            </template>
+                                        </div>
+                                    </el-popover>
+                                </div>
+                            </el-tooltip>
                         </div>
                         <div style="margin-top: 5px">
                             <span style="font-size: 12px" v-text="userDialog.ref.statusDescription"></span>
@@ -322,7 +319,7 @@
                     </div>
 
                     <div v-if="userDialog.ref.userIcon" style="flex: none; margin-right: 10px">
-                        <el-popover placement="right" width="500px" trigger="click">
+                        <el-popover placement="right" :width="500" trigger="click">
                             <template #reference>
                                 <img
                                     class="x-link"
@@ -338,8 +335,7 @@
                             </template>
                             <img
                                 :src="userDialog.ref.userIcon"
-                                class="x-link"
-                                style="height: 500px"
+                                :class="['x-link', 'x-popover-image']"
                                 @click="showFullscreenImageDialog(userDialog.ref.userIcon)"
                                 loading="lazy" />
                         </el-popover>
@@ -745,7 +741,7 @@
                                     "
                                     class="extra">
                                     <div style="display: inline-block; flex: none; margin-right: 5px">
-                                        <el-popover placement="right" width="500px" trigger="click">
+                                        <el-popover placement="right" :width="500" trigger="click">
                                             <template #reference>
                                                 <el-image
                                                     v-loading="userDialog.isRepresentedGroupLoading"
@@ -769,8 +765,7 @@
                                             </template>
                                             <img
                                                 :src="userDialog.representedGroup.iconUrl"
-                                                class="x-link"
-                                                style="height: 500px"
+                                                :class="['x-link', 'x-popover-image']"
                                                 @click="showFullscreenImageDialog(userDialog.representedGroup.iconUrl)"
                                                 loading="lazy" />
                                         </el-popover>

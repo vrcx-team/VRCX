@@ -5,26 +5,9 @@
         :show-close="false"
         width="770px"
         class="x-dialog x-group-dialog">
-        <div class="group-banner-image">
-            <el-popover placement="right" width="500px" trigger="click">
-                <template #reference>
-                    <img
-                        :src="groupDialog.ref.bannerUrl"
-                        style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"
-                        class="x-link"
-                        loading="lazy" />
-                </template>
-                <img
-                    :src="groupDialog.ref.bannerUrl"
-                    style="width: 854px; height: 480px"
-                    class="x-link"
-                    @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
-                    loading="lazy" />
-            </el-popover>
-        </div>
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
-                <el-popover placement="right" width="500px" trigger="click">
+                <el-popover placement="right" :width="500" trigger="click">
                     <template #reference>
                         <img
                             :src="groupDialog.ref.iconUrl"
@@ -34,8 +17,7 @@
                     </template>
                     <img
                         :src="groupDialog.ref.iconUrl"
-                        style="width: 500px; height: 500px"
-                        class="x-link"
+                        :class="['x-link', 'x-popover-image']"
                         @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
                         loading="lazy" />
                 </el-popover>
@@ -383,7 +365,7 @@
             <el-tabs v-model="groupDialogLastActiveTab" @tab-click="groupDialogTabClick">
                 <el-tab-pane name="Info" :label="t('dialog.group.info.header')">
                     <div class="group-banner-image-info">
-                        <el-popover placement="right" width="500px" trigger="click">
+                        <el-popover placement="bottom" :width="1000" trigger="click">
                             <template #reference>
                                 <img
                                     :src="groupDialog.ref.bannerUrl"
@@ -399,8 +381,7 @@
                             </template>
                             <img
                                 :src="groupDialog.ref.bannerUrl"
-                                class="x-link"
-                                style="width: 854px; height: 480px"
+                                :class="['x-link', 'x-popover-image']"
                                 @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
                                 loading="lazy" />
                         </el-popover>
@@ -464,7 +445,7 @@
                                 <div
                                     v-if="groupDialog.announcement.imageUrl"
                                     style="display: inline-block; margin-right: 5px">
-                                    <el-popover placement="right" width="500px" trigger="click">
+                                    <el-popover placement="right" :width="500" trigger="click">
                                         <template #reference>
                                             <img
                                                 :src="groupDialog.announcement.imageUrl"
@@ -480,8 +461,7 @@
                                         </template>
                                         <img
                                             :src="groupDialog.announcement.imageUrl"
-                                            class="x-link"
-                                            style="height: 500px"
+                                            :class="['x-link', 'x-popover-image']"
                                             @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
                                             loading="lazy" />
                                     </el-popover>
@@ -757,7 +737,7 @@
                                 <div class="detail">
                                     <span style="display: block" v-text="post.title" />
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
-                                        <el-popover placement="right" width="500px" trigger="click">
+                                        <el-popover placement="right" :width="500" trigger="click">
                                             <template #reference>
                                                 <img
                                                     :src="post.imageUrl"
@@ -773,8 +753,7 @@
                                             </template>
                                             <img
                                                 :src="post.imageUrl"
-                                                class="x-link"
-                                                style="height: 500px"
+                                                :class="['x-link', 'x-popover-image']"
                                                 @click="showFullscreenImageDialog(post.imageUrl)"
                                                 loading="lazy" />
                                         </el-popover>
@@ -1118,7 +1097,7 @@
                                     <el-carousel-item
                                         v-for="image in groupDialog.galleries[gallery.id]"
                                         :key="image.id">
-                                        <el-popover placement="top" width="700px" trigger="click">
+                                        <el-popover placement="top" :width="700" trigger="click">
                                             <template #reference>
                                                 <img
                                                     :src="image.imageUrl"
@@ -1128,8 +1107,7 @@
                                             </template>
                                             <img
                                                 :src="image.imageUrl"
-                                                class="x-link"
-                                                style="height: 700px"
+                                                :class="['x-link', 'x-popover-image']"
                                                 @click="showFullscreenImageDialog(image.imageUrl)"
                                                 loading="lazy" />
                                         </el-popover>

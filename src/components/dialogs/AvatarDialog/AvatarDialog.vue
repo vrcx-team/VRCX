@@ -7,7 +7,7 @@
         width="700px">
         <div v-loading="avatarDialog.loading">
             <div style="display: flex">
-                <el-popover placement="right" width="500px" trigger="click">
+                <el-popover placement="right" :width="500" trigger="click">
                     <template #reference>
                         <img
                             :src="avatarDialog.ref.thumbnailImageUrl"
@@ -17,8 +17,7 @@
                     </template>
                     <img
                         :src="avatarDialog.ref.imageUrl"
-                        class="x-link"
-                        style="width: 500px; height: 375px"
+                        :class="['x-link', 'x-popover-image']"
                         @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)"
                         loading="lazy" />
                 </el-popover>

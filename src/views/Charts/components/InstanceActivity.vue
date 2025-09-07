@@ -3,7 +3,7 @@
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
                 <span>{{ t('view.charts.instance_activity.header') }}</span>
-                <el-popover placement="bottom-start" trigger="hover" width="300">
+                <el-popover placement="bottom-start" trigger="hover" :width="300">
                     <div class="tips-popover">
                         <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
                         <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>

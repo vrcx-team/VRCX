@@ -120,7 +120,7 @@
                                 width="70"
                                 prop="photo">
                                 <template #default="scope">
-                                    <el-popover placement="right" height="500px" trigger="hover">
+                                    <el-popover placement="right" :width="500" trigger="hover">
                                         <template #reference>
                                             <img
                                                 :src="userImage(scope.row.user)"
@@ -129,8 +129,8 @@
                                         </template>
                                         <img
                                             :src="userImageFull(scope.row.user)"
-                                            class="friends-list-avatar"
-                                            style="height: 500px; cursor: pointer"
+                                            :class="['friends-list-avatar', 'x-popover-image']"
+                                            style="cursor: pointer"
                                             @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
                                             loading="lazy" />
                                     </el-popover>
@@ -237,7 +237,7 @@
                                 width="70"
                                 prop="photo">
                                 <template #default="scope">
-                                    <el-popover placement="right" height="500px" trigger="hover">
+                                    <el-popover placement="right" :width="500" trigger="hover">
                                         <template #reference>
                                             <img
                                                 :src="userImage(scope.row.user)"
@@ -246,8 +246,8 @@
                                         </template>
                                         <img
                                             :src="userImageFull(scope.row.user)"
-                                            class="friends-list-avatar"
-                                            style="height: 500px; cursor: pointer"
+                                            :class="['friends-list-avatar', 'x-popover-image']"
+                                            style="cursor: pointer"
                                             @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
                                             loading="lazy" />
                                     </el-popover>
@@ -353,7 +353,7 @@
                                         width="70"
                                         prop="photo">
                                         <template #default="scope">
-                                            <el-popover placement="right" height="500px" trigger="hover">
+                                            <el-popover placement="right" :width="500" trigger="hover">
                                                 <template #reference>
                                                     <img
                                                         :src="userImage(scope.row.user)"
@@ -362,8 +362,8 @@
                                                 </template>
                                                 <img
                                                     :src="userImageFull(scope.row.user)"
-                                                    class="friends-list-avatar"
-                                                    style="height: 500px; cursor: pointer"
+                                                    :class="['friends-list-avatar', 'x-popover-image']"
+                                                    style="cursor: pointer"
                                                     @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
                                                     loading="lazy" />
                                             </el-popover>
@@ -438,7 +438,7 @@
                                         width="70"
                                         prop="photo">
                                         <template #default="scope">
-                                            <el-popover placement="right" height="500px" trigger="hover">
+                                            <el-popover placement="right" :width="500" trigger="hover">
                                                 <template #reference>
                                                     <img
                                                         :src="userImage(scope.row.user)"
@@ -447,8 +447,8 @@
                                                 </template>
                                                 <img
                                                     :src="userImageFull(scope.row.user)"
-                                                    class="friends-list-avatar"
-                                                    style="height: 500px; cursor: pointer"
+                                                    :class="['friends-list-avatar', 'x-popover-image']"
+                                                    style="cursor: pointer"
                                                     @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
                                                     loading="lazy" />
                                             </el-popover>
@@ -549,7 +549,7 @@
                                         width="70"
                                         prop="photo">
                                         <template #default="scope">
-                                            <el-popover placement="right" height="500px" trigger="hover">
+                                            <el-popover placement="right" :width="500" trigger="hover">
                                                 <template #reference>
                                                     <img
                                                         :src="userImage(scope.row.user)"
@@ -558,8 +558,8 @@
                                                 </template>
                                                 <img
                                                     :src="userImageFull(scope.row.user)"
-                                                    class="friends-list-avatar"
-                                                    style="height: 500px; cursor: pointer"
+                                                    :class="['friends-list-avatar', 'x-popover-image']"
+                                                    style="cursor: pointer"
                                                     @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
                                                     loading="lazy" />
                                             </el-popover>

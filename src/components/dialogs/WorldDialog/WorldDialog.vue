@@ -7,7 +7,7 @@
         width="770px">
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
-                <el-popover placement="right" width="500px" trigger="click">
+                <el-popover placement="right" :width="500" trigger="click">
                     <template #reference>
                         <img
                             :src="worldDialog.ref.thumbnailImageUrl"
@@ -17,8 +17,7 @@
                     </template>
                     <img
                         :src="worldDialog.ref.imageUrl"
-                        class="x-link"
-                        style="width: 500px; height: 375px"
+                        :class="['x-link', 'x-popover-image']"
                         @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
                         loading="lazy" />
                 </el-popover>
