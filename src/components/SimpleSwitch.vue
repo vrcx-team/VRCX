@@ -31,13 +31,13 @@
 <style scoped>
     .simple-switch {
         font-size: 12px;
-        margin-top: 5px;
         display: flex;
     }
     .simple-switch > .name {
         width: 225px;
         min-width: 225px;
         word-wrap: break-word;
+        padding-top: 7px;
     }
     .simple-switch > .switch {
         margin-left: 10px;

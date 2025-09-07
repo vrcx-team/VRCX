@@ -596,7 +596,7 @@
                             :marks="{ 300: '' }"
                             :min="200"
                             :max="500"
-                            style="display: inline-block; width: 300px"
+                            style="display: inline-block; width: 300px; padding-top: 16px"
                             @input="setAsideWidth"></el-slider>
                     </div>
                     <simple-switch
@@ -665,10 +665,8 @@
                                 size="small"
                                 :predefine="['#CCCCCC']"
                                 @change="updateTrustColor('untrusted', $event)">
-                                <template #trigger>
-                                    <span class="color-picker x-tag-untrusted">Visitor</span>
-                                </template>
                             </el-color-picker>
+                            <span class="color-picker x-tag-untrusted">Visitor</span>
                         </div>
                         <div>
                             <el-color-picker
@@ -676,10 +674,8 @@
                                 size="small"
                                 :predefine="['#1778ff']"
                                 @change="updateTrustColor('basic', $event)">
-                                <template #trigger>
-                                    <span class="color-picker x-tag-basic">New User</span>
-                                </template>
                             </el-color-picker>
+                            <span class="color-picker x-tag-basic">New User</span>
                         </div>
                         <div>
                             <el-color-picker
@@ -687,10 +683,8 @@
                                 size="small"
                                 :predefine="['#2bcf5c']"
                                 @change="updateTrustColor('known', $event)">
-                                <template #trigger>
-                                    <span class="color-picker x-tag-known">User</span>
-                                </template>
                             </el-color-picker>
+                            <span class="color-picker x-tag-known">User</span>
                         </div>
                         <div>
                             <el-color-picker
@@ -698,10 +692,8 @@
                                 size="small"
                                 :predefine="['#ff7b42']"
                                 @change="updateTrustColor('trusted', $event)">
-                                <template #trigger>
-                                    <span class="color-picker x-tag-trusted">Known User</span>
-                                </template>
                             </el-color-picker>
+                            <span class="color-picker x-tag-trusted">Known User</span>
                         </div>
                         <div>
                             <el-color-picker
@@ -709,10 +701,8 @@
                                 size="small"
                                 :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
                                 @change="updateTrustColor('veteran', $event)">
-                                <template #trigger>
-                                    <span class="color-picker x-tag-veteran">Trusted User</span>
-                                </template>
                             </el-color-picker>
+                            <span class="color-picker x-tag-veteran">Trusted User</span>
                         </div>
                         <div>
                             <el-color-picker
@@ -720,10 +710,8 @@
                                 size="small"
                                 :predefine="['#ff2626']"
                                 @change="updateTrustColor('vip', $event)">
-                                <template #trigger>
-                                    <span class="color-picker x-tag-vip">VRChat Team</span>
-                                </template>
                             </el-color-picker>
+                            <span class="color-picker x-tag-vip">VRChat Team</span>
                         </div>
                         <div>
                             <el-color-picker
@@ -731,10 +719,8 @@
                                 size="small"
                                 :predefine="['#782f2f']"
                                 @change="updateTrustColor('troll', $event)">
-                                <template #trigger>
-                                    <span class="color-picker x-tag-troll">Nuisance</span>
-                                </template>
                             </el-color-picker>
+                            <span class="color-picker x-tag-troll">Nuisance</span>
                         </div>
                     </div>
                 </div>

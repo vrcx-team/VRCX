@@ -53,7 +53,7 @@
                                 clearable
                                 show-password></el-input>
                         </el-form-item>
-                        <el-checkbox v-model="loginForm.saveCredentials" style="margin-top: 15px">{{
+                        <el-checkbox v-model="loginForm.saveCredentials">{{
                             t('view.login.field.saveCredentials')
                         }}</el-checkbox>
                         <el-checkbox
@@ -84,7 +84,7 @@
                                 :placeholder="AppGlobal.websocketDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
-                        <el-form-item style="margin-top: 15px">
+                        <el-form-item>
                             <el-button native-type="submit" type="primary" style="width: 100%">{{
                                 t('view.login.login')
                             }}</el-button>
