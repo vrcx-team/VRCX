@@ -303,7 +303,6 @@
                                                 <br />
                                                 <el-checkbox
                                                     v-model="badge.showcased"
-                                                    style="margin-top: 5px"
                                                     @change="toggleBadgeShowcased(badge)">
                                                     {{ t('dialog.user.badges.showcased') }}
                                                 </el-checkbox>

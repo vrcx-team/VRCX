@@ -141,13 +141,13 @@ namespace VRCX
             var overlayHandle2 = 0UL;
 
             _wristOverlay = new OffScreenBrowserLegacy(
-                "file://vrcx/vr.html?wrist",
+                Program.LaunchDebug ? "http://localhost:9000/vr.html?wrist" : "file://vrcx/vr.html?wrist",
                 512,
                 512
             );
 
             _hmdOverlay = new OffScreenBrowserLegacy(
-                "file://vrcx/vr.html?hmd",
+                Program.LaunchDebug ? "http://localhost:9000/vr.html?hmd" : "file://vrcx/vr.html?hmd",
                 1024,
                 1024
             );
