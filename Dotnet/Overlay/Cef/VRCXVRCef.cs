@@ -190,13 +190,13 @@ namespace VRCX
             var dashboardHandle = 0UL;
 
             _wristOverlay = new OffScreenBrowser(
-                Program.LaunchDebug ? "http://localhost:9000/vr.html?1": "file://vrcx/vr.html?1",
+                Program.LaunchDebug ? "http://localhost:9000/vr.html?wrist" : "file://vrcx/vr.html?wrist",
                 512,
                 512
             );
 
             _hmdOverlay = new OffScreenBrowser(
-                Program.LaunchDebug ? "http://localhost:9000/vr.html?2": "file://vrcx/vr.html?2",
+                Program.LaunchDebug ? "http://localhost:9000/vr.html?hmd" : "file://vrcx/vr.html?hmd",
                 1024,
                 1024
             );

@@ -22,7 +22,7 @@ namespace VRCX
             InitializeComponent();
 
             _browser1 = new ChromiumWebBrowser(
-                Path.Join(Program.BaseDirectory, "html/vr.html?1")
+                Path.Join(Program.BaseDirectory, "html/vr.html?wrist")
             )
             {
                 DragHandler = new CefNoopDragHandler(),
@@ -35,7 +35,7 @@ namespace VRCX
             };
 
             _browser2 = new ChromiumWebBrowser(
-                Path.Join(Program.BaseDirectory, "html/vr.html?2")
+                Path.Join(Program.BaseDirectory, "html/vr.html?hmd")
             )
             {
                 DragHandler = new CefNoopDragHandler(),

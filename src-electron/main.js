@@ -428,7 +428,7 @@ function createWristOverlayWindowOffscreen() {
     wristOverlayWindow.webContents.setFrameRate(2);
 
     const indexPath = path.join(rootDir, 'build/html/vr.html');
-    const fileUrl = `file://${indexPath}?1`;
+    const fileUrl = `file://${indexPath}?wrist`;
     wristOverlayWindow.loadURL(fileUrl, { userAgent: version });
 
     // Use paint event for offscreen rendering
@@ -491,7 +491,7 @@ function createHmdOverlayWindowOffscreen() {
     hmdOverlayWindow.webContents.setFrameRate(48);
 
     const indexPath = path.join(rootDir, 'build/html/vr.html');
-    const fileUrl = `file://${indexPath}?2`;
+    const fileUrl = `file://${indexPath}?hmd`;
     hmdOverlayWindow.loadURL(fileUrl, { userAgent: version });
 
     // Use paint event for offscreen rendering

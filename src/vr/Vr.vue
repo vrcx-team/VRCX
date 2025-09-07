@@ -2,8 +2,8 @@
     <div
         id="x-app"
         class="x-app x-app-type"
-        :class="{ background: appType === '1' && config && config.backgroundEnabled }">
-        <template v-if="appType === '1'">
+        :class="{ background: appType === 'wrist' && config && config.backgroundEnabled }">
+        <template v-if="appType === 'wrist'">
             <div class="x-container" style="flex: 1">
                 <div class="x-friend-list" ref="list" style="color: #aaa">
                     <template v-if="config && config.minimalFeed">
@@ -1439,7 +1439,7 @@
         if (LINUX) {
             updateVrElectronLoop();
         }
-        if (vrState.appType === '1') {
+        if (vrState.appType === 'wrist') {
             refreshCustomScript();
             updateStatsLoop();
         }
@@ -1500,7 +1500,7 @@
 
     function nowPlayingUpdate(json) {
         vrState.nowPlaying = JSON.parse(json);
-        if (vrState.appType === '2') {
+        if (vrState.appType === 'hmd') {
             const circle = /** @type {SVGCircleElement} */ (document.querySelector('.np-progress-circle-stroke'));
 
             if (vrState.lastLocation.progressPie && vrState.nowPlaying.percentage !== 0) {
@@ -1527,7 +1527,7 @@
     }
 
     function updateFeedLength() {
-        if (vrState.appType === '2' || vrState.wristFeed.length === 0) {
+        if (vrState.appType === 'hmd' || vrState.wristFeed.length === 0) {
             return;
         }
         let length = 16;
@@ -1664,7 +1664,7 @@
 
     async function updateVrElectronLoop() {
         try {
-            if (vrState.appType === '1') {
+            if (vrState.appType === 'wrist') {
                 const wristOverlayQueue = await AppApiVr.GetExecuteVrFeedFunctionQueue();
                 if (wristOverlayQueue) {
                     wristOverlayQueue.forEach((item) => {
