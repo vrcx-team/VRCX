@@ -124,8 +124,9 @@
         ElMessageBox.confirm('Continue? Restore Backup', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'warning',
-            callback: (action) => {
+            type: 'warning'
+        })
+            .then((action) => {
                 if (action !== 'confirm') {
                     return;
                 }
@@ -144,8 +145,8 @@
                             type: 'error'
                         });
                     });
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function saveVrcRegistryBackupToFile(row) {
@@ -163,8 +164,9 @@
         ElMessageBox.confirm('Continue? Delete VRC Registry Settings', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'warning',
-            callback: (action) => {
+            type: 'warning'
+        })
+            .then((action) => {
                 if (action !== 'confirm') {
                     return;
                 }
@@ -174,8 +176,8 @@
                         type: 'success'
                     });
                 });
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     async function handleBackupVrcRegistry(name) {
@@ -184,16 +186,16 @@
     }
 
     async function promptVrcRegistryBackupName() {
-        const name = await ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            inputPattern: /\S+/,
-            inputErrorMessage: 'Name is required',
-            inputValue: 'Backup'
-        });
-        if (name.action === 'confirm') {
-            await handleBackupVrcRegistry(name.value);
-        }
+        try {
+            const { value } = await ElMessageBox.prompt('Enter a name for the backup', 'Backup Name', {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                inputPattern: /\S+/,
+                inputErrorMessage: 'Name is required',
+                inputValue: 'Backup'
+            });
+            await handleBackupVrcRegistry(value);
+        } catch (error) {}
     }
 
     async function openJsonFileSelectorDialogElectron() {

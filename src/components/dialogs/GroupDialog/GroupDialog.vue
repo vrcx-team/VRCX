@@ -1404,8 +1404,9 @@
         ElMessageBox.confirm('Are you sure you want to delete this post?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     groupRequest
                         .deleteGroupPost({
@@ -1437,8 +1438,8 @@
                             updateGroupPostSearch();
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function groupGalleryStatus(gallery) {
@@ -1520,8 +1521,9 @@
         ElMessageBox.confirm('Are you sure you want to block this group?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     groupRequest
                         .blockGroup({
@@ -1533,16 +1535,17 @@
                             }
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function unblockGroup(groupId) {
         ElMessageBox.confirm('Are you sure you want to unblock this group?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     groupRequest
                         .unblockGroup({
@@ -1555,8 +1558,8 @@
                             }
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function joinGroup(id) {

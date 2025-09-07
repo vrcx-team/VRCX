@@ -789,16 +789,14 @@
                             }}</el-radio-button>
                         </el-radio-group>
                     </div>
-                    <template>
-                        <simple-switch
-                            :label="
-                                t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')
-                            "
-                            :value="openVR"
-                            @change="
-                                setOpenVR();
-                                saveOpenVROption();
-                            " />
+                    <simple-switch
+                        :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')"
+                        :value="openVR"
+                        @change="
+                            setOpenVR();
+                            saveOpenVROption();
+                        " />
+                    <template v-if="openVR">
                         <simple-switch
                             :label="
                                 t(
@@ -832,11 +830,9 @@
                             }}</span>
                             <el-slider
                                 :model-value="notificationOpacity"
-                                @change="setNotificationOpacity"
-                                :show-tooltip="false"
+                                @input="setNotificationOpacity"
                                 :min="0"
                                 :max="100"
-                                show-input
                                 style="display: inline-block; width: 300px" />
                         </div>
                         <div class="options-container-item">

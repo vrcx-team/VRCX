@@ -267,13 +267,14 @@
         ElMessageBox.confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteAllVRChatCache();
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     async function deleteAllVRChatCache() {

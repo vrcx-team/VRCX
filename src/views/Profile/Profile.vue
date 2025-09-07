@@ -581,15 +581,16 @@
             confirmButtonText: t('prompt.direct_access_username.ok'),
             cancelButtonText: t('prompt.direct_access_username.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_username.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
+            inputErrorMessage: t('prompt.direct_access_username.input_error')
+        })
+            .then(({ value }) => {
+                if (value) {
                     lookupUser({
-                        displayName: instance.inputValue
+                        displayName: value
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function promptUserIdDialog() {
         ElMessageBox.prompt(t('prompt.direct_access_user_id.description'), t('prompt.direct_access_user_id.header'), {
@@ -597,13 +598,14 @@
             confirmButtonText: t('prompt.direct_access_user_id.ok'),
             cancelButtonText: t('prompt.direct_access_user_id.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_user_id.input_error'),
-            callback: (action, instance) => {
-                instance.inputValue = instance.inputValue.trim();
-                if (action === 'confirm' && instance.inputValue) {
-                    const testUrl = instance.inputValue.substring(0, 15);
+            inputErrorMessage: t('prompt.direct_access_user_id.input_error')
+        })
+            .then(({ value }) => {
+                if (value) {
+                    const trimmedValue = value.trim();
+                    const testUrl = trimmedValue.substring(0, 15);
                     if (testUrl === 'https://vrchat.') {
-                        const userId = parseUserUrl(instance.inputValue);
+                        const userId = parseUserUrl(trimmedValue);
                         if (userId) {
                             showUserDialog(userId);
                         } else {
@@ -613,11 +615,11 @@
                             });
                         }
                     } else {
-                        showUserDialog(instance.inputValue);
+                        showUserDialog(trimmedValue);
                     }
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function promptWorldDialog() {
         ElMessageBox.prompt(t('prompt.direct_access_world_id.description'), t('prompt.direct_access_world_id.header'), {
@@ -625,19 +627,20 @@
             confirmButtonText: t('prompt.direct_access_world_id.ok'),
             cancelButtonText: t('prompt.direct_access_world_id.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.direct_access_world_id.input_error'),
-            callback: (action, instance) => {
-                instance.inputValue = instance.inputValue.trim();
-                if (action === 'confirm' && instance.inputValue) {
-                    if (!directAccessWorld(instance.inputValue)) {
+            inputErrorMessage: t('prompt.direct_access_world_id.input_error')
+        })
+            .then(({ value }) => {
+                if (value) {
+                    const trimmedValue = value.trim();
+                    if (!directAccessWorld(trimmedValue)) {
                         ElMessage({
                             message: t('prompt.direct_access_world_id.message.error'),
                             type: 'error'
                         });
                     }
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function promptAvatarDialog() {
         ElMessageBox.prompt(
@@ -648,28 +651,29 @@
                 confirmButtonText: t('prompt.direct_access_avatar_id.ok'),
                 cancelButtonText: t('prompt.direct_access_avatar_id.cancel'),
                 inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.direct_access_avatar_id.input_error'),
-                callback: (action, instance) => {
-                    instance.inputValue = instance.inputValue.trim();
-                    if (action === 'confirm' && instance.inputValue) {
-                        const testUrl = instance.inputValue.substring(0, 15);
-                        if (testUrl === 'https://vrchat.') {
-                            const avatarId = parseAvatarUrl(instance.inputValue);
-                            if (avatarId) {
-                                showAvatarDialog(avatarId);
-                            } else {
-                                ElMessage({
-                                    message: t('prompt.direct_access_avatar_id.message.error'),
-                                    type: 'error'
-                                });
-                            }
+                inputErrorMessage: t('prompt.direct_access_avatar_id.input_error')
+            }
+        )
+            .then(({ value }) => {
+                if (value) {
+                    const trimmedValue = value.trim();
+                    const testUrl = trimmedValue.substring(0, 15);
+                    if (testUrl === 'https://vrchat.') {
+                        const avatarId = parseAvatarUrl(trimmedValue);
+                        if (avatarId) {
+                            showAvatarDialog(avatarId);
                         } else {
-                            showAvatarDialog(instance.inputValue);
+                            ElMessage({
+                                message: t('prompt.direct_access_avatar_id.message.error'),
+                                type: 'error'
+                            });
                         }
+                    } else {
+                        showAvatarDialog(trimmedValue);
                     }
                 }
-            }
-        );
+            })
+            .catch(() => {});
     }
     async function getConfig() {
         await authRequest.getConfig();

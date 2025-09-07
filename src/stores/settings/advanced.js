@@ -677,24 +677,21 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     2
                 ).toString(),
                 inputPattern: /\d+$/,
-                inputErrorMessage: t('prompt.auto_clear_cache.input_error'),
-                callback: async (action, instance) => {
-                    if (
-                        action === 'confirm' &&
-                        instance.inputValue &&
-                        !isNaN(parseInt(instance.inputValue, 10))
-                    ) {
-                        vrcxStore.clearVRCXCacheFrequency = Math.trunc(
-                            parseInt(instance.inputValue, 10) * 3600 * 2
-                        );
-                        await configRepository.setString(
-                            'VRCX_clearVRCXCacheFrequency',
-                            vrcxStore.clearVRCXCacheFrequency.toString()
-                        );
-                    }
-                }
+                inputErrorMessage: t('prompt.auto_clear_cache.input_error')
             }
-        );
+        )
+            .then(async ({ value }) => {
+                if (value && !isNaN(parseInt(value, 10))) {
+                    vrcxStore.clearVRCXCacheFrequency = Math.trunc(
+                        parseInt(value, 10) * 3600 * 2
+                    );
+                    await configRepository.setString(
+                        'VRCX_clearVRCXCacheFrequency',
+                        vrcxStore.clearVRCXCacheFrequency.toString()
+                    );
+                }
+            })
+            .catch(() => {});
     }
 
     return {

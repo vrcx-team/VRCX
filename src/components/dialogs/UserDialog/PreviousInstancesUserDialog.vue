@@ -182,11 +182,12 @@
         ElMessageBox.confirm('Continue? Delete User From GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') deleteGameLogUserInstance(row);
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>
 

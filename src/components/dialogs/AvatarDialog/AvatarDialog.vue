@@ -808,8 +808,9 @@
                 ElMessageBox.confirm(`Continue? ${command}`, 'Confirm', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
+                    type: 'info'
+                })
+                    .then((action) => {
                         if (action !== 'confirm') {
                             return;
                         }
@@ -973,8 +974,8 @@
                                     });
                                 break;
                         }
-                    }
-                });
+                    })
+                    .catch(() => {});
                 break;
         }
     }
@@ -1019,26 +1020,27 @@
                 confirmButtonText: t('prompt.change_avatar_description.ok'),
                 cancelButtonText: t('prompt.change_avatar_description.cancel'),
                 inputValue: avatar.ref.description,
-                inputErrorMessage: t('prompt.change_avatar_description.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue !== avatar.ref.description) {
-                        avatarRequest
-                            .saveAvatar({
-                                id: avatar.id,
-                                description: instance.inputValue
-                            })
-                            .then((args) => {
-                                applyAvatar(args.json);
-                                ElMessage({
-                                    message: t('prompt.change_avatar_description.message.success'),
-                                    type: 'success'
-                                });
-                                return args;
-                            });
-                    }
-                }
+                inputErrorMessage: t('prompt.change_avatar_description.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value && value !== avatar.ref.description) {
+                    avatarRequest
+                        .saveAvatar({
+                            id: avatar.id,
+                            description: value
+                        })
+                        .then((args) => {
+                            applyAvatar(args.json);
+                            ElMessage({
+                                message: t('prompt.change_avatar_description.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptRenameAvatar(avatar) {
@@ -1047,13 +1049,14 @@
             confirmButtonText: t('prompt.rename_avatar.ok'),
             cancelButtonText: t('prompt.rename_avatar.cancel'),
             inputValue: avatar.ref.name,
-            inputErrorMessage: t('prompt.rename_avatar.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== avatar.ref.name) {
+            inputErrorMessage: t('prompt.rename_avatar.input_error')
+        })
+            .then(({ value }) => {
+                if (value && value !== avatar.ref.name) {
                     avatarRequest
                         .saveAvatar({
                             id: avatar.id,
-                            name: instance.inputValue
+                            name: value
                         })
                         .then((args) => {
                             applyAvatar(args.json);
@@ -1064,8 +1067,8 @@
                             return args;
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function onAvatarMemoChange() {

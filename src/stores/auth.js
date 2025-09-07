@@ -446,8 +446,9 @@ export const useAuthStore = defineStore('Auth', () => {
         ElMessageBox.confirm('Continue? Logout', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     const existingStyle = document.getElementById(
                         'login-container-style'
@@ -457,8 +458,8 @@ export const useAuthStore = defineStore('Auth', () => {
                     }
                     handleLogoutEvent();
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     async function relogin(user) {

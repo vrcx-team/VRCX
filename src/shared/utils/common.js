@@ -391,15 +391,16 @@ function openExternalLink(link) {
         distinguishCancelAndClose: true,
         confirmButtonText: 'Open',
         cancelButtonText: 'Copy',
-        type: 'info',
-        callback: (action) => {
+        type: 'info'
+    })
+        .then((action) => {
             if (action === 'confirm') {
                 AppApi.OpenLink(link);
             } else if (action === 'cancel') {
                 copyLink(link);
             }
-        }
-    });
+        })
+        .catch(() => {});
 }
 
 /**

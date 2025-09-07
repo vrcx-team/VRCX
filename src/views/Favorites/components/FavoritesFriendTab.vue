@@ -121,16 +121,17 @@
         ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     favoriteRequest.clearFavoriteGroup({
                         type: ctx.type,
                         group: ctx.name
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function changeFavoriteGroupName(group) {

@@ -149,12 +149,13 @@
         ElMessageBox.confirm('Continue? Delete GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteGameLogGroupInstance(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

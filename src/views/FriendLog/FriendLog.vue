@@ -121,13 +121,14 @@
         ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteFriendLog(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function deleteFriendLog(row) {
         removeFromArray(friendLogTable.value.data, row);

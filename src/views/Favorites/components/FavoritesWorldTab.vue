@@ -318,14 +318,15 @@
                 confirmButtonText: t('prompt.new_local_favorite_group.ok'),
                 cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
                 inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
-                        newLocalWorldFavoriteGroup(instance.inputValue);
-                    }
-                }
+                inputErrorMessage: t('prompt.new_local_favorite_group.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value) {
+                    newLocalWorldFavoriteGroup(value);
+                }
+            })
+            .catch(() => {});
     }
 
     function promptLocalWorldFavoriteGroupRename(group) {
@@ -338,43 +339,46 @@
                 cancelButtonText: t('prompt.local_favorite_group_rename.cancel'),
                 inputPattern: /\S+/,
                 inputErrorMessage: t('prompt.local_favorite_group_rename.input_error'),
-                inputValue: group,
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
-                        renameLocalWorldFavoriteGroup(instance.inputValue, group);
-                    }
-                }
+                inputValue: group
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value) {
+                    renameLocalWorldFavoriteGroup(value, group);
+                }
+            })
+            .catch(() => {});
     }
 
     function promptLocalWorldFavoriteGroupDelete(group) {
         ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteLocalWorldFavoriteGroup(group);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function clearFavoriteGroup(ctx) {
         ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     favoriteRequest.clearFavoriteGroup({
                         type: ctx.type,
                         group: ctx.name
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function searchWorldFavorites(worldFavoriteSearch) {

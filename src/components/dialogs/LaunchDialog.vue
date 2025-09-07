@@ -212,14 +212,15 @@
             ElMessageBox.confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
                 confirmButtonText: t('dialog.launch.confirm_yes'),
                 cancelButtonText: t('dialog.launch.confirm_no'),
-                type: 'warning',
-                callback: (action) => {
+                type: 'warning'
+            })
+                .then((action) => {
                     if (action === 'confirm') {
                         launchGame(location, shortName, desktop);
                         isVisible.value = false;
                     }
-                }
-            });
+                })
+                .catch(() => {});
             return;
         }
         launchGame(location, shortName, desktop);

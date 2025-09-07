@@ -121,14 +121,15 @@
             {
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        bulkUnfavoriteSelection(elementsTicked);
-                    }
-                }
+                type: 'info'
             }
-        );
+        )
+            .then((action) => {
+                if (action === 'confirm') {
+                    bulkUnfavoriteSelection(elementsTicked);
+                }
+            })
+            .catch(() => {});
     }
 
     function bulkUnfavoriteSelection(elementsTicked) {
@@ -150,33 +151,32 @@
                 inputPlaceholder: t('prompt.change_favorite_group_name.input_placeholder'),
                 inputValue: ctx.displayName,
                 inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.change_favorite_group_name.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        favoriteRequest
-                            .saveFavoriteGroup({
-                                type: ctx.type,
-                                group: ctx.name,
-                                displayName: instance.inputValue
-                            })
-                            .then((args) => {
-                                handleFavoriteGroup({
-                                    json: args.json,
-                                    params: {
-                                        favoriteGroupId: args.json.id
-                                    }
-                                });
-                                ElMessage({
-                                    message: t('prompt.change_favorite_group_name.message.success'),
-                                    type: 'success'
-                                });
-                                // load new group name
-                                refreshFavoriteGroups();
-                            });
-                    }
-                }
+                inputErrorMessage: t('prompt.change_favorite_group_name.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                favoriteRequest
+                    .saveFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name,
+                        displayName: value
+                    })
+                    .then((args) => {
+                        handleFavoriteGroup({
+                            json: args.json,
+                            params: {
+                                favoriteGroupId: args.json.id
+                            }
+                        });
+                        ElMessage({
+                            message: t('prompt.change_favorite_group_name.message.success'),
+                            type: 'success'
+                        });
+                        // load new group name
+                        refreshFavoriteGroups();
+                    });
+            })
+            .catch(() => {});
     }
 
     function handleBulkCopyFavoriteSelection() {

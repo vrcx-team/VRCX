@@ -339,16 +339,17 @@
         ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     favoriteRequest.clearFavoriteGroup({
                         type: ctx.type,
                         group: ctx.name
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function showAvatarExportDialog() {
@@ -368,14 +369,15 @@
                 confirmButtonText: t('prompt.new_local_favorite_group.ok'),
                 cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
                 inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
-                        newLocalAvatarFavoriteGroup(instance.inputValue);
-                    }
-                }
+                inputErrorMessage: t('prompt.new_local_favorite_group.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value) {
+                    newLocalAvatarFavoriteGroup(value);
+                }
+            })
+            .catch(() => {});
     }
 
     function refreshLocalAvatarFavorites() {
@@ -392,26 +394,28 @@
                 cancelButtonText: t('prompt.local_favorite_group_rename.cancel'),
                 inputPattern: /\S+/,
                 inputErrorMessage: t('prompt.local_favorite_group_rename.input_error'),
-                inputValue: group,
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
-                        renameLocalAvatarFavoriteGroup(instance.inputValue, group);
-                    }
-                }
+                inputValue: group
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value) {
+                    renameLocalAvatarFavoriteGroup(value, group);
+                }
+            })
+            .catch(() => {});
     }
 
     function promptLocalAvatarFavoriteGroupDelete(group) {
         ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteLocalAvatarFavoriteGroup(group);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

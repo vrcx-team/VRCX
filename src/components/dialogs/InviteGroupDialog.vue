@@ -251,8 +251,9 @@
         ElMessageBox.confirm('Continue? Invite User(s) To Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 const D = inviteGroupDialog.value;
                 if (action !== 'confirm' || D.loading === true) {
                     return;
@@ -275,7 +276,7 @@
                         });
                 };
                 inviteLoop();
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

@@ -153,15 +153,16 @@
         ElMessageBox.confirm('Continue? Close Instance, nobody will be able to join', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'warning',
-            callback: async (action) => {
+            type: 'warning'
+        })
+            .then(async (action) => {
                 if (action !== 'confirm') return;
                 const args = await miscRequest.closeInstance({ location, hardClose: false });
                 if (args.json) {
                     ElMessage({ message: t('message.instance.closed'), type: 'success' });
                     instanceStore.applyInstance(args.json);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

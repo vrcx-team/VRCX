@@ -674,26 +674,26 @@ export const useAppearanceSettingsStore = defineStore(
                     cancelButtonText: t('prompt.change_table_size.cancel'),
                     inputValue: vrcxStore.maxTableSize,
                     inputPattern: /\d+$/,
-                    inputErrorMessage: t(
-                        'prompt.change_table_size.input_error'
-                    ),
-                    callback: async (action, instance) => {
-                        if (action === 'confirm' && instance.inputValue) {
-                            if (instance.inputValue > 10000) {
-                                instance.inputValue = 10000;
-                            }
-                            vrcxStore.maxTableSize = instance.inputValue;
-                            await configRepository.setString(
-                                'VRCX_maxTableSize',
-                                vrcxStore.maxTableSize
-                            );
-                            database.setMaxTableSize(vrcxStore.maxTableSize);
-                            feedStore.feedTableLookup();
-                            gameLogStore.gameLogTableLookup();
-                        }
-                    }
+                    inputErrorMessage: t('prompt.change_table_size.input_error')
                 }
-            );
+            )
+                .then(async ({ value }) => {
+                    if (value) {
+                        let processedValue = value;
+                        if (processedValue > 10000) {
+                            processedValue = 10000;
+                        }
+                        vrcxStore.maxTableSize = processedValue;
+                        await configRepository.setString(
+                            'VRCX_maxTableSize',
+                            vrcxStore.maxTableSize
+                        );
+                        database.setMaxTableSize(vrcxStore.maxTableSize);
+                        feedStore.feedTableLookup();
+                        gameLogStore.gameLogTableLookup();
+                    }
+                })
+                .catch(() => {});
         }
 
         async function tryInitUserColours() {

@@ -383,10 +383,15 @@
                 type: 'info',
                 showInput: true,
                 inputType: 'textarea',
-                inputValue: pending.join('\r\n'),
-                callback: (action) => action === 'confirm' && bulkUnfriendSelection()
+                inputValue: pending.join('\r\n')
             }
-        );
+        )
+            .then((action) => {
+                if (action === 'confirm') {
+                    bulkUnfriendSelection();
+                }
+            })
+            .catch(() => {});
     }
 
     function bulkUnfriendSelection() {

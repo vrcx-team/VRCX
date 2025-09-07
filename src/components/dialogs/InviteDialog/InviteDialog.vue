@@ -247,8 +247,9 @@
         ElMessageBox.confirm('Continue? Invite', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 const D = props.inviteDialog;
                 if (action !== 'confirm' || D.loading === true) {
                     return;
@@ -288,7 +289,7 @@
                     }
                 };
                 inviteLoop();
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

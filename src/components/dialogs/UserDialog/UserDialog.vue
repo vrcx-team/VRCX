@@ -2372,14 +2372,15 @@
                 {
                     confirmButtonText: t('confirm.confirm_button'),
                     cancelButtonText: t('confirm.cancel_button'),
-                    type: 'info',
-                    callback: (action) => {
-                        if (action === 'confirm') {
-                            performUserDialogCommand(command, D.id);
-                        }
-                    }
+                    type: 'info'
                 }
-            );
+            )
+                .then((action) => {
+                    if (action === 'confirm') {
+                        performUserDialogCommand(command, D.id);
+                    }
+                })
+                .catch(() => {});
         }
     }
 
@@ -2868,8 +2869,9 @@
         ElMessageBox.confirm('Continue? Reset Home', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     userRequest
                         .saveCurrentUser({
@@ -2883,8 +2885,8 @@
                             return args;
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function copyUserId(userId) {

@@ -520,15 +520,16 @@
         ElMessageBox.confirm('Continue? Accept Friend Request', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     notificationRequest.acceptFriendRequestNotification({
                         notificationId: row.id
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function showSendInviteResponseDialog(invite) {
@@ -543,8 +544,9 @@
         ElMessageBox.confirm('Continue? Send Invite', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     let currentLocation = lastLocation.value.location;
                     if (lastLocation.value.location === 'traveling') {
@@ -575,8 +577,8 @@
                                 });
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function showSendInviteRequestResponseDialog(invite) {
@@ -644,13 +646,14 @@
         ElMessageBox.confirm(`Continue? Decline ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     hideNotification(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function deleteNotificationLog(row) {
@@ -664,13 +667,14 @@
         ElMessageBox.confirm(`Continue? Delete ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteNotificationLog(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>
 

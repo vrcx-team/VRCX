@@ -160,13 +160,14 @@
         ElMessageBox.confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deletePlayerModeration(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>
 

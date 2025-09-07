@@ -453,25 +453,22 @@ export const useNotificationsSettingsStore = defineStore(
                     inputPattern: /\d+$/,
                     inputErrorMessage: t(
                         'prompt.notification_timeout.input_error'
-                    ),
-                    callback: async (action, instance) => {
-                        if (
-                            action === 'confirm' &&
-                            instance.inputValue &&
-                            !isNaN(instance.inputValue)
-                        ) {
-                            state.notificationTimeout = Math.trunc(
-                                Number(instance.inputValue) * 1000
-                            );
-                            await configRepository.setString(
-                                'VRCX_notificationTimeout',
-                                state.notificationTimeout
-                            );
-                            vrStore.updateVRConfigVars();
-                        }
-                    }
+                    )
                 }
-            );
+            )
+                .then(async ({ value }) => {
+                    if (value && !isNaN(value)) {
+                        state.notificationTimeout = Math.trunc(
+                            Number(value) * 1000
+                        );
+                        await configRepository.setString(
+                            'VRCX_notificationTimeout',
+                            state.notificationTimeout
+                        );
+                        vrStore.updateVRConfigVars();
+                    }
+                })
+                .catch(() => {});
         }
 
         return {

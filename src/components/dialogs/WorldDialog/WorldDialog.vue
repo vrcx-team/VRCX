@@ -1023,8 +1023,9 @@
                 ElMessageBox.confirm(`Continue? ${command}`, 'Confirm', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
+                    type: 'info'
+                })
+                    .then((action) => {
                         if (action !== 'confirm') {
                             return;
                         }
@@ -1129,8 +1130,8 @@
                                     });
                                 break;
                         }
-                    }
-                });
+                    })
+                    .catch(() => {});
                 break;
             case 'Previous Instances':
                 showPreviousInstancesWorldDialog(D.ref);
@@ -1191,13 +1192,14 @@
             confirmButtonText: t('prompt.rename_world.ok'),
             cancelButtonText: t('prompt.rename_world.cancel'),
             inputValue: world.ref.name,
-            inputErrorMessage: t('prompt.rename_world.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.name) {
+            inputErrorMessage: t('prompt.rename_world.input_error')
+        })
+            .then(({ value }) => {
+                if (value && value !== world.ref.name) {
                     worldRequest
                         .saveWorld({
                             id: world.id,
-                            name: instance.inputValue
+                            name: value
                         })
                         .then((args) => {
                             ElMessage({
@@ -1207,8 +1209,8 @@
                             return args;
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function promptChangeWorldDescription(world) {
         ElMessageBox.prompt(
@@ -1219,25 +1221,26 @@
                 confirmButtonText: t('prompt.change_world_description.ok'),
                 cancelButtonText: t('prompt.change_world_description.cancel'),
                 inputValue: world.ref.description,
-                inputErrorMessage: t('prompt.change_world_description.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue !== world.ref.description) {
-                        worldRequest
-                            .saveWorld({
-                                id: world.id,
-                                description: instance.inputValue
-                            })
-                            .then((args) => {
-                                ElMessage({
-                                    message: t('prompt.change_world_description.message.success'),
-                                    type: 'success'
-                                });
-                                return args;
-                            });
-                    }
-                }
+                inputErrorMessage: t('prompt.change_world_description.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value && value !== world.ref.description) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            description: value
+                        })
+                        .then((args) => {
+                            ElMessage({
+                                message: t('prompt.change_world_description.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptChangeWorldCapacity(world) {
@@ -1247,13 +1250,14 @@
             cancelButtonText: t('prompt.change_world_capacity.cancel'),
             inputValue: world.ref.capacity,
             inputPattern: /\d+$/,
-            inputErrorMessage: t('prompt.change_world_capacity.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.capacity) {
+            inputErrorMessage: t('prompt.change_world_capacity.input_error')
+        })
+            .then(({ value }) => {
+                if (value && value !== world.ref.capacity) {
                     worldRequest
                         .saveWorld({
                             id: world.id,
-                            capacity: Number(instance.inputValue)
+                            capacity: Number(value)
                         })
                         .then((args) => {
                             ElMessage({
@@ -1263,8 +1267,8 @@
                             return args;
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function promptChangeWorldRecommendedCapacity(world) {
@@ -1277,25 +1281,26 @@
                 cancelButtonText: t('prompt.change_world_capacity.cancel'),
                 inputValue: world.ref.recommendedCapacity,
                 inputPattern: /\d+$/,
-                inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue !== world.ref.recommendedCapacity) {
-                        worldRequest
-                            .saveWorld({
-                                id: world.id,
-                                recommendedCapacity: Number(instance.inputValue)
-                            })
-                            .then((args) => {
-                                ElMessage({
-                                    message: t('prompt.change_world_recommended_capacity.message.success'),
-                                    type: 'success'
-                                });
-                                return args;
-                            });
-                    }
-                }
+                inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value && value !== world.ref.recommendedCapacity) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            recommendedCapacity: Number(value)
+                        })
+                        .then((args) => {
+                            ElMessage({
+                                message: t('prompt.change_world_recommended_capacity.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptChangeWorldYouTubePreview(world) {
@@ -1304,19 +1309,21 @@
             confirmButtonText: t('prompt.change_world_preview.ok'),
             cancelButtonText: t('prompt.change_world_preview.cancel'),
             inputValue: world.ref.previewYoutubeId,
-            inputErrorMessage: t('prompt.change_world_preview.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.previewYoutubeId) {
-                    if (instance.inputValue.length > 11) {
+            inputErrorMessage: t('prompt.change_world_preview.input_error')
+        })
+            .then(({ value }) => {
+                if (value && value !== world.ref.previewYoutubeId) {
+                    let processedValue = value;
+                    if (value.length > 11) {
                         try {
-                            const url = new URL(instance.inputValue);
+                            const url = new URL(value);
                             const id1 = url.pathname;
                             const id2 = url.searchParams.get('v');
                             if (id1 && id1.length === 12) {
-                                instance.inputValue = id1.substring(1, 12);
+                                processedValue = id1.substring(1, 12);
                             }
                             if (id2 && id2.length === 11) {
-                                instance.inputValue = id2;
+                                processedValue = id2;
                             }
                         } catch {
                             ElMessage({
@@ -1326,11 +1333,11 @@
                             return;
                         }
                     }
-                    if (instance.inputValue !== world.ref.previewYoutubeId) {
+                    if (processedValue !== world.ref.previewYoutubeId) {
                         worldRequest
                             .saveWorld({
                                 id: world.id,
-                                previewYoutubeId: instance.inputValue
+                                previewYoutubeId: processedValue
                             })
                             .then((args) => {
                                 ElMessage({
@@ -1341,8 +1348,8 @@
                             });
                     }
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function onWorldMemoChange() {
         const worldId = worldDialog.value.id;
