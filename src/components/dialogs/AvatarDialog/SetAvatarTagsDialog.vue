@@ -55,8 +55,7 @@
                 <div
                     v-for="avatar in setAvatarTagsDialog.ownAvatars"
                     :key="avatar.id"
-                    class="x-friend-item x-friend-item-border"
-                    style="width: 350px"
+                    :class="['item-width', 'x-friend-item', 'x-friend-item-border']"
                     @click="showAvatarDialog(avatar.id)">
                     <div class="avatar">
                         <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
@@ -273,4 +272,8 @@
     }
 </script>
 
-<style scoped></style>
+<style scoped>
+    .item-width {
+        width: 335px;
+    }
+</style>

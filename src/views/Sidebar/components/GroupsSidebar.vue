@@ -3,7 +3,13 @@
         <template v-for="(group, index) in groupedGroupInstances" :key="getGroupId(group)">
             <div class="x-friend-group x-link" :style="{ paddingTop: index === 0 ? '0px' : '10px' }">
                 <div @click="toggleGroupSidebarCollapse(getGroupId(group))" style="display: flex; align-items: center">
-                    <el-icon><ArrowRight /></el-icon>
+                    <el-icon
+                        class="rotation-transition"
+                        :class="{
+                            'is-rotated': !groupInstancesCfg[getGroupId(group)].isCollapsed
+                        }"
+                        ><ArrowRight
+                    /></el-icon>
                     <span style="margin-left: 5px">{{ group[0].group.name }} – {{ group.length }}</span>
                 </div>
             </div>
@@ -95,5 +101,11 @@
     }
     .x-link:hover span {
         text-decoration: underline;
+    }
+    .is-rotated {
+        transform: rotate(90deg);
+    }
+    .rotation-transition {
+        transition: transform 0.2s ease-in-out;
     }
 </style>

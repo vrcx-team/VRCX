@@ -171,28 +171,12 @@
                             :link="true" />
                         <br v-if="scope.row.details" />
                     </span>
-                    <el-tooltip
+                    <div
                         v-if="
                             scope.row.message &&
                             scope.row.message !== `This is a generated invite to ${scope.row.details?.worldName}`
                         "
-                        placement="top">
-                        <template #content>
-                            <pre
-                                class="extra"
-                                style="
-                                    display: inline-block;
-                                    vertical-align: top;
-                                    font-family: inherit;
-                                    font-size: 12px;
-                                    white-space: pre-wrap;
-                                    margin: 0;
-                                "
-                                >{{ scope.row.message || '-' }}</pre
-                            >
-                        </template>
-                        <div v-text="scope.row.message"></div>
-                    </el-tooltip>
+                        v-text="scope.row.message"></div>
                     <span
                         v-else-if="scope.row.details && scope.row.details.inviteMessage"
                         v-text="scope.row.details.inviteMessage"></span>
@@ -681,6 +665,6 @@
         padding: 0;
     }
     .ml-5 {
-        margin-left: 5px;
+        margin-left: 5px !important; // due to ".el-button + .el-button"
     }
 </style>

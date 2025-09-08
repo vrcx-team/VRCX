@@ -13,7 +13,8 @@ import {
     extractFileVersion,
     getUserMemo,
     parseLocation,
-    removeFromArray
+    removeFromArray,
+    replaceBioSymbols
 } from '../shared/utils';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
@@ -368,6 +369,9 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @returns {object}
      */
     function applyNotification(json) {
+        if (json.message) {
+            json.message = replaceBioSymbols(json.message);
+        }
         let ref;
         const array = state.notificationTable.data;
         for (let i = array.length - 1; i >= 0; i--) {

@@ -7,7 +7,7 @@
                 isFriendsGroupMe = !isFriendsGroupMe;
                 saveFriendsGroupStates();
             ">
-            <el-icon><ArrowRight /></el-icon>
+            <el-icon class="rotation-transition" :class="{ 'is-rotated': isFriendsGroupMe }"><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.me') }}</span>
         </div>
         <div v-show="isFriendsGroupMe">
@@ -43,7 +43,7 @@
                 isVIPFriends = !isVIPFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon><ArrowRight /></el-icon>
+            <el-icon class="rotation-transition" :class="{ 'is-rotated': isVIPFriends }"><ArrowRight /></el-icon>
             <span style="margin-left: 5px">
                 {{ t('side_panel.favorite') }} &horbar;
                 {{ vipFriendsDisplayNumber }}
@@ -81,7 +81,9 @@
 
         <template v-if="isSidebarGroupByInstance && friendsInSameInstance.length">
             <div class="x-friend-group x-link" @click="toggleSwitchGroupByInstanceCollapsed">
-                <el-icon><ArrowRight /></el-icon>
+                <el-icon class="rotation-transition" :class="{ 'is-rotated': !isSidebarGroupByInstanceCollapsed }"
+                    ><ArrowRight
+                /></el-icon>
                 <span style="margin-left: 5px"
                     >{{ t('side_panel.same_instance') }} &horbar; {{ friendsInSameInstance.length }}</span
                 >
@@ -114,7 +116,7 @@
                 isOnlineFriends = !isOnlineFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon><ArrowRight /></el-icon>
+            <el-icon class="rotation-transition" :class="{ 'is-rotated': isOnlineFriends }"><ArrowRight /></el-icon>
             <span style="margin-left: 5px"
                 >{{ t('side_panel.online') }} &horbar; {{ onlineFriendsByGroupStatus.length }}</span
             >
@@ -134,7 +136,7 @@
                 isActiveFriends = !isActiveFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon><ArrowRight /></el-icon>
+            <el-icon class="rotation-transition" :class="{ 'is-rotated': isActiveFriends }"><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.active') }} &horbar; {{ activeFriends.length }}</span>
         </div>
         <div v-show="isActiveFriends">
@@ -152,7 +154,7 @@
                 isOfflineFriends = !isOfflineFriends;
                 saveFriendsGroupStates();
             ">
-            <el-icon><ArrowRight /></el-icon>
+            <el-icon class="rotation-transition" :class="{ 'is-rotated': isOfflineFriends }"><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.offline') }} &horbar; {{ offlineFriends.length }}</span>
         </div>
         <div v-show="isOfflineFriends">
@@ -361,5 +363,11 @@
     }
     .x-link:hover span {
         text-decoration: underline;
+    }
+    .is-rotated {
+        transform: rotate(90deg);
+    }
+    .rotation-transition {
+        transition: transform 0.2s ease-in-out;
     }
 </style>

@@ -22,10 +22,10 @@
 
             <div>
                 <el-tooltip :content="t('view.charts.instance_activity.refresh')" placement="top"
-                    ><el-button :icon="Refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
+                    ><el-button :icon="Refresh" circle style="margin-right: 5px" @click="reloadData"></el-button
                 ></el-tooltip>
 
-                <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
+                <el-popover placement="bottom" trigger="click" :width="250">
                     <div class="settings">
                         <div>
                             <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
@@ -67,12 +67,12 @@
                     <template #reference>
                         <div>
                             <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
-                                <el-button :icon="Setting" circle></el-button>
+                                <el-button :icon="Setting" style="margin-right: 5px" circle></el-button>
                             </el-tooltip>
                         </div>
                     </template>
                 </el-popover>
-                <el-button-group style="margin-right: 10px">
+                <el-button-group style="margin-right: 5px">
                     <el-tooltip :content="t('view.charts.instance_activity.previous_day')" placement="top">
                         <el-button
                             :icon="ArrowLeft"

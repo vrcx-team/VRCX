@@ -819,7 +819,7 @@
                                 @input="setNotificationOpacity"
                                 :min="0"
                                 :max="100"
-                                style="display: inline-block; width: 300px" />
+                                style="display: inline-block; width: 300px; padding-top: 16px" />
                         </div>
                         <div class="options-container-item">
                             <el-button
@@ -1336,12 +1336,12 @@
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
                     <br />
-                    <div class="options-container-item">
+                    <div class="options-container-item" style="margin-bottom: 5px">
                         <span class="name" style="min-width: 300px">{{
                             t('view.settings.advanced.advanced.user_generated_content.description')
                         }}</span>
                     </div>
-                    <el-button size="small" :icon="Folder" @click="openUGCFolder()" style="margin-top: 5px">{{
+                    <el-button size="small" :icon="Folder" @click="openUGCFolder()">{{
                         t('view.settings.advanced.advanced.user_generated_content.folder')
                     }}</el-button>
                     <el-button size="small" :icon="FolderOpened" @click="openUGCFolderSelector()">{{

@@ -6,7 +6,9 @@
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
-                        <el-icon><ArrowRight /></el-icon>
+                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['group'] }"
+                            ><ArrowRight
+                        /></el-icon>
                         <span class="category-title">Group</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
@@ -26,7 +28,9 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('image')">
-                        <el-icon><ArrowRight /></el-icon>
+                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }"
+                            ><ArrowRight
+                        /></el-icon>
                         <span class="category-title">Image</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
@@ -57,7 +61,9 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('user')">
-                        <el-icon><ArrowRight /></el-icon>
+                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }"
+                            ><ArrowRight
+                        /></el-icon>
                         <span class="category-title">User</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
@@ -166,6 +172,7 @@
             }
 
             .category-title {
+                margin-left: 5px;
                 font-size: 16px;
                 font-weight: 600;
                 color: var(--el-color-primary);
@@ -243,7 +250,11 @@
         overflow: visible;
     }
 
-    .rotate {
+    .is-rotated {
         transform: rotate(90deg);
+    }
+
+    .rotation-transition {
+        transition: transform 0.2s ease-in-out;
     }
 </style>

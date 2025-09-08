@@ -36,6 +36,7 @@
                             <span>💚</span>
                         </el-tooltip>
                     </template>
+                    <span v-else></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.previous_instances.display_name')" prop="displayName" sortable>

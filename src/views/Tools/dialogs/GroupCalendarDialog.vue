@@ -41,23 +41,23 @@
 
                     <div class="calendar-container">
                         <el-calendar v-model="selectedDay" v-loading="isLoading">
-                            <template #dateCell="{ date }">
+                            <template #date-cell="{ data }">
                                 <div class="date">
                                     <div
                                         class="calendar-date-content"
                                         :class="{
-                                            'has-events': filteredCalendar[formatDateKey(date)]?.length
+                                            'has-events': filteredCalendar[formatDateKey(data.date)]?.length
                                         }">
-                                        {{ dayjs(date).utc().format('D') }}
+                                        {{ dayjs(data.date).format('D') }}
                                         <div
-                                            v-if="filteredCalendar[formatDateKey(date)]?.length"
+                                            v-if="filteredCalendar[formatDateKey(data.date)]?.length"
                                             class="calendar-event-badge"
                                             :class="
-                                                followingCalendarDate[formatDateKey(date)]
+                                                followingCalendarDate[formatDateKey(data.date)]
                                                     ? 'has-following'
                                                     : 'no-following'
                                             ">
-                                            {{ filteredCalendar[formatDateKey(date)]?.length }}
+                                            {{ filteredCalendar[formatDateKey(data.date)]?.length }}
                                         </div>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">
                                     <el-icon
-                                        class="el-icon-arrow-right"
+                                        class="el-icon-arrow-right rotation-transition"
                                         :class="{ rotate: !groupCollapsed[group.groupId] }"
                                         ><ArrowRight
                                     /></el-icon>
@@ -472,6 +472,7 @@
         }
         .calendar-container {
             width: 609px;
+            height: 100%;
             flex-shrink: 0;
         }
     }
@@ -542,5 +543,9 @@
 
     .rotate {
         transform: rotate(90deg);
+    }
+
+    .rotation-transition {
+        transition: transform 0.2s ease-in-out;
     }
 </style>
