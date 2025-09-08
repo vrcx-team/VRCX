@@ -5,19 +5,12 @@ import * as localizedStrings from '../localization/localizedStrings';
 const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
-    messages: {
-        en: localizedStrings.en,
-        es: localizedStrings.es,
-        fr: localizedStrings.fr,
-        ja: localizedStrings.ja_JP,
-        ko: localizedStrings.ko,
-        pl: localizedStrings.pl,
-        pt: localizedStrings.pt,
-        vi: localizedStrings.vi,
-        'zh-CN': localizedStrings.zh_CN,
-        'zh-TW': localizedStrings.zh_TW,
-        th: localizedStrings.th
-    },
+    messages: Object.fromEntries(
+        Object.entries(localizedStrings).map(([key, value]) => [
+            key.replace('_', '-'),
+            value
+        ])
+    ),
     legacy: false,
     globalInjection: true,
     missingWarn: false,
