@@ -49,25 +49,7 @@
                         <div>
                             <el-tooltip v-if="userDialog.ref.status" placement="top">
                                 <template #content>
-                                    <span v-if="userDialog.ref.state === 'active'">{{
-                                        t('dialog.user.status.active')
-                                    }}</span>
-                                    <span v-else-if="userDialog.ref.state === 'offline'">{{
-                                        t('dialog.user.status.offline')
-                                    }}</span>
-                                    <span v-else-if="userDialog.ref.status === 'active'">{{
-                                        t('dialog.user.status.online')
-                                    }}</span>
-                                    <span v-else-if="userDialog.ref.status === 'join me'">{{
-                                        t('dialog.user.status.join_me')
-                                    }}</span>
-                                    <span v-else-if="userDialog.ref.status === 'ask me'">{{
-                                        t('dialog.user.status.ask_me')
-                                    }}</span>
-                                    <span v-else-if="userDialog.ref.status === 'busy'">{{
-                                        t('dialog.user.status.busy')
-                                    }}</span>
-                                    <span v-else>{{ t('dialog.user.status.offline') }}</span>
+                                    <span>{{ getUserStateText(userDialog.ref) }}</span>
                                 </template>
                                 <i class="x-user-status" :class="userStatusClass(userDialog.ref)"></i>
                             </el-tooltip>
@@ -2020,6 +2002,37 @@
             style.red = true;
         }
         return style;
+    }
+
+    function getUserStateText(user) {
+        let state = '';
+        if (user.state === 'active') {
+            state = t('dialog.user.status.active');
+        } else if (user.state === 'offline') {
+            state = t('dialog.user.status.offline');
+        } else {
+            return getUserStatusText(user.status);
+        }
+        if (user.status && user.status !== 'active') {
+            state += ` (${getUserStatusText(user.status)})`;
+        }
+        return state;
+    }
+
+    function getUserStatusText(status) {
+        if (status === 'active') {
+            return t('dialog.user.status.active');
+        }
+        if (status === 'join me') {
+            return t('dialog.user.status.join_me');
+        }
+        if (status === 'ask me') {
+            return t('dialog.user.status.ask_me');
+        }
+        if (status === 'busy') {
+            return t('dialog.user.status.busy');
+        }
+        return t('dialog.user.status.offline');
     }
 
     function cleanNote(note) {
