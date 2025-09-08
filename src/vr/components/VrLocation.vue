@@ -8,12 +8,12 @@
             :class="region"
             style="display: inline-block; margin-bottom: 2px; margin-left: 5px">
         </span>
-        <el-icon v-if="strict" style="display: inline-block; margin-left: 5px"><Lock /></el-icon>
+
+        <i v-if="strict" style="display: inline-block; margin-left: 5px" class="ri-lock-line"></i>
     </span>
 </template>
 
 <script setup>
-    import { Lock } from '@element-plus/icons-vue';
     import { ref, watch, onMounted } from 'vue';
     import { parseLocation } from '../../shared/utils/location';
 

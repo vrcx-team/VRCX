@@ -8,11 +8,11 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@use './assets/scss/flags.scss';
+@use '../assets/scss/flags.scss';
 
-@import '~animate.css/animate.min.css';
-@import '~noty/lib/noty.css';
-@import '~element-ui/lib/theme-chalk/index.css';
+@import 'animate.css/animate.min.css';
+@import 'noty/lib/noty.css';
+@import 'remixicon/fonts/remixicon.css';
 
 /*
     마지노선인듯
@@ -20,7 +20,7 @@
     손등 18px -> 나나 24
 */
 
-.el-icon.is-loading {
+.ri-loader-line {
     animation: rotating 2s linear infinite;
 }
 

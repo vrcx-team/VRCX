@@ -6,7 +6,7 @@
 
 import { createApp } from 'vue';
 import { initNoty } from '../plugin/noty';
-import '../plugin/i18n.js';
+import { i18n } from '../plugin';
 import InteropApi from '../ipc-electron/interopApi.js';
 import Vr from './Vr.vue';
 
@@ -19,8 +19,8 @@ if (WINDOWS) {
     window.AppApiVr = InteropApi.AppApiVrElectron;
 }
 
-const $app = createApp(Vr).mount('#root');
+const $app = createApp(Vr);
 
-window.$app = $app;
+$app.use(i18n);
 
-export { $app };
+$app.mount('#root');

@@ -17,7 +17,7 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <el-icon v-if="feed.isTraveling" style="margin-right: 5px"><Loading /></el-icon>
+                                        <i class="ri-loader-line"></i>
                                         <span class="name" v-text="feed.displayName"></span>
                                         <VrLocation
                                             :location="feed.location"
@@ -65,7 +65,7 @@
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
-                                            <el-icon><ArrowRight /></el-icon>
+                                            <i class="ri-arrow-right-line"></i>
                                             <i class="x-user-status" :class="statusClass(feed.status)"></i>
                                         </template>
                                         <template v-else>
@@ -246,7 +246,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         📃 <span class="name" v-text="feed.previousDisplayName"></span>
-                                        <el-icon><Right /></el-icon>
+                                        <i class="ri-arrow-right-fill"></i>
                                         <span class="name" v-text="feed.displayName"></span>
                                     </span>
                                 </div>
@@ -259,7 +259,7 @@
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
                                         🤝 <span class="name" v-text="feed.displayName"></span>
-                                        {{ feed.previousTrustLevel }} <el-icon><Right /></el-icon>
+                                        {{ feed.previousTrustLevel }} <i class="ri-arrow-right-fill"></i>
                                         {{ feed.trustLevel }}
                                     </span>
                                 </div>
@@ -625,7 +625,7 @@
                                         <span class="name" v-text="feed.displayName" style="margin-right: 5px"></span>
                                         <template v-if="feed.statusDescription === feed.previousStatusDescription">
                                             <i class="x-user-status" :class="statusClass(feed.previousStatus)"></i>
-                                            <el-icon><ArrowRight /></el-icon>
+                                            <i class="ri-arrow-right-line"></i>
                                             <i class="x-user-status" :class="statusClass(feed.status)"></i>
                                         </template>
                                         <template v-else>
@@ -1263,8 +1263,8 @@
                         <template v-if="feed.type === 'ChangeAvatar'">
                             <span style="margin-left: 10px; color: #a3a3a3">ChangeAvatar</span>
                             <span v-if="!feed.inCache" style="color: #aaa; margin-left: 10px"
-                                ><el-icon><Download /></el-icon
-                            ></span>
+                                ><i class="ri-download-line"></i>
+                            </span>
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
                             <span
                                 v-if="feed.avatar.releaseStatus === 'public'"
@@ -1285,7 +1285,7 @@
                                     :class="statusClass(feed.previousStatus)"
                                     style="margin-left: 10px; width: 20px; height: 20px"></i>
                                 <span>
-                                    <el-icon><Right /></el-icon>
+                                    <i class="ri-arrow-right-line"></i>
                                 </span>
                                 <i
                                     class="x-user-status"
@@ -1327,8 +1327,8 @@
                                 >iOS</span
                             >
                             <span v-if="!feed.inCache" style="color: #aaa; margin-left: 10px"
-                                ><el-icon><Download /></el-icon
-                            ></span>
+                                ><i class="ri-download-line"></i>
+                            </span>
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
                         </template>
                         <template v-else-if="feed.type === 'SpawnEmoji'">
@@ -1370,7 +1370,7 @@
 </template>
 
 <script setup>
-    import { ArrowRight, Download, Loading, Right } from '@element-plus/icons-vue';
+    import './vr.scss';
     import '@fontsource/noto-sans-kr';
     import '@fontsource/noto-sans-jp';
     import '@fontsource/noto-sans-sc';
@@ -1394,7 +1394,7 @@
     const { t } = useI18n();
 
     const vrState = reactive({
-        appType: location.href.substr(-1),
+        appType: new URLSearchParams(window.location.search).has('wrist') ? 'wrist' : 'hmd',
         appLanguage: 'en',
         currentCulture: 'en-nz',
         currentTime: new Date().toJSON(),
@@ -1435,7 +1435,31 @@
         cleanHudFeedLoopStatus: false
     });
 
-    onMounted(async () => {
+    onMounted(() => {
+        window.$vr = {};
+        window.$vr.configUpdate = configUpdate;
+        window.$vr.updateOnlineFriendCount = updateOnlineFriendCount;
+        window.$vr.nowPlayingUpdate = nowPlayingUpdate;
+        window.$vr.lastLocationUpdate = lastLocationUpdate;
+        window.$vr.wristFeedUpdate = wristFeedUpdate;
+        window.$vr.refreshCustomScript = refreshCustomScript;
+        window.$vr.playNoty = playNoty;
+        window.$vr.statusClass = statusClass;
+        window.$vr.notyClear = notyClear;
+        window.$vr.addEntryHudFeed = addEntryHudFeed;
+        window.$vr.updateHudFeedTag = updateHudFeedTag;
+        window.$vr.updateHudTimeout = updateHudTimeout;
+        window.$vr.setDatetimeFormat = setDatetimeFormat;
+        window.$vr.setAppLanguage = setAppLanguage;
+        window.$vr.trackingResultToClass = trackingResultToClass;
+        window.$vr.updateFeedLength = updateFeedLength;
+        window.$vr.updateStatsLoop = updateStatsLoop;
+        window.$vr.updateVrElectronLoop = updateVrElectronLoop;
+        window.$vr.cleanHudFeedLoop = cleanHudFeedLoop;
+        window.$vr.cleanHudFeed = cleanHudFeed;
+
+        window.$vr.vrState = vrState;
+
         if (LINUX) {
             updateVrElectronLoop();
         }
@@ -1446,29 +1470,6 @@
         setDatetimeFormat();
 
         nextTick(() => {
-            window.$vr.configUpdate = configUpdate;
-            window.$vr.updateOnlineFriendCount = updateOnlineFriendCount;
-            window.$vr.nowPlayingUpdate = nowPlayingUpdate;
-            window.$vr.lastLocationUpdate = lastLocationUpdate;
-            window.$vr.wristFeedUpdate = wristFeedUpdate;
-            window.$vr.refreshCustomScript = refreshCustomScript;
-            window.$vr.playNoty = playNoty;
-            window.$vr.statusClass = statusClass;
-            window.$vr.notyClear = notyClear;
-            window.$vr.addEntryHudFeed = addEntryHudFeed;
-            window.$vr.updateHudFeedTag = updateHudFeedTag;
-            window.$vr.updateHudTimeout = updateHudTimeout;
-            window.$vr.setDatetimeFormat = setDatetimeFormat;
-            window.$vr.setAppLanguage = setAppLanguage;
-            window.$vr.trackingResultToClass = trackingResultToClass;
-            window.$vr.updateFeedLength = updateFeedLength;
-            window.$vr.updateStatsLoop = updateStatsLoop;
-            window.$vr.updateVrElectronLoop = updateVrElectronLoop;
-            window.$vr.cleanHudFeedLoop = cleanHudFeedLoop;
-            window.$vr.cleanHudFeed = cleanHudFeed;
-
-            window.$vr.vrState = vrState;
-
             AppApiVr.VrInit();
         });
     });
