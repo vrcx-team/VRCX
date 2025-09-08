@@ -1842,7 +1842,7 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
-        <OpenSourceSoftwareNoticeDialog v-model:ossDialog="ossDialog" />
+        <OpenSourceSoftwareNoticeDialog v-if="ossDialog" v-model:ossDialog="ossDialog" />
         <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <RegistryBackupDialog />
         <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
@@ -1884,7 +1884,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { ref, computed } from 'vue';
+    import { ref, computed, defineAsyncComponent } from 'vue';
     import { useI18n } from 'vue-i18n';
     import {
         useFavoriteStore,
@@ -1910,8 +1910,7 @@
         useGameLogStore,
         useUserStore
     } from '../../stores';
-    import { photonEventTableTypeFilterList } from '../../shared/constants';
-    import OpenSourceSoftwareNoticeDialog from './dialogs/OpenSourceSoftwareNoticeDialog.vue';
+    import { photonEventTableTypeFilterList } from '../../shared/constants/photon';
     import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
     import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
@@ -1920,6 +1919,10 @@
     import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
     import { openExternalLink } from '../../shared/utils';
     import { THEME_CONFIG } from '../../shared/constants';
+
+    const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
+        () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')
+    );
 
     const { messages, t } = useI18n();
     const { cachedUsers } = storeToRefs(useUserStore());

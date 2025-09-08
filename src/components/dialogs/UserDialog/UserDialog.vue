@@ -1758,16 +1758,18 @@
             :send-invite-request-dialog-visible="sendInviteRequestDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-        <PreviousInstancesUserDialog :previous-instances-user-dialog="previousInstancesUserDialog" />
-        <PreviousImagesDialog />
-        <InviteGroupDialog />
-        <SocialStatusDialog
-            :social-status-dialog="socialStatusDialog"
-            :social-status-history-table="socialStatusHistoryTable" />
-        <LanguageDialog />
-        <BioDialog :bio-dialog="bioDialog" />
-        <PronounsDialog :pronouns-dialog="pronounsDialog" />
-        <ModerateGroupDialog />
+        <template v-if="userDialog.visible">
+            <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
+            <PreviousImagesDialog />
+            <InviteGroupDialog />
+            <SocialStatusDialog
+                :social-status-dialog="socialStatusDialog"
+                :social-status-history-table="socialStatusHistoryTable" />
+            <LanguageDialog />
+            <BioDialog :bio-dialog="bioDialog" />
+            <PronounsDialog :pronouns-dialog="pronounsDialog" />
+            <ModerateGroupDialog
+        /></template>
     </el-dialog>
 </template>
 
@@ -1816,7 +1818,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { computed, nextTick, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import {
         favoriteRequest,
@@ -1877,14 +1879,15 @@
     } from '../../../stores';
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
-    import PreviousImagesDialog from '../PreviousImagesDialog.vue';
-    import BioDialog from './BioDialog.vue';
-    import LanguageDialog from './LanguageDialog.vue';
-    import PreviousInstancesUserDialog from './PreviousInstancesUserDialog.vue';
-    import PronounsDialog from './PronounsDialog.vue';
-    import SendInviteRequestDialog from './SendInviteRequestDialog.vue';
-    import SocialStatusDialog from './SocialStatusDialog.vue';
-    import ModerateGroupDialog from '../ModerateGroupDialog.vue';
+
+    const PreviousImagesDialog = defineAsyncComponent(() => import('../PreviousImagesDialog.vue'));
+    const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
+    const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));
+    const PreviousInstancesUserDialog = defineAsyncComponent(() => import('./PreviousInstancesUserDialog.vue'));
+    const PronounsDialog = defineAsyncComponent(() => import('./PronounsDialog.vue'));
+    const SendInviteRequestDialog = defineAsyncComponent(() => import('./SendInviteRequestDialog.vue'));
+    const SocialStatusDialog = defineAsyncComponent(() => import('./SocialStatusDialog.vue'));
+    const ModerateGroupDialog = defineAsyncComponent(() => import('../ModerateGroupDialog.vue'));
 
     const { t } = useI18n();
 

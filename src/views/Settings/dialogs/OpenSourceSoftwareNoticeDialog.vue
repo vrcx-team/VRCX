@@ -4,7 +4,8 @@
         :model-value="ossDialog"
         :title="t('dialog.open_source.header')"
         width="650px"
-        @close="closeDialog">
+        @close="closeDialog"
+        destroy-on-close>
         <div v-once style="height: 350px; overflow: hidden scroll; word-break: break-all">
             <div>
                 <span>{{ t('dialog.open_source.description') }}</span>
@@ -20,7 +21,7 @@
 
 <script setup>
     import { useI18n } from 'vue-i18n';
-    import { openSourceSoftwareLicenses } from '../../../shared/constants';
+    import { openSourceSoftwareLicenses } from '../../../shared/constants/ossLicenses';
 
     const { t } = useI18n();
 

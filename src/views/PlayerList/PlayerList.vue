@@ -889,7 +889,7 @@
         useVrcxStore
     } from '../../stores';
     import ChatboxBlacklistDialog from './dialogs/ChatboxBlacklistDialog.vue';
-    import { photonEventTableTypeFilterList } from '../../shared/constants';
+    import { photonEventTableTypeFilterList } from '../../shared/constants/photon';
 
     const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const {

@@ -1,5 +1,5 @@
 <template>
-    <div id="chart" class="x-container" v-show="menuActiveIndex === 'tools'">
+    <div id="chart" class="x-container" v-show="isShowToolsTab">
         <div class="options-container" style="margin-top: 0">
             <span class="header">Tools</span>
 
@@ -76,27 +76,31 @@
                 </div>
             </div>
         </div>
-        <GroupCalendarDialog :visible="isGroupCalendarDialogVisible" @close="isGroupCalendarDialogVisible = false" />
-        <ScreenshotMetadataDialog
-            :isScreenshotMetadataDialogVisible="isScreenshotMetadataDialogVisible"
-            @close="isScreenshotMetadataDialogVisible = false" />
-        <NoteExportDialog
-            :isNoteExportDialogVisible="isNoteExportDialogVisible"
-            @close="isNoteExportDialogVisible = false" />
+        <template v-if="isShowToolsTab">
+            <GroupCalendarDialog
+                :visible="isGroupCalendarDialogVisible"
+                @close="isGroupCalendarDialogVisible = false" />
+            <ScreenshotMetadataDialog
+                :isScreenshotMetadataDialogVisible="isScreenshotMetadataDialogVisible"
+                @close="isScreenshotMetadataDialogVisible = false" />
+            <NoteExportDialog
+                :isNoteExportDialogVisible="isNoteExportDialogVisible"
+                @close="isNoteExportDialogVisible = false" />
+            <GalleryDialog />
+        </template>
     </div>
 </template>
 
 <script setup>
     import { ArrowRight } from '@element-plus/icons-vue';
-    import { ref } from 'vue';
+    import { ref, defineAsyncComponent, computed } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n';
     import { useUiStore, useGalleryStore } from '../../stores';
-    import GroupCalendarDialog from './dialogs/GroupCalendarDialog.vue';
-    import ScreenshotMetadataDialog from './dialogs/ScreenshotMetadataDialog.vue';
-    import NoteExportDialog from './dialogs/NoteExportDialog.vue';
 
-    const { t } = useI18n();
+    const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
+    const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
+    const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
+    const GalleryDialog = defineAsyncComponent(() => import('./dialogs/GalleryDialog.vue'));
 
     const uiStore = useUiStore();
     const { showGalleryDialog } = useGalleryStore();
@@ -111,6 +115,8 @@
     const isGroupCalendarDialogVisible = ref(false);
     const isScreenshotMetadataDialogVisible = ref(false);
     const isNoteExportDialogVisible = ref(false);
+
+    const isShowToolsTab = computed(() => menuActiveIndex.value === 'tools');
 
     const showGroupCalendarDialog = () => {
         isGroupCalendarDialogVisible.value = true;

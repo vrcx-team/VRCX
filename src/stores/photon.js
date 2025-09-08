@@ -6,7 +6,7 @@ import { instanceRequest, userRequest } from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { AppGlobal } from '../service/appConfig';
-import { photonEventType } from '../shared/constants';
+import { photonEventType } from '../shared/constants/photon';
 import {
     checkVRChatCache,
     displayLocation,

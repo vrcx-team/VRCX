@@ -737,23 +737,24 @@
             </el-tabs>
         </div>
 
-        <!-- Nested -->
-        <WorldAllowedDomainsDialog :world-allowed-domains-dialog="worldAllowedDomainsDialog" />
-        <SetWorldTagsDialog
-            :is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
-            :old-tags="worldDialog.ref?.tags"
-            :world-id="worldDialog.id"
-            :is-world-dialog-visible="worldDialog.visible" />
-        <PreviousInstancesWorldDialog :previous-instances-world-dialog="previousInstancesWorldDialog" />
-        <NewInstanceDialog
-            :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
-            :last-location="lastLocation" />
-        <ChangeWorldImageDialog
-            :change-world-image-dialog-visible="changeWorldImageDialogVisible"
-            :previous-images-file-id="previousImagesFileId"
-            :world-dialog="worldDialog"
-            @refresh="displayPreviousImages" />
-        <PreviousImagesDialog />
+        <template v-if="isDialogVisible">
+            <WorldAllowedDomainsDialog :world-allowed-domains-dialog="worldAllowedDomainsDialog" />
+            <SetWorldTagsDialog
+                :is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
+                :old-tags="worldDialog.ref?.tags"
+                :world-id="worldDialog.id"
+                :is-world-dialog-visible="worldDialog.visible" />
+            <PreviousInstancesWorldDialog v-model:previous-instances-world-dialog="previousInstancesWorldDialog" />
+            <NewInstanceDialog
+                :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
+                :last-location="lastLocation" />
+            <ChangeWorldImageDialog
+                :change-world-image-dialog-visible="changeWorldImageDialogVisible"
+                :previous-images-file-id="previousImagesFileId"
+                :world-dialog="worldDialog"
+                @refresh="displayPreviousImages" />
+            <PreviousImagesDialog />
+        </template>
     </el-dialog>
 </template>
 
@@ -785,7 +786,7 @@
     } from '@element-plus/icons-vue';
 
     import { ElMessage, ElMessageBox } from 'element-plus';
-    import { computed, ref, watch, nextTick } from 'vue';
+    import { computed, ref, watch, nextTick, defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
@@ -819,12 +820,15 @@
         useUserStore,
         useWorldStore
     } from '../../../stores';
-    import NewInstanceDialog from '../NewInstanceDialog.vue';
-    import PreviousImagesDialog from '../PreviousImagesDialog.vue';
-    import PreviousInstancesWorldDialog from '../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
-    import ChangeWorldImageDialog from './ChangeWorldImageDialog.vue';
-    import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
-    import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
+
+    const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
+    const PreviousImagesDialog = defineAsyncComponent(() => import('../PreviousImagesDialog.vue'));
+    const PreviousInstancesWorldDialog = defineAsyncComponent(
+        () => import('../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue')
+    );
+    const ChangeWorldImageDialog = defineAsyncComponent(() => import('./ChangeWorldImageDialog.vue'));
+    const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
+    const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
 
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();

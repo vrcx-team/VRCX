@@ -573,13 +573,15 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
-        <SetAvatarTagsDialog :set-avatar-tags-dialog="setAvatarTagsDialog" />
-        <SetAvatarStylesDialog :set-avatar-styles-dialog="setAvatarStylesDialog" />
-        <ChangeAvatarImageDialog
-            v-model:changeAvatarImageDialogVisible="changeAvatarImageDialogVisible"
-            :previous-images-file-id="previousImagesFileId"
-            @refresh="displayPreviousImages" />
-        <PreviousImagesDialog />
+        <template v-if="avatarDialog.visible">
+            <SetAvatarTagsDialog :set-avatar-tags-dialog="setAvatarTagsDialog" />
+            <SetAvatarStylesDialog :set-avatar-styles-dialog="setAvatarStylesDialog" />
+            <ChangeAvatarImageDialog
+                v-model:changeAvatarImageDialogVisible="changeAvatarImageDialogVisible"
+                :previous-images-file-id="previousImagesFileId"
+                @refresh="displayPreviousImages" />
+            <PreviousImagesDialog
+        /></template>
     </el-dialog>
 </template>
 
@@ -608,7 +610,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { computed, nextTick, reactive, ref, watch } from 'vue';
+    import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { avatarModerationRequest, avatarRequest, favoriteRequest, imageRequest, miscRequest } from '../../../api';
     import { database } from '../../../service/database';
@@ -629,10 +631,11 @@
         textToHex
     } from '../../../shared/utils';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
-    import PreviousImagesDialog from '../PreviousImagesDialog.vue';
-    import ChangeAvatarImageDialog from './ChangeAvatarImageDialog.vue';
-    import SetAvatarStylesDialog from './SetAvatarStylesDialog.vue';
-    import SetAvatarTagsDialog from './SetAvatarTagsDialog.vue';
+
+    const PreviousImagesDialog = defineAsyncComponent(() => import('../PreviousImagesDialog.vue'));
+    const ChangeAvatarImageDialog = defineAsyncComponent(() => import('./ChangeAvatarImageDialog.vue'));
+    const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));
+    const SetAvatarTagsDialog = defineAsyncComponent(() => import('./SetAvatarTagsDialog.vue'));
 
     const { showUserDialog, sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());

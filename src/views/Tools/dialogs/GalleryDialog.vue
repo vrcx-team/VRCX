@@ -540,11 +540,11 @@
         userRequest,
         vrcPlusIconRequest,
         vrcPlusImageRequest
-    } from '../../api';
-    import { AppGlobal } from '../../service/appConfig';
-    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
-    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../shared/utils';
-    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../stores';
+    } from '../../../api';
+    import { AppGlobal } from '../../../service/appConfig';
+    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
+    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
+    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
 
