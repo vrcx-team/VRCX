@@ -132,9 +132,7 @@ $--pagination-hover-color: $--theme-text-4;
 $--calendar-selected-background-color: rgba($--theme-primary, 0.1);
 $--card-background-color: $--theme-bg-4;
 
-$--font-path: '~element-ui/lib/theme-chalk/fonts';
-
-@import '~element-ui/packages/theme-chalk/src/index';
+@use 'element-plus/theme-chalk/src/index.scss' as *;
 
 :root {
     --group-calendar-event-bg: #{$--calendar-selected-background-color};

@@ -197,7 +197,7 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <WorldExportDialog v-model="worldExportDialogVisible" />
+        <WorldExportDialog v-model:worldExportDialogVisible="worldExportDialogVisible" />
     </div>
 </template>
 

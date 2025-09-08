@@ -25,18 +25,49 @@ export default defineConfig(() => ({
             input: {
                 // main app page
                 index: resolve(__dirname, 'index.html'),
-                vr: resolve(__dirname, 'vr.html')
+                vr: resolve(__dirname, 'vr.html'),
 
                 // css-only entries for themes
-                // 'theme.dark': 'src/assets/scss/themes/theme.dark.scss',
-                // 'theme.darkblue': 'src/assets/scss/themes/theme.darkblue.scss',
-                // 'theme.amoled': 'src/assets/scss/themes/theme.amoled.scss',
-                // 'theme.darkvanillaold':
-                //     'src/assets/scss/themes/theme.darkvanillaold.scss',
-                // 'theme.darkvanilla':
-                //     'src/assets/scss/themes/theme.darkvanilla.scss',
-                // 'theme.pink': 'src/assets/scss/themes/theme.pink.scss',
-                // 'theme.material3': 'src/assets/scss/themes/theme.material3.scss'
+                'theme.dark': resolve(
+                    __dirname,
+                    'assets/scss/themes/theme.dark.scss'
+                ),
+                'theme.darkblue': resolve(
+                    __dirname,
+                    'assets/scss/themes/theme.darkblue.scss'
+                ),
+                'theme.amoled': resolve(
+                    __dirname,
+                    'assets/scss/themes/theme.amoled.scss'
+                ),
+                'theme.darkvanillaold': resolve(
+                    __dirname,
+                    'assets/scss/themes/theme.darkvanillaold.scss'
+                ),
+                'theme.darkvanilla': resolve(
+                    __dirname,
+                    'assets/scss/themes/theme.darkvanilla.scss'
+                ),
+                'theme.pink': resolve(
+                    __dirname,
+                    'assets/scss/themes/theme.pink.scss'
+                ),
+                'theme.material3': resolve(
+                    __dirname,
+                    'assets/scss/themes/theme.material3.scss'
+                )
+            },
+            output: {
+                assetFileNames: (assetInfo) => {
+                    if (
+                        assetInfo.originalFileNames.find((name) =>
+                            name.endsWith('.scss')
+                        )
+                    ) {
+                        return `assets/${assetInfo.originalFileName.replace(/.*[/\\]|\.scss/g, '')}[extname]`;
+                    }
+                    return 'assets/[name][extname]';
+                }
             }
         }
     }
