@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessageBox } from 'element-plus';
 
-import { i18n, t } from '../../plugin';
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
 import { watchState } from '../../service/watchState';
@@ -36,6 +36,9 @@ export const useAppearanceSettingsStore = defineStore(
         const gameLogStore = useGameLogStore();
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
+
+        const i18n = useI18n();
+        const t = i18n.t;
 
         const state = reactive({
             appLanguage: 'en',
@@ -163,7 +166,7 @@ export const useAppearanceSettingsStore = defineStore(
                     }
                 });
             } else {
-                state.appLanguage = appLanguage;
+                changeAppLanguage(appLanguage);
             }
             changeCJKFontsOrder(state.appLanguage);
 
@@ -277,7 +280,7 @@ export const useAppearanceSettingsStore = defineStore(
             state.appLanguage = language;
             configRepository.setString('VRCX_appLanguage', language);
             changeCJKFontsOrder(state.appLanguage);
-            i18n.locale = state.appLanguage;
+            i18n.locale.value = state.appLanguage;
         }
 
         /**

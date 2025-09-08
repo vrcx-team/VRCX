@@ -85,8 +85,7 @@
 
 <script setup>
     import { onMounted, computed } from 'vue';
-    import * as ElementPlusLocale from 'element-plus/es/locale/lang/en';
-
+    import { useI18n } from 'vue-i18n';
     import { createGlobalStores } from './stores';
     import { watchState } from './service/watchState';
 
@@ -125,19 +124,49 @@
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
 
-    // import { utils } from './shared/utils/_utils';
+    import en from 'element-plus/es/locale/lang/en';
+    import es from 'element-plus/es/locale/lang/es';
+    import fr from 'element-plus/es/locale/lang/fr';
+    import hu from 'element-plus/es/locale/lang/hu';
+    import ja from 'element-plus/es/locale/lang/ja';
+    import ko from 'element-plus/es/locale/lang/ko';
+    import pl from 'element-plus/es/locale/lang/pl';
+    import pt from 'element-plus/es/locale/lang/pt';
+    import cs from 'element-plus/es/locale/lang/cs';
+    import ru from 'element-plus/es/locale/lang/ru';
+    import vi from 'element-plus/es/locale/lang/vi';
+    import zhCN from 'element-plus/es/locale/lang/zh-CN';
+    import zhTW from 'element-plus/es/locale/lang/zh-TW';
+    import th from 'element-plus/es/locale/lang/th';
+
+    const langMap = {
+        en: en,
+        es: es,
+        fr: fr,
+        hu: hu,
+        ja: ja,
+        ko: ko,
+        pl: pl,
+        pt: pt,
+        cs: cs,
+        ru: ru,
+        vi: vi,
+        'zh-CN': zhCN,
+        'zh-TW': zhTW,
+        th: th
+    };
+
+    const currentLocale = computed(() => {
+        return langMap[locale.value] || en;
+    });
+
+    const { locale } = useI18n();
 
     const store = createGlobalStores();
 
     if (typeof window !== 'undefined') {
         window.$pinia = store;
     }
-    // Vue.prototype.utils = utils;
-
-    const currentLocale = computed(() => {
-        // TODO: Implement dynamic locale switching based on current locale
-        return ElementPlusLocale.default || ElementPlusLocale;
-    });
 
     store.updateLoop.updateLoop();
 
