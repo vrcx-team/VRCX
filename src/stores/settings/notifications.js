@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 import { ElMessageBox } from 'element-plus';
 
-import { t } from '../../plugin';
+import { useI18n } from 'vue-i18n';
 import configRepository from '../../service/config';
 import { sharedFeedFiltersDefaults } from '../../shared/constants';
 import { useVrStore } from '../vr';
@@ -11,6 +11,8 @@ export const useNotificationsSettingsStore = defineStore(
     'NotificationsSettings',
     () => {
         const vrStore = useVrStore();
+
+        const { t } = useI18n();
         const state = reactive({
             overlayToast: true,
             openVR: false,

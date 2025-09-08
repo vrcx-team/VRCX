@@ -3,7 +3,7 @@ import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
 import { ElMessageBox } from 'element-plus';
 
-import { t } from '../../plugin';
+import { useI18n } from 'vue-i18n';
 import configRepository from '../../service/config';
 import { useVrcxStore } from '../vrcx';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
@@ -13,6 +13,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const vrcxStore = useVrcxStore();
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const friendStore = useFriendStore();
+
+    const { t } = useI18n();
     const state = reactive({
         isStartAtWindowsStartup: false,
         isStartAsMinimizedState: false,

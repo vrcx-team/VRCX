@@ -1,5 +1,5 @@
 import { ElMessage } from 'element-plus';
-import { t } from '../plugin';
+import { i18n } from '../plugin/i18n';
 import { request } from '../service/request';
 import { useInstanceStore } from '../stores';
 
@@ -117,7 +117,7 @@ const instanceReq = {
                     throw err;
                 }
                 ElMessage({
-                    message: t('message.instance.not_allowed'),
+                    message: i18n.global.t('message.instance.not_allowed'),
                     type: 'error'
                 });
                 throw err;

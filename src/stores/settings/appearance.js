@@ -37,8 +37,7 @@ export const useAppearanceSettingsStore = defineStore(
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
 
-        const i18n = useI18n();
-        const t = i18n.t;
+        const { t, availableLocales, locale } = useI18n();
 
         const state = reactive({
             appLanguage: 'en',
@@ -159,7 +158,7 @@ export const useAppearanceSettingsStore = defineStore(
                 const result = await AppApi.CurrentLanguage();
 
                 const lang = result.split('-')[0];
-                i18n.availableLocales.forEach((ref) => {
+                availableLocales.forEach((ref) => {
                     const refLang = ref.split('_')[0];
                     if (refLang === lang) {
                         changeAppLanguage(ref);
@@ -280,7 +279,7 @@ export const useAppearanceSettingsStore = defineStore(
             state.appLanguage = language;
             configRepository.setString('VRCX_appLanguage', language);
             changeCJKFontsOrder(state.appLanguage);
-            i18n.locale.value = state.appLanguage;
+            locale.value = state.appLanguage;
         }
 
         /**

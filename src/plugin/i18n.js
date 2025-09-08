@@ -11,9 +11,10 @@ const i18n = createI18n({
         ])
     ),
     legacy: false,
-    globalInjection: false
+    globalInjection: false,
+    missingWarn: false,
+    warnHtmlMessage: false,
+    fallbackWarn: false
 });
 
-const t = i18n.global.t;
-
-export { i18n, t };
+export { i18n };

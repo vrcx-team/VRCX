@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { t } from '../../plugin';
+import { useI18n } from 'vue-i18n';
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
 import webApiService from '../../service/webapi';
@@ -13,6 +13,8 @@ import { AppGlobal } from '../../service/appConfig';
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
     const vrcxStore = useVrcxStore();
+
+    const { t } = useI18n();
 
     const state = reactive({
         enablePrimaryPassword: false,

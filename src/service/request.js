@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { t } from '../plugin';
+import { i18n } from '../plugin';
 import { statusCodes } from '../shared/constants/api.js';
 import { escapeTag } from '../shared/utils';
 import {
@@ -16,6 +16,8 @@ import { watchState } from './watchState';
 
 const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();
+
+const t = i18n.global.t;
 
 /**
  * @template T
