@@ -12,6 +12,7 @@
         "notification": "通知",
         "friend_list": "好友列表",
         "charts": "图表",
+        "tools": "工具",
         "profile": "个人资料",
         "settings": "设置"
     },
@@ -134,7 +135,6 @@
             "import": "导入",
             "move_tooltip": "移动",
             "copy_tooltip": "复制",
-            "self_invite_tooltip": "邀请自己",
             "unfavorite_tooltip": "取消收藏",
             "visibility_tooltip": "更改可见性",
             "rename_tooltip": "重命名",
@@ -186,6 +186,9 @@
                 "message": "消息",
                 "boop": "Boop",
                 "groupChange": "群组变动",
+                "event": {
+                    "announcement": "活动日历事件"
+                },
                 "group": {
                     "announcement": "群组公告",
                     "informative": "群组消息",
@@ -376,7 +379,9 @@
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
+                    "theme_mode_blue": "蓝色",
                     "theme_mode_darkblue": "深蓝色",
+                    "theme_mode_amoled": "纯黑（Amoled）",
                     "theme_mode_darkvanillaold": "深色香草（旧）",
                     "theme_mode_darkvanilla": "深色香草",
                     "theme_mode_pink": "粉色",
@@ -517,7 +522,18 @@
                     "instance_type_player_count": "显示房间类型和人数",
                     "join_button": "在面板上显示加入按钮（仅限公开房间）",
                     "show_details_in_private": "在私人房间时显示房间信息",
-                    "show_images": "显示世界缩略图"
+                    "show_images": "显示世界缩略图",
+                    "show_current_platform": "显示当前所在的平台",
+                    "world_integration": "打开与特定世界的集成",
+                    "world_integration_tooltip": "为 Popcorn Palace、PyPyDance、VRDancing 和 LS Media 显示“正在观看/正在收听”的状态",
+                    "display_world_name_as_discord_status": "在 Discord 状态中显示世界名称"
+                },
+                "rpc": {
+                    "vr": "VR 模式",
+                    "desktop": "桌面模式",
+                    "join_button": "加入",
+                    "powered_by_vrcx": "由 VRCX 强力驱动",
+                    "private_world": "私人世界"
                 }
             },
             "pictures": {
@@ -570,6 +586,13 @@
                         "header": "保存“表情贴纸”至文件",
                         "description": "保存生成的“表情贴纸”到 VRChat 的照片文件夹中"
                     },
+                    "delete_all_screenshot_metadata": {
+                        "button": "删除截图元数据",
+                        "ask": "你确定要从 VRChat 图片文件夹中删除所有由 VRC 和 VRCX 添加的截图元数据吗？",
+                        "confirm": "删除截图元数据是一个非常破坏性的操作，无法撤销！这包括你的 VRChat 图片文件夹中的所有拍立得图片，如果这些照片的元数据信息对你很珍贵，请在继续之前进行备份。",
+                        "confirm_yes": "是，确认删除",
+                        "confirm_no": "否，我再想想"
+                    },
                     "remote_database": {
                         "header": "模型数据库",
                         "enable": "启用",
@@ -608,7 +631,8 @@
                         "folder": "打开启动文件夹",
                         "folder_tooltip": "如果要在 VRChat 启动时一并启动一些APP，请将其快捷方式放在这个文件夹中.",
                         "enable": "启用",
-                        "auto_close": "在 VRChat 关闭后自动关闭这些APP"
+                        "auto_close": "在 VRChat 关闭后自动关闭这些APP",
+                        "run_process_once": "仅允许启动应用的单个实例（禁止多开）"
                     },
                     "cache_debug": {
                         "header": "VRCX 缓存/调试选项",
@@ -728,6 +752,7 @@
                 "request_invite": "申请加入",
                 "request_invite_with_message": "发送带消息的加入申请",
                 "invite_to_group": "邀请加入群组",
+                "group_moderation": "群组管理",
                 "send_boop": "Send Boop",
                 "manage_gallery_inventory_icon": "管理相册与库存",
                 "accept_friend_request": "接受好友申请",
@@ -760,6 +785,7 @@
                 "header": "信息",
                 "launch_invite_tooltip": "启动 / 邀请",
                 "self_invite_tooltip": "邀请自己",
+                "open_in_vrchat_tooltip": "在 VRChat 中打开",
                 "refresh_instance_info": "刷新房间信息",
                 "instance_queue": "在排队等待的玩家：",
                 "instance_users": "房间玩家：",
@@ -813,9 +839,9 @@
                 "edit_mode": "编辑模式",
                 "exit_edit_mode": "退出编辑模式",
                 "hold_shift": "按住Shift键可在不确认的情况下退出",
-                "own_groups": "拥有的群组",
+                "own_groups": "创建的群组",
                 "mutual_groups": "共同群组",
-                "groups": "群组",
+                "groups": "加入的群组",
                 "sorting": {
                     "alphabetical": "按字母顺序",
                     "members": "按成员数",
@@ -881,6 +907,7 @@
                 "share": "分享",
                 "new_instance": "创建新房间",
                 "new_instance_and_self_invite": "创建新房间并邀请自己",
+                "new_instance_and_open_in_vrchat": "创建新房间并在 VRChat 中打开",
                 "make_home": "设为出生点",
                 "reset_home": "重置出生点为默认",
                 "show_previous_instances": "显示加入过的房间",
@@ -890,7 +917,7 @@
                 "change_capacity": "更改人数上限",
                 "change_recommended_capacity": "更改推荐人数",
                 "change_preview": "更改 YouTube 预览",
-                "change_tags": "更改标签",
+                "change_warnings_settings_tags": "更改内容警告设置&标签",
                 "change_image": "更改图片",
                 "change_allowed_video_player_domains": "更改允许在视频播放器使用的域名",
                 "download_package": "下载 Unity Package",
@@ -1296,7 +1323,8 @@
             "start_as_desktop": "以桌面模式启动游戏（不使用 VR）",
             "info": "信息",
             "invite": "邀请",
-            "launch": "启动"
+            "launch": "启动",
+            "open_ingame": "在 VRChat 中打开"
         },
         "export_friends_list": {
             "header": "导出好友列表",
@@ -1391,7 +1419,8 @@
             "choose_group_placeholder": "选择群组",
             "groups": "群组",
             "choose_friends_placeholder": "选择好友",
-            "selected_users": "已选择的玩家"
+            "selected_users": "已选择的玩家",
+            "invite": "邀请"
         },
         "note_export": {
             "header": "备注导出",
@@ -1522,6 +1551,7 @@
             "last_screenshot": "上一张图片",
             "copy_image": "复制图片",
             "open_folder": "打开文件夹",
+            "delete_metadata": "删除当前图片的元数据",
             "upload": "上传"
         },
         "registry_backup": {
@@ -1536,6 +1566,7 @@
             "date": "日期",
             "action": "操作",
             "auto_backup": "只要 VRCX 在运行，就会每周自动备份一次 VRChat 的设置数据，你也可以在这里手动备份和恢复你的设置数据",
+            "ask_to_restore": "当未检测到本地 VRC 设置数据时，询问是否恢复",
             "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复数据，可以在此处进行恢复。"
         },
         "group_member_moderation": {
@@ -1580,6 +1611,7 @@
             "select_user": "选择玩家",
             "selected_users": "已选择的玩家",
             "select_all": "全选",
+            "user_isnt_in_group": "该玩家不在群组中",
             "cancel": "取消",
             "choose_roles_placeholder": "选择身份组",
             "selected_roles": "已选择的身份组",
@@ -1613,6 +1645,15 @@
             "header": "允许在视频播放器使用的域名",
             "add_domain": "添加域名",
             "save": "保存"
+        },
+        "group_calendar": {
+            "header": "活动日历"
+        },
+        "moderate_group": {
+            "header": "管理群组成员",
+            "choose_group_placeholder": "选择群组....",
+            "groups_with_moderation_permission": "拥有管理权限的群组",
+            "moderation_tools": "管理工具"
         }
     },
     "confirm": {
@@ -1681,6 +1722,10 @@
         },
         "friend": {
             "load_failed": "加载好友列表失败，即将登出"
+        },
+        "screenshot_metadata": {
+            "deleted": "已删除图片元数据",
+            "delete_failed": "删除图片元数据失败"
         }
     },
     "prompt": {
