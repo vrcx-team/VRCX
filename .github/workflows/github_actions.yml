@@ -17,9 +17,8 @@ jobs:
             - uses: actions/checkout@v4
             - id: version
               run: |
-                  git_hash=$(git rev-parse --short "$GITHUB_SHA")
-                  export FILENAME="$(date '+%Y-%m-%dT%H.%M')-${git_hash}"
-                  export DATE="$(date '+%Y.%m.%d')"
+                  export FILENAME="$(cat Version)"
+                  export DATE="$(cat Version)"
                   echo "version=${FILENAME}" >> $GITHUB_OUTPUT
                   echo "date=${DATE}" >> $GITHUB_OUTPUT
 
