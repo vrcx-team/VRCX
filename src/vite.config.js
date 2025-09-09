@@ -20,6 +20,9 @@ export default defineConfig(() => ({
         target: 'esnext',
         outDir: '../build/html',
         emptyOutDir: true,
+        copyPublicDir: false,
+        reportCompressedSize: false,
+        chunkSizeWarningLimit: 5000,
         modulePreload: { polyfill: false },
         rollupOptions: {
             input: {

@@ -9,7 +9,6 @@ import { watchState } from '../../service/watchState';
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
-    changeCJKFontsOrder,
     getNameColour,
     HueToHex,
     systemIsDarkMode,
@@ -167,10 +166,9 @@ export const useAppearanceSettingsStore = defineStore(
             } else {
                 changeAppLanguage(appLanguage);
             }
-            changeCJKFontsOrder(state.appLanguage);
 
             state.themeMode = themeMode;
-            applyThemeMode(themeMode);
+            applyThemeMode();
 
             state.displayVRCPlusIconsAsAvatar = displayVRCPlusIconsAsAvatar;
             state.hideNicknames = hideNicknames;
@@ -278,8 +276,9 @@ export const useAppearanceSettingsStore = defineStore(
             console.log('Language changed:', language);
             state.appLanguage = language;
             configRepository.setString('VRCX_appLanguage', language);
-            changeCJKFontsOrder(state.appLanguage);
             locale.value = state.appLanguage;
+            const htmlElement = document.documentElement;
+            htmlElement.setAttribute('lang', state.appLanguage);
         }
 
         /**
@@ -294,7 +293,7 @@ export const useAppearanceSettingsStore = defineStore(
         async function changeThemeMode() {
             await changeAppThemeStyle(state.themeMode);
             vrStore.updateVRConfigVars();
-            await updateTrustColor();
+            await updateTrustColor(undefined, undefined);
         }
 
         /**
@@ -335,6 +334,7 @@ export const useAppearanceSettingsStore = defineStore(
                 Array.from(userStore.cachedUsers.keys())
             );
             if (LINUX) {
+                // @ts-ignore
                 dictObject = Object.fromEntries(dictObject);
             }
             for (const [userId, hue] of Object.entries(dictObject)) {
@@ -674,21 +674,21 @@ export const useAppearanceSettingsStore = defineStore(
                     distinguishCancelAndClose: true,
                     confirmButtonText: t('prompt.change_table_size.save'),
                     cancelButtonText: t('prompt.change_table_size.cancel'),
-                    inputValue: vrcxStore.maxTableSize,
+                    inputValue: vrcxStore.maxTableSize.toString(),
                     inputPattern: /\d+$/,
                     inputErrorMessage: t('prompt.change_table_size.input_error')
                 }
             )
                 .then(async ({ value }) => {
                     if (value) {
-                        let processedValue = value;
+                        let processedValue = Number(value);
                         if (processedValue > 10000) {
                             processedValue = 10000;
                         }
                         vrcxStore.maxTableSize = processedValue;
                         await configRepository.setString(
                             'VRCX_maxTableSize',
-                            vrcxStore.maxTableSize
+                            vrcxStore.maxTableSize.toString()
                         );
                         database.setMaxTableSize(vrcxStore.maxTableSize);
                         feedStore.feedTableLookup();

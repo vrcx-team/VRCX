@@ -1391,7 +1391,9 @@
         name: 'vr'
     });
 
-    const { t } = useI18n();
+    const i18n = useI18n();
+
+    const { t } = i18n;
 
     const vrState = reactive({
         appType: new URLSearchParams(window.location.search).has('wrist') ? 'wrist' : 'hmd',

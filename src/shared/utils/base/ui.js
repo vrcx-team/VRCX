@@ -72,34 +72,6 @@ function changeAppThemeStyle(themeMode) {
 }
 
 /**
- * CJK character in Japanese, Korean, Chinese are different
- * so change font-family order when users change language to display CJK character correctly
- * @param {string} lang
- */
-function changeCJKFontsOrder(lang) {
-    const otherFonts = window
-        .getComputedStyle(document.body)
-        .fontFamily.split(',')
-        .filter((item) => !item.includes('Noto Sans'))
-        .join(', ');
-    const notoSans = 'Noto Sans';
-
-    const fontFamilies = {
-        ja_JP: ['JP', 'KR', 'TC', 'SC'],
-        ko: ['KR', 'JP', 'TC', 'SC'],
-        zh_TW: ['TC', 'JP', 'KR', 'SC'],
-        zh_CN: ['SC', 'JP', 'KR', 'TC']
-    };
-
-    if (fontFamilies[lang]) {
-        const CJKFamily = fontFamilies[lang]
-            .map((item) => `${notoSans} ${item}`)
-            .join(', ');
-        document.body.style.fontFamily = `${CJKFamily}, ${otherFonts}`;
-    }
-}
-
-/**
  *
  * @param {object} trustColor
  */
@@ -244,7 +216,6 @@ export {
     systemIsDarkMode,
     changeAppDarkStyle,
     changeAppThemeStyle,
-    changeCJKFontsOrder,
     updateTrustColorClasses,
     refreshCustomCss,
     refreshCustomScript,
