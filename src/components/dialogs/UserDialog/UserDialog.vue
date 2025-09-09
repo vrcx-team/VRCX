@@ -1901,8 +1901,8 @@
         () => {
             if (userDialog.value.visible) {
                 nextTick(() => {
-                    if (userDialogTabsRef.value?.$el) {
-                        adjustDialogZ(userDialogTabsRef.value.$el);
+                    if (userDialogRef.value?.$el) {
+                        adjustDialogZ(userDialogRef.value.$el);
                     }
                 });
                 !userDialog.value.loading && toggleLastActiveTab(userDialog.value.id);

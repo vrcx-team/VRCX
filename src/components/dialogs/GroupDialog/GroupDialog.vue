@@ -1289,8 +1289,8 @@
 
     watch(
         () => groupDialog.value.loading,
-        (val) => {
-            if (val) {
+        () => {
+            if (groupDialog.value.visible) {
                 nextTick(() => adjustDialogZ(groupDialogRef.value.$el));
             }
         }
