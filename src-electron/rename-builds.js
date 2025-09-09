@@ -9,10 +9,10 @@ const buildDir = path.join(rootDir, 'build');
 let version = '';
 try {
     version = fs.readFileSync(versionFilePath, 'utf8').trim();
-    if (!version.includes('T')) {
-        // Remove dots only from Stable version
-        version = version.replaceAll('.', '');
-    }
+    // if (!version.includes('T')) {
+    //     // Remove dots only from Stable version
+    //     version = version.replaceAll('.', '');
+    // }
 } catch (err) {
     console.error('Error reading Version file:', err);
     process.exit(1);
