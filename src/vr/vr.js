@@ -6,7 +6,7 @@
 
 import { createApp } from 'vue';
 import { initNoty } from '../plugin/noty';
-import { i18n } from '../plugin';
+import { i18n } from '../plugin/i18n';
 import InteropApi from '../ipc-electron/interopApi.js';
 import Vr from './Vr.vue';
 

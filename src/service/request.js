@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { i18n } from '../plugin';
+import { i18n } from '../plugin/i18n';
 import { statusCodes } from '../shared/constants/api.js';
 import { escapeTag } from '../shared/utils';
 import {

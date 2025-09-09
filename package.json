@@ -39,7 +39,6 @@
         "@fontsource/noto-sans-kr": "^5.2.7",
         "@fontsource/noto-sans-sc": "^5.2.6",
         "@fontsource/noto-sans-tc": "^5.2.7",
-        "@prettier/plugin-pug": "^3.4.2",
         "@types/jest": "^30.0.0",
         "@types/node": "^24.3.1",
         "@vitejs/plugin-vue": "^6.0.1",

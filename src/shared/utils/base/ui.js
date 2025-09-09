@@ -30,6 +30,10 @@ function changeAppThemeStyle(themeMode) {
     if (LINUX) {
         filePathPrefix = './';
     }
+    if (process.env.NODE_ENV === 'development') {
+        filePathPrefix = 'http://localhost:9000/';
+        console.log('Using development file path prefix:', filePathPrefix);
+    }
 
     let $appThemeStyle = document.getElementById('app-theme-style');
     if (!$appThemeStyle) {
@@ -38,9 +42,7 @@ function changeAppThemeStyle(themeMode) {
         $appThemeStyle.rel = 'stylesheet';
         document.head.appendChild($appThemeStyle);
     }
-    $appThemeStyle.href = themeConfig.cssFile
-        ? `${filePathPrefix}${themeConfig.cssFile}`
-        : '';
+    $appThemeStyle.href = themeConfig.cssFile ? themeConfig.cssFile : '';
 
     let $appThemeDarkStyle = document.getElementById('app-theme-dark-style');
     const darkThemeCssPath = `${filePathPrefix}theme.dark.css`;
