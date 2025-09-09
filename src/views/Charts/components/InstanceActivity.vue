@@ -126,7 +126,7 @@
 
 <script setup>
     import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-    import { ref, onDeactivated, watch, computed, onMounted, onBeforeMount, onActivated, nextTick } from 'vue';
+    import { ref, onDeactivated, watch, onMounted, onBeforeMount, onActivated, nextTick } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
@@ -136,6 +136,10 @@
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
     import { useInstanceActivitySettings } from '../composables/useInstanceActivitySettings';
     import { useInstanceActivityData } from '../composables/useInstanceActivityData';
+    import { useActivityDataFilter } from '../composables/useActivityDataFilter';
+    import { useIntersectionObserver } from '../composables/useIntersectionObserver';
+    import { useActivityStats } from '../composables/useActivityStats';
+    import { useDateNavigation } from '../composables/useDateNavigation';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
@@ -167,58 +171,31 @@
         getActivityData
     } = useInstanceActivityData();
 
-    // echarts and observer
     const echartsInstance = ref(null);
     const resizeObserver = ref(null);
-    const intersectionObservers = ref([]);
-    const selectedDate = ref(dayjs().toDate());
+    const { handleIntersectionObserver } = useIntersectionObserver();
     const isLoading = ref(true);
+
+    let reloadData;
+    const {
+        selectedDate,
+        isNextDayBtnDisabled,
+        isPrevDayBtnDisabled,
+        changeSelectedDateFromBtn,
+        getDatePickerDisabledDate
+    } = useDateNavigation(allDateOfActivity, () => reloadData());
 
     const activityChartRef = ref(null);
     const activityDetailChartRef = ref(null);
 
-    const totalOnlineTime = computed(() => {
-        return activityData.value?.reduce((acc, item) => acc + item.time, 0);
-    });
+    const { totalOnlineTime } = useActivityStats(activityData);
 
-    const allDateOfActivityArray = computed(() => {
-        return allDateOfActivity.value
-            ? Array.from(allDateOfActivity.value)
-                  .map((item) => dayjs(item))
-                  .sort((a, b) => b.valueOf() - a.valueOf())
-            : [];
-    });
-
-    const isNextDayBtnDisabled = computed(() => {
-        return dayjs(selectedDate.value).isSameOrAfter(allDateOfActivityArray.value[0], 'day');
-    });
-
-    const isPrevDayBtnDisabled = computed(() => {
-        return dayjs(selectedDate.value).isSame(
-            allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1],
-            'day'
-        );
-    });
-
-    const filteredActivityDetailData = computed(() => {
-        if (!isDetailVisible.value) {
-            return [];
-        }
-        let result = [...activityDetailData.value];
-        if (!isSoloInstanceVisible.value) {
-            result = result.filter((arr) => arr.length > 1);
-        }
-        if (!isNoFriendInstanceVisible.value) {
-            result = result.filter((arr) => {
-                // solo instance
-                if (arr.length === 1) {
-                    return true;
-                }
-                return arr.some((item) => item.isFriend);
-            });
-        }
-        return result;
-    });
+    const { filteredActivityDetailData } = useActivityDataFilter(
+        activityDetailData,
+        isDetailVisible,
+        isSoloInstanceVisible,
+        isNoFriendInstanceVisible
+    );
 
     watch(
         () => isDarkMode.value,
@@ -261,7 +238,9 @@
     onMounted(async () => {
         try {
             getAllDateOfActivity();
-            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, handleIntersectionObserver);
+            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
+                handleIntersectionObserver(activityDetailChartRef)
+            );
             await getWorldNameData();
             initEcharts();
         } catch (error) {
@@ -270,16 +249,18 @@
         }
     });
 
-    async function reloadData() {
+    reloadData = async function () {
         isLoading.value = true;
-        await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, handleIntersectionObserver);
+        await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
+            handleIntersectionObserver(activityDetailChartRef)
+        );
         getWorldNameData();
         // possibility past 24:00
         getAllDateOfActivity();
         if (echartsInstance.value) {
             echartsInstance.value.setOption(activityData.value.length ? getNewOption() : {}, { notMerge: true });
         }
-    }
+    };
 
     // echarts - start
     function initEcharts() {
@@ -488,67 +469,6 @@
         handleChangeSettings(activityDetailChartRef);
     }
     // settings - end
-
-    // options - start
-    function changeSelectedDateFromBtn(isNext = false) {
-        if (!allDateOfActivityArray.value || allDateOfActivityArray.value.length === 0) {
-            return;
-        }
-
-        const idx = allDateOfActivityArray.value.findIndex((date) => date.isSame(selectedDate.value, 'day'));
-        if (idx !== -1) {
-            const newIdx = isNext ? idx - 1 : idx + 1;
-
-            if (newIdx >= 0 && newIdx < allDateOfActivityArray.value.length) {
-                selectedDate.value = allDateOfActivityArray.value[newIdx].toDate();
-                reloadData();
-                return;
-            }
-        }
-        selectedDate.value = (
-            isNext
-                ? allDateOfActivityArray.value[0]
-                : allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1]
-        ).toDate();
-        reloadData();
-    }
-    function getDatePickerDisabledDate(time) {
-        if (
-            time > Date.now() ||
-            allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1]
-                ?.add(-1, 'day')
-                .isAfter(time, 'day') ||
-            !allDateOfActivity.value
-        ) {
-            return true;
-        }
-        return !allDateOfActivity.value.has(dayjs(time).format('YYYY-MM-DD'));
-    }
-    // options - end
-
-    // data - moved to useInstanceActivityData composable
-
-    // intersection observer - start
-    function handleIntersectionObserver() {
-        activityDetailChartRef.value?.forEach((child, index) => {
-            const observer = new IntersectionObserver((entries) => handleIntersection(index, entries));
-            observer.observe(child.$el);
-            intersectionObservers.value[index] = observer;
-        });
-    }
-    function handleIntersection(index, entries) {
-        if (!entries) {
-            console.error('handleIntersection failed');
-            return;
-        }
-        entries.forEach((entry) => {
-            if (entry.isIntersecting && activityDetailChartRef.value[index]) {
-                activityDetailChartRef.value[index].initEcharts();
-                intersectionObservers.value[index].unobserve(entry.target);
-            }
-        });
-    }
-    // intersection observer - end
 </script>
 
 <style lang="scss" scoped>
