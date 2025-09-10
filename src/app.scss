@@ -964,6 +964,12 @@ i.x-status-icon.red {
     display: none;
 }
 
+input[type='text']::placeholder,
+input[type='number']::placeholder,
+input[type='password']::placeholder {
+    color: #606266;
+}
+
 // FIXME
 // Something changed the CSS of element-ui
 // The other parts are the same

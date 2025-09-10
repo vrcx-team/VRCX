@@ -542,3 +542,9 @@ div.x-friend-list
 .el-tooltip__popper {
     box-shadow: $--box-shadow-dark !important;
 }
+
+input[type='text']::placeholder,
+input[type='number']::placeholder,
+input[type='password']::placeholder {
+    color: #b3b3b3;
+}

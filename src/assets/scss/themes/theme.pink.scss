@@ -337,6 +337,11 @@ input[type='text'],
 input[type='password'] {
     user-select: text;
 }
+input[type='text']::placeholder,
+input[type='number']::placeholder,
+input[type='password']::placeholder {
+    color: #C9C8C5;
+}
 .avatar-info-public::selection {
     color: hsl(100, 54%, 64%);
 }
