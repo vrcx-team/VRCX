@@ -403,7 +403,7 @@ export const useSearchStore = defineStore('Search', () => {
     }
 
     return {
-        // state,
+        state,
 
         searchText,
         searchUserResults,

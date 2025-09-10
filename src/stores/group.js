@@ -83,7 +83,6 @@ export const useGroupStore = defineStore('Group', () => {
             auditLogTypes: [],
             openWithUserId: ''
         },
-        // cachedGroups: new Map(),
         inGameGroupOrder: [],
         groupInstances: [],
         currentUserGroupsInit: false
@@ -1093,7 +1092,7 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     return {
-        // state,
+        state,
 
         groupDialog,
         currentUserGroups,

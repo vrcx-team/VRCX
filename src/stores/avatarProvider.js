@@ -165,7 +165,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     initAvatarProviderState();
 
     return {
-        // state,
+        state,
 
         isAvatarProviderDialogVisible,
         avatarRemoteDatabaseProvider,

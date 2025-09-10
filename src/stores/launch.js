@@ -189,7 +189,7 @@ export const useLaunchStore = defineStore('Launch', () => {
     }
 
     return {
-        // state,
+        state,
 
         isLaunchOptionsDialogVisible,
         launchDialogData,

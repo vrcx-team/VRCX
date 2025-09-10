@@ -71,7 +71,7 @@ export const useUiStore = defineStore('Ui', () => {
     }
 
     return {
-        // state,
+        state,
 
         menuActiveIndex,
         notifiedMenus,

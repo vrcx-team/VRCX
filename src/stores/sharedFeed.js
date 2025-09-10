@@ -606,7 +606,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     }
 
     return {
-        // state,
+        state,
         sharedFeed,
         updateSharedFeed
     };

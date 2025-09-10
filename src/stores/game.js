@@ -280,7 +280,7 @@ export const useGameStore = defineStore('Game', () => {
     }
 
     return {
-        // state,
+        state,
 
         VRChatUsedCacheSize,
         VRChatTotalCacheSize,

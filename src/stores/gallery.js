@@ -655,7 +655,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     }
 
     return {
-        // state,
+        state,
 
         galleryTable,
         galleryDialogVisible,

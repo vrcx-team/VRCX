@@ -178,7 +178,7 @@ export const useVrStore = defineStore('Vr', () => {
     }
 
     return {
-        // state,
+        state,
 
         vrInit,
         saveOpenVROption,

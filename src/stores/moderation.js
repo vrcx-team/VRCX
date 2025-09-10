@@ -270,7 +270,7 @@ export const useModerationStore = defineStore('Moderation', () => {
     }
 
     return {
-        // state,
+        state,
 
         cachedPlayerModerations,
         cachedPlayerModerationsUserIds,

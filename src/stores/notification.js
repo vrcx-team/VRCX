@@ -2326,7 +2326,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     }
 
     return {
-        // state,
+        state,
 
         notificationInitStatus,
         notificationTable,

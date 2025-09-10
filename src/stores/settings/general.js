@@ -272,22 +272,9 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                 inputValue: vrcxStore.proxyServer,
                 inputPlaceholder: t('prompt.proxy_settings.placeholder')
             }
-        ).then(async ({ value }) => {
-            vrcxStore.proxyServer = value;
-            await VRCXStorage.Set(
-                'VRCX_ProxyServer',
-                vrcxStore.proxyServer
-            );
-            await VRCXStorage.Flush();
-            await new Promise((resolve) => {
-                workerTimers.setTimeout(resolve, 100);
-            });
-            const { restartVRCX } = VRCXUpdaterStore;
-            const isUpgrade = false;
-            restartVRCX(isUpgrade);
-        }).catch(async () => {
-            // User clicked close/cancel, still save the value but don't restart
-            if (vrcxStore.proxyServer !== undefined) {
+        )
+            .then(async ({ value }) => {
+                vrcxStore.proxyServer = value;
                 await VRCXStorage.Set(
                     'VRCX_ProxyServer',
                     vrcxStore.proxyServer
@@ -296,12 +283,27 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                 await new Promise((resolve) => {
                     workerTimers.setTimeout(resolve, 100);
                 });
-            }
-        });
+                const { restartVRCX } = VRCXUpdaterStore;
+                const isUpgrade = false;
+                restartVRCX(isUpgrade);
+            })
+            .catch(async () => {
+                // User clicked close/cancel, still save the value but don't restart
+                if (vrcxStore.proxyServer !== undefined) {
+                    await VRCXStorage.Set(
+                        'VRCX_ProxyServer',
+                        vrcxStore.proxyServer
+                    );
+                    await VRCXStorage.Flush();
+                    await new Promise((resolve) => {
+                        workerTimers.setTimeout(resolve, 100);
+                    });
+                }
+            });
     }
 
     return {
-        // state,
+        state,
 
         isStartAtWindowsStartup,
         isStartAsMinimizedState,

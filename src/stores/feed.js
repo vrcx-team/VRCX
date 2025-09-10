@@ -228,7 +228,7 @@ export const useFeedStore = defineStore('Feed', () => {
     }
 
     return {
-        // state,
+        state,
 
         feedTable,
         feedSessionTable,

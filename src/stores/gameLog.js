@@ -1430,7 +1430,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     }
 
     return {
-        // state,
+        state,
 
         nowPlaying,
         gameLogTable,

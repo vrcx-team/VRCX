@@ -1209,7 +1209,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     // };
 
     return {
-        // state,
+        state,
 
         cachedInstances,
         currentInstanceWorld,

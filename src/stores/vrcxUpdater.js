@@ -421,7 +421,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     initVRCXUpdaterSettings();
 
     return {
-        // state,
+        state,
 
         appVersion,
         autoUpdateVRCX,

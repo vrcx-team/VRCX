@@ -708,7 +708,7 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         return {
-            // state,
+            state,
 
             appLanguage,
             themeMode,

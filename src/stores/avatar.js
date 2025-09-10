@@ -687,7 +687,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     }
 
     return {
-        // state,
+        state,
 
         avatarDialog,
         avatarHistory,

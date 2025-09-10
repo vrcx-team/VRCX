@@ -762,7 +762,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     }
 
     return {
-        // state,
+        state,
 
         proxyServer,
         currentlyDroppingFile,
