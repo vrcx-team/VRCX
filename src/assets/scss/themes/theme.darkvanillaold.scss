@@ -325,7 +325,7 @@ path[stroke='#e5e9f2'] {
     stroke: var(--farback) !important;
 }
 
-.el-collapse-item .el-tag--mini {
+.el-collapse-item .el-tag--small {
     border: transparent;
     background-color: #333 !important;
 }
@@ -372,7 +372,7 @@ path[stroke='#e5e9f2'] {
 div.x-friend-list
     > div:nth-child(1)
     > div
-    > div.el-textarea.el-input--mini
+    > div.el-textarea.el-input--small
     > span.el-input__count {
     background-color: var(--mid) !important;
 }
@@ -401,4 +401,28 @@ div.x-friend-list
 
 .el-timeline-item__node {
     background-color: var(--theme-text-muted) !important;
+}
+
+.el-select__wrapper {
+    background-color: var(--top) !important;
+    border: 1px solid var(--top-border) !important;
+    color: var(--theme-text);
+}
+
+.el-select__wrapper.is-focused {
+    border-color: var(--theme-text) !important;
+}
+
+.el-select__wrapper.is-disabled {
+    background-color: var(--farback) !important;
+    color: var(--theme-text-muted) !important;
+}
+
+.el-input__wrapper {
+    background-color: var(--top) !important;
+    border: 1px solid var(--top-border) !important;
+}
+
+.el-input__wrapper.is-focus {
+    border-color: var(--theme-text) !important;
 }
