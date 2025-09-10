@@ -20,8 +20,9 @@
     손등 18px -> 나나 24
 */
 
-.ri-loader-line {
-    animation: rotating 2s linear infinite;
+.is-loading {
+    animation: rotation 2s linear infinite;
+    display: inline-block;
 }
 
 body {

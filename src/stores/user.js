@@ -1842,7 +1842,7 @@ export const useUserStore = defineStore('User', () => {
                 username: '',
                 viveId: '',
                 // VRCX
-                $online_for: Date.now(),
+                $online_for: null,
                 $offline_for: null,
                 $location_at: Date.now(),
                 $travelingToTime: Date.now(),

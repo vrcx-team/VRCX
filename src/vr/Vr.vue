@@ -17,12 +17,13 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <i class="ri-loader-line"></i>
                                         <span class="name" v-text="feed.displayName"></span>
+                                        <i v-if="feed.isTraveling" class="ri-loader-line is-loading ml-5"></i>
                                         <VrLocation
                                             :location="feed.location"
                                             :hint="feed.worldName"
-                                            :grouphint="feed.groupName"></VrLocation>
+                                            :grouphint="feed.groupName"
+                                            style="margin-left: 5px"></VrLocation>
                                     </span>
                                 </div>
                             </div>
@@ -33,7 +34,8 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName"></span> ✖️
+                                        <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-close-line" style="font-size: 21px"></i>
                                     </span>
                                 </div>
                             </div>
@@ -44,8 +46,10 @@
                                 <div class="detail">
                                     <span class="extra">
                                         <span class="time">{{ formatDate(feed.created_at) }}</span>
-                                        <span class="name" v-text="feed.displayName"></span> ✔
+                                        <span class="name" v-text="feed.displayName"></span>
+                                        <i class="ri-check-line" style="font-size: 21px"></i>
                                         <template v-if="feed.worldName">
+                                            <i v-if="feed.isTraveling" class="ri-loader-line is-loading ml-5"></i>
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
@@ -607,6 +611,7 @@
                                         <span style="margin-left: 5px; margin-right: 5px">has logged in</span>
                                         <template v-if="feed.worldName">
                                             to
+                                            <i v-if="feed.isTraveling" class="ri-loader-line is-loading ml-5"></i>
                                             <VrLocation
                                                 :location="feed.location"
                                                 :hint="feed.worldName"
@@ -1201,49 +1206,41 @@
             <div class="x-containerbottom">
                 <template v-if="nowPlaying.playing">
                     <span style="float: right; padding-left: 10px">{{ nowPlaying.remainingText }}</span>
-                    <MarqueeText>{{ nowPlaying.name }} ‎</MarqueeText>
-                    <div class="np-progress-bar" :style="{ width: nowPlaying.percentage + '%' }"></div>
+                    <MarqueeText>{{ nowPlaying.name }}</MarqueeText>
+                    <div class="np-progress-bar" style="margin-left: 5px" :style="{ width: nowPlaying.percentage + '%' }"></div>
                 </template>
-                <template v-if="lastLocation.date !== 0">
-                    <template v-if="config && config.minimalFeed">
-                        <span style="float: right"
-                            >{{ lastLocationTimer }}
-                            <template v-if="onlineForTimer"> &nbsp;/ {{ onlineForTimer }} </template>
-                            <template v-if="pcUptime"> &nbsp;/ {{ pcUptime }} </template>
-                        </span>
-                        <span style="display: inline-block">{{ lastLocation.playerList.length }}</span>
-                        <span style="display: inline-block; font-weight: bold">{{
-                            lastLocation.friendList.length !== 0
-                                ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})`
-                                : ''
-                        }}</span>
-                    </template>
-                    <template v-else>
-                        <span style="float: right"
-                            >{{ t('vr.status.timer') }} {{ lastLocationTimer }}
-                            <template v-if="onlineForTimer"> &nbsp;/ {{ onlineForTimer }} </template>
-                            <template v-if="pcUptime"> &nbsp;/ {{ pcUptime }} </template>
-                        </span>
-                        <span style="display: inline-block"
-                            >{{ t('vr.status.players') }} {{ lastLocation.playerList.length }}</span
-                        >
-                        <span style="display: inline-block; font-weight: bold">{{
-                            lastLocation.friendList.length !== 0
-                                ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})`
-                                : ''
-                        }}</span>
-                    </template>
+                <div style="float: right"
+                    >
+                    <span v-if="!config?.minimalFeed" style="display: inline-block">{{ t('vr.status.timer') }}</span>
+                    <span v-if="lastLocationTimer" style="display: inline-block">{{ lastLocationTimer }}</span>
+                    <span v-if="lastLocationTimer && (onlineForTimer || pcUptime)" style="display: inline-block"> | </span>
+                    <span v-if="onlineForTimer" style="display: inline-block; margin-left: 5px">{{ onlineForTimer }}</span>
+                    <span v-if="pcUptime && onlineForTimer" style="display: inline-block; margin-left: 5px"> | </span>
+                    <span v-if="pcUptime" style="display: inline-block; margin-left: 5px">{{ pcUptime }}</span>
+                </div>
+                <template v-if="lastLocation.playerList.length">
+                    <span v-if="!config?.minimalFeed" style="display: inline-block"
+                        >{{ t('vr.status.players') }}</span
+                    >
+                    <span style="display: inline-block"
+                        >{{ lastLocation.playerList.length }}</span>
                 </template>
+                <span v-if="lastLocation.friendList.length" style="display: inline-block; font-weight: bold; margin-left: 5px">({{lastLocation.friendList.length}})</span>
+                <!-- Bottom row -->
                 <br />
-                <span style="float: right">{{ currentTime }}</span>
+                <span style="position: absolute; right: 10px">{{ currentTime }}</span>
                 <span v-if="config && cpuUsageEnabled" style="display: inline-block; margin-right: 5px"
                     >{{ t('vr.status.cpu') }} {{ cpuUsage }}%</span
                 >
                 <span style="display: inline-block"
-                    >{{ t('vr.status.online') }} {{ onlineFriendCount }} ‎{{ customInfo }}</span
+                    >{{ t('vr.status.online') }} {{ onlineFriendCount }}</span
+                >
+                <span style="display: inline-block; margin-left: 5px"
+                    >{{ customInfo }}</span
                 >
             </div>
         </template>
+        <!-- HMD Overlay -->
         <template v-else>
             <svg class="np-progress-circle">
                 <circle
@@ -1263,7 +1260,7 @@
                         <template v-if="feed.type === 'ChangeAvatar'">
                             <span style="margin-left: 10px; color: #a3a3a3">ChangeAvatar</span>
                             <span v-if="!feed.inCache" style="color: #aaa; margin-left: 10px"
-                                ><i class="ri-download-line"></i>
+                                ><i class="ri-download-line is-loading"></i>
                             </span>
                             <span v-text="feed.avatar.name" style="margin-left: 10px"></span>
                             <span
@@ -1596,7 +1593,7 @@
                 const cpuUsage = await AppApiVr.CpuUsage();
                 vrState.cpuUsage = cpuUsage.toFixed(0);
             }
-            if (vrState.lastLocation.date !== 0) {
+            if (vrState.lastLocation.date) {
                 vrState.lastLocationTimer = timeToText(Date.now() - vrState.lastLocation.date);
             } else {
                 vrState.lastLocationTimer = '';
@@ -2018,3 +2015,9 @@
         hudTimeout
     } = toRefs(vrState);
 </script>
+
+<style scoped>
+    .ml-5 {
+        margin-left: 5px;
+    }
+</style>
