@@ -250,6 +250,34 @@
                 }
             }
         },
+        "tools": {
+            "header": "ツール",
+            "group": {
+                "header": "グループ",
+                "calendar": {
+                    "title": "カレンダー",
+                    "info": "グループイベントカレンダー"
+                }
+            },
+            "image": {
+                "header": "写真",
+                "screenshot": {
+                    "title": "スクリーンショットの管理",
+                    "info": "スクリーンショットのメタデータを管理"
+                },
+                "vrchat_inventory": {
+                    "title": "VRC+インベントリの管理",
+                    "info": "VRC+ギャラリーとインベントリの管理"
+                }
+            },
+            "user": {
+                "header": "ユーザー",
+                "export_notes": {
+                    "title": "ノートをエクスポート",
+                    "info": "VRCXユーザーメモをVRChatノートにエクスポート"
+                }
+            }
+        },
         "profile": {
             "profile": {
                 "header": "プロフィール",
@@ -1656,7 +1684,18 @@
             "save": "保存"
         },
         "group_calendar": {
-            "header": "グループカレンダー"
+            "header": "グループカレンダー",
+            "no_events": "イベントが見つかりません",
+            "search_placeholder": "グループまたはイベントを検索...",
+            "search_no_matching": "一致するイベントが見つかりません",
+            "search_no_this_month": "今月のイベントはありません",
+            "event_card": {
+                "category": "カテゴリ",
+                "interested_user": "興味のあるユーザー",
+                "close_time": "終了後にインスタンスを閉じる時間",
+                "created": "イベント作成日",
+                "description": "このイベントについて"
+            }
         },
         "moderate_group": {
             "header": "グループメンバーのモデレーション",

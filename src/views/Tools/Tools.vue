@@ -1,13 +1,13 @@
 <template>
     <div id="chart" class="x-container" v-show="menuActiveIndex === 'tools'">
         <div class="options-container" style="margin-top: 0">
-            <span class="header">Tools</span>
+            <span class="header">{{ t('view.tools.header') }}</span>
 
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
                         <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['group'] }"></i>
-                        <span class="category-title">Group</span>
+                        <span class="category-title">{{ t('view.tools.group.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
@@ -16,8 +16,8 @@
                                     <i class="ri-calendar-event-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">Calendar</div>
-                                    <div class="tool-description">Group Events Calendar</div>
+                                    <div class="tool-name">{{ t('view.tools.group.calendar.title') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.group.calendar.info') }}</div>
                                 </div>
                             </div>
                         </el-card>
@@ -27,7 +27,7 @@
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('image')">
                         <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['image'] }"></i>
-                        <span class="category-title">Image</span>
+                        <span class="category-title">{{ t('view.tools.image.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
@@ -36,8 +36,8 @@
                                     <i class="ri-screenshot-2-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">Screenshot Management</div>
-                                    <div class="tool-description">Manage screenshots and view metadata</div>
+                                    <div class="tool-name">{{ t('view.tools.image.screenshot.title') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.image.screenshot.info') }}</div>
                                 </div>
                             </div>
                         </el-card>
@@ -47,8 +47,8 @@
                                     <i class="ri-multi-image-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">VRC+ Images & Inventory Management</div>
-                                    <div class="tool-description">Manage VRC+ Images & Inventory</div>
+                                    <div class="tool-name">{{ t('view.tools.image.vrchat_inventory.title') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.image.vrchat_inventory.info') }}</div>
                                 </div>
                             </div>
                         </el-card>
@@ -58,7 +58,7 @@
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('user')">
                         <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['user'] }"></i>
-                        <span class="category-title">User</span>
+                        <span class="category-title">{{ t('view.tools.user.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
@@ -67,8 +67,8 @@
                                     <i class="ri-user-shared-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">Export User Notes</div>
-                                    <div class="tool-description">Export VRCX user memos to VRChat notes</div>
+                                    <div class="tool-name">{{ t('view.tools.user.export_notes.title') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.user.export_notes.info') }}</div>
                                 </div>
                             </div>
                         </el-card>

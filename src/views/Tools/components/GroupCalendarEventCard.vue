@@ -14,19 +14,21 @@
                             </div>
                         </template>
 
-                        <el-descriptions-item label="Category">{{
-                            capitalizeFirst(event.category)
-                        }}</el-descriptions-item>
-                        <el-descriptions-item label="Interested User">
+                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.category')">
+                            {{ capitalizeFirst(event.category) }}
+                        </el-descriptions-item>
+                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.interested_user')">
                             {{ event.interestedUserCount }}
                         </el-descriptions-item>
-                        <el-descriptions-item label="Close Instance After End">
+                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.close_time')">
                             {{ event.closeInstanceAfterEndMinutes + ' min' }}
                         </el-descriptions-item>
-                        <el-descriptions-item label="Created Date">{{
-                            dayjs(event.createdAt).format('YYYY-MM-DD HH:mm')
-                        }}</el-descriptions-item>
-                        <el-descriptions-item label="Description">{{ event.description }}</el-descriptions-item>
+                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.created')">
+                            {{ dayjs(event.createdAt).format('YYYY-MM-DD HH:mm') }}
+                        </el-descriptions-item>
+                        <el-descriptions-item :label="t('dialog.group_calendar.event_card.description')">
+                            {{ event.description }}
+                        </el-descriptions-item>
                     </el-descriptions>
                     <div class="event-title-content" slot="reference" @click="onGroupClick">
                         {{ event.title }}
@@ -50,9 +52,12 @@
 
 <script setup>
     import { computed } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
     import { useGroupStore } from '../../../stores';
+
+    const { t } = useI18n();
 
     const { cachedGroups } = storeToRefs(useGroupStore());
     const { showGroupDialog } = useGroupStore();
