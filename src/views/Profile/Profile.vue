@@ -549,9 +549,10 @@
 
     const visits = ref(0);
 
-    // redirect to tools tab
+    // redirect to tools tab and open gallery dialog
     function showGalleryDialog() {
         menuActiveIndex.value = 'tools';
+        useGalleryStore();
     }
 
     function getVisits() {
