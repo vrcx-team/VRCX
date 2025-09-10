@@ -4,7 +4,7 @@ import { computed, reactive, watch } from 'vue';
 import { notificationRequest, userRequest, worldRequest } from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { watchState } from '../service/watchState';
 import {
     checkCanInvite,
@@ -284,14 +284,14 @@ export const useNotificationStore = defineStore('Notification', () => {
                     )
                     .then((_args) => {
                         const text = `Auto invite sent to ${ref.senderUsername}`;
-                        if (AppGlobal.errorNoty) {
-                            AppGlobal.errorNoty.close();
+                        if (AppDebug.errorNoty) {
+                            AppDebug.errorNoty.close();
                         }
-                        AppGlobal.errorNoty = new Noty({
+                        AppDebug.errorNoty = new Noty({
                             type: 'info',
                             text
                         });
-                        AppGlobal.errorNoty.show();
+                        AppDebug.errorNoty.show();
                         console.log(text);
                         notificationRequest.hideNotification({
                             notificationId: ref.id

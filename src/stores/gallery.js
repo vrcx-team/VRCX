@@ -9,7 +9,7 @@ import {
     vrcPlusIconRequest,
     vrcPlusImageRequest
 } from '../api';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { watchState } from '../service/watchState';
 import {
     getEmojiFileName,
@@ -540,10 +540,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
             for (const printId of idList) {
                 await vrcPlusImageRequest.deletePrint(printId);
                 const text = `Old print automatically deleted: ${printId}`;
-                if (AppGlobal.errorNoty) {
-                    AppGlobal.errorNoty.close();
+                if (AppDebug.errorNoty) {
+                    AppDebug.errorNoty.close();
                 }
-                AppGlobal.errorNoty = new Noty({
+                AppDebug.errorNoty = new Noty({
                     type: 'info',
                     text
                 }).show();

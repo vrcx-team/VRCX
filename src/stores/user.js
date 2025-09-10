@@ -10,7 +10,7 @@ import {
     userRequest
 } from '../api';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { processBulk, request } from '../service/request';
 import { watchState } from '../service/watchState';
 import {
@@ -435,7 +435,7 @@ export const useUserStore = defineStore('User', () => {
         locationStore.updateCurrentUserLocation();
     }
 
-    const robotUrl = `${AppGlobal.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
+    const robotUrl = `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
     /**
      *
      * @param {import('../types/api/user').GetUserResponse} json
@@ -726,7 +726,7 @@ export const useUserStore = defineStore('User', () => {
                 ref.$location_at = ts;
             }
             handleUserUpdate(ref, changedProps);
-            if (AppGlobal.debugUserDiff) {
+            if (AppDebug.debugUserDiff) {
                 delete changedProps.last_login;
                 delete changedProps.last_activity;
                 if (Object.keys(changedProps).length !== 0) {
@@ -1304,7 +1304,7 @@ export const useUserStore = defineStore('User', () => {
                     time = 0;
                 }
             }
-            if (AppGlobal.debugFriendState && previousLocation) {
+            if (AppDebug.debugFriendState && previousLocation) {
                 console.log(
                     `${ref.displayName} GPS ${previousLocation} -> ${newLocation}`
                 );
@@ -1314,7 +1314,7 @@ export const useUserStore = defineStore('User', () => {
             }
             if (!previousLocation) {
                 // no previous location
-                if (AppGlobal.debugFriendState) {
+                if (AppDebug.debugFriendState) {
                     console.log(
                         ref.displayName,
                         'Ignoring GPS, no previous location',
@@ -1584,14 +1584,14 @@ export const useUserStore = defineStore('User', () => {
             })
             .then(() => {
                 const text = `Status automaticly changed to ${newStatus}`;
-                if (AppGlobal.errorNoty) {
-                    AppGlobal.errorNoty.close();
+                if (AppDebug.errorNoty) {
+                    AppDebug.errorNoty.close();
                 }
-                AppGlobal.errorNoty = new Noty({
+                AppDebug.errorNoty = new Noty({
                     type: 'info',
                     text
                 });
-                AppGlobal.errorNoty.show();
+                AppDebug.errorNoty.show();
                 console.log(text);
             });
     }

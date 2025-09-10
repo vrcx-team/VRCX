@@ -45,7 +45,7 @@
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { imageRequest } from '../../../api';
-    import { AppGlobal } from '../../../service/appConfig';
+    import { AppDebug } from '../../../service/appConfig';
     import { $throw } from '../../../service/request';
     import { extractFileId } from '../../../shared/utils';
     import { useAvatarStore, useGalleryStore } from '../../../stores';
@@ -310,7 +310,7 @@
         const { fileId, fileVersion } = args.params;
         const parmas = {
             id: avatarImage.value.avatarId,
-            imageUrl: `${AppGlobal.endpointDomain}/file/${fileId}/${fileVersion}/file`
+            imageUrl: `${AppDebug.endpointDomain}/file/${fileId}/${fileVersion}/file`
         };
         const res = await imageRequest.setAvatarImage(parmas);
         return avatarImageSet(res);
@@ -340,7 +340,7 @@
         changeAvatarImageDialogLoading.value = true;
         const parmas = {
             id: avatarDialog.value.id,
-            imageUrl: `${AppGlobal.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file`
+            imageUrl: `${AppDebug.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file`
         };
         imageRequest
             .setAvatarImage(parmas)
@@ -353,7 +353,7 @@
 
     function compareCurrentImage(image) {
         return (
-            `${AppGlobal.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file` ===
+            `${AppDebug.endpointDomain}/file/${props.previousImagesFileId}/${image.version}/file` ===
             avatarDialog.value.ref.imageUrl
         );
     }

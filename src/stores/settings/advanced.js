@@ -8,7 +8,7 @@ import webApiService from '../../service/webapi';
 import { watchState } from '../../service/watchState';
 import { useGameStore } from '../game';
 import { useVrcxStore } from '../vrcx';
-import { AppGlobal } from '../../service/appConfig';
+import { AppDebug } from '../../service/appConfig';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
@@ -502,7 +502,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 }
             });
             const json = JSON.parse(response.data);
-            if (AppGlobal.debugWebRequests) {
+            if (AppDebug.debugWebRequests) {
                 console.log(json, response);
             }
             if (response.status === 200) {

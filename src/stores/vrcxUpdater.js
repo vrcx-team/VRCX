@@ -7,7 +7,7 @@ import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useUiStore } from './ui';
 import { useI18n } from 'vue-i18n';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 
 export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const uiStore = useUiStore();
@@ -253,7 +253,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         state.pendingVRCXUpdate = false;
         const json = JSON.parse(response.data);
-        if (AppGlobal.debugWebRequests) {
+        if (AppDebug.debugWebRequests) {
             console.log(json, response);
         }
         if (json === Object(json) && json.name && json.published_at) {
@@ -315,7 +315,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             state.checkingForVRCXUpdate = false;
         }
         const json = JSON.parse(response.data);
-        if (AppGlobal.debugWebRequests) {
+        if (AppDebug.debugWebRequests) {
             console.log(json, response);
         }
         const releases = [];

@@ -70,7 +70,7 @@
                             <el-input
                                 v-model="loginForm.endpoint"
                                 name="endpoint"
-                                :placeholder="AppGlobal.endpointDomainVrchat"
+                                :placeholder="AppDebug.endpointDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item
@@ -81,7 +81,7 @@
                             <el-input
                                 v-model="loginForm.websocket"
                                 name="websocket"
-                                :placeholder="AppGlobal.websocketDomainVrchat"
+                                :placeholder="AppDebug.websocketDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item>
@@ -160,7 +160,7 @@
     import { useI18n } from 'vue-i18n';
     import { useAuthStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
-    import { AppGlobal } from '../../service/appConfig';
+    import { AppDebug } from '../../service/appConfig';
 
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());

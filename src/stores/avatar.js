@@ -4,7 +4,7 @@ import { computed, reactive, watch, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { avatarRequest, imageRequest } from '../api';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import webApiService from '../service/webapi';
 import { watchState } from '../service/watchState';
 import {
@@ -482,7 +482,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                     }
                 });
                 const json = JSON.parse(response.data);
-                if (AppGlobal.debugWebRequests) {
+                if (AppDebug.debugWebRequests) {
                     console.log(json, response);
                 }
                 if (response.status === 200 && typeof json === 'object') {
@@ -562,7 +562,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 }
             });
             const json = JSON.parse(response.data);
-            if (AppGlobal.debugWebRequests) {
+            if (AppDebug.debugWebRequests) {
                 console.log(json, response);
             }
             if (response.status === 200 && typeof json === 'object') {

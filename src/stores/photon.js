@@ -5,7 +5,7 @@ import * as workerTimers from 'worker-timers';
 import { instanceRequest, userRequest } from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { photonEventType } from '../shared/constants/photon';
 import {
     checkVRChatCache,
@@ -1291,7 +1291,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         const datetime = json.dt;
         const eventData = json.VRCEventData;
         const senderId = eventData.Sender;
-        if (AppGlobal.debugPhotonLogging) {
+        if (AppDebug.debugPhotonLogging) {
             console.log('VrcEvent:', json);
         }
         if (eventData.EventName === '_SendOnSpawn') {
@@ -1353,7 +1353,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                     '$1:'
                 )}`;
             }
-            if (AppGlobal.debugPhotonLogging) {
+            if (AppDebug.debugPhotonLogging) {
                 const displayName = getDisplayNameFromPhotonId(senderId);
                 const feed = `RPC ${displayName} ${
                     photonEventType[eventData.EventType]

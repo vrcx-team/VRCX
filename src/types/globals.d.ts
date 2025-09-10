@@ -9,6 +9,7 @@ declare global {
         $app: any;
         $pinia: any;
         $vr: any;
+        $debug: AppDebug;
         AppApi: AppApi;
         AppApiVr: AppApiVr;
         WebApi: WebApi;
@@ -69,10 +70,9 @@ declare global {
                 on(channel: String, func: (...args: unknown[]) => void);
             };
         };
-        __APP_GLOBALS__: AppGlobals;
     }
 
-    interface AppGlobals {
+    interface AppDebug {
         debug: boolean;
         debugWebSocket: boolean;
         debugUserDiff: boolean;

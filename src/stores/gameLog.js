@@ -6,7 +6,7 @@ import * as workerTimers from 'worker-timers';
 import { userRequest } from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import gameLogService from '../service/gamelog.js';
 import { watchState } from '../service/watchState';
 import {
@@ -627,7 +627,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     // set $location_at to join time if user isn't a friend
                     ref.$location_at = joinTime;
                 } else {
-                    if (AppGlobal.debugGameLog || AppGlobal.debugWebRequests) {
+                    if (AppDebug.debugGameLog || AppDebug.debugWebRequests) {
                         console.log('Fetching user from gameLog:', userId);
                     }
                     userRequest.getUser({ userId });
@@ -744,7 +744,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 vrcxStore.processScreenshot(gameLog.screenshotPath);
                 break;
             case 'api-request':
-                if (AppGlobal.debugWebRequests) {
+                if (AppDebug.debugWebRequests) {
                     console.log('API Request:', gameLog.url);
                 }
                 // const userId = '';
@@ -1387,7 +1387,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             rawLogs.slice(3)
         );
         if (
-            AppGlobal.debugGameLog &&
+            AppDebug.debugGameLog &&
             gameLog.type !== 'photon-id' &&
             gameLog.type !== 'api-request' &&
             gameLog.type !== 'udon-exception'

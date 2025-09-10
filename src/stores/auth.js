@@ -6,7 +6,7 @@ import { authRequest } from '../api';
 import { useI18n } from 'vue-i18n';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { request } from '../service/request';
 import security from '../service/security';
 import webApiService from '../service/webapi';
@@ -211,8 +211,8 @@ export const useAuthStore = defineStore('Auth', () => {
                     state.loginForm.lastUserLoggedIn
                 ];
             if (user?.loginParmas?.endpoint) {
-                AppGlobal.endpointDomain = user.loginParmas.endpoint;
-                AppGlobal.websocketDomain = user.loginParmas.websocket;
+                AppDebug.endpointDomain = user.loginParmas.endpoint;
+                AppDebug.websocketDomain = user.loginParmas.websocket;
             }
             // login at startup
             state.loginForm.loading = true;
@@ -469,11 +469,11 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         state.loginForm.lastUserLoggedIn = user.user.id; // for resend email 2fa
         if (loginParmas.endpoint) {
-            AppGlobal.endpointDomain = loginParmas.endpoint;
-            AppGlobal.websocketDomain = loginParmas.websocket;
+            AppDebug.endpointDomain = loginParmas.endpoint;
+            AppDebug.websocketDomain = loginParmas.websocket;
         } else {
-            AppGlobal.endpointDomain = AppGlobal.endpointDomainVrchat;
-            AppGlobal.websocketDomain = AppGlobal.websocketDomainVrchat;
+            AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
+            AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
         }
         return new Promise((resolve, reject) => {
             state.loginForm.loading = true;
@@ -560,11 +560,11 @@ export const useAuthStore = defineStore('Auth', () => {
         if (!state.loginForm.loading) {
             state.loginForm.loading = true;
             if (state.loginForm.endpoint) {
-                AppGlobal.endpointDomain = state.loginForm.endpoint;
-                AppGlobal.websocketDomain = state.loginForm.websocket;
+                AppDebug.endpointDomain = state.loginForm.endpoint;
+                AppDebug.websocketDomain = state.loginForm.websocket;
             } else {
-                AppGlobal.endpointDomain = AppGlobal.endpointDomainVrchat;
-                AppGlobal.websocketDomain = AppGlobal.websocketDomainVrchat;
+                AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
+                AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
             }
             authRequest
                 .getConfig()
@@ -849,20 +849,20 @@ export const useAuthStore = defineStore('Auth', () => {
         state.autoLoginAttempts.add(new Date().getTime());
         relogin(user)
             .then(() => {
-                if (AppGlobal.errorNoty) {
-                    AppGlobal.errorNoty.close();
+                if (AppDebug.errorNoty) {
+                    AppDebug.errorNoty.close();
                 }
-                AppGlobal.errorNoty = new Noty({
+                AppDebug.errorNoty = new Noty({
                     type: 'success',
                     text: 'Automatically logged in.'
                 }).show();
                 console.log('Automatically logged in.');
             })
             .catch((err) => {
-                if (AppGlobal.errorNoty) {
-                    AppGlobal.errorNoty.close();
+                if (AppDebug.errorNoty) {
+                    AppDebug.errorNoty.close();
                 }
-                AppGlobal.errorNoty = new Noty({
+                AppDebug.errorNoty = new Noty({
                     type: 'error',
                     text: 'Failed to login automatically.'
                 }).show();
@@ -870,7 +870,7 @@ export const useAuthStore = defineStore('Auth', () => {
             })
             .finally(() => {
                 if (!navigator.onLine) {
-                    AppGlobal.errorNoty = new Noty({
+                    AppDebug.errorNoty = new Noty({
                         type: 'error',
                         text: `You're offline.`
                     }).show();
