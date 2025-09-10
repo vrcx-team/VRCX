@@ -54,11 +54,9 @@
     import { Check } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import dayjs from 'dayjs';
-    import { storeToRefs } from 'pinia';
     import { useGroupStore } from '../../../stores';
 
-    const { cachedGroups } = storeToRefs(useGroupStore());
-    const { showGroupDialog } = useGroupStore();
+    const { cachedGroups, showGroupDialog } = useGroupStore();
 
     const props = defineProps({
         event: {
@@ -90,13 +88,13 @@
         if (props.event.imageUrl) {
             return props.event.imageUrl;
         } else {
-            return cachedGroups.value.get(props.event.ownerId)?.bannerUrl || '';
+            return cachedGroups.get(props.event.ownerId)?.bannerUrl || '';
         }
     });
 
     const groupName = computed(() => {
         if (!props.event) return '';
-        return cachedGroups.value.get(props.event.ownerId)?.name || '';
+        return cachedGroups.get(props.event.ownerId)?.name || '';
     });
 
     const formattedTime = computed(() => {

@@ -83,7 +83,7 @@ export const useGroupStore = defineStore('Group', () => {
             auditLogTypes: [],
             openWithUserId: ''
         },
-        cachedGroups: new Map(),
+        // cachedGroups: new Map(),
         inGameGroupOrder: [],
         groupInstances: [],
         currentUserGroupsInit: false
@@ -124,12 +124,7 @@ export const useGroupStore = defineStore('Group', () => {
         }
     });
 
-    const cachedGroups = computed({
-        get: () => state.cachedGroups,
-        set: (value) => {
-            state.cachedGroups = value;
-        }
-    });
+    const cachedGroups = new Map();
 
     const inGameGroupOrder = computed({
         get: () => state.inGameGroupOrder,
@@ -160,7 +155,7 @@ export const useGroupStore = defineStore('Group', () => {
             state.moderateGroupDialog.visible = false;
             state.groupMemberModeration.visible = false;
             state.currentUserGroupsInit = false;
-            state.cachedGroups.clear();
+            cachedGroups.clear();
             state.currentUserGroups.clear();
             if (isLoggedIn) {
                 initUserGroups();
@@ -619,7 +614,7 @@ export const useGroupStore = defineStore('Group', () => {
      * @returns {object} ref
      */
     function applyGroup(json) {
-        let ref = state.cachedGroups.get(json.id);
+        let ref = cachedGroups.get(json.id);
         if (json.rules) {
             json.rules = replaceBioSymbols(json.rules);
         }
@@ -687,7 +682,7 @@ export const useGroupStore = defineStore('Group', () => {
                 $languages: [],
                 ...json
             };
-            state.cachedGroups.set(ref.id, ref);
+            cachedGroups.set(ref.id, ref);
         } else {
             if (state.currentUserGroups.has(ref.id)) {
                 // compare group props
@@ -848,7 +843,7 @@ export const useGroupStore = defineStore('Group', () => {
         const json = args.json;
         for (const groupId in json) {
             const permissions = json[groupId];
-            const group = state.cachedGroups.get(groupId);
+            const group = cachedGroups.get(groupId);
             if (group) {
                 group.myMember.permissions = permissions;
             }
@@ -899,7 +894,7 @@ export const useGroupStore = defineStore('Group', () => {
                 json.$fetchedAt = args.json.fetchedAt;
             }
             const instanceRef = instanceStore.applyInstance(json);
-            const groupRef = state.cachedGroups.get(json.ownerId);
+            const groupRef = cachedGroups.get(json.ownerId);
             if (typeof groupRef === 'undefined') {
                 if (watchState.isFriendsLoaded) {
                     const args = await groupRequest.getGroup({
@@ -939,7 +934,7 @@ export const useGroupStore = defineStore('Group', () => {
         }
         // update myMember without fetching member
         if (json?.userId === userStore.currentUser.id) {
-            ref = state.cachedGroups.get(json.groupId);
+            ref = cachedGroups.get(json.groupId);
             if (typeof ref !== 'undefined') {
                 const newJson = {
                     id: json.groupId,
@@ -983,7 +978,7 @@ export const useGroupStore = defineStore('Group', () => {
                 '[]'
             )
         );
-        state.cachedGroups.clear();
+        cachedGroups.clear();
         state.currentUserGroups.clear();
         for (const group of savedGroups) {
             const json = {
@@ -1002,7 +997,7 @@ export const useGroupStore = defineStore('Group', () => {
 
         if (groups) {
             const promises = groups.map(async (groupId) => {
-                const groupRef = state.cachedGroups.get(groupId);
+                const groupRef = cachedGroups.get(groupId);
 
                 if (
                     typeof groupRef !== 'undefined' &&

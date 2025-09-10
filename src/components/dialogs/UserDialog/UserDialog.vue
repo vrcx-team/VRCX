@@ -1875,15 +1875,14 @@
 
     const { hideUserNotes, hideUserMemos } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
-    const { userDialog, languageDialog, currentUser, cachedUsers } = storeToRefs(useUserStore());
-    const { showUserDialog, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
+    const { userDialog, languageDialog, currentUser } = storeToRefs(useUserStore());
+    const { cachedUsers, showUserDialog, sortUserDialogAvatars, refreshUserDialogAvatars, refreshUserDialogTreeData } =
         useUserStore();
     const { favoriteLimits } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog, handleFavoriteWorldList } = useFavoriteStore();
     const { showAvatarDialog, lookupAvatars, showAvatarAuthorDialog } = useAvatarStore();
-    const { cachedAvatars } = storeToRefs(useAvatarStore());
-    const { cachedWorlds } = storeToRefs(useWorldStore());
-    const { showWorldDialog } = useWorldStore();
+    const { cachedAvatars } = useAvatarStore();
+    const { cachedWorlds, showWorldDialog } = useWorldStore();
     const {
         showGroupDialog,
         applyGroup,
@@ -2396,7 +2395,7 @@
     }
 
     function handleSendFriendRequest(args) {
-        const ref = cachedUsers.value.get(args.params.userId);
+        const ref = cachedUsers.get(args.params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -2421,7 +2420,7 @@
     }
 
     function handleCancelFriendRequest(args) {
-        const ref = cachedUsers.value.get(args.params.userId);
+        const ref = cachedUsers.get(args.params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -2693,7 +2692,7 @@
         userDialogAvatars.value.forEach((avatar) => {
             avatars.add(avatar.id);
         });
-        for (const ref of cachedAvatars.value.values()) {
+        for (const ref of cachedAvatars.values()) {
             if (ref.authorId === userId && !avatars.has(ref.id)) {
                 userDialog.value.avatars.push(ref);
             }
@@ -2703,7 +2702,7 @@
 
     function setUserDialogWorlds(userId) {
         const worlds = [];
-        for (const ref of cachedWorlds.value.values()) {
+        for (const ref of cachedWorlds.values()) {
             if (ref.authorId === userId) {
                 worlds.push(ref);
             }
@@ -2731,9 +2730,9 @@
             params.releaseStatus = 'all';
         }
         const map = new Map();
-        for (const ref of cachedWorlds.value.values()) {
+        for (const ref of cachedWorlds.values()) {
             if (ref.authorId === D.id && (ref.authorId === currentUser.value.id || ref.releaseStatus === 'public')) {
-                cachedWorlds.value.delete(ref.id);
+                cachedWorlds.delete(ref.id);
             }
         }
         processBulk({
@@ -2742,7 +2741,7 @@
             params,
             handle: (args) => {
                 for (const json of args.json) {
-                    const $ref = cachedWorlds.value.get(json.id);
+                    const $ref = cachedWorlds.get(json.id);
                     if (typeof $ref !== 'undefined') {
                         map.set($ref.id, $ref);
                     }
@@ -2832,7 +2831,7 @@
                 userRequest.getUser({ userId: targetUserId });
             }
         }
-        const ref = cachedUsers.value.get(targetUserId);
+        const ref = cachedUsers.get(targetUserId);
         if (typeof ref !== 'undefined') {
             ref.note = _note;
         }

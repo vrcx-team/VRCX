@@ -1710,6 +1710,9 @@
                         <el-button size="small" :icon="Timer" @click="promptAutoClearVRCXCacheFrequency">{{
                             t('view.settings.advanced.advanced.cache_debug.auto_clear_cache')
                         }}</el-button>
+                        <el-button size="small" :icon="Refresh" @click="refreshCacheSize">{{
+                            t('view.settings.advanced.advanced.cache_debug.refresh_cache')
+                        }}</el-button>
                     </div>
 
                     <simple-switch
@@ -1720,37 +1723,37 @@
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.user_cache') }}
-                            <span v-text="cachedUsers.size"></span
+                            <span v-text="cacheSize.cachedUsers"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.world_cache') }}
-                            <span v-text="cachedWorlds.size"></span
+                            <span v-text="cacheSize.cachedWorlds"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.avatar_cache') }}
-                            <span v-text="cachedAvatars.size"></span
+                            <span v-text="cacheSize.cachedAvatars"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.group_cache') }}
-                            <span v-text="cachedGroups.size"></span
+                            <span v-text="cacheSize.cachedGroups"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }}
-                            <span v-text="cachedAvatarNames.size"></span
+                            <span v-text="cacheSize.cachedAvatarNames"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.instance_cache') }}
-                            <span v-text="cachedInstances.size"></span
+                            <span v-text="cacheSize.cachedInstances"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
@@ -1884,7 +1887,7 @@
     } from '@element-plus/icons-vue';
 
     import { storeToRefs } from 'pinia';
-    import { ref, computed, defineAsyncComponent } from 'vue';
+    import { ref, computed, defineAsyncComponent, reactive } from 'vue';
     import { useI18n } from 'vue-i18n';
     import {
         useFavoriteStore,
@@ -1925,7 +1928,7 @@
     );
 
     const { messages, t } = useI18n();
-    const { cachedUsers } = storeToRefs(useUserStore());
+    const { cachedUsers } = useUserStore();
     const generalSettingsStore = useGeneralSettingsStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const notificationsSettingsStore = useNotificationsSettingsStore();
@@ -1938,8 +1941,8 @@
     const { setAutoUpdateVRCX, checkForVRCXUpdate, showVRCXUpdateDialog, showChangeLogDialog } = useVRCXUpdaterStore();
     const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
     const { saveSortFavoritesOption } = useFavoriteStore();
-    const { cachedGroups } = storeToRefs(useGroupStore());
-    const { cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
+    const { cachedGroups } = useGroupStore();
+    const { cachedAvatars, cachedAvatarNames } = useAvatarStore();
     const { showConsole } = useVrcxStore();
     const {
         discordActive,
@@ -1981,8 +1984,8 @@
         timeoutHudOverlayFilter
     } = storeToRefs(usePhotonStore());
     const { saveSidebarSortOrder } = useFriendStore();
-    const { cachedWorlds } = storeToRefs(useWorldStore());
-    const { cachedInstances } = storeToRefs(useInstanceStore());
+    const { cachedWorlds } = useWorldStore();
+    const { cachedInstances } = useInstanceStore();
     const { showLaunchOptions } = useLaunchStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { enablePrimaryPasswordChange } = useAuthStore();
@@ -2211,6 +2214,15 @@
 
     const zoomLevel = ref(100);
 
+    const cacheSize = reactive({
+        cachedUsers: 0,
+        cachedWorlds: 0,
+        cachedAvatars: 0,
+        cachedGroups: 0,
+        cachedAvatarNames: 0,
+        cachedInstances: 0
+    });
+
     const isLinux = computed(() => LINUX);
 
     initGetZoomLevel();
@@ -2230,6 +2242,15 @@
 
     function setZoomLevel() {
         AppApi.SetZoom(zoomLevel.value / 10 - 10);
+    }
+
+    function refreshCacheSize() {
+        cacheSize.cachedUsers = cachedUsers.size;
+        cacheSize.cachedWorlds = cachedWorlds.size;
+        cacheSize.cachedAvatars = cachedAvatars.size;
+        cacheSize.cachedGroups = cachedGroups.size;
+        cacheSize.cachedAvatarNames = cachedAvatarNames.size;
+        cacheSize.cachedInstances = cachedInstances.size;
     }
 
     function showNotyFeedFiltersDialog() {

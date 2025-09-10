@@ -339,10 +339,8 @@
     const { setAvatarProvider } = useAvatarProviderStore();
     const { userDialog } = storeToRefs(useUserStore());
     const { showUserDialog, refreshUserDialogAvatars } = useUserStore();
-    const { showAvatarDialog, lookupAvatars } = useAvatarStore();
-    const { cachedAvatars } = storeToRefs(useAvatarStore());
-    const { cachedWorlds } = storeToRefs(useWorldStore());
-    const { showWorldDialog } = useWorldStore();
+    const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
+    const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog, applyGroup } = useGroupStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
@@ -516,7 +514,7 @@
             .then((args) => {
                 const map = new Map();
                 for (const json of args.json) {
-                    const ref = cachedWorlds.value.get(json.id);
+                    const ref = cachedWorlds.get(json.id);
                     if (typeof ref !== 'undefined') {
                         map.set(ref.id, ref);
                     }
@@ -545,7 +543,7 @@
         const query = searchText.value;
         const queryUpper = query.toUpperCase();
         if (!query) {
-            for (ref of cachedAvatars.value.values()) {
+            for (ref of cachedAvatars.values()) {
                 switch (searchAvatarFilter.value) {
                     case 'all':
                         avatars.set(ref.id, ref);
@@ -565,7 +563,7 @@
             isSearchAvatarLoading.value = false;
         } else {
             if (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'local') {
-                for (ref of cachedAvatars.value.values()) {
+                for (ref of cachedAvatars.values()) {
                     let match = ref.name.toUpperCase().includes(queryUpper);
                     if (!match && ref.description) {
                         match = ref.description.toUpperCase().includes(queryUpper);

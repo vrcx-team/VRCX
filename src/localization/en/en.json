@@ -653,6 +653,7 @@
                         "avatar_name_cache": "Avatar Name cache:",
                         "instance_cache": "Instance cache:",
                         "clear_cache": "Clear Cache",
+                        "refresh_cache": "Refresh Cache",
                         "auto_clear_cache": "Auto Clear Cache",
                         "show_console": "Show Console"
                     },

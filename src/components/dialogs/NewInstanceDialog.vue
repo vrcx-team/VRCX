@@ -528,8 +528,8 @@
     const { t } = useI18n();
 
     const { friends, vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
-    const { currentUserGroups, cachedGroups } = storeToRefs(useGroupStore());
-    const { handleGroupPermissions } = useGroupStore();
+    const { currentUserGroups } = storeToRefs(useGroupStore());
+    const { cachedGroups, handleGroupPermissions } = useGroupStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showLaunchDialog } = useLaunchStore();
     const { createNewInstance } = useInstanceStore();
@@ -778,7 +778,7 @@
         }
         if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
             D.roleIds = [];
-            const ref = cachedGroups.value.get(D.groupId);
+            const ref = cachedGroups.get(D.groupId);
             if (typeof ref !== 'undefined') {
                 D.groupRef = ref;
                 D.selectedGroupRoles = ref.roles;
@@ -853,7 +853,7 @@
         }
         if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
             D.roleIds = [];
-            const ref = cachedGroups.value.get(D.groupId);
+            const ref = cachedGroups.get(D.groupId);
             if (typeof ref !== 'undefined') {
                 D.groupRef = ref;
                 D.selectedGroupRoles = ref.roles;

@@ -388,7 +388,6 @@
                                     class="x-friend-list"
                                     style="margin: 10px 0; max-height: unset">
                                     <div
-                                        v-if="room.$location.userId"
                                         class="x-friend-item x-friend-item-border"
                                         @click="showUserDialog(room.$location.userId)">
                                         <template v-if="room.$location.user">
@@ -833,8 +832,8 @@
     const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser, userDialog } = storeToRefs(useUserStore());
-    const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());
-    const { showWorldDialog } = useWorldStore();
+    const { worldDialog } = storeToRefs(useWorldStore());
+    const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { newInstanceSelfInvite, canOpenInstanceInGame } = useInviteStore();
     const { showFavoriteDialog } = useFavoriteStore();
@@ -1113,10 +1112,10 @@
                                     })
                                     .then((args) => {
                                         const { json } = args;
-                                        cachedWorlds.value.delete(json.id);
+                                        cachedWorlds.delete(json.id);
                                         if (worldDialog.value.ref.authorId === json.authorId) {
                                             const map = new Map();
-                                            for (const ref of cachedWorlds.value.values()) {
+                                            for (const ref of cachedWorlds.values()) {
                                                 if (ref.authorId === json.authorId) {
                                                     map.set(ref.id, ref);
                                                 }

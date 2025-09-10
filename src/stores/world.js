@@ -50,8 +50,7 @@ export const useWorldStore = defineStore('World', () => {
             isQuest: false,
             isIos: false,
             hasPersistData: false
-        },
-        cachedWorlds: new Map()
+        }
     });
 
     const worldDialog = computed({
@@ -61,18 +60,13 @@ export const useWorldStore = defineStore('World', () => {
         }
     });
 
-    const cachedWorlds = computed({
-        get: () => state.cachedWorlds,
-        set: (value) => {
-            state.cachedWorlds = value;
-        }
-    });
+    const cachedWorlds = new Map();
 
     watch(
         () => watchState.isLoggedIn,
         () => {
             state.worldDialog.visible = false;
-            state.cachedWorlds.clear();
+            cachedWorlds.clear();
         },
         { flush: 'sync' }
     );
@@ -240,7 +234,7 @@ export const useWorldStore = defineStore('World', () => {
         if (json.description) {
             json.description = replaceBioSymbols(json.description);
         }
-        let ref = state.cachedWorlds.get(json.id);
+        let ref = cachedWorlds.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -283,7 +277,7 @@ export const useWorldStore = defineStore('World', () => {
                 //
                 ...json
             };
-            state.cachedWorlds.set(ref.id, ref);
+            cachedWorlds.set(ref.id, ref);
         } else {
             Object.assign(ref, json);
         }

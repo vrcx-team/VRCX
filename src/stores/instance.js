@@ -45,7 +45,6 @@ export const useInstanceStore = defineStore('Instance', () => {
     const { t } = useI18n();
 
     const state = reactive({
-        cachedInstances: new Map(),
         currentInstanceWorld: {
             ref: {},
             instance: {},
@@ -80,14 +79,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         updatePlayerListPending: false
     });
 
-    const cachedInstances = computed({
-        get() {
-            return state.cachedInstances;
-        },
-        set(value) {
-            state.cachedInstances = value;
-        }
-    });
+    const cachedInstances = new Map();
 
     const currentInstanceWorld = computed({
         get: () => state.currentInstanceWorld,
@@ -144,7 +136,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             state.currentInstanceUserList.data = [];
             state.instanceJoinHistory = new Map();
             state.previousInstancesInfoDialogVisible = false;
-            state.cachedInstances.clear();
+            cachedInstances.clear();
             state.queuedInstances.clear();
             if (isLoggedIn) {
                 getInstanceJoinHistory();
@@ -285,7 +277,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 });
         }
         if (isRealInstance(instanceId)) {
-            const ref = state.cachedInstances.get(instanceId);
+            const ref = cachedInstances.get(instanceId);
             if (typeof ref !== 'undefined') {
                 state.currentInstanceWorld.instance = ref;
             } else {
@@ -322,7 +314,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         if (!json.$fetchedAt) {
             json.$fetchedAt = new Date().toJSON();
         }
-        let ref = state.cachedInstances.get(json.id);
+        let ref = cachedInstances.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -371,7 +363,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 $disabledContentSettings: [],
                 ...json
             };
-            state.cachedInstances.set(ref.id, ref);
+            cachedInstances.set(ref.id, ref);
         } else {
             Object.assign(ref, json);
         }
@@ -685,7 +677,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         // get instance from cache
         for (const room of rooms) {
-            ref = state.cachedInstances.get(room.tag);
+            ref = cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 room.ref = ref;
             }

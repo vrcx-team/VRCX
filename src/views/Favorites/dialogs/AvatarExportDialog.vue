@@ -110,8 +110,7 @@
         localAvatarFavoriteGroups
     } = storeToRefs(favoriteStore);
     const { getLocalAvatarFavoriteGroupLength } = favoriteStore;
-    const avatarStore = useAvatarStore();
-    const { cachedAvatars } = storeToRefs(avatarStore);
+    const { cachedAvatars } = useAvatarStore();
 
     const avatarExportContent = ref('');
     const avatarExportFavoriteGroup = ref(null);
@@ -213,7 +212,7 @@
             });
             for (let i = 0; i < localAvatarFavoritesList.value.length; ++i) {
                 const avatarId = localAvatarFavoritesList.value[i];
-                const ref = cachedAvatars.value.get(avatarId);
+                const ref = cachedAvatars.get(avatarId);
                 if (typeof ref !== 'undefined') {
                     lines.push(resText(ref));
                 }

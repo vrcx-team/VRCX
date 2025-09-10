@@ -639,9 +639,11 @@
 
     const { showUserDialog, sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
-    const { avatarDialog, cachedAvatarModerations, cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
+    const avatarStore = useAvatarStore();
+    const { cachedAvatarModerations, cachedAvatars, cachedAvatarNames } = avatarStore;
+    const { avatarDialog } = storeToRefs(avatarStore);
     const { showAvatarDialog, getAvatarGallery, applyAvatarModeration, applyAvatar, selectAvatarWithoutConfirmation } =
-        useAvatarStore();
+        avatarStore;
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { deleteVRChatCache } = useGameStore();
@@ -861,7 +863,7 @@
                                         targetAvatarId: D.id
                                     })
                                     .then((args) => {
-                                        cachedAvatarModerations.value.delete(args.params.targetAvatarId);
+                                        cachedAvatarModerations.delete(args.params.targetAvatarId);
                                         const D = avatarDialog.value;
                                         if (
                                             args.params.avatarModerationType === 'block' &&
@@ -908,10 +910,10 @@
                                     })
                                     .then((args) => {
                                         const { json } = args;
-                                        cachedAvatars.value.delete(json._id);
+                                        cachedAvatars.delete(json._id);
                                         if (userDialog.value.id === json.authorId) {
                                             const map = new Map();
-                                            for (const ref of cachedAvatars.value.values()) {
+                                            for (const ref of cachedAvatars.values()) {
                                                 if (ref.authorId === json.authorId) {
                                                     map.set(ref.id, ref);
                                                 }
@@ -1003,7 +1005,7 @@
             changeAvatarImageDialogVisible.value = true;
         }
         imageRequest.getAvatarImages(params).then((args) => {
-            storeAvatarImage(args, cachedAvatarNames.value);
+            storeAvatarImage(args, cachedAvatarNames);
             previousImagesFileId.value = args.json.id;
 
             const images = [];
@@ -1138,7 +1140,7 @@
                     break;
             }
         });
-        for (const ref of cachedAvatars.value.values()) {
+        for (const ref of cachedAvatars.values()) {
             if (ref.authorId === currentUser.value.id) {
                 ref.$selected = false;
                 ref.$tagString = '';

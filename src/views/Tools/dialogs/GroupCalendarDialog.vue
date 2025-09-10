@@ -112,14 +112,13 @@
     import { ArrowRight } from '@element-plus/icons-vue';
     import { ref, watch, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { storeToRefs } from 'pinia';
     import dayjs from 'dayjs';
     import { groupRequest } from '../../../api';
     import { useGroupStore } from '../../../stores';
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
     import { replaceBioSymbols } from '../../../shared/utils';
 
-    const { cachedGroups } = storeToRefs(useGroupStore());
+    const { cachedGroups } = useGroupStore();
 
     const { t } = useI18n();
 
@@ -309,7 +308,7 @@
 
     function getGroupName(event) {
         if (!event) return '';
-        return cachedGroups.value.get(event.ownerId)?.name || '';
+        return cachedGroups.get(event.ownerId)?.name || '';
     }
 
     async function getCalendarData() {

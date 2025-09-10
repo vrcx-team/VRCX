@@ -19,13 +19,11 @@
 
 <script setup>
     import { Loading, Lock } from '@element-plus/icons-vue';
-    import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
 
-    const { cachedWorlds } = storeToRefs(useWorldStore());
-    const { showWorldDialog } = useWorldStore();
+    const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
@@ -85,7 +83,7 @@
                 text.value = props.hint;
             }
         } else if (L.worldId) {
-            const ref = cachedWorlds.value.get(L.worldId);
+            const ref = cachedWorlds.get(L.worldId);
             if (typeof ref === 'undefined') {
                 getWorldName(L.worldId).then((worldName) => {
                     if (L.tag === instanceId) {

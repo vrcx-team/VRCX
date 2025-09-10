@@ -110,7 +110,7 @@
         localWorldFavoritesList
     } = storeToRefs(favoriteStore);
     const { getLocalWorldFavoriteGroupLength } = favoriteStore;
-    const { cachedWorlds } = storeToRefs(useWorldStore());
+    const { cachedWorlds } = useWorldStore();
 
     const worldExportContent = ref('');
     const worldExportFavoriteGroup = ref(null);
@@ -216,7 +216,7 @@
             });
             for (let i = 0; i < localWorldFavoritesList.value.length; ++i) {
                 const worldId = localWorldFavoritesList.value[i];
-                const ref = cachedWorlds.value.get(worldId);
+                const ref = cachedWorlds.get(worldId);
                 if (typeof ref !== 'undefined') {
                     lines.push(resText(ref));
                 }

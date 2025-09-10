@@ -172,7 +172,6 @@ export const useUserStore = defineStore('User', () => {
             $travelingToLocation: ''
         },
         currentTravelers: new Map(),
-        cachedUsers: new Map(),
         userDialog: {
             visible: false,
             loading: false,
@@ -292,12 +291,7 @@ export const useUserStore = defineStore('User', () => {
         }
     });
 
-    const cachedUsers = computed({
-        get: () => state.cachedUsers,
-        set: (value) => {
-            state.cachedUsers = value;
-        }
-    });
+    const cachedUsers = new Map();
 
     const userDialog = computed({
         get: () => state.userDialog,
@@ -444,7 +438,7 @@ export const useUserStore = defineStore('User', () => {
     function applyUser(json) {
         let hasPropChanged = false;
         const changedProps = {};
-        let ref = state.cachedUsers.get(json.id);
+        let ref = cachedUsers.get(json.id);
         if (json.statusDescription) {
             json.statusDescription = replaceBioSymbols(json.statusDescription);
             json.statusDescription = removeEmojis(json.statusDescription);
@@ -553,7 +547,7 @@ export const useUserStore = defineStore('User', () => {
                 ref.$customTag = '';
                 ref.$customTagColour = '';
             }
-            state.cachedUsers.set(ref.id, ref);
+            cachedUsers.set(ref.id, ref);
         } else {
             if (json.state !== 'online') {
                 // offline event before GPS to offline location
@@ -1015,7 +1009,7 @@ export const useUserStore = defineStore('User', () => {
         }
         D.$location = L;
         if (L.userId) {
-            ref = state.cachedUsers.get(L.userId);
+            ref = cachedUsers.get(L.userId);
             if (typeof ref === 'undefined') {
                 userRequest
                     .getUser({
@@ -1031,10 +1025,10 @@ export const useUserStore = defineStore('User', () => {
         const users = [];
         let friendCount = 0;
         const playersInInstance = locationStore.lastLocation.playerList;
-        const cachedCurrentUser = state.cachedUsers.get(state.currentUser.id);
+        const cachedCurrentUser = cachedUsers.get(state.currentUser.id);
         const currentLocation = cachedCurrentUser.$location.tag;
         if (!L.isOffline && currentLocation === L.tag) {
-            ref = state.cachedUsers.get(state.currentUser.id);
+            ref = cachedUsers.get(state.currentUser.id);
             if (typeof ref !== 'undefined') {
                 users.push(ref); // add self
             }
@@ -1051,7 +1045,7 @@ export const useUserStore = defineStore('User', () => {
                     return friend.userId === user.id;
                 });
                 if (addUser) {
-                    ref = state.cachedUsers.get(friend.userId);
+                    ref = cachedUsers.get(friend.userId);
                     if (typeof ref !== 'undefined') {
                         users.push(ref);
                     }
@@ -1216,7 +1210,7 @@ export const useUserStore = defineStore('User', () => {
         if (!ref.displayName || ref.displayName.substring(0, 3) === 'ID:') {
             return;
         }
-        for (ctx of state.cachedUsers.values()) {
+        for (ctx of cachedUsers.values()) {
             if (ctx.displayName === ref.displayName) {
                 showUserDialog(ctx.id);
                 return;
@@ -1613,7 +1607,7 @@ export const useUserStore = defineStore('User', () => {
             'updateHudFeedTag',
             JSON.stringify(feedUpdate)
         );
-        const ref = state.cachedUsers.get(data.UserId);
+        const ref = cachedUsers.get(data.UserId);
         if (typeof ref !== 'undefined') {
             ref.$customTag = data.Tag;
             ref.$customTagColour = data.TagColour;
@@ -1627,7 +1621,7 @@ export const useUserStore = defineStore('User', () => {
         state.notes.clear();
         try {
             // todo: get users from store
-            const users = state.cachedUsers;
+            const users = cachedUsers;
             const dbNotes = await database.getAllUserNotes();
             for (const note of dbNotes) {
                 state.notes.set(note.userId, note.note);
@@ -1688,7 +1682,7 @@ export const useUserStore = defineStore('User', () => {
             console.error('Error fetching user notes:', error);
         }
         // todo: get users from store
-        const users = state.cachedUsers;
+        const users = cachedUsers;
 
         for (const note of newNotes.values()) {
             const newNote = {
@@ -1864,7 +1858,7 @@ export const useUserStore = defineStore('User', () => {
             if (gameStore.isGameRunning) {
                 ref.$previousAvatarSwapTime = Date.now();
             }
-            state.cachedUsers.clear(); // clear before running applyUser
+            cachedUsers.clear(); // clear before running applyUser
             state.currentUser = ref;
             authStore.loginComplete();
         }

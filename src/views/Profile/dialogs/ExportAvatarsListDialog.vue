@@ -23,8 +23,7 @@
 
     const { t } = useI18n();
 
-    const { cachedAvatars } = storeToRefs(useAvatarStore());
-    const { applyAvatar } = useAvatarStore();
+    const { applyAvatar, cachedAvatars } = useAvatarStore();
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -59,9 +58,9 @@
 
     function initExportAvatarsListDialog() {
         loading.value = true;
-        for (const ref of cachedAvatars.value.values()) {
+        for (const ref of cachedAvatars.values()) {
             if (ref.authorId === currentUser.value.id) {
-                cachedAvatars.value.delete(ref.id);
+                cachedAvatars.delete(ref.id);
             }
         }
         const params = {

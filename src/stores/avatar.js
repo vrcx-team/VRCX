@@ -1,4 +1,3 @@
-import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -55,11 +54,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
             cachePath: '',
             fileAnalysis: []
         },
-        cachedAvatarModerations: new Map(),
         avatarHistory: new Set(),
-        avatarHistoryArray: [],
-        cachedAvatars: new Map(),
-        cachedAvatarNames: new Map()
+        avatarHistoryArray: []
     });
 
     const avatarDialog = computed({
@@ -76,34 +72,17 @@ export const useAvatarStore = defineStore('Avatar', () => {
         }
     });
 
-    const cachedAvatarModerations = computed({
-        get: () => state.cachedAvatarModerations,
-        set: (value) => {
-            state.cachedAvatarModerations = value;
-        }
-    });
-
-    const cachedAvatars = computed({
-        get: () => state.cachedAvatars,
-        set: (value) => {
-            state.cachedAvatars = value;
-        }
-    });
-
-    const cachedAvatarNames = computed({
-        get: () => state.cachedAvatarNames,
-        set: (value) => {
-            state.cachedAvatarNames = value;
-        }
-    });
+    const cachedAvatarModerations = new Map();
+    const cachedAvatars = new Map();
+    const cachedAvatarNames = new Map();
 
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
             state.avatarDialog.visible = false;
-            state.cachedAvatars.clear();
-            state.cachedAvatarNames.clear();
-            state.cachedAvatarModerations.clear();
+            cachedAvatars.clear();
+            cachedAvatarNames.clear();
+            cachedAvatarModerations.clear();
             state.avatarHistory.clear();
             state.avatarHistoryArray = [];
             if (isLoggedIn) {
@@ -120,7 +99,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
     function applyAvatar(json) {
         json.name = replaceBioSymbols(json.name);
         json.description = replaceBioSymbols(json.description);
-        let ref = state.cachedAvatars.get(json.id);
+        let ref = cachedAvatars.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
                 acknowledgements: '',
@@ -152,7 +131,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 version: 0,
                 ...json
             };
-            state.cachedAvatars.set(ref.id, ref);
+            cachedAvatars.set(ref.id, ref);
         } else {
             const { unityPackages } = ref;
             Object.assign(ref, json);
@@ -228,8 +207,8 @@ export const useAvatarStore = defineStore('Avatar', () => {
             favoriteStore.cachedFavoritesByObjectId.has(avatarId) ||
             (userStore.currentUser.$isVRCPlus &&
                 favoriteStore.localAvatarFavoritesList.includes(avatarId));
-        D.isBlocked = state.cachedAvatarModerations.has(avatarId);
-        const ref2 = state.cachedAvatars.get(avatarId);
+        D.isBlocked = cachedAvatarModerations.has(avatarId);
+        const ref2 = cachedAvatars.get(avatarId);
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
             updateVRChatAvatarCache();
@@ -325,7 +304,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             json.created = new Date(json.created).toJSON();
         }
 
-        let ref = state.cachedAvatarModerations.get(json.targetAvatarId);
+        let ref = cachedAvatarModerations.get(json.targetAvatarId);
         if (typeof ref === 'undefined') {
             ref = {
                 avatarModerationType: '',
@@ -333,7 +312,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 targetAvatarId: '',
                 ...json
             };
-            state.cachedAvatarModerations.set(ref.targetAvatarId, ref);
+            cachedAvatarModerations.set(ref.targetAvatarId, ref);
         } else {
             Object.assign(ref, json);
         }
@@ -452,12 +431,12 @@ export const useAvatarStore = defineStore('Avatar', () => {
                 avatarName: '-'
             };
         }
-        if (state.cachedAvatarNames.has(fileId)) {
-            return state.cachedAvatarNames.get(fileId);
+        if (cachedAvatarNames.has(fileId)) {
+            return cachedAvatarNames.get(fileId);
         }
         try {
             const args = await imageRequest.getAvatarImages({ fileId });
-            return storeAvatarImage(args, state.cachedAvatarNames);
+            return storeAvatarImage(args, cachedAvatarNames);
         } catch (error) {
             console.error('Failed to get avatar images:', error);
             return {
@@ -630,7 +609,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
 
     function checkAvatarCache(fileId) {
         let avatarId = '';
-        for (let ref of state.cachedAvatars.values()) {
+        for (let ref of cachedAvatars.values()) {
             if (extractFileId(ref.imageUrl) === fileId) {
                 avatarId = ref.id;
             }
