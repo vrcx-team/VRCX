@@ -277,6 +277,8 @@ export const useUserStore = defineStore('User', () => {
         notes: new Map()
     });
 
+    let cachedUsers = new Map();
+
     const currentUser = computed({
         get: () => state.currentUser,
         set: (value) => {
@@ -290,8 +292,6 @@ export const useUserStore = defineStore('User', () => {
             state.currentTravelers = value;
         }
     });
-
-    const cachedUsers = new Map();
 
     const userDialog = computed({
         get: () => state.userDialog,
@@ -337,9 +337,16 @@ export const useUserStore = defineStore('User', () => {
 
     watch(
         () => watchState.isLoggedIn,
-        () => {
-            state.userDialog.visible = false;
-            state.languageDialog.visible = false;
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.currentTravelers.clear();
+                state.showUserDialogHistory.clear();
+                state.instancePlayerCount.clear();
+                state.customUserTags.clear();
+                state.notes.clear();
+                state.pastDisplayNameTable.data = [];
+                state.subsetOfLanguages = [];
+            }
         },
         { flush: 'sync' }
     );

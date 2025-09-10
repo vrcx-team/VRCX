@@ -79,7 +79,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         updatePlayerListPending: false
     });
 
-    const cachedInstances = new Map();
+    let cachedInstances = new Map();
 
     const currentInstanceWorld = computed({
         get: () => state.currentInstanceWorld,

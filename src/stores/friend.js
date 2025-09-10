@@ -58,7 +58,6 @@ export const useFriendStore = defineStore('Friend', () => {
         localFavoriteFriends: new Set(),
         isRefreshFriendsLoading: false,
         onlineFriendCount: 0,
-        friendLog: new Map(),
         friendLogTable: {
             data: [],
             filters: [
@@ -97,6 +96,26 @@ export const useFriendStore = defineStore('Friend', () => {
         friendNumber: 0
     });
 
+    let friendLog = new Map();
+
+    const friends = computed({
+        get() {
+            return state.friends;
+        },
+        set(value) {
+            state.friends = value;
+        }
+    });
+
+    const localFavoriteFriends = computed({
+        get() {
+            return state.localFavoriteFriends;
+        },
+        set(value) {
+            state.localFavoriteFriends = value;
+        }
+    });
+
     async function init() {
         const friendLogTableFiltersValue = JSON.parse(
             await configRepository.getString('VRCX_friendLogTableFilters', '[]')
@@ -105,8 +124,6 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     init();
-
-    const friends = state.friends;
 
     // friends_(array) may not have change records in pinia because does not use action
     const onlineFriends_ = computed({
@@ -173,19 +190,21 @@ export const useFriendStore = defineStore('Friend', () => {
             state.sortOfflineFriends = value;
         }
     });
-    const localFavoriteFriends = state.localFavoriteFriends;
 
     // VIP friends
     const vipFriends = computed(() => {
         if (!state.sortVIPFriends) {
             return state.vipFriends_;
         }
-        state.sortVIPFriends = false;
 
-        state.vipFriends_.sort(
+        const sorted = [...state.vipFriends_].sort(
             getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
         );
-        return state.vipFriends_;
+
+        state.vipFriends_ = sorted;
+        state.sortVIPFriends = false;
+
+        return sorted;
     });
 
     // Online friends
@@ -193,13 +212,15 @@ export const useFriendStore = defineStore('Friend', () => {
         if (!state.sortOnlineFriends) {
             return state.onlineFriends_;
         }
-        state.sortOnlineFriends = false;
 
-        state.onlineFriends_.sort(
+        const sorted = [...state.onlineFriends_].sort(
             getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
         );
 
-        return state.onlineFriends_;
+        state.onlineFriends_ = sorted;
+        state.sortOnlineFriends = false;
+
+        return sorted;
     });
 
     // Active friends
@@ -207,13 +228,15 @@ export const useFriendStore = defineStore('Friend', () => {
         if (!state.sortActiveFriends) {
             return state.activeFriends_;
         }
-        state.sortActiveFriends = false;
 
-        state.activeFriends_.sort(
+        const sorted = [...state.activeFriends_].sort(
             getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
         );
 
-        return state.activeFriends_;
+        state.activeFriends_ = sorted;
+        state.sortActiveFriends = false;
+
+        return sorted;
     });
 
     // Offline friends
@@ -221,13 +244,15 @@ export const useFriendStore = defineStore('Friend', () => {
         if (!state.sortOfflineFriends) {
             return state.offlineFriends_;
         }
-        state.sortOfflineFriends = false;
 
-        state.offlineFriends_.sort(
+        const sorted = [...state.offlineFriends_].sort(
             getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
         );
 
-        return state.offlineFriends_;
+        state.offlineFriends_ = sorted;
+        state.sortOfflineFriends = false;
+
+        return sorted;
     });
 
     const isRefreshFriendsLoading = computed({
@@ -247,15 +272,6 @@ export const useFriendStore = defineStore('Friend', () => {
         }
     });
 
-    const friendLog = computed({
-        get() {
-            return state.friendLog;
-        },
-        set(value) {
-            state.friendLog = value;
-        }
-    });
-
     const friendLogTable = computed({
         get() {
             return state.friendLogTable;
@@ -270,7 +286,7 @@ export const useFriendStore = defineStore('Friend', () => {
         (isLoggedIn) => {
             state.friends.clear();
             state.friendNumber = 0;
-            state.friendLog.clear();
+            friendLog.clear();
             state.friendLogTable.data = [];
             groupStore.groupInstances = [];
             state.vipFriends_ = [];
@@ -343,7 +359,7 @@ export const useFriendStore = defineStore('Friend', () => {
         if (
             watchState.isFriendsLoaded &&
             ref.isFriend &&
-            !state.friendLog.has(ref.id) &&
+            !friendLog.has(ref.id) &&
             ref.id !== userStore.currentUser.id
         ) {
             addFriendship(ref.id);
@@ -780,7 +796,7 @@ export const useFriendStore = defineStore('Friend', () => {
         const ref = userStore.cachedUsers.get(id);
         const isVIP = state.localFavoriteFriends.has(id);
         let name = '';
-        const friend = state.friendLog.get(id);
+        const friend = friendLog.get(id);
         if (friend) {
             name = friend.displayName;
         }
@@ -809,7 +825,7 @@ export const useFriendStore = defineStore('Friend', () => {
             });
         }
         if (typeof ref === 'undefined') {
-            const friendLogRef = state.friendLog.get(id);
+            const friendLogRef = friendLog.get(id);
             if (friendLogRef?.displayName) {
                 ctx.name = friendLogRef.displayName;
             }
@@ -1118,7 +1134,7 @@ export const useFriendStore = defineStore('Friend', () => {
     function addFriendship(id) {
         if (
             !watchState.isFriendsLoaded ||
-            state.friendLog.has(id) ||
+            friendLog.has(id) ||
             id === userStore.currentUser.id
         ) {
             return;
@@ -1139,7 +1155,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     return;
                 }
                 handleFriendStatus(args);
-                if (args.json.isFriend && !state.friendLog.has(id)) {
+                if (args.json.isFriend && !friendLog.has(id)) {
                     if (state.friendNumber === 0) {
                         state.friendNumber = state.friends.size;
                     }
@@ -1165,7 +1181,7 @@ export const useFriendStore = defineStore('Friend', () => {
                         trustLevel: ref.$trustLevel,
                         friendNumber: ref.$friendNumber
                     };
-                    state.friendLog.set(id, friendLogCurrent);
+                    friendLog.set(id, friendLogCurrent);
                     database.setFriendLogCurrent(friendLogCurrent);
                     uiStore.notifyMenu('friendLog');
                     deleteFriendRequest(id);
@@ -1208,7 +1224,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {string} id
      */
     function deleteFriendship(id) {
-        const ctx = state.friendLog.get(id);
+        const ctx = friendLog.get(id);
         if (typeof ctx === 'undefined') {
             return;
         }
@@ -1223,7 +1239,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     return;
                 }
                 handleFriendStatus(args);
-                if (!args.json.isFriend && state.friendLog.has(id)) {
+                if (!args.json.isFriend && friendLog.has(id)) {
                     const friendLogHistory = {
                         created_at: new Date().toJSON(),
                         type: 'Unfriend',
@@ -1233,7 +1249,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     state.friendLogTable.data.push(friendLogHistory);
                     database.addFriendLogHistory(friendLogHistory);
                     notificationStore.queueFriendLogNoty(friendLogHistory);
-                    state.friendLog.delete(id);
+                    friendLog.delete(id);
                     database.deleteFriendLogCurrent(id);
                     if (!appearanceSettingsStore.hideUnfriends) {
                         uiStore.notifyMenu('friendLog');
@@ -1255,9 +1271,9 @@ export const useFriendStore = defineStore('Friend', () => {
             set.add(id);
             addFriendship(id);
         }
-        for (id of state.friendLog.keys()) {
+        for (id of friendLog.keys()) {
             if (id === userStore.currentUser.id) {
-                state.friendLog.delete(id);
+                friendLog.delete(id);
                 database.deleteFriendLogCurrent(id);
             } else if (!set.has(id)) {
                 deleteFriendship(id);
@@ -1270,7 +1286,7 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {object} ref
      */
     function updateFriendship(ref) {
-        const ctx = state.friendLog.get(ref.id);
+        const ctx = friendLog.get(ref.id);
         if (!watchState.isFriendsLoaded || typeof ctx === 'undefined') {
             return;
         }
@@ -1301,7 +1317,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     trustLevel: ref.$trustLevel,
                     friendNumber: ref.$friendNumber
                 };
-                state.friendLog.set(ref.id, friendLogCurrent);
+                friendLog.set(ref.id, friendLogCurrent);
                 database.setFriendLogCurrent(friendLogCurrent);
                 ctx.displayName = ref.displayName;
                 uiStore.notifyMenu('friendLog');
@@ -1325,7 +1341,7 @@ export const useFriendStore = defineStore('Friend', () => {
                     trustLevel: ref.$trustLevel,
                     friendNumber: ref.$friendNumber
                 };
-                state.friendLog.set(ref.id, friendLogCurrent3);
+                friendLog.set(ref.id, friendLogCurrent3);
                 database.setFriendLogCurrent(friendLogCurrent3);
                 return;
             }
@@ -1347,7 +1363,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 trustLevel: ref.$trustLevel,
                 friendNumber: ref.$friendNumber
             };
-            state.friendLog.set(ref.id, friendLogCurrent2);
+            friendLog.set(ref.id, friendLogCurrent2);
             database.setFriendLogCurrent(friendLogCurrent2);
             uiStore.notifyMenu('friendLog');
             sharedFeedStore.updateSharedFeed(true);
@@ -1372,7 +1388,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 trustLevel: ref.$trustLevel,
                 friendNumber: 0
             };
-            state.friendLog.set(friend.id, row);
+            friendLog.set(friend.id, row);
             sqlValues.unshift(row);
         }
         database.setFriendLogCurrentArray(sqlValues);
@@ -1414,7 +1430,7 @@ export const useFriendStore = defineStore('Friend', () => {
 
         const friendLogCurrentArray = await database.getFriendLogCurrent();
         for (friend of friendLogCurrentArray) {
-            state.friendLog.set(friend.userId, friend);
+            friendLog.set(friend.userId, friend);
         }
         refreshFriendsStatus(currentUser);
 
@@ -1443,12 +1459,12 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {string} userId
      */
     function setFriendNumber(friendNumber, userId) {
-        const ref = state.friendLog.get(userId);
+        const ref = friendLog.get(userId);
         if (!ref) {
             return;
         }
         ref.friendNumber = friendNumber;
-        state.friendLog.set(ref.userId, ref);
+        friendLog.set(ref.userId, ref);
         database.setFriendLogCurrent(ref);
         const friendRef = state.friends.get(userId);
         if (friendRef?.ref) {
@@ -1467,7 +1483,7 @@ export const useFriendStore = defineStore('Friend', () => {
 
         // reset friendNumber and friendLog
         state.friendNumber = 0;
-        for (const ref of state.friendLog.values()) {
+        for (const ref of friendLog.values()) {
             ref.friendNumber = 0;
         }
 
@@ -1504,7 +1520,7 @@ export const useFriendStore = defineStore('Friend', () => {
         }
         var status = false;
         state.friendNumber = 0;
-        for (const ref of state.friendLog.values()) {
+        for (const ref of friendLog.values()) {
             ref.friendNumber = 0;
         }
         try {
@@ -1595,7 +1611,7 @@ export const useFriendStore = defineStore('Friend', () => {
         const friendLogTable = getFriendLogFriendOrder();
         for (let i = friendLogTable.length - 1; i > -1; i--) {
             const friendLog = friendLogTable[i];
-            const ref = state.friendLog.get(friendLog.id);
+            const ref = friendLog.get(friendLog.id);
             if (!ref) {
                 continue;
             }
@@ -1603,7 +1619,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 break;
             }
             ref.friendNumber = --state.friendNumber;
-            state.friendLog.set(ref.userId, ref);
+            friendLog.set(ref.userId, ref);
             database.setFriendLogCurrent(ref);
             const friendRef = state.friends.get(friendLog.id);
             if (friendRef?.ref) {
@@ -1714,7 +1730,7 @@ export const useFriendStore = defineStore('Friend', () => {
                 trustLevel: ref.$trustLevel,
                 friendNumber: i + 1
             };
-            state.friendLog.set(userId, friendLogCurrent);
+            friendLog.set(userId, friendLogCurrent);
             database.setFriendLogCurrent(friendLogCurrent);
             state.friendNumber = i + 1;
         }
@@ -1729,12 +1745,12 @@ export const useFriendStore = defineStore('Friend', () => {
             return;
         }
         for (const friendLog of friendLogTable) {
-            const ref = state.friendLog.get(friendLog.id);
+            const ref = friendLog.get(friendLog.id);
             if (!ref || ref.friendNumber) {
                 continue;
             }
             ref.friendNumber = ++state.friendNumber;
-            state.friendLog.set(ref.userId, ref);
+            friendLog.set(ref.userId, ref);
             database.setFriendLogCurrent(ref);
             const friendRef = state.friends.get(friendLog.id);
             if (friendRef?.ref) {
@@ -1769,7 +1785,7 @@ export const useFriendStore = defineStore('Friend', () => {
         const userId = userStore.currentUser.id;
         state.isRefreshFriendsLoading = true;
         watchState.isFriendsLoaded = false;
-        state.friendLog = new Map();
+        friendLog = new Map();
         initFriendLogHistoryTable();
 
         try {

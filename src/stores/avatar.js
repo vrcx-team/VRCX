@@ -58,6 +58,10 @@ export const useAvatarStore = defineStore('Avatar', () => {
         avatarHistoryArray: []
     });
 
+    let cachedAvatarModerations = new Map();
+    let cachedAvatars = new Map();
+    let cachedAvatarNames = new Map();
+
     const avatarDialog = computed({
         get: () => state.avatarDialog,
         set: (value) => {
@@ -71,10 +75,6 @@ export const useAvatarStore = defineStore('Avatar', () => {
             state.avatarHistoryArray = value;
         }
     });
-
-    const cachedAvatarModerations = new Map();
-    const cachedAvatars = new Map();
-    const cachedAvatarNames = new Map();
 
     watch(
         () => watchState.isLoggedIn,

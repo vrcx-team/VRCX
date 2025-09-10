@@ -53,14 +53,14 @@ export const useWorldStore = defineStore('World', () => {
         }
     });
 
+    let cachedWorlds = new Map();
+
     const worldDialog = computed({
         get: () => state.worldDialog,
         set: (value) => {
             state.worldDialog = value;
         }
     });
-
-    const cachedWorlds = new Map();
 
     watch(
         () => watchState.isLoggedIn,

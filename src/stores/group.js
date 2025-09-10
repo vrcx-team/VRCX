@@ -88,6 +88,8 @@ export const useGroupStore = defineStore('Group', () => {
         currentUserGroupsInit: false
     });
 
+    let cachedGroups = new Map();
+
     const groupDialog = computed({
         get: () => state.groupDialog,
         set: (value) => {
@@ -122,8 +124,6 @@ export const useGroupStore = defineStore('Group', () => {
             state.groupMemberModeration = value;
         }
     });
-
-    const cachedGroups = new Map();
 
     const inGameGroupOrder = computed({
         get: () => state.inGameGroupOrder,
