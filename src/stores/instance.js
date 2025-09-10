@@ -852,7 +852,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         // get instance
         for (const room of rooms) {
-            ref = cachedInstances.value.get(room.tag);
+            ref = cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 room.ref = ref;
             } else if (isRealInstance(room.tag)) {
