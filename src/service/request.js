@@ -52,7 +52,7 @@ export function request(endpoint, options) {
             if (lastRun >= Date.now() - 900000) {
                 // 15mins
                 $throw(
-                    0,
+                    -1,
                     t('api.error.message.403_404_bailing_request'),
                     endpoint
                 );
@@ -278,7 +278,21 @@ export function $throw(code, error, endpoint) {
         );
     }
     const text = message.map((s) => escapeTag(s)).join('<br>');
-    if (text.length) {
+    let ignoreError = false;
+    if (
+        (code === 404 || code === -1) &&
+        endpoint.split('/').length === 2 &&
+        (endpoint.startsWith('users/') ||
+            endpoint.startsWith('worlds/') ||
+            endpoint.startsWith('avatars/') ||
+            endpoint.startsWith('file/'))
+    ) {
+        ignoreError = true;
+    }
+    if (endpoint.startsWith('analysis/')) {
+        ignoreError = true;
+    }
+    if (text.length && !ignoreError) {
         if (AppDebug.errorNoty) {
             AppDebug.errorNoty.close();
         }
