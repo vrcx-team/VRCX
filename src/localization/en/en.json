@@ -767,7 +767,6 @@
                 "show_avatar_author": "Show Avatar Author",
                 "show_fallback_avatar": "Show Fallback Avatar Details",
                 "show_previous_instances": "Show Previous Instances",
-                "show_previous_images": "Show Previous Images",
                 "moderation_block": "Block",
                 "moderation_unblock": "Unblock",
                 "moderation_mute": "Mute",
@@ -916,7 +915,6 @@
                 "make_home": "Make Home",
                 "reset_home": "Reset Home",
                 "show_previous_instances": "Show Previous Instances",
-                "show_previous_images": "Show Previous Images",
                 "rename": "Rename",
                 "change_description": "Change Description",
                 "change_capacity": "Change Capacity",
@@ -1003,7 +1001,6 @@
                 "select_fallback": "Select Fallback Avatar",
                 "block": "Block Avatar",
                 "unblock": "Unblock Avatar",
-                "show_previous_images": "Show Previous Images",
                 "make_public": "Make Public",
                 "make_private": "Make Private",
                 "rename": "Rename",
@@ -1519,11 +1516,7 @@
             "avatar": "Change Avatar Image",
             "world": "Change World Image",
             "description": "Recommended image size: 1200x900px (4:3)",
-            "refresh": "Refresh",
             "upload": "Upload Image"
-        },
-        "previous_images": {
-            "header": "Previous Images"
         },
         "previous_instances": {
             "header": "Previous Instances",

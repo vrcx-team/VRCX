@@ -33,9 +33,9 @@ const avatarReq = {
             return args;
         });
     },
+
     /**
-     * @param {{ id: string, releaseStatus?: 'public' | 'private', name?: string, description?: string,tags?: string[] }} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/api/avatar').SaveAvatar}
      */
     saveAvatar(params) {
         return request(`avatars/${params.id}`, {
@@ -164,6 +164,24 @@ const avatarReq = {
         return request(`files`, {
             params,
             method: 'GET'
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
+    },
+
+    uploadAvatarImage(imageData) {
+        const params = {
+            tag: 'avatarimage'
+        };
+        return request('file/image', {
+            uploadImage: true,
+            matchingDimensions: false,
+            postData: JSON.stringify(params),
+            imageData
         }).then((json) => {
             const args = {
                 json,

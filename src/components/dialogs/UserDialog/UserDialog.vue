@@ -453,12 +453,6 @@
                                             t('dialog.user.actions.show_previous_instances')
                                         }}</el-dropdown-item>
                                         <el-dropdown-item
-                                            v-if="userDialog.ref.currentAvatarImageUrl"
-                                            :icon="Picture"
-                                            command="Previous Images">
-                                            {{ t('dialog.user.actions.show_previous_images') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
                                             v-if="userDialog.isBlock"
                                             :icon="CircleCheck"
                                             command="Moderation Unblock"
@@ -1742,7 +1736,6 @@
             @closeInviteDialog="closeInviteDialog" />
         <template v-if="userDialog.visible">
             <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
-            <PreviousImagesDialog />
             <InviteGroupDialog />
             <SocialStatusDialog
                 :social-status-dialog="socialStatusDialog"
@@ -1806,7 +1799,6 @@
         favoriteRequest,
         friendRequest,
         groupRequest,
-        imageRequest,
         miscRequest,
         notificationRequest,
         playerModerationRequest,
@@ -1862,7 +1854,6 @@
     import SendInviteDialog from '../InviteDialog/SendInviteDialog.vue';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
 
-    const PreviousImagesDialog = defineAsyncComponent(() => import('../PreviousImagesDialog.vue'));
     const BioDialog = defineAsyncComponent(() => import('./BioDialog.vue'));
     const LanguageDialog = defineAsyncComponent(() => import('./LanguageDialog.vue'));
     const PreviousInstancesUserDialog = defineAsyncComponent(() => import('./PreviousInstancesUserDialog.vue'));
@@ -1899,8 +1890,7 @@
     const { refreshInviteMessageTableData } = useInviteStore();
     const { friendLogTable } = storeToRefs(useFriendStore());
     const { getFriendRequest, handleFriendDelete } = useFriendStore();
-    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-    const { clearInviteImageUpload, checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
+    const { clearInviteImageUpload, showFullscreenImageDialog } = useGalleryStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
@@ -2216,30 +2206,6 @@
         sendInviteRequestDialogVisible.value = true;
     }
 
-    function displayPreviousImages() {
-        previousImagesTable.value = [];
-        const imageUrl = userDialog.value.ref.currentAvatarImageUrl;
-
-        const fileId = extractFileId(imageUrl);
-        if (!fileId) {
-            return;
-        }
-        const params = {
-            fileId
-        };
-        previousImagesDialogVisible.value = true;
-
-        imageRequest.getAvatarImages(params).then((args) => {
-            const images = [];
-            args.json.versions.forEach((item) => {
-                if (!item.deleted) {
-                    images.unshift(item);
-                }
-            });
-            checkPreviousImageAvailable(images);
-        });
-    }
-
     function showInviteGroupDialog(groupId, userId) {
         inviteGroupDialog.value.groupId = groupId;
         inviteGroupDialog.value.userId = userId;
@@ -2341,8 +2307,6 @@
                     type: 'error'
                 });
             }
-        } else if (command === 'Previous Images') {
-            displayPreviousImages();
         } else if (command === 'Previous Instances') {
             showPreviousInstancesUserDialog(D.ref);
         } else if (command === 'Manage Gallery') {

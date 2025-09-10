@@ -50,14 +50,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Blake2Sharp">
-      <HintPath>libs\Blake2Sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="librsync.net">
-      <HintPath>libs\librsync.net.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.manifest" />
     <None Include="..\Version">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

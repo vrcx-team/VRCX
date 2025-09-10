@@ -186,8 +186,6 @@ declare global {
         // Common Functions
         MD5File(blob: string): Promise<string>;
         GetColourFromUserID(userId: string): Promise<number>;
-        SignFile(blob: string): Promise<string>;
-        FileLength(blob: string): Promise<string>;
         OpenLink(url: string): Promise<void>;
         GetLaunchCommand(): Promise<string>;
         IPCAnnounceStart(): Promise<void>;

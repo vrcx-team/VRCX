@@ -293,12 +293,6 @@
                                         command="Select Fallback Avatar"
                                         >{{ t('dialog.avatar.actions.select_fallback') }}</el-dropdown-item
                                     >
-                                    <el-dropdown-item
-                                        v-if="avatarDialog.ref.authorId !== currentUser.id"
-                                        :icon="Picture"
-                                        command="Previous Images"
-                                        >{{ t('dialog.avatar.actions.show_previous_images') }}</el-dropdown-item
-                                    >
                                     <template v-if="avatarDialog.ref.authorId === currentUser.id">
                                         <el-dropdown-item
                                             v-if="avatarDialog.ref.releaseStatus === 'public'"
@@ -578,10 +572,8 @@
             <SetAvatarStylesDialog :set-avatar-styles-dialog="setAvatarStylesDialog" />
             <ChangeAvatarImageDialog
                 v-model:changeAvatarImageDialogVisible="changeAvatarImageDialogVisible"
-                :previous-images-file-id="previousImagesFileId"
-                @refresh="displayPreviousImages" />
-            <PreviousImagesDialog
-        /></template>
+                v-model:previousImageUrl="previousImageUrl" />
+        </template>
     </el-dialog>
 </template>
 
@@ -612,7 +604,7 @@
     import { storeToRefs } from 'pinia';
     import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { avatarModerationRequest, avatarRequest, favoriteRequest, imageRequest, miscRequest } from '../../../api';
+    import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
     import { database } from '../../../service/database';
     import {
         getNextDialogIndex,
@@ -624,7 +616,6 @@
         openExternalLink,
         openFolderGeneric,
         replaceVrcPackageUrl,
-        storeAvatarImage,
         timeToText,
         moveArrayItem,
         formatDateFilter,
@@ -632,7 +623,6 @@
     } from '../../../shared/utils';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
 
-    const PreviousImagesDialog = defineAsyncComponent(() => import('../PreviousImagesDialog.vue'));
     const ChangeAvatarImageDialog = defineAsyncComponent(() => import('./ChangeAvatarImageDialog.vue'));
     const SetAvatarStylesDialog = defineAsyncComponent(() => import('./SetAvatarStylesDialog.vue'));
     const SetAvatarTagsDialog = defineAsyncComponent(() => import('./SetAvatarTagsDialog.vue'));
@@ -640,23 +630,21 @@
     const { showUserDialog, sortUserDialogAvatars } = useUserStore();
     const { userDialog, currentUser } = storeToRefs(useUserStore());
     const avatarStore = useAvatarStore();
-    const { cachedAvatarModerations, cachedAvatars, cachedAvatarNames } = avatarStore;
+    const { cachedAvatarModerations, cachedAvatars } = avatarStore;
     const { avatarDialog } = storeToRefs(avatarStore);
     const { showAvatarDialog, getAvatarGallery, applyAvatarModeration, applyAvatar, selectAvatarWithoutConfirmation } =
         avatarStore;
     const { showFavoriteDialog } = useFavoriteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
     const { deleteVRChatCache } = useGameStore();
-    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-    const { showFullscreenImageDialog, checkPreviousImageAvailable } = useGalleryStore();
+    const { showFullscreenImageDialog } = useGalleryStore();
 
     const { t } = useI18n();
-    defineEmits(['openPreviousImagesDialog']);
 
     const avatarDialogIndex = ref(2000);
     const avatarDialogLastActiveTab = ref('Info');
     const changeAvatarImageDialogVisible = ref(false);
-    const previousImagesFileId = ref('');
+    const previousImageUrl = ref('');
 
     const treeData = ref([]);
     const timeSpent = ref(0);
@@ -791,10 +779,7 @@
                 promptRenameAvatar(D);
                 break;
             case 'Change Image':
-                displayPreviousImages('Change');
-                break;
-            case 'Previous Images':
-                displayPreviousImages('Display');
+                showChangeAvatarImageDialog();
                 break;
             case 'Change Description':
                 promptChangeAvatarDescription(D);
@@ -987,35 +972,10 @@
         }
     }
 
-    function displayPreviousImages(command) {
-        previousImagesTable.value = [];
-        previousImagesFileId.value = '';
+    function showChangeAvatarImageDialog() {
         const { imageUrl } = avatarDialog.value.ref;
-        const fileId = extractFileId(imageUrl);
-        if (!fileId) {
-            return;
-        }
-        const params = {
-            fileId
-        };
-        if (command === 'Display') {
-            previousImagesDialogVisible.value = true;
-        }
-        if (command === 'Change') {
-            changeAvatarImageDialogVisible.value = true;
-        }
-        imageRequest.getAvatarImages(params).then((args) => {
-            storeAvatarImage(args, cachedAvatarNames);
-            previousImagesFileId.value = args.json.id;
-
-            const images = [];
-            args.json.versions.forEach((item) => {
-                if (!item.deleted) {
-                    images.unshift(item);
-                }
-            });
-            checkPreviousImageAvailable(images);
-        });
+        previousImageUrl.value = imageUrl;
+        changeAvatarImageDialogVisible.value = true;
     }
 
     function promptChangeAvatarDescription(avatar) {

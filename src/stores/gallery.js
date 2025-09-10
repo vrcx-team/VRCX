@@ -45,8 +45,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
         printTable: [],
         emojiTable: [],
         inventoryTable: [],
-        previousImagesDialogVisible: false,
-        previousImagesTable: [],
         fullscreenImageDialog: {
             visible: false,
             imageUrl: '',
@@ -176,20 +174,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
     });
 
-    const previousImagesDialogVisible = computed({
-        get: () => state.previousImagesDialogVisible,
-        set: (value) => {
-            state.previousImagesDialogVisible = value;
-        }
-    });
-
-    const previousImagesTable = computed({
-        get: () => state.previousImagesTable,
-        set: (value) => {
-            state.previousImagesTable = value;
-        }
-    });
-
     const fullscreenImageDialog = computed({
         get: () => state.fullscreenImageDialog,
         set: (value) => {
@@ -200,14 +184,12 @@ export const useGalleryStore = defineStore('Gallery', () => {
     watch(
         () => watchState.isLoggedIn,
         (isLoggedIn) => {
-            state.previousImagesTable = [];
             state.galleryTable = [];
             state.VRCPlusIconsTable = [];
             state.stickerTable = [];
             state.printTable = [];
             state.emojiTable = [];
             state.galleryDialogVisible = false;
-            state.previousImagesDialogVisible = false;
             state.fullscreenImageDialog.visible = false;
             if (isLoggedIn) {
                 tryDeleteOldPrints();
@@ -554,24 +536,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
         await refreshPrintTable();
     }
 
-    async function checkPreviousImageAvailable(images) {
-        state.previousImagesTable = [];
-        for (const image of images) {
-            if (image.file && image.file.url) {
-                const response = await fetch(image.file.url, {
-                    method: 'HEAD',
-                    redirect: 'follow'
-                }).catch((error) => {
-                    console.error('Failed to check image availability:', error);
-                    return null;
-                });
-                if (response && response.status === 200) {
-                    state.previousImagesTable.push(image);
-                }
-            }
-        }
-    }
-
     function showFullscreenImageDialog(imageUrl, fileName) {
         if (!imageUrl) {
             return;
@@ -674,8 +638,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
         printTable,
         emojiTable,
         inventoryTable,
-        previousImagesDialogVisible,
-        previousImagesTable,
         fullscreenImageDialog,
 
         showGalleryDialog,
@@ -690,7 +652,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
         refreshEmojiTable,
         getInventory,
         tryDeleteOldPrints,
-        checkPreviousImageAvailable,
         showFullscreenImageDialog,
         handleStickerAdd,
         handleGalleryImageAdd,

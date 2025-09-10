@@ -254,9 +254,6 @@
                                         {{ t('dialog.world.actions.show_previous_instances') }}
                                     </el-dropdown-item>
                                     <template v-if="currentUser.id !== worldDialog.ref.authorId">
-                                        <el-dropdown-item :icon="Picture" command="Previous Images">
-                                            {{ t('dialog.world.actions.show_previous_images') }}
-                                        </el-dropdown-item>
                                         <el-dropdown-item
                                             :disabled="!worldDialog.hasPersistData"
                                             :icon="Upload"
@@ -749,10 +746,7 @@
                 :last-location="lastLocation" />
             <ChangeWorldImageDialog
                 :change-world-image-dialog-visible="changeWorldImageDialogVisible"
-                :previous-images-file-id="previousImagesFileId"
-                :world-dialog="worldDialog"
-                @refresh="displayPreviousImages" />
-            <PreviousImagesDialog />
+                v-model:previousImageUrl="previousImageUrl" />
         </template>
     </el-dialog>
 </template>
@@ -788,13 +782,12 @@
     import { computed, ref, watch, nextTick, defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
-    import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
+    import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { database } from '../../../service/database.js';
     import {
         getNextDialogIndex,
         buildTreeData,
         downloadAndSaveJson,
-        extractFileId,
         openExternalLink,
         refreshInstancePlayerCount,
         replaceVrcPackageUrl,
@@ -821,7 +814,6 @@
     } from '../../../stores';
 
     const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
-    const PreviousImagesDialog = defineAsyncComponent(() => import('../PreviousImagesDialog.vue'));
     const PreviousInstancesWorldDialog = defineAsyncComponent(
         () => import('../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue')
     );
@@ -840,8 +832,7 @@
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());
     const { isGameRunning } = storeToRefs(useGameStore());
-    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-    const { checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
+    const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
 
     const treeData = ref([]);
@@ -858,7 +849,7 @@
     });
     const newInstanceDialogLocationTag = ref('');
     const changeWorldImageDialogVisible = ref(false);
-    const previousImagesFileId = ref('');
+    const previousImageUrl = ref('');
 
     const isDialogVisible = computed({
         get() {
@@ -973,34 +964,10 @@
         treeData.value = [];
     }
 
-    function displayPreviousImages(command) {
-        previousImagesFileId.value = '';
-        previousImagesTable.value = [];
+    function showChangeAvatarImageDialog() {
         const { imageUrl } = worldDialog.value.ref;
-
-        const fileId = extractFileId(imageUrl);
-        if (!fileId) {
-            return;
-        }
-        const params = {
-            fileId
-        };
-        if (command === 'Display') {
-            previousImagesDialogVisible.value = true;
-        }
-        if (command === 'Change') {
-            changeWorldImageDialogVisible.value = true;
-        }
-        imageRequest.getWorldImages(params).then((args) => {
-            previousImagesFileId.value = args.json.id;
-            const images = [];
-            args.json.versions.forEach((item) => {
-                if (!item.deleted) {
-                    images.unshift(item);
-                }
-            });
-            checkPreviousImageAvailable(images);
-        });
+        previousImageUrl.value = imageUrl;
+        changeWorldImageDialogVisible.value = true;
     }
 
     function showNewInstanceDialog(tag) {
@@ -1151,10 +1118,7 @@
                 openExternalLink(replaceVrcPackageUrl(worldDialog.value.ref.unityPackageUrl));
                 break;
             case 'Change Image':
-                displayPreviousImages('Change');
-                break;
-            case 'Previous Images':
-                displayPreviousImages('Display');
+                showChangeAvatarImageDialog();
                 break;
             case 'Refresh':
                 showWorldDialog(D.id);

@@ -6,12 +6,13 @@ function getCurrentUserId() {
 }
 
 const miscReq = {
-    getBundles(fileId) {
-        return request(`file/${fileId}`, {
+    getFile(params) {
+        return request(`file/${params.fileId}`, {
             method: 'GET'
         }).then((json) => {
             const args = {
-                json
+                json,
+                params
             };
             return args;
         });

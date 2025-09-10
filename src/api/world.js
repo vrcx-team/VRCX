@@ -140,6 +140,24 @@ const worldReq = {
             args.ref = worldStore.applyWorld(json);
             return args;
         });
+    },
+
+    uploadWorldImage(imageData) {
+        const params = {
+            tag: 'worldimage'
+        };
+        return request('file/image', {
+            uploadImage: true,
+            matchingDimensions: false,
+            postData: JSON.stringify(params),
+            imageData
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 

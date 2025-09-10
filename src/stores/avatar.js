@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { avatarRequest, imageRequest } from '../api';
+import { avatarRequest, miscRequest } from '../api';
 import { database } from '../service/database';
 import { AppDebug } from '../service/appConfig';
 import webApiService from '../service/webapi';
@@ -435,7 +435,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
             return cachedAvatarNames.get(fileId);
         }
         try {
-            const args = await imageRequest.getAvatarImages({ fileId });
+            const args = await miscRequest.getFile({ fileId });
             return storeAvatarImage(args, cachedAvatarNames);
         } catch (error) {
             console.error('Failed to get avatar images:', error);

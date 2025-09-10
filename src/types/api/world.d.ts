@@ -51,6 +51,7 @@ export type SaveWorld = (params: {
     id: string;
     name?: string;
     description?: string;
+    imageUrl?: string;
     capacity?: number;
     recommendedCapacity?: number;
     previewYoutubeId?: string;

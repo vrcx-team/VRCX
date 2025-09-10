@@ -29,3 +29,15 @@ interface GetAvatarResponse extends BaseAvatar {
         'standalonewindows-sort': number;
     };
 }
+
+export type SaveAvatar = (params: {
+    id: string;
+    releaseStatus?: 'public' | 'private';
+    name?: string;
+    description?: string;
+    imageUrl?: string;
+    tags?: string[];
+}) => Promise<{
+    json: any;
+    params: any;
+}>;
