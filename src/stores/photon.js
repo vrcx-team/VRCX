@@ -564,25 +564,22 @@ export const usePhotonStore = defineStore('Photon', () => {
                 distinguishCancelAndClose: true,
                 confirmButtonText: t('prompt.overlay_message_timeout.ok'),
                 cancelButtonText: t('prompt.overlay_message_timeout.cancel'),
-                inputValue: state.photonOverlayMessageTimeout / 1000,
+                inputValue: (
+                    state.photonOverlayMessageTimeout / 1000
+                ).toString(),
                 inputPattern: /\d+$/,
                 inputErrorMessage: t(
                     'prompt.overlay_message_timeout.input_error'
-                ),
-                callback: async (action, instance) => {
-                    if (
-                        action === 'confirm' &&
-                        instance.inputValue &&
-                        !isNaN(instance.inputValue)
-                    ) {
-                        state.photonOverlayMessageTimeout = Math.trunc(
-                            Number(instance.inputValue) * 1000
-                        );
-                        vrStore.updateVRConfigVars();
-                    }
-                }
+                )
             }
-        );
+        ).then(({ value, action }) => {
+            if (action === 'confirm' && value && !isNaN(Number(value))) {
+                state.photonOverlayMessageTimeout = Math.trunc(
+                    Number(value) * 1000
+                );
+                vrStore.updateVRConfigVars();
+            }
+        });
     }
 
     function promptPhotonLobbyTimeoutThreshold() {
@@ -593,22 +590,19 @@ export const usePhotonStore = defineStore('Photon', () => {
                 distinguishCancelAndClose: true,
                 confirmButtonText: t('prompt.photon_lobby_timeout.ok'),
                 cancelButtonText: t('prompt.photon_lobby_timeout.cancel'),
-                inputValue: state.photonLobbyTimeoutThreshold / 1000,
+                inputValue: (
+                    state.photonLobbyTimeoutThreshold / 1000
+                ).toString(),
                 inputPattern: /\d+$/,
-                inputErrorMessage: t('prompt.photon_lobby_timeout.input_error'),
-                callback: async (action, instance) => {
-                    if (
-                        action === 'confirm' &&
-                        instance.inputValue &&
-                        !isNaN(instance.inputValue)
-                    ) {
-                        state.photonLobbyTimeoutThreshold = Math.trunc(
-                            Number(instance.inputValue) * 1000
-                        );
-                    }
-                }
+                inputErrorMessage: t('prompt.photon_lobby_timeout.input_error')
             }
-        );
+        ).then(({ value, action }) => {
+            if (action === 'confirm' && value && !isNaN(Number(value))) {
+                state.photonLobbyTimeoutThreshold = Math.trunc(
+                    Number(value) * 1000
+                );
+            }
+        });
     }
 
     function startLobbyWatcherLoop() {

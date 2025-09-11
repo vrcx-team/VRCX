@@ -660,30 +660,29 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputPlaceholder: t('prompt.totp.input_placeholder'),
                 inputPattern: /^[0-9]{6}$/,
                 inputErrorMessage: t('prompt.totp.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        authRequest
-                            .verifyTOTP({
-                                code: instance.inputValue.trim()
-                            })
-                            .catch((err) => {
-                                clearCookiesTryLogin();
-                                throw err;
-                            })
-                            .then((args) => {
-                                userStore.getCurrentUser();
-                                return args;
-                            });
-                    } else if (action === 'cancel') {
-                        promptOTP();
-                    }
-                },
                 beforeClose: (action, instance, done) => {
                     state.twoFactorAuthDialogVisible = false;
                     done();
                 }
             }
-        );
+        ).then(({ value, action }) => {
+            if (action === 'confirm') {
+                authRequest
+                    .verifyTOTP({
+                        code: value.trim()
+                    })
+                    .catch((err) => {
+                        clearCookiesTryLogin();
+                        throw err;
+                    })
+                    .then((args) => {
+                        userStore.getCurrentUser();
+                        return args;
+                    });
+            } else if (action === 'cancel') {
+                promptOTP();
+            }
+        });
     }
 
     function promptOTP() {
@@ -701,30 +700,29 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputPlaceholder: t('prompt.otp.input_placeholder'),
                 inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
                 inputErrorMessage: t('prompt.otp.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        authRequest
-                            .verifyOTP({
-                                code: instance.inputValue.trim()
-                            })
-                            .catch((err) => {
-                                clearCookiesTryLogin();
-                                throw err;
-                            })
-                            .then((args) => {
-                                userStore.getCurrentUser();
-                                return args;
-                            });
-                    } else if (action === 'cancel') {
-                        promptTOTP();
-                    }
-                },
                 beforeClose: (action, instance, done) => {
                     state.twoFactorAuthDialogVisible = false;
                     done();
                 }
             }
-        );
+        ).then(({ value, action }) => {
+            if (action === 'confirm') {
+                authRequest
+                    .verifyOTP({
+                        code: value.trim()
+                    })
+                    .catch((err) => {
+                        clearCookiesTryLogin();
+                        throw err;
+                    })
+                    .then((args) => {
+                        userStore.getCurrentUser();
+                        return args;
+                    });
+            } else if (action === 'cancel') {
+                promptTOTP();
+            }
+        });
     }
 
     function promptEmailOTP() {
@@ -743,30 +741,29 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputPlaceholder: t('prompt.email_otp.input_placeholder'),
                 inputPattern: /^[0-9]{6}$/,
                 inputErrorMessage: t('prompt.email_otp.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        authRequest
-                            .verifyEmailOTP({
-                                code: instance.inputValue.trim()
-                            })
-                            .catch((err) => {
-                                promptEmailOTP();
-                                throw err;
-                            })
-                            .then((args) => {
-                                userStore.getCurrentUser();
-                                return args;
-                            });
-                    } else if (action === 'cancel') {
-                        resendEmail2fa();
-                    }
-                },
                 beforeClose: (action, instance, done) => {
                     state.twoFactorAuthDialogVisible = false;
                     done();
                 }
             }
-        );
+        ).then(({ value, action }) => {
+            if (action === 'confirm') {
+                authRequest
+                    .verifyEmailOTP({
+                        code: value.trim()
+                    })
+                    .catch((err) => {
+                        promptEmailOTP();
+                        throw err;
+                    })
+                    .then((args) => {
+                        userStore.getCurrentUser();
+                        return args;
+                    });
+            } else if (action === 'cancel') {
+                resendEmail2fa();
+            }
+        });
     }
 
     /**

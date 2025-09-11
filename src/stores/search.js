@@ -355,22 +355,19 @@ export const useSearchStore = defineStore('Search', () => {
                 confirmButtonText: t('prompt.direct_access_omni.ok'),
                 cancelButtonText: t('prompt.direct_access_omni.cancel'),
                 inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.direct_access_omni.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
-                        const input = instance.inputValue.trim();
-                        if (!directAccessParse(input)) {
-                            ElMessage({
-                                message: t(
-                                    'prompt.direct_access_omni.message.error'
-                                ),
-                                type: 'error'
-                            });
-                        }
-                    }
+                inputErrorMessage: t('prompt.direct_access_omni.input_error')
+            }
+        ).then(({ value, action }) => {
+            if (action === 'confirm' && value) {
+                const input = value.trim();
+                if (!directAccessParse(input)) {
+                    ElMessage({
+                        message: t('prompt.direct_access_omni.message.error'),
+                        type: 'error'
+                    });
                 }
             }
-        );
+        });
     }
 
     function showGroupDialogShortCode(shortCode) {

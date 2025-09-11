@@ -1410,11 +1410,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
             ElMessageBox.confirm('Continue? Disable GameLog', 'Confirm', {
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: async (action) => {
-                    if (action === 'confirm') {
-                        advancedSettingsStore.setGameLogDisabled();
-                    }
+                type: 'info'
+            }).then(({ action }) => {
+                if (action === 'confirm') {
+                    advancedSettingsStore.setGameLogDisabled();
                 }
             });
         } else {
