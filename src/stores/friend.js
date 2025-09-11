@@ -196,15 +196,12 @@ export const useFriendStore = defineStore('Friend', () => {
         if (!state.sortVIPFriends) {
             return state.vipFriends_;
         }
-
-        const sorted = [...state.vipFriends_].sort(
-            getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
-        );
-
-        state.vipFriends_ = sorted;
         state.sortVIPFriends = false;
 
-        return sorted;
+        state.vipFriends_.sort(
+            getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
+        );
+        return state.vipFriends_;
     });
 
     // Online friends
@@ -212,15 +209,13 @@ export const useFriendStore = defineStore('Friend', () => {
         if (!state.sortOnlineFriends) {
             return state.onlineFriends_;
         }
+        state.sortOnlineFriends = false;
 
-        const sorted = [...state.onlineFriends_].sort(
+        state.onlineFriends_.sort(
             getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
         );
 
-        state.onlineFriends_ = sorted;
-        state.sortOnlineFriends = false;
-
-        return sorted;
+        return state.onlineFriends_;
     });
 
     // Active friends
@@ -228,15 +223,13 @@ export const useFriendStore = defineStore('Friend', () => {
         if (!state.sortActiveFriends) {
             return state.activeFriends_;
         }
+        state.sortActiveFriends = false;
 
-        const sorted = [...state.activeFriends_].sort(
+        state.activeFriends_.sort(
             getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
         );
 
-        state.activeFriends_ = sorted;
-        state.sortActiveFriends = false;
-
-        return sorted;
+        return state.activeFriends_;
     });
 
     // Offline friends
@@ -244,15 +237,13 @@ export const useFriendStore = defineStore('Friend', () => {
         if (!state.sortOfflineFriends) {
             return state.offlineFriends_;
         }
+        state.sortOfflineFriends = false;
 
-        const sorted = [...state.offlineFriends_].sort(
+        state.offlineFriends_.sort(
             getFriendsSortFunction(appearanceSettingsStore.sidebarSortMethods)
         );
 
-        state.offlineFriends_ = sorted;
-        state.sortOfflineFriends = false;
-
-        return sorted;
+        return state.offlineFriends_;
     });
 
     const isRefreshFriendsLoading = computed({
@@ -800,7 +791,7 @@ export const useFriendStore = defineStore('Friend', () => {
         if (friend) {
             name = friend.displayName;
         }
-        const ctx = {
+        const ctx = reactive({
             id,
             state: state_input || 'offline',
             isVIP,
@@ -811,7 +802,7 @@ export const useFriendStore = defineStore('Friend', () => {
             pendingOfflineTime: '',
             pendingState: '',
             $nickName: ''
-        };
+        });
         if (watchState.isFriendsLoaded) {
             getUserMemo(id).then((memo) => {
                 if (memo.userId === id) {

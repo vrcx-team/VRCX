@@ -19,7 +19,7 @@
 
 <script setup>
     import { Loading, Lock } from '@element-plus/icons-vue';
-    import { ref, watch } from 'vue';
+    import { ref, watchEffect } from 'vue';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
 
@@ -52,14 +52,9 @@
     const isTraveling = ref(false);
     const groupName = ref('');
 
-    watch(
-        () => props.location,
-        () => {
-            parse();
-        }
-    );
-
-    parse();
+    watchEffect(() => {
+        parse();
+    });
 
     function parse() {
         isTraveling.value = false;

@@ -277,7 +277,7 @@ export const useUserStore = defineStore('User', () => {
         notes: new Map()
     });
 
-    let cachedUsers = new Map();
+    const cachedUsers = new Map();
 
     const currentUser = computed({
         get: () => state.currentUser,
@@ -461,7 +461,7 @@ export const useUserStore = defineStore('User', () => {
             delete json.currentAvatarThumbnailImageUrl;
         }
         if (typeof ref === 'undefined') {
-            ref = {
+            ref = reactive({
                 ageVerificationStatus: '',
                 ageVerified: false,
                 allowAvatarCopying: false,
@@ -528,7 +528,7 @@ export const useUserStore = defineStore('User', () => {
                 $moderations: {},
                 //
                 ...json
-            };
+            });
             if (locationStore.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
                 const player = locationStore.lastLocation.playerList.get(
@@ -555,6 +555,7 @@ export const useUserStore = defineStore('User', () => {
                 ref.$customTagColour = '';
             }
             cachedUsers.set(ref.id, ref);
+            friendStore.updateFriend(ref.id);
         } else {
             if (json.state !== 'online') {
                 // offline event before GPS to offline location
@@ -594,7 +595,11 @@ export const useUserStore = defineStore('User', () => {
                     changedProps[prop] = [toBe, asIs];
                 }
             }
-            Object.assign(ref, json);
+            for (const prop in json) {
+                if (typeof ref[prop] !== 'undefined') {
+                    ref[prop] = json[prop];
+                }
+            }
         }
         ref.$moderations = moderationStore.getUserModerations(ref.id);
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
@@ -1756,9 +1761,13 @@ export const useUserStore = defineStore('User', () => {
                     ref.$previousAvatarSwapTime = Date.now();
                 }
             }
-            Object.assign(ref, json);
+            for (const prop in json) {
+                if (typeof ref[prop] !== 'undefined') {
+                    ref[prop] = json[prop];
+                }
+            }
         } else {
-            ref = {
+            ref = reactive({
                 acceptedPrivacyVersion: 0,
                 acceptedTOSVersion: 0,
                 accountDeletionDate: null,
@@ -1862,7 +1871,7 @@ export const useUserStore = defineStore('User', () => {
                 $locationTag: '',
                 $travelingToLocation: '',
                 ...json
-            };
+            });
             if (gameStore.isGameRunning) {
                 ref.$previousAvatarSwapTime = Date.now();
             }

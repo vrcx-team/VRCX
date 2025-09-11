@@ -636,7 +636,6 @@
                                     v-model="userDialog.note"
                                     type="textarea"
                                     maxlength="256"
-                                    show-word-limit
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
                                     :placeholder="t('dialog.user.info.note_placeholder')"

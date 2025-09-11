@@ -28,12 +28,7 @@
                             :epoch="epoch"
                             :style="isFriendTraveling ? { display: 'inline-block', overflow: 'unset' } : undefined" />
                     </template>
-                    <Location
-                        v-else
-                        class="extra"
-                        :location="friend.ref.location"
-                        :traveling="friend.ref.travelingToLocation"
-                        :link="false" />
+                    <Location v-else class="extra" :location="locationProp" :traveling="travelingProp" :link="false" />
                 </template>
             </div>
         </template>
@@ -86,6 +81,9 @@
     const epoch = computed(() =>
         isFriendTraveling.value ? props.friend.ref?.$travelingToTime : props.friend.ref?.$location_at
     );
+
+    const locationProp = computed(() => props.friend.ref?.location || '');
+    const travelingProp = computed(() => props.friend.ref?.travelingToLocation || '');
 </script>
 
 <style scoped>
