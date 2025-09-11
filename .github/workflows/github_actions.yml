@@ -1,7 +1,9 @@
 name: VRCX
 
 on:
-    - workflow_dispatch
+    push:
+        branches:
+            - Nightly
 
 concurrency:
     group: ${{ github.ref }}
@@ -17,8 +19,9 @@ jobs:
             - uses: actions/checkout@v4
             - id: version
               run: |
-                  export FILENAME="$(cat Version)"
-                  export DATE="$(cat Version)"
+                  git_hash=$(git rev-parse --short "$GITHUB_SHA")
+                  export FILENAME="$(date '+%Y-%m-%dT%H.%M')-${git_hash}"
+                  export DATE="$(date '+%Y.%m.%d')"
                   echo "version=${FILENAME}" >> $GITHUB_OUTPUT
                   echo "date=${DATE}" >> $GITHUB_OUTPUT
 
@@ -257,13 +260,48 @@ jobs:
                   7z a -tzip ${file_name} * -mx=7 -xr0!*.log
                   mv ${file_name} ../../${file_name}
                   echo "Zip FileName: ${file_name}"
-            - name: Upload Setup artifact
-              uses: actions/upload-artifact@v4
+
+            - name: Download x64 Electron AppImage artifacts
+              uses: actions/download-artifact@v4
               with:
-                  name: VRCX-Setup
-                  path: 'VRCX_${{ needs.set_version.outputs.version }}_Setup.exe'
-            - name: Upload Zip artifact
-              uses: actions/upload-artifact@v4
+                  name: Electron-AppImage-x64
+            - name: Download arm64 Electron AppImage artifacts
+              uses: actions/download-artifact@v4
               with:
-                  name: VRCX-Zip
-                  path: 'VRCX_${{ needs.set_version.outputs.version }}.zip'
+                  name: Electron-AppImage-arm64
+
+            - name: Download x64 Electron macOS artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: Electron-MacDmg-x64
+            - name: Download arm64 Electron macOS artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: Electron-MacDmg-arm64
+
+            - name: Generate hashes
+              run: |
+                  sha256sum "VRCX_${{ needs.set_version.outputs.version }}_Setup.exe" "VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage" > "SHA256SUMS.txt"
+            - name: Create Release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: '${{ needs.set_version.outputs.version }}'
+                  release_name: 'VRCX Nightly ${{ needs.set_version.outputs.version }}'
+                  draft: false
+                  prerelease: false
+            - name: Upload multiple assets to release
+              uses: csexton/release-asset-action@v3
+              with:
+                  files: |
+                      VRCX_${{ needs.set_version.outputs.version }}_Setup.exe
+                      VRCX_${{ needs.set_version.outputs.version }}.zip
+                      VRCX_${{ needs.set_version.outputs.version }}_x64.AppImage
+                      VRCX_${{ needs.set_version.outputs.version }}_arm64.AppImage
+                      VRCX_${{ needs.set_version.outputs.version }}_x64.dmg
+                      VRCX_${{ needs.set_version.outputs.version }}_arm64.dmg
+                      SHA256SUMS.txt
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  release-url: ${{ steps.create_release.outputs.upload_url }}
