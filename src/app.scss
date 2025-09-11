@@ -88,9 +88,14 @@
 //     margin-top: 15px;
 // }
 
-// .el-table--mini .el-table__expanded-cell[class*='cell'] {
-//     padding: 20px 50px;
-// }
+.el-table__expanded-cell[class*='cell'] {
+    padding: 20px 30px;
+}
+
+.el-table--small .cell {
+    // fix expand arrow position
+    padding: 0px;
+}
 
 // .el-table--mini .el-table__cell {
 //     padding: 5px 0;

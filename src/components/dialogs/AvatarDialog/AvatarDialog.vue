@@ -179,31 +179,31 @@
                                         effect="plain"
                                         size="small"
                                         style="margin-right: 5px; margin-top: 5px">
-                                        <template v-if="tag === 'content_horror'">{{
+                                        <span v-if="tag === 'content_horror'">{{
                                             t('dialog.avatar.tags.content_horror')
-                                        }}</template>
-                                        <template v-else-if="tag === 'content_gore'">{{
+                                        }}</span>
+                                        <span v-else-if="tag === 'content_gore'">{{
                                             t('dialog.avatar.tags.content_gore')
-                                        }}</template>
-                                        <template v-else-if="tag === 'content_violence'">{{
+                                        }}</span>
+                                        <span v-else-if="tag === 'content_violence'">{{
                                             t('dialog.avatar.tags.content_violence')
-                                        }}</template>
-                                        <template v-else-if="tag === 'content_adult'">{{
+                                        }}</span>
+                                        <span v-else-if="tag === 'content_adult'">{{
                                             t('dialog.avatar.tags.content_adult')
-                                        }}</template>
-                                        <template v-else-if="tag === 'content_sex'">{{
+                                        }}</span>
+                                        <span v-else-if="tag === 'content_sex'">{{
                                             t('dialog.avatar.tags.content_sex')
-                                        }}</template>
-                                        <template v-else>{{ tag.replace('content_', '') }}</template>
+                                        }}</span>
+                                        <span v-else>{{ tag.replace('content_', '') }}</span>
                                     </el-tag>
                                     <el-tag
                                         v-if="tag.startsWith('author_tag_')"
                                         effect="plain"
                                         size="small"
                                         style="margin-right: 5px; margin-top: 5px">
-                                        <template>
+                                        <span>
                                             {{ tag.replace('author_tag_', '') }}
-                                        </template>
+                                        </span>
                                     </el-tag>
                                 </template>
                             </div>

@@ -163,24 +163,24 @@
                                     effect="plain"
                                     size="small"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <template v-if="tag === 'content_horror'">
+                                    <span v-if="tag === 'content_horror'">
                                         {{ t('dialog.world.tags.content_horror') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_gore'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_gore'">
                                         {{ t('dialog.world.tags.content_gore') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_violence'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_violence'">
                                         {{ t('dialog.world.tags.content_violence') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_adult'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_adult'">
                                         {{ t('dialog.world.tags.content_adult') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_sex'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_sex'">
                                         {{ t('dialog.world.tags.content_sex') }}
-                                    </template>
-                                    <template v-else>
+                                    </span>
+                                    <span v-else>
                                         {{ tag.replace('content_', '') }}
-                                    </template>
+                                    </span>
                                 </el-tag>
                             </template>
                         </div>
