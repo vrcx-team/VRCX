@@ -1020,10 +1020,10 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         D.$location = L;
+        L.user = null;
         if (L.userId) {
             ref = cachedUsers.get(L.userId);
             if (typeof ref === 'undefined') {
-                L.user = null;
                 userRequest
                     .getUser({
                         userId: L.userId

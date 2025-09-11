@@ -385,6 +385,7 @@
                                     class="x-friend-list"
                                     style="margin: 10px 0; max-height: unset">
                                     <div
+                                        v-if="room.$location.userId"
                                         class="x-friend-item x-friend-item-border"
                                         @click="showUserDialog(room.$location.userId)">
                                         <template v-if="room.$location.user">

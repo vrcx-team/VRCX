@@ -646,6 +646,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 L.shortName = instance.shortName;
             }
             instance.$location = L;
+            L.user = null;
             if (L.userId) {
                 ref = userStore.cachedUsers.get(L.userId);
                 if (typeof ref === 'undefined') {
@@ -654,12 +655,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                             userId: L.userId
                         })
                         .then((args) => {
-                            // TODO: upgrade, need test
-                            // Vue.set(L, 'user', args.ref);
-                            return args;
-                        })
-                        .catch((error) => {
-                            console.error('Error fetching user:', error);
+                            L.user = args.ref;
                         });
                 } else {
                     L.user = ref;
