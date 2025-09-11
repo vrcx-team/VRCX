@@ -1002,8 +1002,9 @@ export const useFriendStore = defineStore('Friend', () => {
      * @returns {Promise<*>}
      */
     async function refreshRemainingFriends(friends) {
+        const friendsSet = new Set(friends.map((x) => x.id));
         for (const userId of userStore.currentUser.friends) {
-            if (!friends.some((x) => x.id === userId)) {
+            if (!friendsSet.has(userId)) {
                 try {
                     if (!watchState.isLoggedIn) {
                         console.error(`User isn't logged in`);
@@ -1069,26 +1070,33 @@ export const useFriendStore = defineStore('Friend', () => {
         }
 
         const data = await database.getAllUserStats(userIds, displayNames);
+
+        const dataByDisplayName = new Map();
+        const friendsByDisplayName = new Map();
+
+        for (const ref of data) {
+            if (ref.displayName && ref.userId) {
+                dataByDisplayName.set(ref.displayName, ref.userId);
+            }
+        }
+
+        for (const ref of state.friends.values()) {
+            if (ref?.ref?.id && ref.ref.displayName) {
+                friendsByDisplayName.set(ref.ref.displayName, ref.id);
+            }
+        }
+
         const friendListMap = new Map();
         for (item of data) {
             if (!item.userId) {
                 // find userId from previous data with matching displayName
-                for (ref of data) {
-                    if (ref.displayName === item.displayName && ref.userId) {
-                        item.userId = ref.userId;
-                    }
-                }
+                item.userId = dataByDisplayName.get(item.displayName);
+
                 // if still no userId, find userId from friends list
                 if (!item.userId) {
-                    for (ref of state.friends.values()) {
-                        if (
-                            ref?.ref?.id &&
-                            ref.ref.displayName === item.displayName
-                        ) {
-                            item.userId = ref.id;
-                        }
-                    }
+                    item.userId = friendsByDisplayName.get(item.displayName);
                 }
+
                 // if still no userId, skip
                 if (!item.userId) {
                     continue;
