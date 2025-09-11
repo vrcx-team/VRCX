@@ -530,33 +530,32 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'
                 ),
                 type: 'info',
-                showInput: false,
-                callback: async (action) => {
-                    if (action === 'confirm') {
-                        const msgBox = ElMessage({
-                            message: 'Batch print cropping in progress...',
-                            type: 'warning',
-                            duration: 0
-                        });
-                        try {
-                            await AppApi.CropAllPrints(state.ugcFolderPath);
-                            ElMessage({
-                                message: 'Batch print cropping complete',
-                                type: 'success'
-                            });
-                        } catch (err) {
-                            console.error(err);
-                            ElMessage({
-                                message: `Batch print cropping failed: ${err}`,
-                                type: 'error'
-                            });
-                        } finally {
-                            msgBox.close();
-                        }
-                    }
+                showInput: false
+            }
+        ).then(async ({ action }) => {
+            if (action === 'confirm') {
+                const msgBox = ElMessage({
+                    message: 'Batch print cropping in progress...',
+                    type: 'warning',
+                    duration: 0
+                });
+                try {
+                    await AppApi.CropAllPrints(state.ugcFolderPath);
+                    ElMessage({
+                        message: 'Batch print cropping complete',
+                        type: 'success'
+                    });
+                } catch (err) {
+                    console.error(err);
+                    ElMessage({
+                        message: `Batch print cropping failed: ${err}`,
+                        type: 'error'
+                    });
+                } finally {
+                    msgBox.close();
                 }
             }
-        );
+        });
     }
 
     function askDeleteAllScreenshotMetadata() {
@@ -572,14 +571,13 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm_no'
                 ),
                 type: 'warning',
-                showInput: false,
-                callback: async (action) => {
-                    if (action === 'confirm') {
-                        deleteAllScreenshotMetadata();
-                    }
-                }
+                showInput: false
             }
-        );
+        ).then(({ action }) => {
+            if (action === 'confirm') {
+                deleteAllScreenshotMetadata();
+            }
+        });
     }
 
     function deleteAllScreenshotMetadata() {
@@ -595,33 +593,32 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old_cancel'
                 ),
                 type: 'warning',
-                showInput: false,
-                callback: async (action) => {
-                    if (action === 'confirm') {
-                        const msgBox = ElMessage({
-                            message: 'Batch metadata removal in progress...',
-                            type: 'warning',
-                            duration: 0
-                        });
-                        try {
-                            await AppApi.DeleteAllScreenshotMetadata();
-                            ElMessage({
-                                message: 'Batch metadata removal complete',
-                                type: 'success'
-                            });
-                        } catch (err) {
-                            console.error(err);
-                            ElMessage({
-                                message: `Batch metadata removal failed: ${err}`,
-                                type: 'error'
-                            });
-                        } finally {
-                            msgBox.close();
-                        }
-                    }
+                showInput: false
+            }
+        ).then(async ({ action }) => {
+            if (action === 'confirm') {
+                const msgBox = ElMessage({
+                    message: 'Batch metadata removal in progress...',
+                    type: 'warning',
+                    duration: 0
+                });
+                try {
+                    await AppApi.DeleteAllScreenshotMetadata();
+                    ElMessage({
+                        message: 'Batch metadata removal complete',
+                        type: 'success'
+                    });
+                } catch (err) {
+                    console.error(err);
+                    ElMessage({
+                        message: `Batch metadata removal failed: ${err}`,
+                        type: 'error'
+                    });
+                } finally {
+                    msgBox.close();
                 }
             }
-        );
+        });
     }
 
     function resetUGCFolder() {
