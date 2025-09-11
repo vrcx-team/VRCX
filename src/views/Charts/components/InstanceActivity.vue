@@ -113,14 +113,14 @@
                 <el-divider>·</el-divider>
             </div>
         </transition>
-        <!-- <template v-if="isDetailVisible && activityData.length !== 0">
+        <template v-if="isDetailVisible && activityData.length !== 0">
             <InstanceActivityDetail
                 v-for="arr in filteredActivityDetailData"
                 :key="arr[0].location + arr[0].created_at"
                 ref="activityDetailChartRef"
                 :activity-detail-data="arr"
                 :bar-width="barWidth" />
-        </template> -->
+        </template>
     </div>
 </template>
 
@@ -136,9 +136,9 @@
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
     import { useInstanceActivitySettings } from '../composables/useInstanceActivitySettings';
     import { useInstanceActivityData } from '../composables/useInstanceActivityData';
-    import { useActivityDataFilter } from '../composables/useActivityDataFilter';
+    import { useActivityDataProcessor } from '../composables/useActivityDataProcessor';
     import { useIntersectionObserver } from '../composables/useIntersectionObserver';
-    import { useActivityStats } from '../composables/useActivityStats';
+    import { useChartHelpers } from '../composables/useChartHelpers';
     import { useDateNavigation } from '../composables/useDateNavigation';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -188,14 +188,15 @@
     const activityChartRef = ref(null);
     const activityDetailChartRef = ref(null);
 
-    const { totalOnlineTime } = useActivityStats(activityData);
-
-    const { filteredActivityDetailData } = useActivityDataFilter(
+    const { totalOnlineTime, filteredActivityDetailData } = useActivityDataProcessor(
+        activityData,
         activityDetailData,
         isDetailVisible,
         isSoloInstanceVisible,
         isNoFriendInstanceVisible
     );
+
+    const { isDetailDataFiltered, findMatchingDetailData, generateYAxisLabel } = useChartHelpers();
 
     watch(
         () => isDarkMode.value,
@@ -280,7 +281,55 @@
         }
     };
 
-    // echarts - start
+    function handleYAxisLabelClick(params) {
+        const targetActivity = activityData.value[params?.dataIndex];
+        if (!targetActivity) {
+            console.error('handleClickYAxisLabel failed, no activity data found for index:', params?.dataIndex);
+            return;
+        }
+
+        const detailDataIdx = filteredActivityDetailData.value.findIndex((arr) => {
+            const sameLocation = arr[0]?.location === targetActivity.location;
+            const sameJoinTime = arr
+                .find((item) => item.user_id === currentUser.value.id)
+                ?.joinTime.isSame(targetActivity.joinTime);
+            return sameLocation && sameJoinTime;
+        });
+
+        if (detailDataIdx === -1) {
+            console.error(
+                "handleClickYAxisLabel failed, likely current user wasn't in this instance or chart is filtered out.",
+                params
+            );
+            return;
+        }
+
+        if (activityDetailChartRef.value && activityDetailChartRef.value[detailDataIdx]) {
+            activityDetailChartRef.value[detailDataIdx].$el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        } else {
+            console.error('handleClickYAxisLabel failed, chart ref not found at index:', detailDataIdx);
+        }
+    }
+
+    function getYAxisData() {
+        return worldNameArray.value.map((worldName, index) => {
+            const activityItem = activityData.value[index];
+            if (!activityItem) return worldName;
+
+            const detailData = findMatchingDetailData(activityItem, activityDetailData.value, currentUser.value);
+            if (!detailData) return worldName;
+
+            const shouldFilter =
+                isDetailVisible.value &&
+                isDetailDataFiltered(detailData, isSoloInstanceVisible.value, isNoFriendInstanceVisible.value);
+
+            return generateYAxisLabel(worldName, shouldFilter);
+        });
+    }
+
     function initEcharts() {
         const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
         const chartDom = activityChartRef.value;
@@ -298,24 +347,7 @@
                 }
             });
 
-            const handleClickYAxisLabel = (params) => {
-                const detailDataIdx = filteredActivityDetailData.value.findIndex((arr) => {
-                    const sameLocation = arr[0]?.location === activityData.value[params?.dataIndex]?.location;
-                    const sameJoinTime = arr
-                        .find((item) => item.user_id === currentUser.value.id)
-                        ?.joinTime.isSame(activityData.value[params?.dataIndex].joinTime);
-                    return sameLocation && sameJoinTime;
-                });
-                if (detailDataIdx === -1) {
-                    // no detail chart down below, it's hidden, so can't find instance data index
-                    console.error("handleClickYAxisLabel failed, likely current user wasn't in this instance.", params);
-                } else {
-                    activityDetailChartRef.value[detailDataIdx].$el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            };
+            const handleClickYAxisLabel = handleYAxisLabelClick;
 
             echartsInstance.value.off('click');
 
@@ -404,10 +436,17 @@
                 type: 'category',
                 axisLabel: {
                     interval: 0,
-                    formatter: (value) => (value.length > 20 ? `${value.slice(0, 20)}...` : value)
+                    rich: {
+                        filtered: {
+                            opacity: 0.4
+                        },
+                        normal: {
+                            opacity: 1
+                        }
+                    }
                 },
                 inverse: true,
-                data: worldNameArray.value,
+                data: getYAxisData(),
                 triggerEvent: true
             },
             xAxis: {
@@ -480,17 +519,25 @@
         };
         return echartsOption;
     }
-    // echarts - end
 
-    // settings - start
     function handleEchartsRerender() {
         initEcharts();
         handleSettingsChange();
     }
     function handleSettingsChange() {
         handleChangeSettings(activityDetailChartRef);
+
+        if (echartsInstance.value) {
+            const newOptions = getNewOption();
+            echartsInstance.value.setOption({
+                yAxis: newOptions.yAxis
+            });
+        }
+
+        nextTick(() => {
+            handleIntersectionObserver(activityDetailChartRef);
+        });
     }
-    // settings - end
 </script>
 
 <style lang="scss" scoped>

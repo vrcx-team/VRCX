@@ -4,7 +4,18 @@ export function useIntersectionObserver() {
     const intersectionObservers = ref([]);
 
     // intersection observer - start
+    function clearIntersectionObservers() {
+        intersectionObservers.value.forEach((observer) => {
+            if (observer) {
+                observer.disconnect();
+            }
+        });
+        intersectionObservers.value = [];
+    }
+
     function handleIntersectionObserver(activityDetailChartRef) {
+        clearIntersectionObservers();
+
         activityDetailChartRef.value?.forEach((child, index) => {
             const observer = new IntersectionObserver((entries) =>
                 handleIntersection(index, entries, activityDetailChartRef)

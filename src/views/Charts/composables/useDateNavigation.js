@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import dayjs from 'dayjs';
 
 export function useDateNavigation(allDateOfActivity, reloadData) {
-    const selectedDate = ref(dayjs());
+    const selectedDate = ref(dayjs().toDate());
 
     const allDateOfActivityArray = computed(() => {
         return allDateOfActivity.value
@@ -43,16 +43,17 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
             const newIdx = isNext ? idx - 1 : idx + 1;
 
             if (newIdx >= 0 && newIdx < allDateOfActivityArray.value.length) {
-                selectedDate.value = allDateOfActivityArray.value[newIdx];
+                selectedDate.value =
+                    allDateOfActivityArray.value[newIdx].toDate();
                 reloadData();
                 return;
             }
         }
         selectedDate.value = isNext
-            ? allDateOfActivityArray.value[0]
+            ? allDateOfActivityArray.value[0].toDate()
             : allDateOfActivityArray.value[
                   allDateOfActivityArray.value.length - 1
-              ];
+              ].toDate();
         reloadData();
     }
 
