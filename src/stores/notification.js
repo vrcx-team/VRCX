@@ -1,10 +1,10 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { notificationRequest, userRequest, worldRequest } from '../api';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { watchState } from '../service/watchState';
 import {
     checkCanInvite,
@@ -13,7 +13,8 @@ import {
     extractFileVersion,
     getUserMemo,
     parseLocation,
-    removeFromArray
+    removeFromArray,
+    replaceBioSymbols
 } from '../shared/utils';
 import { useFavoriteStore } from './favorite';
 import { useFriendStore } from './friend';
@@ -59,7 +60,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             ],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'created_at',
                     order: 'descending'
@@ -135,7 +136,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         const { length } = array;
         for (let i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
-                Vue.set(array, i, ref);
+                array[i] = ref;
                 return;
             }
         }
@@ -283,14 +284,14 @@ export const useNotificationStore = defineStore('Notification', () => {
                     )
                     .then((_args) => {
                         const text = `Auto invite sent to ${ref.senderUsername}`;
-                        if (AppGlobal.errorNoty) {
-                            AppGlobal.errorNoty.close();
+                        if (AppDebug.errorNoty) {
+                            AppDebug.errorNoty.close();
                         }
-                        AppGlobal.errorNoty = new Noty({
+                        AppDebug.errorNoty = new Noty({
                             type: 'info',
                             text
                         });
-                        AppGlobal.errorNoty.show();
+                        AppDebug.errorNoty.show();
                         console.log(text);
                         notificationRequest.hideNotification({
                             notificationId: ref.id
@@ -368,6 +369,9 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @returns {object}
      */
     function applyNotification(json) {
+        if (json.message) {
+            json.message = replaceBioSymbols(json.message);
+        }
         let ref;
         const array = state.notificationTable.data;
         for (let i = array.length - 1; i >= 0; i--) {
@@ -2323,6 +2327,7 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     return {
         state,
+
         notificationInitStatus,
         notificationTable,
         unseenNotifications,

@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="sendInviteDialogVisible"
+        :model-value="sendInviteDialogVisible"
         :title="t('dialog.invite_message.header')"
         width="800px"
         append-to-body
@@ -9,46 +9,46 @@
         <template v-if="currentUser.$isVRCPlus">
             <!--            <template v-if="gallerySelectDialog.selectedFileId">-->
             <!--                <div style="display: inline-block; flex: none; margin-right: 5px">-->
-            <!--                    <el-popover placement="right" width="500px" trigger="click">-->
+            <!--                    <el-popover placement="right" :width="500px" trigger="click">-->
             <!--                        <template #reference>-->
             <!--                            <img-->
             <!--                                class="x-link"-->
-            <!--                                v-lazy="gallerySelectDialog.selectedImageUrl"-->
+            <!--                                :src="gallerySelectDialog.selectedImageUrl"-->
             <!--                                style="flex: none; width: 60px; height: 60px; border-radius: 4px; object-fit: cover" />-->
             <!--                        </template>-->
             <!--                        <img-->
             <!--                            class="x-link"-->
-            <!--                            v-lazy="gallerySelectDialog.selectedImageUrl"-->
+            <!--                            :src="gallerySelectDialog.selectedImageUrl"-->
             <!--                            style="height: 500px"-->
             <!--                            @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" />-->
             <!--                    </el-popover>-->
             <!--                </div>-->
-            <!--                <el-button size="mini" @click="clearImageGallerySelect" style="vertical-align: top">-->
+            <!--                <el-button size="small" @click="clearImageGallerySelect" style="vertical-align: top">-->
             <!--                    {{ t('dialog.invite_message.clear_selected_image') }}-->
             <!--                </el-button>-->
             <!--            </template>-->
             <!--            <template v-else>-->
-            <!--                <el-button size="mini" @click="showGallerySelectDialog" style="margin-right: 5px">-->
+            <!--                <el-button size="small" @click="showGallerySelectDialog" style="margin-right: 5px">-->
             <!--                    {{ t('dialog.invite_message.select_image') }}-->
             <!--                </el-button>-->
             <!--            </template>-->
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
-        <data-tables
+        <DataTable
             v-bind="inviteMessageTable"
             style="margin-top: 10px; cursor: pointer"
             @row-click="showSendInviteConfirmDialog">
             <el-table-column
                 :label="t('table.profile.invite_messages.slot')"
                 prop="slot"
-                sortable="custom"
+                :sortable="true"
                 width="70"></el-table-column>
             <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"></el-table-column>
             <el-table-column
                 :label="t('table.profile.invite_messages.cool_down')"
                 prop="updatedAt"
-                sortable="custom"
+                :sortable="true"
                 width="110"
                 align="right">
                 <template #default="scope">
@@ -59,38 +59,40 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-edit"
-                        size="mini"
+                        :icon="Edit"
+                        size="small"
                         @click.stop="showEditAndSendInviteDialog(scope.row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
 
         <template #footer>
-            <el-button type="small" @click="cancelSendInvite">
+            <el-button @click="cancelSendInvite">
                 {{ t('dialog.invite_message.cancel') }}
             </el-button>
-            <el-button type="small" @click="refreshInviteMessageTableData('message')">
+            <el-button @click="refreshInviteMessageTableData('message')">
                 {{ t('dialog.invite_message.refresh') }}
             </el-button>
         </template>
         <SendInviteConfirmDialog
-            :visible.sync="isSendInviteConfirmDialogVisible"
+            v-model="isSendInviteConfirmDialogVisible"
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <EditAndSendInviteDialog
-            :edit-and-send-invite-dialog.sync="editAndSendInviteDialog"
+            :edit-and-send-invite-dialog="editAndSendInviteDialog"
             :send-invite-dialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { Edit } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
     import EditAndSendInviteDialog from './EditAndSendInviteDialog.vue';
     import SendInviteConfirmDialog from './SendInviteConfirmDialog.vue';

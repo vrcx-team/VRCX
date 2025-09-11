@@ -47,10 +47,10 @@
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.general.vrcx_updater.header') }}</span>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-document" @click="showChangeLogDialog">{{
+                        <el-button size="small" :icon="Document" @click="showChangeLogDialog">{{
                             t('view.settings.general.vrcx_updater.change_log')
                         }}</el-button>
-                        <el-button size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()">{{
+                        <el-button size="small" :icon="Upload" @click="showVRCXUpdateDialog()">{{
                             t('view.settings.general.vrcx_updater.change_build')
                         }}</el-button>
                     </div>
@@ -58,10 +58,10 @@
                         <span class="name">{{ t('view.settings.general.vrcx_updater.update_action') }}</span>
                         <br />
                         <el-radio-group
-                            :value="autoUpdateVRCX"
-                            size="mini"
+                            :model-value="autoUpdateVRCX"
+                            size="small"
                             style="margin-top: 5px"
-                            @input="setAutoUpdateVRCX">
+                            @change="setAutoUpdateVRCX">
                             <el-radio-button label="Off">{{
                                 t('view.settings.general.vrcx_updater.auto_update_off')
                             }}</el-radio-button>
@@ -110,7 +110,7 @@
                         :tooltip="t('view.settings.general.application.disable_gpu_acceleration_tooltip')"
                         @change="setDisableVrOverlayGpuAcceleration" />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-connection" @click="promptProxySettings">{{
+                        <el-button size="small" :icon="Connection" @click="promptProxySettings">{{
                             t('view.settings.general.application.proxy')
                         }}</el-button>
                     </div>
@@ -120,7 +120,7 @@
                     <span class="header">{{ t('view.settings.general.favorites.header') }}</span>
                     <br />
                     <el-select
-                        :value="localFavoriteFriendsGroups"
+                        :model-value="localFavoriteFriendsGroups"
                         multiple
                         clearable
                         :placeholder="t('view.settings.general.favorites.group_placeholder')"
@@ -170,7 +170,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.alone_status') }}</span>
                         <el-select
-                            :value="autoStateChangeAloneStatus"
+                            :model-value="autoStateChangeAloneStatus"
                             :disabled="!autoStateChangeEnabled"
                             style="margin-top: 8px"
                             size="small"
@@ -192,7 +192,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.company_status') }}</span>
                         <el-select
-                            :value="autoStateChangeCompanyStatus"
+                            :model-value="autoStateChangeCompanyStatus"
                             :disabled="!autoStateChangeEnabled"
                             style="margin-top: 8px"
                             size="small"
@@ -214,7 +214,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.allowed_instance_types') }}</span>
                         <el-select
-                            :value="autoStateChangeInstanceTypes"
+                            :model-value="autoStateChangeInstanceTypes"
                             :disabled="!autoStateChangeEnabled"
                             multiple
                             clearable
@@ -239,7 +239,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.general.automation.alone_condition') }}</span>
                         <el-radio-group
-                            :value="autoStateChangeNoFriends"
+                            :model-value="autoStateChangeNoFriends"
                             :disabled="!autoStateChangeEnabled"
                             @change="setAutoStateChangeNoFriends">
                             <el-radio :label="false">{{ t('view.settings.general.automation.alone') }}</el-radio>
@@ -253,15 +253,15 @@
                                 placement="top"
                                 style="margin-left: 5px"
                                 :content="t('view.settings.general.automation.auto_invite_request_accept_tooltip')">
-                                <i class="el-icon-info"></i>
+                                <el-icon><InfoFilled /></el-icon>
                             </el-tooltip>
                         </span>
                         <br />
                         <el-radio-group
-                            :value="autoAcceptInviteRequests"
-                            size="mini"
+                            :model-value="autoAcceptInviteRequests"
+                            size="small"
                             style="margin-top: 5px"
-                            @input="setAutoAcceptInviteRequests">
+                            @change="setAutoAcceptInviteRequests">
                             <el-radio-button label="Off">{{
                                 t('view.settings.general.automation.auto_invite_request_accept_off')
                             }}</el-radio-button>
@@ -313,40 +313,44 @@
                     <span class="header">{{ t('view.settings.appearance.appearance.header') }}</span>
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.language') }}</span>
-                        <el-dropdown trigger="click" size="small" @click.native.stop>
-                            <el-button size="mini">
+                        <el-dropdown trigger="click" size="small" @click.stop>
+                            <el-button size="small">
                                 <span
                                     >{{ messages[appLanguage]?.language }}
-                                    <i class="el-icon-arrow-down el-icon--right"></i
+                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
                                 ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="(obj, language) in messages"
-                                    :key="language"
-                                    @click.native="changeAppLanguage(language)"
-                                    v-text="obj.language" />
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="(obj, language) in messages"
+                                        :key="language"
+                                        @click="changeAppLanguage(language)"
+                                        v-text="obj.language" />
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.theme_mode') }}</span>
-                        <el-dropdown trigger="click" size="small" @click.native.stop>
-                            <el-button size="mini">
+                        <el-dropdown trigger="click" size="small" @click.stop>
+                            <el-button size="small">
                                 <span
                                     >{{ t(`view.settings.appearance.appearance.theme_mode_${themeMode}`) }}
-                                    <i class="el-icon-arrow-down el-icon--right"></i
+                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
                                 ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="(config, themeKey) in THEME_CONFIG"
-                                    :key="themeKey"
-                                    @click.native="saveThemeMode(themeKey)"
-                                    :class="{ 'is-active': themeMode === themeKey }">
-                                    {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="(config, themeKey) in THEME_CONFIG"
+                                        :key="themeKey"
+                                        @click="saveThemeMode(themeKey)"
+                                        :class="{ 'is-active': themeMode === themeKey }">
+                                        {{ t(`view.settings.appearance.appearance.theme_mode_${themeKey}`) }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <div v-if="!isLinux" class="options-container-item">
@@ -373,19 +377,12 @@
                             saveOpenVROption();
                         " />
                     <simple-switch
-                        :label="t('view.settings.appearance.appearance.tooltips')"
-                        :value="!hideTooltips"
-                        @change="
-                            setHideTooltips();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
                         :label="t('view.settings.appearance.appearance.age_gated_instances')"
                         :value="isAgeGatedInstancesVisible"
                         @change="setIsAgeGatedInstancesVisible" />
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.sort_favorite_by') }}</span>
-                        <el-radio-group :value="sortFavorites" @change="saveSortFavoritesOption">
+                        <el-radio-group :model-value="sortFavorites" @change="saveSortFavoritesOption">
                             <el-radio :label="false">{{
                                 t('view.settings.appearance.appearance.sort_favorite_by_name')
                             }}</el-radio>
@@ -397,7 +394,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.appearance.sort_instance_users_by') }}</span>
                         <el-radio-group
-                            :value="instanceUsersSortAlphabetical"
+                            :model-value="instanceUsersSortAlphabetical"
                             @change="setInstanceUsersSortAlphabetical">
                             <el-radio :label="false">{{
                                 t('view.settings.appearance.appearance.sort_instance_users_by_time')
@@ -410,25 +407,27 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-notebook-1"
+                            :icon="Notebook"
                             style="margin-right: 10px"
                             @click="promptMaxTableSizeDialog"
                             >{{ t('view.settings.appearance.appearance.table_max_size') }}</el-button
                         >
-                        <el-dropdown trigger="click" size="small" @click.native.stop>
+                        <el-dropdown trigger="click" size="small" @click.stop>
                             <el-button size="small">
                                 <span
                                     >{{ t('view.settings.appearance.appearance.page_size') }} {{ tablePageSize }}
-                                    <i class="el-icon-arrow-down el-icon--right"></i
+                                    <el-icon class="el-icon--right"><ArrowDown /></el-icon
                                 ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="number in [10, 15, 20, 25, 50, 100]"
-                                    :key="number"
-                                    @click.native="handleSetTablePageSize(number)"
-                                    v-text="number" />
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="number in [10, 15, 20, 25, 50, 100]"
+                                        :key="number"
+                                        @click="handleSetTablePageSize(number)"
+                                        v-text="number" />
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <div class="options-container-item" />
@@ -439,7 +438,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.timedate.time_format') }}</span>
                         <el-radio-group
-                            :value="dtHour12"
+                            :model-value="dtHour12"
                             @change="
                                 setDtHour12();
                                 updateVRConfigVars();
@@ -464,7 +463,7 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.appearance.side_panel.sorting.header') }}</span>
                         <el-select
-                            :value="sidebarSortMethod1"
+                            :model-value="sidebarSortMethod1"
                             style="width: 170px"
                             :placeholder="t('view.settings.appearance.side_panel.sorting.placeholder')"
                             @change="
@@ -502,9 +501,9 @@
                                     value="Sort by Location"></el-option>
                             </el-option-group>
                         </el-select>
-                        <i class="el-icon-arrow-right" style="margin: 16px 5px"></i>
+                        <el-icon><ArrowRight /></el-icon>
                         <el-select
-                            :value="sidebarSortMethod2"
+                            :model-value="sidebarSortMethod2"
                             :disabled="!sidebarSortMethod1"
                             style="width: 170px"
                             clearable
@@ -544,9 +543,9 @@
                                     value="Sort by Location"></el-option>
                             </el-option-group>
                         </el-select>
-                        <i class="el-icon-arrow-right" style="margin: 16px 5px"></i>
+                        <el-icon><ArrowRight /></el-icon>
                         <el-select
-                            :value="sidebarSortMethod3"
+                            :model-value="sidebarSortMethod3"
                             :disabled="!sidebarSortMethod2"
                             style="width: 170px"
                             clearable
@@ -592,12 +591,12 @@
                             t('view.settings.appearance.side_panel.width')
                         }}</span>
                         <el-slider
-                            :value="asideWidth"
+                            :model-value="asideWidth"
                             :show-tooltip="false"
                             :marks="{ 300: '' }"
                             :min="200"
                             :max="500"
-                            style="display: inline-block; width: 300px"
+                            style="display: inline-block; width: 300px; padding-top: 16px"
                             @input="setAsideWidth"></el-slider>
                     </div>
                     <simple-switch
@@ -636,7 +635,7 @@
                         <br />
                         <el-button
                             size="small"
-                            icon="el-icon-document-copy"
+                            :icon="DocumentCopy"
                             style="margin-top: 5px"
                             @click="showNoteExportDialog"
                             >{{ t('view.settings.appearance.user_dialog.export_notes') }}</el-button
@@ -662,66 +661,66 @@
                     <div class="options-container-item">
                         <div>
                             <el-color-picker
-                                :value="trustColor.untrusted"
-                                size="mini"
+                                :model-value="trustColor.untrusted"
+                                size="small"
                                 :predefine="['#CCCCCC']"
                                 @change="updateTrustColor('untrusted', $event)">
                             </el-color-picker>
-                            <span slot="trigger" class="color-picker x-tag-untrusted">Visitor</span>
+                            <span class="color-picker x-tag-untrusted">Visitor</span>
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.basic"
-                                size="mini"
+                                :model-value="trustColor.basic"
+                                size="small"
                                 :predefine="['#1778ff']"
                                 @change="updateTrustColor('basic', $event)">
                             </el-color-picker>
-                            <span slot="trigger" class="color-picker x-tag-basic">New User</span>
+                            <span class="color-picker x-tag-basic">New User</span>
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.known"
-                                size="mini"
+                                :model-value="trustColor.known"
+                                size="small"
                                 :predefine="['#2bcf5c']"
                                 @change="updateTrustColor('known', $event)">
                             </el-color-picker>
-                            <span slot="trigger" class="color-picker x-tag-known">User</span>
+                            <span class="color-picker x-tag-known">User</span>
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.trusted"
-                                size="mini"
+                                :model-value="trustColor.trusted"
+                                size="small"
                                 :predefine="['#ff7b42']"
                                 @change="updateTrustColor('trusted', $event)">
                             </el-color-picker>
-                            <span slot="trigger" class="color-picker x-tag-trusted">Known User</span>
+                            <span class="color-picker x-tag-trusted">Known User</span>
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.veteran"
-                                size="mini"
+                                :model-value="trustColor.veteran"
+                                size="small"
                                 :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']"
                                 @change="updateTrustColor('veteran', $event)">
                             </el-color-picker>
-                            <span slot="trigger" class="color-picker x-tag-veteran">Trusted User</span>
+                            <span class="color-picker x-tag-veteran">Trusted User</span>
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.vip"
-                                size="mini"
+                                :model-value="trustColor.vip"
+                                size="small"
                                 :predefine="['#ff2626']"
                                 @change="updateTrustColor('vip', $event)">
                             </el-color-picker>
-                            <span slot="trigger" class="color-picker x-tag-vip">VRChat Team</span>
+                            <span class="color-picker x-tag-vip">VRChat Team</span>
                         </div>
                         <div>
                             <el-color-picker
-                                :value="trustColor.troll"
-                                size="mini"
+                                :model-value="trustColor.troll"
+                                size="small"
                                 :predefine="['#782f2f']"
                                 @change="updateTrustColor('troll', $event)">
                             </el-color-picker>
-                            <span slot="trigger" class="color-picker x-tag-troll">Nuisance</span>
+                            <span class="color-picker x-tag-troll">Nuisance</span>
                         </div>
                     </div>
                 </div>
@@ -733,7 +732,7 @@
                 <div class="options-container" style="margin-top: 0">
                     <span class="header">{{ t('view.settings.notifications.notifications.header') }}</span>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog">{{
+                        <el-button size="small" :icon="ChatSquare" @click="showNotyFeedFiltersDialog">{{
                             t('view.settings.notifications.notifications.notification_filter')
                         }}</el-button>
                     </div>
@@ -749,8 +748,8 @@
                         }}</span>
                         <br />
                         <el-radio-group
-                            :value="overlayToast"
-                            size="mini"
+                            :model-value="overlayToast"
+                            size="small"
                             :disabled="
                                 (!overlayNotifications || !openVR) &&
                                 !xsNotifications &&
@@ -758,7 +757,7 @@
                                 !ovrtWristNotifications
                             "
                             style="margin-top: 5px"
-                            @input="
+                            @change="
                                 setOverlayToast($event);
                                 saveOpenVROption();
                             ">
@@ -776,16 +775,14 @@
                             }}</el-radio-button>
                         </el-radio-group>
                     </div>
-                    <template>
-                        <simple-switch
-                            :label="
-                                t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')
-                            "
-                            :value="openVR"
-                            @change="
-                                setOpenVR();
-                                saveOpenVROption();
-                            " />
+                    <simple-switch
+                        :label="t('view.settings.notifications.notifications.steamvr_notifications.steamvr_overlay')"
+                        :value="openVR"
+                        @change="
+                            setOpenVR();
+                            saveOpenVROption();
+                        " />
+                    <template v-if="openVR">
                         <simple-switch
                             :label="
                                 t(
@@ -801,7 +798,7 @@
                         <div class="options-container-item">
                             <el-button
                                 size="small"
-                                icon="el-icon-rank"
+                                :icon="Rank"
                                 :disabled="!overlayNotifications || !openVR"
                                 @click="showNotificationPositionDialog"
                                 >{{
@@ -818,18 +815,16 @@
                                 )
                             }}</span>
                             <el-slider
-                                :value="notificationOpacity"
+                                :model-value="notificationOpacity"
                                 @input="setNotificationOpacity"
-                                :show-tooltip="false"
                                 :min="0"
                                 :max="100"
-                                show-input
-                                style="display: inline-block; width: 300px" />
+                                style="display: inline-block; width: 300px; padding-top: 16px" />
                         </div>
                         <div class="options-container-item">
                             <el-button
                                 size="small"
-                                icon="el-icon-time"
+                                :icon="Timer"
                                 :disabled="(!overlayNotifications || !openVR) && !xsNotifications"
                                 @click="promptNotificationTimeout"
                                 >{{
@@ -909,10 +904,10 @@
                         }}</span>
                         <br />
                         <el-radio-group
-                            :value="desktopToast"
-                            size="mini"
+                            :model-value="desktopToast"
+                            size="small"
                             style="margin-top: 5px"
-                            @input="
+                            @change="
                                 setDesktopToast($event);
                                 saveOpenVROption();
                             ">
@@ -962,10 +957,10 @@
                         }}</span>
                         <br />
                         <el-radio-group
-                            :value="notificationTTS"
-                            size="mini"
+                            :model-value="notificationTTS"
+                            size="small"
                             style="margin-top: 5px"
-                            @input="saveNotificationTTS">
+                            @change="saveNotificationTTS">
                             <el-radio-button label="Never">{{
                                 t('view.settings.notifications.notifications.conditions.never')
                             }}</el-radio-button>
@@ -988,16 +983,20 @@
                             t('view.settings.notifications.notifications.text_to_speech.tts_voice')
                         }}</span>
                         <el-dropdown trigger="click" size="small" @command="(voice) => changeTTSVoice(voice)">
-                            <el-button size="mini" :disabled="notificationTTS === 'Never'">
-                                <span>{{ getTTSVoiceName() }} <i class="el-icon-arrow-down el-icon--right"></i></span>
+                            <el-button size="small" :disabled="notificationTTS === 'Never'">
+                                <span
+                                    >{{ getTTSVoiceName() }} <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
+                                ></span>
                             </el-button>
-                            <el-dropdown-menu>
-                                <el-dropdown-item
-                                    v-for="(voice, index) in TTSvoices"
-                                    :key="index"
-                                    :command="index"
-                                    v-text="voice.name" />
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="(voice, index) in TTSvoices"
+                                        :key="index"
+                                        :command="index"
+                                        v-text="voice.name" />
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                     <simple-switch
@@ -1023,7 +1022,7 @@
                             style="width: 175px; display: inline-block"></el-input>
                         <el-button
                             size="small"
-                            icon="el-icon-video-play"
+                            :icon="VideoPlay"
                             style="margin-left: 10px"
                             @click="testNotificationTTS"
                             >{{ t('view.settings.notifications.notifications.text_to_speech.play') }}</el-button
@@ -1040,7 +1039,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-notebook-2"
+                            :icon="Files"
                             :disabled="!openVR || !overlayWrist"
                             @click="showWristFeedFiltersDialog"
                             >{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}</el-button
@@ -1082,7 +1081,7 @@
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')
                         }}</span>
                         <el-radio-group
-                            :value="openVRAlways"
+                            :model-value="openVRAlways"
                             :disabled="!openVR"
                             @change="
                                 setOpenVRAlways();
@@ -1097,7 +1096,7 @@
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button')
                         }}</span>
                         <el-radio-group
-                            :value="overlaybutton"
+                            :model-value="overlaybutton"
                             :disabled="!openVR || !overlayWrist"
                             @change="
                                 setOverlaybutton();
@@ -1116,9 +1115,9 @@
                             t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on')
                         }}</span>
                         <el-radio-group
-                            :value="overlayHand"
-                            size="mini"
-                            @input="
+                            :model-value="overlayHand"
+                            size="small"
+                            @change="
                                 setOverlayHand($event);
                                 saveOpenVROption();
                             ">
@@ -1271,7 +1270,7 @@
                     <span class="header">{{ t('view.settings.category.pictures') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group
-                            ><el-button size="small" icon="el-icon-picture" @click="showScreenshotMetadataDialog()">{{
+                            ><el-button size="small" :icon="Picture" @click="showScreenshotMetadataDialog()">{{
                                 t('view.settings.advanced.advanced.screenshot_metadata')
                             }}</el-button>
                         </el-button-group>
@@ -1283,10 +1282,10 @@
                     <span class="header">{{ t('view.settings.pictures.pictures.open_folder') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcPhotosFolder()">{{
+                            <el-button size="small" :icon="Folder" @click="openVrcPhotosFolder()">{{
                                 t('view.settings.pictures.pictures.vrc_photos')
                             }}</el-button>
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcScreenshotsFolder()">{{
+                            <el-button size="small" :icon="Folder" @click="openVrcScreenshotsFolder()">{{
                                 t('view.settings.pictures.pictures.steam_screenshots')
                             }}</el-button>
                         </el-button-group>
@@ -1319,7 +1318,7 @@
                         :value="screenshotHelperCopyToClipboard"
                         @change="setScreenshotHelperCopyToClipboard()"
                         :long-label="true" />
-                    <el-button size="small" icon="el-icon-delete" @click="askDeleteAllScreenshotMetadata()">{{
+                    <el-button size="small" :icon="Delete" @click="askDeleteAllScreenshotMetadata()">{{
                         t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
                     }}</el-button>
                 </div>
@@ -1337,18 +1336,18 @@
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
                     <br />
-                    <div class="options-container-item">
+                    <div class="options-container-item" style="margin-bottom: 5px">
                         <span class="name" style="min-width: 300px">{{
                             t('view.settings.advanced.advanced.user_generated_content.description')
                         }}</span>
                     </div>
-                    <el-button size="small" icon="el-icon-folder" @click="openUGCFolder()" style="margin-top: 5px">{{
+                    <el-button size="small" :icon="Folder" @click="openUGCFolder()">{{
                         t('view.settings.advanced.advanced.user_generated_content.folder')
                     }}</el-button>
-                    <el-button size="small" icon="el-icon-folder-opened" @click="openUGCFolderSelector()">{{
+                    <el-button size="small" :icon="FolderOpened" @click="openUGCFolderSelector()">{{
                         t('view.settings.advanced.advanced.user_generated_content.set_folder')
                     }}</el-button>
-                    <el-button size="small" icon="el-icon-delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
+                    <el-button size="small" :icon="Delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
                         t('view.settings.advanced.advanced.user_generated_content.reset_override')
                     }}</el-button>
                     <br />
@@ -1361,7 +1360,7 @@
                         placement="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <i class="el-icon-info"></i>
+                        <el-icon><InfoFilled /></el-icon>
                     </el-tooltip>
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
@@ -1390,7 +1389,7 @@
                         placement="top"
                         style="margin-left: 5px"
                         :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <i class="el-icon-info" />
+                        <el-icon><InfoFilled /></el-icon>
                     </el-tooltip>
                     <simple-switch
                         :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
@@ -1407,13 +1406,13 @@
                     <span class="header">{{ t('view.settings.advanced.advanced.header') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
-                            <el-button size="small" icon="el-icon-s-operation" @click="showVRChatConfig()"
+                            <el-button size="small" :icon="Operation" @click="showVRChatConfig()"
                                 >VRChat config.json</el-button
                             >
-                            <el-button size="small" icon="el-icon-s-operation" @click="showLaunchOptions()">{{
+                            <el-button size="small" :icon="Operation" @click="showLaunchOptions()">{{
                                 t('view.settings.advanced.advanced.launch_options')
                             }}</el-button>
-                            <el-button size="small" icon="el-icon-goods" @click="showRegistryBackupDialog()">{{
+                            <el-button size="small" :icon="Goods" @click="showRegistryBackupDialog()">{{
                                 t('view.settings.advanced.advanced.vrc_registry_backup')
                             }}</el-button>
                         </el-button-group>
@@ -1424,13 +1423,13 @@
                     <span class="header">{{ t('view.settings.advanced.advanced.common_folders') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcxAppDataFolder()"
+                            <el-button size="small" :icon="Folder" @click="openVrcxAppDataFolder()"
                                 >VRCX Data</el-button
                             >
-                            <el-button size="small" icon="el-icon-folder" @click="openVrcAppDataFolder()"
+                            <el-button size="small" :icon="Folder" @click="openVrcAppDataFolder()"
                                 >VRChat Data</el-button
                             >
-                            <el-button size="small" icon="el-icon-folder" @click="openCrashVrcCrashDumps()"
+                            <el-button size="small" :icon="Folder" @click="openCrashVrcCrashDumps()"
                                 >Crash Dumps</el-button
                             >
                         </el-button-group>
@@ -1502,7 +1501,7 @@
                             saveOpenVROption();
                         " />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog">{{
+                        <el-button size="small" :icon="User" @click="showAvatarProviderDialog">{{
                             t('view.settings.advanced.advanced.remote_database.avatar_database_provider')
                         }}</el-button>
                     </div>
@@ -1512,22 +1511,13 @@
                     <div class="options-container">
                         <span class="header">{{ t('view.settings.advanced.advanced.app_launcher.header') }}</span>
                         <br />
-                        <el-button
-                            size="small"
-                            icon="el-icon-folder"
-                            style="margin-top: 5px"
-                            @click="openShortcutFolder()"
-                            >{{ t('view.settings.advanced.advanced.app_launcher.folder') }}</el-button
-                        >
-                        <el-tooltip
-                            placement="top"
-                            style="margin-left: 5px"
-                            :content="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')">
-                            <i class="el-icon-info"></i>
-                        </el-tooltip>
+                        <el-button size="small" :icon="Folder" style="margin-top: 5px" @click="openShortcutFolder()">{{
+                            t('view.settings.advanced.advanced.app_launcher.folder')
+                        }}</el-button>
                         <simple-switch
                             :label="t('view.settings.advanced.advanced.remote_database.enable')"
                             :value="enableAppLauncher"
+                            :tooltip="t('view.settings.advanced.advanced.app_launcher.folder_tooltip')"
                             :long-label="true"
                             @change="setEnableAppLauncher" />
                         <simple-switch
@@ -1553,7 +1543,7 @@
                         :long-label="true"
                         @change="changeYouTubeApi('VRCX_youtubeAPI')" />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog">{{
+                        <el-button size="small" :icon="CaretRight" @click="showYouTubeApiDialog">{{
                             t('view.settings.advanced.advanced.youtube_api.youtube_api_key')
                         }}</el-button>
                     </div>
@@ -1595,7 +1585,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-paperclip"
+                            :icon="Paperclip"
                             @click="
                                 openExternalLink('https://github.com/vrcx-team/VRCX/wiki/Launch-parameters-&-VRCX.json')
                             "
@@ -1603,7 +1593,7 @@
                         >
                         <el-button
                             size="small"
-                            icon="el-icon-paperclip"
+                            :icon="Paperclip"
                             @click="openExternalLink('https://github.com/Myrkie/open-in-vrcx')"
                             >{{ t('view.settings.advanced.advanced.launch_commands.website_userscript') }}</el-button
                         >
@@ -1624,10 +1614,10 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.advanced.photon.event_hud.filter') }}</span>
                         <el-radio-group
-                            :value="photonEventOverlayFilter"
-                            size="mini"
+                            :model-value="photonEventOverlayFilter"
+                            size="small"
                             :disabled="!openVR || !photonEventOverlay"
-                            @input="
+                            @change="
                                 setPhotonEventOverlayFilter($event);
                                 saveEventOverlay();
                             ">
@@ -1645,7 +1635,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-time"
+                            :icon="Timer"
                             :disabled="!openVR"
                             @click="promptPhotonOverlayMessageTimeout"
                             >{{ t('view.settings.advanced.photon.event_hud.message_timeout') }}</el-button
@@ -1653,13 +1643,13 @@
                     </div>
                     <div class="options-container-item">
                         <el-select
-                            :value="photonEventTableTypeOverlayFilter"
+                            :model-value="photonEventTableTypeOverlayFilter"
                             multiple
                             clearable
                             collapse-tags
                             style="flex: 1"
                             placeholder="Filter"
-                            @input="
+                            @change="
                                 setPhotonEventTableTypeOverlayFilter($event);
                                 photonEventTableFilterChange();
                             ">
@@ -1681,10 +1671,10 @@
                     <div class="options-container-item">
                         <span class="name">{{ t('view.settings.advanced.photon.timeout_hud.filter') }}</span>
                         <el-radio-group
-                            :value="timeoutHudOverlayFilter"
-                            size="mini"
+                            :model-value="timeoutHudOverlayFilter"
+                            size="small"
                             :disabled="!openVR || !timeoutHudOverlay"
-                            @input="
+                            @change="
                                 setTimeoutHudOverlayFilter($event);
                                 saveEventOverlay();
                             ">
@@ -1702,7 +1692,7 @@
                     <div class="options-container-item">
                         <el-button
                             size="small"
-                            icon="el-icon-time"
+                            :icon="Timer"
                             :disabled="!openVR"
                             @click="promptPhotonLobbyTimeoutThreshold"
                             >{{ t('view.settings.advanced.photon.timeout_hud.timeout_threshold') }}</el-button
@@ -1714,62 +1704,60 @@
                     <span class="header">{{ t('view.settings.advanced.advanced.cache_debug.header') }}</span>
                     <br />
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-delete-solid" @click="clearVRCXCache">{{
+                        <el-button size="small" :icon="DeleteFilled" @click="clearVRCXCache">{{
                             t('view.settings.advanced.advanced.cache_debug.clear_cache')
                         }}</el-button>
-                        <el-button size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency">{{
+                        <el-button size="small" :icon="Timer" @click="promptAutoClearVRCXCacheFrequency">{{
                             t('view.settings.advanced.advanced.cache_debug.auto_clear_cache')
+                        }}</el-button>
+                        <el-button size="small" :icon="Refresh" @click="refreshCacheSize">{{
+                            t('view.settings.advanced.advanced.cache_debug.refresh_cache')
                         }}</el-button>
                     </div>
 
                     <simple-switch
-                        :label="t('view.settings.advanced.advanced.cache_debug.disable_gamelog')"
+                        :label="`${t('view.settings.advanced.advanced.cache_debug.disable_gamelog')} ${t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')}`"
                         :value="gameLogDisabled"
                         :long-label="true"
                         @change="disableGameLogDialog()" />
                     <div class="options-container-item">
-                        <span class="name" style="margin-left: 15px">{{
-                            t('view.settings.advanced.advanced.cache_debug.disable_gamelog_notice')
-                        }}</span>
-                    </div>
-                    <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.user_cache') }}
-                            <span v-text="cachedUsers.size"></span
+                            <span v-text="cacheSize.cachedUsers"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.world_cache') }}
-                            <span v-text="cachedWorlds.size"></span
+                            <span v-text="cacheSize.cachedWorlds"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.avatar_cache') }}
-                            <span v-text="cachedAvatars.size"></span
+                            <span v-text="cacheSize.cachedAvatars"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.group_cache') }}
-                            <span v-text="cachedGroups.size"></span
+                            <span v-text="cacheSize.cachedGroups"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }}
-                            <span v-text="cachedAvatarNames.size"></span
+                            <span v-text="cacheSize.cachedAvatarNames"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
                         <span class="name"
                             >{{ t('view.settings.advanced.advanced.cache_debug.instance_cache') }}
-                            <span v-text="cachedInstances.size"></span
+                            <span v-text="cacheSize.cachedInstances"></span
                         ></span>
                     </div>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-tickets" @click="showConsole">{{
+                        <el-button size="small" :icon="Tickets" @click="showConsole">{{
                             t('view.settings.advanced.advanced.cache_debug.show_console')
                         }}</el-button>
                     </div>
@@ -1778,7 +1766,7 @@
                 <div class="options-container">
                     <span class="sub-header">{{ t('view.settings.advanced.advanced.sqlite_table_size.header') }}</span>
                     <div class="options-container-item">
-                        <el-button size="small" icon="el-icon-refresh" @click="getSqliteTableSizes">{{
+                        <el-button size="small" :icon="Refresh" @click="getSqliteTableSizes">{{
                             t('view.settings.advanced.advanced.sqlite_table_size.refresh')
                         }}</el-button>
                     </div>
@@ -1857,20 +1845,50 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
-        <OpenSourceSoftwareNoticeDialog :ossDialog.sync="ossDialog" />
-        <NotificationPositionDialog :isNotificationPositionDialogVisible.sync="isNotificationPositionDialogVisible" />
+        <OpenSourceSoftwareNoticeDialog v-if="ossDialog" v-model:ossDialog="ossDialog" />
+        <NotificationPositionDialog v-model:isNotificationPositionDialogVisible="isNotificationPositionDialogVisible" />
         <RegistryBackupDialog />
-        <YouTubeApiDialog :isYouTubeApiDialogVisible.sync="isYouTubeApiDialogVisible" />
-        <FeedFiltersDialog :feedFiltersDialogMode.sync="feedFiltersDialogMode" />
+        <YouTubeApiDialog v-model:isYouTubeApiDialogVisible="isYouTubeApiDialogVisible" />
+        <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
         <ChangelogDialog />
-        <AvatarProviderDialog :isAvatarProviderDialogVisible.sync="isAvatarProviderDialogVisible" />
+        <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
     </div>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+
+    import {
+        InfoFilled,
+        ArrowRight,
+        Upload,
+        Folder,
+        Delete,
+        FolderOpened,
+        User,
+        Tickets,
+        Refresh,
+        Operation,
+        Goods,
+        Document,
+        Connection,
+        ChatSquare,
+        Picture,
+        CaretRight,
+        DeleteFilled,
+        Timer,
+        Notebook,
+        DocumentCopy,
+        Rank,
+        VideoPlay,
+        Files,
+        Paperclip,
+        ArrowDown
+    } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
-    import { ref, getCurrentInstance, computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ref, computed, defineAsyncComponent, reactive } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import {
         useFavoriteStore,
         useAppearanceSettingsStore,
@@ -1895,8 +1913,7 @@
         useGameLogStore,
         useUserStore
     } from '../../stores';
-    import { photonEventTableTypeFilterList } from '../../shared/constants';
-    import OpenSourceSoftwareNoticeDialog from './dialogs/OpenSourceSoftwareNoticeDialog.vue';
+    import { photonEventTableTypeFilterList } from '../../shared/constants/photon';
     import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
     import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
@@ -1906,10 +1923,12 @@
     import { openExternalLink } from '../../shared/utils';
     import { THEME_CONFIG } from '../../shared/constants';
 
-    const { messages, t } = useI18n();
-    const { $message } = getCurrentInstance().proxy;
+    const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
+        () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')
+    );
 
-    const { cachedUsers } = storeToRefs(useUserStore());
+    const { messages, t } = useI18n();
+    const { cachedUsers } = useUserStore();
     const generalSettingsStore = useGeneralSettingsStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const notificationsSettingsStore = useNotificationsSettingsStore();
@@ -1922,8 +1941,8 @@
     const { setAutoUpdateVRCX, checkForVRCXUpdate, showVRCXUpdateDialog, showChangeLogDialog } = useVRCXUpdaterStore();
     const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
     const { saveSortFavoritesOption } = useFavoriteStore();
-    const { cachedGroups } = storeToRefs(useGroupStore());
-    const { cachedAvatars, cachedAvatarNames } = storeToRefs(useAvatarStore());
+    const { cachedGroups } = useGroupStore();
+    const { cachedAvatars, cachedAvatarNames } = useAvatarStore();
     const { showConsole } = useVrcxStore();
     const {
         discordActive,
@@ -1965,8 +1984,8 @@
         timeoutHudOverlayFilter
     } = storeToRefs(usePhotonStore());
     const { saveSidebarSortOrder } = useFriendStore();
-    const { cachedWorlds } = storeToRefs(useWorldStore());
-    const { cachedInstances } = storeToRefs(useInstanceStore());
+    const { cachedWorlds } = useWorldStore();
+    const { cachedInstances } = useInstanceStore();
     const { showLaunchOptions } = useLaunchStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { enablePrimaryPasswordChange } = useAuthStore();
@@ -2014,7 +2033,6 @@
         themeMode,
         displayVRCPlusIconsAsAvatar,
         hideNicknames,
-        hideTooltips,
         isAgeGatedInstancesVisible,
         sortFavorites,
         instanceUsersSortAlphabetical,
@@ -2037,7 +2055,6 @@
     const {
         setDisplayVRCPlusIconsAsAvatar,
         setHideNicknames,
-        setHideTooltips,
         setIsAgeGatedInstancesVisible,
         setInstanceUsersSortAlphabetical,
         setDtHour12,
@@ -2197,6 +2214,15 @@
 
     const zoomLevel = ref(100);
 
+    const cacheSize = reactive({
+        cachedUsers: 0,
+        cachedWorlds: 0,
+        cachedAvatars: 0,
+        cachedGroups: 0,
+        cachedAvatarNames: 0,
+        cachedInstances: 0
+    });
+
     const isLinux = computed(() => LINUX);
 
     initGetZoomLevel();
@@ -2216,6 +2242,15 @@
 
     function setZoomLevel() {
         AppApi.SetZoom(zoomLevel.value / 10 - 10);
+    }
+
+    function refreshCacheSize() {
+        cacheSize.cachedUsers = cachedUsers.size;
+        cacheSize.cachedWorlds = cachedWorlds.size;
+        cacheSize.cachedAvatars = cachedAvatars.size;
+        cacheSize.cachedGroups = cachedGroups.size;
+        cacheSize.cachedAvatarNames = cachedAvatarNames.size;
+        cacheSize.cachedInstances = cachedInstances.size;
     }
 
     function showNotyFeedFiltersDialog() {
@@ -2242,12 +2277,12 @@
     function openVrcxAppDataFolder() {
         AppApi.OpenVrcxAppDataFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2258,12 +2293,12 @@
     function openVrcAppDataFolder() {
         AppApi.OpenVrcAppDataFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2274,12 +2309,12 @@
     function openVrcPhotosFolder() {
         AppApi.OpenVrcPhotosFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2290,12 +2325,12 @@
     function openVrcScreenshotsFolder() {
         AppApi.OpenVrcScreenshotsFolder().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });
@@ -2306,12 +2341,12 @@
     function openCrashVrcCrashDumps() {
         AppApi.OpenCrashVrcCrashDumps().then((result) => {
             if (result) {
-                $message({
+                ElMessage({
                     message: 'Folder opened',
                     type: 'success'
                 });
             } else {
-                $message({
+                ElMessage({
                     message: "Folder dosn't exist",
                     type: 'error'
                 });

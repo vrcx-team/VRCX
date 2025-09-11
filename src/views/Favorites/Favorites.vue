@@ -14,15 +14,12 @@
                 <span class="name">{{ t('view.favorite.edit_mode') }}</span>
                 <el-switch v-model="editFavoritesMode" style="margin-left: 5px"></el-switch>
             </div>
-            <el-tooltip
-                placement="bottom"
-                :content="t('view.favorite.refresh_favorites_tooltip')"
-                :disabled="hideTooltips">
+            <el-tooltip placement="bottom" :content="t('view.favorite.refresh_favorites_tooltip')">
                 <el-button
                     type="default"
                     :loading="isFavoriteLoading"
                     size="small"
-                    icon="el-icon-refresh"
+                    :icon="Refresh"
                     circle
                     @click="
                         refreshFavorites();
@@ -33,13 +30,11 @@
         <el-tabs v-model="currentTabName" v-loading="isFavoriteLoading" type="card" style="height: 100%">
             <el-tab-pane name="friend" :label="t('view.favorite.friends.header')">
                 <FavoritesFriendTab
-                    :hide-tooltips="hideTooltips"
                     :edit-favorites-mode="editFavoritesMode"
                     @change-favorite-group-name="changeFavoriteGroupName" />
             </el-tab-pane>
             <el-tab-pane name="world" :label="t('view.favorite.worlds.header')" lazy>
                 <FavoritesWorldTab
-                    :hide-tooltips="hideTooltips"
                     :edit-favorites-mode="editFavoritesMode"
                     :refresh-local-world-favorites="refreshLocalWorldFavorites"
                     @change-favorite-group-name="changeFavoriteGroupName"
@@ -47,7 +42,6 @@
             </el-tab-pane>
             <el-tab-pane name="avatar" :label="t('view.favorite.avatars.header')" lazy>
                 <FavoritesAvatarTab
-                    :hide-tooltips="hideTooltips"
                     :edit-favorites-mode="editFavoritesMode"
                     :refreshing-local-favorites="refreshingLocalFavorites"
                     @change-favorite-group-name="changeFavoriteGroupName"
@@ -58,19 +52,19 @@
 </template>
 
 <script setup>
-    import { ref, getCurrentInstance } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { Refresh } from '@element-plus/icons-vue';
+    import { ref } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { avatarRequest, favoriteRequest, worldRequest } from '../../api';
-    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
+    import { useFavoriteStore, useUiStore, useAvatarStore } from '../../stores';
     import FavoritesAvatarTab from './components/FavoritesAvatarTab.vue';
     import FavoritesFriendTab from './components/FavoritesFriendTab.vue';
     import FavoritesWorldTab from './components/FavoritesWorldTab.vue';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const {
         favoriteFriends,
         favoriteWorlds,
@@ -120,21 +114,22 @@
         if (elementsTicked.length === 0) {
             return;
         }
-        proxy.$confirm(
+        ElMessageBox.confirm(
             `Are you sure you want to unfavorite ${elementsTicked.length} favorites?
             This action cannot be undone.`,
             `Delete ${elementsTicked.length} favorites?`,
             {
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action === 'confirm') {
-                        bulkUnfavoriteSelection(elementsTicked);
-                    }
-                }
+                type: 'info'
             }
-        );
+        )
+            .then((action) => {
+                if (action === 'confirm') {
+                    bulkUnfavoriteSelection(elementsTicked);
+                }
+            })
+            .catch(() => {});
     }
 
     function bulkUnfavoriteSelection(elementsTicked) {
@@ -146,7 +141,7 @@
         editFavoritesMode.value = false;
     }
     function changeFavoriteGroupName(ctx) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.change_favorite_group_name.description'),
             t('prompt.change_favorite_group_name.header'),
             {
@@ -156,33 +151,32 @@
                 inputPlaceholder: t('prompt.change_favorite_group_name.input_placeholder'),
                 inputValue: ctx.displayName,
                 inputPattern: /\S+/,
-                inputErrorMessage: t('prompt.change_favorite_group_name.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        favoriteRequest
-                            .saveFavoriteGroup({
-                                type: ctx.type,
-                                group: ctx.name,
-                                displayName: instance.inputValue
-                            })
-                            .then((args) => {
-                                handleFavoriteGroup({
-                                    json: args.json,
-                                    params: {
-                                        favoriteGroupId: args.json.id
-                                    }
-                                });
-                                proxy.$message({
-                                    message: t('prompt.change_favorite_group_name.message.success'),
-                                    type: 'success'
-                                });
-                                // load new group name
-                                refreshFavoriteGroups();
-                            });
-                    }
-                }
+                inputErrorMessage: t('prompt.change_favorite_group_name.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                favoriteRequest
+                    .saveFavoriteGroup({
+                        type: ctx.type,
+                        group: ctx.name,
+                        displayName: value
+                    })
+                    .then((args) => {
+                        handleFavoriteGroup({
+                            json: args.json,
+                            params: {
+                                favoriteGroupId: args.json.id
+                            }
+                        });
+                        ElMessage({
+                            message: t('prompt.change_favorite_group_name.message.success'),
+                            type: 'success'
+                        });
+                        // load new group name
+                        refreshFavoriteGroups();
+                    });
+            })
+            .catch(() => {});
     }
 
     function handleBulkCopyFavoriteSelection() {

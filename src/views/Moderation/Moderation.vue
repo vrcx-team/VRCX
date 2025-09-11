@@ -1,48 +1,45 @@
 <template>
     <div v-show="menuActiveIndex === 'moderation'" class="x-container">
-        <data-tables
+        <!-- 工具栏 -->
+        <div class="tool-slot">
+            <el-select
+                v-model="filters[0].value"
+                @change="saveTableFilters()"
+                multiple
+                clearable
+                style="flex: 1"
+                :placeholder="t('view.moderation.filter_placeholder')">
+                <el-option
+                    v-for="item in moderationTypes"
+                    :key="item"
+                    :label="t('view.moderation.filters.' + item)"
+                    :value="item" />
+            </el-select>
+            <el-input
+                v-model="filters[1].value"
+                :placeholder="t('view.moderation.search_placeholder')"
+                class="filter-input" />
+            <el-tooltip placement="bottom" :content="t('view.moderation.refresh_tooltip')">
+                <el-button
+                    type="default"
+                    :loading="isPlayerModerationsLoading"
+                    @click="refreshPlayerModerations()"
+                    :icon="Refresh"
+                    circle />
+            </el-tooltip>
+        </div>
+
+        <DataTable
             :data="playerModerationTable.data"
             :pageSize="playerModerationTable.pageSize"
             :filters="filters"
             :tableProps="tableProps"
             :paginationProps="paginationProps"
             v-loading="isPlayerModerationsLoading">
-            <template slot="tool">
-                <div class="tool-slot">
-                    <el-select
-                        v-model="filters[0].value"
-                        @change="saveTableFilters()"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.moderation.filter_placeholder')">
-                        <el-option
-                            v-for="item in moderationTypes"
-                            :key="item"
-                            :label="t('view.moderation.filters.' + item)"
-                            :value="item" />
-                    </el-select>
-                    <el-input
-                        v-model="filters[1].value"
-                        :placeholder="t('view.moderation.search_placeholder')"
-                        class="filter-input" />
-                    <el-tooltip
-                        placement="bottom"
-                        :content="t('view.moderation.refresh_tooltip')"
-                        :disabled="hideTooltips">
-                        <el-button
-                            type="default"
-                            :loading="isPlayerModerationsLoading"
-                            @click="refreshPlayerModerations()"
-                            icon="el-icon-refresh"
-                            circle />
-                    </el-tooltip>
-                </div>
-            </template>
-            <el-table-column :label="t('table.moderation.date')" prop="created" sortable="custom" width="120">
-                <template slot-scope="scope">
+            <el-table-column :label="t('table.moderation.date')" prop="created" :sortable="true" width="120">
+                <template #default="scope">
                     <el-tooltip placement="right">
-                        <template slot="content">
+                        <template #content>
                             <span>{{ formatDateFilter(scope.row.created, 'long') }}</span>
                         </template>
                         <span>{{ formatDateFilter(scope.row.created, 'short') }}</span>
@@ -50,12 +47,12 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.type')" prop="type" width="100">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span v-text="t('view.moderation.filters.' + scope.row.type)"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.source')" prop="sourceDisplayName">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span
                         class="x-link"
                         v-text="scope.row.sourceDisplayName"
@@ -63,7 +60,7 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.target')" prop="targetDisplayName">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <span
                         class="x-link"
                         v-text="scope.row.targetDisplayName"
@@ -71,31 +68,33 @@
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.moderation.action')" width="80" align="right">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <template v-if="scope.row.sourceUserId === currentUser.id">
                         <el-button
                             v-if="shiftHeld"
                             style="color: #f56c6c"
                             type="text"
-                            icon="el-icon-close"
-                            size="mini"
+                            :icon="Close"
+                            size="small"
                             @click="deletePlayerModeration(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
-                            icon="el-icon-close"
-                            size="mini"
+                            :icon="Close"
+                            size="small"
                             @click="deletePlayerModerationPrompt(scope.row)"></el-button>
                     </template>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </div>
 </template>
 
 <script setup>
-    import { getCurrentInstance, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ElMessageBox } from 'element-plus';
+    import { Refresh, Close } from '@element-plus/icons-vue';
+    import { ref } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { playerModerationRequest } from '../../api';
     import configRepository from '../../service/config.js';
@@ -104,9 +103,6 @@
     import { formatDateFilter } from '../../shared/utils';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { isPlayerModerationsLoading, playerModerationTable } = storeToRefs(useModerationStore());
     const { refreshPlayerModerations, handlePlayerModerationDelete } = useModerationStore();
@@ -127,7 +123,7 @@
 
     const tableProps = ref({
         stripe: true,
-        size: 'mini',
+        size: 'small',
         defaultSort: {
             prop: 'created',
             order: 'descending'
@@ -161,16 +157,17 @@
     }
 
     function deletePlayerModerationPrompt(row) {
-        proxy.$confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Delete Moderation ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deletePlayerModeration(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>
 

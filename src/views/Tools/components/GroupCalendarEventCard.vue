@@ -6,7 +6,7 @@
                 <div v-if="showGroupName" class="event-group-name" @click="onGroupClick">
                     {{ groupName }}
                 </div>
-                <el-popover placement="right" width="500" trigger="hover">
+                <el-popover placement="right" :width="500" trigger="hover">
                     <el-descriptions :title="event.title" size="small" :column="2" class="event-title-popover">
                         <template #extra>
                             <div>
@@ -28,9 +28,11 @@
                         }}</el-descriptions-item>
                         <el-descriptions-item label="Description">{{ event.description }}</el-descriptions-item>
                     </el-descriptions>
-                    <div class="event-title-content" slot="reference" @click="onGroupClick">
-                        {{ event.title }}
-                    </div>
+                    <template #reference>
+                        <div class="event-title-content" @click="onGroupClick">
+                            {{ event.title }}
+                        </div>
+                    </template>
                 </el-popover>
             </div>
             <div class="event-info">
@@ -43,19 +45,18 @@
             </div>
         </div>
         <div v-if="isFollowing" class="following-badge">
-            <i class="el-icon-check"></i>
+            <el-icon><Check /></el-icon>
         </div>
     </el-card>
 </template>
 
 <script setup>
+    import { Check } from '@element-plus/icons-vue';
     import { computed } from 'vue';
     import dayjs from 'dayjs';
-    import { storeToRefs } from 'pinia';
     import { useGroupStore } from '../../../stores';
 
-    const { cachedGroups } = storeToRefs(useGroupStore());
-    const { showGroupDialog } = useGroupStore();
+    const { cachedGroups, showGroupDialog } = useGroupStore();
 
     const props = defineProps({
         event: {
@@ -87,13 +88,13 @@
         if (props.event.imageUrl) {
             return props.event.imageUrl;
         } else {
-            return cachedGroups.value.get(props.event.ownerId)?.bannerUrl || '';
+            return cachedGroups.get(props.event.ownerId)?.bannerUrl || '';
         }
     });
 
     const groupName = computed(() => {
         if (!props.event) return '';
-        return cachedGroups.value.get(props.event.ownerId)?.name || '';
+        return cachedGroups.get(props.event.ownerId)?.name || '';
     });
 
     const formattedTime = computed(() => {
@@ -131,7 +132,7 @@
             flex: 0 0 280px;
             max-width: 280px;
         }
-        ::v-deep .el-card__body {
+        :deep(.el-card__body) {
             overflow: visible;
         }
         .banner {
@@ -213,7 +214,7 @@
             }
         }
     }
-    ::v-deep .el-card {
+    :deep(.el-card) {
         border-radius: 8px;
         width: 100%;
         overflow: visible;

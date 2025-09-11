@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
-        ref="friendImportDialogRef"
-        :visible.sync="isVisible"
+    <el-dialog
+        :z-index="friendImportDialogIndex"
+        v-model="isVisible"
         :title="t('dialog.friend_import.header')"
         width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
@@ -10,7 +10,7 @@
                 <div v-if="friendImportDialog.progress">
                     {{ t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }} /
                     {{ friendImportDialog.progressTotal }}
-                    <i class="el-icon-loading" style="margin: 0 5px"></i>
+                    <el-icon style="margin: 0 5px"><Loading /></el-icon>
                 </div>
                 <el-button v-if="friendImportDialog.loading" size="small" @click="cancelFriendImport">
                     {{ t('dialog.friend_import.cancel') }}
@@ -23,36 +23,37 @@
         <el-input
             v-model="friendImportDialog.input"
             type="textarea"
-            size="mini"
-            rows="10"
+            size="small"
+            :rows="10"
             resize="none"
             style="margin-top: 10px" />
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" @click.native.stop>
-                    <el-button size="mini">
+                <el-dropdown trigger="click" size="small">
+                    <el-button size="small">
                         <span v-if="friendImportDialog.friendImportFavoriteGroup">
                             {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{
                                 friendImportDialog.friendImportFavoriteGroup.count
                             }}/{{ friendImportDialog.friendImportFavoriteGroup.capacity }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else
                             >{{ t('dialog.friend_import.select_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon
                         ></span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteFriendGroups">
-                            <el-dropdown-item
-                                :key="groupAPI.name"
-                                style="display: block; margin: 10px 0"
-                                :disabled="groupAPI.count >= groupAPI.capacity"
-                                @click.native="selectFriendImportGroup(groupAPI)">
-                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    :disabled="groupAPI.count >= groupAPI.capacity"
+                                    @click="selectFriendImportGroup(groupAPI)">
+                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <span v-if="friendImportDialog.friendImportFavoriteGroup" style="margin-left: 5px">
                     {{ friendImportTable.data.length }} /
@@ -77,7 +78,7 @@
             </div>
         </div>
         <span v-if="friendImportDialog.importProgress" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{
                 friendImportDialog.importProgressTotal
             }}
@@ -90,47 +91,47 @@
             <h2 style="font-weight: bold; margin: 5px 0">{{ t('dialog.friend_import.errors') }}</h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="friendImportDialog.errors"></pre>
         </template>
-        <data-tables v-loading="friendImportDialog.loading" v-bind="friendImportTable" style="margin-top: 10px">
+        <DataTable v-loading="friendImportDialog.loading" v-bind="friendImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
-                <template slot-scope="scope">
-                    <el-popover placement="right" height="500px" trigger="hover">
-                        <template slot="reference">
-                            <img class="friends-list-avatar" :src="userImage(scope.row)" />
+                <template #default="{ row }">
+                    <el-popover placement="right" :width="500" trigger="hover">
+                        <template #reference>
+                            <img class="friends-list-avatar" :src="userImage(row)" />
                         </template>
                         <img
-                            class="friends-list-avatar"
-                            :src="userImageFull(scope.row)"
-                            style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(userImageFull(scope.row))" />
+                            :src="userImageFull(row)"
+                            :class="['friends-list-avatar', 'x-popover-image']"
+                            style="cursor: pointer"
+                            @click="showFullscreenImageDialog(userImageFull(row))" />
                     </el-popover>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.name')" prop="displayName">
-                <template slot-scope="scope">
-                    <span class="x-link" :title="scope.row.displayName" @click="showUserDialog(scope.row.id)">
-                        {{ scope.row.displayName }}
+                <template #default="{ row }">
+                    <span class="x-link" :title="row.displayName" @click="showUserDialog(row.id)">
+                        {{ row.displayName }}
                     </span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-close" size="mini" @click="deleteItemFriendImport(scope.row)">
-                    </el-button>
+                <template #default="{ row }">
+                    <el-button type="text" :icon="Close" size="small" @click="deleteItemFriendImport(row)"> </el-button>
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
-    import { favoriteRequest, userRequest } from '../../../api';
-    import { adjustDialogZ, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
-    import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
+    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
 
-    const { proxy } = getCurrentInstance();
+    import { ref, computed, watch } from 'vue';
+    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
+    import { favoriteRequest, userRequest } from '../../../api';
+    import { getNextDialogIndex, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
 
@@ -157,12 +158,12 @@
         data: [],
         tableProps: {
             stripe: true,
-            size: 'mini'
+            size: 'small'
         },
         layout: 'table'
     });
 
-    const friendImportDialogRef = ref(null);
+    const friendImportDialogIndex = ref(2000);
 
     const isVisible = computed({
         get() {
@@ -177,7 +178,7 @@
         () => friendImportDialogVisible.value,
         (value) => {
             if (value) {
-                adjustDialogZ(friendImportDialogRef.value.$el);
+                friendImportDialogIndex.value = getNextDialogIndex();
                 clearFriendImportTable();
                 resetFriendImport();
                 if (friendImportDialogInput.value) {
@@ -211,7 +212,7 @@
         }
         const data = [...friendImportTable.value.data].reverse();
         D.importProgressTotal = data.length;
-        let ref = '';
+        let ref = null;
         try {
             for (let i = data.length - 1; i >= 0; i--) {
                 if (!D.loading || !isVisible.value) {
@@ -224,7 +225,7 @@
                 D.importProgress++;
             }
         } catch (err) {
-            D.errors = `Name: ${ref.displayName}\nUserId: ${ref.id}\n${err}\n\n`;
+            D.errors = `Name: ${ref?.displayName}\nUserId: ${ref?.id}\n${err}\n\n`;
         } finally {
             D.importProgress = 0;
             D.importProgressTotal = 0;
@@ -240,7 +241,7 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({
+                    ElMessage({
                         message: 'Friend added to favorites',
                         type: 'success'
                     });

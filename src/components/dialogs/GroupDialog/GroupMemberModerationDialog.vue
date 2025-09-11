@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible.sync="groupMemberModeration.visible"
+        v-model="groupMemberModeration.visible"
         :title="t('dialog.group_member_moderation.header')"
         append-to-body
         width="90vw">
@@ -12,8 +12,8 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
-                            icon="el-icon-refresh"
+                            size="small"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="loadAllGroupMembers" />
@@ -34,21 +34,23 @@
                                             memberSearch.length ||
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
-                                "
-                                @click.native.stop>
-                                <el-button size="mini">
+                                ">
+                                <el-button size="small" @click.stop>
                                     <span
-                                        >{{ t(memberSortOrder.name) }} <i class="el-icon-arrow-down el-icon--right"></i
-                                    ></span>
+                                        >{{ t(memberSortOrder.name) }}
+                                        <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                    </span>
                                 </el-button>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item
-                                        v-for="item in groupDialogSortingOptions"
-                                        :key="item.name"
-                                        @click.native="setGroupMemberSortOrder(item)">
-                                        {{ t(item.name) }}
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item
+                                            v-for="item in groupDialogSortingOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberSortOrder(item)">
+                                            {{ t(item.name) }}
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
                             </el-dropdown>
                             <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
                             <el-dropdown
@@ -61,33 +63,36 @@
                                             memberSearch.length ||
                                             !hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')
                                     )
-                                "
-                                @click.native.stop>
-                                <el-button size="mini">
+                                ">
+                                <el-button size="small" @click.stop>
                                     <span
-                                        >{{ t(memberFilter.name) }} <i class="el-icon-arrow-down el-icon--right"></i
+                                        >{{ t(memberFilter.name) }}
+                                        <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
                                     ></span>
                                 </el-button>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item
-                                        v-for="item in groupDialogFilterOptions"
-                                        :key="item.name"
-                                        @click.native="setGroupMemberFilter(item)"
-                                        v-text="t(item.name)"></el-dropdown-item>
-                                    <el-dropdown-item
-                                        v-for="item in groupMemberModeration.groupRef.roles"
-                                        :key="item.name"
-                                        @click.native="setGroupMemberFilter(item)"
-                                        ><span v-if="!item.defaultRole">{{ t(item.name) }}</span></el-dropdown-item
-                                    >
-                                </el-dropdown-menu>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item
+                                            v-for="item in groupDialogFilterOptions"
+                                            :key="item.name"
+                                            @click="setGroupMemberFilter(item)"
+                                            v-text="t(item.name)"></el-dropdown-item>
+                                        <template v-for="role in groupMemberModeration.groupRef.roles" :key="role.name">
+                                            <el-dropdown-item
+                                                v-if="!role.defaultRole"
+                                                @click="setGroupMemberFilter(role)">
+                                                {{ t(role.name) }}
+                                            </el-dropdown-item>
+                                        </template>
+                                    </el-dropdown-menu>
+                                </template>
                             </el-dropdown>
                         </div>
                         <el-input
                             v-model="memberSearch"
                             :disabled="!hasGroupPermission(groupMemberModeration.groupRef, 'group-bans-manage')"
                             clearable
-                            size="mini"
+                            size="small"
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px"
                             @input="groupMembersSearch"></el-input>
@@ -95,13 +100,13 @@
                         <el-button size="small" @click="selectAllGroupMembers">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</el-button>
-                        <data-tables
+                        <DataTable
                             v-if="groupMemberModerationTable.data.length"
                             v-bind="groupMemberModerationTable"
                             style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
-                                    <el-button type="text" size="mini" @click.stop>
+                                    <el-button type="text" size="small" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
                                             @change="
@@ -115,16 +120,19 @@
                                 width="70"
                                 prop="photo">
                                 <template #default="scope">
-                                    <el-popover placement="right" height="500px" trigger="hover">
+                                    <el-popover placement="right" :width="500" trigger="hover">
+                                        <template #reference>
+                                            <img
+                                                :src="userImage(scope.row.user)"
+                                                class="friends-list-avatar"
+                                                loading="lazy" />
+                                        </template>
                                         <img
-                                            slot="reference"
-                                            v-lazy="userImage(scope.row.user)"
-                                            class="friends-list-avatar" />
-                                        <img
-                                            v-lazy="userImageFull(scope.row.user)"
-                                            class="friends-list-avatar"
-                                            style="height: 500px; cursor: pointer"
-                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))" />
+                                            :src="userImageFull(scope.row.user)"
+                                            :class="['friends-list-avatar', 'x-popover-image']"
+                                            style="cursor: pointer"
+                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                            loading="lazy" />
                                     </el-popover>
                                 </template>
                             </el-table-column>
@@ -145,9 +153,11 @@
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
                                 <template #default="scope">
-                                    <template v-for="(roleId, index) in scope.row.roleIds">
-                                        <template v-for="(role, rIndex) in groupMemberModeration.groupRef.roles">
-                                            <span v-if="role?.id === roleId" :key="roleId + rIndex"
+                                    <template v-for="(roleId, index) in scope.row.roleIds" :key="roleId">
+                                        <template
+                                            v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
+                                            :key="roleId + rIndex">
+                                            <span v-if="role?.id === roleId"
                                                 >{{ role.name
                                                 }}<span v-if="index < scope.row.roleIds.length - 1">, </span></span
                                             ></template
@@ -181,7 +191,7 @@
                                     <span v-text="scope.row.visibility"></span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </div>
                 </el-tab-pane>
 
@@ -191,8 +201,8 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
-                            icon="el-icon-refresh"
+                            size="small"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="getAllGroupBans(groupMemberModeration.id)"></el-button>
@@ -203,17 +213,17 @@
                         <el-input
                             v-model="groupBansModerationTable.filters[0].value"
                             clearable
-                            size="mini"
+                            size="small"
                             :placeholder="t('dialog.group.members.search')"
                             style="margin-top: 10px; margin-bottom: 10px"></el-input>
                         <br />
                         <el-button size="small" @click="selectAllGroupBans">{{
                             t('dialog.group_member_moderation.select_all')
                         }}</el-button>
-                        <data-tables v-bind="groupBansModerationTable" style="margin-top: 10px">
+                        <DataTable v-bind="groupBansModerationTable" style="margin-top: 10px">
                             <el-table-column width="55" prop="$selected">
                                 <template #default="scope">
-                                    <el-button type="text" size="mini" @click.stop>
+                                    <el-button type="text" size="small" @click.stop>
                                         <el-checkbox
                                             v-model="scope.row.$selected"
                                             @change="
@@ -227,16 +237,19 @@
                                 width="70"
                                 prop="photo">
                                 <template #default="scope">
-                                    <el-popover placement="right" height="500px" trigger="hover">
+                                    <el-popover placement="right" :width="500" trigger="hover">
+                                        <template #reference>
+                                            <img
+                                                :src="userImage(scope.row.user)"
+                                                class="friends-list-avatar"
+                                                loading="lazy" />
+                                        </template>
                                         <img
-                                            slot="reference"
-                                            v-lazy="userImage(scope.row.user)"
-                                            class="friends-list-avatar" />
-                                        <img
-                                            v-lazy="userImageFull(scope.row.user)"
-                                            class="friends-list-avatar"
-                                            style="height: 500px; cursor: pointer"
-                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))" />
+                                            :src="userImageFull(scope.row.user)"
+                                            :class="['friends-list-avatar', 'x-popover-image']"
+                                            style="cursor: pointer"
+                                            @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                            loading="lazy" />
                                     </el-popover>
                                 </template>
                             </el-table-column>
@@ -257,16 +270,14 @@
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.roles')" prop="roleIds" sortable>
                                 <template #default="scope">
-                                    <template v-for="(roleId, index) in scope.row.roleIds">
+                                    <template v-for="(roleId, index) in scope.row.roleIds" :key="roleId">
                                         <span
                                             v-for="(role, rIndex) in groupMemberModeration.groupRef.roles"
                                             v-if="role.id === roleId"
                                             :key="rIndex + roleId"
                                             >{{ role.name }}</span
                                         >
-                                        <span v-if="index < scope.row.roleIds.length - 1" :key="index + roleId"
-                                            >,
-                                        </span>
+                                        <span v-if="index < scope.row.roleIds.length - 1">, </span>
                                     </template>
                                 </template>
                             </el-table-column>
@@ -296,7 +307,7 @@
                                     <span>{{ formatDateFilter(scope.row.bannedAt, 'long') }}</span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </div>
                 </el-tab-pane>
 
@@ -306,29 +317,29 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
-                            icon="el-icon-refresh"
+                            size="small"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="getAllGroupInvitesAndJoinRequests(groupMemberModeration.id)"></el-button>
                         <br />
                         <el-tabs>
                             <el-tab-pane>
-                                <span slot="label">
+                                <template #label>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.sent_invites')
                                     }}</span>
                                     <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
                                         groupInvitesModerationTable.data.length
                                     }}</span>
-                                </span>
+                                </template>
                                 <el-button size="small" @click="selectAllGroupInvites">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
-                                <data-tables v-bind="groupInvitesModerationTable" style="margin-top: 10px">
+                                <DataTable v-bind="groupInvitesModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="mini" @click.stop>
+                                            <el-button type="text" size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -342,16 +353,19 @@
                                         width="70"
                                         prop="photo">
                                         <template #default="scope">
-                                            <el-popover placement="right" height="500px" trigger="hover">
+                                            <el-popover placement="right" :width="500" trigger="hover">
+                                                <template #reference>
+                                                    <img
+                                                        :src="userImage(scope.row.user)"
+                                                        class="friends-list-avatar"
+                                                        loading="lazy" />
+                                                </template>
                                                 <img
-                                                    slot="reference"
-                                                    v-lazy="userImage(scope.row.user)"
-                                                    class="friends-list-avatar" />
-                                                <img
-                                                    v-lazy="userImageFull(scope.row.user)"
-                                                    class="friends-list-avatar"
-                                                    style="height: 500px; cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))" />
+                                                    :src="userImageFull(scope.row.user)"
+                                                    :class="['friends-list-avatar', 'x-popover-image']"
+                                                    style="cursor: pointer"
+                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                                    loading="lazy" />
                                             </el-popover>
                                         </template>
                                     </el-table-column>
@@ -378,7 +392,7 @@
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
-                                </data-tables>
+                                </DataTable>
                                 <br />
                                 <el-button
                                     :disabled="
@@ -396,21 +410,21 @@
                             </el-tab-pane>
 
                             <el-tab-pane>
-                                <span slot="label">
+                                <template #label>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.join_requests')
                                     }}</span>
                                     <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
                                         groupJoinRequestsModerationTable.data.length
                                     }}</span>
-                                </span>
+                                </template>
                                 <el-button size="small" @click="selectAllGroupJoinRequests">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
-                                <data-tables v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
+                                <DataTable v-bind="groupJoinRequestsModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="mini" @click.stop>
+                                            <el-button type="text" size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -424,16 +438,19 @@
                                         width="70"
                                         prop="photo">
                                         <template #default="scope">
-                                            <el-popover placement="right" height="500px" trigger="hover">
+                                            <el-popover placement="right" :width="500" trigger="hover">
+                                                <template #reference>
+                                                    <img
+                                                        :src="userImage(scope.row.user)"
+                                                        class="friends-list-avatar"
+                                                        loading="lazy" />
+                                                </template>
                                                 <img
-                                                    slot="reference"
-                                                    v-lazy="userImage(scope.row.user)"
-                                                    class="friends-list-avatar" />
-                                                <img
-                                                    v-lazy="userImageFull(scope.row.user)"
-                                                    class="friends-list-avatar"
-                                                    style="height: 500px; cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))" />
+                                                    :src="userImageFull(scope.row.user)"
+                                                    :class="['friends-list-avatar', 'x-popover-image']"
+                                                    style="cursor: pointer"
+                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                                    loading="lazy" />
                                             </el-popover>
                                         </template>
                                     </el-table-column>
@@ -460,7 +477,7 @@
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
-                                </data-tables>
+                                </DataTable>
                                 <br />
                                 <el-button
                                     :disabled="
@@ -504,21 +521,21 @@
                             </el-tab-pane>
 
                             <el-tab-pane>
-                                <span slot="label">
+                                <template #label>
                                     <span style="font-weight: bold; font-size: 16px">{{
                                         t('dialog.group_member_moderation.blocked_requests')
                                     }}</span>
                                     <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
                                         groupBlockedModerationTable.data.length
                                     }}</span>
-                                </span>
+                                </template>
                                 <el-button size="small" @click="selectAllGroupBlocked">{{
                                     t('dialog.group_member_moderation.select_all')
                                 }}</el-button>
-                                <data-tables v-bind="groupBlockedModerationTable" style="margin-top: 10px">
+                                <DataTable v-bind="groupBlockedModerationTable" style="margin-top: 10px">
                                     <el-table-column width="55" prop="$selected">
                                         <template #default="scope">
-                                            <el-button type="text" size="mini" @click.stop>
+                                            <el-button type="text" size="small" @click.stop>
                                                 <el-checkbox
                                                     v-model="scope.row.$selected"
                                                     @change="
@@ -532,16 +549,19 @@
                                         width="70"
                                         prop="photo">
                                         <template #default="scope">
-                                            <el-popover placement="right" height="500px" trigger="hover">
+                                            <el-popover placement="right" :width="500" trigger="hover">
+                                                <template #reference>
+                                                    <img
+                                                        :src="userImage(scope.row.user)"
+                                                        class="friends-list-avatar"
+                                                        loading="lazy" />
+                                                </template>
                                                 <img
-                                                    slot="reference"
-                                                    v-lazy="userImage(scope.row.user)"
-                                                    class="friends-list-avatar" />
-                                                <img
-                                                    v-lazy="userImageFull(scope.row.user)"
-                                                    class="friends-list-avatar"
-                                                    style="height: 500px; cursor: pointer"
-                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))" />
+                                                    :src="userImageFull(scope.row.user)"
+                                                    :class="['friends-list-avatar', 'x-popover-image']"
+                                                    style="cursor: pointer"
+                                                    @click="showFullscreenImageDialog(userImageFull(scope.row.user))"
+                                                    loading="lazy" />
                                             </el-popover>
                                         </template>
                                     </el-table-column>
@@ -568,7 +588,7 @@
                                             <span @click.stop v-text="scope.row.managerNotes"></span>
                                         </template>
                                     </el-table-column>
-                                </data-tables>
+                                </DataTable>
                                 <br />
                                 <el-button
                                     :disabled="
@@ -594,8 +614,8 @@
                     <div style="margin-top: 10px">
                         <el-button
                             type="default"
-                            size="mini"
-                            icon="el-icon-refresh"
+                            size="small"
+                            :icon="Refresh"
                             :loading="isGroupMembersLoading"
                             circle
                             @click="getAllGroupLogs(groupMemberModeration.id)"></el-button>
@@ -637,7 +657,7 @@
                             </div>
                         </div>
                         <br />
-                        <data-tables v-bind="groupLogsModerationTable" style="margin-top: 10px">
+                        <DataTable v-bind="groupLogsModerationTable" style="margin-top: 10px">
                             <el-table-column
                                 :label="t('dialog.group_member_moderation.created_at')"
                                 width="170"
@@ -684,7 +704,7 @@
                                         v-text="JSON.stringify(scope.row.data)"></span>
                                 </template>
                             </el-table-column>
-                        </data-tables>
+                        </DataTable>
                     </div>
                 </el-tab-pane>
             </el-tabs>
@@ -695,7 +715,7 @@
             <br />
             <el-input
                 v-model="selectUserId"
-                size="mini"
+                size="small"
                 style="margin-top: 5px; width: 340px"
                 :placeholder="t('dialog.group_member_moderation.user_id_placeholder')"
                 clearable></el-input>
@@ -707,8 +727,8 @@
             <span class="name">{{ t('dialog.group_member_moderation.selected_users') }}</span>
             <el-button
                 type="default"
-                size="mini"
-                icon="el-icon-delete"
+                size="small"
+                :icon="Delete"
                 circle
                 style="margin-left: 5px"
                 @click="clearSelectedGroupMembers"></el-button>
@@ -725,7 +745,7 @@
                     <template #content>
                         <span>{{ t('dialog.group_member_moderation.user_isnt_in_group') }}</span>
                     </template>
-                    <i class="el-icon el-icon-warning" style="display: inline-block" />
+                    <el-icon style="margin-left: 3px; display: inline-block"><Warning /></el-icon>
                 </el-tooltip>
                 <span v-text="user.user?.displayName || user.userId" style="font-weight: bold; margin-left: 5px"></span>
             </el-tag>
@@ -739,7 +759,7 @@
                 :rows="2"
                 :autosize="{ minRows: 1, maxRows: 20 }"
                 :placeholder="t('dialog.group_member_moderation.note_placeholder')"
-                size="mini"
+                size="small"
                 resize="none"
                 style="margin-top: 5px"></el-input>
             <br />
@@ -826,7 +846,7 @@
                 >{{ t('dialog.group_member_moderation.unban') }}</el-button
             >
             <span v-if="progressCurrent" style="margin-top: 10px">
-                <i class="el-icon-loading" style="margin-left: 5px; margin-right: 5px"></i>
+                <el-icon class="is-loading" style="margin-left: 5px; margin-right: 5px"><Loading /></el-icon>
                 {{ t('dialog.group_member_moderation.progress') }} {{ progressCurrent }}/{{ progressTotal }}
             </span>
             <el-button v-if="progressCurrent" style="margin-left: 5px" @click="progressTotal = 0">{{
@@ -834,15 +854,18 @@
             }}</el-button>
         </div>
         <group-member-moderation-export-dialog
-            :is-group-logs-export-dialog-visible.sync="isGroupLogsExportDialogVisible"
+            :is-group-logs-export-dialog-visible="isGroupLogsExportDialogVisible"
             :group-logs-moderation-table="groupLogsModerationTable" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { Refresh, Delete, ArrowDown, Warning, Loading } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
+
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { groupRequest, userRequest } from '../../../api';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
@@ -857,9 +880,6 @@
     const { applyGroupMember, handleGroupMember, handleGroupMemberProps } = useGroupStore();
     const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const selectedUsers = reactive({});
     const selectedUsersArray = ref([]);
     const isGroupMembersLoading = ref(false);
@@ -880,7 +900,7 @@
         n: 100,
         offset: 0,
         groupId: '',
-        sort: '',
+        sort: 'joinedAt:desc',
         roleId: ''
     });
 
@@ -917,7 +937,7 @@
 
     const groupInvitesModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -927,7 +947,7 @@
     });
     const groupJoinRequestsModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -937,7 +957,7 @@
     });
     const groupBlockedModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -948,7 +968,7 @@
     const groupLogsModerationTable = reactive({
         data: [],
         filters: [{ prop: ['description'], value: '' }],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -959,7 +979,7 @@
     const groupBansModerationTable = reactive({
         data: [],
         filters: [{ prop: ['$displayName'], value: '' }],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -969,7 +989,7 @@
     });
     const groupMemberModerationTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini' },
+        tableProps: { stripe: true, size: 'small' },
         pageSize: 15,
         paginationProps: {
             small: true,
@@ -1084,7 +1104,7 @@
                 });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to delete group invites: ${err}`,
                     type: 'error'
                 });
@@ -1092,7 +1112,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Deleted ${memberCount} group invites`,
                 type: 'success'
             });
@@ -1136,7 +1156,7 @@
             }
             groupBansModerationTable.data = fetchedBans;
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group bans',
                 type: 'error'
             });
@@ -1167,13 +1187,13 @@
                 await groupRequest.banGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to ban group member: ${err}`,
                     type: 'error'
                 });
             }
         }
-        $message({ message: `Banned ${memberCount} group members`, type: 'success' });
+        ElMessage({ message: `Banned ${memberCount} group members`, type: 'success' });
         progressCurrent.value = 0;
         progressTotal.value = 0;
         getAllGroupBans(D.id);
@@ -1196,7 +1216,7 @@
                 await groupRequest.unbanGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to unban group member: ${err}`,
                     type: 'error'
                 });
@@ -1205,7 +1225,7 @@
         }
 
         if (allSuccess) {
-            $message({ message: `Unbanned ${memberCount} group members`, type: 'success' });
+            ElMessage({ message: `Unbanned ${memberCount} group members`, type: 'success' });
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1230,7 +1250,7 @@
                 await groupRequest.kickGroupMember({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to kick group member: ${err}`,
                     type: 'error'
                 });
@@ -1238,7 +1258,7 @@
             }
         }
         if (allSuccess) {
-            $message({ message: `Kicked ${memberCount} group members`, type: 'success' });
+            ElMessage({ message: `Kicked ${memberCount} group members`, type: 'success' });
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1266,7 +1286,7 @@
                 handleGroupMemberProps(args);
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to set group member note for ${err}`,
                     type: 'error'
                 });
@@ -1274,7 +1294,7 @@
             }
         }
         if (allSuccess) {
-            $message({ message: `Saved notes for ${memberCount} group members`, type: 'success' });
+            ElMessage({ message: `Saved notes for ${memberCount} group members`, type: 'success' });
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -1314,7 +1334,7 @@
                     handleGroupMemberRoleChange(args);
                 } catch (err) {
                     console.error(err);
-                    $message({
+                    ElMessage({
                         message: `Failed to remove group member roles: ${err}`,
                         type: 'error'
                     });
@@ -1323,7 +1343,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Roles removed`,
                 type: 'success'
             });
@@ -1362,7 +1382,7 @@
                     handleGroupMemberRoleChange(args);
                 } catch (err) {
                     console.error(err);
-                    $message({
+                    ElMessage({
                         message: `Failed to add group member roles: ${err}`,
                         type: 'error'
                     });
@@ -1371,7 +1391,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Added group member roles`,
                 type: 'success'
             });
@@ -1466,7 +1486,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group logs',
                 type: 'error'
             });
@@ -1496,7 +1516,7 @@
                 await groupRequest.deleteBlockedGroupRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to delete blocked group requests: ${err}`,
                     type: 'error'
                 });
@@ -1504,7 +1524,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Deleted ${memberCount} blocked group requests`,
                 type: 'success'
             });
@@ -1532,7 +1552,7 @@
                 await groupRequest.blockGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to block group join requests: ${err}`,
                     type: 'error'
                 });
@@ -1540,7 +1560,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Blocked ${memberCount} group join requests`,
                 type: 'success'
             });
@@ -1569,7 +1589,7 @@
                 await groupRequest.rejectGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to reject group join requests: ${err}`,
                     type: 'error'
                 });
@@ -1577,7 +1597,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Rejected ${memberCount} group join requests`,
                 type: 'success'
             });
@@ -1605,7 +1625,7 @@
                 await groupRequest.acceptGroupInviteRequest({ groupId: D.id, userId: user.userId });
             } catch (err) {
                 console.error(err);
-                $message({
+                ElMessage({
                     message: `Failed to accept group join requests: ${err}`,
                     type: 'error'
                 });
@@ -1613,7 +1633,7 @@
             }
         }
         if (allSuccess) {
-            $message({
+            ElMessage({
                 message: `Accepted ${memberCount} group join requests`,
                 type: 'success'
             });
@@ -1661,7 +1681,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group join requests',
                 type: 'error'
             });
@@ -1694,7 +1714,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group join requests',
                 type: 'error'
             });
@@ -1731,7 +1751,7 @@
                 }
             }
         } catch {
-            $message({
+            ElMessage({
                 message: 'Failed to get group invites',
                 type: 'error'
             });
@@ -1823,7 +1843,7 @@
         members.value = [];
         isGroupMembersDone.value = false;
         loadMoreGroupMembersParams.value = {
-            sort: '',
+            sort: 'joinedAt:desc',
             roleId: '',
             n: 100,
             offset: 0,

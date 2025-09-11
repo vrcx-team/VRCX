@@ -1,5 +1,5 @@
-import { $app } from '../app';
-import { t } from '../plugin';
+import { ElMessage } from 'element-plus';
+import { i18n } from '../plugin/i18n';
 import { request } from '../service/request';
 import { useInstanceStore } from '../stores';
 
@@ -110,14 +110,14 @@ const instanceReq = {
             })
             .catch((err) => {
                 if (err?.error?.message) {
-                    $app.$message({
+                    ElMessage({
                         message: err.error.message,
                         type: 'error'
                     });
                     throw err;
                 }
-                $app.$message({
-                    message: t('message.instance.not_allowed'),
+                ElMessage({
+                    message: i18n.global.t('message.instance.not_allowed'),
                     type: 'error'
                 });
                 throw err;

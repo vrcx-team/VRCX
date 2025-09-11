@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
-import { $app } from '../../app';
-import { t } from '../../plugin';
+import { ElMessageBox } from 'element-plus';
+
+import { useI18n } from 'vue-i18n';
 import configRepository from '../../service/config';
 import { sharedFeedFiltersDefaults } from '../../shared/constants';
 import { useVrStore } from '../vr';
@@ -10,6 +11,8 @@ export const useNotificationsSettingsStore = defineStore(
     'NotificationsSettings',
     () => {
         const vrStore = useVrStore();
+
+        const { t } = useI18n();
         const state = reactive({
             overlayToast: true,
             openVR: false,
@@ -441,7 +444,7 @@ export const useNotificationsSettingsStore = defineStore(
         }
 
         function promptNotificationTimeout() {
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.notification_timeout.description'),
                 t('prompt.notification_timeout.header'),
                 {
@@ -452,25 +455,22 @@ export const useNotificationsSettingsStore = defineStore(
                     inputPattern: /\d+$/,
                     inputErrorMessage: t(
                         'prompt.notification_timeout.input_error'
-                    ),
-                    callback: async (action, instance) => {
-                        if (
-                            action === 'confirm' &&
-                            instance.inputValue &&
-                            !isNaN(instance.inputValue)
-                        ) {
-                            state.notificationTimeout = Math.trunc(
-                                Number(instance.inputValue) * 1000
-                            );
-                            await configRepository.setString(
-                                'VRCX_notificationTimeout',
-                                state.notificationTimeout
-                            );
-                            vrStore.updateVRConfigVars();
-                        }
-                    }
+                    )
                 }
-            );
+            )
+                .then(async ({ value }) => {
+                    if (value && !isNaN(value)) {
+                        state.notificationTimeout = Math.trunc(
+                            Number(value) * 1000
+                        );
+                        await configRepository.setString(
+                            'VRCX_notificationTimeout',
+                            state.notificationTimeout
+                        );
+                        vrStore.updateVRConfigVars();
+                    }
+                })
+                .catch(() => {});
         }
 
         return {

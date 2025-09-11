@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { instanceRequest, userRequest, worldRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
 import { watchState } from '../service/watchState';
@@ -29,7 +29,7 @@ import { useSharedFeedStore } from './sharedFeed';
 import { useUiStore } from './ui';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();
@@ -45,7 +45,6 @@ export const useInstanceStore = defineStore('Instance', () => {
     const { t } = useI18n();
 
     const state = reactive({
-        cachedInstances: new Map(),
         currentInstanceWorld: {
             ref: {},
             instance: {},
@@ -68,7 +67,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'timer',
                     order: 'descending'
@@ -80,14 +79,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         updatePlayerListPending: false
     });
 
-    const cachedInstances = computed({
-        get() {
-            return state.cachedInstances;
-        },
-        set(value) {
-            state.cachedInstances = value;
-        }
-    });
+    let cachedInstances = new Map();
 
     const currentInstanceWorld = computed({
         get: () => state.currentInstanceWorld,
@@ -144,7 +136,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             state.currentInstanceUserList.data = [];
             state.instanceJoinHistory = new Map();
             state.previousInstancesInfoDialogVisible = false;
-            state.cachedInstances.clear();
+            cachedInstances.clear();
             state.queuedInstances.clear();
             if (isLoggedIn) {
                 getInstanceJoinHistory();
@@ -285,7 +277,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 });
         }
         if (isRealInstance(instanceId)) {
-            const ref = state.cachedInstances.get(instanceId);
+            const ref = cachedInstances.get(instanceId);
             if (typeof ref !== 'undefined') {
                 state.currentInstanceWorld.instance = ref;
             } else {
@@ -322,7 +314,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         if (!json.$fetchedAt) {
             json.$fetchedAt = new Date().toJSON();
         }
-        let ref = state.cachedInstances.get(json.id);
+        let ref = cachedInstances.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -371,7 +363,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 $disabledContentSettings: [],
                 ...json
             };
-            state.cachedInstances.set(ref.id, ref);
+            cachedInstances.set(ref.id, ref);
         } else {
             Object.assign(ref, json);
         }
@@ -516,6 +508,9 @@ export const useInstanceStore = defineStore('Instance', () => {
         ) {
             params.ageGate = true;
         }
+        if (D.displayName) {
+            params.displayName = D.displayName;
+        }
         try {
             const args = await instanceRequest.createInstance(params);
             return args;
@@ -651,6 +646,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 L.shortName = instance.shortName;
             }
             instance.$location = L;
+            L.user = null;
             if (L.userId) {
                 ref = userStore.cachedUsers.get(L.userId);
                 if (typeof ref === 'undefined') {
@@ -659,11 +655,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                             userId: L.userId
                         })
                         .then((args) => {
-                            Vue.set(L, 'user', args.ref);
-                            return args;
-                        })
-                        .catch((error) => {
-                            console.error('Error fetching user:', error);
+                            L.user = args.ref;
                         });
                 } else {
                     L.user = ref;
@@ -681,7 +673,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         // get instance from cache
         for (const room of rooms) {
-            ref = state.cachedInstances.get(room.tag);
+            ref = cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 room.ref = ref;
             }
@@ -856,7 +848,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         // get instance
         for (const room of rooms) {
-            ref = cachedInstances.value.get(room.tag);
+            ref = cachedInstances.get(room.tag);
             if (typeof ref !== 'undefined') {
                 room.ref = ref;
             } else if (isRealInstance(room.tag)) {
@@ -892,7 +884,7 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     function removeAllQueuedInstances() {
         state.queuedInstances.forEach((ref) => {
-            $app.$message({
+            ElMessage({
                 message: `Removed instance ${ref.$worldName} from queue`,
                 type: 'info'
             });
@@ -920,7 +912,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     function applyQueuedInstance(instanceId) {
         state.queuedInstances.forEach((ref) => {
             if (ref.location !== instanceId) {
-                $app.$message({
+                ElMessage({
                     message: t('message.instance.removed_form_queue', {
                         worldName: ref.$worldName
                     }),
@@ -976,7 +968,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         const groupName = group?.name ?? '';
         const worldName = ref?.$worldName ?? '';
         const location = displayLocation(instanceId, worldName, groupName);
-        $app.$message({
+        ElMessage({
             message: `Instance ready to join ${location}`,
             type: 'success'
         });
@@ -1026,7 +1018,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         ref.queueSize = queueSize;
         ref.updatedAt = Date.now();
         if (!ref.$msgBox || ref.$msgBox.closed) {
-            ref.$msgBox = $app.$message({
+            ref.$msgBox = ElMessage({
                 message: '',
                 type: 'info',
                 duration: 0,
@@ -1214,6 +1206,7 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     return {
         state,
+
         cachedInstances,
         currentInstanceWorld,
         currentInstanceLocation,
@@ -1222,6 +1215,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         previousInstancesInfoDialogInstanceId,
         instanceJoinHistory,
         currentInstanceUserList,
+
         applyInstance,
         updateCurrentInstanceWorld,
         createNewInstance,

@@ -1,8 +1,8 @@
 <template>
-    <safe-dialog
-        ref="VRCXUpdateDialogRef"
+    <el-dialog
+        :z-index="VRCXUpdateDialogIndex"
         class="x-dialog"
-        :visible.sync="VRCXUpdateDialog.visible"
+        v-model="VRCXUpdateDialog.visible"
         :title="t('dialog.vrcx_updater.header')"
         append-to-body
         width="400px">
@@ -59,15 +59,15 @@
                 {{ t('dialog.vrcx_updater.install') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
     import { storeToRefs } from 'pinia';
     import { nextTick, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { branches } from '../../shared/constants';
-    import { adjustDialogZ } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils';
     import { useVRCXUpdaterStore } from '../../stores';
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();
@@ -85,14 +85,14 @@
 
     const { t } = useI18n();
 
-    const VRCXUpdateDialogRef = ref(null);
+    const VRCXUpdateDialogIndex = ref(2000);
 
     watch(
         () => VRCXUpdateDialog,
         (newVal) => {
             if (newVal.value.visible) {
                 nextTick(() => {
-                    adjustDialogZ(VRCXUpdateDialogRef.value.$el);
+                    VRCXUpdateDialogIndex.value = getNextDialogIndex();
                 });
             }
         }

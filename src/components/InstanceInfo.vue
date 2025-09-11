@@ -7,7 +7,7 @@
                     <template v-if="state.canCloseInstance">
                         <el-button
                             :disabled="state.isClosed"
-                            size="mini"
+                            size="small"
                             type="primary"
                             @click="closeInstance(props.location)">
                             {{ t('dialog.user.info.close_instance') }} </el-button
@@ -24,17 +24,14 @@
                         >{{ t('dialog.user.info.instance_disabled_content') }} {{ state.disabledContentSettings }}<br
                     /></span>
                     <span v-if="state.userList.length">{{ t('dialog.user.info.instance_users') }}<br /></span>
-                    <template v-for="user in state.userList">
-                        <span
-                            style="cursor: pointer; margin-right: 5px"
-                            @click="showUserDialog(user.id)"
-                            :key="user.id"
-                            >{{ user.displayName }}</span
-                        >
+                    <template v-for="user in state.userList" :key="user.id">
+                        <span style="cursor: pointer; margin-right: 5px" @click="showUserDialog(user.id)">{{
+                            user.displayName
+                        }}</span>
                     </template>
                 </div>
             </template>
-            <i class="el-icon-caret-bottom"></i>
+            <el-icon><CaretBottom /></el-icon>
         </el-tooltip>
         <span v-if="state.occupants" style="margin-left: 5px">{{ state.occupants }}/{{ state.capacity }}</span>
         <span v-if="props.friendcount" style="margin-left: 5px">({{ props.friendcount }})</span>
@@ -57,8 +54,10 @@
 </template>
 
 <script setup>
-    import { getCurrentInstance, reactive, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { CaretBottom } from '@element-plus/icons-vue';
+    import { reactive, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { miscRequest } from '../api';
     import { formatDateFilter, hasGroupPermission } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useLocationStore, useUserStore } from '../stores';
@@ -93,8 +92,6 @@
         isAgeGated: false,
         disabledContentSettings: ''
     });
-
-    const { proxy } = getCurrentInstance();
 
     function parse() {
         Object.assign(state, {
@@ -153,18 +150,19 @@
     }
 
     function closeInstance(location) {
-        proxy.$confirm('Continue? Close Instance, nobody will be able to join', 'Confirm', {
+        ElMessageBox.confirm('Continue? Close Instance, nobody will be able to join', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'warning',
-            callback: async (action) => {
+            type: 'warning'
+        })
+            .then(async (action) => {
                 if (action !== 'confirm') return;
                 const args = await miscRequest.closeInstance({ location, hardClose: false });
                 if (args.json) {
-                    proxy.$message({ message: t('message.instance.closed'), type: 'success' });
+                    ElMessage({ message: t('message.instance.closed'), type: 'success' });
                     instanceStore.applyInstance(args.json);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

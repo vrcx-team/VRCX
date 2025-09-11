@@ -6,7 +6,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using librsync.net;
 using Newtonsoft.Json;
 using NLog;
 
@@ -20,10 +19,10 @@ namespace VRCX
         public void Init()
         {
         }
-        
+
         public JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
-            Error = delegate(object _, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+            Error = delegate (object _, Newtonsoft.Json.Serialization.ErrorEventArgs args)
             {
                 args.ErrorContext.Handled = true;
             }
@@ -43,22 +42,6 @@ namespace VRCX
             return (hash[3] << 8) | hash[4];
         }
 
-        public string SignFile(string blob)
-        {
-            var fileData = Convert.FromBase64String(blob);
-            using var sig = Librsync.ComputeSignature(new MemoryStream(fileData));
-            using var memoryStream = new MemoryStream();
-            sig.CopyTo(memoryStream);
-            var sigBytes = memoryStream.ToArray();
-            return Convert.ToBase64String(sigBytes);
-        }
-
-        public string FileLength(string blob)
-        {
-            var fileData = Convert.FromBase64String(blob);
-            return fileData.Length.ToString();
-        }
-
         public void OpenLink(string url)
         {
             if (url.StartsWith("http://") ||
@@ -70,7 +53,7 @@ namespace VRCX
                 });
             }
         }
-        
+
         public string GetLaunchCommand()
         {
             var command = StartupArgs.LaunchArguments.LaunchCommand;
@@ -102,7 +85,7 @@ namespace VRCX
             var filePath = Path.Join(Program.AppDataDirectory, "custom.css");
             if (File.Exists(filePath))
                 return File.ReadAllText(filePath);
-            
+
             return string.Empty;
         }
 
@@ -111,7 +94,7 @@ namespace VRCX
             var filePath = Path.Join(Program.AppDataDirectory, "custom.js");
             if (File.Exists(filePath))
                 return File.ReadAllText(filePath);
-            
+
             return string.Empty;
         }
 

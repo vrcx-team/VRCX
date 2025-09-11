@@ -617,7 +617,7 @@
                     "launch_commands": {
                         "header": "Launch Commands (Deep Links)",
                         "docs": "Launch Command Docs",
-                        "show_confirmation_on_switch_avatar_enable": "Show confirmation diaglog before switching avatars",
+                        "show_confirmation_on_switch_avatar_enable": "Show confirmation dialog before switching avatars",
                         "show_confirmation_on_switch_avatar_tooltip": "When disabled VRCX will not come to the front when switching avatars and ask for confirmation",
                         "website_userscript": "VRC Website Userscript"
                     },
@@ -653,6 +653,7 @@
                         "avatar_name_cache": "Avatar Name cache:",
                         "instance_cache": "Instance cache:",
                         "clear_cache": "Clear Cache",
+                        "refresh_cache": "Refresh Cache",
                         "auto_clear_cache": "Auto Clear Cache",
                         "show_console": "Show Console"
                     },
@@ -766,7 +767,6 @@
                 "show_avatar_author": "Show Avatar Author",
                 "show_fallback_avatar": "Show Fallback Avatar Details",
                 "show_previous_instances": "Show Previous Instances",
-                "show_previous_images": "Show Previous Images",
                 "moderation_block": "Block",
                 "moderation_unblock": "Unblock",
                 "moderation_mute": "Mute",
@@ -915,7 +915,6 @@
                 "make_home": "Make Home",
                 "reset_home": "Reset Home",
                 "show_previous_instances": "Show Previous Instances",
-                "show_previous_images": "Show Previous Images",
                 "rename": "Rename",
                 "change_description": "Change Description",
                 "change_capacity": "Change Capacity",
@@ -1002,7 +1001,6 @@
                 "select_fallback": "Select Fallback Avatar",
                 "block": "Block Avatar",
                 "unblock": "Unblock Avatar",
-                "show_previous_images": "Show Previous Images",
                 "make_public": "Make Public",
                 "make_private": "Make Private",
                 "rename": "Rename",
@@ -1118,7 +1116,6 @@
                 "load_more": "Load more...",
                 "sort_by": "Sort By:",
                 "sorting": {
-                    "user_id": "User ID (Ascending)",
                     "joined_at_asc": "Joined At (Ascending)",
                     "joined_at_desc": "Joined At (Descending)"
                 },
@@ -1227,7 +1224,8 @@
             "group": "Group",
             "legacy": "Legacy",
             "roles": "Roles",
-            "open_ingame": "Open in-game"
+            "open_ingame": "Open in-game",
+            "display_name": "Display Name (VRC+)"
         },
         "launch_options": {
             "header": "VRChat Launch Options",
@@ -1518,11 +1516,7 @@
             "avatar": "Change Avatar Image",
             "world": "Change World Image",
             "description": "Recommended image size: 1200x900px (4:3)",
-            "refresh": "Refresh",
             "upload": "Upload Image"
-        },
-        "previous_images": {
-            "header": "Previous Images"
         },
         "previous_instances": {
             "header": "Previous Instances",
@@ -1663,6 +1657,10 @@
             "choose_group_placeholder": "Choose Group",
             "groups_with_moderation_permission": "Groups with Moderation Permission",
             "moderation_tools": "Moderation Tools"
+        },
+        "fullscreen_image": {
+            "download_and_save_image": "Download and save image",
+            "copy_image_to_clipboard": "Copy image to clipboard"
         }
     },
     "confirm": {

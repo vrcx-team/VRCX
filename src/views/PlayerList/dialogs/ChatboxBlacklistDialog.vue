@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible.sync="chatboxBlacklistDialog.visible"
+        v-model="chatboxBlacklistDialog.visible"
         :title="t('dialog.chatbox_blacklist.header')"
         width="600px">
         <div v-if="chatboxBlacklistDialog.visible" v-loading="chatboxBlacklistDialog.loading">
@@ -15,7 +15,7 @@
                 @change="saveChatboxBlacklist">
                 <template #append>
                     <el-button
-                        icon="el-icon-delete"
+                        :icon="Delete"
                         @click="
                             chatboxBlacklist.splice(index, 1);
                             saveChatboxBlacklist();
@@ -23,7 +23,7 @@
                     </el-button>
                 </template>
             </el-input>
-            <el-button size="mini" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
+            <el-button size="small" style="margin-top: 5px" @click="chatboxBlacklist.push('')">
                 {{ t('dialog.chatbox_blacklist.add_item') }}
             </el-button>
             <br />
@@ -39,13 +39,15 @@
                 <span>{{ user[1] }}</span>
             </el-tag>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { Delete } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { usePhotonStore } from '../../../stores';
 

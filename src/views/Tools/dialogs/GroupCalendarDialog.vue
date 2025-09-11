@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="visible"
+        :model-value="visible"
         :title="t('dialog.group_calendar.header')"
         :show-close="false"
         width="90vw"
@@ -10,9 +10,9 @@
         <template #title>
             <div class="dialog-title-container">
                 <span>{{ t('dialog.group_calendar.header') }}</span>
-                <!-- <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">
+                <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">
                     {{ viewMode === 'timeline' ? 'List View' : 'Calendar View' }}
-                </el-button> -->
+                </el-button>
             </div>
         </template>
         <div class="top-content">
@@ -41,23 +41,23 @@
 
                     <div class="calendar-container">
                         <el-calendar v-model="selectedDay" v-loading="isLoading">
-                            <template #dateCell="{ date }">
+                            <template #date-cell="{ data }">
                                 <div class="date">
                                     <div
                                         class="calendar-date-content"
                                         :class="{
-                                            'has-events': filteredCalendar[formatDateKey(date)]?.length
+                                            'has-events': filteredCalendar[formatDateKey(data.date)]?.length
                                         }">
-                                        {{ dayjs(date).utc().format('D') }}
+                                        {{ dayjs(data.date).format('D') }}
                                         <div
-                                            v-if="filteredCalendar[formatDateKey(date)]?.length"
+                                            v-if="filteredCalendar[formatDateKey(data.date)]?.length"
                                             class="calendar-event-badge"
                                             :class="
-                                                followingCalendarDate[formatDateKey(date)]
+                                                followingCalendarDate[formatDateKey(data.date)]
                                                     ? 'has-following'
                                                     : 'no-following'
                                             ">
-                                            {{ filteredCalendar[formatDateKey(date)]?.length }}
+                                            {{ filteredCalendar[formatDateKey(data.date)]?.length }}
                                         </div>
                                     </div>
                                 </div>
@@ -72,7 +72,7 @@
                             placeholder="Search groups or events..."
                             clearable
                             size="small"
-                            prefix-icon="el-icon-search"
+                            prefix-:icon="Search"
                             class="search-input" />
                     </div>
 
@@ -80,9 +80,11 @@
                         <div v-if="filteredGroupEvents.length" class="groups-container">
                             <div v-for="group in filteredGroupEvents" :key="group.groupId" class="group-row">
                                 <div class="group-header" @click="toggleGroup(group.groupId)">
-                                    <i
-                                        class="el-icon-arrow-right"
-                                        :class="{ rotate: !groupCollapsed[group.groupId] }"></i>
+                                    <el-icon
+                                        class="el-icon-arrow-right rotation-transition"
+                                        :class="{ rotate: !groupCollapsed[group.groupId] }"
+                                        ><ArrowRight
+                                    /></el-icon>
                                     {{ group.groupName }}
                                 </div>
                                 <div class="events-row" v-show="!groupCollapsed[group.groupId]">
@@ -103,20 +105,20 @@
                 </div>
             </transition>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ArrowRight } from '@element-plus/icons-vue';
     import { ref, watch, computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
-    import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import dayjs from 'dayjs';
     import { groupRequest } from '../../../api';
     import { useGroupStore } from '../../../stores';
     import GroupCalendarEventCard from '../components/GroupCalendarEventCard.vue';
     import { replaceBioSymbols } from '../../../shared/utils';
 
-    const { cachedGroups } = storeToRefs(useGroupStore());
+    const { cachedGroups } = useGroupStore();
 
     const { t } = useI18n();
 
@@ -133,7 +135,7 @@
     const followingCalendar = ref([]);
     const selectedDay = ref(new Date());
     const isLoading = ref(false);
-    const viewMode = ref('grid');
+    const viewMode = ref('timeline');
     const searchQuery = ref('');
     const groupCollapsed = ref({});
 
@@ -306,7 +308,7 @@
 
     function getGroupName(event) {
         if (!event) return '';
-        return cachedGroups.value.get(event.ownerId)?.name || '';
+        return cachedGroups.get(event.ownerId)?.name || '';
     }
 
     async function getCalendarData() {
@@ -357,7 +359,7 @@
 
 <style lang="scss" scoped>
     .x-dialog {
-        ::v-deep .el-dialog {
+        :deep(.el-dialog) {
             max-height: 750px;
             .el-dialog__body {
                 height: 680px;
@@ -369,7 +371,7 @@
             overflow: hidden;
             .timeline-view {
                 .timeline-container {
-                    ::v-deep .el-timeline {
+                    :deep(.el-timeline) {
                         width: 100%;
                         height: 100%;
                         min-width: 200px;
@@ -469,6 +471,7 @@
         }
         .calendar-container {
             width: 609px;
+            height: 100%;
             flex-shrink: 0;
         }
     }
@@ -539,5 +542,9 @@
 
     .rotate {
         transform: rotate(90deg);
+    }
+
+    .rotation-transition {
+        transition: transform 0.2s ease-in-out;
     }
 </style>

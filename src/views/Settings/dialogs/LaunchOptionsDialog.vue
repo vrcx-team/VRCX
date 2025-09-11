@@ -1,14 +1,14 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="isLaunchOptionsDialogVisible"
+        :model-value="isLaunchOptionsDialogVisible"
         :title="t('dialog.launch_options.header')"
         width="600px"
         @close="closeDialog">
         <div style="font-size: 12px">
             {{ t('dialog.launch_options.description') }} <br />
             {{ t('dialog.launch_options.example') }}
-            <el-tag size="mini"
+            <el-tag size="small"
                 >--fps=144 --enable-debug-gui --enable-sdk-log-levels --enable-udon-debug-logging
             </el-tag>
         </div>
@@ -16,7 +16,7 @@
         <el-input
             v-model="launchOptionsDialog.launchArguments"
             type="textarea"
-            size="mini"
+            size="small"
             show-word-limit
             :autosize="{ minRows: 2, maxRows: 5 }"
             placeholder=""
@@ -52,21 +52,19 @@
                 </el-button>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { computed, ref } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { openExternalLink } from '../../../shared/utils';
     import { useLaunchStore } from '../../../stores';
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const launchStore = useLaunchStore();
     const { isLaunchOptionsDialogVisible } = storeToRefs(launchStore);
@@ -105,14 +103,14 @@
             D.vrcLaunchPathOverride.endsWith('.exe') &&
             !D.vrcLaunchPathOverride.endsWith('launch.exe')
         ) {
-            $message({
+            ElMessage({
                 message: 'Invalid path, you must enter VRChat folder or launch.exe',
                 type: 'error'
             });
             return;
         }
         configRepository.setString('vrcLaunchPathOverride', D.vrcLaunchPathOverride);
-        $message({
+        ElMessage({
             message: 'Updated launch options',
             type: 'success'
         });

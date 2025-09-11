@@ -1,7 +1,7 @@
 import Noty from 'noty';
 import { storeToRefs } from 'pinia';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { miscRequest } from '../../api';
-import { $app } from '../../app';
 import {
     useAvatarStore,
     useInstanceStore,
@@ -156,14 +156,14 @@ function copyToClipboard(text, message = 'Copied successfully!') {
     navigator.clipboard
         .writeText(text)
         .then(() => {
-            $app.$message({
+            ElMessage({
                 message: message,
                 type: 'success'
             });
         })
         .catch((err) => {
             console.error('Copy failed:', err);
-            $app.$message.error('Copy failed!');
+            ElMessage.error('Copy failed!');
         });
 }
 
@@ -387,19 +387,20 @@ function openExternalLink(link) {
         return;
     }
 
-    $app.$confirm(`${link}`, 'Open External Link', {
+    ElMessageBox.confirm(`${link}`, 'Open External Link', {
         distinguishCancelAndClose: true,
         confirmButtonText: 'Open',
         cancelButtonText: 'Copy',
-        type: 'info',
-        callback: (action) => {
+        type: 'info'
+    })
+        .then((action) => {
             if (action === 'confirm') {
                 AppApi.OpenLink(link);
             } else if (action === 'cancel') {
                 copyLink(link);
             }
-        }
-    });
+        })
+        .catch(() => {});
 }
 
 /**
@@ -407,7 +408,7 @@ function openExternalLink(link) {
  * @param {string} text
  */
 function copyLink(text) {
-    $app.$message({
+    ElMessage({
         message: 'Link copied to clipboard',
         type: 'success'
     });
@@ -485,26 +486,23 @@ async function getBundleDateSize(ref) {
             fileSize
         };
 
-        if (unityPackage.variant === 'standard') {
-            if (avatarDialog.value.id === ref.id) {
-                // update avatar dialog
-                avatarDialog.value.bundleSizes[platform] =
-                    bundleSizes[platform];
-                avatarDialog.value.lastUpdated = createdAt;
-                avatarDialog.value.fileAnalysis = buildTreeData(bundleJson);
-            }
-            // update world dialog
-            if (worldDialog.value.id === ref.id) {
-                worldDialog.value.bundleSizes[platform] = bundleSizes[platform];
-                worldDialog.value.lastUpdated = createdAt;
-                worldDialog.value.fileAnalysis = buildTreeData(bundleJson);
-            }
-            // update player list
-            if (currentInstanceLocation.value.worldId === ref.id) {
-                currentInstanceWorld.value.bundleSizes[platform] =
-                    bundleSizes[platform];
-                currentInstanceWorld.value.lastUpdated = createdAt;
-            }
+        if (avatarDialog.value.id === ref.id) {
+            // update avatar dialog
+            avatarDialog.value.bundleSizes[platform] = bundleSizes[platform];
+            avatarDialog.value.lastUpdated = createdAt;
+            avatarDialog.value.fileAnalysis = buildTreeData(bundleJson);
+        }
+        // update world dialog
+        if (worldDialog.value.id === ref.id) {
+            worldDialog.value.bundleSizes[platform] = bundleSizes[platform];
+            worldDialog.value.lastUpdated = createdAt;
+            worldDialog.value.fileAnalysis = buildTreeData(bundleJson);
+        }
+        // update player list
+        if (currentInstanceLocation.value.worldId === ref.id) {
+            currentInstanceWorld.value.bundleSizes[platform] =
+                bundleSizes[platform];
+            currentInstanceWorld.value.lastUpdated = createdAt;
         }
     }
 

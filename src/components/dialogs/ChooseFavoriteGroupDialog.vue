@@ -1,12 +1,12 @@
 <template>
-    <safe-dialog ref="favoriteDialogRef" :visible.sync="isVisible" :title="t('dialog.favorite.header')" width="300px">
+    <el-dialog :z-index="favoriteDialogIndex" v-model="isVisible" :title="t('dialog.favorite.header')" width="300px">
         <div v-loading="loading">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.vrchat_favorites') }}</span>
             <template v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key">
                 <el-button
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="deleteFavoriteNoConfirm(favoriteDialog.objectId)">
-                    <i class="el-icon-check"></i>
+                    <el-icon><Check /></el-icon>
                     {{ favoriteDialog.currentGroup.displayName }} ({{ favoriteDialog.currentGroup.count }} /
                     {{ favoriteDialog.currentGroup.capacity }})
                 </el-button>
@@ -23,18 +23,16 @@
         </div>
         <div v-if="favoriteDialog.type === 'world'" style="margin-top: 20px">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.local_favorites') }}</span>
-            <template v-for="group in localWorldFavoriteGroups">
+            <template v-for="group in localWorldFavoriteGroups" :key="group">
                 <el-button
                     v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)"
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)">
-                    <i class="el-icon-check"></i>
+                    <el-icon><Check /></el-icon>
                     {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                 </el-button>
                 <el-button
                     v-else
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="addLocalWorldFavorite(favoriteDialog.objectId, group)">
                     {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
@@ -43,18 +41,16 @@
         </div>
         <div v-if="favoriteDialog.type === 'avatar'" style="margin-top: 20px">
             <span style="display: block; text-align: center">{{ t('dialog.favorite.local_avatar_favorites') }}</span>
-            <template v-for="group in localAvatarFavoriteGroups">
+            <template v-for="group in localAvatarFavoriteGroups" :key="group">
                 <el-button
                     v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)"
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)">
-                    <i class="el-icon-check"></i>
+                    <el-icon><Check /></el-icon>
                     {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 </el-button>
                 <el-button
                     v-else
-                    :key="group"
                     style="display: block; width: 100%; margin: 10px 0"
                     :disabled="!isLocalUserVrcplusSupporter"
                     @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)">
@@ -62,16 +58,18 @@
                 </el-button>
             </template>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { Check } from '@element-plus/icons-vue';
+
     import Noty from 'noty';
     import { storeToRefs } from 'pinia';
     import { computed, nextTick, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../api';
-    import { adjustDialogZ } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils';
     import { useFavoriteStore, useUserStore } from '../../stores';
 
     const { t } = useI18n();
@@ -98,7 +96,7 @@
     } = favoriteStore;
     const { currentUser } = storeToRefs(useUserStore());
 
-    const favoriteDialogRef = ref(null);
+    const favoriteDialogIndex = ref(2000);
     const groups = ref([]);
     const loading = ref(false);
 
@@ -113,11 +111,12 @@
 
     watch(
         () => favoriteDialog.value.visible,
-        async (value) => {
+        (value) => {
             if (value) {
                 initFavoriteDialog();
-                await nextTick();
-                adjustDialogZ(favoriteDialogRef.value.$el);
+                nextTick(() => {
+                    favoriteDialogIndex.value = getNextDialogIndex();
+                });
             }
         }
     );

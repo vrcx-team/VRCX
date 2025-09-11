@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible.sync="socialStatusDialog.visible"
+        v-model="socialStatusDialog.visible"
         :title="t('dialog.social_status.header')"
         append-to-body
         width="400px">
@@ -11,13 +11,13 @@
                     <template #title>
                         <span style="font-size: 16px">{{ t('dialog.social_status.history') }}</span>
                     </template>
-                    <data-tables
+                    <DataTable
                         v-bind="socialStatusHistoryTable"
                         style="cursor: pointer"
                         @row-click="setSocialStatusFromHistory">
                         <el-table-column :label="t('table.social_status.no')" prop="no" width="50"></el-table-column>
                         <el-table-column :label="t('table.social_status.status')" prop="status"></el-table-column>
-                    </data-tables>
+                    </DataTable>
                 </el-collapse-item>
             </el-collapse>
 
@@ -53,19 +53,18 @@
                 {{ t('dialog.social_status.update') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';
     import { useUserStore } from '../../../stores';
 
     const { t } = useI18n();
-    const { $message } = getCurrentInstance().proxy;
-
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -103,7 +102,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                $message({
+                ElMessage({
                     message: 'Status updated',
                     type: 'success'
                 });

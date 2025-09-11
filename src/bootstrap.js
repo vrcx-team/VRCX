@@ -1,16 +1,6 @@
-import '@fontsource/noto-sans-kr';
-import '@fontsource/noto-sans-jp';
-import '@fontsource/noto-sans-sc';
-import '@fontsource/noto-sans-tc';
-
-import 'remixicon/fonts/remixicon.css';
-
-import Vue from 'vue';
-import { PiniaVuePlugin } from 'pinia';
-import { DataTables } from 'vue-data-tables';
-import VueLazyload from 'vue-lazyload';
 import configRepository from './service/config';
 import vrcxJsonStorage from './service/jsonStorage';
+
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
@@ -18,8 +8,10 @@ import {
     refreshCustomScript,
     systemIsDarkMode
 } from './shared/utils';
-import { i18n } from './plugin';
+import { i18n } from './plugin/i18n';
 import { initNoty } from './plugin/noty';
+import './plugin/ipc';
+import './plugin/dayjs';
 
 initNoty(false);
 
@@ -42,7 +34,7 @@ function setLoginContainerStyle(isDarkMode) {
         background-color: ${backgroundColor} !important;
         transition: background-color 0.3s ease;
     }
-    
+
     .x-login-container .el-input__inner {
         background-color: ${inputBackgroundColor} !important;
         border: ${inputBorder} !important;
@@ -88,33 +80,7 @@ try {
 refreshCustomCss();
 refreshCustomScript();
 
-Vue.use(PiniaVuePlugin);
-Vue.use(DataTables);
-
-Vue.use(VueLazyload, {
-    preLoad: 1,
-    observer: true,
-    observerOptions: {
-        rootMargin: '0px',
-        threshold: 0
-    },
-    attempt: 3
-});
-
 new vrcxJsonStorage(VRCXStorage);
 
 // some workaround for failing to get voice list first run
 speechSynthesis.getVoices();
-
-if (process.env.NODE_ENV !== 'production') {
-    Vue.config.errorHandler = function (err, vm, info) {
-        console.error('Vue Error：', err);
-        console.error('Component：', vm);
-        console.error('Error Info：', info);
-    };
-    Vue.config.warnHandler = function (msg, vm, trace) {
-        console.warn('Vue Warning：', msg);
-        console.warn('Component：', vm);
-        console.warn('Trace：', trace);
-    };
-}

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import * as workerTimers from 'worker-timers';
-import { $app } from '../app';
 import configRepository from '../service/config.js';
 import { database } from '../service/database';
 import {
@@ -158,7 +158,7 @@ export const useGameStore = defineStore('Game', () => {
         }
         AppApi.FocusWindow();
         const message = 'VRChat crashed, attempting to rejoin last instance';
-        $app.$message({
+        ElMessage({
             message,
             type: 'info'
         });
@@ -255,14 +255,14 @@ export const useGameStore = defineStore('Game', () => {
             );
             if (!result) {
                 // failed to set key
-                $app.$alert(
+                ElMessageBox.alert(
                     'VRCX has noticed VRChat debug logging is disabled. VRCX requires debug logging in order to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
                     'Enable debug logging'
                 );
                 console.error('Failed to enable debug logging', result);
                 return;
             }
-            $app.$alert(
+            ElMessageBox.alert(
                 'VRCX has noticed VRChat debug logging is disabled and automatically re-enabled it. VRCX requires debug logging in order to function correctly.',
                 'Enabled debug logging'
             );
@@ -281,6 +281,7 @@ export const useGameStore = defineStore('Game', () => {
 
     return {
         state,
+
         VRChatUsedCacheSize,
         VRChatTotalCacheSize,
         VRChatCacheSizeLoading,

@@ -271,6 +271,7 @@ export const useModerationStore = defineStore('Moderation', () => {
 
     return {
         state,
+
         cachedPlayerModerations,
         cachedPlayerModerationsUserIds,
         isPlayerModerationsLoading,

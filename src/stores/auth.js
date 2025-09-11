@@ -1,12 +1,12 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { authRequest } from '../api';
-import { $app } from '../app';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { request } from '../service/request';
 import security from '../service/security';
 import webApiService from '../service/webapi';
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('Auth', () => {
             password: '',
             rePassword: '',
             beforeClose(done) {
-                $app._data.enablePrimaryPassword = false;
+                // $app._data.enablePrimaryPassword = false;
                 done();
             }
         },
@@ -211,8 +211,8 @@ export const useAuthStore = defineStore('Auth', () => {
                     state.loginForm.lastUserLoggedIn
                 ];
             if (user?.loginParmas?.endpoint) {
-                AppGlobal.endpointDomain = user.loginParmas.endpoint;
-                AppGlobal.websocketDomain = user.loginParmas.websocket;
+                AppDebug.endpointDomain = user.loginParmas.endpoint;
+                AppDebug.websocketDomain = user.loginParmas.websocket;
             }
             // login at startup
             state.loginForm.loading = true;
@@ -283,7 +283,7 @@ export const useAuthStore = defineStore('Auth', () => {
         if (advancedSettingsStore.enablePrimaryPassword) {
             state.enablePrimaryPasswordDialog.visible = true;
         } else {
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.primary_password.description'),
                 t('prompt.primary_password.header'),
                 {
@@ -415,7 +415,7 @@ export const useAuthStore = defineStore('Auth', () => {
             if (!advancedSettingsStore.enablePrimaryPassword) {
                 resolve(args.password);
             }
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.primary_password.description'),
                 t('prompt.primary_password.header'),
                 {
@@ -443,11 +443,12 @@ export const useAuthStore = defineStore('Auth', () => {
     }
 
     function logout() {
-        $app.$confirm('Continue? Logout', 'Confirm', {
+        ElMessageBox.confirm('Continue? Logout', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     const existingStyle = document.getElementById(
                         'login-container-style'
@@ -457,8 +458,8 @@ export const useAuthStore = defineStore('Auth', () => {
                     }
                     handleLogoutEvent();
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     async function relogin(user) {
@@ -468,11 +469,11 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         state.loginForm.lastUserLoggedIn = user.user.id; // for resend email 2fa
         if (loginParmas.endpoint) {
-            AppGlobal.endpointDomain = loginParmas.endpoint;
-            AppGlobal.websocketDomain = loginParmas.websocket;
+            AppDebug.endpointDomain = loginParmas.endpoint;
+            AppDebug.websocketDomain = loginParmas.websocket;
         } else {
-            AppGlobal.endpointDomain = AppGlobal.endpointDomainVrchat;
-            AppGlobal.websocketDomain = AppGlobal.websocketDomainVrchat;
+            AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
+            AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
         }
         return new Promise((resolve, reject) => {
             state.loginForm.loading = true;
@@ -501,7 +502,7 @@ export const useAuthStore = defineStore('Auth', () => {
                             });
                     })
                     .catch((_) => {
-                        $app.$message({
+                        ElMessage({
                             message: 'Incorrect primary password',
                             type: 'error'
                         });
@@ -559,11 +560,11 @@ export const useAuthStore = defineStore('Auth', () => {
         if (!state.loginForm.loading) {
             state.loginForm.loading = true;
             if (state.loginForm.endpoint) {
-                AppGlobal.endpointDomain = state.loginForm.endpoint;
-                AppGlobal.websocketDomain = state.loginForm.websocket;
+                AppDebug.endpointDomain = state.loginForm.endpoint;
+                AppDebug.websocketDomain = state.loginForm.websocket;
             } else {
-                AppGlobal.endpointDomain = AppGlobal.endpointDomainVrchat;
-                AppGlobal.websocketDomain = AppGlobal.websocketDomainVrchat;
+                AppDebug.endpointDomain = AppDebug.endpointDomainVrchat;
+                AppDebug.websocketDomain = AppDebug.websocketDomainVrchat;
             }
             authRequest
                 .getConfig()
@@ -576,7 +577,7 @@ export const useAuthStore = defineStore('Auth', () => {
                         state.loginForm.saveCredentials &&
                         advancedSettingsStore.enablePrimaryPassword
                     ) {
-                        $app.$prompt(
+                        ElMessageBox.prompt(
                             t('prompt.primary_password.description'),
                             t('prompt.primary_password.header'),
                             {
@@ -649,36 +650,40 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         AppApi.FlashWindow();
         state.twoFactorAuthDialogVisible = true;
-        $app.$prompt(t('prompt.totp.description'), t('prompt.totp.header'), {
-            distinguishCancelAndClose: true,
-            cancelButtonText: t('prompt.totp.use_otp'),
-            confirmButtonText: t('prompt.totp.verify'),
-            inputPlaceholder: t('prompt.totp.input_placeholder'),
-            inputPattern: /^[0-9]{6}$/,
-            inputErrorMessage: t('prompt.totp.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm') {
-                    authRequest
-                        .verifyTOTP({
-                            code: instance.inputValue.trim()
-                        })
-                        .catch((err) => {
-                            clearCookiesTryLogin();
-                            throw err;
-                        })
-                        .then((args) => {
-                            userStore.getCurrentUser();
-                            return args;
-                        });
-                } else if (action === 'cancel') {
-                    promptOTP();
+        ElMessageBox.prompt(
+            t('prompt.totp.description'),
+            t('prompt.totp.header'),
+            {
+                distinguishCancelAndClose: true,
+                cancelButtonText: t('prompt.totp.use_otp'),
+                confirmButtonText: t('prompt.totp.verify'),
+                inputPlaceholder: t('prompt.totp.input_placeholder'),
+                inputPattern: /^[0-9]{6}$/,
+                inputErrorMessage: t('prompt.totp.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm') {
+                        authRequest
+                            .verifyTOTP({
+                                code: instance.inputValue.trim()
+                            })
+                            .catch((err) => {
+                                clearCookiesTryLogin();
+                                throw err;
+                            })
+                            .then((args) => {
+                                userStore.getCurrentUser();
+                                return args;
+                            });
+                    } else if (action === 'cancel') {
+                        promptOTP();
+                    }
+                },
+                beforeClose: (action, instance, done) => {
+                    state.twoFactorAuthDialogVisible = false;
+                    done();
                 }
-            },
-            beforeClose: (action, instance, done) => {
-                state.twoFactorAuthDialogVisible = false;
-                done();
             }
-        });
+        );
     }
 
     function promptOTP() {
@@ -686,36 +691,40 @@ export const useAuthStore = defineStore('Auth', () => {
             return;
         }
         state.twoFactorAuthDialogVisible = true;
-        $app.$prompt(t('prompt.otp.description'), t('prompt.otp.header'), {
-            distinguishCancelAndClose: true,
-            cancelButtonText: t('prompt.otp.use_totp'),
-            confirmButtonText: t('prompt.otp.verify'),
-            inputPlaceholder: t('prompt.otp.input_placeholder'),
-            inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
-            inputErrorMessage: t('prompt.otp.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm') {
-                    authRequest
-                        .verifyOTP({
-                            code: instance.inputValue.trim()
-                        })
-                        .catch((err) => {
-                            clearCookiesTryLogin();
-                            throw err;
-                        })
-                        .then((args) => {
-                            userStore.getCurrentUser();
-                            return args;
-                        });
-                } else if (action === 'cancel') {
-                    promptTOTP();
+        ElMessageBox.prompt(
+            t('prompt.otp.description'),
+            t('prompt.otp.header'),
+            {
+                distinguishCancelAndClose: true,
+                cancelButtonText: t('prompt.otp.use_totp'),
+                confirmButtonText: t('prompt.otp.verify'),
+                inputPlaceholder: t('prompt.otp.input_placeholder'),
+                inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
+                inputErrorMessage: t('prompt.otp.input_error'),
+                callback: (action, instance) => {
+                    if (action === 'confirm') {
+                        authRequest
+                            .verifyOTP({
+                                code: instance.inputValue.trim()
+                            })
+                            .catch((err) => {
+                                clearCookiesTryLogin();
+                                throw err;
+                            })
+                            .then((args) => {
+                                userStore.getCurrentUser();
+                                return args;
+                            });
+                    } else if (action === 'cancel') {
+                        promptTOTP();
+                    }
+                },
+                beforeClose: (action, instance, done) => {
+                    state.twoFactorAuthDialogVisible = false;
+                    done();
                 }
-            },
-            beforeClose: (action, instance, done) => {
-                state.twoFactorAuthDialogVisible = false;
-                done();
             }
-        });
+        );
     }
 
     function promptEmailOTP() {
@@ -724,7 +733,7 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         AppApi.FlashWindow();
         state.twoFactorAuthDialogVisible = true;
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.email_otp.description'),
             t('prompt.email_otp.header'),
             {
@@ -840,20 +849,20 @@ export const useAuthStore = defineStore('Auth', () => {
         state.autoLoginAttempts.add(new Date().getTime());
         relogin(user)
             .then(() => {
-                if (AppGlobal.errorNoty) {
-                    AppGlobal.errorNoty.close();
+                if (AppDebug.errorNoty) {
+                    AppDebug.errorNoty.close();
                 }
-                AppGlobal.errorNoty = new Noty({
+                AppDebug.errorNoty = new Noty({
                     type: 'success',
                     text: 'Automatically logged in.'
                 }).show();
                 console.log('Automatically logged in.');
             })
             .catch((err) => {
-                if (AppGlobal.errorNoty) {
-                    AppGlobal.errorNoty.close();
+                if (AppDebug.errorNoty) {
+                    AppDebug.errorNoty.close();
                 }
-                AppGlobal.errorNoty = new Noty({
+                AppDebug.errorNoty = new Noty({
                     type: 'error',
                     text: 'Failed to login automatically.'
                 }).show();
@@ -861,7 +870,7 @@ export const useAuthStore = defineStore('Auth', () => {
             })
             .finally(() => {
                 if (!navigator.onLine) {
-                    AppGlobal.errorNoty = new Noty({
+                    AppDebug.errorNoty = new Noty({
                         type: 'error',
                         text: `You're offline.`
                     }).show();
@@ -879,6 +888,7 @@ export const useAuthStore = defineStore('Auth', () => {
 
     return {
         state,
+
         loginForm,
         enablePrimaryPasswordDialog,
         saveCredentials,

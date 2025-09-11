@@ -3,73 +3,85 @@
         <div class="options-container instance-activity" style="margin-top: 0">
             <div>
                 <span>{{ t('view.charts.instance_activity.header') }}</span>
-                <el-popover placement="bottom-start" trigger="hover" width="300">
+                <el-popover placement="bottom-start" trigger="hover" :width="300">
                     <div class="tips-popover">
                         <div>{{ t('view.charts.instance_activity.tips.online_time') }}</div>
                         <div>{{ t('view.charts.instance_activity.tips.click_Y_axis') }}</div>
                         <div>{{ t('view.charts.instance_activity.tips.click_instance_name') }}</div>
                         <div>
-                            <i class="el-icon-warning-outline"></i
+                            <el-icon><WarningFilled /></el-icon
                             ><i>{{ t('view.charts.instance_activity.tips.accuracy_notice') }}</i>
                         </div>
                     </div>
 
-                    <i
-                        slot="reference"
-                        class="el-icon-info"
-                        style="margin-left: 5px; font-size: 12px; opacity: 0.7"></i>
+                    <template #reference>
+                        <el-icon style="margin-left: 5px; font-size: 12px; opacity: 0.7"><InfoFilled /></el-icon>
+                    </template>
                 </el-popover>
             </div>
 
             <div>
                 <el-tooltip :content="t('view.charts.instance_activity.refresh')" placement="top"
-                    ><el-button icon="el-icon-refresh" circle style="margin-right: 9px" @click="reloadData"></el-button
+                    ><el-button :icon="Refresh" circle style="margin-right: 5px" @click="reloadData"></el-button
                 ></el-tooltip>
-                <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
-                    <el-popover placement="bottom" trigger="click" style="margin-right: 9px">
-                        <div class="settings">
+
+                <el-popover placement="bottom" trigger="click" :width="250">
+                    <div class="settings">
+                        <div>
+                            <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
                             <div>
-                                <span>{{ t('view.charts.instance_activity.settings.bar_width') }}</span>
-                                <div>
-                                    <el-slider
-                                        v-model.lazy="barWidth"
-                                        :max="50"
-                                        :min="1"
-                                        @change="changeBarWidth"></el-slider>
-                                </div>
-                            </div>
-                            <div>
-                                <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
-                                <el-switch v-model="isDetailVisible" @change="changeIsDetailInstanceVisible">
-                                </el-switch>
-                            </div>
-                            <div v-if="isDetailVisible">
-                                <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
-                                <el-switch v-model="isSoloInstanceVisible" @change="changeIsSoloInstanceVisible">
-                                </el-switch>
-                            </div>
-                            <div v-if="isDetailVisible">
-                                <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
-                                <el-switch
-                                    v-model="isNoFriendInstanceVisible"
-                                    @change="changeIsNoFriendInstanceVisible">
-                                </el-switch>
+                                <el-slider
+                                    v-model.lazy="barWidth"
+                                    :max="50"
+                                    :min="1"
+                                    @change="
+                                        (value) => changeBarWidth(value, () => handleEchartsRerender())
+                                    "></el-slider>
                             </div>
                         </div>
+                        <div>
+                            <span>{{ t('view.charts.instance_activity.settings.show_detail') }}</span>
+                            <el-switch
+                                v-model="isDetailVisible"
+                                @change="(value) => changeIsDetailInstanceVisible(value, () => handleSettingsChange())">
+                            </el-switch>
+                        </div>
+                        <div v-if="isDetailVisible">
+                            <span>{{ t('view.charts.instance_activity.settings.show_solo_instance') }}</span>
+                            <el-switch
+                                v-model="isSoloInstanceVisible"
+                                @change="(value) => changeIsSoloInstanceVisible(value, () => handleSettingsChange())">
+                            </el-switch>
+                        </div>
+                        <div v-if="isDetailVisible">
+                            <span>{{ t('view.charts.instance_activity.settings.show_no_friend_instance') }}</span>
+                            <el-switch
+                                v-model="isNoFriendInstanceVisible"
+                                @change="
+                                    (value) => changeIsNoFriendInstanceVisible(value, () => handleSettingsChange())
+                                ">
+                            </el-switch>
+                        </div>
+                    </div>
 
-                        <el-button slot="reference" icon="el-icon-setting" circle></el-button>
-                    </el-popover>
-                </el-tooltip>
-                <el-button-group style="margin-right: 10px">
+                    <template #reference>
+                        <div>
+                            <el-tooltip :content="t('view.charts.instance_activity.settings.header')" placement="top">
+                                <el-button :icon="Setting" style="margin-right: 5px" circle></el-button>
+                            </el-tooltip>
+                        </div>
+                    </template>
+                </el-popover>
+                <el-button-group style="margin-right: 5px">
                     <el-tooltip :content="t('view.charts.instance_activity.previous_day')" placement="top">
                         <el-button
-                            icon="el-icon-arrow-left"
+                            :icon="ArrowLeft"
                             :disabled="isPrevDayBtnDisabled"
                             @click="changeSelectedDateFromBtn(false)"></el-button>
                     </el-tooltip>
                     <el-tooltip :content="t('view.charts.instance_activity.next_day')" placement="top">
                         <el-button :disabled="isNextDayBtnDisabled" @click="changeSelectedDateFromBtn(true)"
-                            ><i class="el-icon-arrow-right el-icon--right"></i
+                            ><el-icon class="el-icon--right"><ArrowRight /></el-icon
                         ></el-button>
                     </el-tooltip>
                 </el-button-group>
@@ -78,17 +90,16 @@
                     type="date"
                     :clearable="false"
                     align="right"
-                    :picker-options="{
-                        disabledDate: (time) => getDatePickerDisabledDate(time)
-                    }"
+                    :default-value="dayjs().toDate()"
+                    :disabled-date="getDatePickerDisabledDate"
                     @change="reloadData"></el-date-picker>
             </div>
         </div>
         <div style="position: relative">
-            <el-statistic :title="t('view.charts.instance_activity.online_time')">
-                <template #formatter>
-                    <span :style="isDarkMode ? 'color:rgb(120,120,120)' : ''">{{ totalOnlineTime }}</span>
-                </template>
+            <el-statistic
+                :title="t('view.charts.instance_activity.online_time')"
+                :formatter="(val) => timeToText(val, true)"
+                :value="totalOnlineTime">
             </el-statistic>
         </div>
 
@@ -102,25 +113,33 @@
                 <el-divider>·</el-divider>
             </div>
         </transition>
-        <InstanceActivityDetail
-            v-for="arr in filteredActivityDetailData"
-            :key="arr[0].location + arr[0].created_at"
-            ref="activityDetailChartRef"
-            :activity-detail-data="arr"
-            :bar-width="barWidth" />
+        <template v-if="isDetailVisible && activityData.length !== 0">
+            <InstanceActivityDetail
+                v-for="arr in filteredActivityDetailData"
+                :key="arr[0].location + arr[0].created_at"
+                ref="activityDetailChartRef"
+                :activity-detail-data="arr"
+                :bar-width="barWidth" />
+        </template>
     </div>
 </template>
 
 <script setup>
-    import { ref, onActivated, onDeactivated, watch, computed, onMounted, nextTick, onBeforeMount } from 'vue';
+    import { WarningFilled, InfoFilled, Refresh, Setting, ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
+    import { ref, onDeactivated, watch, onMounted, onBeforeMount, onActivated, nextTick } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
-    import configRepository from '../../../service/config';
-    import { database } from '../../../service/database';
-    import { getWorldName, loadEcharts, parseLocation, timeToText } from '../../../shared/utils';
+    import { useI18n } from 'vue-i18n';
+    import { parseLocation, timeToText } from '../../../shared/utils';
+    import * as echarts from 'echarts';
     import { useAppearanceSettingsStore, useFriendStore, useUserStore } from '../../../stores';
     import InstanceActivityDetail from './InstanceActivityDetail.vue';
+    import { useInstanceActivitySettings } from '../composables/useInstanceActivitySettings';
+    import { useInstanceActivityData } from '../composables/useInstanceActivityData';
+    import { useActivityDataProcessor } from '../composables/useActivityDataProcessor';
+    import { useIntersectionObserver } from '../composables/useIntersectionObserver';
+    import { useChartHelpers } from '../composables/useChartHelpers';
+    import { useDateNavigation } from '../composables/useDateNavigation';
 
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
@@ -129,72 +148,55 @@
     const { currentUser } = storeToRefs(useUserStore());
     const { t } = useI18n();
 
-    // echarts and observer
-    const echarts = ref(null);
+    const {
+        barWidth,
+        isDetailVisible,
+        isSoloInstanceVisible,
+        isNoFriendInstanceVisible,
+        initializeSettings,
+        changeBarWidth,
+        changeIsDetailInstanceVisible,
+        changeIsSoloInstanceVisible,
+        changeIsNoFriendInstanceVisible,
+        handleChangeSettings
+    } = useInstanceActivitySettings();
+
+    const {
+        activityData,
+        activityDetailData,
+        allDateOfActivity,
+        worldNameArray,
+        getAllDateOfActivity,
+        getWorldNameData,
+        getActivityData
+    } = useInstanceActivityData();
+
     const echartsInstance = ref(null);
     const resizeObserver = ref(null);
-    const intersectionObservers = ref([]);
-    const selectedDate = ref(dayjs());
-    // data
-    const activityData = ref([]);
-    const activityDetailData = ref([]);
-    const allDateOfActivity = ref(new Set());
-    const worldNameArray = ref([]);
+    const { handleIntersectionObserver } = useIntersectionObserver();
     const isLoading = ref(true);
-    // settings
-    const barWidth = ref(25);
-    const isDetailVisible = ref(true);
-    const isSoloInstanceVisible = ref(true);
-    const isNoFriendInstanceVisible = ref(true);
+
+    let reloadData;
+    const {
+        selectedDate,
+        isNextDayBtnDisabled,
+        isPrevDayBtnDisabled,
+        changeSelectedDateFromBtn,
+        getDatePickerDisabledDate
+    } = useDateNavigation(allDateOfActivity, () => reloadData());
 
     const activityChartRef = ref(null);
     const activityDetailChartRef = ref(null);
 
-    const totalOnlineTime = computed(() => {
-        return timeToText(
-            activityData.value?.reduce((acc, item) => acc + item.time, 0),
-            true
-        );
-    });
+    const { totalOnlineTime, filteredActivityDetailData } = useActivityDataProcessor(
+        activityData,
+        activityDetailData,
+        isDetailVisible,
+        isSoloInstanceVisible,
+        isNoFriendInstanceVisible
+    );
 
-    const allDateOfActivityArray = computed(() => {
-        return allDateOfActivity.value
-            ? Array.from(allDateOfActivity.value)
-                  .map((item) => dayjs(item))
-                  .sort((a, b) => b.valueOf() - a.valueOf())
-            : [];
-    });
-
-    const isNextDayBtnDisabled = computed(() => {
-        return dayjs(selectedDate.value).isSameOrAfter(allDateOfActivityArray.value[0], 'day');
-    });
-
-    const isPrevDayBtnDisabled = computed(() => {
-        return dayjs(selectedDate.value).isSame(
-            allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1],
-            'day'
-        );
-    });
-
-    const filteredActivityDetailData = computed(() => {
-        if (!isDetailVisible.value) {
-            return [];
-        }
-        let result = [...activityDetailData.value];
-        if (!isSoloInstanceVisible.value) {
-            result = result.filter((arr) => arr.length > 1);
-        }
-        if (!isNoFriendInstanceVisible.value) {
-            result = result.filter((arr) => {
-                // solo instance
-                if (arr.length === 1) {
-                    return true;
-                }
-                return arr.some((item) => item.isFriend);
-            });
-        }
-        return result;
-    });
+    const { isDetailDataFiltered, findMatchingDetailData, generateYAxisLabel } = useChartHelpers();
 
     watch(
         () => isDarkMode.value,
@@ -218,7 +220,7 @@
 
     onActivated(() => {
         // first time also call activated
-        if (!echartsInstance.value) {
+        if (echartsInstance.value) {
             reloadData();
         }
     });
@@ -230,75 +232,114 @@
         }
     });
 
-    function created() {
-        resizeObserver.value = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                echartsInstance.value.resize({
-                    width: entry.contentRect.width,
-                    animation: {
-                        duration: 300
-                    }
-                });
-            }
-        });
-        configRepository.getInt('VRCX_InstanceActivityBarWidth', 25).then((value) => {
-            barWidth.value = value;
-        });
-        configRepository.getBool('VRCX_InstanceActivityDetailVisible', true).then((value) => {
-            isDetailVisible.value = value;
-        });
-        configRepository.getBool('VRCX_InstanceActivitySoloInstanceVisible', true).then((value) => {
-            isSoloInstanceVisible.value = value;
-        });
-        configRepository.getBool('VRCX_InstanceActivityNoFriendInstanceVisible', true).then((value) => {
-            isNoFriendInstanceVisible.value = value;
-        });
-    }
-
     onBeforeMount(() => {
-        // ensure created is called before mounted
-        created();
+        initializeSettings();
     });
 
     onMounted(async () => {
         try {
             getAllDateOfActivity();
-            const [echartsModule] = await Promise.all([
-                // lazy load echarts
-                loadEcharts().catch((error) => {
-                    console.error('lazy load echarts failed', error);
-                    return null;
-                }),
-                getActivityData()
-            ]);
-            if (echartsModule) {
-                echarts.value = echartsModule;
-            }
-            if (echartsModule) {
-                initEcharts();
-                getWorldNameData();
-            } else {
-                isLoading.value = false;
-            }
+            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
+                handleIntersectionObserver(activityDetailChartRef)
+            );
+            await getWorldNameData();
+            initEcharts();
         } catch (error) {
             console.error('error in mounted', error);
+            isLoading.value = false;
         }
     });
 
-    async function reloadData() {
+    reloadData = async function () {
         isLoading.value = true;
-        await getActivityData();
-        getWorldNameData();
-        // possibility past 24:00
-        getAllDateOfActivity();
+        try {
+            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
+                handleIntersectionObserver(activityDetailChartRef)
+            );
+            await getWorldNameData();
+            // possibility past 24:00
+            getAllDateOfActivity();
+
+            await nextTick();
+
+            if (echartsInstance.value && activityData.value.length) {
+                const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
+                echartsInstance.value.resize({
+                    height: chartsHeight,
+                    animation: {
+                        duration: 300
+                    }
+                });
+                echartsInstance.value.setOption(getNewOption(), { notMerge: true });
+            } else if (echartsInstance.value) {
+                echartsInstance.value.clear();
+            }
+        } catch (error) {
+            console.error('Error in reloadData:', error);
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
+    function handleYAxisLabelClick(params) {
+        const targetActivity = activityData.value[params?.dataIndex];
+        if (!targetActivity) {
+            console.error('handleClickYAxisLabel failed, no activity data found for index:', params?.dataIndex);
+            return;
+        }
+
+        const detailDataIdx = filteredActivityDetailData.value.findIndex((arr) => {
+            const sameLocation = arr[0]?.location === targetActivity.location;
+            const sameJoinTime = arr
+                .find((item) => item.user_id === currentUser.value.id)
+                ?.joinTime.isSame(targetActivity.joinTime);
+            return sameLocation && sameJoinTime;
+        });
+
+        if (detailDataIdx === -1) {
+            console.error(
+                "handleClickYAxisLabel failed, likely current user wasn't in this instance or chart is filtered out.",
+                params
+            );
+            return;
+        }
+
+        if (activityDetailChartRef.value && activityDetailChartRef.value[detailDataIdx]) {
+            activityDetailChartRef.value[detailDataIdx].$el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        } else {
+            console.error('handleClickYAxisLabel failed, chart ref not found at index:', detailDataIdx);
+        }
     }
 
-    // echarts - start
+    function getYAxisData() {
+        return worldNameArray.value.map((worldName, index) => {
+            const activityItem = activityData.value[index];
+            if (!activityItem) return worldName;
+
+            const detailData = findMatchingDetailData(activityItem, activityDetailData.value, currentUser.value);
+            if (!detailData) return worldName;
+
+            const shouldFilter =
+                isDetailVisible.value &&
+                isDetailDataFiltered(detailData, isSoloInstanceVisible.value, isNoFriendInstanceVisible.value);
+
+            return generateYAxisLabel(worldName, shouldFilter);
+        });
+    }
+
     function initEcharts() {
         const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
         const chartDom = activityChartRef.value;
 
         const afterInit = () => {
+            if (!echartsInstance.value) {
+                console.error('ECharts instance not initialized');
+                return;
+            }
+
             echartsInstance.value.resize({
                 height: chartsHeight,
                 animation: {
@@ -306,67 +347,42 @@
                 }
             });
 
-            const handleClickYAxisLabel = (params) => {
-                const detailDataIdx = filteredActivityDetailData.value.findIndex((arr) => {
-                    const sameLocation = arr[0]?.location === activityData.value[params?.dataIndex]?.location;
-                    const sameJoinTime = arr
-                        .find((item) => item.user_id === currentUser.value.id)
-                        ?.joinTime.isSame(activityData.value[params?.dataIndex].joinTime);
-                    return sameLocation && sameJoinTime;
-                });
-                if (detailDataIdx === -1) {
-                    // no detail chart down below, it's hidden, so can't find instance data index
-                    console.error("handleClickYAxisLabel failed, likely current user wasn't in this instance.", params);
-                } else {
-                    activityDetailChartRef.value[detailDataIdx].$el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            };
+            const handleClickYAxisLabel = handleYAxisLabelClick;
 
-            const options = activityData.value.length ? getNewOption() : {};
+            echartsInstance.value.off('click');
 
-            echartsInstance.value.setOption(options, { lazyUpdate: true });
-            echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+            if (activityData.value.length && worldNameArray.value.length) {
+                const options = getNewOption();
+                echartsInstance.value.clear();
+                echartsInstance.value.setOption(options, { notMerge: true });
+                echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+            } else {
+                echartsInstance.value.clear();
+            }
             isLoading.value = false;
         };
 
         const initEchartsInstance = () => {
-            echartsInstance.value = echarts.value.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
+            echartsInstance.value = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
                 height: chartsHeight
             });
-            resizeObserver.value.observe(chartDom);
-        };
-
-        const loadEchartsWithTimeout = () => {
-            const timeout = 5000;
-            let time = 0;
-            const timer = setInterval(() => {
-                if (echarts.value) {
-                    initEchartsInstance();
-                    afterInit();
-                    clearInterval(timer);
-                    return;
-                }
-                time += 100;
-                if (time >= timeout) {
-                    clearInterval(timer);
-                    console.error('echarts init timeout');
-                }
-            }, 100);
+            // resizeObserver.value = new ResizeObserver((entries) => {
+            //     for (const entry of entries) {
+            //         echartsInstance.value.resize({
+            //             width: entry.contentRect.width,
+            //             animation: {
+            //                 duration: 300
+            //             }
+            //         });
+            //     }
+            // });
+            // resizeObserver.value.observe(chartDom);
         };
 
         if (!echartsInstance.value) {
-            if (!echarts.value) {
-                loadEchartsWithTimeout();
-            } else {
-                initEchartsInstance();
-                afterInit();
-            }
-        } else {
-            afterInit();
+            initEchartsInstance();
         }
+        afterInit();
     }
     function getNewOption() {
         const getTooltip = (params) => {
@@ -420,10 +436,17 @@
                 type: 'category',
                 axisLabel: {
                     interval: 0,
-                    formatter: (value) => (value.length > 20 ? `${value.slice(0, 20)}...` : value)
+                    rich: {
+                        filtered: {
+                            opacity: 0.4
+                        },
+                        normal: {
+                            opacity: 1
+                        }
+                    }
                 },
                 inverse: true,
-                data: worldNameArray.value,
+                data: getYAxisData(),
                 triggerEvent: true
             },
             xAxis: {
@@ -461,7 +484,7 @@
                                 return 0;
                             }
                         }
-                        return item.joinTime - dayjs.tz(selectedDate.value).startOf('day');
+                        return item.joinTime - dayjs.tz(selectedDate.value).startOf('day').valueOf();
                     })
                 },
                 {
@@ -485,7 +508,7 @@
                         if (idx === 0) {
                             const midnight = dayjs.tz(selectedDate.value).startOf('day');
                             if (midnight.isAfter(item.joinTime)) {
-                                return item.leaveTime - dayjs.tz(midnight);
+                                return item.leaveTime - dayjs.tz(midnight).valueOf();
                             }
                         }
                         return item.time;
@@ -494,258 +517,27 @@
             ],
             backgroundColor: 'transparent'
         };
-
         return echartsOption;
     }
-    // echarts - end
 
-    // settings - start
-    function changeBarWidth(value) {
-        barWidth.value = value;
+    function handleEchartsRerender() {
         initEcharts();
-        configRepository.setInt('VRCX_InstanceActivityBarWidth', value).finally(() => {
-            handleChangeSettings();
-        });
+        handleSettingsChange();
     }
-    function changeIsDetailInstanceVisible(value) {
-        isDetailVisible.value = value;
-        configRepository.setBool('VRCX_InstanceActivityDetailVisible', value).finally(() => {
-            handleChangeSettings();
-        });
-    }
-    function changeIsSoloInstanceVisible(value) {
-        isSoloInstanceVisible.value = value;
-        configRepository.setBool('VRCX_InstanceActivitySoloInstanceVisible', value).finally(() => {
-            handleChangeSettings();
-        });
-    }
-    function changeIsNoFriendInstanceVisible(value) {
-        isNoFriendInstanceVisible.value = value;
-        configRepository.setBool('VRCX_InstanceActivityNoFriendInstanceVisible', value).finally(() => {
-            handleChangeSettings();
-        });
-    }
-    function handleChangeSettings() {
+    function handleSettingsChange() {
+        handleChangeSettings(activityDetailChartRef);
+
+        if (echartsInstance.value) {
+            const newOptions = getNewOption();
+            echartsInstance.value.setOption({
+                yAxis: newOptions.yAxis
+            });
+        }
+
         nextTick(() => {
-            if (activityDetailChartRef.value) {
-                activityDetailChartRef.value.forEach((child) => {
-                    requestAnimationFrame(() => {
-                        if (child.echartsInstance) {
-                            child.initEcharts();
-                        }
-                    });
-                });
-            }
-        });
-        //rerender detail chart
-    }
-    // settings - end
-
-    // options - start
-    function changeSelectedDateFromBtn(isNext = false) {
-        if (!allDateOfActivityArray.value || allDateOfActivityArray.value.length === 0) {
-            return;
-        }
-
-        const idx = allDateOfActivityArray.value.findIndex((date) => date.isSame(selectedDate.value, 'day'));
-        if (idx !== -1) {
-            const newIdx = isNext ? idx - 1 : idx + 1;
-
-            if (newIdx >= 0 && newIdx < allDateOfActivityArray.value.length) {
-                selectedDate.value = allDateOfActivityArray.value[newIdx];
-                reloadData();
-                return;
-            }
-        }
-        selectedDate.value = isNext
-            ? allDateOfActivityArray.value[0]
-            : allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1];
-        reloadData();
-    }
-    function getDatePickerDisabledDate(time) {
-        if (
-            time > Date.now() ||
-            allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1]
-                ?.add(-1, 'day')
-                .isAfter(time, 'day') ||
-            !allDateOfActivity.value
-        ) {
-            return true;
-        }
-        return !allDateOfActivity.value.has(dayjs(time).format('YYYY-MM-DD'));
-    }
-    // options - end
-
-    // data - start
-    async function getWorldNameData() {
-        worldNameArray.value = await Promise.all(
-            activityData.value.map(async (item) => {
-                try {
-                    return await getWorldName(item.location);
-                } catch {
-                    console.error('getWorldName failed location', item.location);
-                    return 'Unknown world';
-                }
-            })
-        );
-
-        if (worldNameArray.value) {
-            initEcharts();
-        }
-    }
-    async function getAllDateOfActivity() {
-        const utcDateStrings = (await database.getDateOfInstanceActivity()) || [];
-        const uniqueDates = new Set();
-
-        for (const utcString of utcDateStrings) {
-            const formattedDate = dayjs.utc(utcString).tz().format('YYYY-MM-DD');
-            uniqueDates.add(formattedDate);
-        }
-
-        allDateOfActivity.value = uniqueDates;
-    }
-    async function getActivityData() {
-        const localStartDate = dayjs.tz(selectedDate.value).startOf('day').toISOString();
-        const localEndDate = dayjs.tz(selectedDate.value).endOf('day').toISOString();
-        const dbData = await database.getInstanceActivity(localStartDate, localEndDate);
-
-        const transformData = (item) => ({
-            ...item,
-            joinTime: dayjs(item.created_at).subtract(item.time, 'millisecond'),
-            leaveTime: dayjs(item.created_at),
-            time: item.time < 0 ? 0 : item.time,
-            isFriend: item.user_id === currentUser.value.id ? null : friends.value.has(item.user_id),
-            isFavorite: item.user_id === currentUser.value.id ? null : localFavoriteFriends.value.has(item.user_id)
-        });
-
-        activityData.value = dbData.currentUserData.map(transformData);
-
-        const transformAndSort = (arr) => {
-            return arr.map(transformData).sort((a, b) => {
-                const timeDiff = Math.abs(a.joinTime.diff(b.joinTime, 'second'));
-                // recording delay, under 3s is considered the same time entry, beautify the chart
-                return timeDiff < 3 ? a.leaveTime - b.leaveTime : a.joinTime - b.joinTime;
-            });
-        };
-
-        const filterByLocation = (innerArray, locationSet) => {
-            return innerArray.every((innerObject) => locationSet.has(innerObject.location));
-        };
-        const locationSet = new Set(activityData.value.map((item) => item.location));
-
-        const preSplitActivityDetailData = Array.from(dbData.detailData.values())
-            .map(transformAndSort)
-            .filter((innerArray) => filterByLocation(innerArray, locationSet));
-
-        activityDetailData.value = handleSplitActivityDetailData(preSplitActivityDetailData, currentUser.value.id);
-
-        if (activityDetailData.value.length) {
-            nextTick(() => {
-                handleIntersectionObserver();
-            });
-        }
-    }
-    function handleSplitActivityDetailData(activityDetailData, currentUserId) {
-        function countTargetIdOccurrences(innerArray, targetId) {
-            let count = 0;
-            for (const obj of innerArray) {
-                if (obj.user_id === targetId) {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        function areIntervalsOverlapping(objA, objB) {
-            const isObj1EndTimeBeforeObj2StartTime = objA.leaveTime.isBefore(objB.joinTime, 'second');
-            const isObj2EndTimeBeforeObj1StartTime = objB.leaveTime.isBefore(objA.joinTime, 'second');
-            return !(isObj1EndTimeBeforeObj2StartTime || isObj2EndTimeBeforeObj1StartTime);
-        }
-
-        function buildOverlapGraph(innerArray) {
-            const numObjects = innerArray.length;
-            const adjacencyList = Array.from({ length: numObjects }, () => []);
-
-            for (let i = 0; i < numObjects; i++) {
-                for (let j = i + 1; j < numObjects; j++) {
-                    if (areIntervalsOverlapping(innerArray[i], innerArray[j])) {
-                        adjacencyList[i].push(j);
-                        adjacencyList[j].push(i);
-                    }
-                }
-            }
-            return adjacencyList;
-        }
-
-        function depthFirstSearch(nodeIndex, visited, graph, component) {
-            visited[nodeIndex] = true;
-            component.push(nodeIndex);
-            for (const neighborIndex of graph[nodeIndex]) {
-                if (!visited[neighborIndex]) {
-                    depthFirstSearch(neighborIndex, visited, graph, component);
-                }
-            }
-        }
-
-        function findConnectedComponents(graph, numNodes) {
-            const visited = new Array(numNodes).fill(false);
-            const components = [];
-
-            for (let i = 0; i < numNodes; i++) {
-                if (!visited[i]) {
-                    const component = [];
-                    depthFirstSearch(i, visited, graph, component);
-                    components.push(component);
-                }
-            }
-            return components;
-        }
-
-        function processOuterArrayWithTargetId(outerArray, targetId) {
-            let i = 0;
-            while (i < outerArray.length) {
-                let currentInnerArray = outerArray[i];
-                let targetIdCount = countTargetIdOccurrences(currentInnerArray, targetId);
-                if (targetIdCount > 1) {
-                    let graph = buildOverlapGraph(currentInnerArray);
-                    let connectedComponents = findConnectedComponents(graph, currentInnerArray.length);
-                    let newInnerArrays = connectedComponents.map((componentIndices) => {
-                        return componentIndices.map((index) => currentInnerArray[index]);
-                    });
-                    outerArray.splice(i, 1, ...newInnerArrays);
-                    i += newInnerArrays.length;
-                } else {
-                    i += 1;
-                }
-            }
-            return outerArray.sort((a, b) => a[0].joinTime - b[0].joinTime);
-        }
-
-        return processOuterArrayWithTargetId(activityDetailData, currentUserId);
-    }
-    // data - end
-
-    // intersection observer - start
-    function handleIntersectionObserver() {
-        activityDetailChartRef.value?.forEach((child, index) => {
-            const observer = new IntersectionObserver((entries) => handleIntersection(index, entries));
-            observer.observe(child.$el);
-            intersectionObservers.value[index] = observer;
+            handleIntersectionObserver(activityDetailChartRef);
         });
     }
-    function handleIntersection(index, entries) {
-        if (!entries) {
-            console.error('handleIntersection failed');
-            return;
-        }
-        entries.forEach((entry) => {
-            if (entry.isIntersecting && activityDetailChartRef.value[index]) {
-                activityDetailChartRef.value[index].initEcharts();
-                intersectionObservers.value[index].unobserve(entry.target);
-            }
-        });
-    }
-    // intersection observer - end
 </script>
 
 <style lang="scss" scoped>
@@ -798,7 +590,7 @@
         & > div:first-child {
             > div {
                 width: 160px;
-                padding-left: 20px;
+                margin-left: 20px;
             }
         }
     }

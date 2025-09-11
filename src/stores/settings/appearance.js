@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import { $app } from '../../app';
-import { i18n, t } from '../../plugin';
+import { useI18n } from 'vue-i18n';
+import { ElMessageBox } from 'element-plus';
+
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
 import { watchState } from '../../service/watchState';
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
-    changeCJKFontsOrder,
     getNameColour,
     HueToHex,
     systemIsDarkMode,
@@ -36,13 +36,14 @@ export const useAppearanceSettingsStore = defineStore(
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
 
+        const { t, availableLocales, locale } = useI18n();
+
         const state = reactive({
             appLanguage: 'en',
             themeMode: '',
             isDarkMode: false,
             displayVRCPlusIconsAsAvatar: false,
             hideNicknames: false,
-            hideTooltips: false,
             isAgeGatedInstancesVisible: false,
             sortFavorites: true,
             instanceUsersSortAlphabetical: false,
@@ -83,7 +84,6 @@ export const useAppearanceSettingsStore = defineStore(
                 themeMode,
                 displayVRCPlusIconsAsAvatar,
                 hideNicknames,
-                hideTooltips,
                 isAgeGatedInstancesVisible,
                 sortFavorites,
                 instanceUsersSortAlphabetical,
@@ -105,7 +105,6 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getString('VRCX_ThemeMode', 'system'),
                 configRepository.getBool('displayVRCPlusIconsAsAvatar', true),
                 configRepository.getBool('VRCX_hideNicknames', false),
-                configRepository.getBool('VRCX_hideTooltips', false),
                 configRepository.getBool(
                     'VRCX_isAgeGatedInstancesVisible',
                     true
@@ -158,23 +157,21 @@ export const useAppearanceSettingsStore = defineStore(
                 const result = await AppApi.CurrentLanguage();
 
                 const lang = result.split('-')[0];
-                i18n.availableLocales.forEach((ref) => {
+                availableLocales.forEach((ref) => {
                     const refLang = ref.split('_')[0];
                     if (refLang === lang) {
                         changeAppLanguage(ref);
                     }
                 });
             } else {
-                state.appLanguage = appLanguage;
+                changeAppLanguage(appLanguage);
             }
-            changeCJKFontsOrder(state.appLanguage);
 
             state.themeMode = themeMode;
-            applyThemeMode(themeMode);
+            applyThemeMode();
 
             state.displayVRCPlusIconsAsAvatar = displayVRCPlusIconsAsAvatar;
             state.hideNicknames = hideNicknames;
-            state.hideTooltips = hideTooltips;
             state.isAgeGatedInstancesVisible = isAgeGatedInstancesVisible;
             state.sortFavorites = sortFavorites;
             state.instanceUsersSortAlphabetical = instanceUsersSortAlphabetical;
@@ -222,7 +219,6 @@ export const useAppearanceSettingsStore = defineStore(
             () => state.displayVRCPlusIconsAsAvatar
         );
         const hideNicknames = computed(() => state.hideNicknames);
-        const hideTooltips = computed(() => state.hideTooltips);
         const isAgeGatedInstancesVisible = computed(
             () => state.isAgeGatedInstancesVisible
         );
@@ -280,8 +276,9 @@ export const useAppearanceSettingsStore = defineStore(
             console.log('Language changed:', language);
             state.appLanguage = language;
             configRepository.setString('VRCX_appLanguage', language);
-            changeCJKFontsOrder(state.appLanguage);
-            i18n.locale = state.appLanguage;
+            locale.value = state.appLanguage;
+            const htmlElement = document.documentElement;
+            htmlElement.setAttribute('lang', state.appLanguage);
         }
 
         /**
@@ -296,7 +293,7 @@ export const useAppearanceSettingsStore = defineStore(
         async function changeThemeMode() {
             await changeAppThemeStyle(state.themeMode);
             vrStore.updateVRConfigVars();
-            await updateTrustColor();
+            await updateTrustColor(undefined, undefined);
         }
 
         /**
@@ -337,6 +334,7 @@ export const useAppearanceSettingsStore = defineStore(
                 Array.from(userStore.cachedUsers.keys())
             );
             if (LINUX) {
+                // @ts-ignore
                 dictObject = Object.fromEntries(dictObject);
             }
             for (const [userId, hue] of Object.entries(dictObject)) {
@@ -455,10 +453,6 @@ export const useAppearanceSettingsStore = defineStore(
         function setHideNicknames() {
             state.hideNicknames = !state.hideNicknames;
             configRepository.setBool('VRCX_hideNicknames', state.hideNicknames);
-        }
-        function setHideTooltips() {
-            state.hideTooltips = !state.hideTooltips;
-            configRepository.setBool('VRCX_hideTooltips', state.hideTooltips);
         }
         function setIsAgeGatedInstancesVisible() {
             state.isAgeGatedInstancesVisible =
@@ -673,35 +667,35 @@ export const useAppearanceSettingsStore = defineStore(
         }
 
         function promptMaxTableSizeDialog() {
-            $app.$prompt(
+            ElMessageBox.prompt(
                 t('prompt.change_table_size.description'),
                 t('prompt.change_table_size.header'),
                 {
                     distinguishCancelAndClose: true,
                     confirmButtonText: t('prompt.change_table_size.save'),
                     cancelButtonText: t('prompt.change_table_size.cancel'),
-                    inputValue: vrcxStore.maxTableSize,
+                    inputValue: vrcxStore.maxTableSize.toString(),
                     inputPattern: /\d+$/,
-                    inputErrorMessage: t(
-                        'prompt.change_table_size.input_error'
-                    ),
-                    callback: async (action, instance) => {
-                        if (action === 'confirm' && instance.inputValue) {
-                            if (instance.inputValue > 10000) {
-                                instance.inputValue = 10000;
-                            }
-                            vrcxStore.maxTableSize = instance.inputValue;
-                            await configRepository.setString(
-                                'VRCX_maxTableSize',
-                                vrcxStore.maxTableSize
-                            );
-                            database.setMaxTableSize(vrcxStore.maxTableSize);
-                            feedStore.feedTableLookup();
-                            gameLogStore.gameLogTableLookup();
-                        }
-                    }
+                    inputErrorMessage: t('prompt.change_table_size.input_error')
                 }
-            );
+            )
+                .then(async ({ value }) => {
+                    if (value) {
+                        let processedValue = Number(value);
+                        if (processedValue > 10000) {
+                            processedValue = 10000;
+                        }
+                        vrcxStore.maxTableSize = processedValue;
+                        await configRepository.setString(
+                            'VRCX_maxTableSize',
+                            vrcxStore.maxTableSize.toString()
+                        );
+                        database.setMaxTableSize(vrcxStore.maxTableSize);
+                        feedStore.feedTableLookup();
+                        gameLogStore.gameLogTableLookup();
+                    }
+                })
+                .catch(() => {});
         }
 
         async function tryInitUserColours() {
@@ -721,7 +715,6 @@ export const useAppearanceSettingsStore = defineStore(
             isDarkMode,
             displayVRCPlusIconsAsAvatar,
             hideNicknames,
-            hideTooltips,
             isAgeGatedInstancesVisible,
             sortFavorites,
             instanceUsersSortAlphabetical,
@@ -746,7 +739,6 @@ export const useAppearanceSettingsStore = defineStore(
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
             setHideNicknames,
-            setHideTooltips,
             setIsAgeGatedInstancesVisible,
             setSortFavorites,
             setInstanceUsersSortAlphabetical,

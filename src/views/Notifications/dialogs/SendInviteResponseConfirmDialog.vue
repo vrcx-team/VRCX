@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="sendInviteResponseConfirmDialog.visible"
+        :model-value="sendInviteResponseConfirmDialog.visible"
         :title="t('dialog.invite_response_message.header')"
         width="400px"
         append-to-body
@@ -11,27 +11,23 @@
         </div>
 
         <template #footer>
-            <el-button type="small" @click="cancelInviteResponseConfirm">{{
-                t('dialog.invite_response_message.cancel')
-            }}</el-button>
+            <el-button @click="cancelInviteResponseConfirm">{{ t('dialog.invite_response_message.cancel') }}</el-button>
             <el-button type="primary" size="small" @click="sendInviteResponseConfirm">{{
                 t('dialog.invite_response_message.confirm')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { notificationRequest } from '../../../api';
     import { useGalleryStore } from '../../../stores';
 
     const { t } = useI18n();
 
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
     const galleryStore = useGalleryStore();
     const { uploadImage } = storeToRefs(galleryStore);
 
@@ -69,7 +65,7 @@
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    $message({
+                    ElMessage({
                         message: 'Invite response photo message sent',
                         type: 'success'
                     });
@@ -88,7 +84,7 @@
                     notificationRequest.hideNotification({
                         notificationId: D.invite.id
                     });
-                    $message({
+                    ElMessage({
                         message: 'Invite response message sent',
                         type: 'success'
                     });

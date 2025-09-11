@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="isScreenshotMetadataDialogVisible"
+        :model-value="isScreenshotMetadataDialogVisible"
         :title="t('dialog.screenshot_metadata.header')"
         width="1050px"
         @close="closeDialog">
@@ -16,35 +16,35 @@
             }}</span>
             <br />
             <br />
-            <el-button size="small" icon="el-icon-folder-opened" @click="getAndDisplayScreenshotFromFile">{{
+            <el-button size="small" :icon="FolderOpened" @click="getAndDisplayScreenshotFromFile">{{
                 t('dialog.screenshot_metadata.browse')
             }}</el-button>
-            <el-button size="small" icon="el-icon-picture-outline" @click="getAndDisplayLastScreenshot">{{
+            <el-button size="small" :icon="Picture" @click="getAndDisplayLastScreenshot">{{
                 t('dialog.screenshot_metadata.last_screenshot')
             }}</el-button>
             <el-button
                 size="small"
-                icon="el-icon-copy-document"
+                :icon="CopyDocument"
                 @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)"
                 >{{ t('dialog.screenshot_metadata.copy_image') }}</el-button
             >
             <el-button
                 size="small"
-                icon="el-icon-folder"
+                :icon="Folder"
                 @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)"
                 >{{ t('dialog.screenshot_metadata.open_folder') }}</el-button
             >
             <el-button
                 v-if="currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath"
                 size="small"
-                icon="el-icon-upload2"
+                :icon="Upload"
                 @click="uploadScreenshotToGallery"
                 >{{ t('dialog.screenshot_metadata.upload') }}</el-button
             >
             <el-button
                 v-if="screenshotMetadataDialog.metadata.filePath"
                 size="small"
-                icon="el-icon-delete"
+                :icon="Delete"
                 @click="deleteMetadata(screenshotMetadataDialog.metadata.filePath)"
                 >{{ t('dialog.screenshot_metadata.delete_metadata') }}</el-button
             >
@@ -93,7 +93,7 @@
                 v-if="screenshotMetadataDialog.metadata.fileResolution"
                 style="margin-right: 5px"
                 v-text="screenshotMetadataDialog.metadata.fileResolution"></span>
-            <el-tag v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini">{{
+            <el-tag v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="small">{{
                 screenshotMetadataDialog.metadata.fileSize
             }}</el-tag>
             <br />
@@ -117,35 +117,23 @@
                 style="margin-top: 10px"
                 @change="screenshotMetadataCarouselChange">
                 <el-carousel-item>
-                    <span placement="top" width="700px" trigger="click">
-                        <img
-                            slot="reference"
-                            class="x-link"
-                            :src="screenshotMetadataDialog.metadata.previousFilePath"
-                            style="width: 100%; height: 100%; object-fit: contain" />
-                    </span>
+                    <img
+                        class="x-link"
+                        :src="screenshotMetadataDialog.metadata.previousFilePath"
+                        style="width: 100%; height: 100%; object-fit: contain" />
                 </el-carousel-item>
                 <el-carousel-item>
-                    <span
-                        placement="top"
-                        width="700px"
-                        trigger="click"
-                        @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)">
-                        <img
-                            slot="reference"
-                            class="x-link"
-                            :src="screenshotMetadataDialog.metadata.filePath"
-                            style="width: 100%; height: 100%; object-fit: contain" />
-                    </span>
+                    <img
+                        class="x-link"
+                        :src="screenshotMetadataDialog.metadata.filePath"
+                        style="width: 100%; height: 100%; object-fit: contain"
+                        @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)" />
                 </el-carousel-item>
                 <el-carousel-item>
-                    <span placement="top" width="700px" trigger="click">
-                        <img
-                            slot="reference"
-                            class="x-link"
-                            :src="screenshotMetadataDialog.metadata.nextFilePath"
-                            style="width: 100%; height: 100%; object-fit: contain" />
-                    </span>
+                    <img
+                        class="x-link"
+                        :src="screenshotMetadataDialog.metadata.nextFilePath"
+                        style="width: 100%; height: 100%; object-fit: contain" />
                 </el-carousel-item>
             </el-carousel>
             <br />
@@ -164,13 +152,15 @@
                 <br />
             </span>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+    import { FolderOpened, Picture, CopyDocument, Folder, Upload, Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { vrcPlusImageRequest } from '../../../api';
     import { useGalleryStore, useUserStore, useVrcxStore } from '../../../stores';
     import { formatDateFilter } from '../../../shared/utils';
@@ -180,9 +170,6 @@
     const { currentUser } = storeToRefs(useUserStore());
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const userStore = useUserStore();
     const { lookupUser } = userStore;
@@ -286,7 +273,7 @@
             return;
         }
         AppApi.CopyImageToClipboard(path).then(() => {
-            $message({
+            ElMessage({
                 message: 'Image copied to clipboard',
                 type: 'success'
             });
@@ -297,7 +284,7 @@
             return;
         }
         AppApi.OpenFolderAndSelectItem(path).then(() => {
-            $message({
+            ElMessage({
                 message: 'Opened image folder',
                 type: 'success'
             });
@@ -309,13 +296,13 @@
         }
         AppApi.DeleteScreenshotMetadata(path).then((result) => {
             if (!result) {
-                $message({
+                ElMessage({
                     message: t('message.screenshot_metadata.delete_failed'),
                     type: 'error'
                 });
                 return;
             }
-            $message({
+            ElMessage({
                 message: t('message.screenshot_metadata.deleted'),
                 type: 'success'
             });
@@ -326,7 +313,7 @@
     function uploadScreenshotToGallery() {
         const D = screenshotMetadataDialog;
         if (D.metadata.fileSizeBytes > 10000000) {
-            $message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -339,7 +326,7 @@
                     .uploadGalleryImage(base64Body)
                     .then((args) => {
                         handleGalleryImageAdd(args);
-                        $message({
+                        ElMessage({
                             message: t('message.gallery.uploaded'),
                             type: 'success'
                         });
@@ -350,7 +337,7 @@
                     });
             })
             .catch((err) => {
-                $message({
+                ElMessage({
                     message: t('message.gallery.failed'),
                     type: 'error'
                 });

@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import { worldRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { failedGetRequests } from '../service/request';
 import { watchState } from '../service/watchState';
 import { debounce, parseLocation, refreshCustomCss } from '../shared/utils';
@@ -24,7 +24,7 @@ import { useAdvancedSettingsStore } from './settings/advanced';
 import { useUpdateLoopStore } from './updateLoop';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import Noty from 'noty';
 
 export const useVrcxStore = defineStore('Vrcx', () => {
@@ -47,7 +47,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     const { t } = useI18n();
 
     const state = reactive({
-        isRunningUnderWine: false,
         databaseVersion: 0,
         clearVRCXCacheFrequency: 172800,
         proxyServer: '',
@@ -174,6 +173,13 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
     });
 
+    const proxyServer = computed({
+        get: () => state.proxyServer,
+        set: async (value) => {
+            state.proxyServer = value;
+        }
+    });
+
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
     // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
     document.body.addEventListener('drop', function (e) {
@@ -189,27 +195,20 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             }
         } else if (e.altKey && e.key === 'R') {
             refreshCustomCss();
-            $app.$message({
+            ElMessage({
                 message: 'Custom CSS refreshed',
                 type: 'success'
             });
         }
     });
 
-    const isRunningUnderWine = computed({
-        get: () => state.isRunningUnderWine,
-        set: (value) => {
-            state.isRunningUnderWine = value;
-        }
-    });
-
     function showConsole() {
         AppApi.ShowDevTools();
         if (
-            AppGlobal.debug ||
-            AppGlobal.debugWebRequests ||
-            AppGlobal.debugWebSocket ||
-            AppGlobal.debugUserDiff
+            AppDebug.debug ||
+            AppDebug.debugWebRequests ||
+            AppDebug.debugWebSocket ||
+            AppDebug.debugUserDiff
         ) {
             return;
         }
@@ -229,7 +228,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         let msgBox;
         if (state.databaseVersion < databaseVersion) {
             if (state.databaseVersion) {
-                msgBox = $app.$message({
+                msgBox = ElMessage({
                     message:
                         'DO NOT CLOSE VRCX, database upgrade in progress...',
                     type: 'warning',
@@ -260,7 +259,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 msgBox?.close();
                 if (state.databaseVersion) {
                     // only display when database exists
-                    $app.$message({
+                    ElMessage({
                         message: 'Database upgrade complete',
                         type: 'success'
                     });
@@ -269,7 +268,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             } catch (err) {
                 console.error(err);
                 msgBox?.close();
-                $app.$message({
+                ElMessage({
                     message:
                         'Database upgrade failed, check console for details',
                     type: 'error',
@@ -450,7 +449,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (AppGlobal.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging) {
                     console.log(
                         'OnEvent',
                         data.OnEventData.Code,
@@ -465,7 +464,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (AppGlobal.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging) {
                     console.log(
                         'OnOperationResponse',
                         data.OnOperationResponseData.OperationCode,
@@ -483,7 +482,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                if (AppGlobal.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging) {
                     console.log(
                         'OnOperationRequest',
                         data.OnOperationRequestData.OperationCode,
@@ -507,7 +506,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 photonStore.photonLastEvent7List = Date.parse(data.dt);
                 break;
             case 'VrcxMessage':
-                if (AppGlobal.debugPhotonLogging) {
+                if (AppDebug.debugPhotonLogging) {
                     console.log('VrcxMessage:', data);
                 }
                 eventVrcxMessage(data);
@@ -601,7 +600,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 const regexAvatarId =
                     /avtr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
                 if (!avatarId.match(regexAvatarId) || avatarId.length !== 41) {
-                    $app.$message({
+                    ElMessage({
                         message: 'Invalid Avatar ID',
                         type: 'error'
                     });
@@ -699,7 +698,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 return;
             }
             // popup message about auto restore
-            $app.$alert(
+            ElMessageBox.alert(
                 t('dialog.registry_backup.restore_prompt'),
                 t('dialog.registry_backup.header')
             );
@@ -764,7 +763,8 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     return {
         state,
-        isRunningUnderWine,
+
+        proxyServer,
         currentlyDroppingFile,
         isRegistryBackupDialogVisible,
         ipcEnabled,

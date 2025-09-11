@@ -11,8 +11,8 @@
         <div v-else-if="pendingVRCXUpdate || pendingVRCXInstall" class="pending-update">
             <el-button
                 type="default"
-                size="mini"
-                icon="el-icon-download"
+                size="small"
+                :icon="Download"
                 circle
                 style="font-size: 14px; height: 50px; width: 50px"
                 @click="showVRCXUpdateDialog" />
@@ -30,7 +30,7 @@
                 :class="{ notify: notifiedMenus.includes(item.index) }">
                 <i :class="item.icon"></i>
                 <template #title>
-                    <span>{{ $t(item.tooltip) }}</span>
+                    <span>{{ t(item.tooltip) }}</span>
                 </template>
             </el-menu-item>
         </el-menu>
@@ -38,8 +38,12 @@
 </template>
 
 <script setup>
+    import { Download } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import { useUiStore, useVRCXUpdaterStore } from '../stores';
+
+    const { t } = useI18n();
 
     const navItems = [
         { index: 'feed', icon: 'ri-rss-line', tooltip: 'nav_tooltip.feed' },

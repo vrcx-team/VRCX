@@ -7,6 +7,9 @@ declare global {
 
     interface Window {
         $app: any;
+        $pinia: any;
+        $vr: any;
+        $debug: AppDebug;
         AppApi: AppApi;
         AppApiVr: AppApiVr;
         WebApi: WebApi;
@@ -67,10 +70,9 @@ declare global {
                 on(channel: String, func: (...args: unknown[]) => void);
             };
         };
-        __APP_GLOBALS__: AppGlobals;
     }
 
-    interface AppGlobals {
+    interface AppDebug {
         debug: boolean;
         debugWebSocket: boolean;
         debugUserDiff: boolean;
@@ -170,7 +172,6 @@ declare global {
         ): Promise<void>;
         RestartApplication(isUpgrade: boolean): Promise<void>;
         CheckForUpdateExe(): Promise<boolean>;
-        ExecuteAppFunction(key: string, json: string): Promise<void>;
         ExecuteVrFeedFunction(key: string, json: string): Promise<void>;
         ExecuteVrOverlayFunction(key: string, json: string): Promise<void>;
         FocusWindow(): Promise<void>;
@@ -181,13 +182,10 @@ declare global {
         CopyImageToClipboard(path: string): Promise<void>;
         FlashWindow(): Promise<void>;
         SetUserAgent(): Promise<void>;
-        IsRunningUnderWine(): Promise<boolean>;
 
         // Common Functions
         MD5File(blob: string): Promise<string>;
         GetColourFromUserID(userId: string): Promise<number>;
-        SignFile(blob: string): Promise<string>;
-        FileLength(blob: string): Promise<string>;
         OpenLink(url: string): Promise<void>;
         GetLaunchCommand(): Promise<string>;
         IPCAnnounceStart(): Promise<void>;
@@ -356,7 +354,6 @@ declare global {
         GetUptime(): Promise<number>;
         CurrentCulture(): Promise<string>;
         CustomVrScript(): Promise<string>;
-        IsRunningUnderWine(): Promise<boolean>;
         GetExecuteVrFeedFunctionQueue(): Promise<Map<string, string>>;
         GetExecuteVrOverlayFunctionQueue(): Promise<Map<string, string>>;
     };

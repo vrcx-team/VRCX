@@ -3,7 +3,7 @@
     --offy: calc(var(--offx) / 72 * 52);
 }
 .flags {
-    background: url('/images/flags.png') no-repeat;
+    background: url('../images/flags.png') no-repeat;
     background-size: calc(var(--offx) * 6);
     width: var(--offx);
     height: var(--offy);

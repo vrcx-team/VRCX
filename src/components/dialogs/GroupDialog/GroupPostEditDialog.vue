@@ -1,6 +1,6 @@
 <template>
-    <safe-dialog
-        :visible.sync="groupPostEditDialog.visible"
+    <el-dialog
+        v-model="groupPostEditDialog.visible"
         :title="t('dialog.group_post_edit.header')"
         width="650px"
         append-to-body>
@@ -8,7 +8,7 @@
             <h3 v-text="groupPostEditDialog.groupRef.name"></h3>
             <el-form :model="groupPostEditDialog" label-width="150px">
                 <el-form-item :label="t('dialog.group_post_edit.title')">
-                    <el-input v-model="groupPostEditDialog.title" size="mini"></el-input>
+                    <el-input v-model="groupPostEditDialog.title" size="small"></el-input>
                 </el-form-item>
                 <el-form-item :label="t('dialog.group_post_edit.message')">
                     <el-input
@@ -61,29 +61,32 @@
                 <el-form-item :label="t('dialog.group_post_edit.image')">
                     <template v-if="gallerySelectDialog.selectedFileId">
                         <div style="display: inline-block; flex: none; margin-right: 5px">
-                            <el-popover placement="right" width="500px" trigger="click">
+                            <el-popover placement="right" :width="500" trigger="click">
+                                <template #reference>
+                                    <img
+                                        :src="gallerySelectDialog.selectedImageUrl"
+                                        style="
+                                            flex: none;
+                                            width: 60px;
+                                            height: 60px;
+                                            border-radius: 4px;
+                                            object-fit: cover;
+                                        "
+                                        loading="lazy" />
+                                </template>
                                 <img
-                                    slot="reference"
-                                    v-lazy="gallerySelectDialog.selectedImageUrl"
-                                    style="
-                                        flex: none;
-                                        width: 60px;
-                                        height: 60px;
-                                        border-radius: 4px;
-                                        object-fit: cover;
-                                    " />
-                                <img
-                                    v-lazy="gallerySelectDialog.selectedImageUrl"
-                                    style="height: 500px"
-                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)" />
+                                    :src="gallerySelectDialog.selectedImageUrl"
+                                    :class="['x-link', 'x-popover-image']"
+                                    @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)"
+                                    loading="lazy" />
                             </el-popover>
-                            <el-button size="mini" style="vertical-align: top" @click="clearImageGallerySelect">
+                            <el-button size="small" style="vertical-align: top" @click="clearImageGallerySelect">
                                 {{ t('dialog.invite_message.clear_selected_image') }}
                             </el-button>
                         </div>
                     </template>
                     <template v-else>
-                        <el-button size="mini" style="margin-right: 5px" @click="showGallerySelectDialog">
+                        <el-button size="small" style="margin-right: 5px" @click="showGallerySelectDialog">
                             {{ t('dialog.invite_message.select_image') }}
                         </el-button>
                     </template>
@@ -105,12 +108,13 @@
             :gallery-select-dialog="gallerySelectDialog"
             :gallery-table="galleryTable"
             @refresh-gallery-table="refreshGalleryTable" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ElMessage } from 'element-plus';
+    import { ref, computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { groupRequest, vrcPlusIconRequest } from '../../../api';
     import { useGalleryStore, useGroupStore } from '../../../stores';
     import GallerySelectDialog from './GallerySelectDialog.vue';
@@ -125,7 +129,6 @@
 
     const emit = defineEmits(['update:dialogData']);
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
     const { showFullscreenImageDialog, handleFilesList } = useGalleryStore();
@@ -169,7 +172,7 @@
             return;
         }
         if (!D.title || !D.text) {
-            proxy.$message({
+            ElMessage({
                 message: 'Title and text are required',
                 type: 'warning'
             });
@@ -188,8 +191,8 @@
             params.imageId = gallerySelectDialog.value.selectedFileId;
         }
         groupRequest.editGroupPost(params).then((args) => {
-            handleGroupPost();
-            proxy.$message({
+            handleGroupPost(args);
+            ElMessage({
                 message: 'Group post edited',
                 type: 'success'
             });
@@ -200,7 +203,7 @@
     function createGroupPost() {
         const D = groupPostEditDialog.value;
         if (!D.title || !D.text) {
-            proxy.$message({
+            ElMessage({
                 message: 'Title and text are required',
                 type: 'warning'
             });
@@ -220,7 +223,7 @@
         }
         groupRequest.createGroupPost(params).then((args) => {
             handleGroupPost();
-            proxy.$message({
+            ElMessage({
                 message: 'Group post created',
                 type: 'success'
             });

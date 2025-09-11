@@ -1,6 +1,7 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
-import Vue, { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import {
     avatarRequest,
@@ -8,9 +9,8 @@ import {
     instanceRequest,
     userRequest
 } from '../api';
-import { $app } from '../app';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import { processBulk, request } from '../service/request';
 import { watchState } from '../service/watchState';
 import {
@@ -172,7 +172,6 @@ export const useUserStore = defineStore('User', () => {
             $travelingToLocation: ''
         },
         currentTravelers: new Map(),
-        cachedUsers: new Map(),
         userDialog: {
             visible: false,
             loading: false,
@@ -263,7 +262,7 @@ export const useUserStore = defineStore('User', () => {
             data: [],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'updated_at',
                     order: 'descending'
@@ -278,6 +277,8 @@ export const useUserStore = defineStore('User', () => {
         notes: new Map()
     });
 
+    const cachedUsers = new Map();
+
     const currentUser = computed({
         get: () => state.currentUser,
         set: (value) => {
@@ -289,13 +290,6 @@ export const useUserStore = defineStore('User', () => {
         get: () => state.currentTravelers,
         set: (value) => {
             state.currentTravelers = value;
-        }
-    });
-
-    const cachedUsers = computed({
-        get: () => state.cachedUsers,
-        set: (value) => {
-            state.cachedUsers = value;
         }
     });
 
@@ -343,9 +337,16 @@ export const useUserStore = defineStore('User', () => {
 
     watch(
         () => watchState.isLoggedIn,
-        () => {
-            state.userDialog.visible = false;
-            state.languageDialog.visible = false;
+        (isLoggedIn) => {
+            if (!isLoggedIn) {
+                state.currentTravelers.clear();
+                state.showUserDialogHistory.clear();
+                state.instancePlayerCount.clear();
+                state.customUserTags.clear();
+                state.notes.clear();
+                state.pastDisplayNameTable.data = [];
+                state.subsetOfLanguages = [];
+            }
         },
         { flush: 'sync' }
     );
@@ -435,7 +436,7 @@ export const useUserStore = defineStore('User', () => {
         locationStore.updateCurrentUserLocation();
     }
 
-    const robotUrl = `${AppGlobal.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
+    const robotUrl = `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
     /**
      *
      * @param {import('../types/api/user').GetUserResponse} json
@@ -444,7 +445,7 @@ export const useUserStore = defineStore('User', () => {
     function applyUser(json) {
         let hasPropChanged = false;
         const changedProps = {};
-        let ref = state.cachedUsers.get(json.id);
+        let ref = cachedUsers.get(json.id);
         if (json.statusDescription) {
             json.statusDescription = replaceBioSymbols(json.statusDescription);
             json.statusDescription = removeEmojis(json.statusDescription);
@@ -460,7 +461,7 @@ export const useUserStore = defineStore('User', () => {
             delete json.currentAvatarThumbnailImageUrl;
         }
         if (typeof ref === 'undefined') {
-            ref = {
+            ref = reactive({
                 ageVerificationStatus: '',
                 ageVerified: false,
                 allowAvatarCopying: false,
@@ -527,7 +528,7 @@ export const useUserStore = defineStore('User', () => {
                 $moderations: {},
                 //
                 ...json
-            };
+            });
             if (locationStore.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
                 const player = locationStore.lastLocation.playerList.get(
@@ -553,7 +554,8 @@ export const useUserStore = defineStore('User', () => {
                 ref.$customTag = '';
                 ref.$customTagColour = '';
             }
-            state.cachedUsers.set(ref.id, ref);
+            cachedUsers.set(ref.id, ref);
+            friendStore.updateFriend(ref.id);
         } else {
             if (json.state !== 'online') {
                 // offline event before GPS to offline location
@@ -593,7 +595,11 @@ export const useUserStore = defineStore('User', () => {
                     changedProps[prop] = [toBe, asIs];
                 }
             }
-            Object.assign(ref, json);
+            for (const prop in json) {
+                if (typeof ref[prop] !== 'undefined') {
+                    ref[prop] = json[prop];
+                }
+            }
         }
         ref.$moderations = moderationStore.getUserModerations(ref.id);
         ref.$isVRCPlus = ref.tags.includes('system_supporter');
@@ -726,7 +732,7 @@ export const useUserStore = defineStore('User', () => {
                 ref.$location_at = ts;
             }
             handleUserUpdate(ref, changedProps);
-            if (AppGlobal.debugUserDiff) {
+            if (AppDebug.debugUserDiff) {
                 delete changedProps.last_login;
                 delete changedProps.last_activity;
                 if (Object.keys(changedProps).length !== 0) {
@@ -820,7 +826,7 @@ export const useUserStore = defineStore('User', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                $app.$message({
+                ElMessage({
                     message: 'Failed to load user',
                     type: 'error'
                 });
@@ -1014,15 +1020,16 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         D.$location = L;
+        L.user = null;
         if (L.userId) {
-            ref = state.cachedUsers.get(L.userId);
+            ref = cachedUsers.get(L.userId);
             if (typeof ref === 'undefined') {
                 userRequest
                     .getUser({
                         userId: L.userId
                     })
                     .then((args) => {
-                        Vue.set(L, 'user', args.ref);
+                        D.$location.user = args.ref;
                     });
             } else {
                 L.user = ref;
@@ -1031,10 +1038,10 @@ export const useUserStore = defineStore('User', () => {
         const users = [];
         let friendCount = 0;
         const playersInInstance = locationStore.lastLocation.playerList;
-        const cachedCurrentUser = state.cachedUsers.get(state.currentUser.id);
+        const cachedCurrentUser = cachedUsers.get(state.currentUser.id);
         const currentLocation = cachedCurrentUser.$location.tag;
         if (!L.isOffline && currentLocation === L.tag) {
-            ref = state.cachedUsers.get(state.currentUser.id);
+            ref = cachedUsers.get(state.currentUser.id);
             if (typeof ref !== 'undefined') {
                 users.push(ref); // add self
             }
@@ -1051,7 +1058,7 @@ export const useUserStore = defineStore('User', () => {
                     return friend.userId === user.id;
                 });
                 if (addUser) {
-                    ref = state.cachedUsers.get(friend.userId);
+                    ref = cachedUsers.get(friend.userId);
                     if (typeof ref !== 'undefined') {
                         users.push(ref);
                     }
@@ -1185,7 +1192,7 @@ export const useUserStore = defineStore('User', () => {
                             return;
                         }
                     }
-                    $app.$message({
+                    ElMessage({
                         message: 'Own avatar not found',
                         type: 'error'
                     });
@@ -1216,7 +1223,7 @@ export const useUserStore = defineStore('User', () => {
         if (!ref.displayName || ref.displayName.substring(0, 3) === 'ID:') {
             return;
         }
-        for (ctx of state.cachedUsers.values()) {
+        for (ctx of cachedUsers.values()) {
             if (ctx.displayName === ref.displayName) {
                 showUserDialog(ctx.id);
                 return;
@@ -1304,7 +1311,7 @@ export const useUserStore = defineStore('User', () => {
                     time = 0;
                 }
             }
-            if (AppGlobal.debugFriendState && previousLocation) {
+            if (AppDebug.debugFriendState && previousLocation) {
                 console.log(
                     `${ref.displayName} GPS ${previousLocation} -> ${newLocation}`
                 );
@@ -1314,7 +1321,7 @@ export const useUserStore = defineStore('User', () => {
             }
             if (!previousLocation) {
                 // no previous location
-                if (AppGlobal.debugFriendState) {
+                if (AppDebug.debugFriendState) {
                     console.log(
                         ref.displayName,
                         'Ignoring GPS, no previous location',
@@ -1584,14 +1591,14 @@ export const useUserStore = defineStore('User', () => {
             })
             .then(() => {
                 const text = `Status automaticly changed to ${newStatus}`;
-                if (AppGlobal.errorNoty) {
-                    AppGlobal.errorNoty.close();
+                if (AppDebug.errorNoty) {
+                    AppDebug.errorNoty.close();
                 }
-                AppGlobal.errorNoty = new Noty({
+                AppDebug.errorNoty = new Noty({
                     type: 'info',
                     text
                 });
-                AppGlobal.errorNoty.show();
+                AppDebug.errorNoty.show();
                 console.log(text);
             });
     }
@@ -1613,7 +1620,7 @@ export const useUserStore = defineStore('User', () => {
             'updateHudFeedTag',
             JSON.stringify(feedUpdate)
         );
-        const ref = state.cachedUsers.get(data.UserId);
+        const ref = cachedUsers.get(data.UserId);
         if (typeof ref !== 'undefined') {
             ref.$customTag = data.Tag;
             ref.$customTagColour = data.TagColour;
@@ -1627,7 +1634,7 @@ export const useUserStore = defineStore('User', () => {
         state.notes.clear();
         try {
             // todo: get users from store
-            const users = state.cachedUsers;
+            const users = cachedUsers;
             const dbNotes = await database.getAllUserNotes();
             for (const note of dbNotes) {
                 state.notes.set(note.userId, note.note);
@@ -1688,7 +1695,7 @@ export const useUserStore = defineStore('User', () => {
             console.error('Error fetching user notes:', error);
         }
         // todo: get users from store
-        const users = state.cachedUsers;
+        const users = cachedUsers;
 
         for (const note of newNotes.values()) {
             const newNote = {
@@ -1754,9 +1761,13 @@ export const useUserStore = defineStore('User', () => {
                     ref.$previousAvatarSwapTime = Date.now();
                 }
             }
-            Object.assign(ref, json);
+            for (const prop in json) {
+                if (typeof ref[prop] !== 'undefined') {
+                    ref[prop] = json[prop];
+                }
+            }
         } else {
-            ref = {
+            ref = reactive({
                 acceptedPrivacyVersion: 0,
                 acceptedTOSVersion: 0,
                 accountDeletionDate: null,
@@ -1842,7 +1853,7 @@ export const useUserStore = defineStore('User', () => {
                 username: '',
                 viveId: '',
                 // VRCX
-                $online_for: Date.now(),
+                $online_for: null,
                 $offline_for: null,
                 $location_at: Date.now(),
                 $travelingToTime: Date.now(),
@@ -1860,11 +1871,11 @@ export const useUserStore = defineStore('User', () => {
                 $locationTag: '',
                 $travelingToLocation: '',
                 ...json
-            };
+            });
             if (gameStore.isGameRunning) {
                 ref.$previousAvatarSwapTime = Date.now();
             }
-            state.cachedUsers.clear(); // clear before running applyUser
+            cachedUsers.clear(); // clear before running applyUser
             state.currentUser = ref;
             authStore.loginComplete();
         }

@@ -16,7 +16,6 @@ import favoriteRequest from './favorite';
 import vrcPlusIconRequest from './vrcPlusIcon';
 import vrcPlusImageRequest from './vrcPlusImage';
 import inviteMessagesRequest from './inviteMessages';
-import imageRequest from './image';
 import miscRequest from './misc';
 import groupRequest from './group';
 import authRequest from './auth';
@@ -37,7 +36,6 @@ window.request = {
     vrcPlusIconRequest,
     vrcPlusImageRequest,
     inviteMessagesRequest,
-    imageRequest,
     miscRequest,
     authRequest,
     groupRequest,
@@ -59,7 +57,6 @@ export {
     vrcPlusIconRequest,
     vrcPlusImageRequest,
     inviteMessagesRequest,
-    imageRequest,
     miscRequest,
     authRequest,
     groupRequest,

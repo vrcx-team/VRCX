@@ -1,12 +1,14 @@
 <template>
-    <div id="chart" class="x-container" v-show="menuActiveIndex === 'tools'">
+    <div id="chart" class="x-container" v-show="isShowToolsTab">
         <div class="options-container" style="margin-top: 0">
             <span class="header">Tools</span>
 
             <div class="tool-categories">
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('group')">
-                        <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['group'] }"></i>
+                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['group'] }"
+                            ><ArrowRight
+                        /></el-icon>
                         <span class="category-title">Group</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
@@ -26,7 +28,9 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('image')">
-                        <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['image'] }"></i>
+                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }"
+                            ><ArrowRight
+                        /></el-icon>
                         <span class="category-title">Image</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
@@ -57,7 +61,9 @@
 
                 <div class="tool-category">
                     <div class="category-header" @click="toggleCategory('user')">
-                        <i class="el-icon-arrow-right" :class="{ rotate: !categoryCollapsed['user'] }"></i>
+                        <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }"
+                            ><ArrowRight
+                        /></el-icon>
                         <span class="category-title">User</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
@@ -76,26 +82,31 @@
                 </div>
             </div>
         </div>
-        <GroupCalendarDialog :visible="isGroupCalendarDialogVisible" @close="isGroupCalendarDialogVisible = false" />
-        <ScreenshotMetadataDialog
-            :isScreenshotMetadataDialogVisible="isScreenshotMetadataDialogVisible"
-            @close="isScreenshotMetadataDialogVisible = false" />
-        <NoteExportDialog
-            :isNoteExportDialogVisible="isNoteExportDialogVisible"
-            @close="isNoteExportDialogVisible = false" />
+        <template v-if="isShowToolsTab">
+            <GroupCalendarDialog
+                :visible="isGroupCalendarDialogVisible"
+                @close="isGroupCalendarDialogVisible = false" />
+            <ScreenshotMetadataDialog
+                :isScreenshotMetadataDialogVisible="isScreenshotMetadataDialogVisible"
+                @close="isScreenshotMetadataDialogVisible = false" />
+            <NoteExportDialog
+                :isNoteExportDialogVisible="isNoteExportDialogVisible"
+                @close="isNoteExportDialogVisible = false" />
+            <GalleryDialog />
+        </template>
     </div>
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { ArrowRight } from '@element-plus/icons-vue';
+    import { ref, defineAsyncComponent, computed } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
     import { useUiStore, useGalleryStore } from '../../stores';
-    import GroupCalendarDialog from './dialogs/GroupCalendarDialog.vue';
-    import ScreenshotMetadataDialog from './dialogs/ScreenshotMetadataDialog.vue';
-    import NoteExportDialog from './dialogs/NoteExportDialog.vue';
 
-    const { t } = useI18n();
+    const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
+    const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
+    const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
+    const GalleryDialog = defineAsyncComponent(() => import('./dialogs/GalleryDialog.vue'));
 
     const uiStore = useUiStore();
     const { showGalleryDialog } = useGalleryStore();
@@ -110,6 +121,8 @@
     const isGroupCalendarDialogVisible = ref(false);
     const isScreenshotMetadataDialogVisible = ref(false);
     const isNoteExportDialogVisible = ref(false);
+
+    const isShowToolsTab = computed(() => menuActiveIndex.value === 'tools');
 
     const showGroupCalendarDialog = () => {
         isGroupCalendarDialogVisible.value = true;
@@ -159,6 +172,7 @@
             }
 
             .category-title {
+                margin-left: 5px;
                 font-size: 16px;
                 font-weight: 600;
                 color: var(--el-color-primary);
@@ -185,7 +199,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        ::v-deep .el-card__body {
+        :deep(.el-card__body) {
             overflow: visible;
         }
 
@@ -230,13 +244,17 @@
         }
     }
 
-    ::v-deep .el-card {
+    :deep(.el-card) {
         border-radius: 8px;
         width: 100%;
         overflow: visible;
     }
 
-    .rotate {
+    .is-rotated {
         transform: rotate(90deg);
+    }
+
+    .rotation-transition {
+        transition: transform 0.2s ease-in-out;
     }
 </style>

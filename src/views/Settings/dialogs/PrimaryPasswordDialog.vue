@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible.sync="enablePrimaryPasswordDialog.visible"
+        v-model="enablePrimaryPasswordDialog.visible"
         :before-close="enablePrimaryPasswordDialog.beforeClose"
         :close-on-click-modal="false"
         :title="t('dialog.primary_password.header')"
@@ -10,7 +10,7 @@
             v-model="enablePrimaryPasswordDialog.password"
             :placeholder="t('dialog.primary_password.password_placeholder')"
             type="password"
-            size="mini"
+            size="small"
             maxlength="32"
             show-password
             autofocus>
@@ -20,7 +20,7 @@
             :placeholder="t('dialog.primary_password.re_input_placeholder')"
             type="password"
             style="margin-top: 5px"
-            size="mini"
+            size="small"
             maxlength="32"
             show-password>
         </el-input>
@@ -36,12 +36,12 @@
                 {{ t('dialog.primary_password.ok') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useAuthStore } from '../../../stores';
 
     const { t } = useI18n();

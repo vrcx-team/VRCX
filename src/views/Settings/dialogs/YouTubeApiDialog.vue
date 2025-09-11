@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="isYouTubeApiDialogVisible"
+        :model-value="isYouTubeApiDialogVisible"
         :title="t('dialog.youtube_api.header')"
         width="400px"
         @close="closeDialog">
@@ -28,13 +28,13 @@
                 </el-button>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { openExternalLink } from '../../../shared/utils';
     import { useAdvancedSettingsStore } from '../../../stores';
 
@@ -46,10 +46,7 @@
 
     const { t } = useI18n();
 
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
-    const props = defineProps({
+    defineProps({
         isYouTubeApiDialogVisible: {
             type: Boolean,
             default: false
@@ -61,7 +58,7 @@
     async function testYouTubeApiKey() {
         const previousKey = youTubeApiKey.value;
         if (!youTubeApiKey.value) {
-            $message({
+            ElMessage({
                 message: 'YouTube API key removed',
                 type: 'success'
             });
@@ -71,13 +68,13 @@
         const data = await lookupYouTubeVideo('dQw4w9WgXcQ');
         if (!data) {
             setYouTubeApiKey(previousKey);
-            $message({
+            ElMessage({
                 message: 'Invalid YouTube API key',
                 type: 'error'
             });
         } else {
             setYouTubeApiKey(youTubeApiKey.value);
-            $message({
+            ElMessage({
                 message: 'YouTube API key valid!',
                 type: 'success'
             });

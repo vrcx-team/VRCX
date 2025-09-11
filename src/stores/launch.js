@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch, nextTick } from 'vue';
+import { ElMessage } from 'element-plus';
 import { instanceRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
 import { parseLocation } from '../shared/utils';
@@ -57,7 +57,7 @@ export const useLaunchStore = defineStore('Launch', () => {
             tag,
             shortName
         };
-        $app.$nextTick(() => (state.launchDialogData.loading = false));
+        nextTick(() => (state.launchDialogData.loading = false));
     }
 
     /**
@@ -111,7 +111,7 @@ export const useLaunchStore = defineStore('Launch', () => {
         }
         console.log('Attach Game', launchUrl, result);
         if (!result) {
-            $app.$message({
+            ElMessage({
                 message:
                     'Failed open instance in VRChat, falling back to self invite',
                 type: 'warning'
@@ -123,7 +123,7 @@ export const useLaunchStore = defineStore('Launch', () => {
                 worldId: L.worldId,
                 shortName
             });
-            $app.$message({
+            ElMessage({
                 message: 'Self invite sent',
                 type: 'success'
             });
@@ -157,13 +157,13 @@ export const useLaunchStore = defineStore('Launch', () => {
                 args.join(' ')
             ).then((result) => {
                 if (!result) {
-                    $app.$message({
+                    ElMessage({
                         message:
                             'Failed to launch VRChat, invalid custom path set',
                         type: 'error'
                     });
                 } else {
-                    $app.$message({
+                    ElMessage({
                         message: 'VRChat launched',
                         type: 'success'
                     });
@@ -172,13 +172,13 @@ export const useLaunchStore = defineStore('Launch', () => {
         } else {
             AppApi.StartGame(args.join(' ')).then((result) => {
                 if (!result) {
-                    $app.$message({
+                    ElMessage({
                         message:
                             'Failed to find VRChat, set a custom path in launch options',
                         type: 'error'
                     });
                 } else {
-                    $app.$message({
+                    ElMessage({
                         message: 'VRChat launched',
                         type: 'success'
                     });
@@ -190,6 +190,7 @@ export const useLaunchStore = defineStore('Launch', () => {
 
     return {
         state,
+
         isLaunchOptionsDialogVisible,
         launchDialogData,
         showLaunchOptions,

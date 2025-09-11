@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 import * as workerTimers from 'worker-timers';
-import { $app } from '../../app';
-import { t } from '../../plugin';
+import { ElMessageBox } from 'element-plus';
+
+import { useI18n } from 'vue-i18n';
 import configRepository from '../../service/config';
 import { useVrcxStore } from '../vrcx';
 import { useVRCXUpdaterStore } from '../vrcxUpdater';
@@ -12,6 +13,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     const vrcxStore = useVrcxStore();
     const VRCXUpdaterStore = useVRCXUpdaterStore();
     const friendStore = useFriendStore();
+
+    const { t } = useI18n();
     const state = reactive({
         isStartAtWindowsStartup: false,
         isStartAsMinimizedState: false,
@@ -259,7 +262,7 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
     }
 
     function promptProxySettings() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.proxy_settings.description'),
             t('prompt.proxy_settings.header'),
             {
@@ -267,9 +270,26 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                 confirmButtonText: t('prompt.proxy_settings.restart'),
                 cancelButtonText: t('prompt.proxy_settings.close'),
                 inputValue: vrcxStore.proxyServer,
-                inputPlaceholder: t('prompt.proxy_settings.placeholder'),
-                callback: async (action, instance) => {
-                    vrcxStore.proxyServer = instance.inputValue;
+                inputPlaceholder: t('prompt.proxy_settings.placeholder')
+            }
+        )
+            .then(async ({ value }) => {
+                vrcxStore.proxyServer = value;
+                await VRCXStorage.Set(
+                    'VRCX_ProxyServer',
+                    vrcxStore.proxyServer
+                );
+                await VRCXStorage.Flush();
+                await new Promise((resolve) => {
+                    workerTimers.setTimeout(resolve, 100);
+                });
+                const { restartVRCX } = VRCXUpdaterStore;
+                const isUpgrade = false;
+                restartVRCX(isUpgrade);
+            })
+            .catch(async () => {
+                // User clicked close/cancel, still save the value but don't restart
+                if (vrcxStore.proxyServer !== undefined) {
                     await VRCXStorage.Set(
                         'VRCX_ProxyServer',
                         vrcxStore.proxyServer
@@ -278,14 +298,8 @@ export const useGeneralSettingsStore = defineStore('GeneralSettings', () => {
                     await new Promise((resolve) => {
                         workerTimers.setTimeout(resolve, 100);
                     });
-                    if (action === 'confirm') {
-                        const { restartVRCX } = VRCXUpdaterStore;
-                        const isUpgrade = false;
-                        restartVRCX(isUpgrade);
-                    }
                 }
-            }
-        );
+            });
     }
 
     return {

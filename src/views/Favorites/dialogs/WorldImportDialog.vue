@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
-        ref="worldImportDialogRef"
-        :visible.sync="isVisible"
+    <el-dialog
+        :z-index="worldImportDialogIndex"
+        v-model="isVisible"
         :title="t('dialog.world_import.header')"
         width="650px"
         class="x-dialog">
@@ -11,7 +11,7 @@
                 <div v-if="worldImportDialog.progress">
                     {{ t('dialog.world_import.process_progress') }}
                     {{ worldImportDialog.progress }} / {{ worldImportDialog.progressTotal }}
-                    <i class="el-icon-loading" style="margin: 0 5px"></i>
+                    <el-icon style="margin: 0 5px"><Loading /></el-icon>
                 </div>
                 <el-button v-if="worldImportDialog.loading" size="small" @click="cancelWorldImport">
                     {{ t('dialog.world_import.cancel') }}
@@ -24,60 +24,62 @@
         <el-input
             v-model="worldImportDialog.input"
             type="textarea"
-            size="mini"
-            rows="10"
+            size="small"
+            :rows="10"
             resize="none"
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.native.stop>
-                    <el-button size="mini">
+                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.stop>
+                    <el-button size="small">
                         <span v-if="worldImportDialog.worldImportFavoriteGroup">
                             {{ worldImportDialog.worldImportFavoriteGroup.displayName }}
                             ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{
                                 worldImportDialog.worldImportFavoriteGroup.capacity
                             }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.world_import.select_vrchat_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteWorldGroups">
-                            <el-dropdown-item
-                                :key="groupAPI.name"
-                                style="display: block; margin: 10px 0"
-                                :disabled="groupAPI.count >= groupAPI.capacity"
-                                @click.native="selectWorldImportGroup(groupAPI)">
-                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    :disabled="groupAPI.count >= groupAPI.capacity"
+                                    @click="selectWorldImportGroup(groupAPI)">
+                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
-                <el-dropdown trigger="click" size="small" style="margin: 5px" @click.native.stop>
-                    <el-button size="mini">
+                <el-dropdown trigger="click" size="small" @click.stop>
+                    <el-button size="small">
                         <span v-if="worldImportDialog.worldImportLocalFavoriteGroup">
                             {{ worldImportDialog.worldImportLocalFavoriteGroup }}
                             ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.world_import.select_local_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="group in localWorldFavoriteGroups">
-                            <el-dropdown-item
-                                :key="group"
-                                style="display: block; margin: 10px 0"
-                                @click.native="selectWorldImportLocalGroup(group)">
-                                {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="group in localWorldFavoriteGroups" :key="group">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    @click="selectWorldImportLocalGroup(group)">
+                                    {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <span v-if="worldImportDialog.worldImportFavoriteGroup" style="margin-left: 5px">
                     {{ worldImportTable.data.length }} /
@@ -106,7 +108,7 @@
             </div>
         </div>
         <span v-if="worldImportDialog.importProgress" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.world_import.import_progress') }}
             {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
         </span>
@@ -120,67 +122,64 @@
             </h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="worldImportDialog.errors"></pre>
         </template>
-        <data-tables v-loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
+        <DataTable v-loading="worldImportDialog.loading" v-bind="worldImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
-                <template slot-scope="scope">
-                    <el-popover placement="right" height="500px" trigger="hover">
-                        <img slot="reference" v-lazy="scope.row.thumbnailImageUrl" class="friends-list-avatar" />
+                <template #default="{ row }">
+                    <el-popover placement="right" :width="500" trigger="hover">
+                        <template #reference>
+                            <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy" />
+                        </template>
                         <img
-                            v-lazy="scope.row.imageUrl"
-                            class="friends-list-avatar"
-                            style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(scope.row.imageUrl)" />
+                            :src="row.imageUrl"
+                            :class="['friends-list-avatar', 'x-popover-image']"
+                            style="cursor: pointer"
+                            @click="showFullscreenImageDialog(row.imageUrl)"
+                            loading="lazy" />
                     </el-popover>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.name')" prop="name">
-                <template slot-scope="scope">
-                    <span class="x-link" @click="showWorldDialog(scope.row.id)" v-text="scope.row.name"></span>
+                <template #default="{ row }">
+                    <span class="x-link" @click="showWorldDialog(row.id)" v-text="row.name"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.author')" width="120" prop="authorName">
-                <template slot-scope="scope">
-                    <span
-                        class="x-link"
-                        @click="showUserDialog(scope.row.authorId)"
-                        v-text="scope.row.authorName"></span>
+                <template #default="{ row }">
+                    <span class="x-link" @click="showUserDialog(row.authorId)" v-text="row.authorName"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.status')" width="70" prop="releaseStatus">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <span
                         :style="{
                             color:
-                                scope.row.releaseStatus === 'public'
+                                row.releaseStatus === 'public'
                                     ? '#67c23a'
-                                    : scope.row.releaseStatus === 'private'
+                                    : row.releaseStatus === 'private'
                                       ? '#f56c6c'
                                       : undefined
                         }"
-                        v-text="
-                            scope.row.releaseStatus.charAt(0).toUpperCase() + scope.row.releaseStatus.slice(1)
-                        "></span>
+                        v-text="row.releaseStatus.charAt(0).toUpperCase() + row.releaseStatus.slice(1)"></span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template slot-scope="scope">
-                    <el-button
-                        type="text"
-                        icon="el-icon-close"
-                        size="mini"
-                        @click="deleteItemWorldImport(scope.row)"></el-button>
+                <template #default="{ row }">
+                    <el-button type="text" :icon="Close" size="small" @click="deleteItemWorldImport(row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, watch, computed, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
+
+    import { ref, watch, computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { favoriteRequest, worldRequest } from '../../../api';
-    import { adjustDialogZ, removeFromArray } from '../../../shared/utils';
+    import { getNextDialogIndex, removeFromArray } from '../../../shared/utils';
     import { useFavoriteStore, useGalleryStore, useUserStore, useWorldStore } from '../../../stores';
 
     const { showUserDialog } = useUserStore();
@@ -192,10 +191,9 @@
 
     const emit = defineEmits(['update:worldImportDialogInput']);
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
-    const worldImportDialogRef = ref(null);
+    const worldImportDialogIndex = ref(2000);
 
     const worldImportDialog = ref({
         loading: false,
@@ -214,7 +212,7 @@
         data: [],
         tableProps: {
             stripe: true,
-            size: 'mini'
+            size: 'small'
         },
         layout: 'table'
     });
@@ -232,7 +230,7 @@
         () => worldImportDialogVisible.value,
         (visible) => {
             if (visible) {
-                adjustDialogZ(worldImportDialogRef.value.$el);
+                worldImportDialogIndex.value = getNextDialogIndex();
                 clearWorldImportTable();
                 resetWorldImport();
                 if (worldImportDialogInput.value) {
@@ -356,7 +354,7 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({
+                    ElMessage({
                         message: 'World added to favorites',
                         type: 'success'
                     });

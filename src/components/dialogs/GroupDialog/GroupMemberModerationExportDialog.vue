@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="isGroupLogsExportDialogVisible"
+        :model-value="isGroupLogsExportDialogVisible"
         :title="t('dialog.group_member_moderation.export_logs')"
         width="650px"
         append-to-body
@@ -10,8 +10,8 @@
             v-model="checkedGroupLogsExportLogsOptions"
             style="margin-bottom: 10px"
             @change="updateGroupLogsExportContent">
-            <template v-for="option in checkGroupsLogsExportLogsOptions">
-                <el-checkbox :key="option.label" :label="option.label">
+            <template v-for="option in checkGroupsLogsExportLogsOptions" :key="option.label">
+                <el-checkbox :label="option.label">
                     {{ t(option.text) }}
                 </el-checkbox>
             </template>
@@ -20,18 +20,18 @@
         <el-input
             v-model="groupLogsExportContent"
             type="textarea"
-            size="mini"
-            rows="15"
+            size="small"
+            :rows="15"
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="handleCopyGroupLogsExportContent" />
-    </safe-dialog>
+            @click="handleCopyGroupLogsExportContent" />
+    </el-dialog>
 </template>
 
 <script setup>
     import { ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { copyToClipboard } from '../../../shared/utils';
 
     const { t } = useI18n();

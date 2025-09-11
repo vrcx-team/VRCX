@@ -17,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp;
-using librsync.net;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Win32;
 using NLog;
@@ -121,12 +120,6 @@ namespace VRCX
         public override bool CheckForUpdateExe()
         {
             return File.Exists(Path.Join(Program.AppDataDirectory, "update.exe"));
-        }
-
-        public override void ExecuteAppFunction(string function, string json)
-        {
-            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public override void ExecuteVrFeedFunction(string function, string json)

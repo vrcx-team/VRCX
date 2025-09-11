@@ -375,7 +375,7 @@ input[type='checkbox']:checked + .el-switch__core {
     background-color: var(--lighter-lighter-bg);
 }
 
-.el-collapse-item .el-tag--mini {
+.el-collapse-item .el-tag--small {
     border: transparent;
     background-color: var(--lighter-lighter-bg);
 }
@@ -505,4 +505,46 @@ input[type='checkbox']:checked + .el-switch__core {
 
 .group-header {
     border-bottom: 2px solid var(--lighter-bg) !important;
+}
+
+.el-select__wrapper {
+    background-color: var(--light-bg) !important;
+    border: 1px solid var(--lighter-bg) !important;
+    color: var(--theme);
+}
+
+.el-select__wrapper.is-focused {
+    border-color: var(--theme) !important;
+}
+
+.el-select__wrapper.is-disabled {
+    background-color: var(--bg) !important;
+    color: var(--lighter-border) !important;
+}
+
+.el-input__wrapper {
+    background-color: var(--light-bg) !important;
+    border: 1px solid var(--lighter-bg) !important;
+}
+
+.el-input__wrapper.is-focus {
+    border-color: var(--theme) !important;
+}
+
+.el-table {
+    background-color: var(--bg) !important;
+}
+
+.el-table tr,
+.el-table td.el-table__cell,
+.el-table th.el-table__cell {
+    background-color: transparent !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+    background-color: var(--light-bg) !important;
+}
+
+.el-table__body-wrapper .el-table__row:hover > .el-table__cell {
+    background-color: var(--lighter-bg) !important;
 }

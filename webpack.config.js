@@ -6,29 +6,29 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const { EsbuildPlugin } = require('esbuild-loader');
 
-const scssBasePath = './src/assets/scss/';
-const themeBasePath = `${scssBasePath}themes/`;
+// const scssBasePath = './src/assets/scss/';
+// const themeBasePath = `${scssBasePath}themes/`;
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
     return {
         entry: {
-            vendor: ['element-ui', 'noty', 'vue', 'vue-i18n', 'worker-timers'],
+            // vendor: ['element-ui', 'noty', 'vue', 'vue-i18n', 'worker-timers'],
             app: {
-                import: ['./src/app.js', './src/app.scss'],
-                dependOn: 'vendor'
-            },
-            vr: {
-                import: ['./src/vr.js', './src/vr.scss'],
-                dependOn: 'vendor'
-            },
-            'theme.dark': `${themeBasePath}theme.dark.scss`,
-            'theme.darkblue': `${themeBasePath}theme.darkblue.scss`,
-            'theme.amoled' : `${themeBasePath}theme.amoled.scss`,
-            'theme.darkvanillaold': `${themeBasePath}theme.darkvanillaold.scss`,
-            'theme.darkvanilla': `${themeBasePath}theme.darkvanilla.scss`,
-            'theme.pink': `${themeBasePath}theme.pink.scss`,
-            'theme.material3': `${themeBasePath}theme.material3.scss`
+                import: ['./src/app.js', './src/app.scss']
+                // dependOn: 'vendor'
+            }
+            // vr: {
+            //     import: ['./src/vr.js', './src/vr.scss'],
+            //     dependOn: 'vendor'
+            // },
+            // 'theme.dark': `${themeBasePath}theme.dark.scss`,
+            // 'theme.darkblue': `${themeBasePath}theme.darkblue.scss`,
+            // 'theme.amoled' : `${themeBasePath}theme.amoled.scss`,
+            // 'theme.darkvanillaold': `${themeBasePath}theme.darkvanillaold.scss`,
+            // 'theme.darkvanilla': `${themeBasePath}theme.darkvanilla.scss`,
+            // 'theme.pink': `${themeBasePath}theme.pink.scss`,
+            // 'theme.material3': `${themeBasePath}theme.material3.scss`
         },
         output: {
             path: path.resolve(__dirname, 'build/html'),
@@ -88,10 +88,10 @@ module.exports = (env, argv) => {
             }
         },
         resolve: {
-            extensions: ['.js', '.vue', '.css', '.scss'],
-            alias: {
-                vue: 'vue/dist/vue.esm.js'
-            }
+            extensions: ['.js', '.vue', '.css', '.scss']
+            // alias: {
+            //     vue: 'vue/dist/vue.esm.js'
+            // }
         },
         performance: {
             hints: false
@@ -118,14 +118,14 @@ module.exports = (env, argv) => {
                 filename: 'index.html',
                 template: './src/static/index.html',
                 inject: true,
-                chunks: ['vendor', 'app']
+                chunks: 'app'
             }),
-            new HtmlWebpackPlugin({
-                filename: 'vr.html',
-                template: './src/static/vr.html',
-                inject: true,
-                chunks: ['vendor', 'vr']
-            }),
+            // new HtmlWebpackPlugin({
+            //     filename: 'vr.html',
+            //     template: './src/static/vr.html',
+            //     inject: true,
+            //     chunks: ['vendor', 'vr']
+            // }),
             new CopyPlugin({
                 patterns: [
                     {

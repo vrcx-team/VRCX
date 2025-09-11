@@ -1,35 +1,35 @@
 <template>
-    <safe-dialog :title="t('dialog.export_friends_list.header')" :visible.sync="isVisible" width="650px">
+    <el-dialog :title="t('dialog.export_friends_list.header')" v-model="isVisible" width="650px">
         <el-tabs type="card">
             <el-tab-pane :label="t('dialog.export_friends_list.csv')">
                 <el-input
                     v-model="exportFriendsListCsv"
                     type="textarea"
-                    size="mini"
-                    rows="15"
+                    size="small"
+                    :rows="15"
                     resize="none"
                     readonly
                     style="margin-top: 15px"
-                    @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+                    @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
             <el-tab-pane :label="t('dialog.export_friends_list.json')">
                 <el-input
                     v-model="exportFriendsListJson"
                     type="textarea"
-                    size="mini"
-                    rows="15"
+                    size="small"
+                    :rows="15"
                     resize="none"
                     readonly
                     style="margin-top: 15px"
-                    @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+                    @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
             </el-tab-pane>
         </el-tabs>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
     import { ref, computed, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
 
     import { useUserStore } from '../../../stores';

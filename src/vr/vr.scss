@@ -8,17 +8,22 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@use './assets/scss/flags.scss';
+@use '../assets/scss/flags.scss';
 
-@import '~animate.css/animate.min.css';
-@import '~noty/lib/noty.css';
-@import '~element-ui/lib/theme-chalk/index.css';
+@import 'animate.css/animate.min.css';
+@import 'noty/lib/noty.css';
+@import 'remixicon/fonts/remixicon.css';
 
 /*
     마지노선인듯
     화면 24px -> 나나 32
     손등 18px -> 나나 24
 */
+
+.is-loading {
+    animation: rotation 2s linear infinite;
+    display: inline-block;
+}
 
 body {
     margin: 0;
@@ -347,17 +352,17 @@ i.x-user-status.online {
 
 i.x-user-status.joinme {
     background: #409eff;
-    mask-image: url(assets/images/masks/joinme.svg);
+    mask-image: url(../assets/images/masks/joinme.svg);
 }
 
 i.x-user-status.askme {
     background: #ff9500;
-    mask-image: url(assets/images/masks/askme.svg);
+    mask-image: url(../assets/images/masks/askme.svg);
 }
 
 i.x-user-status.busy {
     background: #ff2c2c;
-    mask-image: url(assets/images/masks/busy.svg);
+    mask-image: url(../assets/images/masks/busy.svg);
 }
 
 .spin {

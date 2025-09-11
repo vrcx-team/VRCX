@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="isAvatarProviderDialogVisible"
+        :model-value="isAvatarProviderDialogVisible"
         :title="t('dialog.avatar_database_provider.header')"
         width="600px"
         @close="closeDialog">
@@ -13,19 +13,20 @@
                 size="small"
                 style="margin-top: 5px"
                 @change="saveAvatarProviderList">
-                <el-button slot="append" icon="el-icon-delete" @click="removeAvatarProvider(provider)"></el-button>
+                <el-button :icon="Delete" @click="removeAvatarProvider(provider)"></el-button>
             </el-input>
 
-            <el-button size="mini" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">
+            <el-button size="small" style="margin-top: 5px" @click="avatarRemoteDatabaseProviderList.push('')">
                 {{ t('dialog.avatar_database_provider.add_provider') }}
             </el-button>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { Delete } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useAvatarProviderStore } from '../../../stores';
 
     const { t } = useI18n();

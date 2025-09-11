@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible.sync="languageDialog.visible"
+        v-model="languageDialog.visible"
         :title="t('dialog.language.header')"
         width="400px"
         append-to-body>
@@ -22,7 +22,6 @@
                 </el-tag>
             </div>
             <el-select
-                value=""
                 :disabled="languageDialog.loading || (currentUser.$languages && currentUser.$languages.length === 3)"
                 :placeholder="t('dialog.language.select_language')"
                 style="margin-top: 14px"
@@ -40,12 +39,12 @@
                 </el-option>
             </el-select>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';
     import { languageClass } from '../../../shared/utils';
     import { useUserStore } from '../../../stores';

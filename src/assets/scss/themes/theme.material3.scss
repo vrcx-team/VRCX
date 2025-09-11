@@ -1651,35 +1651,35 @@ img.x-link.el-popover__reference {
     border-color: rgb(var(--md-sys-color-outline-variant)) !important;
 }
 
-.el-popper[x-placement^='top'] .popper__arrow {
+.el-popper[data-popper-placement^='top'] .el-popper__arrow {
     border-top-color: var(--md-sys-color-surface-3) !important;
 }
 
-.el-popper[x-placement^='top'] .popper__arrow::after {
+.el-popper[data-popper-placement^='top'] .el-popper__arrow::after {
     border-top-color: var(--md-sys-color-surface-3) !important;
 }
 
-.el-popper[x-placement^='bottom'] .popper__arrow {
+.el-popper[data-popper-placement^='bottom'] .el-popper__arrow {
     border-bottom-color: var(--md-sys-color-surface-3) !important;
 }
 
-.el-popper[x-placement^='bottom'] .popper__arrow::after {
+.el-popper[data-popper-placement^='bottom'] .el-popper__arrow::after {
     border-bottom-color: var(--md-sys-color-surface-3) !important;
 }
 
-.el-popper[x-placement^='left'] .popper__arrow {
+.el-popper[data-popper-placement^='left'] .el-popper__arrow {
     border-left-color: var(--md-sys-color-surface-3) !important;
 }
 
-.el-popper[x-placement^='left'] .popper__arrow::after {
+.el-popper[data-popper-placement^='left'] .el-popper__arrow::after {
     border-left-color: var(--md-sys-color-surface-3) !important;
 }
 
-.el-popper[x-placement^='right'] .popper__arrow {
+.el-popper[data-popper-placement^='right'] .el-popper__arrow {
     border-right-color: var(--md-sys-color-surface-3) !important;
 }
 
-.el-popper[x-placement^='right'] .popper__arrow::after {
+.el-popper[data-popper-placement^='right'] .el-popper__arrow::after {
     border-right-color: var(--md-sys-color-surface-3) !important;
 }
 
@@ -2065,7 +2065,7 @@ i.x-user-status {
     text-align: center !important;
 }
 
-.el-collapse-item .el-tag--mini {
+.el-collapse-item .el-tag--small {
     background-color: transparent;
     border: transparent;
     padding-top: 6px;
@@ -2074,7 +2074,7 @@ i.x-user-status {
     justify-content: space-between;
 }
 
-.el-dialog__body .el-tag--mini {
+.el-dialog__body .el-tag--small {
     line-height: 28px;
 }
 .el-divider {
@@ -2149,7 +2149,7 @@ i.x-user-status {
 div.x-friend-list
     > div:nth-child(1)
     > div
-    > div.el-textarea.el-input--mini
+    > div.el-textarea.el-input--small
     > span.el-input__count {
     background-color: var(--md-sys-color-surface-3) !important;
 }
@@ -2191,4 +2191,45 @@ div.x-friend-list
 
 .group-header {
     border-bottom: 2px solid rgba(var(--md-sys-color-outline), 0.5) !important;
+}
+
+.el-select__wrapper {
+    background-color: rgb(var(--md-sys-color-surface-variant)) !important;
+    border: 1px solid rgb(var(--md-sys-color-outline-variant)) !important;
+}
+
+.el-select__wrapper.is-focused {
+    border-color: rgb(var(--md-sys-color-primary)) !important;
+}
+
+.el-select__wrapper.is-disabled {
+    background-color: rgba(var(--md-sys-color-on-surface), 0.12) !important;
+    color: rgba(var(--md-sys-color-on-surface), 0.38) !important;
+}
+
+.el-input__wrapper {
+    background-color: rgb(var(--md-sys-color-surface-variant)) !important;
+    border: 1px solid rgb(var(--md-sys-color-outline-variant)) !important;
+}
+
+.el-input__wrapper.is-focus {
+    border-color: rgb(var(--md-sys-color-primary)) !important;
+}
+
+.el-table {
+    background-color: rgb(var(--md-sys-color-surface)) !important;
+}
+
+.el-table tr,
+.el-table td.el-table__cell,
+.el-table th.el-table__cell {
+    background-color: transparent !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+    background-color: rgba(var(--md-sys-color-primary), 0.05) !important;
+}
+
+.el-table__body-wrapper .el-table__row:hover > .el-table__cell {
+    background-color: rgba(var(--md-sys-color-primary), 0.08) !important;
 }

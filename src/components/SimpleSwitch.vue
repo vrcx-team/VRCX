@@ -3,15 +3,16 @@
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}
             <el-tooltip v-if="tooltip" placement="top" class="tooltip" :content="tooltip"
-                ><i class="el-icon-info"
-            /></el-tooltip>
+                ><el-icon><InfoFilled /></el-icon
+            ></el-tooltip>
         </div>
 
-        <el-switch class="switch" :value="value" @change="change" :disabled="disabled"></el-switch>
+        <el-switch class="switch" :model-value="value" @change="change" :disabled="disabled"></el-switch>
     </div>
 </template>
 
 <script setup>
+    import { InfoFilled } from '@element-plus/icons-vue';
     defineProps({
         label: String,
         value: Boolean,
@@ -30,13 +31,13 @@
 <style scoped>
     .simple-switch {
         font-size: 12px;
-        margin-top: 5px;
         display: flex;
     }
     .simple-switch > .name {
         width: 225px;
         min-width: 225px;
         word-wrap: break-word;
+        padding-top: 7px;
     }
     .simple-switch > .switch {
         margin-left: 10px;

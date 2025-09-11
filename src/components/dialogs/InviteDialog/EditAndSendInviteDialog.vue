@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="editAndSendInviteDialog.visible"
+        :model-value="editAndSendInviteDialog.visible"
         :title="t('dialog.edit_send_invite_message.header')"
         width="400px"
         append-to-body
@@ -13,7 +13,7 @@
         <el-input
             v-model="editAndSendInviteDialog.newMessage"
             type="textarea"
-            size="mini"
+            size="small"
             maxlength="64"
             show-word-limit
             :autosize="{ minRows: 2, maxRows: 5 }"
@@ -21,28 +21,25 @@
             style="margin-top: 10px"></el-input>
 
         <template #footer>
-            <el-button type="small" @click="cancelEditAndSendInvite">
+            <el-button @click="cancelEditAndSendInvite">
                 {{ t('dialog.edit_send_invite_message.cancel') }}
             </el-button>
             <el-button type="primary" size="small" @click="saveEditAndSendInvite">
                 {{ t('dialog.edit_send_invite_message.send') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { instanceRequest, inviteMessagesRequest, notificationRequest } from '../../../api';
     import { parseLocation } from '../../../shared/utils';
     import { useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const { uploadImage } = storeToRefs(useGalleryStore());
     const { clearInviteImageUpload } = useGalleryStore();
     const { currentUser } = storeToRefs(useUserStore());
@@ -86,13 +83,13 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === I.messageSlot.message) {
-                        $message({
+                        ElMessage({
                             message: "VRChat API didn't update message, try again",
                             type: 'error'
                         });
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        $message('Invite message updated');
+                        ElMessage('Invite message updated');
                     }
                     return args;
                 });
@@ -139,7 +136,7 @@
                 } else {
                     J.loading = false;
                     J.visible = false;
-                    $message({
+                    ElMessage({
                         message: 'Invite sent',
                         type: 'success'
                     });
@@ -155,7 +152,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Invite photo message sent',
                             type: 'success'
                         });
@@ -168,7 +165,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Invite message sent',
                             type: 'success'
                         });
@@ -185,7 +182,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Request invite photo message sent',
                             type: 'success'
                         });
@@ -198,7 +195,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Request invite message sent',
                             type: 'success'
                         });

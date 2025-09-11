@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
-        ref="avatarImportDialogRef"
-        :visible.sync="isVisible"
+    <el-dialog
+        :z-index="avatarImportDialogIndex"
+        v-model="isVisible"
         :title="t('dialog.avatar_import.header')"
         width="650px">
         <div style="display: flex; align-items: center; justify-content: space-between">
@@ -10,7 +10,7 @@
                 <div v-if="avatarImportDialog.progress">
                     {{ t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }} /
                     {{ avatarImportDialog.progressTotal }}
-                    <i class="el-icon-loading" style="margin: 0 5px"></i>
+                    <el-icon style="margin: 0 5px"><Loading /></el-icon>
                 </div>
                 <el-button v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport">
                     {{ t('dialog.avatar_import.cancel') }}
@@ -23,60 +23,62 @@
         <el-input
             v-model="avatarImportDialog.input"
             type="textarea"
-            size="mini"
-            rows="10"
+            size="small"
+            :rows="10"
             resize="none"
             style="margin-top: 10px"></el-input>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px">
             <div>
-                <el-dropdown trigger="click" size="small" @click.native.stop>
-                    <el-button size="mini">
+                <el-dropdown trigger="click" size="small" style="margin-right: 5px" @click.stop>
+                    <el-button size="small">
                         <span v-if="avatarImportDialog.avatarImportFavoriteGroup">
                             {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{
                                 avatarImportDialog.avatarImportFavoriteGroup.count
                             }}/{{ avatarImportDialog.avatarImportFavoriteGroup.capacity }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.avatar_import.select_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="groupAPI in favoriteAvatarGroups">
-                            <el-dropdown-item
-                                :key="groupAPI.name"
-                                style="display: block; margin: 10px 0"
-                                :disabled="groupAPI.count >= groupAPI.capacity"
-                                @click.native="selectAvatarImportGroup(groupAPI)">
-                                {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    :disabled="groupAPI.count >= groupAPI.capacity"
+                                    @click="selectAvatarImportGroup(groupAPI)">
+                                    {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
-                <el-dropdown trigger="click" size="small" style="margin: 5px" @click.native.stop>
-                    <el-button size="mini">
+                <el-dropdown trigger="click" size="small">
+                    <el-button size="small">
                         <span v-if="avatarImportDialog.avatarImportLocalFavoriteGroup">
                             {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{
                                 getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup)
                             }})
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                         <span v-else>
                             {{ t('dialog.avatar_import.select_group_placeholder') }}
-                            <i class="el-icon-arrow-down el-icon--right"></i>
+                            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                         </span>
                     </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                        <template v-for="group in localAvatarFavoriteGroups">
-                            <el-dropdown-item
-                                :key="group"
-                                style="display: block; margin: 10px 0"
-                                @click.native="selectAvatarImportLocalGroup(group)">
-                                {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
-                            </el-dropdown-item>
-                        </template>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <template v-for="group in localAvatarFavoriteGroups" :key="group">
+                                <el-dropdown-item
+                                    style="display: block; margin: 10px 0"
+                                    @click="selectAvatarImportLocalGroup(group)">
+                                    {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                                </el-dropdown-item>
+                            </template>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <span v-if="avatarImportDialog.avatarImportFavoriteGroup" style="margin-left: 5px">
                     {{ avatarImportTable.data.length }} /
@@ -105,7 +107,7 @@
             </div>
         </div>
         <span v-if="avatarImportDialog.importProgress" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.avatar_import.import_progress') }}
             {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
         </span>
@@ -119,70 +121,73 @@
             </h2>
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="avatarImportDialog.errors"></pre>
         </template>
-        <data-tables v-loading="avatarImportDialog.loading" v-bind="avatarImportTable" style="margin-top: 10px">
+        <DataTable v-loading="avatarImportDialog.loading" v-bind="avatarImportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="thumbnailImageUrl">
-                <template slot-scope="scope">
-                    <el-popover placement="right" height="500px" trigger="hover">
-                        <img slot="reference" v-lazy="scope.row.thumbnailImageUrl" class="friends-list-avatar" />
+                <template #default="{ row }">
+                    <el-popover placement="right" :width="500" trigger="hover">
+                        <template #reference>
+                            <img :src="row.thumbnailImageUrl" class="friends-list-avatar" loading="lazy" />
+                        </template>
                         <img
-                            v-lazy="scope.row.imageUrl"
-                            class="friends-list-avatar"
-                            style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(scope.row.imageUrl)" />
+                            :src="row.imageUrl"
+                            :class="['friends-list-avatar', 'x-popover-image']"
+                            style="cursor: pointer"
+                            @click="showFullscreenImageDialog(row.imageUrl)"
+                            loading="lazy" />
                     </el-popover>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.name')" prop="name">
-                <template slot-scope="scope">
-                    <span class="x-link" @click="showAvatarDialog(scope.row.id)">
-                        {{ scope.row.name }}
+                <template #default="{ row }">
+                    <span class="x-link" @click="showAvatarDialog(row.id)">
+                        {{ row.name }}
                     </span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.author')" width="120" prop="authorName">
-                <template slot-scope="scope">
-                    <span class="x-link" @click="showUserDialog(scope.row.authorId)">
-                        {{ scope.row.authorName }}
+                <template #default="{ row }">
+                    <span class="x-link" @click="showUserDialog(row.authorId)">
+                        {{ row.authorName }}
                     </span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.status')" width="70" prop="releaseStatus">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <span
                         :style="{
                             color:
-                                scope.row.releaseStatus === 'public'
+                                row.releaseStatus === 'public'
                                     ? '#67c23a'
-                                    : scope.row.releaseStatus === 'private'
+                                    : row.releaseStatus === 'private'
                                       ? '#f56c6c'
                                       : undefined
                         }">
-                        {{ scope.row.releaseStatus.charAt(0).toUpperCase() + scope.row.releaseStatus.slice(1) }}
+                        {{ row.releaseStatus.charAt(0).toUpperCase() + row.releaseStatus.slice(1) }}
                     </span>
                 </template>
             </el-table-column>
             <el-table-column :label="t('table.import.action')" width="90" align="right">
-                <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-close" size="mini" @click="deleteItemAvatarImport(scope.row)">
-                    </el-button>
+                <template #default="{ row }">
+                    <el-button type="text" :icon="Close" size="small" @click="deleteItemAvatarImport(row)"> </el-button>
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { Close, Loading, ArrowDown } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
+
+    import { ref, computed, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { avatarRequest, favoriteRequest } from '../../../api';
-    import { adjustDialogZ, removeFromArray } from '../../../shared/utils';
+    import { getNextDialogIndex, removeFromArray } from '../../../shared/utils';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const emit = defineEmits(['update:avatarImportDialogInput']);
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-
     const { showUserDialog } = useUserStore();
     const { favoriteAvatarGroups, avatarImportDialogInput, avatarImportDialogVisible, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
@@ -212,7 +217,7 @@
         layout: 'table'
     });
 
-    const avatarImportDialogRef = ref(null);
+    const avatarImportDialogIndex = ref(2000);
 
     const isVisible = computed({
         get() {
@@ -227,7 +232,7 @@
         () => avatarImportDialogVisible.value,
         (value) => {
             if (value) {
-                adjustDialogZ(avatarImportDialogRef.value.$el);
+                avatarImportDialogIndex.value = getNextDialogIndex();
                 clearAvatarImportTable();
                 resetAvatarImport();
                 if (avatarImportDialogInput.value) {
@@ -318,7 +323,7 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({
+                    ElMessage({
                         message: 'Avatar added to favorites',
                         type: 'success'
                     });
@@ -334,7 +339,7 @@
         D.loading = true;
         const data = [...avatarImportTable.value.data].reverse();
         D.importProgressTotal = data.length;
-        let ref = '';
+        let ref = null;
         try {
             for (let i = data.length - 1; i >= 0; i--) {
                 if (!D.loading || !isVisible.value) {
@@ -351,7 +356,7 @@
                 D.importProgress++;
             }
         } catch (err) {
-            D.errors = `Name: ${ref.name}\nAvatarId: ${ref.id}\n${err}\n\n`;
+            D.errors = `Name: ${ref?.name}\nAvatarId: ${ref?.id}\n${err}\n\n`;
         } finally {
             D.importProgress = 0;
             D.importProgressTotal = 0;

@@ -1,19 +1,21 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="galleryDialogVisible"
+        :model-value="galleryDialogVisible"
         :title="t('dialog.gallery_icons.header')"
         width="97vw"
         append-to-body
         @close="closeGalleryDialog">
         <el-tabs type="card" ref="galleryTabs">
             <el-tab-pane v-loading="galleryDialogGalleryLoading">
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.gallery') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ galleryTable.length }}/64
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.gallery') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ galleryTable.length }}/64
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="GalleryUploadButton"
                     type="file"
@@ -24,14 +26,14 @@
                 <br />
                 <br />
                 <el-button-group>
-                    <el-button type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh">
+                    <el-button type="default" size="small" @click="refreshGalleryTable" :icon="Refresh">
                         {{ t('dialog.gallery_icons.refresh') }}
                     </el-button>
                     <el-button
                         type="default"
                         size="small"
                         @click="displayGalleryUpload"
-                        icon="el-icon-upload2"
+                        :icon="Upload"
                         :disabled="!currentUser.$isVRCPlus">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
@@ -39,7 +41,7 @@
                         type="default"
                         size="small"
                         @click="setProfilePicOverride('')"
-                        icon="el-icon-close"
+                        :icon="Close"
                         :disabled="!currentUser.profilePicOverride">
                         {{ t('dialog.gallery_icons.clear') }}
                     </el-button>
@@ -56,20 +58,23 @@
                             v-if="image.versions[image.versions.length - 1].file.url"
                             @click="setProfilePicOverride(image.id)"
                             :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }">
-                            <img class="avatar" v-lazy="image.versions[image.versions.length - 1].file.url" />
+                            <img
+                                class="avatar"
+                                :src="image.versions[image.versions.length - 1].file.url"
+                                loading="lazy" />
                         </div>
                         <div style="float: right; margin-top: 5px">
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="mini"
-                                icon="el-icon-picture-outline"
+                                size="small"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteGalleryImage(image.id)"
-                                size="mini"
-                                icon="el-icon-delete"
+                                size="small"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -77,12 +82,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogIconsLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.icons') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ VRCPlusIconsTable.length }}/64
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.icons') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ VRCPlusIconsTable.length }}/64
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="VRCPlusIconUploadButton"
                     type="file"
@@ -93,14 +100,14 @@
                 <br />
                 <br />
                 <el-button-group>
-                    <el-button type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh">
+                    <el-button type="default" size="small" @click="refreshVRCPlusIconsTable" :icon="Refresh">
                         {{ t('dialog.gallery_icons.refresh') }}
                     </el-button>
                     <el-button
                         type="default"
                         size="small"
                         @click="displayVRCPlusIconUpload"
-                        icon="el-icon-upload2"
+                        :icon="Upload"
                         :disabled="!currentUser.$isVRCPlus">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
@@ -108,7 +115,7 @@
                         type="default"
                         size="small"
                         @click="setVRCPlusIcon('')"
-                        icon="el-icon-close"
+                        :icon="Close"
                         :disabled="!currentUser.userIcon">
                         {{ t('dialog.gallery_icons.clear') }}
                     </el-button>
@@ -125,20 +132,23 @@
                             v-if="image.versions[image.versions.length - 1].file.url"
                             @click="setVRCPlusIcon(image.id)"
                             :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }">
-                            <img class="avatar" v-lazy="image.versions[image.versions.length - 1].file.url" />
+                            <img
+                                class="avatar"
+                                :src="image.versions[image.versions.length - 1].file.url"
+                                loading="lazy" />
                         </div>
                         <div style="float: right; margin-top: 5px">
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="mini"
-                                icon="el-icon-picture-outline"
+                                size="small"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteVRCPlusIcon(image.id)"
-                                size="mini"
-                                icon="el-icon-delete"
+                                size="small"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -146,12 +156,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogEmojisLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.emojis') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ emojiTable.length }}/{{ cachedConfig?.maxUserEmoji }}
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.emojis') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ emojiTable.length }}/{{ cachedConfig?.maxUserEmoji }}
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="EmojiUploadButton"
                     type="file"
@@ -163,14 +175,14 @@
                 <br />
                 <div>
                     <el-button-group style="margin-right: 10px">
-                        <el-button type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh">
+                        <el-button type="default" size="small" @click="refreshEmojiTable" :icon="Refresh">
                             {{ t('dialog.gallery_icons.refresh') }}
                         </el-button>
                         <el-button
                             type="default"
                             size="small"
                             @click="displayEmojiUpload"
-                            icon="el-icon-upload2"
+                            :icon="Upload"
                             :disabled="!currentUser.$isVRCPlus">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
@@ -186,7 +198,7 @@
                                 :value="styleName"
                                 style="height: auto">
                                 <div class="avatar" style="width: 200px; height: 200px">
-                                    <img v-lazy="`${emojiAnimationStyleUrl}${fileName}`" />
+                                    <img :src="`${emojiAnimationStyleUrl}${fileName}`" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span class="name" v-text="styleName" style="margin-right: 100px"></span>
@@ -252,12 +264,15 @@
                                     "></div>
                             </template>
                             <template v-else>
-                                <img class="avatar" v-lazy="image.versions[image.versions.length - 1].file.url" />
+                                <img
+                                    class="avatar"
+                                    :src="image.versions[image.versions.length - 1].file.url"
+                                    loading="lazy" />
                             </template>
                         </div>
                         <div style="display: inline-block; margin: 5px">
                             <span v-if="image.loopStyle === 'pingpong'">
-                                <i class="el-icon-refresh el-icon--left"></i>
+                                <el-icon style="margin-right: 5px"><Refresh /></el-icon>
                             </span>
                             <span style="margin-right: 5px">{{ image.animationStyle }}</span>
                             <span v-if="image.framesOverTime" style="margin-right: 5px"
@@ -275,14 +290,14 @@
                                         getEmojiFileName(image)
                                     )
                                 "
-                                size="mini"
-                                icon="el-icon-picture-outline"
+                                size="small"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteEmoji(image.id)"
-                                size="mini"
-                                icon="el-icon-delete"
+                                size="small"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -290,12 +305,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogStickersLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.stickers') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px">
-                        {{ stickerTable.length }}/{{ cachedConfig?.maxUserStickers }}
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.stickers') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ stickerTable.length }}/{{ cachedConfig?.maxUserStickers }}
+                        </span>
                     </span>
-                </span>
+                </template>
                 <input
                     id="StickerUploadButton"
                     type="file"
@@ -306,14 +323,14 @@
                 <br />
                 <br />
                 <el-button-group>
-                    <el-button type="default" size="small" @click="refreshStickerTable" icon="el-icon-refresh">
+                    <el-button type="default" size="small" @click="refreshStickerTable" :icon="Refresh">
                         {{ t('dialog.gallery_icons.refresh') }}
                     </el-button>
                     <el-button
                         type="default"
                         size="small"
                         @click="displayStickerUpload"
-                        icon="el-icon-upload2"
+                        :icon="Upload"
                         :disabled="!currentUser.$isVRCPlus">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
@@ -330,20 +347,23 @@
                             v-if="image.versions[image.versions.length - 1].file.url"
                             style="overflow: hidden"
                             @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)">
-                            <img class="avatar" v-lazy="image.versions[image.versions.length - 1].file.url" />
+                            <img
+                                class="avatar"
+                                :src="image.versions[image.versions.length - 1].file.url"
+                                loading="lazy" />
                         </div>
                         <div style="float: right; margin-top: 5px">
                             <el-button
                                 type="default"
                                 @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)"
-                                size="mini"
-                                icon="el-icon-picture-outline"
+                                size="small"
+                                :icon="Picture"
                                 circle></el-button>
                             <el-button
                                 type="default"
                                 @click="deleteSticker(image.id)"
-                                size="mini"
-                                icon="el-icon-delete"
+                                size="small"
+                                :icon="Delete"
                                 circle
                                 style="margin-left: 5px"></el-button></div
                     ></template>
@@ -351,10 +371,14 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogPrintsLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.prints') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ printTable.length }}/64 </span>
-                </span>
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.prints') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ printTable.length }}/64
+                        </span>
+                    </span>
+                </template>
                 <input
                     id="PrintUploadButton"
                     type="file"
@@ -366,14 +390,14 @@
                 <br />
                 <div style="display: flex; align-items: center">
                     <el-button-group>
-                        <el-button type="default" size="small" @click="refreshPrintTable" icon="el-icon-refresh">
+                        <el-button type="default" size="small" @click="refreshPrintTable" :icon="Refresh">
                             {{ t('dialog.gallery_icons.refresh') }}
                         </el-button>
                         <el-button
                             type="default"
                             size="small"
                             @click="displayPrintUpload"
-                            icon="el-icon-upload2"
+                            :icon="Upload"
                             :disabled="!currentUser.$isVRCPlus">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
@@ -381,8 +405,8 @@
                     <el-input
                         type="textarea"
                         v-model="printUploadNote"
-                        size="mini"
-                        rows="1"
+                        size="small"
+                        :rows="1"
                         resize="none"
                         maxlength="32"
                         style="margin-left: 10px; width: 300px"
@@ -401,7 +425,7 @@
                         class="vrcplus-icon"
                         style="overflow: hidden"
                         @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))">
-                        <img class="avatar" v-lazy="image.files.image" />
+                        <img class="avatar" :src="image.files.image" loading="lazy" />
                     </div>
                     <div style="margin-top: 5px; width: 208px">
                         <span class="x-ellipsis" v-if="image.note" v-text="image.note" style="display: block"></span>
@@ -432,14 +456,14 @@
                         <el-button
                             type="default"
                             @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))"
-                            size="mini"
-                            icon="el-icon-picture-outline"
+                            size="small"
+                            :icon="Picture"
                             circle></el-button>
                         <el-button
                             type="default"
                             @click="deletePrint(image.id)"
-                            size="mini"
-                            icon="el-icon-delete"
+                            size="small"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"></el-button>
                     </div>
@@ -447,15 +471,19 @@
             </el-tab-pane>
 
             <el-tab-pane v-loading="galleryDialogInventoryLoading" lazy>
-                <span slot="label">
-                    {{ t('dialog.gallery_icons.inventory') }}
-                    <span style="color: #909399; font-size: 12px; margin-left: 5px"> {{ inventoryTable.length }} </span>
-                </span>
+                <template #label>
+                    <span>
+                        {{ t('dialog.gallery_icons.inventory') }}
+                        <span style="color: #909399; font-size: 12px; margin-left: 5px">
+                            {{ inventoryTable.length }}
+                        </span>
+                    </span>
+                </template>
                 <br />
                 <br />
                 <div style="display: flex; align-items: center">
                     <el-button-group>
-                        <el-button type="default" size="small" @click="getInventory" icon="el-icon-refresh">
+                        <el-button type="default" size="small" @click="getInventory" :icon="Refresh">
                             {{ t('dialog.gallery_icons.refresh') }}
                         </el-button>
                     </el-button-group>
@@ -467,7 +495,7 @@
                     :key="item.id"
                     style="display: inline-block; margin-top: 10px; width: unset; cursor: default">
                     <div class="vrcplus-icon" style="overflow: hidden; cursor: default">
-                        <img class="avatar" v-lazy="item.imageUrl" />
+                        <img class="avatar" :src="item.imageUrl" loading="lazy" />
                     </div>
                     <div style="margin-top: 5px; width: 208px">
                         <span class="x-ellipsis" v-text="item.name" style="display: block"></span>
@@ -488,8 +516,8 @@
                         v-if="item.itemType === 'bundle'"
                         type="default"
                         @click="consumeInventoryBundle(item.id)"
-                        size="mini"
-                        icon="el-icon-plus"
+                        size="small"
+                        :icon="Plus"
                         style="float: right"
                         circle>
                         {{ t('dialog.gallery_icons.consume_bundle') }}
@@ -497,22 +525,29 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+    import { Refresh, Upload, Close, Picture, Delete, Plus } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
-    import { inventoryRequest, miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest } from '../../api';
-    import { AppGlobal } from '../../service/appConfig';
-    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../shared/constants';
-    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../shared/utils';
-    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../stores';
+    import { ref } from 'vue';
+    import { useI18n } from 'vue-i18n';
+    import {
+        // inventoryRequest,
+        miscRequest,
+        userRequest,
+        vrcPlusIconRequest,
+        vrcPlusImageRequest
+    } from '../../../api';
+    import { AppDebug } from '../../../service/appConfig';
+    import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
+    import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
+    import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
 
-    const { proxy } = getCurrentInstance();
     const {
         galleryTable,
         galleryDialogVisible,
@@ -569,7 +604,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -577,7 +612,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -589,7 +624,7 @@
             const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
                 handleGalleryImageAdd(args);
-                proxy.$message({
+                ElMessage({
                     message: t('message.gallery.uploaded'),
                     type: 'success'
                 });
@@ -606,7 +641,7 @@
 
     function setProfilePicOverride(fileId) {
         if (!currentUser.value.$isVRCPlus) {
-            proxy.$message({
+            ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'
             });
@@ -614,7 +649,7 @@
         }
         let profilePicOverride = '';
         if (fileId) {
-            profilePicOverride = `${AppGlobal.endpointDomain}/file/${fileId}/1`;
+            profilePicOverride = `${AppDebug.endpointDomain}/file/${fileId}/1`;
         }
         if (profilePicOverride === currentUser.value.profilePicOverride) {
             return;
@@ -624,7 +659,7 @@
                 profilePicOverride
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Profile picture changed',
                     type: 'success'
                 });
@@ -668,7 +703,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -676,7 +711,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -690,7 +725,7 @@
                 if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
                     VRCPlusIconsTable.value.unshift(args.json);
                 }
-                proxy.$message({
+                ElMessage({
                     message: t('message.icon.uploaded'),
                     type: 'success'
                 });
@@ -707,7 +742,7 @@
 
     function setVRCPlusIcon(fileId) {
         if (!currentUser.value.$isVRCPlus) {
-            proxy.$message({
+            ElMessage({
                 message: 'VRCPlus required',
                 type: 'error'
             });
@@ -715,7 +750,7 @@
         }
         let userIcon = '';
         if (fileId) {
-            userIcon = `${AppGlobal.endpointDomain}/file/${fileId}/1`;
+            userIcon = `${AppDebug.endpointDomain}/file/${fileId}/1`;
         }
         if (userIcon === currentUser.value.userIcon) {
             return;
@@ -725,7 +760,7 @@
                 userIcon
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Icon changed',
                     type: 'success'
                 });
@@ -791,7 +826,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -799,7 +834,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -827,7 +862,7 @@
                 if (Object.keys(emojiTable.value).length !== 0) {
                     emojiTable.value.unshift(args.json);
                 }
-                proxy.$message({
+                ElMessage({
                     message: t('message.emoji.uploaded'),
                     type: 'success'
                 });
@@ -888,7 +923,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -896,7 +931,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -912,7 +947,7 @@
             const base64Body = btoa(r.result.toString());
             vrcPlusImageRequest.uploadSticker(base64Body, params).then((args) => {
                 handleStickerAdd(args);
-                proxy.$message({
+                ElMessage({
                     message: t('message.sticker.uploaded'),
                     type: 'success'
                 });
@@ -955,7 +990,7 @@
         }
         if (files[0].size >= 100000000) {
             // 100MB
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.too_large'),
                 type: 'error'
             });
@@ -963,7 +998,7 @@
             return;
         }
         if (!files[0].type.match(/image.*/)) {
-            proxy.$message({
+            ElMessage({
                 message: t('message.file.not_image'),
                 type: 'error'
             });
@@ -984,7 +1019,7 @@
             const base64Body = btoa(r.result.toString());
             const cropWhiteBorder = printCropBorder.value;
             vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params).then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: t('message.print.uploaded'),
                     type: 'success'
                 });
@@ -1018,9 +1053,9 @@
 
     async function consumeInventoryBundle(inventoryId) {
         try {
-            const args = await inventoryRequest.consumeInventoryBundle({
-                inventoryId
-            });
+            // const args = await inventoryRequest.consumeInventoryBundle({
+            //     inventoryId
+            // });
             currentUserInventory.value.delete(inventoryId);
             const array = inventoryTable.value;
             const { length } = array;

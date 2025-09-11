@@ -24,7 +24,7 @@
                 <el-input
                     v-model="avatarFavoriteSearch"
                     clearable
-                    size="mini"
+                    size="small"
                     :placeholder="t('view.favorite.avatars.search')"
                     style="width: 200px"
                     @input="searchAvatarFavorites" />
@@ -39,7 +39,7 @@
                 <div class="x-friend-item">
                     <template v-if="favorite.name">
                         <div class="avatar">
-                            <img v-lazy="favorite.thumbnailImageUrl" />
+                            <img :src="favorite.thumbnailImageUrl" loading="lazy" />
                         </div>
                         <div class="detail">
                             <span class="name" v-text="favorite.name" />
@@ -60,23 +60,23 @@
         </span>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in favoriteAvatarGroups" :key="group.name">
-                <template slot="title">
+                <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group.displayName" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">
                         {{ group.count }}/{{ group.capacity }}
                     </span>
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-edit"
+                            size="small"
+                            :icon="Edit"
                             circle
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)" />
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-delete"
+                            size="small"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="clearFavoriteGroup(group)" />
@@ -88,7 +88,6 @@
                         :key="favorite.id"
                         :favorite="favorite"
                         :group="group"
-                        :hide-tooltips="hideTooltips"
                         :edit-favorites-mode="editFavoritesMode"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         @handle-select="favorite.$selected = $event"
@@ -108,15 +107,15 @@
                 </div>
             </el-collapse-item>
             <el-collapse-item>
-                <template slot="title">
+                <template #title>
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px">Local History</span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px"
                         >{{ avatarHistoryArray.length }}/100</span
                     >
-                    <el-tooltip placement="right" content="Clear" :disabled="hideTooltips">
+                    <el-tooltip placement="right" content="Clear">
                         <el-button
-                            size="mini"
-                            icon="el-icon-delete"
+                            size="small"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="promptClearAvatarHistory"></el-button>
@@ -128,7 +127,6 @@
                         :key="favorite.id"
                         style="display: inline-block; width: 300px; margin-right: 15px"
                         :favorite="favorite"
-                        :hide-tooltips="hideTooltips"
                         @click="showAvatarDialog(favorite.id)" />
                 </div>
                 <div
@@ -157,30 +155,27 @@
                 {{ t('view.favorite.avatars.refresh') }}
             </el-button>
             <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
-                <i class="el-icon-loading" style="margin-right: 5px"></i>
+                <el-icon class="is-loading"><Loading /></el-icon>
                 <span>{{ t('view.favorite.avatars.cancel_refresh') }}</span>
             </el-button>
-            <el-collapse-item
-                v-for="group in localAvatarFavoriteGroups"
-                v-if="localAvatarFavorites[group]"
-                :key="group">
-                <template slot="title">
+            <el-collapse-item v-for="group in localAvatarFavoriteGroups" :key="group">
+                <template #title v-if="localAvatarFavorites[group]">
                     <span :style="{ fontWeight: 'bold', fontSize: '14px', marginLeft: '10px' }">{{ group }}</span>
                     <span :style="{ color: '#909399', fontSize: '12px', marginLeft: '10px' }">{{
                         getLocalAvatarFavoriteGroupLength(group)
                     }}</span>
-                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-edit"
+                            size="small"
+                            :icon="Edit"
                             circle
                             :style="{ marginLeft: '5px' }"
                             @click.stop="promptLocalAvatarFavoriteGroupRename(group)"></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-delete"
+                            size="small"
+                            :icon="Delete"
                             circle
                             :style="{ marginLeft: '5px' }"
                             @click.stop="promptLocalAvatarFavoriteGroupDelete(group)"></el-button>
@@ -194,7 +189,6 @@
                         :style="{ display: 'inline-block', width: '300px', marginRight: '15px' }"
                         :favorite="favorite"
                         :group="group"
-                        :hide-tooltips="hideTooltips"
                         :edit-favorites-mode="editFavoritesMode"
                         @handle-select="favorite.$selected = $event"
                         @click="showAvatarDialog(favorite.id)" />
@@ -213,14 +207,17 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <AvatarExportDialog :avatar-export-dialog-visible.sync="avatarExportDialogVisible" />
+        <AvatarExportDialog v-model:avatarExportDialogVisible="avatarExportDialogVisible" />
     </div>
 </template>
 
 <script setup>
-    import { ref, computed, getCurrentInstance } from 'vue';
+    import { Loading, Edit, Delete } from '@element-plus/icons-vue';
+
+    import { ElMessageBox } from 'element-plus';
+    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { useAppearanceSettingsStore, useAvatarStore, useFavoriteStore, useUserStore } from '../../../stores';
     import AvatarExportDialog from '../dialogs/AvatarExportDialog.vue';
@@ -238,10 +235,9 @@
         }
     });
 
-    const { proxy } = getCurrentInstance();
     const emit = defineEmits(['change-favorite-group-name', 'refresh-local-avatar-favorites']);
 
-    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const { favoriteAvatars, favoriteAvatarGroups, localAvatarFavorites, localAvatarFavoriteGroups } =
         storeToRefs(useFavoriteStore());
@@ -340,19 +336,20 @@
     }
 
     function clearFavoriteGroup(ctx) {
-        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     favoriteRequest.clearFavoriteGroup({
                         type: ctx.type,
                         group: ctx.name
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function showAvatarExportDialog() {
@@ -364,18 +361,23 @@
     }
 
     function promptNewLocalAvatarFavoriteGroup() {
-        proxy.$prompt(t('prompt.new_local_favorite_group.description'), t('prompt.new_local_favorite_group.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.new_local_favorite_group.ok'),
-            cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    newLocalAvatarFavoriteGroup(instance.inputValue);
-                }
+        ElMessageBox.prompt(
+            t('prompt.new_local_favorite_group.description'),
+            t('prompt.new_local_favorite_group.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.new_local_favorite_group.ok'),
+                cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.new_local_favorite_group.input_error')
             }
-        });
+        )
+            .then(({ value }) => {
+                if (value) {
+                    newLocalAvatarFavoriteGroup(value);
+                }
+            })
+            .catch(() => {});
     }
 
     function refreshLocalAvatarFavorites() {
@@ -383,7 +385,7 @@
     }
 
     function promptLocalAvatarFavoriteGroupRename(group) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.local_favorite_group_rename.description'),
             t('prompt.local_favorite_group_rename.header'),
             {
@@ -392,26 +394,28 @@
                 cancelButtonText: t('prompt.local_favorite_group_rename.cancel'),
                 inputPattern: /\S+/,
                 inputErrorMessage: t('prompt.local_favorite_group_rename.input_error'),
-                inputValue: group,
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
-                        renameLocalAvatarFavoriteGroup(instance.inputValue, group);
-                    }
-                }
+                inputValue: group
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value) {
+                    renameLocalAvatarFavoriteGroup(value, group);
+                }
+            })
+            .catch(() => {});
     }
 
     function promptLocalAvatarFavoriteGroupDelete(group) {
-        proxy.$confirm(`Delete Group? ${group}`, 'Confirm', {
+        ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteLocalAvatarFavoriteGroup(group);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

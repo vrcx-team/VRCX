@@ -15,11 +15,12 @@
 </template>
 
 <script setup>
-    import { ref, watch, computed, onDeactivated, onMounted } from 'vue';
+    import { ref, watch, computed, onDeactivated, onMounted, nextTick } from 'vue';
     import dayjs from 'dayjs';
     import { storeToRefs } from 'pinia';
 
-    import { loadEcharts, timeToText } from '../../../shared/utils';
+    import { timeToText } from '../../../shared/utils';
+    import * as echarts from 'echarts';
     import { useUserStore, useAppearanceSettingsStore } from '../../../stores';
 
     const { isDarkMode, dtHour12 } = storeToRefs(useAppearanceSettingsStore());
@@ -40,7 +41,6 @@
 
     const activityDetailChartRef = ref(null);
 
-    const echarts = ref(null);
     const isLoading = ref(true);
     const echartsInstance = ref(null);
     const usersFirstActivity = ref(null);
@@ -76,8 +76,9 @@
 
     initResizeObserver();
 
-    onMounted(() => {
-        initEcharts(true);
+    onMounted(async () => {
+        await nextTick();
+        initEcharts();
     });
 
     onDeactivated(() => {
@@ -87,45 +88,79 @@
 
     function initResizeObserver() {
         resizeObserver.value = new ResizeObserver((entries) => {
+            if (!echartsInstance.value) {
+                return;
+            }
             for (const entry of entries) {
-                echartsInstance.value.resize({
-                    width: entry.contentRect.width,
-                    animation: {
-                        duration: 300
-                    }
-                });
+                try {
+                    echartsInstance.value.resize({
+                        width: entry.contentRect.width,
+                        animation: {
+                            duration: 300
+                        }
+                    });
+                } catch (error) {
+                    console.warn('Error resizing chart:', error);
+                }
             }
         });
     }
 
-    async function initEcharts(isFirstLoad = false) {
-        if (!echarts.value) {
-            echarts.value = await loadEcharts();
+    async function initEcharts() {
+        if (!activityDetailChartRef.value || !props.activityDetailData || props.activityDetailData.length === 0) {
+            isLoading.value = false;
+            return;
         }
 
         const chartsHeight = props.activityDetailData.length * (props.barWidth + 10) + 200;
         const chartDom = activityDetailChartRef.value;
-        if (!echartsInstance.value) {
-            echartsInstance.value = echarts.value.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
-                height: chartsHeight,
-                useDirtyRect: props.activityDetailData.length > 80
-            });
-            resizeObserver.value.observe(chartDom);
-        }
 
-        echartsInstance.value.resize({
-            height: chartsHeight,
-            animation: {
-                duration: 300
+        const afterInit = () => {
+            if (!echartsInstance.value) {
+                console.error('ECharts instance not initialized');
+                isLoading.value = false;
+                return;
             }
-        });
 
-        echartsInstance.value.setOption(isFirstLoad ? {} : getNewOption(), { lazyUpdate: true });
-        echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+            try {
+                echartsInstance.value.resize({
+                    height: chartsHeight,
+                    animation: {
+                        duration: 300
+                    }
+                });
 
-        setTimeout(() => {
+                echartsInstance.value.off('click');
+
+                const options = getNewOption();
+                if (options && options.series && options.series.length > 0) {
+                    echartsInstance.value.clear();
+                    echartsInstance.value.setOption(options, { notMerge: true });
+                    echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+                } else {
+                    echartsInstance.value.clear();
+                }
+            } catch (error) {
+                console.error('Error in afterInit:', error);
+            }
+
             isLoading.value = false;
-        }, 200);
+        };
+
+        const initEchartsInstance = () => {
+            if (!echartsInstance.value) {
+                echartsInstance.value = echarts.init(chartDom, `${isDarkMode.value ? 'dark' : null}`, {
+                    height: chartsHeight,
+                    useDirtyRect: props.activityDetailData.length > 80
+                });
+                if (resizeObserver.value) {
+                    resizeObserver.value.observe(chartDom);
+                }
+            }
+        };
+
+        initEchartsInstance();
+        setTimeout(afterInit, 50);
     }
 
     function handleClickYAxisLabel(params) {
@@ -136,6 +171,26 @@
     }
 
     function getNewOption() {
+        if (!props.activityDetailData || props.activityDetailData.length === 0) {
+            return {
+                title: {
+                    text: 'No data available',
+                    left: 'center',
+                    top: 'middle'
+                }
+            };
+        }
+
+        if (!startTimeStamp.value || !endTimeStamp.value) {
+            return {
+                title: {
+                    text: 'Invalid timestamp data',
+                    left: 'center',
+                    top: 'middle'
+                }
+            };
+        }
+
         // grouping player activity entries by user_id and calculate below:
         // 1. offset: the time from startTimeStamp or the previous entry's tail to the current entry's joinTime
         // 2. time: the time the user spent in the instance
@@ -318,9 +373,10 @@
                 splitLine: { lineStyle: { type: 'dashed' } }
             },
             series: generateSeries(),
-            backgroundColor: 'rgba(0, 0, 0, 0)'
+            backgroundColor: 'transparent'
         };
 
+        console.log(echartsOption);
         return echartsOption;
     }
 

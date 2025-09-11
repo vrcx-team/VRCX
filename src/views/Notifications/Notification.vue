@@ -1,61 +1,56 @@
 <template>
     <div v-show="menuActiveIndex === 'notification'" v-loading="isNotificationsLoading" class="x-container">
-        <data-tables v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
-            <template #tool>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <el-select
-                        v-model="notificationTable.filters[0].value"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.notification.filter_placeholder')"
-                        @change="saveTableFilters">
-                        <el-option
-                            v-for="type in [
-                                'requestInvite',
-                                'invite',
-                                'requestInviteResponse',
-                                'inviteResponse',
-                                'friendRequest',
-                                'ignoredFriendRequest',
-                                'message',
-                                'boop',
-                                'event.announcement',
-                                'groupChange',
-                                'group.announcement',
-                                'group.informative',
-                                'group.invite',
-                                'group.joinRequest',
-                                'group.transfer',
-                                'group.queueReady',
-                                'moderation.warning.group',
-                                'moderation.report.closed',
-                                'instance.closed'
-                            ]"
-                            :key="type"
-                            :label="t('view.notification.filters.' + type)"
-                            :value="type" />
-                    </el-select>
-                    <el-input
-                        v-model="notificationTable.filters[1].value"
-                        :placeholder="t('view.notification.search_placeholder')"
-                        style="flex: none; width: 150px; margin: 0 10px" />
-                    <el-tooltip
-                        placement="bottom"
-                        :content="t('view.notification.refresh_tooltip')"
-                        :disabled="hideTooltips">
-                        <el-button
-                            type="default"
-                            :loading="isNotificationsLoading"
-                            icon="el-icon-refresh"
-                            circle
-                            style="flex: none"
-                            @click="refreshNotifications()" />
-                    </el-tooltip>
-                </div>
-            </template>
+        <div style="margin: 0 0 10px; display: flex; align-items: center">
+            <el-select
+                v-model="notificationTable.filters[0].value"
+                multiple
+                clearable
+                style="flex: 1"
+                :placeholder="t('view.notification.filter_placeholder')"
+                @change="saveTableFilters">
+                <el-option
+                    v-for="type in [
+                        'requestInvite',
+                        'invite',
+                        'requestInviteResponse',
+                        'inviteResponse',
+                        'friendRequest',
+                        'ignoredFriendRequest',
+                        'message',
+                        'boop',
+                        'event.announcement',
+                        'groupChange',
+                        'group.announcement',
+                        'group.informative',
+                        'group.invite',
+                        'group.joinRequest',
+                        'group.transfer',
+                        'group.queueReady',
+                        'moderation.warning.group',
+                        'moderation.report.closed',
+                        'instance.closed'
+                    ]"
+                    :key="type"
+                    :label="t('view.notification.filters.' + type)"
+                    :value="type" />
+            </el-select>
+            <el-input
+                v-model="notificationTable.filters[1].value"
+                :placeholder="t('view.notification.search_placeholder')"
+                style="flex: none; width: 150px; margin: 0 10px" />
+            <el-tooltip placement="bottom" :content="t('view.notification.refresh_tooltip')">
+                <el-button
+                    type="default"
+                    :loading="isNotificationsLoading"
+                    :icon="Refresh"
+                    circle
+                    style="flex: none"
+                    @click="refreshNotifications()" />
+            </el-tooltip>
+        </div>
 
-            <el-table-column :label="t('table.notification.date')" prop="created_at" sortable="custom" width="120">
+        <DataTable v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
+            <el-table-column :label="t('table.notification.date')" prop="created_at" :sortable="true" width="120">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
@@ -89,11 +84,7 @@
                             @click="showWorldDialog(scope.row.location)"
                             v-text="t('view.notification.filters.' + scope.row.type)"></span>
                     </el-tooltip>
-                    <el-tooltip
-                        v-else-if="scope.row.link"
-                        placement="top"
-                        :content="scope.row.linkText"
-                        :disabled="hideTooltips">
+                    <el-tooltip v-else-if="scope.row.link" placement="top" :content="scope.row.linkText">
                         <span
                             class="x-link"
                             @click="openNotificationLink(scope.row.link)"
@@ -135,33 +126,35 @@
             <el-table-column :label="t('table.notification.photo')" width="100" prop="photo">
                 <template #default="scope">
                     <template v-if="scope.row.details && scope.row.details.imageUrl">
-                        <el-popover placement="right" width="500px" trigger="click">
+                        <el-popover placement="right" :width="500" trigger="click">
                             <template #reference>
                                 <img
                                     class="x-link"
                                     :src="getSmallThumbnailUrl(scope.row.details.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px" />
+                                    style="flex: none; height: 50px; border-radius: 4px"
+                                    loading="lazy" />
                             </template>
                             <img
-                                v-lazy="scope.row.details.imageUrl"
-                                class="x-link"
-                                style="width: 500px"
-                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)" />
+                                :src="scope.row.details.imageUrl"
+                                :class="['x-link', 'x-popover-image']"
+                                @click="showFullscreenImageDialog(scope.row.details.imageUrl)"
+                                loading="lazy" />
                         </el-popover>
                     </template>
                     <template v-else-if="scope.row.imageUrl">
-                        <el-popover placement="right" width="500px" trigger="click">
+                        <el-popover placement="right" :width="500" trigger="click">
                             <template #reference>
                                 <img
                                     class="x-link"
                                     :src="getSmallThumbnailUrl(scope.row.imageUrl)"
-                                    style="flex: none; height: 50px; border-radius: 4px" />
+                                    style="flex: none; height: 50px; border-radius: 4px"
+                                    loading="lazy" />
                             </template>
                             <img
-                                v-lazy="scope.row.imageUrl"
-                                class="x-link"
-                                style="width: 500px"
-                                @click="showFullscreenImageDialog(scope.row.imageUrl)" />
+                                :src="scope.row.imageUrl"
+                                :class="['x-link', 'x-popover-image']"
+                                @click="showFullscreenImageDialog(scope.row.imageUrl)"
+                                loading="lazy" />
                         </el-popover>
                     </template>
                 </template>
@@ -178,28 +171,12 @@
                             :link="true" />
                         <br v-if="scope.row.details" />
                     </span>
-                    <el-tooltip
+                    <div
                         v-if="
                             scope.row.message &&
                             scope.row.message !== `This is a generated invite to ${scope.row.details?.worldName}`
                         "
-                        placement="top">
-                        <template #content>
-                            <pre
-                                class="extra"
-                                style="
-                                    display: inline-block;
-                                    vertical-align: top;
-                                    font-family: inherit;
-                                    font-size: 12px;
-                                    white-space: pre-wrap;
-                                    margin: 0;
-                                "
-                                >{{ scope.row.message || '-' }}</pre
-                            >
-                        </template>
-                        <div v-text="scope.row.message"></div>
-                    </el-tooltip>
+                        v-text="scope.row.message"></div>
                     <span
                         v-else-if="scope.row.details && scope.row.details.inviteMessage"
                         v-text="scope.row.details.inviteMessage"></span>
@@ -216,86 +193,85 @@
                 <template #default="scope">
                     <template v-if="scope.row.senderUserId !== currentUser.id && !scope.row.$isExpired">
                         <template v-if="scope.row.type === 'friendRequest'">
-                            <el-tooltip placement="top" content="Accept" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Accept">
                                 <el-button
                                     type="text"
-                                    icon="el-icon-check"
+                                    :icon="Check"
                                     style="color: #67c23a"
-                                    size="mini"
+                                    size="small"
+                                    class="button-pd-0"
                                     @click="acceptFriendRequestNotification(scope.row)" />
                             </el-tooltip>
                         </template>
                         <template v-else-if="scope.row.type === 'invite'">
-                            <el-tooltip placement="top" content="Decline with message" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Decline with message">
                                 <el-button
                                     type="text"
-                                    icon="el-icon-chat-line-square"
-                                    size="mini"
+                                    :icon="ChatLineSquare"
+                                    size="small"
+                                    class="button-pd-0"
                                     @click="showSendInviteResponseDialog(scope.row)" />
                             </el-tooltip>
                         </template>
                         <template v-else-if="scope.row.type === 'requestInvite'">
                             <template
                                 v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)">
-                                <el-tooltip placement="top" content="Invite" :disabled="hideTooltips">
+                                <el-tooltip placement="top" content="Invite">
                                     <el-button
                                         type="text"
-                                        icon="el-icon-check"
+                                        :icon="Check"
                                         style="color: #67c23a"
-                                        size="mini"
+                                        size="small"
+                                        class="button-pd-0"
                                         @click="acceptRequestInvite(scope.row)" />
                                 </el-tooltip>
                             </template>
-                            <el-tooltip placement="top" content="Decline with message" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Decline with message">
                                 <el-button
                                     type="text"
-                                    icon="el-icon-chat-line-square"
-                                    size="mini"
-                                    style="margin-left: 5px"
+                                    :icon="ChatLineSquare"
+                                    size="small"
+                                    :class="['button-pd-0', 'ml-5']"
                                     @click="showSendInviteRequestResponseDialog(scope.row)" />
                             </el-tooltip>
                         </template>
 
                         <template v-if="scope.row.responses">
-                            <template v-for="response in scope.row.responses">
-                                <el-tooltip
-                                    placement="top"
-                                    :content="response.text"
-                                    :disabled="hideTooltips"
-                                    :key="response.text">
+                            <template v-for="response in scope.row.responses" :key="response.text">
+                                <el-tooltip placement="top" :content="response.text">
                                     <el-button
                                         v-if="response.icon === 'check'"
                                         type="text"
-                                        icon="el-icon-check"
-                                        size="mini"
-                                        style="margin-left: 5px"
+                                        :icon="Check"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
                                     <el-button
                                         v-else-if="response.icon === 'cancel'"
                                         type="text"
-                                        icon="el-icon-close"
-                                        size="mini"
-                                        style="margin-left: 5px"
+                                        :icon="Close"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
                                     <el-button
                                         v-else-if="response.icon === 'ban'"
                                         type="text"
-                                        icon="el-icon-circle-close"
-                                        size="mini"
-                                        style="margin-left: 5px"
+                                        :icon="CircleClose"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
                                     <el-button
                                         v-else-if="response.icon === 'bell-slash'"
                                         type="text"
-                                        icon="el-icon-bell"
-                                        size="mini"
-                                        style="margin-left: 5px"
+                                        :icon="Bell"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -309,18 +285,18 @@
                                     <el-button
                                         v-else-if="response.icon === 'reply'"
                                         type="text"
-                                        icon="el-icon-chat-line-square"
-                                        size="mini"
-                                        style="margin-left: 5px"
+                                        :icon="ChatLineSquare"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
                                     <el-button
                                         v-else
                                         type="text"
-                                        icon="el-icon-collection-tag"
-                                        size="mini"
-                                        style="margin-left: 5px"
+                                        :icon="CollectionTag"
+                                        size="small"
+                                        :class="['button-pd-0', 'ml-5']"
                                         @click="
                                             sendNotificationResponse(scope.row.id, scope.row.responses, response.type)
                                         " />
@@ -339,39 +315,41 @@
                                 !scope.row.type.includes('moderation.') &&
                                 !scope.row.type.includes('instance.')
                             ">
-                            <el-tooltip placement="top" content="Decline" :disabled="hideTooltips">
+                            <el-tooltip placement="top" content="Decline">
                                 <el-button
                                     v-if="shiftHeld"
                                     style="color: #f56c6c; margin-left: 5px"
                                     type="text"
-                                    icon="el-icon-close"
-                                    size="mini"
+                                    :icon="Close"
+                                    size="small"
+                                    class="button-pd-0"
                                     @click="hideNotification(scope.row)" />
                                 <el-button
                                     v-else
                                     type="text"
-                                    icon="el-icon-close"
-                                    size="mini"
-                                    style="margin-left: 5px"
+                                    :icon="Close"
+                                    size="small"
+                                    :class="['button-pd-0', 'ml-5']"
                                     @click="hideNotificationPrompt(scope.row)" />
                             </el-tooltip>
                         </template>
                     </template>
                     <template v-if="scope.row.type === 'group.queueReady'">
-                        <el-tooltip placement="top" content="Delete log" :disabled="hideTooltips">
+                        <el-tooltip placement="top" content="Delete log">
                             <el-button
                                 v-if="shiftHeld"
                                 style="color: #f56c6c; margin-left: 5px"
                                 type="text"
-                                icon="el-icon-close"
-                                size="mini"
+                                :icon="Close"
+                                size="small"
+                                class="button-pd-0"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
-                                icon="el-icon-delete"
-                                size="mini"
-                                style="margin-left: 5px"
+                                :icon="Delete"
+                                size="small"
+                                :class="['button-pd-0', 'ml-5']"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
                         </el-tooltip>
                     </template>
@@ -383,39 +361,53 @@
                             !scope.row.type.includes('group.') &&
                             !scope.row.type.includes('moderation.')
                         ">
-                        <el-tooltip placement="top" content="Delete log" :disabled="hideTooltips">
+                        <el-tooltip placement="top" content="Delete log">
                             <el-button
                                 v-if="shiftHeld"
                                 style="color: #f56c6c; margin-left: 5px"
                                 type="text"
-                                icon="el-icon-close"
-                                size="mini"
+                                :icon="Close"
+                                size="small"
+                                class="button-pd-0"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
                                 type="text"
-                                icon="el-icon-delete"
-                                size="mini"
-                                style="margin-left: 5px"
+                                :icon="Delete"
+                                size="small"
+                                :class="['button-pd-0', 'ml-5']"
                                 @click="deleteNotificationLogPrompt(scope.row)" />
                         </el-tooltip>
                     </template>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
         <SendInviteResponseDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-response-dialog-visible.sync="sendInviteResponseDialogVisible" />
+            :send-invite-response-dialog-visible="sendInviteResponseDialogVisible" />
         <SendInviteRequestResponseDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-request-response-dialog-visible.sync="sendInviteRequestResponseDialogVisible" />
+            :send-invite-request-response-dialog-visible="sendInviteRequestResponseDialogVisible" />
     </div>
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
+    import {
+        Refresh,
+        Check,
+        ChatLineSquare,
+        Close,
+        CircleClose,
+        Bell,
+        CollectionTag,
+        Delete
+    } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ref } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { friendRequest, notificationRequest, worldRequest } from '../../api';
     import {
         checkCanInvite,
@@ -428,7 +420,6 @@
     import configRepository from '../../service/config';
     import { database } from '../../service/database';
     import {
-        useAppearanceSettingsStore,
         useGalleryStore,
         useGameStore,
         useGroupStore,
@@ -443,7 +434,6 @@
     import SendInviteResponseDialog from './dialogs/SendInviteResponseDialog.vue';
     import Noty from 'noty';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
@@ -458,8 +448,6 @@
     const { currentUser } = storeToRefs(useUserStore());
 
     const { t } = useI18n();
-
-    const { $confirm, $message } = getCurrentInstance().proxy;
 
     const sendInviteResponseDialog = ref({
         messageSlot: {},
@@ -511,18 +499,19 @@
 
     function acceptFriendRequestNotification(row) {
         // FIXME: 메시지 수정
-        $confirm('Continue? Accept Friend Request', 'Confirm', {
+        ElMessageBox.confirm('Continue? Accept Friend Request', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     notificationRequest.acceptFriendRequestNotification({
                         notificationId: row.id
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function showSendInviteResponseDialog(invite) {
@@ -534,11 +523,12 @@
     }
 
     function acceptRequestInvite(row) {
-        $confirm('Continue? Send Invite', 'Confirm', {
+        ElMessageBox.confirm('Continue? Send Invite', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     let currentLocation = lastLocation.value.location;
                     if (lastLocation.value.location === 'traveling') {
@@ -561,7 +551,7 @@
                                     row.senderUserId
                                 )
                                 .then((_args) => {
-                                    $message('Invite sent');
+                                    ElMessage('Invite sent');
                                     notificationRequest.hideNotification({
                                         notificationId: row.id
                                     });
@@ -569,8 +559,8 @@
                                 });
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function showSendInviteRequestResponseDialog(invite) {
@@ -635,16 +625,17 @@
     }
 
     function hideNotificationPrompt(row) {
-        $confirm(`Continue? Decline ${row.type}`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Decline ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     hideNotification(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function deleteNotificationLog(row) {
@@ -655,15 +646,25 @@
     }
 
     function deleteNotificationLogPrompt(row) {
-        $confirm(`Continue? Delete ${row.type}`, 'Confirm', {
+        ElMessageBox.confirm(`Continue? Delete ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteNotificationLog(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>
+
+<style lang="scss" scoped>
+    .button-pd-0 {
+        padding: 0;
+    }
+    .ml-5 {
+        margin-left: 5px !important; // due to ".el-button + .el-button"
+    }
+</style>

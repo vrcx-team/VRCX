@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="discordNamesDialogVisible"
+        :model-value="discordNamesDialogVisible"
         :title="t('dialog.discord_names.header')"
         width="650px"
         @close="closeDialog">
@@ -11,18 +11,18 @@
         <el-input
             v-model="discordNamesContent"
             type="textarea"
-            size="mini"
-            rows="15"
+            size="small"
+            :rows="15"
             resize="none"
             readonly
             style="margin-top: 15px" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
     import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useUserStore } from '../../../stores';
 
     const { t } = useI18n();

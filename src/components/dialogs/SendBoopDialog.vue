@@ -1,7 +1,7 @@
 <!--<template>-->
-<!--    <safe-dialog-->
+<!--    <el-dialog-->
 <!--        class="x-dialog"-->
-<!--        :visible="sendBoopDialog.visible"-->
+<!--        :model-value="sendBoopDialog.visible"-->
 <!--        :title="t('dialog.boop_dialog.header')"-->
 <!--        width="450px"-->
 <!--        @close="closeDialog">-->
@@ -20,7 +20,7 @@
 <!--                    style="height: auto">-->
 <!--                    <template v-if="friend.ref">-->
 <!--                        <div class="avatar" :class="userStatusClass(friend.ref)">-->
-<!--                            <img v-lazy="userImage(friend.ref)" />-->
+<!--                            <img :src="userImage(friend.ref)" loading="lazy">-->
 <!--                        </div>-->
 <!--                        <div class="detail">-->
 <!--                            <span-->
@@ -42,7 +42,7 @@
 <!--                    style="height: auto">-->
 <!--                    <template v-if="friend.ref">-->
 <!--                        <div class="avatar" :class="userStatusClass(friend.ref)">-->
-<!--                            <img v-lazy="userImage(friend.ref)" />-->
+<!--                            <img :src="userImage(friend.ref)" loading="lazy">-->
 <!--                        </div>-->
 <!--                        <div class="detail">-->
 <!--                            <span-->
@@ -64,7 +64,7 @@
 <!--                    style="height: auto">-->
 <!--                    <template v-if="friend.ref">-->
 <!--                        <div class="avatar">-->
-<!--                            <img v-lazy="userImage(friend.ref)" />-->
+<!--                            <img :src="userImage(friend.ref)" loading="lazy">-->
 <!--                        </div>-->
 <!--                        <div class="detail">-->
 <!--                            <span-->
@@ -86,7 +86,7 @@
 <!--                    style="height: auto">-->
 <!--                    <template v-if="friend.ref">-->
 <!--                        <div class="avatar">-->
-<!--                            <img v-lazy="userImage(friend.ref)" />-->
+<!--                            <img :src="userImage(friend.ref)" loading="lazy">-->
 <!--                        </div>-->
 <!--                        <div class="detail">-->
 <!--                            <span-->
@@ -135,7 +135,7 @@
 <!--                        </template>-->
 <!--                        <template v-else>-->
 <!--                            <img-->
-<!--                                v-lazy="image.versions[image.versions.length - 1].file.url"-->
+<!--                                :src="image.versions[image.versions.length - 1].file.url"-->
 <!--                                class="avatar"-->
 <!--                                style="width: 200px; height: 200px" />-->
 <!--                        </template>-->
@@ -162,7 +162,7 @@
 <!--                t('dialog.boop_dialog.send')-->
 <!--            }}</el-button>-->
 <!--        </template>-->
-<!--    </safe-dialog>-->
+<!--    </el-dialog>-->
 <!--</template>-->
 
 <!--<script setup>-->

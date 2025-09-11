@@ -1,42 +1,46 @@
 <template>
-    <safe-dialog
-        ref="worldDialogRef"
+    <el-dialog
+        :z-index="worldDialogIndex"
         class="x-dialog x-world-dialog"
-        :visible.sync="isDialogVisible"
+        v-model="isDialogVisible"
         :show-close="false"
         width="770px">
         <div v-loading="worldDialog.loading">
             <div style="display: flex">
-                <el-popover placement="right" width="500px" trigger="click">
+                <el-popover placement="right" :width="500" trigger="click">
+                    <template #reference>
+                        <img
+                            :src="worldDialog.ref.thumbnailImageUrl"
+                            class="x-link"
+                            style="flex: none; width: 160px; height: 120px; border-radius: 12px"
+                            loading="lazy" />
+                    </template>
                     <img
-                        slot="reference"
-                        :src="worldDialog.ref.thumbnailImageUrl"
-                        class="x-link"
-                        style="flex: none; width: 160px; height: 120px; border-radius: 12px" />
-                    <img
-                        v-lazy="worldDialog.ref.imageUrl"
-                        class="x-link"
-                        style="width: 500px; height: 375px"
-                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)" />
+                        :src="worldDialog.ref.imageUrl"
+                        :class="['x-link', 'x-popover-image']"
+                        @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)"
+                        loading="lazy" />
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div style="flex: 1">
                         <div>
                             <el-popover placement="top" trigger="click">
-                                <span
-                                    slot="reference"
-                                    class="dialog-title"
-                                    style="margin-right: 5px; cursor: pointer"
-                                    @click="copyToClipboard(worldDialog.ref.name)">
-                                    <i
-                                        v-if="
-                                            currentUser.$homeLocation &&
-                                            currentUser.$homeLocation.worldId === worldDialog.id
-                                        "
-                                        class="el-icon-s-home"
-                                        style="margin-right: 5px" />
-                                    {{ worldDialog.ref.name }}
-                                </span>
+                                <template #reference>
+                                    <span
+                                        class="dialog-title"
+                                        style="margin-right: 5px; cursor: pointer"
+                                        @click="copyToClipboard(worldDialog.ref.name)">
+                                        <el-icon
+                                            v-if="
+                                                currentUser.$homeLocation &&
+                                                currentUser.$homeLocation.worldId === worldDialog.id
+                                            "
+                                            style="margin-right: 5px"
+                                            ><HomeFilled
+                                        /></el-icon>
+                                        {{ worldDialog.ref.name }}
+                                    </span>
+                                </template>
                                 <span style="display: block; text-align: center; font-family: monospace">{{
                                     textToHex(worldDialog.ref.name)
                                 }}</span>
@@ -54,7 +58,7 @@
                                 v-if="worldDialog.ref.$isLabs"
                                 type="primary"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.labs') }}
                             </el-tag>
@@ -62,7 +66,7 @@
                                 v-else-if="worldDialog.ref.releaseStatus === 'public'"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.public') }}
                             </el-tag>
@@ -70,7 +74,7 @@
                                 v-else
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.private') }}
                             </el-tag>
@@ -79,12 +83,11 @@
                                 class="x-tag-platform-pc"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 PC<span
                                     v-if="worldDialog.bundleSizes['standalonewindows']"
-                                    class="x-grey"
-                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    :class="['x-grey', 'x-tag-platform-pc', 'x-tag-border-left']">
                                     {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
                                 </span>
                             </el-tag>
@@ -94,12 +97,11 @@
                                 class="x-tag-platform-quest"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 Android<span
                                     v-if="worldDialog.bundleSizes['android']"
-                                    class="x-grey"
-                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    :class="['x-grey', 'x-tag-platform-quest', 'x-tag-border-left']">
                                     {{ worldDialog.bundleSizes['android'].fileSize }}
                                 </span>
                             </el-tag>
@@ -109,12 +111,11 @@
                                 class="x-tag-platform-ios"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 iOS<span
                                     v-if="worldDialog.bundleSizes['ios']"
-                                    class="x-grey"
-                                    style="margin-left: 5px; border-left: inherit; padding-left: 5px">
+                                    :class="['x-grey', 'x-tag-platform-ios', 'x-tag-border-left']">
                                     {{ worldDialog.bundleSizes['ios'].fileSize }}
                                 </span>
                             </el-tag>
@@ -123,7 +124,7 @@
                                 v-if="worldDialog.avatarScalingDisabled"
                                 type="warning"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.avatar_scaling_disabled') }}
                             </el-tag>
@@ -131,7 +132,7 @@
                                 v-if="worldDialog.focusViewDisabled"
                                 type="warning"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.focus_view_disabled') }}
                             </el-tag>
@@ -139,7 +140,7 @@
                                 v-if="worldDialog.ref.unityPackageUrl"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.world.tags.future_proofing') }}
                             </el-tag>
@@ -148,7 +149,7 @@
                                 class="x-link"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px"
                                 @click="openFolderGeneric(worldDialog.cachePath)">
                                 <span v-text="worldDialog.cacheSize" />
@@ -156,31 +157,30 @@
                             </el-tag>
                         </div>
                         <div>
-                            <template v-for="tag in worldDialog.ref.tags">
+                            <template v-for="tag in worldDialog.ref.tags" :key="tag">
                                 <el-tag
                                     v-if="tag.startsWith('content_')"
-                                    :key="tag"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
-                                    <template v-if="tag === 'content_horror'">
+                                    <span v-if="tag === 'content_horror'">
                                         {{ t('dialog.world.tags.content_horror') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_gore'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_gore'">
                                         {{ t('dialog.world.tags.content_gore') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_violence'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_violence'">
                                         {{ t('dialog.world.tags.content_violence') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_adult'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_adult'">
                                         {{ t('dialog.world.tags.content_adult') }}
-                                    </template>
-                                    <template v-else-if="tag === 'content_sex'">
+                                    </span>
+                                    <span v-else-if="tag === 'content_sex'">
                                         {{ t('dialog.world.tags.content_sex') }}
-                                    </template>
-                                    <template v-else>
+                                    </span>
+                                    <span v-else>
                                         {{ tag.replace('content_', '') }}
-                                    </template>
+                                    </span>
                                 </el-tag>
                             </template>
                         </div>
@@ -196,21 +196,19 @@
                         <el-tooltip
                             v-if="worldDialog.inCache"
                             placement="top"
-                            :content="t('dialog.world.actions.delete_cache_tooltip')"
-                            :disabled="hideTooltips">
+                            :content="t('dialog.world.actions.delete_cache_tooltip')">
                             <el-button
-                                icon="el-icon-delete"
+                                :icon="Delete"
+                                size="large"
                                 circle
                                 :disabled="isGameRunning && worldDialog.cacheLocked"
                                 @click="deleteVRChatCache(worldDialog.ref)" />
                         </el-tooltip>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('dialog.world.actions.favorites_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('dialog.world.actions.favorites_tooltip')">
                             <el-button
                                 :type="worldDialog.isFavorite ? 'warning' : 'default'"
-                                :icon="worldDialog.isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'"
+                                :icon="worldDialog.isFavorite ? StarFilled : Star"
+                                size="large"
                                 circle
                                 style="margin-left: 5px"
                                 @click="worldDialogCommand('Add Favorite')" />
@@ -220,122 +218,121 @@
                             size="small"
                             style="margin-left: 5px"
                             @command="worldDialogCommand">
-                            <el-button type="default" icon="el-icon-more" circle />
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item icon="el-icon-refresh" command="Refresh">
-                                    {{ t('dialog.world.actions.refresh') }}
-                                </el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-share" command="Share">
-                                    {{ t('dialog.world.actions.share') }}
-                                </el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-s-flag" command="New Instance" divided>
-                                    {{ t('dialog.world.actions.new_instance') }}
-                                </el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-message" command="New Instance and Self Invite">
-                                    {{
-                                        canOpenInstanceInGame()
-                                            ? t('dialog.world.actions.new_instance_and_open_ingame')
-                                            : t('dialog.world.actions.new_instance_and_self_invite')
-                                    }}
-                                </el-dropdown-item>
-                                <el-dropdown-item
-                                    v-if="
-                                        currentUser.$homeLocation &&
-                                        currentUser.$homeLocation.worldId === worldDialog.id
-                                    "
-                                    icon="el-icon-magic-stick"
-                                    command="Reset Home"
-                                    divided>
-                                    {{ t('dialog.world.actions.reset_home') }}
-                                </el-dropdown-item>
-                                <el-dropdown-item v-else icon="el-icon-s-home" command="Make Home" divided>
-                                    {{ t('dialog.world.actions.make_home') }}
-                                </el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-tickets" command="Previous Instances">
-                                    {{ t('dialog.world.actions.show_previous_instances') }}
-                                </el-dropdown-item>
-                                <template v-if="currentUser.id !== worldDialog.ref.authorId">
-                                    <el-dropdown-item icon="el-icon-picture-outline" command="Previous Images">
-                                        {{ t('dialog.world.actions.show_previous_images') }}
+                            <el-button type="default" :icon="MoreFilled" size="large" circle />
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :icon="Refresh" command="Refresh">
+                                        {{ t('dialog.world.actions.refresh') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item
-                                        :disabled="!worldDialog.hasPersistData"
-                                        icon="el-icon-upload"
-                                        command="Delete Persistent Data">
-                                        {{ t('dialog.world.actions.delete_persistent_data') }}
+                                    <el-dropdown-item :icon="Share" command="Share">
+                                        {{ t('dialog.world.actions.share') }}
                                     </el-dropdown-item>
-                                </template>
-                                <template v-else>
-                                    <el-dropdown-item icon="el-icon-edit" command="Rename">
-                                        {{ t('dialog.world.actions.rename') }}
+                                    <el-dropdown-item :icon="Flag" command="New Instance" divided>
+                                        {{ t('dialog.world.actions.new_instance') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change Description">
-                                        {{ t('dialog.world.actions.change_description') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change Capacity">
-                                        {{ t('dialog.world.actions.change_capacity') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change Recommended Capacity">
-                                        {{ t('dialog.world.actions.change_recommended_capacity') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change YouTube Preview">
-                                        {{ t('dialog.world.actions.change_preview') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change Tags">
-                                        {{ t('dialog.world.actions.change_warnings_settings_tags') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-edit" command="Change Allowed Domains">
-                                        {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-picture-outline" command="Change Image">
-                                        {{ t('dialog.world.actions.change_image') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item
-                                        v-if="worldDialog.ref.unityPackageUrl"
-                                        icon="el-icon-download"
-                                        command="Download Unity Package">
-                                        {{ t('dialog.world.actions.download_package') }}
+                                    <el-dropdown-item :icon="Message" command="New Instance and Self Invite">
+                                        {{
+                                            canOpenInstanceInGame()
+                                                ? t('dialog.world.actions.new_instance_and_open_ingame')
+                                                : t('dialog.world.actions.new_instance_and_self_invite')
+                                        }}
                                     </el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="
-                                            worldDialog.ref?.tags?.includes('system_approved') ||
-                                            worldDialog.ref?.tags?.includes('system_labs')
+                                            currentUser.$homeLocation &&
+                                            currentUser.$homeLocation.worldId === worldDialog.id
                                         "
-                                        icon="el-icon-view"
-                                        command="Unpublish"
+                                        :icon="MagicStick"
+                                        command="Reset Home"
                                         divided>
-                                        {{ t('dialog.world.actions.unpublish') }}
+                                        {{ t('dialog.world.actions.reset_home') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item v-else icon="el-icon-view" command="Publish" divided>
-                                        {{ t('dialog.world.actions.publish_to_labs') }}
+                                    <el-dropdown-item v-else :icon="HomeFilled" command="Make Home" divided>
+                                        {{ t('dialog.world.actions.make_home') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item
-                                        :disabled="!worldDialog.hasPersistData"
-                                        icon="el-icon-upload"
-                                        command="Delete Persistent Data">
-                                        {{ t('dialog.world.actions.delete_persistent_data') }}
+                                    <el-dropdown-item :icon="DataLine" command="Previous Instances">
+                                        {{ t('dialog.world.actions.show_previous_instances') }}
                                     </el-dropdown-item>
-                                    <el-dropdown-item icon="el-icon-delete" command="Delete" style="color: #f56c6c">
-                                        {{ t('dialog.world.actions.delete') }}
-                                    </el-dropdown-item>
-                                </template>
-                            </el-dropdown-menu>
+                                    <template v-if="currentUser.id !== worldDialog.ref.authorId">
+                                        <el-dropdown-item
+                                            :disabled="!worldDialog.hasPersistData"
+                                            :icon="Upload"
+                                            command="Delete Persistent Data">
+                                            {{ t('dialog.world.actions.delete_persistent_data') }}
+                                        </el-dropdown-item>
+                                    </template>
+                                    <template v-else>
+                                        <el-dropdown-item :icon="Edit" command="Rename">
+                                            {{ t('dialog.world.actions.rename') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Description">
+                                            {{ t('dialog.world.actions.change_description') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Capacity">
+                                            {{ t('dialog.world.actions.change_capacity') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Recommended Capacity">
+                                            {{ t('dialog.world.actions.change_recommended_capacity') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change YouTube Preview">
+                                            {{ t('dialog.world.actions.change_preview') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Tags">
+                                            {{ t('dialog.world.actions.change_warnings_settings_tags') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Edit" command="Change Allowed Domains">
+                                            {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Picture" command="Change Image">
+                                            {{ t('dialog.world.actions.change_image') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item
+                                            v-if="worldDialog.ref.unityPackageUrl"
+                                            :icon="Download"
+                                            command="Download Unity Package">
+                                            {{ t('dialog.world.actions.download_package') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item
+                                            v-if="
+                                                worldDialog.ref?.tags?.includes('system_approved') ||
+                                                worldDialog.ref?.tags?.includes('system_labs')
+                                            "
+                                            :icon="View"
+                                            command="Unpublish"
+                                            divided>
+                                            {{ t('dialog.world.actions.unpublish') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item v-else :icon="View" command="Publish" divided>
+                                            {{ t('dialog.world.actions.publish_to_labs') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item
+                                            :disabled="!worldDialog.hasPersistData"
+                                            :icon="Upload"
+                                            command="Delete Persistent Data">
+                                            {{ t('dialog.world.actions.delete_persistent_data') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :icon="Delete" command="Delete" style="color: #f56c6c">
+                                            {{ t('dialog.world.actions.delete') }}
+                                        </el-dropdown-item>
+                                    </template>
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                 </div>
             </div>
-            <el-tabs ref="worldDialogTabsRef" @tab-click="worldDialogTabClick">
+            <el-tabs v-model="worldDialogLastActiveTab" @tab-click="worldDialogTabClick">
                 <el-tab-pane name="Instances" :label="t('dialog.world.instances.header')">
                     <div class="">
-                        <i class="el-icon-user" />
+                        <el-icon><User /></el-icon>
                         {{ t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
-                        <i class="el-icon-user-solid" style="margin-left: 10px" />
+                        <el-icon style="margin-left: 10px"><UserFilled /></el-icon>
                         {{
                             t('dialog.world.instances.private_count', {
                                 count: worldDialog.ref.privateOccupants
                             })
                         }}
-                        <i class="el-icon-check" style="margin-left: 10px" />
+                        <el-icon style="margin-left: 10px"><Check /></el-icon>
                         {{
                             t('dialog.world.instances.capacity_count', {
                                 count: worldDialog.ref.recommendedCapacity,
@@ -358,11 +355,10 @@
                                     style="margin-left: 5px" />
                                 <el-tooltip
                                     placement="top"
-                                    :content="t('dialog.world.instances.refresh_instance_info')"
-                                    :disabled="hideTooltips">
+                                    :content="t('dialog.world.instances.refresh_instance_info')">
                                     <el-button
-                                        size="mini"
-                                        icon="el-icon-refresh"
+                                        size="small"
+                                        :icon="Refresh"
                                         style="margin-left: 5px"
                                         circle
                                         @click="refreshInstancePlayerCount(room.tag)" />
@@ -370,11 +366,10 @@
                                 <el-tooltip
                                     v-if="instanceJoinHistory.get(room.$location.tag)"
                                     placement="top"
-                                    :content="t('dialog.previous_instances.info')"
-                                    :disabled="hideTooltips">
+                                    :content="t('dialog.previous_instances.info')">
                                     <el-button
-                                        size="mini"
-                                        icon="el-icon-s-data"
+                                        size="small"
+                                        :icon="DataLine"
                                         style="margin-left: 5px"
                                         plain
                                         circle
@@ -395,7 +390,7 @@
                                         @click="showUserDialog(room.$location.userId)">
                                         <template v-if="room.$location.user">
                                             <div class="avatar" :class="userStatusClass(room.$location.user)">
-                                                <img v-lazy="userImage(room.$location.user, true)" />
+                                                <img :src="userImage(room.$location.user, true)" loading="lazy" />
                                             </div>
                                             <div class="detail">
                                                 <span
@@ -415,7 +410,7 @@
                                         class="x-friend-item x-friend-item-border"
                                         @click="showUserDialog(user.id)">
                                         <div class="avatar" :class="userStatusClass(user)">
-                                            <img v-lazy="userImage(user, true)" />
+                                            <img :src="userImage(user, true)" loading="lazy" />
                                         </div>
                                         <div class="detail">
                                             <span
@@ -423,7 +418,9 @@
                                                 :style="{ color: user.$userColour }"
                                                 v-text="user.displayName" />
                                             <span v-if="user.location === 'traveling'" class="extra">
-                                                <i class="el-icon-loading" style="margin-right: 5px" />
+                                                <el-icon class="is-loading" style="margin-right: 3px"
+                                                    ><Loading
+                                                /></el-icon>
                                                 <Timer :epoch="user.$travelingToTime" />
                                             </span>
                                             <span v-else class="extra">
@@ -450,7 +447,7 @@
                                     :rows="2"
                                     :autosize="{ minRows: 1, maxRows: 20 }"
                                     :placeholder="t('dialog.world.info.memo_placeholder')"
-                                    size="mini"
+                                    size="small"
                                     resize="none"
                                     @change="onWorldMemoChange" />
                             </div>
@@ -464,27 +461,22 @@
                                     <span class="extra" style="display: inline">
                                         {{ worldDialog.id }}
                                     </span>
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.world.info.id_tooltip')"
-                                        :disabled="hideTooltips">
-                                        <el-dropdown
-                                            trigger="click"
-                                            size="mini"
-                                            style="margin-left: 5px"
-                                            @click.native.stop>
-                                            <el-button type="default" icon="el-icon-s-order" size="mini" circle />
-                                            <el-dropdown-menu slot="dropdown">
-                                                <el-dropdown-item @click.native="copyWorldId()">
-                                                    {{ t('dialog.world.info.copy_id') }}
-                                                </el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyWorldUrl()">
-                                                    {{ t('dialog.world.info.copy_url') }}
-                                                </el-dropdown-item>
-                                                <el-dropdown-item @click.native="copyWorldName()">
-                                                    {{ t('dialog.world.info.copy_name') }}
-                                                </el-dropdown-item>
-                                            </el-dropdown-menu>
+                                    <el-tooltip placement="top" :content="t('dialog.world.info.id_tooltip')">
+                                        <el-dropdown trigger="click" size="small" style="margin-left: 5px" @click.stop>
+                                            <el-button type="default" :icon="CopyDocument" size="small" circle />
+                                            <template #dropdown>
+                                                <el-dropdown-menu>
+                                                    <el-dropdown-item @click="copyWorldId()">
+                                                        {{ t('dialog.world.info.copy_id') }}
+                                                    </el-dropdown-item>
+                                                    <el-dropdown-item @click="copyWorldUrl()">
+                                                        {{ t('dialog.world.info.copy_url') }}
+                                                    </el-dropdown-item>
+                                                    <el-dropdown-item @click="copyWorldName()">
+                                                        {{ t('dialog.world.info.copy_name') }}
+                                                    </el-dropdown-item>
+                                                </el-dropdown-menu>
+                                            </template>
                                         </el-dropdown>
                                     </el-tooltip>
                                 </div>
@@ -613,13 +605,13 @@
                                     {{ t('dialog.world.info.publication_date') }}
                                 </span>
                                 <el-tooltip v-if="isTimeInLabVisible" placement="top" style="margin-left: 5px">
-                                    <template slot="content">
+                                    <template #content>
                                         <span>
                                             {{ t('dialog.world.info.time_in_labs') }}
                                             {{ timeInLab }}
                                         </span>
                                     </template>
-                                    <i class="el-icon-arrow-down" />
+                                    <el-icon><ArrowDown /></el-icon>
                                 </el-tooltip>
                                 <span class="extra">
                                     {{ formatDateFilter(worldDialog.ref.publicationDate, 'long') }}
@@ -667,31 +659,20 @@
                             <div class="detail">
                                 <span class="name">
                                     {{ t('dialog.world.info.last_visited') }}
-                                    <el-tooltip
-                                        v-if="!hideTooltips"
-                                        placement="top"
-                                        style="margin-left: 5px"
-                                        :content="t('dialog.world.info.accuracy_notice')"
-                                        ><i class="el-icon-warning"></i
+                                    <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')"
+                                        ><el-icon style="margin-left: 3px"><Warning /></el-icon
                                     ></el-tooltip>
                                 </span>
                                 <span class="extra">{{ formatDateFilter(worldDialog.lastVisit, 'long') }}</span>
                             </div>
                         </div>
-                        <el-tooltip
-                            :disabled="hideTooltips"
-                            placement="top"
-                            :content="t('dialog.user.info.open_previous_instance')">
+                        <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesWorldDialog(worldDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.world.info.visit_count') }}
-                                        <el-tooltip
-                                            v-if="!hideTooltips"
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.world.info.accuracy_notice')"
-                                            ><i class="el-icon-warning"></i
+                                        <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')"
+                                            ><el-icon style="margin-left: 3px"><Warning /></el-icon
                                         ></el-tooltip>
                                     </span>
                                     <span class="extra">
@@ -704,12 +685,8 @@
                             <div class="detail">
                                 <span class="name"
                                     >{{ t('dialog.world.info.time_spent') }}
-                                    <el-tooltip
-                                        v-if="!hideTooltips"
-                                        placement="top"
-                                        style="margin-left: 5px"
-                                        :content="t('dialog.world.info.accuracy_notice')">
-                                        <i class="el-icon-warning"></i>
+                                    <el-tooltip placement="top" :content="t('dialog.world.info.accuracy_notice')">
+                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                     </el-tooltip>
                                 </span>
                                 <span class="extra">
@@ -722,19 +699,28 @@
                 <el-tab-pane name="JSON" :label="t('dialog.world.json.header')" style="max-height: 50vh" lazy>
                     <el-button
                         type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
+                        size="small"
+                        :icon="Refresh"
                         circle
                         @click="refreshWorldDialogTreeData"></el-button>
                     <el-button
                         type="default"
-                        size="mini"
-                        icon="el-icon-download"
+                        size="small"
+                        :icon="Download"
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)"></el-button>
+                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
+                        <template #default="{ data }">
+                            <span>
+                                <span style="font-weight: bold; margin-right: 5px" v-text="data.key"></span>
+                                <span v-if="!data.children" v-text="data.value"></span>
+                            </span>
+                        </template>
+                    </el-tree>
+                    <br />
                     <el-tree
-                        v-if="Object.keys(worldDialog.fileAnalysis).length > 0"
+                        v-if="worldDialog.fileAnalysis.length > 0"
                         :data="worldDialog.fileAnalysis"
                         style="margin-top: 5px; font-size: 12px">
                         <template #default="scope">
@@ -744,49 +730,65 @@
                             </span>
                         </template>
                     </el-tree>
-                    <el-tree :data="treeData" style="margin-top: 5px; font-size: 12px">
-                        <template #default="{ data }">
-                            <span>
-                                <span style="font-weight: bold; margin-right: 5px" v-text="data.key"></span>
-                                <span v-if="!data.children" v-text="data.value"></span>
-                            </span>
-                        </template>
-                    </el-tree>
                 </el-tab-pane>
             </el-tabs>
         </div>
 
-        <!-- Nested -->
-        <WorldAllowedDomainsDialog :world-allowed-domains-dialog.sync="worldAllowedDomainsDialog" />
-        <SetWorldTagsDialog
-            :is-set-world-tags-dialog-visible.sync="isSetWorldTagsDialogVisible"
-            :old-tags="worldDialog.ref?.tags"
-            :world-id="worldDialog.id"
-            :is-world-dialog-visible="worldDialog.visible" />
-        <PreviousInstancesWorldDialog :previous-instances-world-dialog.sync="previousInstancesWorldDialog" />
-        <NewInstanceDialog
-            :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
-            :last-location="lastLocation" />
-        <ChangeWorldImageDialog
-            :change-world-image-dialog-visible.sync="changeWorldImageDialogVisible"
-            :previous-images-file-id="previousImagesFileId"
-            :world-dialog="worldDialog"
-            @refresh="displayPreviousImages" />
-        <PreviousImagesDialog />
-    </safe-dialog>
+        <template v-if="isDialogVisible">
+            <WorldAllowedDomainsDialog :world-allowed-domains-dialog="worldAllowedDomainsDialog" />
+            <SetWorldTagsDialog
+                :is-set-world-tags-dialog-visible="isSetWorldTagsDialogVisible"
+                :old-tags="worldDialog.ref?.tags"
+                :world-id="worldDialog.id"
+                :is-world-dialog-visible="worldDialog.visible" />
+            <PreviousInstancesWorldDialog v-model:previous-instances-world-dialog="previousInstancesWorldDialog" />
+            <NewInstanceDialog
+                :new-instance-dialog-location-tag="newInstanceDialogLocationTag"
+                :last-location="lastLocation" />
+            <ChangeWorldImageDialog
+                :change-world-image-dialog-visible="changeWorldImageDialogVisible"
+                v-model:previousImageUrl="previousImageUrl" />
+        </template>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { computed, ref, watch, nextTick, getCurrentInstance } from 'vue';
+    import {
+        HomeFilled,
+        Delete,
+        MoreFilled,
+        Refresh,
+        Share,
+        Flag,
+        Message,
+        MagicStick,
+        Picture,
+        Upload,
+        Edit,
+        Download,
+        View,
+        DataLine,
+        CopyDocument,
+        Warning,
+        Star,
+        StarFilled,
+        User,
+        Check,
+        Loading,
+        ArrowDown,
+        UserFilled
+    } from '@element-plus/icons-vue';
+
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { computed, ref, watch, nextTick, defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
-    import { favoriteRequest, imageRequest, miscRequest, userRequest, worldRequest } from '../../../api';
+    import { useI18n } from 'vue-i18n';
+    import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { database } from '../../../service/database.js';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         buildTreeData,
         downloadAndSaveJson,
-        extractFileId,
         openExternalLink,
         refreshInstancePlayerCount,
         replaceVrcPackageUrl,
@@ -811,28 +813,27 @@
         useUserStore,
         useWorldStore
     } from '../../../stores';
-    import NewInstanceDialog from '../NewInstanceDialog.vue';
-    import PreviousImagesDialog from '../PreviousImagesDialog.vue';
-    import PreviousInstancesWorldDialog from '../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue';
-    import ChangeWorldImageDialog from './ChangeWorldImageDialog.vue';
-    import SetWorldTagsDialog from './SetWorldTagsDialog.vue';
-    import WorldAllowedDomainsDialog from './WorldAllowedDomainsDialog.vue';
 
-    const { proxy } = getCurrentInstance();
+    const NewInstanceDialog = defineAsyncComponent(() => import('../NewInstanceDialog.vue'));
+    const PreviousInstancesWorldDialog = defineAsyncComponent(
+        () => import('../PreviousInstancesDialog/PreviousInstancesWorldDialog.vue')
+    );
+    const ChangeWorldImageDialog = defineAsyncComponent(() => import('./ChangeWorldImageDialog.vue'));
+    const SetWorldTagsDialog = defineAsyncComponent(() => import('./SetWorldTagsDialog.vue'));
+    const WorldAllowedDomainsDialog = defineAsyncComponent(() => import('./WorldAllowedDomainsDialog.vue'));
 
-    const { hideTooltips, isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
+    const { isAgeGatedInstancesVisible } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser, userDialog } = storeToRefs(useUserStore());
-    const { worldDialog, cachedWorlds } = storeToRefs(useWorldStore());
-    const { showWorldDialog } = useWorldStore();
+    const { worldDialog } = storeToRefs(useWorldStore());
+    const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { lastLocation } = storeToRefs(useLocationStore());
     const { newInstanceSelfInvite, canOpenInstanceInGame } = useInviteStore();
     const { showFavoriteDialog } = useFavoriteStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { instanceJoinHistory } = storeToRefs(useInstanceStore());
     const { isGameRunning } = storeToRefs(useGameStore());
-    const { previousImagesDialogVisible, previousImagesTable } = storeToRefs(useGalleryStore());
-    const { checkPreviousImageAvailable, showFullscreenImageDialog } = useGalleryStore();
+    const { showFullscreenImageDialog } = useGalleryStore();
     const { t } = useI18n();
 
     const treeData = ref([]);
@@ -849,7 +850,7 @@
     });
     const newInstanceDialogLocationTag = ref('');
     const changeWorldImageDialogVisible = ref(false);
-    const previousImagesFileId = ref('');
+    const previousImageUrl = ref('');
 
     const isDialogVisible = computed({
         get() {
@@ -926,8 +927,7 @@
         return platforms.join(', ');
     });
 
-    const worldDialogRef = ref(null);
-    const worldDialogTabsRef = ref(null);
+    const worldDialogIndex = ref(2000);
     const worldDialogLastActiveTab = ref('Instances');
 
     watch(
@@ -935,11 +935,10 @@
         () => {
             if (worldDialog.value.visible) {
                 nextTick(() => {
-                    if (worldDialogRef.value?.$el) {
-                        adjustDialogZ(worldDialogRef.value.$el);
-                    }
+                    worldDialogIndex.value = getNextDialogIndex();
                 });
-                !worldDialog.value.loading && toggleLastActiveTab();
+                handleDialogOpen();
+                !worldDialog.value.loading && loadLastActiveTab();
             }
         }
     );
@@ -950,52 +949,26 @@
         }
     }
 
-    function toggleLastActiveTab() {
-        let tabName = worldDialogTabsRef.value.currentName;
-        if (tabName === '0') {
-            tabName = worldDialogLastActiveTab.value;
-            worldDialogTabsRef.value.setCurrentName(tabName);
-        }
-        handleWorldDialogTab(tabName);
-        worldDialogLastActiveTab.value = tabName;
+    function loadLastActiveTab() {
+        handleWorldDialogTab(worldDialogLastActiveTab.value);
     }
 
     function worldDialogTabClick(obj) {
-        if (worldDialogLastActiveTab.value === obj.name) {
+        if (obj.props.name === worldDialogLastActiveTab.value) {
             return;
         }
-        handleWorldDialogTab(obj.name);
-        worldDialogLastActiveTab.value = obj.name;
+        handleWorldDialogTab(obj.props.name);
+        worldDialogLastActiveTab.value = obj.props.name;
     }
 
-    function displayPreviousImages(command) {
-        previousImagesFileId.value = '';
-        previousImagesTable.value = [];
-        const { imageUrl } = worldDialog.value.ref;
+    function handleDialogOpen() {
+        treeData.value = [];
+    }
 
-        const fileId = extractFileId(imageUrl);
-        if (!fileId) {
-            return;
-        }
-        const params = {
-            fileId
-        };
-        if (command === 'Display') {
-            previousImagesDialogVisible.value = true;
-        }
-        if (command === 'Change') {
-            changeWorldImageDialogVisible.value = true;
-        }
-        imageRequest.getWorldImages(params).then((args) => {
-            previousImagesFileId.value = args.json.id;
-            const images = [];
-            args.json.versions.forEach((item) => {
-                if (!item.deleted) {
-                    images.unshift(item);
-                }
-            });
-            checkPreviousImageAvailable(images);
-        });
+    function showChangeAvatarImageDialog() {
+        const { imageUrl } = worldDialog.value.ref;
+        previousImageUrl.value = imageUrl;
+        changeWorldImageDialogVisible.value = true;
     }
 
     function showNewInstanceDialog(tag) {
@@ -1017,11 +990,12 @@
             case 'Unpublish':
             case 'Delete Persistent Data':
             case 'Delete':
-                proxy.$confirm(`Continue? ${command}`, 'Confirm', {
+                ElMessageBox.confirm(`Continue? ${command}`, 'Confirm', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
-                    type: 'info',
-                    callback: (action) => {
+                    type: 'info'
+                })
+                    .then((action) => {
                         if (action !== 'confirm') {
                             return;
                         }
@@ -1037,7 +1011,7 @@
                                         homeLocation: D.id
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'Home world updated',
                                             type: 'success'
                                         });
@@ -1050,7 +1024,7 @@
                                         homeLocation: ''
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'Home world has been reset',
                                             type: 'success'
                                         });
@@ -1063,7 +1037,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'World has been published',
                                             type: 'success'
                                         });
@@ -1076,7 +1050,7 @@
                                         worldId: D.id
                                     })
                                     .then((args) => {
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'World has been unpublished',
                                             type: 'success'
                                         });
@@ -1092,7 +1066,7 @@
                                         if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
                                             worldDialog.value.hasPersistData = false;
                                         }
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'Persistent data has been deleted',
                                             type: 'success'
                                         });
@@ -1106,10 +1080,10 @@
                                     })
                                     .then((args) => {
                                         const { json } = args;
-                                        cachedWorlds.value.delete(json.id);
+                                        cachedWorlds.delete(json.id);
                                         if (worldDialog.value.ref.authorId === json.authorId) {
                                             const map = new Map();
-                                            for (const ref of cachedWorlds.value.values()) {
+                                            for (const ref of cachedWorlds.values()) {
                                                 if (ref.authorId === json.authorId) {
                                                     map.set(ref.id, ref);
                                                 }
@@ -1117,7 +1091,7 @@
                                             const array = Array.from(map.values());
                                             userDialog.value.worlds = array;
                                         }
-                                        proxy.$message({
+                                        ElMessage({
                                             message: 'World has been deleted',
                                             type: 'success'
                                         });
@@ -1126,8 +1100,8 @@
                                     });
                                 break;
                         }
-                    }
-                });
+                    })
+                    .catch(() => {});
                 break;
             case 'Previous Instances':
                 showPreviousInstancesWorldDialog(D.ref);
@@ -1145,10 +1119,7 @@
                 openExternalLink(replaceVrcPackageUrl(worldDialog.value.ref.unityPackageUrl));
                 break;
             case 'Change Image':
-                displayPreviousImages('Change');
-                break;
-            case 'Previous Images':
-                displayPreviousImages('Display');
+                showChangeAvatarImageDialog();
                 break;
             case 'Refresh':
                 showWorldDialog(D.id);
@@ -1183,85 +1154,92 @@
     }
 
     function promptRenameWorld(world) {
-        proxy.$prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
+        ElMessageBox.prompt(t('prompt.rename_world.description'), t('prompt.rename_world.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.rename_world.ok'),
             cancelButtonText: t('prompt.rename_world.cancel'),
             inputValue: world.ref.name,
-            inputErrorMessage: t('prompt.rename_world.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.name) {
+            inputErrorMessage: t('prompt.rename_world.input_error')
+        })
+            .then(({ value }) => {
+                if (value && value !== world.ref.name) {
                     worldRequest
                         .saveWorld({
                             id: world.id,
-                            name: instance.inputValue
+                            name: value
                         })
                         .then((args) => {
-                            proxy.$message({
+                            ElMessage({
                                 message: t('prompt.rename_world.message.success'),
                                 type: 'success'
                             });
                             return args;
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function promptChangeWorldDescription(world) {
-        proxy.$prompt(t('prompt.change_world_description.description'), t('prompt.change_world_description.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.change_world_description.ok'),
-            cancelButtonText: t('prompt.change_world_description.cancel'),
-            inputValue: world.ref.description,
-            inputErrorMessage: t('prompt.change_world_description.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.description) {
+        ElMessageBox.prompt(
+            t('prompt.change_world_description.description'),
+            t('prompt.change_world_description.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.change_world_description.ok'),
+                cancelButtonText: t('prompt.change_world_description.cancel'),
+                inputValue: world.ref.description,
+                inputErrorMessage: t('prompt.change_world_description.input_error')
+            }
+        )
+            .then(({ value }) => {
+                if (value && value !== world.ref.description) {
                     worldRequest
                         .saveWorld({
                             id: world.id,
-                            description: instance.inputValue
+                            description: value
                         })
                         .then((args) => {
-                            proxy.$message({
+                            ElMessage({
                                 message: t('prompt.change_world_description.message.success'),
                                 type: 'success'
                             });
                             return args;
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function promptChangeWorldCapacity(world) {
-        proxy.$prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
+        ElMessageBox.prompt(t('prompt.change_world_capacity.description'), t('prompt.change_world_capacity.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.change_world_capacity.ok'),
             cancelButtonText: t('prompt.change_world_capacity.cancel'),
             inputValue: world.ref.capacity,
             inputPattern: /\d+$/,
-            inputErrorMessage: t('prompt.change_world_capacity.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.capacity) {
+            inputErrorMessage: t('prompt.change_world_capacity.input_error')
+        })
+            .then(({ value }) => {
+                if (value && value !== world.ref.capacity) {
                     worldRequest
                         .saveWorld({
                             id: world.id,
-                            capacity: Number(instance.inputValue)
+                            capacity: Number(value)
                         })
                         .then((args) => {
-                            proxy.$message({
+                            ElMessage({
                                 message: t('prompt.change_world_capacity.message.success'),
                                 type: 'success'
                             });
                             return args;
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function promptChangeWorldRecommendedCapacity(world) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.change_world_recommended_capacity.description'),
             t('prompt.change_world_recommended_capacity.header'),
             {
@@ -1270,63 +1248,66 @@
                 cancelButtonText: t('prompt.change_world_capacity.cancel'),
                 inputValue: world.ref.recommendedCapacity,
                 inputPattern: /\d+$/,
-                inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue !== world.ref.recommendedCapacity) {
-                        worldRequest
-                            .saveWorld({
-                                id: world.id,
-                                recommendedCapacity: Number(instance.inputValue)
-                            })
-                            .then((args) => {
-                                proxy.$message({
-                                    message: t('prompt.change_world_recommended_capacity.message.success'),
-                                    type: 'success'
-                                });
-                                return args;
-                            });
-                    }
-                }
+                inputErrorMessage: t('prompt.change_world_recommended_capacity.input_error')
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value && value !== world.ref.recommendedCapacity) {
+                    worldRequest
+                        .saveWorld({
+                            id: world.id,
+                            recommendedCapacity: Number(value)
+                        })
+                        .then((args) => {
+                            ElMessage({
+                                message: t('prompt.change_world_recommended_capacity.message.success'),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                }
+            })
+            .catch(() => {});
     }
 
     function promptChangeWorldYouTubePreview(world) {
-        proxy.$prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
+        ElMessageBox.prompt(t('prompt.change_world_preview.description'), t('prompt.change_world_preview.header'), {
             distinguishCancelAndClose: true,
             confirmButtonText: t('prompt.change_world_preview.ok'),
             cancelButtonText: t('prompt.change_world_preview.cancel'),
             inputValue: world.ref.previewYoutubeId,
-            inputErrorMessage: t('prompt.change_world_preview.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue !== world.ref.previewYoutubeId) {
-                    if (instance.inputValue.length > 11) {
+            inputErrorMessage: t('prompt.change_world_preview.input_error')
+        })
+            .then(({ value }) => {
+                if (value && value !== world.ref.previewYoutubeId) {
+                    let processedValue = value;
+                    if (value.length > 11) {
                         try {
-                            const url = new URL(instance.inputValue);
+                            const url = new URL(value);
                             const id1 = url.pathname;
                             const id2 = url.searchParams.get('v');
                             if (id1 && id1.length === 12) {
-                                instance.inputValue = id1.substring(1, 12);
+                                processedValue = id1.substring(1, 12);
                             }
                             if (id2 && id2.length === 11) {
-                                instance.inputValue = id2;
+                                processedValue = id2;
                             }
                         } catch {
-                            proxy.$message({
+                            ElMessage({
                                 message: t('prompt.change_world_preview.message.error'),
                                 type: 'error'
                             });
                             return;
                         }
                     }
-                    if (instance.inputValue !== world.ref.previewYoutubeId) {
+                    if (processedValue !== world.ref.previewYoutubeId) {
                         worldRequest
                             .saveWorld({
                                 id: world.id,
-                                previewYoutubeId: instance.inputValue
+                                previewYoutubeId: processedValue
                             })
                             .then((args) => {
-                                proxy.$message({
+                                ElMessage({
                                     message: t('prompt.change_world_preview.message.success'),
                                     type: 'success'
                                 });
@@ -1334,8 +1315,8 @@
                             });
                     }
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
     function onWorldMemoChange() {
         const worldId = worldDialog.value.id;
@@ -1365,14 +1346,14 @@
         navigator.clipboard
             .writeText(worldDialog.value.id)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'World ID copied to clipboard',
                     type: 'success'
                 });
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                proxy.$message({
+                ElMessage({
                     message: 'Copy failed',
                     type: 'error'
                 });
@@ -1382,14 +1363,14 @@
         navigator.clipboard
             .writeText(`https://vrchat.com/home/world/${worldDialog.value.id}`)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'World URL copied to clipboard',
                     type: 'success'
                 });
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                proxy.$message({
+                ElMessage({
                     message: 'Copy failed',
                     type: 'error'
                 });
@@ -1399,14 +1380,14 @@
         navigator.clipboard
             .writeText(worldDialog.value.ref.name)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'World name copied to clipboard',
                     type: 'success'
                 });
             })
             .catch((err) => {
                 console.error('copy failed:', err);
-                proxy.$message({
+                ElMessage({
                     message: 'Copy failed',
                     type: 'error'
                 });

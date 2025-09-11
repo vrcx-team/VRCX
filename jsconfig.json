@@ -10,7 +10,8 @@
         "skipLibCheck": true,
         "moduleResolution": "bundler",
         "forceConsistentCasingInFileNames": true,
-        "lib": ["esnext", "dom", "dom.iterable"]
+        "lib": ["esnext", "dom", "dom.iterable"],
+        "types": ["vite/client", "element-plus/global", "node"]
     },
     "include": ["src/**/*", "src-electron/**/*"],
     "exclude": ["node_modules", "build"]

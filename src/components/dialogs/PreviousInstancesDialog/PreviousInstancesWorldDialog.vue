@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
-        ref="previousInstancesWorldDialogRef"
-        :visible.sync="isVisible"
+    <el-dialog
+        :z-index="previousInstancesWorldDialogIndex"
+        v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
@@ -12,7 +12,7 @@
                 :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="display: block; width: 150px"></el-input>
         </div>
-        <data-tables v-loading="loading" v-bind="previousInstancesWorldDialogTable" style="margin-top: 10px">
+        <DataTable v-loading="loading" v-bind="previousInstancesWorldDialogTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
@@ -43,35 +43,41 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-s-data"
-                        size="mini"
+                        :icon="DataLine"
+                        size="small"
+                        class="button-pd-0"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
+                        :icon="Close"
+                        size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogWorldInstance(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
+                        :icon="Close"
+                        size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogWorldInstancePrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { DataLine, Close } from '@element-plus/icons-vue';
+
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { computed, nextTick, reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         compareByCreatedAt,
         parseLocation,
         removeFromArray,
@@ -80,7 +86,6 @@
     } from '../../../shared/utils';
     import { useInstanceStore, useUiStore, useUserStore } from '../../../stores';
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
     const props = defineProps({
@@ -100,7 +105,7 @@
         filters: [{ prop: 'groupName', value: '' }],
         tableProps: {
             stripe: true,
-            size: 'mini',
+            size: 'small',
             defaultSort: { prop: 'created_at', order: 'descending' }
         },
         pageSize: 10,
@@ -111,7 +116,7 @@
         }
     });
     const loading = ref(false);
-    const previousInstancesWorldDialogRef = ref(null);
+    const previousInstancesWorldDialogIndex = ref(2000);
 
     const isVisible = computed({
         get: () => props.previousInstancesWorldDialog.visible,
@@ -145,16 +150,17 @@
     }
 
     function deleteGameLogWorldInstancePrompt(row) {
-        proxy.$confirm('Continue? Delete GameLog Instance', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteGameLogWorldInstance(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     watch(
@@ -162,10 +168,16 @@
         () => {
             if (props.previousInstancesWorldDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(previousInstancesWorldDialogRef.value.$el);
+                    previousInstancesWorldDialogIndex.value = getNextDialogIndex();
                 });
                 refreshPreviousInstancesWorldTable();
             }
         }
     );
 </script>
+
+<style scoped>
+    .button-pd-0 {
+        padding: 0;
+    }
+</style>

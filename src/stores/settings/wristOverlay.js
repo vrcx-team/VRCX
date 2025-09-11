@@ -10,9 +10,9 @@ export const useWristOverlaySettingsStore = defineStore(
             hidePrivateFromFeed: false,
             openVRAlways: false,
             overlaybutton: false,
-            overlayHand: 0,
+            overlayHand: '0',
             vrBackgroundEnabled: false,
-            minimalFeed: false,
+            minimalFeed: true,
             hideDevicesFromFeed: false,
             vrOverlayCpuUsage: false,
             hideUptimeFromFeed: false,
@@ -39,7 +39,7 @@ export const useWristOverlaySettingsStore = defineStore(
                 configRepository.getBool('VRCX_overlaybutton', false),
                 configRepository.getInt('VRCX_overlayHand', 0),
                 configRepository.getBool('VRCX_vrBackgroundEnabled', false),
-                configRepository.getBool('VRCX_minimalFeed', false),
+                configRepository.getBool('VRCX_minimalFeed', true),
                 configRepository.getBool('VRCX_hideDevicesFromFeed', false),
                 configRepository.getBool('VRCX_vrOverlayCpuUsage', false),
                 configRepository.getBool('VRCX_hideUptimeFromFeed', false),
@@ -50,7 +50,7 @@ export const useWristOverlaySettingsStore = defineStore(
             state.hidePrivateFromFeed = hidePrivateFromFeed;
             state.openVRAlways = openVRAlways;
             state.overlaybutton = overlaybutton;
-            state.overlayHand = overlayHand;
+            state.overlayHand = String(overlayHand);
             state.vrBackgroundEnabled = vrBackgroundEnabled;
             state.minimalFeed = minimalFeed;
             state.hideDevicesFromFeed = hideDevicesFromFeed;
@@ -94,11 +94,12 @@ export const useWristOverlaySettingsStore = defineStore(
          * @param {string} value
          */
         function setOverlayHand(value) {
-            state.overlayHand = parseInt(value, 10);
-            if (isNaN(state.overlayHand)) {
-                state.overlayHand = 0;
+            state.overlayHand = value;
+            let overlayHandInt = parseInt(value, 10);
+            if (isNaN(overlayHandInt)) {
+                overlayHandInt = 0;
             }
-            configRepository.setInt('VRCX_overlayHand', value);
+            configRepository.setInt('VRCX_overlayHand', overlayHandInt);
         }
         function setVrBackgroundEnabled() {
             state.vrBackgroundEnabled = !state.vrBackgroundEnabled;

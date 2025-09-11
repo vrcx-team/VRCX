@@ -1,8 +1,8 @@
 <template>
-    <safe-dialog
-        ref="dialogRef"
-        :visible="previousInstancesInfoDialogVisible"
-        :title="$t('dialog.previous_instances.info')"
+    <el-dialog
+        :z-index="previousInstancesInfoDialogIndex"
+        :model-value="previousInstancesInfoDialogVisible"
+        :title="t('dialog.previous_instances.info')"
         width="800px"
         :fullscreen="fullscreen"
         destroy-on-close
@@ -11,12 +11,12 @@
             <Location :location="location.tag" style="font-size: 14px" />
             <el-input
                 v-model="dataTable.filters[0].value"
-                :placeholder="$t('dialog.previous_instances.search_placeholder')"
+                :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="width: 150px"
                 clearable></el-input>
         </div>
-        <data-tables v-loading="loading" v-bind="dataTable" style="margin-top: 10px">
-            <el-table-column :label="$t('table.previous_instances.date')" prop="created_at" sortable width="110">
+        <DataTable v-loading="loading" v-bind="dataTable" style="margin-top: 10px">
+            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="110">
                 <template #default="scope">
                     <el-tooltip placement="left">
                         <template #content>
@@ -26,7 +26,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.gameLog.icon')" prop="isFriend" width="70" align="center">
+            <el-table-column :label="t('table.gameLog.icon')" prop="isFriend" width="70" align="center">
                 <template #default="scope">
                     <template v-if="gameLogIsFriend(scope.row)">
                         <el-tooltip v-if="gameLogIsFavorite(scope.row)" placement="top" content="Favorite">
@@ -36,33 +36,35 @@
                             <span>💚</span>
                         </el-tooltip>
                     </template>
+                    <span v-else></span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.display_name')" prop="displayName" sortable>
+            <el-table-column :label="t('table.previous_instances.display_name')" prop="displayName" sortable>
                 <template #default="scope">
                     <span class="x-link" @click="lookupUser(scope.row)">{{ scope.row.displayName }}</span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.time')" prop="time" width="100" sortable>
+            <el-table-column :label="t('table.previous_instances.time')" prop="time" width="100" sortable>
                 <template #default="scope">
                     <span>{{ scope.row.timer }}</span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.count')" prop="count" width="100" sortable>
+            <el-table-column :label="t('table.previous_instances.count')" prop="count" width="100" sortable>
                 <template #default="scope">
                     <span>{{ scope.row.count }}</span>
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
     import { ref, watch, nextTick } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         compareByCreatedAt,
         parseLocation,
         timeToText,
@@ -74,8 +76,9 @@
     const { previousInstancesInfoDialogVisible, previousInstancesInfoDialogInstanceId } =
         storeToRefs(useInstanceStore());
     const { gameLogIsFriend, gameLogIsFavorite } = useGameLogStore();
+    const { t } = useI18n();
 
-    const dialogRef = ref(null);
+    const previousInstancesInfoDialogIndex = ref(2000);
 
     const loading = ref(false);
     const location = ref({
@@ -111,7 +114,7 @@
         ],
         tableProps: {
             stripe: true,
-            size: 'mini',
+            size: 'small',
             defaultSort: {
                 prop: 'created_at',
                 order: 'descending'
@@ -139,7 +142,7 @@
     );
 
     function init() {
-        adjustDialogZ(dialogRef.value.$el);
+        previousInstancesInfoDialogIndex.value = getNextDialogIndex();
         loading.value = true;
         location.value = parseLocation(previousInstancesInfoDialogInstanceId.value);
     }

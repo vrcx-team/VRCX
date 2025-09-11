@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="sendInviteRequestResponseDialogVisible"
+        :model-value="sendInviteRequestResponseDialogVisible"
         :title="t('dialog.invite_request_response_message.header')"
         width="800px"
         append-to-body
@@ -10,17 +10,17 @@
             <input class="inviteImageUploadButton" type="file" accept="image/*" @change="inviteImageUpload" />
         </template>
 
-        <data-tables
+        <DataTable
             v-bind="inviteRequestResponseMessageTable"
             style="margin-top: 10px; cursor: pointer"
             @row-click="showSendInviteResponseConfirmDialog">
-            <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70">
+            <el-table-column :label="t('table.profile.invite_messages.slot')" prop="slot" :sortable="true" width="70">
             </el-table-column>
             <el-table-column :label="t('table.profile.invite_messages.message')" prop="message"> </el-table-column>
             <el-table-column
                 :label="t('table.profile.invite_messages.cool_down')"
                 prop="updatedAt"
-                sortable="custom"
+                :sortable="true"
                 width="110"
                 align="right">
                 <template #default="scope">
@@ -31,37 +31,42 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-edit"
-                        size="mini"
+                        :icon="Edit"
+                        size="small"
                         @click.stop="showEditAndSendInviteResponseDialog(scope.row)">
                     </el-button>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
 
         <template #footer>
-            <el-button type="small" @click="cancelSendInviteRequestResponse">
+            <el-button @click="cancelSendInviteRequestResponse">
                 {{ t('dialog.invite_request_response_message.cancel') }}
             </el-button>
-            <el-button type="small" @click="refreshInviteMessageTableData('requestResponse')">
+            <el-button @click="refreshInviteMessageTableData('requestResponse')">
                 {{ t('dialog.invite_request_response_message.refresh') }}
             </el-button>
         </template>
         <EditAndSendInviteResponseDialog
-            :edit-and-send-invite-response-dialog.sync="editAndSendInviteResponseDialog"
-            :send-invite-response-dialog.sync="sendInviteResponseDialog"
+            :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
+            :send-invite-response-dialog="sendInviteResponseDialog"
+            @update:edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog = $event"
+            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteResponseConfirmDialog
-            :send-invite-response-dialog.sync="sendInviteResponseDialog"
+            :send-invite-response-dialog="sendInviteResponseDialog"
             :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
+            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
             @closeInviteDialog="closeInviteDialog" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { Edit } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useGalleryStore, useInviteStore, useUserStore } from '../../../stores';
     import EditAndSendInviteResponseDialog from './EditAndSendInviteResponseDialog.vue';
     import SendInviteResponseConfirmDialog from './SendInviteResponseConfirmDialog.vue';

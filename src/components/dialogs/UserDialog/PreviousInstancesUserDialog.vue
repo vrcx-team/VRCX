@@ -1,24 +1,24 @@
 <template>
-    <safe-dialog
-        ref="previousInstancesUserDialogRef"
-        :visible.sync="isVisible"
-        :title="$t('dialog.previous_instances.header')"
+    <el-dialog
+        :z-index="previousInstancesUserDialogIndex"
+        v-model="isVisible"
+        :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <span style="font-size: 14px" v-text="previousInstancesUserDialog.userRef.displayName"></span>
             <el-input
                 v-model="previousInstancesUserDialogTable.filters[0].value"
-                :placeholder="$t('dialog.previous_instances.search_placeholder')"
+                :placeholder="t('dialog.previous_instances.search_placeholder')"
                 style="display: block; width: 150px"></el-input>
         </div>
-        <data-tables v-loading="loading" v-bind="previousInstancesUserDialogTable" style="margin-top: 10px">
-            <el-table-column :label="$t('table.previous_instances.date')" prop="created_at" sortable width="170">
+        <DataTable v-loading="loading" v-bind="previousInstancesUserDialogTable" style="margin-top: 10px">
+            <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.world')" prop="name" sortable>
+            <el-table-column :label="t('table.previous_instances.world')" prop="name" sortable>
                 <template #default="scope">
                     <Location
                         :location="scope.row.location"
@@ -26,53 +26,61 @@
                         :grouphint="scope.row.groupName" />
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.instance_creator')" prop="location" width="170">
+            <el-table-column :label="t('table.previous_instances.instance_creator')" prop="location" width="170">
                 <template #default="scope">
                     <DisplayName :userid="scope.row.$location.userId" :location="scope.row.$location.tag" />
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.time')" prop="time" width="100" sortable>
+            <el-table-column :label="t('table.previous_instances.time')" prop="time" width="100" sortable>
                 <template #default="scope">
                     <span v-text="scope.row.timer"></span>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('table.previous_instances.action')" width="90" align="right">
+            <el-table-column :label="t('table.previous_instances.action')" width="90" align="right">
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-switch-button"
-                        size="mini"
+                        :icon="SwitchButton"
+                        size="small"
+                        class="button-pd-0"
                         @click="showLaunchDialog(scope.row.location)"></el-button>
                     <el-button
                         type="text"
-                        icon="el-icon-s-data"
-                        size="mini"
+                        :icon="DataLine"
+                        size="small"
+                        class="button-pd-0"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
+                        :icon="Close"
+                        size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogUserInstance(scope.row)"></el-button>
                     <el-button
                         v-else
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
+                        :icon="Close"
+                        size="small"
+                        class="button-pd-0"
                         @click="deleteGameLogUserInstancePrompt(scope.row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { SwitchButton, DataLine, Close } from '@element-plus/icons-vue';
+
+    import { ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
+    import { computed, nextTick, reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         compareByCreatedAt,
         parseLocation,
         removeFromArray,
@@ -93,22 +101,20 @@
                 previousInstancesTable: {
                     data: [],
                     filters: [{ prop: 'displayName', value: '' }],
-                    tableProps: { stripe: true, size: 'mini', height: '400px' }
+                    tableProps: { stripe: true, size: 'small', height: '400px' }
                 }
             })
         }
     });
 
     const emit = defineEmits(['update:previous-instances-user-dialog']);
-    const { proxy } = getCurrentInstance();
-
     const loading = ref(false);
     const previousInstancesUserDialogTable = reactive({
         data: [],
         filters: [{ prop: 'worldName', value: '' }],
         tableProps: {
             stripe: true,
-            size: 'mini',
+            size: 'small',
             defaultSort: { prop: 'created_at', order: 'descending' }
         },
         pageSize: 10,
@@ -122,8 +128,9 @@
     const { showLaunchDialog } = useLaunchStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
+    const { t } = useI18n();
 
-    const previousInstancesUserDialogRef = ref(null);
+    const previousInstancesUserDialogIndex = ref(2000);
 
     const isVisible = computed({
         get: () => props.previousInstancesUserDialog.visible,
@@ -154,7 +161,7 @@
         () => {
             if (props.previousInstancesUserDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(previousInstancesUserDialogRef.value.$el);
+                    previousInstancesUserDialogIndex.value = getNextDialogIndex();
                 });
                 refreshPreviousInstancesUserTable();
             }
@@ -172,13 +179,20 @@
     }
 
     function deleteGameLogUserInstancePrompt(row) {
-        proxy.$confirm('Continue? Delete User From GameLog Instance', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete User From GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') deleteGameLogUserInstance(row);
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>
+
+<style scoped>
+    .button-pd-0 {
+        padding: 0;
+    }
+</style>

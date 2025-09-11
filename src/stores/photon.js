@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import { instanceRequest, userRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
-import { photonEventType } from '../shared/constants';
+import { AppDebug } from '../service/appConfig';
+import { photonEventType } from '../shared/constants/photon';
 import {
     checkVRChatCache,
     displayLocation,
@@ -27,7 +27,7 @@ import { useNotificationStore } from './notification';
 import { useSharedFeedStore } from './sharedFeed';
 import { useUserStore } from './user';
 import { useVrStore } from './vr';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 export const usePhotonStore = defineStore('Photon', () => {
     const vrStore = useVrStore();
@@ -85,7 +85,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             ],
             tableProps: {
                 stripe: true,
-                size: 'mini'
+                size: 'small'
             },
             pageSize: 10,
             paginationProps: {
@@ -110,7 +110,7 @@ export const usePhotonStore = defineStore('Photon', () => {
             ],
             tableProps: {
                 stripe: true,
-                size: 'mini'
+                size: 'small'
             },
             pageSize: 10,
             paginationProps: {
@@ -548,7 +548,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                     userStore.lookupUser(ref);
                 }
             } else {
-                $app.$message({
+                ElMessage({
                     message: 'No user info available',
                     type: 'error'
                 });
@@ -557,7 +557,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     function promptPhotonOverlayMessageTimeout() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.overlay_message_timeout.description'),
             t('prompt.overlay_message_timeout.header'),
             {
@@ -586,7 +586,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     function promptPhotonLobbyTimeoutThreshold() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.photon_lobby_timeout.description'),
             t('prompt.photon_lobby_timeout.header'),
             {
@@ -1291,7 +1291,7 @@ export const usePhotonStore = defineStore('Photon', () => {
         const datetime = json.dt;
         const eventData = json.VRCEventData;
         const senderId = eventData.Sender;
-        if (AppGlobal.debugPhotonLogging) {
+        if (AppDebug.debugPhotonLogging) {
             console.log('VrcEvent:', json);
         }
         if (eventData.EventName === '_SendOnSpawn') {
@@ -1353,7 +1353,7 @@ export const usePhotonStore = defineStore('Photon', () => {
                     '$1:'
                 )}`;
             }
-            if (AppGlobal.debugPhotonLogging) {
+            if (AppDebug.debugPhotonLogging) {
                 const displayName = getDisplayNameFromPhotonId(senderId);
                 const feed = `RPC ${displayName} ${
                     photonEventType[eventData.EventType]
@@ -1891,7 +1891,7 @@ export const usePhotonStore = defineStore('Photon', () => {
     }
 
     return {
-        state,
+        // state,
 
         photonLoggingEnabled,
         photonEventOverlay,

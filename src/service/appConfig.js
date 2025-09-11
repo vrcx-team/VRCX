@@ -1,6 +1,6 @@
-import Vue from 'vue';
+import { reactive } from 'vue';
 
-const AppGlobal = Vue.observable({
+const AppDebug = reactive({
     debug: false,
     debugWebSocket: false,
     debugUserDiff: false,
@@ -16,6 +16,6 @@ const AppGlobal = Vue.observable({
     websocketDomainVrchat: 'wss://pipeline.vrchat.cloud'
 });
 
-window.__APP_GLOBALS__ = AppGlobal;
+window.$debug = AppDebug;
 
-export { AppGlobal };
+export { AppDebug };

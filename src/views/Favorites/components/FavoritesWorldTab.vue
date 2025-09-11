@@ -2,26 +2,26 @@
     <div>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div>
-                <el-button size="small" @click="showExportDialog">{{ $t('view.favorite.export') }}</el-button>
+                <el-button size="small" @click="showExportDialog">{{ t('view.favorite.export') }}</el-button>
                 <el-button size="small" style="margin-left: 5px" @click="showWorldImportDialog">{{
-                    $t('view.favorite.import')
+                    t('view.favorite.import')
                 }}</el-button>
             </div>
             <div style="display: flex; align-items: center; font-size: 13px; margin-right: 10px">
-                <span class="name" style="margin-right: 5px; line-height: 10px">{{ $t('view.favorite.sort_by') }}</span>
+                <span class="name" style="margin-right: 5px; line-height: 10px">{{ t('view.favorite.sort_by') }}</span>
                 <el-radio-group v-model="sortFav" style="margin-right: 12px" @change="saveSortFavoritesOption">
                     <el-radio :label="false">{{
-                        $t('view.settings.appearance.appearance.sort_favorite_by_name')
+                        t('view.settings.appearance.appearance.sort_favorite_by_name')
                     }}</el-radio>
                     <el-radio :label="true">{{
-                        $t('view.settings.appearance.appearance.sort_favorite_by_date')
+                        t('view.settings.appearance.appearance.sort_favorite_by_date')
                     }}</el-radio>
                 </el-radio-group>
                 <el-input
                     v-model="worldFavoriteSearch"
                     clearable
-                    size="mini"
-                    :placeholder="$t('view.favorite.worlds.search')"
+                    size="small"
+                    :placeholder="t('view.favorite.worlds.search')"
                     style="width: 200px"
                     @input="searchWorldFavorites" />
             </div>
@@ -35,7 +35,7 @@
                 <div class="x-friend-item">
                     <template v-if="favorite.name">
                         <div class="avatar">
-                            <img v-lazy="favorite.thumbnailImageUrl" />
+                            <img :src="favorite.thumbnailImageUrl" loading="lazy" />
                         </div>
                         <div class="detail">
                             <span class="name" v-text="favorite.name"></span>
@@ -54,64 +54,58 @@
                 </div>
             </div>
         </div>
-        <span style="display: block; margin-top: 20px">{{ $t('view.favorite.worlds.vrchat_favorites') }}</span>
+        <span style="display: block; margin-top: 20px">{{ t('view.favorite.worlds.vrchat_favorites') }}</span>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in favoriteWorldGroups" :key="group.name">
-                <template slot="title">
+                <template #title>
                     <div style="display: flex; align-items: center">
                         <span
                             style="font-weight: bold; font-size: 14px; margin-left: 10px"
                             v-text="group.displayName" />
                         <el-tag
                             style="margin: 1px 0 0 5px"
-                            size="mini"
+                            size="small"
                             :type="userFavoriteWorldsStatusForFavTab(group.visibility)"
                             effect="plain"
                             >{{ group.visibility.charAt(0).toUpperCase() + group.visibility.slice(1) }}</el-tag
                         >
                         <span style="color: #909399; font-size: 12px; margin-left: 10px"
                             >{{ group.count }}/{{ group.capacity }}</span
-                        >
-                        <el-dropdown trigger="click" size="mini" style="margin-left: 10px" @click.native.stop>
-                            <el-tooltip
-                                placement="top"
-                                :content="$t('view.favorite.visibility_tooltip')"
-                                :disabled="hideTooltips">
-                                <el-button type="default" icon="el-icon-view" size="mini" circle />
-                            </el-tooltip>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item
-                                    v-for="visibility in worldGroupVisibilityOptions"
-                                    v-if="group.visibility !== visibility"
-                                    :key="visibility"
-                                    style="display: block; margin: 10px 0"
-                                    @click.native="changeWorldGroupVisibility(group.name, visibility)"
-                                    >{{ visibility.charAt(0).toUpperCase() + visibility.slice(1) }}</el-dropdown-item
-                                >
-                            </el-dropdown-menu>
-                            <el-tooltip
-                                placement="top"
-                                :content="$t('view.favorite.rename_tooltip')"
-                                :disabled="hideTooltips">
-                                <el-button
-                                    size="mini"
-                                    icon="el-icon-edit"
-                                    circle
-                                    style="margin-left: 5px"
-                                    @click.stop="changeFavoriteGroupName(group)" />
-                            </el-tooltip>
-                            <el-tooltip
-                                placement="right"
-                                :content="$t('view.favorite.clear_tooltip')"
-                                :disabled="hideTooltips">
-                                <el-button
-                                    size="mini"
-                                    icon="el-icon-delete"
-                                    circle
-                                    style="margin-left: 5px"
-                                    @click.stop="clearFavoriteGroup(group)" />
-                            </el-tooltip>
-                        </el-dropdown>
+                        ><el-tooltip placement="top" :content="t('view.favorite.visibility_tooltip')">
+                            <el-dropdown trigger="click" size="small" style="margin-left: 10px">
+                                <el-button type="default" :icon="View" size="small" circle @click.stop />
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <template v-for="visibility in worldGroupVisibilityOptions" :key="visibility">
+                                            <el-dropdown-item
+                                                v-if="group.visibility !== visibility"
+                                                style="display: block; margin: 10px 0"
+                                                @click="changeWorldGroupVisibility(group.name, visibility)"
+                                                >{{
+                                                    visibility.charAt(0).toUpperCase() + visibility.slice(1)
+                                                }}</el-dropdown-item
+                                            >
+                                        </template>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </el-tooltip>
+                        <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
+                            <el-button
+                                size="small"
+                                :icon="Edit"
+                                circle
+                                style="margin-left: 5px"
+                                @click.stop="changeFavoriteGroupName(group)" />
+                        </el-tooltip>
+                        <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
+                            <el-button
+                                size="small"
+                                :icon="Delete"
+                                circle
+                                style="margin-left: 5px"
+                                @click.stop="clearFavoriteGroup(group)" />
+                        </el-tooltip>
                     </div>
                 </template>
                 <div v-if="group.count" class="x-friend-list" style="margin-top: 10px">
@@ -121,7 +115,6 @@
                         :group="group"
                         :favorite="favorite"
                         :edit-favorites-mode="editFavoritesMode"
-                        :hide-tooltips="hideTooltips"
                         @click="showWorldDialog(favorite.id)"
                         @handle-select="favorite.$selected = $event" />
                 </div>
@@ -139,44 +132,41 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <span style="display: block; margin-top: 20px">{{ $t('view.favorite.worlds.local_favorites') }}</span>
+        <span style="display: block; margin-top: 20px">{{ t('view.favorite.worlds.local_favorites') }}</span>
         <br />
         <el-button size="small" @click="promptNewLocalWorldFavoriteGroup">{{
-            $t('view.favorite.worlds.new_group')
+            t('view.favorite.worlds.new_group')
         }}</el-button>
         <el-button
             v-if="!refreshingLocalFavorites"
             size="small"
             style="margin-left: 5px"
             @click="refreshLocalWorldFavorite"
-            >{{ $t('view.favorite.worlds.refresh') }}</el-button
+            >{{ t('view.favorite.worlds.refresh') }}</el-button
         >
         <el-button v-else size="small" style="margin-left: 5px" @click="refreshingLocalFavorites = false">
-            <i class="el-icon-loading" style="margin-right: 5px" />
-            <span>{{ $t('view.favorite.worlds.cancel_refresh') }}</span>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
+            <span>{{ t('view.favorite.worlds.cancel_refresh') }}</span>
         </el-button>
         <el-collapse style="border: 0">
-            <el-collapse-item v-for="group in localWorldFavoriteGroups" v-if="localWorldFavorites[group]" :key="group">
-                <template slot="title">
+            <el-collapse-item v-for="group in localWorldFavoriteGroups" :key="group">
+                <template #title v-if="localWorldFavorites[group]">
                     <span style="font-weight: bold; font-size: 14px; margin-left: 10px" v-text="group" />
                     <span style="color: #909399; font-size: 12px; margin-left: 10px">{{
                         getLocalWorldFavoriteGroupLength(group)
                     }}</span>
-                    <el-tooltip placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-edit"
+                            size="small"
+                            :icon="Edit"
                             circle
                             style="margin-left: 10px"
                             @click.stop="promptLocalWorldFavoriteGroupRename(group)" />
                     </el-tooltip>
-                    <el-tooltip
-                        placement="right"
-                        :content="$t('view.favorite.delete_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.delete_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-delete"
+                            size="small"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="promptLocalWorldFavoriteGroupDelete(group)" />
@@ -190,7 +180,6 @@
                         :group="group"
                         :favorite="favorite"
                         :edit-favorites-mode="editFavoritesMode"
-                        :hide-tooltips="hideTooltips"
                         @click="showWorldDialog(favorite.id)"
                         @remove-local-world-favorite="removeLocalWorldFavorite" />
                 </div>
@@ -208,14 +197,16 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <WorldExportDialog :world-export-dialog-visible.sync="worldExportDialogVisible" />
+        <WorldExportDialog v-model:worldExportDialogVisible="worldExportDialogVisible" />
     </div>
 </template>
 
 <script setup>
-    import { computed, ref, getCurrentInstance } from 'vue';
+    import { View, Edit, Delete, Loading } from '@element-plus/icons-vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { computed, ref } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { useAppearanceSettingsStore, useFavoriteStore, useWorldStore } from '../../../stores';
     import WorldExportDialog from '../dialogs/WorldExportDialog.vue';
@@ -238,10 +229,8 @@
         'refresh-local-world-favorite'
     ]);
 
-    const { proxy } = getCurrentInstance();
-
     const { t } = useI18n();
-    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const { favoriteWorlds, favoriteWorldGroups, localWorldFavorites, localWorldFavoriteGroups } =
         storeToRefs(useFavoriteStore());
@@ -290,15 +279,13 @@
     }
 
     function userFavoriteWorldsStatusForFavTab(visibility) {
-        let style = '';
         if (visibility === 'public') {
-            style = '';
-        } else if (visibility === 'friends') {
-            style = 'success';
-        } else {
-            style = 'info';
+            return 'primary';
         }
-        return style;
+        if (visibility === 'friends') {
+            return 'success';
+        }
+        return 'info';
     }
 
     function changeWorldGroupVisibility(name, visibility) {
@@ -314,7 +301,7 @@
                     favoriteGroupId: args.json.id
                 }
             });
-            proxy.$message({
+            ElMessage({
                 message: 'Group visibility changed',
                 type: 'success'
             });
@@ -323,22 +310,27 @@
     }
 
     function promptNewLocalWorldFavoriteGroup() {
-        proxy.$prompt(t('prompt.new_local_favorite_group.description'), t('prompt.new_local_favorite_group.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: t('prompt.new_local_favorite_group.ok'),
-            cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: t('prompt.new_local_favorite_group.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    newLocalWorldFavoriteGroup(instance.inputValue);
-                }
+        ElMessageBox.prompt(
+            t('prompt.new_local_favorite_group.description'),
+            t('prompt.new_local_favorite_group.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: t('prompt.new_local_favorite_group.ok'),
+                cancelButtonText: t('prompt.new_local_favorite_group.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: t('prompt.new_local_favorite_group.input_error')
             }
-        });
+        )
+            .then(({ value }) => {
+                if (value) {
+                    newLocalWorldFavoriteGroup(value);
+                }
+            })
+            .catch(() => {});
     }
 
     function promptLocalWorldFavoriteGroupRename(group) {
-        proxy.$prompt(
+        ElMessageBox.prompt(
             t('prompt.local_favorite_group_rename.description'),
             t('prompt.local_favorite_group_rename.header'),
             {
@@ -347,43 +339,46 @@
                 cancelButtonText: t('prompt.local_favorite_group_rename.cancel'),
                 inputPattern: /\S+/,
                 inputErrorMessage: t('prompt.local_favorite_group_rename.input_error'),
-                inputValue: group,
-                callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
-                        renameLocalWorldFavoriteGroup(instance.inputValue, group);
-                    }
-                }
+                inputValue: group
             }
-        );
+        )
+            .then(({ value }) => {
+                if (value) {
+                    renameLocalWorldFavoriteGroup(value, group);
+                }
+            })
+            .catch(() => {});
     }
 
     function promptLocalWorldFavoriteGroupDelete(group) {
-        proxy.$confirm(`Delete Group? ${group}`, 'Confirm', {
+        ElMessageBox.confirm(`Delete Group? ${group}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteLocalWorldFavoriteGroup(group);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function clearFavoriteGroup(ctx) {
-        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     favoriteRequest.clearFavoriteGroup({
                         type: ctx.type,
                         group: ctx.name
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function searchWorldFavorites(worldFavoriteSearch) {

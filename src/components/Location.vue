@@ -1,28 +1,29 @@
 <template>
     <div>
-        <span v-if="!text" style="color: transparent">-</span>
+        <span v-if="!text" class="transparent">-</span>
         <span v-show="text">
             <span
                 :class="{ 'x-link': link && location !== 'private' && location !== 'offline' }"
                 @click="handleShowWorldDialog">
-                <i v-if="isTraveling" class="el-icon el-icon-loading" style="display: inline-block"></i>
+                <el-icon :class="['is-loading', 'inline-block']" style="margin-right: 3px" v-if="isTraveling"
+                    ><Loading
+                /></el-icon>
                 <span>{{ text }}</span>
             </span>
             <span v-if="groupName" :class="{ 'x-link': link }" @click="handleShowGroupDialog">({{ groupName }})</span>
-            <span v-if="region" class="flags" :class="region" style="display: inline-block; margin-left: 5px"></span>
-            <i v-if="strict" class="el-icon el-icon-lock" style="display: inline-block; margin-left: 5px"></i>
+            <span v-if="region" :class="['flags', 'inline-block', 'ml-5', region]"></span>
+            <el-icon v-if="strict" :class="['inline-block', 'ml-5']"><Lock /></el-icon>
         </span>
     </div>
 </template>
 
 <script setup>
-    import { storeToRefs } from 'pinia';
-    import { ref, watch } from 'vue';
+    import { Loading, Lock } from '@element-plus/icons-vue';
+    import { ref, watchEffect } from 'vue';
     import { getGroupName, getWorldName, parseLocation } from '../shared/utils';
     import { useGroupStore, useInstanceStore, useSearchStore, useWorldStore } from '../stores';
 
-    const { cachedWorlds } = storeToRefs(useWorldStore());
-    const { showWorldDialog } = useWorldStore();
+    const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog } = useGroupStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { verifyShortName } = useSearchStore();
@@ -51,14 +52,9 @@
     const isTraveling = ref(false);
     const groupName = ref('');
 
-    watch(
-        () => props.location,
-        () => {
-            parse();
-        }
-    );
-
-    parse();
+    watchEffect(() => {
+        parse();
+    });
 
     function parse() {
         isTraveling.value = false;
@@ -82,7 +78,7 @@
                 text.value = props.hint;
             }
         } else if (L.worldId) {
-            const ref = cachedWorlds.value.get(L.worldId);
+            const ref = cachedWorlds.get(L.worldId);
             if (typeof ref === 'undefined') {
                 getWorldName(L.worldId).then((worldName) => {
                     if (L.tag === instanceId) {
@@ -152,3 +148,17 @@
         showGroupDialog(L.groupId);
     }
 </script>
+
+<style scoped>
+    .inline-block {
+        display: inline-block;
+    }
+
+    .ml-5 {
+        margin-left: 5px;
+    }
+
+    .transparent {
+        color: transparent;
+    }
+</style>

@@ -1,8 +1,8 @@
 <template>
-    <safe-dialog
+    <el-dialog
         ref="setAvatarStylesDialog"
         class="x-dialog"
-        :visible.sync="setAvatarStylesDialog.visible"
+        v-model="setAvatarStylesDialog.visible"
         :title="t('dialog.set_avatar_styles.header')"
         width="400px"
         append-to-body>
@@ -39,11 +39,11 @@
                 </el-select>
             </div>
             <br />
-            <div style="font-size: 12px; margin-top: 10px">{{ $t('dialog.set_world_tags.author_tags') }}<br /></div>
+            <div style="font-size: 12px; margin-top: 10px">{{ t('dialog.set_world_tags.author_tags') }}<br /></div>
             <el-input
                 v-model="setAvatarStylesDialog.authorTags"
                 type="textarea"
-                size="mini"
+                size="small"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 5 }"
                 placeholder=""
@@ -57,21 +57,18 @@
                 t('dialog.set_avatar_styles.save')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { watch, getCurrentInstance } from 'vue';
+    import { watch } from 'vue';
 
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { arraysMatch } from '../../../shared/utils';
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const { applyAvatar } = useAvatarStore();
 
     const props = defineProps({

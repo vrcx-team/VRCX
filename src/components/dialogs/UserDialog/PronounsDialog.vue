@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible.sync="pronounsDialog.visible"
+        v-model="pronounsDialog.visible"
         :title="t('dialog.pronouns.header')"
         width="600px"
         append-to-body>
@@ -9,7 +9,7 @@
             <el-input
                 type="textarea"
                 v-model="pronounsDialog.pronouns"
-                size="mini"
+                size="small"
                 maxlength="32"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 5 }"
@@ -21,18 +21,15 @@
                 {{ t('dialog.pronouns.update') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ElMessage } from 'element-plus';
+    import { useI18n } from 'vue-i18n';
     import { userRequest } from '../../../api';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-    const { $message } = proxy;
-
     const props = defineProps({
         pronounsDialog: {
             type: Object,
@@ -55,7 +52,7 @@
             })
             .then((args) => {
                 D.visible = false;
-                $message({
+                ElMessage({
                     message: 'Pronouns updated',
                     type: 'success'
                 });

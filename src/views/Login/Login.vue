@@ -2,19 +2,19 @@
     <div v-loading="loginForm.loading" class="x-login-container">
         <div class="x-login">
             <div style="position: fixed; top: 0; left: 0; margin: 5px">
-                <el-tooltip placement="top" :content="t('view.login.updater')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.login.updater')">
                     <el-button
                         type="default"
-                        size="mini"
-                        icon="el-icon-download"
+                        size="small"
+                        :icon="Download"
                         circle
                         @click="showVRCXUpdateDialog"></el-button>
                 </el-tooltip>
-                <el-tooltip placement="top" :content="t('view.login.proxy_settings')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.login.proxy_settings')">
                     <el-button
                         type="default"
-                        size="mini"
-                        icon="el-icon-connection"
+                        size="small"
+                        :icon="Connection"
                         style="margin-left: 5px"
                         circle
                         @click="promptProxySettings"></el-button>
@@ -28,8 +28,12 @@
                         ref="loginFormRef"
                         :model="loginForm"
                         :rules="loginForm.rules"
-                        @submit.native.prevent="handleLogin()">
-                        <el-form-item :label="t('view.login.field.username')" prop="username" required>
+                        @submit.prevent="handleLogin()">
+                        <el-form-item
+                            :label="t('view.login.field.username')"
+                            prop="username"
+                            required
+                            style="display: block">
                             <el-input
                                 v-model="loginForm.username"
                                 name="username"
@@ -40,7 +44,7 @@
                             :label="t('view.login.field.password')"
                             prop="password"
                             required
-                            style="margin-top: 10px">
+                            style="display: block; margin-top: 10px">
                             <el-input
                                 v-model="loginForm.password"
                                 type="password"
@@ -49,7 +53,7 @@
                                 clearable
                                 show-password></el-input>
                         </el-form-item>
-                        <el-checkbox v-model="loginForm.saveCredentials" style="margin-top: 15px">{{
+                        <el-checkbox v-model="loginForm.saveCredentials">{{
                             t('view.login.field.saveCredentials')
                         }}</el-checkbox>
                         <el-checkbox
@@ -66,7 +70,7 @@
                             <el-input
                                 v-model="loginForm.endpoint"
                                 name="endpoint"
-                                :placeholder="AppGlobal.endpointDomainVrchat"
+                                :placeholder="AppDebug.endpointDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
                         <el-form-item
@@ -77,10 +81,10 @@
                             <el-input
                                 v-model="loginForm.websocket"
                                 name="websocket"
-                                :placeholder="AppGlobal.websocketDomainVrchat"
+                                :placeholder="AppDebug.websocketDomainVrchat"
                                 clearable></el-input>
                         </el-form-item>
-                        <el-form-item style="margin-top: 15px">
+                        <el-form-item>
                             <el-button native-type="submit" type="primary" style="width: 100%">{{
                                 t('view.login.login')
                             }}</el-button>
@@ -108,7 +112,7 @@
                                 class="x-friend-item"
                                 @click="relogin(user)">
                                 <div class="avatar">
-                                    <img v-lazy="userImage(user.user)" />
+                                    <img :src="userImage(user.user)" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span class="name" v-text="user.user.displayName"></span>
@@ -117,8 +121,8 @@
                                 </div>
                                 <el-button
                                     type="default"
-                                    size="mini"
-                                    icon="el-icon-delete"
+                                    size="small"
+                                    :icon="Delete"
                                     style="margin-left: 10px"
                                     circle
                                     @click.stop="deleteSavedLogin(user.user.id)"></el-button>
@@ -150,20 +154,15 @@
 </template>
 
 <script setup>
+    import { Download, Delete, Connection } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { onBeforeUnmount, ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
-    import {
-        useAppearanceSettingsStore,
-        useAuthStore,
-        useGeneralSettingsStore,
-        useVRCXUpdaterStore
-    } from '../../stores';
+    import { useI18n } from 'vue-i18n';
+    import { useAuthStore, useGeneralSettingsStore, useVRCXUpdaterStore } from '../../stores';
     import { openExternalLink, userImage } from '../../shared/utils';
-    import { AppGlobal } from '../../service/appConfig';
+    import { AppDebug } from '../../service/appConfig';
 
     const { showVRCXUpdateDialog } = useVRCXUpdaterStore();
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { loginForm, enableCustomEndpoint } = storeToRefs(useAuthStore());
     const { toggleCustomEndpoint, relogin, deleteSavedLogin, login } = useAuthStore();
     const { promptProxySettings } = useGeneralSettingsStore();

@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { branches } from '../shared/constants';
 import { changeLogRemoveLinks } from '../shared/utils';
 import { useUiStore } from './ui';
-import { useI18n } from 'vue-i18n-bridge';
-import { AppGlobal } from '../service/appConfig';
+import { useI18n } from 'vue-i18n';
+import { AppDebug } from '../service/appConfig';
 
 export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     const uiStore = useUiStore();
@@ -253,7 +253,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         state.pendingVRCXUpdate = false;
         const json = JSON.parse(response.data);
-        if (AppGlobal.debugWebRequests) {
+        if (AppDebug.debugWebRequests) {
             console.log(json, response);
         }
         if (json === Object(json) && json.name && json.published_at) {
@@ -315,12 +315,12 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             state.checkingForVRCXUpdate = false;
         }
         const json = JSON.parse(response.data);
-        if (AppGlobal.debugWebRequests) {
+        if (AppDebug.debugWebRequests) {
             console.log(json, response);
         }
         const releases = [];
         if (typeof json !== 'object' || json.message) {
-            $app.$message({
+            ElMessage({
                 message: t('message.vrcx_updater.failed', {
                     message: json.message
                 }),
@@ -364,7 +364,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             state.pendingVRCXInstall = releaseName;
         } catch (err) {
             console.error(err);
-            $app.$message({
+            ElMessage({
                 message: `${t('message.vrcx_updater.failed_install')} ${err}`,
                 type: 'error'
             });

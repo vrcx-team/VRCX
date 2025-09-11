@@ -1,6 +1,6 @@
 <template>
-    <safe-dialog
-        :visible.sync="isVisible"
+    <el-dialog
+        v-model="isVisible"
         :title="t('dialog.set_world_tags.header')"
         width="400px"
         destroy-on-close
@@ -20,7 +20,7 @@
         <el-input
             v-model="setWorldTagsDialog.authorTags"
             type="textarea"
-            size="mini"
+            size="small"
             show-word-limit
             :autosize="{ minRows: 2, maxRows: 5 }"
             placeholder=""
@@ -81,12 +81,13 @@
                 </el-button>
             </div>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ref, computed, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+    import { useI18n } from 'vue-i18n';
     import { worldRequest } from '../../../api';
     import { useWorldStore } from '../../../stores';
 
@@ -114,8 +115,6 @@
     const { showWorldDialog } = useWorldStore();
 
     const { t } = useI18n();
-
-    const { proxy } = getCurrentInstance();
 
     const setWorldTagsDialog = ref({
         authorTags: '',
@@ -296,7 +295,7 @@
                 tags
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Tags updated',
                     type: 'success'
                 });

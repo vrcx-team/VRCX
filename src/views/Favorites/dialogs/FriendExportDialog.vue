@@ -1,55 +1,60 @@
 <template>
-    <safe-dialog
-        :visible.sync="isDialogVisible"
+    <el-dialog
+        v-model="isDialogVisible"
         class="x-dialog"
         :title="t('dialog.friend_export.header')"
         width="650px"
         destroy-on-close>
-        <el-dropdown trigger="click" size="small" @click.native.stop>
-            <el-button size="mini">
+        <el-dropdown trigger="click" size="small">
+            <el-button size="small">
                 <span v-if="friendExportFavoriteGroup">
                     {{ friendExportFavoriteGroup.displayName }} ({{ friendExportFavoriteGroup.count }}/{{
                         friendExportFavoriteGroup.capacity
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
-                <span v-else>All Favorites <i class="el-icon-arrow-down el-icon--right"></i></span>
+                <span v-else
+                    >All Favorites <el-icon class="el-icon--right"><ArrowDown /></el-icon
+                ></span>
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectFriendExportGroup(null)">
-                    All Favorites
-                </el-dropdown-item>
-                <template v-for="groupAPI in favoriteFriendGroups">
-                    <el-dropdown-item
-                        :key="groupAPI.name"
-                        style="display: block; margin: 10px 0"
-                        @click.native="selectFriendExportGroup(groupAPI)">
-                        {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectFriendExportGroup(null)">
+                        All Favorites
                     </el-dropdown-item>
-                </template>
-            </el-dropdown-menu>
+                    <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
+                        <el-dropdown-item
+                            style="display: block; margin: 10px 0"
+                            @click="selectFriendExportGroup(groupAPI)">
+                            {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                        </el-dropdown-item>
+                    </template>
+                </el-dropdown-menu>
+            </template>
         </el-dropdown>
         <br />
         <el-input
             v-model="friendExportContent"
             type="textarea"
-            size="mini"
-            rows="15"
+            size="small"
+            :rows="15"
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="handleCopyFriendExportData"></el-input>
-    </safe-dialog>
+            @click="handleCopyFriendExportData"></el-input>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ArrowDown } from '@element-plus/icons-vue';
+    import { ref, computed, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { useFavoriteStore } from '../../../stores';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
 
     const props = defineProps({
         friendExportDialogVisible: {
@@ -96,7 +101,7 @@
         navigator.clipboard
             .writeText(friendExportContent.value)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'Copied successfully!',
                     type: 'success',
                     duration: 2000
@@ -104,7 +109,7 @@
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                proxy.$message.error('Copy failed!');
+                ElMessage.error('Copy failed!');
             });
     }
 

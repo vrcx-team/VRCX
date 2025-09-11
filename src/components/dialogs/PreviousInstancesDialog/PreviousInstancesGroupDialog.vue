@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
-        ref="previousInstancesGroupDialogRef"
-        :visible.sync="isVisible"
+    <el-dialog
+        :z-index="previousInstancesGroupDialogIndex"
+        v-model="isVisible"
         :title="t('dialog.previous_instances.header')"
         width="1000px"
         append-to-body>
@@ -13,7 +13,7 @@
                 style="width: 150px" />
         </div>
 
-        <data-tables v-loading="loading" v-bind="previousInstancesGroupDialogTable" style="margin-top: 10px">
+        <DataTable v-loading="loading" v-bind="previousInstancesGroupDialogTable" style="margin-top: 10px">
             <el-table-column :label="t('table.previous_instances.date')" prop="created_at" sortable width="170">
                 <template #default="scope">
                     <span>{{ formatDateFilter(scope.row.created_at, 'long') }}</span>
@@ -39,48 +39,50 @@
                 <template #default="scope">
                     <el-button
                         type="text"
-                        icon="el-icon-s-data"
-                        size="mini"
+                        :icon="DataLine"
+                        size="small"
                         @click="showPreviousInstancesInfoDialog(scope.row.location)" />
                     <el-button
                         v-if="shiftHeld"
                         style="color: #f56c6c"
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
+                        :icon="Close"
+                        size="small"
                         @click="deleteGameLogGroupInstance(scope.row)" />
                     <el-button
                         v-else
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
+                        :icon="Close"
+                        size="small"
                         @click="deleteGameLogGroupInstancePrompt(scope.row)" />
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { DataLine, Close } from '@element-plus/icons-vue';
+
+    import { ElMessageBox } from 'element-plus';
     import { ref, reactive, computed, watch, nextTick, getCurrentInstance } from 'vue';
     import {
         parseLocation,
         compareByCreatedAt,
         timeToText,
         removeFromArray,
-        adjustDialogZ,
+        getNextDialogIndex,
         formatDateFilter
     } from '../../../shared/utils';
     import { database } from '../../../service/database';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { useInstanceStore, useUiStore } from '../../../stores';
 
-    const { proxy } = getCurrentInstance();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = useUiStore();
     const { t } = useI18n();
 
-    const previousInstancesGroupDialogRef = ref(null);
+    const previousInstancesGroupDialogIndex = ref(2000);
     const loading = ref(false);
 
     const previousInstancesGroupDialogTable = reactive({
@@ -88,7 +90,7 @@
         filters: [{ prop: 'groupName', value: '' }],
         tableProps: {
             stripe: true,
-            size: 'mini',
+            size: 'small',
             defaultSort: { prop: 'created_at', order: 'descending' }
         },
         pageSize: 10,
@@ -115,7 +117,7 @@
         () => {
             if (props.previousInstancesGroupDialog.visible) {
                 nextTick(() => {
-                    adjustDialogZ(previousInstancesGroupDialogRef.value.$el);
+                    previousInstancesGroupDialogIndex.value = getNextDialogIndex();
                 });
                 refreshPreviousInstancesGroupTable();
             }
@@ -144,15 +146,16 @@
     }
 
     function deleteGameLogGroupInstancePrompt(row) {
-        proxy.$confirm('Continue? Delete GameLog Instance', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete GameLog Instance', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteGameLogGroupInstance(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>

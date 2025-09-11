@@ -230,6 +230,7 @@ export const useLocationStore = defineStore('Location', () => {
 
     return {
         state,
+
         lastLocation,
         lastLocationDestination,
         lastLocationDestinationTime,

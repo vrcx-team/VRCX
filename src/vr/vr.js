@@ -4,10 +4,10 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-import Vue from 'vue';
-import { initNoty } from './plugin/noty';
-import './plugin/i18n.js';
-import InteropApi from './ipc-electron/interopApi.js';
+import { createApp } from 'vue';
+import { initNoty } from '../plugin/noty';
+import { i18n } from '../plugin/i18n';
+import InteropApi from '../ipc-electron/interopApi.js';
 import Vr from './Vr.vue';
 
 initNoty(true);
@@ -19,8 +19,8 @@ if (WINDOWS) {
     window.AppApiVr = InteropApi.AppApiVrElectron;
 }
 
-const $app = new Vue({
-    render: (h) => h(Vr)
-}).$mount('#root');
+const $app = createApp(Vr);
 
-window.$app = $app;
+$app.use(i18n);
+
+$app.mount('#root');

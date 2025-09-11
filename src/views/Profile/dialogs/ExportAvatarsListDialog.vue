@@ -1,21 +1,21 @@
 <template>
-    <safe-dialog :visible.sync="isVisible" :title="t('dialog.export_own_avatars.header')" width="650px">
+    <el-dialog v-model="isVisible" :title="t('dialog.export_own_avatars.header')" width="650px">
         <el-input
             v-model="exportAvatarsListCsv"
             v-loading="loading"
             type="textarea"
-            size="mini"
-            rows="15"
+            size="small"
+            :rows="15"
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
-    </safe-dialog>
+            @click="$event.target.tagName === 'TEXTAREA' && $event.target.select()" />
+    </el-dialog>
 </template>
 
 <script setup>
     import { ref, computed, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { avatarRequest } from '../../../api';
     import { processBulk } from '../../../service/request';
@@ -23,8 +23,7 @@
 
     const { t } = useI18n();
 
-    const { cachedAvatars } = storeToRefs(useAvatarStore());
-    const { applyAvatar } = useAvatarStore();
+    const { applyAvatar, cachedAvatars } = useAvatarStore();
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
@@ -59,9 +58,9 @@
 
     function initExportAvatarsListDialog() {
         loading.value = true;
-        for (const ref of cachedAvatars.value.values()) {
+        for (const ref of cachedAvatars.values()) {
             if (ref.authorId === currentUser.value.id) {
-                cachedAvatars.value.delete(ref.id);
+                cachedAvatars.delete(ref.id);
             }
         }
         const params = {

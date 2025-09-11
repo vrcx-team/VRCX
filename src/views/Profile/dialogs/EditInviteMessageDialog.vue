@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="editInviteMessageDialog.visible"
+        :model-value="editInviteMessageDialog.visible"
         :title="t('dialog.edit_invite_message.header')"
         width="400px"
         @close="closeDialog">
@@ -10,7 +10,7 @@
             <el-input
                 v-model="message"
                 type="textarea"
-                size="mini"
+                size="small"
                 maxlength="64"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 5 }"
@@ -18,25 +18,23 @@
                 style="margin-top: 10px"></el-input>
         </div>
         <template #footer>
-            <el-button type="small" @click="closeDialog">{{ $t('dialog.edit_invite_message.cancel') }}</el-button>
+            <el-button @click="closeDialog">{{ t('dialog.edit_invite_message.cancel') }}</el-button>
             <el-button type="primary" size="small" @click="saveEditInviteMessage">{{
                 t('dialog.edit_invite_message.save')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { inviteMessagesRequest } from '../../../api';
     import { useInviteStore } from '../../../stores';
 
     const { t } = useI18n();
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
-
     const inviteStore = useInviteStore();
     const { editInviteMessageDialog } = storeToRefs(inviteStore);
 
@@ -68,13 +66,13 @@
                 })
                 .then((args) => {
                     if (args.json[slot].message === D.inviteMessage.message) {
-                        $message({
+                        ElMessage({
                             message: "VRChat API didn't update message, try again",
                             type: 'error'
                         });
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        $message.success('Invite message updated');
+                        ElMessage.success('Invite message updated');
                     }
                     return args;
                 });

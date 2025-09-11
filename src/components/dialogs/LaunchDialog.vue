@@ -1,38 +1,38 @@
 <template>
-    <safe-dialog ref="launchDialogRef" :visible.sync="isVisible" :title="t('dialog.launch.header')" width="450px">
+    <el-dialog :z-index="launchDialogIndex" v-model="isVisible" :title="t('dialog.launch.header')" width="450px">
         <el-form :model="launchDialog" label-width="100px">
             <el-form-item :label="t('dialog.launch.url')">
                 <el-input
                     v-model="launchDialog.url"
-                    size="mini"
-                    style="width: 260px"
-                    @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
+                    size="small"
+                    style="width: 230px"
+                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
-                        size="mini"
-                        icon="el-icon-s-order"
+                        size="small"
+                        :icon="CopyDocument"
                         style="margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.url)" />
                 </el-tooltip>
             </el-form-item>
             <el-form-item v-if="launchDialog.shortUrl">
-                <template slot="label">
+                <template #label>
                     <span>{{ t('dialog.launch.short_url') }}</span>
-                    <el-tooltip placement="top" style="margin-left: 5px" :content="t('dialog.launch.short_url_notice')">
-                        <i class="el-icon-warning" />
+                    <el-tooltip placement="top" :content="t('dialog.launch.short_url_notice')">
+                        <el-icon style="display: inline-block; margin-left: 5px"><Warning /></el-icon>
                     </el-tooltip>
                 </template>
                 <el-input
                     v-model="launchDialog.shortUrl"
-                    size="mini"
-                    style="width: 260px"
-                    @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
+                    size="small"
+                    style="width: 230px"
+                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
-                        size="mini"
-                        icon="el-icon-s-order"
-                        style="margin-left: 5px"
+                        size="small"
+                        :icon="CopyDocument"
+                        style="display: inline-block; margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.shortUrl)" />
                 </el-tooltip>
@@ -40,23 +40,26 @@
             <el-form-item :label="t('dialog.launch.location')">
                 <el-input
                     v-model="launchDialog.location"
-                    size="mini"
-                    style="width: 260px"
-                    @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" />
-                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')" :disabled="hideTooltips">
+                    size="small"
+                    style="width: 230px"
+                    @click="$event.target.tagName === 'INPUT' && $event.target.select()" />
+                <el-tooltip placement="right" :content="t('dialog.launch.copy_tooltip')">
                     <el-button
-                        size="mini"
-                        icon="el-icon-s-order"
-                        style="margin-left: 5px"
+                        size="small"
+                        :icon="CopyDocument"
+                        style="display: inline-block; margin-left: 5px"
                         circle
                         @click="copyInstanceMessage(launchDialog.location)" />
                 </el-tooltip>
             </el-form-item>
         </el-form>
-        <el-checkbox v-model="launchDialog.desktop" style="float: left; margin-top: 5px" @change="saveLaunchDialog">
+        <el-checkbox
+            v-model="launchDialog.desktop"
+            style="display: inline-flex; align-items: center; margin-top: 5px"
+            @change="saveLaunchDialog">
             {{ t('dialog.launch.start_as_desktop') }}
         </el-checkbox>
-        <template slot="footer">
+        <template #footer>
             <el-button size="small" @click="showPreviousInstancesInfoDialog(launchDialog.location)">
                 {{ t('dialog.launch.info') }}
             </el-button>
@@ -68,7 +71,6 @@
             </el-button>
             <template v-if="canOpenInstanceInGame()">
                 <el-button
-                    type="default"
                     size="small"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
@@ -84,7 +86,6 @@
             </template>
             <template v-else>
                 <el-button
-                    type="default"
                     size="small"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="selfInvite(launchDialog.location, launchDialog.shortName)">
@@ -100,18 +101,26 @@
             </template>
         </template>
         <InviteDialog :invite-dialog="inviteDialog" @closeInviteDialog="closeInviteDialog" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, nextTick, watch, getCurrentInstance } from 'vue';
+    import { CopyDocument, Warning } from '@element-plus/icons-vue';
+
+    import { ref, computed, nextTick, watch } from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
-    import { adjustDialogZ, checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
     import {
-        useAppearanceSettingsStore,
+        getNextDialogIndex,
+        checkCanInvite,
+        getLaunchURL,
+        isRealInstance,
+        parseLocation
+    } from '../../shared/utils';
+    import {
         useFriendStore,
         useInviteStore,
         useInstanceStore,
@@ -121,19 +130,18 @@
     } from '../../stores';
     import InviteDialog from './InviteDialog/InviteDialog.vue';
 
-    const { proxy } = getCurrentInstance();
     const { t } = useI18n();
 
     const { friends } = storeToRefs(useFriendStore());
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { lastLocation } = storeToRefs(useLocationStore());
     const { launchGame, tryOpenInstanceInVrc } = useLaunchStore();
     const { launchDialogData } = storeToRefs(useLaunchStore());
+
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { canOpenInstanceInGame } = useInviteStore();
     const { isGameRunning } = storeToRefs(useGameStore());
 
-    const launchDialogRef = ref(null);
+    const launchDialogIndex = ref(2000);
 
     const launchDialog = ref({
         loading: false,
@@ -207,17 +215,18 @@
     }
     function handleLaunchGame(location, shortName, desktop) {
         if (isGameRunning.value) {
-            proxy.$confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
+            ElMessageBox.confirm(t('dialog.launch.game_running_warning'), t('dialog.launch.header'), {
                 confirmButtonText: t('dialog.launch.confirm_yes'),
                 cancelButtonText: t('dialog.launch.confirm_no'),
-                type: 'warning',
-                callback: (action) => {
+                type: 'warning'
+            })
+                .then((action) => {
                     if (action === 'confirm') {
                         launchGame(location, shortName, desktop);
                         isVisible.value = false;
                     }
-                }
-            });
+                })
+                .catch(() => {});
             return;
         }
         launchGame(location, shortName, desktop);
@@ -239,7 +248,7 @@
                 shortName
             })
             .then((args) => {
-                proxy.$message({
+                ElMessage({
                     message: 'Self invite sent',
                     type: 'success'
                 });
@@ -257,7 +266,9 @@
         if (!isRealInstance(tag)) {
             return;
         }
-        nextTick(() => adjustDialogZ(launchDialogRef.value.$el));
+        nextTick(() => {
+            launchDialogIndex.value = getNextDialogIndex();
+        });
         const D = launchDialog.value;
         D.tag = tag;
         D.secureOrShortName = shortName;
@@ -300,12 +311,12 @@
     async function copyInstanceMessage(input) {
         try {
             await navigator.clipboard.writeText(input);
-            proxy.$message({
+            ElMessage({
                 message: 'Instance copied to clipboard',
                 type: 'success'
             });
         } catch (error) {
-            proxy.$message({
+            ElMessage({
                 message: 'Instance copied failed',
                 type: 'error'
             });

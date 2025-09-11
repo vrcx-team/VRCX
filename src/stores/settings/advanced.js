@@ -1,18 +1,20 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import { $app } from '../../app';
-import { t } from '../../plugin';
+import { ElMessageBox, ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
 import webApiService from '../../service/webapi';
 import { watchState } from '../../service/watchState';
 import { useGameStore } from '../game';
 import { useVrcxStore } from '../vrcx';
-import { AppGlobal } from '../../service/appConfig';
+import { AppDebug } from '../../service/appConfig';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
     const vrcxStore = useVrcxStore();
+
+    const { t } = useI18n();
 
     const state = reactive({
         enablePrimaryPassword: false,
@@ -500,7 +502,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 }
             });
             const json = JSON.parse(response.data);
-            if (AppGlobal.debugWebRequests) {
+            if (AppDebug.debugWebRequests) {
                 console.log(json, response);
             }
             if (response.status === 200) {
@@ -516,7 +518,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
     function cropPrintsChanged() {
         if (!state.cropInstancePrints) return;
-        $app.$confirm(
+        ElMessageBox.confirm(
             t(
                 'view.settings.advanced.advanced.save_instance_prints_to_file.crop_convert_old'
             ),
@@ -531,20 +533,20 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 showInput: false,
                 callback: async (action) => {
                     if (action === 'confirm') {
-                        const msgBox = $app.$message({
+                        const msgBox = ElMessage({
                             message: 'Batch print cropping in progress...',
                             type: 'warning',
                             duration: 0
                         });
                         try {
                             await AppApi.CropAllPrints(state.ugcFolderPath);
-                            $app.$message({
+                            ElMessage({
                                 message: 'Batch print cropping complete',
                                 type: 'success'
                             });
                         } catch (err) {
                             console.error(err);
-                            $app.$message({
+                            ElMessage({
                                 message: `Batch print cropping failed: ${err}`,
                                 type: 'error'
                             });
@@ -558,7 +560,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function askDeleteAllScreenshotMetadata() {
-        $app.$confirm(
+        ElMessageBox.confirm(
             t(
                 'view.settings.advanced.advanced.delete_all_screenshot_metadata.ask'
             ),
@@ -581,7 +583,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function deleteAllScreenshotMetadata() {
-        $app.$confirm(
+        ElMessageBox.confirm(
             t(
                 'view.settings.advanced.advanced.delete_all_screenshot_metadata.confirm'
             ),
@@ -596,20 +598,20 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 showInput: false,
                 callback: async (action) => {
                     if (action === 'confirm') {
-                        const msgBox = $app.$message({
+                        const msgBox = ElMessage({
                             message: 'Batch metadata removal in progress...',
                             type: 'warning',
                             duration: 0
                         });
                         try {
                             await AppApi.DeleteAllScreenshotMetadata();
-                            $app.$message({
+                            ElMessage({
                                 message: 'Batch metadata removal complete',
                                 type: 'success'
                             });
                         } catch (err) {
                             console.error(err);
-                            $app.$message({
+                            ElMessage({
                                 message: `Batch metadata removal failed: ${err}`,
                                 type: 'error'
                             });
@@ -664,7 +666,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function promptAutoClearVRCXCacheFrequency() {
-        $app.$prompt(
+        ElMessageBox.prompt(
             t('prompt.auto_clear_cache.description'),
             t('prompt.auto_clear_cache.header'),
             {
@@ -677,24 +679,21 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     2
                 ).toString(),
                 inputPattern: /\d+$/,
-                inputErrorMessage: t('prompt.auto_clear_cache.input_error'),
-                callback: async (action, instance) => {
-                    if (
-                        action === 'confirm' &&
-                        instance.inputValue &&
-                        !isNaN(parseInt(instance.inputValue, 10))
-                    ) {
-                        vrcxStore.clearVRCXCacheFrequency = Math.trunc(
-                            parseInt(instance.inputValue, 10) * 3600 * 2
-                        );
-                        await configRepository.setString(
-                            'VRCX_clearVRCXCacheFrequency',
-                            vrcxStore.clearVRCXCacheFrequency.toString()
-                        );
-                    }
-                }
+                inputErrorMessage: t('prompt.auto_clear_cache.input_error')
             }
-        );
+        )
+            .then(async ({ value }) => {
+                if (value && !isNaN(parseInt(value, 10))) {
+                    vrcxStore.clearVRCXCacheFrequency = Math.trunc(
+                        parseInt(value, 10) * 3600 * 2
+                    );
+                    await configRepository.setString(
+                        'VRCX_clearVRCXCacheFrequency',
+                        vrcxStore.clearVRCXCacheFrequency.toString()
+                    );
+                }
+            })
+            .catch(() => {});
     }
 
     return {

@@ -2,10 +2,7 @@
     <div v-show="menuActiveIndex === 'feed'" class="x-container feed">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                <el-tooltip
-                    placement="bottom"
-                    :content="t('view.feed.favorites_only_tooltip')"
-                    :disabled="hideTooltips">
+                <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
                     <el-switch v-model="feedTable.vip" active-color="#13ce66" @change="feedTableLookup"></el-switch>
                 </el-tooltip>
             </div>
@@ -27,11 +24,11 @@
                 :placeholder="t('view.feed.search_placeholder')"
                 clearable
                 style="flex: none; width: 150px; margin-left: 10px"
-                @keyup.native.13="feedTableLookup"
+                @keyup.enter="feedTableLookup"
                 @change="feedTableLookup"></el-input>
         </div>
 
-        <data-tables v-loading="feedTable.loading" v-bind="feedTable" lazy>
+        <DataTable v-bind="feedTable">
             <el-table-column type="expand" width="20">
                 <template #default="scope">
                     <div style="position: relative; font-size: 14px">
@@ -40,12 +37,12 @@
                                 v-if="scope.row.previousLocation"
                                 :location="scope.row.previousLocation"
                                 style="display: inline-block" />
-                            <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
+                            <el-tag type="info" effect="plain" size="small" style="margin-left: 5px">{{
                                 timeToText(scope.row.time)
                             }}</el-tag>
                             <br />
                             <span style="margin-right: 5px">
-                                <i class="el-icon-right"></i>
+                                <el-icon><Right /></el-icon>
                             </span>
                             <Location
                                 v-if="scope.row.location"
@@ -59,7 +56,7 @@
                                     :location="scope.row.location"
                                     :hint="scope.row.worldName"
                                     :grouphint="scope.row.groupName" />
-                                <el-tag type="info" effect="plain" size="mini" style="margin-left: 5px">{{
+                                <el-tag type="info" effect="plain" size="small" style="margin-left: 5px">{{
                                     timeToText(scope.row.time)
                                 }}</el-tag>
                             </template>
@@ -73,56 +70,58 @@
                         </template>
                         <template v-else-if="scope.row.type === 'Avatar'">
                             <div style="display: flex; align-items: center">
-                                <el-popover placement="right" width="500px" trigger="click">
-                                    <div
-                                        slot="reference"
-                                        style="display: inline-block; vertical-align: top; width: 160px">
-                                        <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
-                                            <img
-                                                v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl"
-                                                class="x-link"
-                                                style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
-                                            <br />
-                                            <AvatarInfo
-                                                :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
-                                                :userid="scope.row.userId"
-                                                :hintownerid="scope.row.previousOwnerId"
-                                                :hintavatarname="scope.row.previousAvatarName"
-                                                :avatartags="scope.row.previousCurrentAvatarTags" />
-                                        </template>
-                                    </div>
+                                <el-popover placement="right" :width="500" trigger="click">
+                                    <template #reference>
+                                        <div style="display: inline-block; vertical-align: top; width: 160px">
+                                            <template v-if="scope.row.previousCurrentAvatarThumbnailImageUrl">
+                                                <img
+                                                    :src="scope.row.previousCurrentAvatarThumbnailImageUrl"
+                                                    class="x-link"
+                                                    style="flex: none; width: 160px; height: 120px; border-radius: 4px"
+                                                    loading="lazy" />
+                                                <br />
+                                                <AvatarInfo
+                                                    :imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl"
+                                                    :userid="scope.row.userId"
+                                                    :hintownerid="scope.row.previousOwnerId"
+                                                    :hintavatarname="scope.row.previousAvatarName"
+                                                    :avatartags="scope.row.previousCurrentAvatarTags" />
+                                            </template>
+                                        </div>
+                                    </template>
                                     <img
-                                        v-lazy="scope.row.previousCurrentAvatarImageUrl"
-                                        class="x-link"
-                                        style="width: 500px; height: 375px"
-                                        @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)" />
+                                        :src="scope.row.previousCurrentAvatarImageUrl"
+                                        :class="['x-link', 'x-popover-image']"
+                                        @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)"
+                                        loading="lazy" />
                                 </el-popover>
                                 <span style="position: relative; margin: 0 10px">
-                                    <i class="el-icon-right"></i>
+                                    <el-icon><Right /></el-icon>
                                 </span>
-                                <el-popover placement="right" width="500px" trigger="click">
-                                    <div
-                                        slot="reference"
-                                        style="display: inline-block; vertical-align: top; width: 160px">
-                                        <template v-if="scope.row.currentAvatarThumbnailImageUrl">
-                                            <img
-                                                v-lazy="scope.row.currentAvatarThumbnailImageUrl"
-                                                class="x-link"
-                                                style="flex: none; width: 160px; height: 120px; border-radius: 4px" />
-                                            <br />
-                                            <AvatarInfo
-                                                :imageurl="scope.row.currentAvatarThumbnailImageUrl"
-                                                :userid="scope.row.userId"
-                                                :hintownerid="scope.row.ownerId"
-                                                :hintavatarname="scope.row.avatarName"
-                                                :avatartags="scope.row.currentAvatarTags" />
-                                        </template>
-                                    </div>
+                                <el-popover placement="right" :width="500" trigger="click">
+                                    <template #reference>
+                                        <div style="display: inline-block; vertical-align: top; width: 160px">
+                                            <template v-if="scope.row.currentAvatarThumbnailImageUrl">
+                                                <img
+                                                    :src="scope.row.currentAvatarThumbnailImageUrl"
+                                                    class="x-link"
+                                                    style="flex: none; width: 160px; height: 120px; border-radius: 4px"
+                                                    loading="lazy" />
+                                                <br />
+                                                <AvatarInfo
+                                                    :imageurl="scope.row.currentAvatarThumbnailImageUrl"
+                                                    :userid="scope.row.userId"
+                                                    :hintownerid="scope.row.ownerId"
+                                                    :hintavatarname="scope.row.avatarName"
+                                                    :avatartags="scope.row.currentAvatarTags" />
+                                            </template>
+                                        </div>
+                                    </template>
                                     <img
-                                        v-lazy="scope.row.currentAvatarImageUrl"
-                                        class="x-link"
-                                        style="width: 500px; height: 375px"
-                                        @click="showFullscreenImageDialog(scope.row.currentAvatarImageUrl)" />
+                                        :src="scope.row.currentAvatarImageUrl"
+                                        :class="['x-link', 'x-popover-image']"
+                                        @click="showFullscreenImageDialog(scope.row.currentAvatarImageUrl)"
+                                        loading="lazy" />
                                 </el-popover>
                             </div>
                         </template>
@@ -148,7 +147,7 @@
                             <span style="margin-left: 5px" v-text="scope.row.previousStatusDescription"></span>
                             <br />
                             <span>
-                                <i class="el-icon-right"></i>
+                                <el-icon><Right /></el-icon>
                             </span>
                             <el-tooltip placement="top">
                                 <template #content>
@@ -182,7 +181,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.feed.date')" prop="created_at" sortable="custom" width="120">
+            <el-table-column :label="t('table.feed.date')" prop="created_at" :sortable="true" width="120">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
@@ -246,7 +245,7 @@
                                 <i class="x-user-status" :class="statusClass(scope.row.previousStatus)"></i>
                             </el-tooltip>
                             <span style="margin: 0 5px">
-                                <i class="el-icon-right"></i>
+                                <el-icon><Right /></el-icon>
                             </span>
                             <el-tooltip placement="top">
                                 <template #content>
@@ -305,17 +304,17 @@
                     </template>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </div>
 </template>
 
 <script setup>
+    import { Right } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
-    import { useGalleryStore, useAppearanceSettingsStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
+    import { useI18n } from 'vue-i18n';
+    import { useGalleryStore, useUserStore, useFeedStore, useUiStore } from '../../stores';
     import { timeToText, statusClass, formatDateFilter } from '../../shared/utils';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { feedTable } = storeToRefs(useFeedStore());
     const { feedTableLookup } = useFeedStore();

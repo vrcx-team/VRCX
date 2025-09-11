@@ -1,70 +1,70 @@
 <template>
-    <safe-dialog :visible.sync="isDialogVisible" :title="t('dialog.world_export.header')" width="650px">
+    <el-dialog v-model="isDialogVisible" :title="t('dialog.world_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
             @change="updateWorldExportDialog">
-            <template v-for="option in exportSelectOptions">
-                <el-checkbox :key="option.value" :label="option.label"></el-checkbox>
+            <template v-for="option in exportSelectOptions" :key="option.value">
+                <el-checkbox :label="option.label"></el-checkbox>
             </template>
         </el-checkbox-group>
 
-        <el-dropdown trigger="click" size="small" @click.native.stop>
-            <el-button size="mini">
+        <el-dropdown trigger="click" size="small">
+            <el-button size="small">
                 <span v-if="worldExportFavoriteGroup">
                     {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{
                         worldExportFavoriteGroup.capacity
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
                 <span v-else>
                     All Favorites
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectWorldExportGroup(null)">
-                    None
-                </el-dropdown-item>
-                <template v-for="groupAPI in favoriteWorldGroups">
-                    <el-dropdown-item
-                        :key="groupAPI.name"
-                        style="display: block; margin: 10px 0"
-                        @click.native="selectWorldExportGroup(groupAPI)">
-                        {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectWorldExportGroup(null)">
+                        None
                     </el-dropdown-item>
-                </template>
-            </el-dropdown-menu>
+                    <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
+                        <el-dropdown-item
+                            style="display: block; margin: 10px 0"
+                            @click="selectWorldExportGroup(groupAPI)">
+                            {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                        </el-dropdown-item>
+                    </template>
+                </el-dropdown-menu>
+            </template>
         </el-dropdown>
 
-        <el-dropdown trigger="click" size="small" style="margin-left: 10px" @click.native.stop>
-            <el-button size="mini">
+        <el-dropdown trigger="click" size="small" style="margin-left: 10px">
+            <el-button size="small">
                 <span v-if="worldExportLocalFavoriteGroup">
                     {{ worldExportLocalFavoriteGroup }} ({{
                         getLocalWorldFavoriteGroupLength(worldExportLocalFavoriteGroup)
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
                 <span v-else>
                     Select Group
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                    style="display: block; margin: 10px 0"
-                    @click.native="selectWorldExportLocalGroup(null)">
-                    None
-                </el-dropdown-item>
-                <template v-for="group in localWorldFavoriteGroups">
-                    <el-dropdown-item
-                        :key="group"
-                        style="display: block; margin: 10px 0"
-                        @click.native="selectWorldExportLocalGroup(group)">
-                        {{ group }} ({{ localWorldFavorites[group].length }})
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectWorldExportLocalGroup(null)">
+                        None
                     </el-dropdown-item>
-                </template>
-            </el-dropdown-menu>
+                    <template v-for="group in localWorldFavoriteGroups" :key="group">
+                        <el-dropdown-item
+                            style="display: block; margin: 10px 0"
+                            @click="selectWorldExportLocalGroup(group)">
+                            {{ group }} ({{ localWorldFavorites[group].length }})
+                        </el-dropdown-item>
+                    </template>
+                </el-dropdown-menu>
+            </template>
         </el-dropdown>
 
         <br />
@@ -72,18 +72,21 @@
         <el-input
             v-model="worldExportContent"
             type="textarea"
-            size="mini"
-            rows="15"
+            size="small"
+            :rows="15"
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="handleCopyWorldExportData"></el-input>
-    </safe-dialog>
+            @click="handleCopyWorldExportData"></el-input>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ArrowDown } from '@element-plus/icons-vue';
+    import { ref, computed, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { useFavoriteStore, useWorldStore } from '../../../stores';
 
@@ -97,7 +100,6 @@
     const emit = defineEmits(['update:worldExportDialogVisible']);
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
 
     const favoriteStore = useFavoriteStore();
     const {
@@ -108,7 +110,7 @@
         localWorldFavoritesList
     } = storeToRefs(favoriteStore);
     const { getLocalWorldFavoriteGroupLength } = favoriteStore;
-    const { cachedWorlds } = storeToRefs(useWorldStore());
+    const { cachedWorlds } = useWorldStore();
 
     const worldExportContent = ref('');
     const worldExportFavoriteGroup = ref(null);
@@ -154,7 +156,7 @@
         navigator.clipboard
             .writeText(worldExportContent.value)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'Copied successfully!',
                     type: 'success',
                     duration: 2000
@@ -162,7 +164,7 @@
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                proxy.$message.error('Copy failed!');
+                ElMessage.error('Copy failed!');
             });
     }
 
@@ -214,7 +216,7 @@
             });
             for (let i = 0; i < localWorldFavoritesList.value.length; ++i) {
                 const worldId = localWorldFavoritesList.value[i];
-                const ref = cachedWorlds.value.get(worldId);
+                const ref = cachedWorlds.get(worldId);
                 if (typeof ref !== 'undefined') {
                     lines.push(resText(ref));
                 }

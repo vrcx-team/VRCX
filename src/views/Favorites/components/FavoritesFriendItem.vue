@@ -3,7 +3,7 @@
         <div class="x-friend-item">
             <template v-if="favorite.ref">
                 <div class="avatar" :class="userStatusClass(favorite.ref)">
-                    <img v-lazy="userImage(favorite.ref, true)" />
+                    <img :src="userImage(favorite.ref, true)" loading="lazy" />
                 </div>
                 <div class="detail">
                     <span
@@ -19,47 +19,44 @@
                     <span v-else v-text="favorite.ref.statusDescription"></span>
                 </div>
                 <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
-                        <el-tooltip
-                            placement="left"
-                            :content="$t('view.favorite.move_tooltip')"
-                            :disabled="hideTooltips">
-                            <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
-                        </el-tooltip>
-                        <el-dropdown-menu slot="dropdown">
-                            <template v-for="groupAPI in favoriteFriendGroups">
-                                <el-dropdown-item
-                                    v-if="groupAPI.name !== group.name"
-                                    :key="groupAPI.name"
-                                    style="display: block; margin: 10px 0"
-                                    :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click.native="moveFavorite(favorite.ref, groupAPI, 'friend')">
-                                    {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
+                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
+                        <div>
+                            <el-tooltip placement="left" :content="t('view.favorite.move_tooltip')">
+                                <el-button type="default" :icon="Back" size="small" circle></el-button>
+                            </el-tooltip>
+                        </div>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <template v-for="groupAPI in favoriteFriendGroups" :key="groupAPI.name">
+                                    <el-dropdown-item
+                                        v-if="groupAPI.name !== group.name"
+                                        style="display: block; margin: 10px 0"
+                                        :disabled="groupAPI.count >= groupAPI.capacity"
+                                        @click="moveFavorite(favorite.ref, groupAPI, 'friend')">
+                                        {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                    </el-dropdown-item>
+                                </template>
+                            </el-dropdown-menu>
+                        </template>
                     </el-dropdown>
-                    <el-button type="text" size="mini" style="margin-left: 5px" @click.stop>
+                    <el-button type="text" size="small" style="margin-left: 5px" @click.stop>
                         <el-checkbox v-model="favorite.$selected"></el-checkbox>
                     </el-button>
                 </template>
                 <template v-else>
-                    <el-tooltip
-                        placement="right"
-                        :content="$t('view.favorite.unfavorite_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                         <el-button
                             v-if="shiftHeld"
-                            size="mini"
-                            icon="el-icon-close"
+                            size="small"
+                            :icon="Close"
                             circle
                             style="color: #f56c6c; margin-left: 5px"
                             @click.stop="deleteFavorite(favorite.id)"></el-button>
                         <el-button
                             v-else
                             type="default"
-                            icon="el-icon-star-on"
-                            size="mini"
+                            :icon="Star"
+                            size="small"
                             circle
                             style="margin-left: 5px"
                             @click.stop="showFavoriteDialog('friend', favorite.id)"></el-button>
@@ -73,8 +70,8 @@
                 </div>
                 <el-button
                     type="text"
-                    icon="el-icon-close"
-                    size="mini"
+                    :icon="Close"
+                    size="small"
                     style="margin-left: 5px"
                     @click.stop="deleteFavorite(favorite.id)"></el-button>
             </template>
@@ -83,10 +80,12 @@
 </template>
 
 <script setup>
+    import { Back, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { userImage, userStatusClass } from '../../../shared/utils';
-    import { useAppearanceSettingsStore, useFavoriteStore, useUiStore } from '../../../stores';
+    import { useFavoriteStore, useUiStore } from '../../../stores';
 
     defineProps({
         favorite: { type: Object, required: true },
@@ -96,10 +95,10 @@
 
     defineEmits(['click']);
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { favoriteFriendGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
+    const { t } = useI18n();
 
     function moveFavorite(ref, group, type) {
         favoriteRequest.deleteFavorite({ objectId: ref.id }).then(() => {

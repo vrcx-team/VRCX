@@ -2,15 +2,15 @@
     <div v-show="menuActiveIndex === 'search'" class="x-container">
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <el-input
-                :value="searchText"
+                :model-value="searchText"
                 :placeholder="t('view.search.search_placeholder')"
                 style="flex: 1"
                 @input="updateSearchText"
-                @keyup.native.13="search"></el-input>
-            <el-tooltip placement="bottom" :content="t('view.search.clear_results_tooltip')" :disabled="hideTooltips">
+                @keyup.enter="search"></el-input>
+            <el-tooltip placement="bottom" :content="t('view.search.clear_results_tooltip')">
                 <el-button
                     type="default"
-                    icon="el-icon-delete"
+                    :icon="Delete"
                     circle
                     style="flex: none; margin-left: 10px"
                     @click="handleClearSearch"></el-button>
@@ -30,37 +30,35 @@
                         :key="user.id"
                         class="x-friend-item"
                         @click="showUserDialog(user.id)">
-                        <template>
-                            <div class="avatar">
-                                <img v-lazy="userImage(user, true)" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="user.displayName"></span>
-                                <span
-                                    v-if="randomUserColours"
-                                    class="extra"
-                                    :class="user.$trustClass"
-                                    v-text="user.$trustLevel"></span>
-                                <span
-                                    v-else
-                                    class="extra"
-                                    :style="{ color: user.$userColour }"
-                                    v-text="user.$trustLevel"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img :src="userImage(user, true)" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name" v-text="user.displayName"></span>
+                            <span
+                                v-if="randomUserColours"
+                                class="extra"
+                                :class="user.$trustClass"
+                                v-text="user.$trustLevel"></span>
+                            <span
+                                v-else
+                                class="extra"
+                                :style="{ color: user.$userColour }"
+                                v-text="user.$trustLevel"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchUserResults.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchUserParams.offset"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="handleMoreSearchUser(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
                     >
                     <el-button
                         :disabled="searchUserResults.length < 10"
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="handleMoreSearchUser(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -77,15 +75,17 @@
                     style="margin-bottom: 15px"
                     @command="(row) => searchWorld(row)">
                     <el-button size="small"
-                        >{{ t('view.search.world.category') }} <i class="el-icon-arrow-down el-icon--right"></i
+                        >{{ t('view.search.world.category') }} <el-icon class="el-icon--right"><ArrowDown /></el-icon
                     ></el-button>
-                    <el-dropdown-menu v-slot="dropdown">
-                        <el-dropdown-item
-                            v-for="row in cachedConfig.dynamicWorldRows"
-                            :key="row.index"
-                            :command="row"
-                            v-text="row.name"></el-dropdown-item>
-                    </el-dropdown-menu>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item
+                                v-for="row in cachedConfig.dynamicWorldRows"
+                                :key="row.index"
+                                :command="row"
+                                v-text="row.name"></el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
                 </el-dropdown>
                 <el-checkbox v-model="searchWorldLabs" style="margin-left: 10px">{{
                     t('view.search.world.community_lab')
@@ -96,31 +96,29 @@
                         :key="world.id"
                         class="x-friend-item"
                         @click="showWorldDialog(world.id)">
-                        <template>
-                            <div class="avatar">
-                                <img v-lazy="world.thumbnailImageUrl" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="world.name"></span>
-                                <span v-if="world.occupants" class="extra"
-                                    >{{ world.authorName }} ({{ world.occupants }})</span
-                                >
-                                <span v-else class="extra" v-text="world.authorName"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img :src="world.thumbnailImageUrl" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name" v-text="world.name"></span>
+                            <span v-if="world.occupants" class="extra"
+                                >{{ world.authorName }} ({{ world.occupants }})</span
+                            >
+                            <span v-else class="extra" v-text="world.authorName"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchWorldResults.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchWorldParams.offset"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="moreSearchWorld(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
                     >
                     <el-button
                         :disabled="searchWorldResults.length < 10"
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="moreSearchWorld(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -136,34 +134,33 @@
                         <el-dropdown
                             v-if="avatarRemoteDatabaseProviderList.length > 1"
                             trigger="click"
-                            size="mini"
+                            size="small"
                             style="margin-right: 5px"
-                            @click.native.stop>
+                            @click.stop>
                             <el-button size="small"
                                 >{{ t('view.search.avatar.search_provider') }}
-                                <i class="el-icon-arrow-down el-icon--right"></i
+                                <el-icon class="el-icon--right"><ArrowDown /></el-icon
                             ></el-button>
-                            <el-dropdown-menu v-slot="dropdown">
-                                <el-dropdown-item
-                                    v-for="provider in avatarRemoteDatabaseProviderList"
-                                    :key="provider"
-                                    @click.native="setAvatarProvider(provider)">
-                                    <i
-                                        v-if="provider === avatarRemoteDatabaseProvider"
-                                        class="el-icon-check el-icon--left"></i>
-                                    {{ provider }}
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                        v-for="provider in avatarRemoteDatabaseProviderList"
+                                        :key="provider"
+                                        @click="setAvatarProvider(provider)">
+                                        <el-icon v-if="provider === avatarRemoteDatabaseProvider" class="el-icon--left"
+                                            ><Check
+                                        /></el-icon>
+                                        {{ provider }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
-                        <el-tooltip
-                            placement="bottom"
-                            :content="t('view.search.avatar.refresh_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="bottom" :content="t('view.search.avatar.refresh_tooltip')">
                             <el-button
                                 type="default"
                                 :loading="userDialog.isAvatarsLoading"
-                                size="mini"
-                                icon="el-icon-refresh"
+                                size="small"
+                                :icon="Refresh"
                                 circle
                                 @click="refreshUserDialogAvatars"></el-button>
                         </el-tooltip>
@@ -176,7 +173,7 @@
                     <div style="display: flex; align-items: center">
                         <el-radio-group
                             v-model="searchAvatarFilter"
-                            size="mini"
+                            size="small"
                             style="margin: 5px; display: block"
                             @change="searchAvatar">
                             <el-radio label="all">{{ t('view.search.avatar.all') }}</el-radio>
@@ -186,7 +183,7 @@
                         <el-divider direction="vertical"></el-divider>
                         <el-radio-group
                             v-model="searchAvatarFilterRemote"
-                            size="mini"
+                            size="small"
                             style="margin: 5px; display: block"
                             @change="searchAvatar">
                             <el-radio label="all">{{ t('view.search.avatar.all') }}</el-radio>
@@ -201,7 +198,7 @@
                     <el-radio-group
                         v-model="searchAvatarSort"
                         :disabled="searchAvatarFilterRemote !== 'local'"
-                        size="mini"
+                        size="small"
                         style="margin: 5px; display: block"
                         @change="searchAvatar">
                         <el-radio label="name">{{ t('view.search.avatar.sort_name') }}</el-radio>
@@ -215,33 +212,31 @@
                         :key="avatar.id"
                         class="x-friend-item"
                         @click="showAvatarDialog(avatar.id)">
-                        <template>
-                            <div class="avatar">
-                                <img v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl" />
-                                <img v-else-if="avatar.imageUrl" v-lazy="avatar.imageUrl" />
-                            </div>
-                            <div class="detail">
-                                <span class="name" v-text="avatar.name"></span>
-                                <span
-                                    v-if="avatar.releaseStatus === 'public'"
-                                    class="extra"
-                                    style="color: #67c23a"
-                                    v-text="avatar.releaseStatus"></span>
-                                <span
-                                    v-else-if="avatar.releaseStatus === 'private'"
-                                    class="extra"
-                                    style="color: #f56c6c"
-                                    v-text="avatar.releaseStatus"></span>
-                                <span v-else class="extra" v-text="avatar.releaseStatus"></span>
-                                <span class="extra" v-text="avatar.authorName"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img v-if="avatar.thumbnailImageUrl" :src="avatar.thumbnailImageUrl" loading="lazy" />
+                            <img v-else-if="avatar.imageUrl" :src="avatar.imageUrl" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name" v-text="avatar.name"></span>
+                            <span
+                                v-if="avatar.releaseStatus === 'public'"
+                                class="extra"
+                                style="color: #67c23a"
+                                v-text="avatar.releaseStatus"></span>
+                            <span
+                                v-else-if="avatar.releaseStatus === 'private'"
+                                class="extra"
+                                style="color: #f56c6c"
+                                v-text="avatar.releaseStatus"></span>
+                            <span v-else class="extra" v-text="avatar.releaseStatus"></span>
+                            <span class="extra" v-text="avatar.authorName"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchAvatarPage.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchAvatarPageNum"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="moreSearchAvatar(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
@@ -251,7 +246,7 @@
                             searchAvatarResults.length < 10 ||
                             (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length
                         "
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="moreSearchAvatar(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -268,41 +263,39 @@
                         :key="group.id"
                         class="x-friend-item"
                         @click="showGroupDialog(group.id)">
-                        <template>
-                            <div class="avatar">
-                                <img v-lazy="getSmallThumbnailUrl(group.iconUrl)" />
-                            </div>
-                            <div class="detail">
-                                <span class="name">
-                                    <span v-text="group.name"></span>
-                                    <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
-                                    <span
-                                        style="
-                                            margin-left: 5px;
-                                            color: #909399;
-                                            font-weight: normal;
-                                            font-family: monospace;
-                                            font-size: 12px;
-                                        "
-                                        >{{ group.shortCode }}.{{ group.discriminator }}</span
-                                    >
-                                </span>
-                                <span class="extra" v-text="group.description"></span>
-                            </div>
-                        </template>
+                        <div class="avatar">
+                            <img :src="getSmallThumbnailUrl(group.iconUrl)" loading="lazy" />
+                        </div>
+                        <div class="detail">
+                            <span class="name">
+                                <span v-text="group.name"></span>
+                                <span style="margin-left: 5px; font-weight: normal">({{ group.memberCount }})</span>
+                                <span
+                                    style="
+                                        margin-left: 5px;
+                                        color: #909399;
+                                        font-weight: normal;
+                                        font-family: monospace;
+                                        font-size: 12px;
+                                    "
+                                    >{{ group.shortCode }}.{{ group.discriminator }}</span
+                                >
+                            </span>
+                            <span class="extra" v-text="group.description"></span>
+                        </div>
                     </div>
                 </div>
                 <el-button-group v-if="searchGroupResults.length" style="margin-top: 15px">
                     <el-button
                         :disabled="!searchGroupParams.offset"
-                        icon="el-icon-back"
+                        :icon="Back"
                         size="small"
                         @click="moreSearchGroup(-1)"
                         >{{ t('view.search.prev_page') }}</el-button
                     >
                     <el-button
                         :disabled="searchGroupResults.length < 10"
-                        icon="el-icon-right"
+                        :icon="Right"
                         size="small"
                         @click="moreSearchGroup(1)"
                         >{{ t('view.search.next_page') }}</el-button
@@ -314,9 +307,10 @@
 </template>
 
 <script setup>
+    import { Delete, Back, Right, Refresh, ArrowDown, Check } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { groupRequest, worldRequest } from '../../api';
     import {
         compareByCreatedAt,
@@ -339,18 +333,15 @@
         useWorldStore
     } from '../../stores';
 
-    const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { avatarRemoteDatabase } = storeToRefs(useAdvancedSettingsStore());
     const { avatarRemoteDatabaseProviderList, avatarRemoteDatabaseProvider } = storeToRefs(useAvatarProviderStore());
     const { setAvatarProvider } = useAvatarProviderStore();
     const { userDialog } = storeToRefs(useUserStore());
     const { showUserDialog, refreshUserDialogAvatars } = useUserStore();
-    const { showAvatarDialog, lookupAvatars } = useAvatarStore();
-    const { cachedAvatars } = storeToRefs(useAvatarStore());
-    const { cachedWorlds } = storeToRefs(useWorldStore());
-    const { showWorldDialog } = useWorldStore();
+    const { showAvatarDialog, lookupAvatars, cachedAvatars } = useAvatarStore();
+    const { cachedWorlds, showWorldDialog } = useWorldStore();
     const { showGroupDialog, applyGroup } = useGroupStore();
-    const { cachedGroups } = storeToRefs(useGroupStore());
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { searchText, searchUserResults } = storeToRefs(useSearchStore());
     const { clearSearch, moreSearchUser } = useSearchStore();
@@ -523,7 +514,7 @@
             .then((args) => {
                 const map = new Map();
                 for (const json of args.json) {
-                    const ref = cachedWorlds.value.get(json.id);
+                    const ref = cachedWorlds.get(json.id);
                     if (typeof ref !== 'undefined') {
                         map.set(ref.id, ref);
                     }
@@ -552,7 +543,7 @@
         const query = searchText.value;
         const queryUpper = query.toUpperCase();
         if (!query) {
-            for (ref of cachedAvatars.value.values()) {
+            for (ref of cachedAvatars.values()) {
                 switch (searchAvatarFilter.value) {
                     case 'all':
                         avatars.set(ref.id, ref);
@@ -572,7 +563,7 @@
             isSearchAvatarLoading.value = false;
         } else {
             if (searchAvatarFilterRemote.value === 'all' || searchAvatarFilterRemote.value === 'local') {
-                for (ref of cachedAvatars.value.values()) {
+                for (ref of cachedAvatars.values()) {
                     let match = ref.name.toUpperCase().includes(queryUpper);
                     if (!match && ref.description) {
                         match = ref.description.toUpperCase().includes(queryUpper);

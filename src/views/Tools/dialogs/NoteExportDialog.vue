@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="isNoteExportDialogVisible"
+        :model-value="isNoteExportDialogVisible"
         :title="t('dialog.note_export.header')"
         width="1000px"
         @close="closeDialog">
@@ -26,7 +26,7 @@
             {{ t('dialog.note_export.cancel') }}
         </el-button>
         <span v-if="loading" style="margin: 10px">
-            <i class="el-icon-loading" style="margin-right: 5px"></i>
+            <el-icon style="margin-right: 5px"><Loading /></el-icon>
             {{ t('dialog.note_export.progress') }} {{ progress }}/{{ progressTotal }}
         </span>
 
@@ -40,57 +40,61 @@
             <pre style="white-space: pre-wrap; font-size: 12px" v-text="errors"></pre>
         </template>
 
-        <data-tables v-loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
+        <DataTable v-loading="loading" v-bind="noteExportTable" style="margin-top: 10px">
             <el-table-column :label="t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl">
-                <template slot-scope="scope">
-                    <el-popover placement="right" height="500px" trigger="hover">
-                        <img slot="reference" v-lazy="userImage(scope.row.ref)" class="friends-list-avatar" />
+                <template #default="{ row }">
+                    <el-popover placement="right" :width="500" trigger="hover">
+                        <template #reference>
+                            <img :src="userImage(row.ref)" class="friends-list-avatar" loading="lazy" />
+                        </template>
                         <img
-                            v-lazy="userImageFull(scope.row.ref)"
-                            class="friends-list-avatar"
-                            style="height: 500px; cursor: pointer"
-                            @click="showFullscreenImageDialog(userImageFull(scope.row.ref))" />
+                            :src="userImageFull(row.ref)"
+                            :class="['friends-list-avatar', 'x-popover-image']"
+                            style="cursor: pointer"
+                            loading="lazy"
+                            @click="showFullscreenImageDialog(userImageFull(row.ref))" />
                     </el-popover>
                 </template>
             </el-table-column>
 
             <el-table-column :label="t('table.import.name')" width="170" prop="name">
-                <template slot-scope="scope">
-                    <span class="x-link" @click="showUserDialog(scope.row.id)" v-text="scope.row.name"></span>
+                <template #default="{ row }">
+                    <span class="x-link" @click="showUserDialog(row.id)" v-text="row.name"></span>
                 </template>
             </el-table-column>
 
             <el-table-column :label="t('table.import.note')" prop="memo">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <el-input
-                        v-model="scope.row.memo"
+                        v-model="row.memo"
                         type="textarea"
                         maxlength="256"
                         show-word-limit
                         :rows="2"
                         :autosize="{ minRows: 1, maxRows: 10 }"
-                        size="mini"
+                        size="small"
                         resize="none"></el-input>
                 </template>
             </el-table-column>
 
             <el-table-column :label="t('table.import.skip_export')" width="90" align="right">
-                <template slot-scope="scope">
+                <template #default="{ row }">
                     <el-button
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
-                        @click="removeFromNoteExportTable(scope.row)"></el-button>
+                        :icon="Close"
+                        size="small"
+                        @click="removeFromNoteExportTable(row)"></el-button>
                 </template>
             </el-table-column>
-        </data-tables>
-    </safe-dialog>
+        </DataTable>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { Close, Loading } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { miscRequest } from '../../../api';
     import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
@@ -112,7 +116,7 @@
         data: [],
         tableProps: {
             stripe: true,
-            size: 'mini'
+            size: 'small'
         },
         layout: 'table'
     });

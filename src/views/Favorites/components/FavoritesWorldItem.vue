@@ -1,57 +1,60 @@
 <template>
-    <div @click="$emit('click')" :style="{ display: 'inline-block', width: '300px', marginRight: '15px' }">
+    <div class="fav-world-item" @click="$emit('click')">
         <div class="x-friend-item">
             <template v-if="isLocalFavorite ? favorite.name : favorite.ref">
-                <div class="avatar">
-                    <img v-lazy="smallThumbnail" />
+                <div class="avatar" v-once>
+                    <img :src="smallThumbnail" loading="lazy" decoding="async" fetchpriority="low" />
                 </div>
-                <div class="detail">
-                    <span class="name" v-once>{{ localFavFakeRef.name }}</span>
-                    <span v-if="localFavFakeRef.occupants" class="extra" v-once
-                        >{{ localFavFakeRef.authorName }} ({{ localFavFakeRef.occupants }})</span
-                    >
-                    <span v-else class="extra" v-once>{{ localFavFakeRef.authorName }}</span>
+                <div class="detail" v-once>
+                    <span class="name">{{ localFavFakeRef.name }}</span>
+                    <span v-if="localFavFakeRef.occupants" class="extra">
+                        {{ localFavFakeRef.authorName }} ({{ localFavFakeRef.occupants }})
+                    </span>
+                    <span v-else class="extra">{{ localFavFakeRef.authorName }}</span>
                 </div>
                 <template v-if="editFavoritesMode">
-                    <el-dropdown trigger="click" size="mini" style="margin-left: 5px" @click.native.stop>
-                        <el-tooltip
-                            placement="left"
-                            :content="$t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')"
-                            :disabled="hideTooltips">
-                            <el-button type="default" icon="el-icon-back" size="mini" circle></el-button>
-                        </el-tooltip>
-                        <el-dropdown-menu slot="dropdown">
-                            <template v-for="groupAPI in favoriteWorldGroups">
-                                <el-dropdown-item
-                                    v-if="isLocalFavorite || groupAPI.name !== group.name"
-                                    :key="groupAPI.name"
-                                    style="display: block; margin: 10px 0"
-                                    :disabled="groupAPI.count >= groupAPI.capacity"
-                                    @click.native="handleDropdownItemClick(groupAPI)">
-                                    {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                </el-dropdown-item>
-                            </template>
-                        </el-dropdown-menu>
-
-                        <el-button v-if="!isLocalFavorite" type="text" size="mini" @click.stop style="margin-left: 5px">
-                            <el-checkbox v-model="isSelected"></el-checkbox>
-                        </el-button>
+                    <el-dropdown trigger="click" size="small" style="margin-left: 5px">
+                        <div>
+                            <el-tooltip
+                                placement="left"
+                                :content="
+                                    t(localFavFakeRef ? 'view.favorite.copy_tooltip' : 'view.favorite.move_tooltip')
+                                ">
+                                <el-button type="default" :icon="Back" size="small" circle></el-button>
+                            </el-tooltip>
+                        </div>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <template v-for="groupAPI in favoriteWorldGroups" :key="groupAPI.name">
+                                    <el-dropdown-item
+                                        v-if="isLocalFavorite || groupAPI.name !== group.name"
+                                        style="display: block; margin: 10px 0"
+                                        :disabled="groupAPI.count >= groupAPI.capacity"
+                                        @click="handleDropdownItemClick(groupAPI)">
+                                        {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
+                                    </el-dropdown-item>
+                                </template>
+                            </el-dropdown-menu>
+                        </template>
                     </el-dropdown>
+                    <el-button v-if="!isLocalFavorite" type="text" size="small" @click.stop style="margin-left: 5px">
+                        <el-checkbox v-model="isSelected"></el-checkbox>
+                    </el-button>
                 </template>
                 <template v-else>
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
-                        :content="$t('view.favorite.unavailable_tooltip')">
-                        <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
+                        :content="t('view.favorite.unavailable_tooltip')">
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.ref.releaseStatus === 'private'"
                         placement="left"
-                        :content="$t('view.favorite.private')">
-                        <i class="el-icon-warning" style="color: #e6a23c; margin-left: 5px"></i>
+                        :content="t('view.favorite.private')">
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
-                    <el-tooltip placement="left" :disabled="hideTooltips">
+                    <el-tooltip placement="left">
                         <template #content>
                             {{
                                 canOpenInstanceInGame()
@@ -60,8 +63,8 @@
                             }}
                         </template>
                         <el-button
-                            size="mini"
-                            icon="el-icon-message"
+                            size="small"
+                            :icon="Message"
                             style="margin-left: 5px"
                             @click.stop="newInstanceSelfInvite(favorite.id)"
                             circle></el-button>
@@ -69,41 +72,36 @@
                     <el-tooltip
                         v-if="!isLocalFavorite"
                         placement="right"
-                        :content="$t('view.favorite.unfavorite_tooltip')"
-                        :disabled="hideTooltips">
+                        :content="t('view.favorite.unfavorite_tooltip')">
                         <el-button
                             v-if="shiftHeld"
-                            size="mini"
-                            icon="el-icon-close"
+                            size="small"
+                            :icon="Close"
                             circle
                             style="color: #f56c6c; margin-left: 5px"
                             @click.stop="deleteFavorite(favorite.id)"></el-button>
                         <el-button
                             v-else
-                            icon="el-icon-star-on"
-                            size="mini"
+                            :icon="Star"
+                            size="small"
                             circle
                             style="margin-left: 5px"
                             type="default"
                             @click.stop="showFavoriteDialog('world', favorite.id)"></el-button>
                     </el-tooltip>
                 </template>
-                <el-tooltip
-                    v-if="isLocalFavorite"
-                    placement="right"
-                    :content="$t('view.favorite.unfavorite_tooltip')"
-                    :disabled="hideTooltips">
+                <el-tooltip v-if="isLocalFavorite" placement="right" :content="t('view.favorite.unfavorite_tooltip')">
                     <el-button
                         v-if="shiftHeld"
-                        size="mini"
-                        icon="el-icon-close"
+                        size="small"
+                        :icon="Close"
                         circle
                         style="color: #f56c6c; margin-left: 5px"
                         @click.stop="$emit('remove-local-world-favorite', favorite.id, group)"></el-button>
                     <el-button
                         v-else
-                        icon="el-icon-star-on"
-                        size="mini"
+                        :icon="Star"
+                        size="small"
                         circle
                         style="margin-left: 5px"
                         type="default"
@@ -112,18 +110,18 @@
             </template>
             <template v-else>
                 <div class="avatar"></div>
-                <div class="detail">
-                    <span v-once>{{ favorite.name || favorite.id }}</span>
+                <div class="detail" v-once>
+                    <span>{{ favorite.name || favorite.id }}</span>
                     <el-tooltip
                         v-if="!isLocalFavorite && favorite.deleted"
                         placement="left"
-                        :content="$t('view.favorite.unavailable_tooltip')">
-                        <i class="el-icon-warning" style="color: #f56c6c; margin-left: 5px"></i>
+                        :content="t('view.favorite.unavailable_tooltip')">
+                        <el-icon><Warning /></el-icon>
                     </el-tooltip>
                     <el-button
                         type="text"
-                        icon="el-icon-close"
-                        size="mini"
+                        :icon="Close"
+                        size="small"
                         style="margin-left: 5px"
                         @click.stop="handleDeleteFavorite"></el-button>
                 </div>
@@ -133,16 +131,13 @@
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
+    import { Warning, Back, Message, Close, Star } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { computed, getCurrentInstance } from 'vue';
+    import { computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
-    import {
-        useAppearanceSettingsStore,
-        useFavoriteStore,
-        useInviteStore,
-        useUiStore,
-        useGameStore
-    } from '../../../stores';
+    import { useFavoriteStore, useInviteStore, useUiStore } from '../../../stores';
 
     const props = defineProps({
         group: [Object, String],
@@ -152,14 +147,11 @@
     });
 
     const emit = defineEmits(['handle-select', 'remove-local-world-favorite', 'click']);
-    const { proxy } = getCurrentInstance();
-
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { favoriteWorldGroups } = storeToRefs(useFavoriteStore());
     const { showFavoriteDialog } = useFavoriteStore();
     const { newInstanceSelfInvite } = useInviteStore();
     const { shiftHeld } = storeToRefs(useUiStore());
-    const { isGameRunning } = storeToRefs(useGameStore());
+    const { t } = useI18n();
     const { canOpenInstanceInGame } = useInviteStore();
 
     const isSelected = computed({
@@ -213,9 +205,17 @@
             })
             .then((args) => {
                 if (message) {
-                    proxy.$message({ message: 'World added to favorites', type: 'success' });
+                    ElMessage({ message: 'World added to favorites', type: 'success' });
                 }
                 return args;
             });
     }
 </script>
+
+<style scoped>
+    .fav-world-item {
+        display: inline-block;
+        width: 300px;
+        margin-right: 15px;
+    }
+</style>

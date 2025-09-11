@@ -1,6 +1,6 @@
 <template>
-    <safe-dialog
-        :visible="!!feedFiltersDialogMode"
+    <el-dialog
+        :model-value="!!feedFiltersDialogMode"
         :title="dialogTitle"
         width="550px"
         destroy-on-close
@@ -14,12 +14,14 @@
                         placement="top"
                         style="margin-left: 5px"
                         :content="setting.tooltip">
-                        <i :class="setting.tooltipIcon || 'el-icon-info'"></i> </el-tooltip
-                ></span>
+                        <el-icon v-if="setting.tooltipWarning"><Warning /></el-icon>
+                        <el-icon v-else><InfoFilled /></el-icon>
+                    </el-tooltip>
+                </span>
 
                 <el-radio-group
                     v-model="currentSharedFeedFilters[setting.key]"
-                    size="mini"
+                    size="small"
                     @change="saveSharedFeedFilters">
                     <el-radio-button v-for="option in setting.options" :key="option.label" :label="option.label">
                         {{ t(option.textKey) }}
@@ -36,7 +38,7 @@
                     <span class="toggle-name">{{ setting.name }}</span>
                     <el-radio-group
                         v-model="currentSharedFeedFilters[setting.key]"
-                        size="mini"
+                        size="small"
                         @change="saveSharedFeedFilters">
                         <el-radio-button v-for="option in setting.options" :key="option.label" :label="option.label">
                             {{ t(option.textKey) }}
@@ -54,13 +56,14 @@
                 t('dialog.shared_feed_filters.close')
             }}</el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { InfoFilled, Warning } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import configRepository from '../../../service/config';
     import { feedFiltersOptions, sharedFeedFiltersDefaults } from '../../../shared/constants';
     import { useNotificationsSettingsStore, usePhotonStore, useSharedFeedStore } from '../../../stores';

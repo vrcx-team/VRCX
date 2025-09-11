@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import { userRequest } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { database } from '../service/database';
-import { AppGlobal } from '../service/appConfig';
+import { AppDebug } from '../service/appConfig';
 import gameLogService from '../service/gamelog.js';
 import { watchState } from '../service/watchState';
 import {
@@ -69,7 +69,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             filter: [],
             tableProps: {
                 stripe: true,
-                size: 'mini',
+                size: 'small',
                 defaultSort: {
                     prop: 'created_at',
                     order: 'descending'
@@ -627,7 +627,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     // set $location_at to join time if user isn't a friend
                     ref.$location_at = joinTime;
                 } else {
-                    if (AppGlobal.debugGameLog || AppGlobal.debugWebRequests) {
+                    if (AppDebug.debugGameLog || AppDebug.debugWebRequests) {
                         console.log('Fetching user from gameLog:', userId);
                     }
                     userRequest.getUser({ userId });
@@ -744,7 +744,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 vrcxStore.processScreenshot(gameLog.screenshotPath);
                 break;
             case 'api-request':
-                if (AppGlobal.debugWebRequests) {
+                if (AppDebug.debugWebRequests) {
                     console.log('API Request:', gameLog.url);
                 }
                 // const userId = '';
@@ -1387,7 +1387,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             rawLogs.slice(3)
         );
         if (
-            AppGlobal.debugGameLog &&
+            AppDebug.debugGameLog &&
             gameLog.type !== 'photon-id' &&
             gameLog.type !== 'api-request' &&
             gameLog.type !== 'udon-exception'
@@ -1399,7 +1399,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     async function disableGameLogDialog() {
         if (gameStore.isGameRunning) {
-            $app.$message({
+            ElMessage({
                 message:
                     'VRChat needs to be closed before this option can be changed',
                 type: 'error'
@@ -1407,7 +1407,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             return;
         }
         if (!advancedSettingsStore.gameLogDisabled) {
-            $app.$confirm('Continue? Disable GameLog', 'Confirm', {
+            ElMessageBox.confirm('Continue? Disable GameLog', 'Confirm', {
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
                 type: 'info',
@@ -1431,11 +1431,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
     return {
         state,
+
         nowPlaying,
         gameLogTable,
         gameLogSessionTable,
         lastVideoUrl,
         lastResourceloadUrl,
+
         initGameLogTable,
         clearNowPlaying,
         tryLoadPlayerList,

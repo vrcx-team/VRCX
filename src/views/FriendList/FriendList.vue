@@ -20,26 +20,20 @@
                     <span>{{ t('view.friend_list.load') }}</span>
                     <template v-if="friendsListLoading">
                         <span style="margin-left: 5px" v-text="friendsListLoadingProgress"></span>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('view.friend_list.cancel_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('view.friend_list.cancel_tooltip')">
                             <el-button
-                                size="mini"
-                                icon="el-icon-loading"
+                                size="small"
+                                :icon="Loading"
                                 circle
                                 style="margin-left: 5px"
                                 @click="friendsListLoading = false"></el-button>
                         </el-tooltip>
                     </template>
                     <template v-else>
-                        <el-tooltip
-                            placement="top"
-                            :content="t('view.friend_list.load_tooltip')"
-                            :disabled="hideTooltips">
+                        <el-tooltip placement="top" :content="t('view.friend_list.load_tooltip')">
                             <el-button
-                                size="mini"
-                                icon="el-icon-refresh-left"
+                                size="small"
+                                :icon="RefreshLeft"
                                 circle
                                 style="margin-left: 5px"
                                 @click="friendsListLoadUsers"></el-button>
@@ -50,10 +44,7 @@
 
             <div style="margin: 10px 0 0 10px; display: flex; align-items: center">
                 <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                    <el-tooltip
-                        placement="bottom"
-                        :content="t('view.friend_list.favorites_only_tooltip')"
-                        :disabled="hideTooltips">
+                    <el-tooltip placement="bottom" :content="t('view.friend_list.favorites_only_tooltip')">
                         <el-switch
                             v-model="friendsListSearchFilterVIP"
                             active-color="#13ce66"
@@ -80,19 +71,19 @@
                         :label="type"
                         :value="type"></el-option>
                 </el-select>
-                <el-tooltip placement="top" :content="t('view.friend_list.refresh_tooltip')" :disabled="hideTooltips">
+                <el-tooltip placement="top" :content="t('view.friend_list.refresh_tooltip')">
                     <el-button
                         type="default"
-                        icon="el-icon-refresh"
+                        :icon="Refresh"
                         circle
                         style="flex: none"
                         @click="friendsListSearchChange"></el-button>
                 </el-tooltip>
             </div>
-            <data-tables
+            <DataTable
                 v-loading="friendsListLoading"
                 v-bind="friendsListTable"
-                :table-props="{ height: 'calc(100vh - 170px)', size: 'mini' }"
+                :table-props="{ height: 'calc(100vh - 170px)', size: 'small' }"
                 style="margin-top: 10px; cursor: pointer"
                 @row-click="selectFriendsListRow">
                 <el-table-column
@@ -100,28 +91,31 @@
                     :key="friendsListBulkUnfriendForceUpdate"
                     width="55"
                     prop="$selected">
-                    <template slot-scope="scope">
-                        <el-button type="text" size="mini" @click.stop>
+                    <template #default="{ row }">
+                        <el-button type="text" size="small" @click.stop>
                             <el-checkbox
-                                v-model="scope.row.$selected"
+                                v-model="row.$selected"
                                 @change="friendsListBulkUnfriendForceUpdate++"></el-checkbox>
                         </el-button>
                     </template>
                 </el-table-column>
-                <el-table-column :label="t('table.friendList.no')" width="70" prop="$friendNumber" sortable="custom">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.$friendNumber ? scope.row.$friendNumber : '' }}</span>
+                <el-table-column :label="t('table.friendList.no')" width="70" prop="$friendNumber" :sortable="true">
+                    <template #default="{ row }">
+                        <span>{{ row.$friendNumber ? row.$friendNumber : '' }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.avatar')" width="70" prop="photo">
-                    <template slot-scope="scope">
-                        <el-popover placement="right" height="500px" trigger="hover">
-                            <img slot="reference" v-lazy="userImage(scope.row, true)" class="friends-list-avatar" />
+                    <template #default="{ row }">
+                        <el-popover placement="right" :width="500" trigger="hover">
+                            <template #reference>
+                                <img :src="userImage(row, true)" class="friends-list-avatar" loading="lazy" />
+                            </template>
                             <img
-                                v-lazy="userImageFull(scope.row)"
-                                class="friends-list-avatar"
-                                style="height: 500px; cursor: pointer"
-                                @click="showFullscreenImageDialog(userImageFull(scope.row))" />
+                                :src="userImageFull(row)"
+                                :class="['friends-list-avatar', 'x-popover-image']"
+                                style="cursor: pointer"
+                                @click="showFullscreenImageDialog(userImageFull(row))"
+                                loading="lazy" />
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -131,24 +125,20 @@
                     prop="displayName"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')">
-                    <template slot-scope="scope">
-                        <span :style="{ color: randomUserColours ? scope.row.$userColour : undefined }" class="name">{{
-                            scope.row.displayName
+                    <template #default="{ row }">
+                        <span :style="{ color: randomUserColours ? row.$userColour : undefined }" class="name">{{
+                            row.displayName
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="t('table.friendList.rank')" width="110" prop="$trustSortNum" sortable="custom">
-                    <template slot-scope="scope">
+                <el-table-column :label="t('table.friendList.rank')" width="110" prop="$trustSortNum" :sortable="true">
+                    <template #default="{ row }">
                         <span
                             v-if="randomUserColours"
-                            :class="scope.row.$trustClass"
+                            :class="row.$trustClass"
                             class="name"
-                            v-text="scope.row.$trustLevel"></span>
-                        <span
-                            v-else
-                            class="name"
-                            :style="{ color: scope.row.$userColour }"
-                            v-text="scope.row.$trustLevel"></span>
+                            v-text="row.$trustLevel"></span>
+                        <span v-else class="name" :style="{ color: row.$userColour }" v-text="row.$trustLevel"></span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -157,13 +147,13 @@
                     prop="status"
                     sortable
                     :sort-method="(a, b) => sortStatus(a.status, b.status)">
-                    <template slot-scope="scope">
+                    <template #default="{ row }">
                         <i
-                            v-if="scope.row.status !== 'offline'"
-                            :class="statusClass(scope.row.status)"
+                            v-if="row.status !== 'offline'"
+                            :class="statusClass(row.status)"
                             style="margin-right: 3px"
                             class="x-user-status"></i>
-                        <span v-text="scope.row.statusDescription"></span>
+                        <span v-text="row.statusDescription"></span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -172,9 +162,9 @@
                     prop="$languages"
                     sortable
                     :sort-method="(a, b) => sortLanguages(a, b)">
-                    <template slot-scope="scope">
-                        <el-tooltip v-for="item in scope.row.$languages" :key="item.key" placement="top">
-                            <template slot="content">
+                    <template #default="{ row }">
+                        <el-tooltip v-for="item in row.$languages" :key="item.key" placement="top">
+                            <template #content>
                                 <span>{{ item.value }} ({{ item.key }})</span>
                             </template>
                             <span
@@ -185,9 +175,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column :label="t('table.friendList.bioLink')" width="100" prop="bioLinks">
-                    <template slot-scope="scope">
-                        <el-tooltip v-for="(link, index) in scope.row.bioLinks" v-if="link" :key="index">
-                            <template slot="content">
+                    <template #default="{ row }">
+                        <el-tooltip v-for="(link, index) in row.bioLinks.filter(Boolean)" :key="index">
+                            <template #content>
                                 <span v-text="link"></span>
                             </template>
                             <img
@@ -199,7 +189,8 @@
                                     margin-right: 5px;
                                     cursor: pointer;
                                 "
-                                @click.stop="openExternalLink(link)" />
+                                @click.stop="openExternalLink(link)"
+                                loading="lazy" />
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -209,8 +200,8 @@
                     prop="$joinCount"
                     sortable></el-table-column>
                 <el-table-column :label="t('table.friendList.timeTogether')" width="140" prop="$timeSpent" sortable>
-                    <template slot-scope="scope">
-                        <span v-if="scope.row.$timeSpent">{{ timeToText(scope.row.$timeSpent) }}</span>
+                    <template #default="{ row }">
+                        <span v-if="row.$timeSpent">{{ timeToText(row.$timeSpent) }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -219,8 +210,8 @@
                     prop="$lastSeen"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')">
-                    <template slot-scope="scope">
-                        <span>{{ formatDateFilter(scope.row.$lastSeen, 'long') }}</span>
+                    <template #default="{ row }">
+                        <span>{{ formatDateFilter(row.$lastSeen, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -229,8 +220,8 @@
                     prop="last_activity"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_activity')">
-                    <template slot-scope="scope">
-                        <span>{{ formatDateFilter(scope.row.last_activity, 'long') }}</span>
+                    <template #default="{ row }">
+                        <span>{{ formatDateFilter(row.last_activity, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -239,8 +230,8 @@
                     prop="last_login"
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')">
-                    <template slot-scope="scope">
-                        <span>{{ formatDateFilter(scope.row.last_login, 'long') }}</span>
+                    <template #default="{ row }">
+                        <span>{{ formatDateFilter(row.last_login, 'long') }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -250,24 +241,26 @@
                     sortable
                     :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')"></el-table-column>
                 <el-table-column :label="t('table.friendList.unfriend')" width="100" align="center">
-                    <template slot-scope="scope">
+                    <template #default="{ row }">
                         <el-button
                             type="text"
-                            icon="el-icon-close"
+                            :icon="Close"
                             style="color: #f56c6c"
-                            size="mini"
-                            @click.stop="confirmDeleteFriend(scope.row.id)"></el-button>
+                            size="small"
+                            @click.stop="confirmDeleteFriend(row.id)"></el-button>
                     </template>
                 </el-table-column>
-            </data-tables>
+            </DataTable>
         </div>
     </div>
 </template>
 
 <script setup>
+    import { ElMessageBox } from 'element-plus';
+    import { Loading, Refresh, Close, RefreshLeft } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { nextTick, reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { friendRequest, userRequest } from '../../api';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
     import {
@@ -293,13 +286,11 @@
 
     const { t } = useI18n();
 
-    const { proxy } = getCurrentInstance();
-    const $confirm = proxy.$confirm;
     const emit = defineEmits(['lookup-user']);
 
     const { friends } = storeToRefs(useFriendStore());
     const { getAllUserStats, confirmDeleteFriend, handleFriendDelete } = useFriendStore();
-    const { hideTooltips, randomUserColours } = storeToRefs(useAppearanceSettingsStore());
+    const { randomUserColours } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { menuActiveIndex } = storeToRefs(useUiStore());
     const { stringComparer, friendsListSearch } = storeToRefs(useSearchStore());
@@ -308,7 +299,7 @@
     const friendsListSearchFilters = ref([]);
     const friendsListTable = reactive({
         data: [],
-        tableProps: { stripe: true, size: 'mini', defaultSort: { prop: '$friendNumber', order: 'descending' } },
+        tableProps: { stripe: true, size: 'small', defaultSort: { prop: '$friendNumber', order: 'descending' } },
         pageSize: 100,
         paginationProps: { small: true, layout: 'sizes,prev,pager,next,total', pageSizes: [50, 100, 250, 500] }
     });
@@ -381,7 +372,7 @@
     function showBulkUnfriendSelectionConfirm() {
         const pending = friendsListTable.data.filter((item) => item.$selected).map((item) => item.displayName);
         if (!pending.length) return;
-        $confirm(
+        ElMessageBox.confirm(
             `Are you sure you want to delete ${pending.length} friends?
             This can negatively affect your trust rank,
             This action cannot be undone.`,
@@ -392,10 +383,15 @@
                 type: 'info',
                 showInput: true,
                 inputType: 'textarea',
-                inputValue: pending.join('\r\n'),
-                callback: (action) => action === 'confirm' && bulkUnfriendSelection()
+                inputValue: pending.join('\r\n')
             }
-        );
+        )
+            .then((action) => {
+                if (action === 'confirm') {
+                    bulkUnfriendSelection();
+                }
+            })
+            .catch(() => {});
     }
 
     function bulkUnfriendSelection() {

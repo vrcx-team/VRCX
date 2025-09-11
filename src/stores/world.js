@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { instanceRequest, miscRequest, worldRequest } from '../api';
-import { $app } from '../app';
 import { database } from '../service/database';
 import { watchState } from '../service/watchState';
 import {
@@ -42,7 +42,7 @@ export const useWorldStore = defineStore('World', () => {
             cacheSize: '',
             cacheLocked: false,
             cachePath: '',
-            fileAnalysis: {},
+            fileAnalysis: [],
             lastVisit: '',
             visitCount: 0,
             timeSpent: 0,
@@ -50,9 +50,10 @@ export const useWorldStore = defineStore('World', () => {
             isQuest: false,
             isIos: false,
             hasPersistData: false
-        },
-        cachedWorlds: new Map()
+        }
     });
+
+    let cachedWorlds = new Map();
 
     const worldDialog = computed({
         get: () => state.worldDialog,
@@ -61,24 +62,17 @@ export const useWorldStore = defineStore('World', () => {
         }
     });
 
-    const cachedWorlds = computed({
-        get: () => state.cachedWorlds,
-        set: (value) => {
-            state.cachedWorlds = value;
-        }
-    });
-
     watch(
         () => watchState.isLoggedIn,
         () => {
             state.worldDialog.visible = false;
-            state.cachedWorlds.clear();
+            cachedWorlds.clear();
         },
         { flush: 'sync' }
     );
 
     /**
-     * aka: `$app.methods.showWorldDialog`
+     *
      * @param {string} tag
      * @param {string} shortName
      */
@@ -100,7 +94,7 @@ export const useWorldStore = defineStore('World', () => {
         D.cacheSize = '';
         D.cacheLocked = false;
         D.cachePath = '';
-        D.fileAnalysis = {};
+        D.fileAnalysis = [];
         D.rooms = [];
         D.lastVisit = '';
         D.visitCount = 0;
@@ -145,7 +139,7 @@ export const useWorldStore = defineStore('World', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                $app.$message({
+                ElMessage({
                     message: 'Failed to load world',
                     type: 'error'
                 });
@@ -240,7 +234,7 @@ export const useWorldStore = defineStore('World', () => {
         if (json.description) {
             json.description = replaceBioSymbols(json.description);
         }
-        let ref = state.cachedWorlds.get(json.id);
+        let ref = cachedWorlds.get(json.id);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -283,7 +277,7 @@ export const useWorldStore = defineStore('World', () => {
                 //
                 ...json
             };
-            state.cachedWorlds.set(ref.id, ref);
+            cachedWorlds.set(ref.id, ref);
         } else {
             Object.assign(ref, json);
         }
@@ -326,6 +320,7 @@ export const useWorldStore = defineStore('World', () => {
 
     return {
         state,
+
         worldDialog,
         cachedWorlds,
         showWorldDialog,

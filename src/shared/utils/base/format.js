@@ -16,6 +16,10 @@ function timeToText(sec, isNeedSeconds = false) {
     if (n < 0) {
         n = -n;
     }
+    if (n >= 31536000) {
+        arr.push(`${Math.floor(n / 31536000)}y`);
+        n %= 31536000;
+    }
     if (n >= 86400) {
         arr.push(`${Math.floor(n / 86400)}d`);
         n %= 86400;

@@ -16,7 +16,6 @@ import { useNotificationsSettingsStore } from './settings/notifications';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 import { useUserStore } from './user';
 import { useWorldStore } from './world';
-import { useAuthStore } from './auth';
 
 export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const friendStore = useFriendStore();
@@ -32,7 +31,6 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const feedStore = useFeedStore();
     const worldStore = useWorldStore();
     const photonStore = usePhotonStore();
-    const authStore = useAuthStore();
 
     const state = reactive({
         sharedFeed: {
@@ -314,7 +312,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
                 isFriend = friendStore.friends.has(ctx.userId);
                 isFavorite = friendStore.localFavoriteFriends.has(ctx.userId);
             } else if (ctx.displayName) {
-                for (var ref of userStore.cachedUsers.values()) {
+                for (let ref of userStore.cachedUsers.values()) {
                     if (ref.displayName === ctx.displayName) {
                         isFriend = friendStore.friends.has(ref.id);
                         isFavorite = friendStore.localFavoriteFriends.has(
@@ -605,5 +603,9 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         state.sharedFeed.pendingUpdate = true;
     }
 
-    return { state, sharedFeed, updateSharedFeed };
+    return {
+        state,
+        sharedFeed,
+        updateSharedFeed
+    };
 });

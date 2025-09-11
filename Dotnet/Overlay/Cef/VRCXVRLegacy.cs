@@ -141,13 +141,13 @@ namespace VRCX
             var overlayHandle2 = 0UL;
 
             _wristOverlay = new OffScreenBrowserLegacy(
-                "file://vrcx/vr.html?1",
+                Program.LaunchDebug ? "http://localhost:9000/vr.html?wrist" : "file://vrcx/vr.html?wrist",
                 512,
                 512
             );
 
             _hmdOverlay = new OffScreenBrowserLegacy(
-                "file://vrcx/vr.html?2",
+                Program.LaunchDebug ? "http://localhost:9000/vr.html?hmd" : "file://vrcx/vr.html?hmd",
                 1024,
                 1024
             );
@@ -763,7 +763,7 @@ namespace VRCX
 
             return err;
         }
-        
+
         public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrFeedFunctionQueue()
         {
             throw new NotImplementedException();
@@ -774,9 +774,9 @@ namespace VRCX
             if (_wristOverlay == null) return;
             if (_wristOverlay.IsLoading)
                 Restart();
-            _wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
+            _wristOverlay.ExecuteScriptAsync($"$vr.{function}", json);
         }
-        
+
         public override ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue()
         {
             throw new NotImplementedException();
@@ -787,7 +787,7 @@ namespace VRCX
             if (_hmdOverlay == null) return;
             if (_hmdOverlay.IsLoading)
                 Restart();
-            _hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
+            _hmdOverlay.ExecuteScriptAsync($"$vr.{function}", json);
         }
     }
 }

@@ -1,10 +1,11 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="ossDialog"
+        :model-value="ossDialog"
         :title="t('dialog.open_source.header')"
         width="650px"
-        @close="closeDialog">
+        @close="closeDialog"
+        destroy-on-close>
         <div v-once style="height: 350px; overflow: hidden scroll; word-break: break-all">
             <div>
                 <span>{{ t('dialog.open_source.description') }}</span>
@@ -15,12 +16,12 @@
                 <pre style="font-size: 12px; white-space: pre-line">{{ lib.licenseText }}</pre>
             </div>
         </div>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { useI18n } from 'vue-i18n-bridge';
-    import { openSourceSoftwareLicenses } from '../../../shared/constants';
+    import { useI18n } from 'vue-i18n';
+    import { openSourceSoftwareLicenses } from '../../../shared/constants/ossLicenses';
 
     const { t } = useI18n();
 

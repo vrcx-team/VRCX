@@ -1,52 +1,48 @@
 <template>
     <div v-show="menuActiveIndex === 'gameLog'" class="x-container">
-        <data-tables v-loading="gameLogTable.loading" v-bind="gameLogTable" lazy>
-            <template #tool>
-                <div style="margin: 0 0 10px; display: flex; align-items: center">
-                    <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
-                        <el-tooltip
-                            placement="bottom"
-                            :content="t('view.feed.favorites_only_tooltip')"
-                            :disabled="hideTooltips">
-                            <el-switch
-                                v-model="gameLogTable.vip"
-                                active-color="#13ce66"
-                                @change="gameLogTableLookup"></el-switch>
-                        </el-tooltip>
-                    </div>
-                    <el-select
-                        v-model="gameLogTable.filter"
-                        multiple
-                        clearable
-                        style="flex: 1"
-                        :placeholder="t('view.game_log.filter_placeholder')"
-                        @change="gameLogTableLookup">
-                        <el-option
-                            v-for="type in [
-                                'Location',
-                                'OnPlayerJoined',
-                                'OnPlayerLeft',
-                                'VideoPlay',
-                                'Event',
-                                'External',
-                                'StringLoad',
-                                'ImageLoad'
-                            ]"
-                            :key="type"
-                            :label="t('view.game_log.filters.' + type)"
-                            :value="type"></el-option>
-                    </el-select>
-                    <el-input
-                        v-model="gameLogTable.search"
-                        :placeholder="t('view.game_log.search_placeholder')"
-                        clearable
-                        style="flex: none; width: 150px; margin-left: 10px"
-                        @keyup.native.enter="gameLogTableLookup"
-                        @change="gameLogTableLookup"></el-input>
-                </div>
-            </template>
+        <!-- 工具栏 -->
+        <div style="margin: 0 0 10px; display: flex; align-items: center">
+            <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
+                <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
+                    <el-switch
+                        v-model="gameLogTable.vip"
+                        active-color="#13ce66"
+                        @change="gameLogTableLookup"></el-switch>
+                </el-tooltip>
+            </div>
+            <el-select
+                v-model="gameLogTable.filter"
+                multiple
+                clearable
+                style="flex: 1"
+                :placeholder="t('view.game_log.filter_placeholder')"
+                @change="gameLogTableLookup">
+                <el-option
+                    v-for="type in [
+                        'Location',
+                        'OnPlayerJoined',
+                        'OnPlayerLeft',
+                        'VideoPlay',
+                        'Event',
+                        'External',
+                        'StringLoad',
+                        'ImageLoad'
+                    ]"
+                    :key="type"
+                    :label="t('view.game_log.filters.' + type)"
+                    :value="type"></el-option>
+            </el-select>
+            <el-input
+                v-model="gameLogTable.search"
+                :placeholder="t('view.game_log.search_placeholder')"
+                clearable
+                style="flex: none; width: 150px; margin-left: 10px"
+                @keyup.enter="gameLogTableLookup"
+                @change="gameLogTableLookup"></el-input>
+        </div>
 
-            <el-table-column :label="t('table.gameLog.date')" prop="created_at" sortable="custom" width="120">
+        <DataTable v-loading="gameLogTable.loading" v-bind="gameLogTable">
+            <el-table-column :label="t('table.gameLog.date')" prop="created_at" :sortable="true" width="120">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
@@ -59,7 +55,7 @@
 
             <el-table-column :label="t('table.gameLog.type')" prop="type" width="120">
                 <template #default="scope">
-                    <el-tooltip placement="right" :open-delay="500" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :show-after="500">
                         <template #content>
                             <span>{{ t('view.game_log.filters.' + scope.row.type) }}</span>
                         </template>
@@ -83,6 +79,7 @@
                             <span>💚</span>
                         </el-tooltip>
                     </template>
+                    <span v-else></span>
                 </template>
             </el-table-column>
 
@@ -167,47 +164,43 @@
                             v-if="shiftHeld"
                             style="color: #f56c6c"
                             type="text"
-                            icon="el-icon-close"
-                            size="mini"
+                            :icon="Close"
+                            size="small"
+                            class="small-button"
                             @click="deleteGameLogEntry(scope.row)"></el-button>
                         <el-button
                             v-else
                             type="text"
-                            icon="el-icon-delete"
-                            size="mini"
+                            :icon="Delete"
+                            size="small"
+                            class="small-button"
                             @click="deleteGameLogEntryPrompt(scope.row)"></el-button>
                     </template>
-                    <el-tooltip placement="top" :content="t('dialog.previous_instances.info')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('dialog.previous_instances.info')">
                         <el-button
                             v-if="scope.row.type === 'Location'"
                             type="text"
-                            icon="el-icon-s-data"
-                            size="mini"
+                            :icon="DataLine"
+                            size="small"
+                            class="small-button"
                             @click="showPreviousInstancesInfoDialog(scope.row.location)"></el-button>
                     </el-tooltip>
                 </template>
             </el-table-column>
-        </data-tables>
+        </DataTable>
     </div>
 </template>
 
 <script setup>
+    import { ElMessageBox } from 'element-plus';
+    import { Close, Delete, DataLine } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { database } from '../../service/database';
     import { removeFromArray, openExternalLink, formatDateFilter } from '../../shared/utils';
-    import {
-        useUserStore,
-        useUiStore,
-        useWorldStore,
-        useAppearanceSettingsStore,
-        useInstanceStore,
-        useGameLogStore
-    } from '../../stores';
+    import { useUserStore, useUiStore, useWorldStore, useInstanceStore, useGameLogStore } from '../../stores';
     import { useSharedFeedStore } from '../../stores';
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showWorldDialog } = useWorldStore();
     const { lookupUser } = useUserStore();
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
@@ -217,8 +210,6 @@
     const { updateSharedFeed } = useSharedFeedStore();
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
-
     const emit = defineEmits(['updateGameLogSessionTable']);
 
     function deleteGameLogEntry(row) {
@@ -232,15 +223,23 @@
     }
 
     function deleteGameLogEntryPrompt(row) {
-        proxy.$confirm('Continue? Delete Log', 'Confirm', {
+        ElMessageBox.confirm('Continue? Delete Log', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     deleteGameLogEntry(row);
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 </script>
+
+<style scoped>
+    .small-button {
+        padding: 0;
+        height: 18px;
+    }
+</style>

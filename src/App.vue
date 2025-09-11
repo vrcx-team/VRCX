@@ -1,10 +1,98 @@
-<script>
-    // @ts-ignore
-    import template from './app.pug';
-    import Vue, { onMounted } from 'vue';
+<template>
+    <!DOCTYPE html>
+    <el-config-provider :locale="currentLocale">
+        <div
+            id="x-app"
+            class="x-app"
+            ondragenter="event.preventDefault()"
+            ondragover="event.preventDefault()"
+            ondrop="event.preventDefault()">
+            <!-- ### Login ### -->
+            <Login v-if="!watchState.isLoggedIn"></Login>
 
+            <VRCXUpdateDialog></VRCXUpdateDialog>
+
+            <template v-if="watchState.isLoggedIn">
+                <!-- ### Menu ### -->
+                <NavMenu></NavMenu>
+
+                <!-- ### Sidebar ### -->
+                <Sidebar></Sidebar>
+
+                <!-- ### Tabs ### -->
+                <Feed></Feed>
+
+                <GameLog></GameLog>
+
+                <PlayerList></PlayerList>
+
+                <Search></Search>
+
+                <Favorites></Favorites>
+
+                <FriendLog></FriendLog>
+
+                <Moderation></Moderation>
+
+                <Notification></Notification>
+
+                <FriendList></FriendList>
+
+                <Charts></Charts>
+
+                <Tools></Tools>
+
+                <Profile></Profile>
+
+                <Settings></Settings>
+
+                <!-- ## Dialogs ## -->
+                <UserDialog></UserDialog>
+
+                <WorldDialog></WorldDialog>
+
+                <AvatarDialog></AvatarDialog>
+
+                <GroupDialog></GroupDialog>
+
+                <GroupMemberModerationDialog></GroupMemberModerationDialog>
+
+                <FullscreenImageDialog></FullscreenImageDialog>
+
+                <PreviousInstancesInfoDialog></PreviousInstancesInfoDialog>
+
+                <LaunchDialog></LaunchDialog>
+
+                <LaunchOptionsDialog></LaunchOptionsDialog>
+
+                <FriendImportDialog></FriendImportDialog>
+
+                <WorldImportDialog></WorldImportDialog>
+
+                <AvatarImportDialog></AvatarImportDialog>
+
+                <ChooseFavoriteGroupDialog></ChooseFavoriteGroupDialog>
+
+                <EditInviteMessageDialog></EditInviteMessageDialog>
+
+                <VRChatConfigDialog></VRChatConfigDialog>
+
+                <PrimaryPasswordDialog></PrimaryPasswordDialog>
+            </template>
+        </div>
+    </el-config-provider>
+</template>
+
+<script setup>
+    import { onMounted, computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { createGlobalStores } from './stores';
     import { watchState } from './service/watchState';
+
+    import '@fontsource/noto-sans-kr';
+    import '@fontsource/noto-sans-jp';
+    import '@fontsource/noto-sans-sc';
+    import '@fontsource/noto-sans-tc';
 
     import Login from './views/Login/Login.vue';
     import NavMenu from './components/NavMenu.vue';
@@ -28,7 +116,6 @@
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
     import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
-    import GalleryDialog from './components/dialogs/GalleryDialog.vue';
     import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
     import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import LaunchDialog from './components/dialogs/LaunchDialog.vue';
@@ -42,66 +129,57 @@
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
 
-    import { utils } from './shared/utils/_utils';
+    import en from 'element-plus/es/locale/lang/en';
+    import es from 'element-plus/es/locale/lang/es';
+    import fr from 'element-plus/es/locale/lang/fr';
+    import hu from 'element-plus/es/locale/lang/hu';
+    import ja from 'element-plus/es/locale/lang/ja';
+    import ko from 'element-plus/es/locale/lang/ko';
+    import pl from 'element-plus/es/locale/lang/pl';
+    import pt from 'element-plus/es/locale/lang/pt';
+    import cs from 'element-plus/es/locale/lang/cs';
+    import ru from 'element-plus/es/locale/lang/ru';
+    import vi from 'element-plus/es/locale/lang/vi';
+    import zhCN from 'element-plus/es/locale/lang/zh-CN';
+    import zhTW from 'element-plus/es/locale/lang/zh-TW';
+    import th from 'element-plus/es/locale/lang/th';
 
-    export default {
-        template,
-        components: {
-            Login,
-            NavMenu,
-            Sidebar,
-            Feed,
-            GameLog,
-            PlayerList,
-            Search,
-            Favorites,
-            FriendLog,
-            Moderation,
-            Notification,
-            FriendList,
-            Charts,
-            Tools,
-            Profile,
-            Settings,
-
-            UserDialog,
-            WorldDialog,
-            AvatarDialog,
-            GroupDialog,
-            GroupMemberModerationDialog,
-            GalleryDialog,
-            FullscreenImageDialog,
-            PreviousInstancesInfoDialog,
-            LaunchDialog,
-            LaunchOptionsDialog,
-            FriendImportDialog,
-            WorldImportDialog,
-            AvatarImportDialog,
-            ChooseFavoriteGroupDialog,
-            EditInviteMessageDialog,
-            VRCXUpdateDialog,
-            VRChatConfigDialog,
-            PrimaryPasswordDialog
-        },
-        setup() {
-            const store = createGlobalStores();
-            Vue.prototype.store = store;
-            Vue.prototype.utils = utils;
-
-            store.updateLoop.updateLoop();
-
-            onMounted(async () => {
-                store.gameLog.getGameLogTable();
-                await store.auth.migrateStoredUsers();
-                store.auth.autoLoginAfterMounted();
-                store.vrcx.checkAutoBackupRestoreVrcRegistry();
-                store.game.checkVRChatDebugLogging();
-            });
-
-            return {
-                store,
-                watchState
-            };
-        }
+    const langMap = {
+        en: en,
+        es: es,
+        fr: fr,
+        hu: hu,
+        ja: ja,
+        ko: ko,
+        pl: pl,
+        pt: pt,
+        cs: cs,
+        ru: ru,
+        vi: vi,
+        'zh-CN': zhCN,
+        'zh-TW': zhTW,
+        th: th
     };
+
+    const currentLocale = computed(() => {
+        return langMap[locale.value] || en;
+    });
+
+    const { locale } = useI18n();
+
+    const store = createGlobalStores();
+
+    if (typeof window !== 'undefined') {
+        window.$pinia = store;
+    }
+
+    store.updateLoop.updateLoop();
+
+    onMounted(async () => {
+        store.gameLog.getGameLogTable();
+        await store.auth.migrateStoredUsers();
+        store.auth.autoLoginAfterMounted();
+        store.vrcx.checkAutoBackupRestoreVrcRegistry();
+        store.game.checkVRChatDebugLogging();
+    });
 </script>

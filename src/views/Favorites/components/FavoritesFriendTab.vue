@@ -2,45 +2,45 @@
     <div>
         <div style="display: flex; align-items: center; justify-content: space-between">
             <div>
-                <el-button size="small" @click="showFriendExportDialog">{{ $t('view.favorite.export') }}</el-button>
+                <el-button size="small" @click="showFriendExportDialog">{{ t('view.favorite.export') }}</el-button>
                 <el-button size="small" style="margin-left: 5px" @click="showFriendImportDialog">{{
-                    $t('view.favorite.import')
+                    t('view.favorite.import')
                 }}</el-button>
             </div>
             <div style="display: flex; align-items: center; font-size: 13px; margin-right: 10px">
-                <span class="name" style="margin-right: 5px; line-height: 10px">{{ $t('view.favorite.sort_by') }}</span>
+                <span class="name" style="margin-right: 5px; line-height: 10px">{{ t('view.favorite.sort_by') }}</span>
                 <el-radio-group v-model="sortFav" @change="saveSortFavoritesOption">
                     <el-radio :label="false">{{
-                        $t('view.settings.appearance.appearance.sort_favorite_by_name')
+                        t('view.settings.appearance.appearance.sort_favorite_by_name')
                     }}</el-radio>
                     <el-radio :label="true">{{
-                        $t('view.settings.appearance.appearance.sort_favorite_by_date')
+                        t('view.settings.appearance.appearance.sort_favorite_by_date')
                     }}</el-radio>
                 </el-radio-group>
             </div>
         </div>
-        <span style="display: block; margin-top: 30px">{{ $t('view.favorite.avatars.vrchat_favorites') }}</span>
+        <span style="display: block; margin-top: 30px">{{ t('view.favorite.avatars.vrchat_favorites') }}</span>
         <el-collapse style="border: 0">
             <el-collapse-item v-for="group in favoriteFriendGroups" :key="group.name">
-                <template slot="title">
+                <template #title>
                     <span
                         style="font-weight: bold; font-size: 14px; margin-left: 10px"
                         v-text="group.displayName"></span>
                     <span style="color: #909399; font-size: 12px; margin-left: 10px"
                         >{{ group.count }}/{{ group.capacity }}</span
                     >
-                    <el-tooltip placement="top" :content="$t('view.favorite.rename_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="top" :content="t('view.favorite.rename_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-edit"
+                            size="small"
+                            :icon="Edit"
                             circle
                             style="margin-left: 10px"
                             @click.stop="changeFavoriteGroupName(group)"></el-button>
                     </el-tooltip>
-                    <el-tooltip placement="right" :content="$t('view.favorite.clear_tooltip')" :disabled="hideTooltips">
+                    <el-tooltip placement="right" :content="t('view.favorite.clear_tooltip')">
                         <el-button
-                            size="mini"
-                            icon="el-icon-delete"
+                            size="small"
+                            :icon="Delete"
                             circle
                             style="margin-left: 5px"
                             @click.stop="clearFavoriteGroup(group)"></el-button>
@@ -70,13 +70,17 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <FriendExportDialog :friend-export-dialog-visible.sync="friendExportDialogVisible" />
+        <FriendExportDialog v-model:friendExportDialogVisible="friendExportDialogVisible" />
     </div>
 </template>
 
 <script setup>
-    import { ref, getCurrentInstance, computed } from 'vue';
+    import { Edit, Delete } from '@element-plus/icons-vue';
+
+    import { ElMessageBox } from 'element-plus';
+    import { ref, computed } from 'vue';
     import { storeToRefs } from 'pinia';
+    import { useI18n } from 'vue-i18n';
     import { favoriteRequest } from '../../../api';
     import { useAppearanceSettingsStore, useFavoriteStore, useUserStore } from '../../../stores';
     import FriendExportDialog from '../dialogs/FriendExportDialog.vue';
@@ -91,13 +95,12 @@
 
     const emit = defineEmits(['change-favorite-group-name']);
 
-    const { proxy } = getCurrentInstance();
-
-    const { hideTooltips, sortFavorites } = storeToRefs(useAppearanceSettingsStore());
+    const { sortFavorites } = storeToRefs(useAppearanceSettingsStore());
     const { setSortFavorites } = useAppearanceSettingsStore();
     const { showUserDialog } = useUserStore();
     const { favoriteFriendGroups, groupedByGroupKeyFavoriteFriends } = storeToRefs(useFavoriteStore());
     const { showFriendImportDialog, saveSortFavoritesOption } = useFavoriteStore();
+    const { t } = useI18n();
 
     const friendExportDialogVisible = ref(false);
 
@@ -115,19 +118,20 @@
     }
 
     function clearFavoriteGroup(ctx) {
-        proxy.$confirm('Continue? Clear Group', 'Confirm', {
+        ElMessageBox.confirm('Continue? Clear Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     favoriteRequest.clearFavoriteGroup({
                         type: ctx.type,
                         group: ctx.name
                     });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function changeFavoriteGroupName(group) {

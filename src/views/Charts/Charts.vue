@@ -5,16 +5,18 @@
         </div>
         <keep-alive>
             <InstanceActivity v-if="menuActiveIndex === 'charts'" />
-            <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
         </keep-alive>
+        <el-backtop target="#chart" :right="30" :bottom="30"></el-backtop>
     </div>
 </template>
 
 <script setup>
+    import { defineAsyncComponent } from 'vue';
     import { storeToRefs } from 'pinia';
-    import { useI18n } from 'vue-i18n-bridge';
-    import InstanceActivity from './components/InstanceActivity.vue';
+    import { useI18n } from 'vue-i18n';
     import { useUiStore } from '../../stores';
+
+    const InstanceActivity = defineAsyncComponent(() => import('./components/InstanceActivity.vue'));
 
     const { t } = useI18n();
 

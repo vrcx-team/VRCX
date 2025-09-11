@@ -1,92 +1,96 @@
 <template>
-    <safe-dialog :visible.sync="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
+    <el-dialog v-model="isDialogVisible" :title="t('dialog.avatar_export.header')" width="650px">
         <el-checkbox-group
             v-model="exportSelectedOptions"
             style="margin-bottom: 10px"
             @change="updateAvatarExportDialog()">
-            <template v-for="option in exportSelectOptions">
-                <el-checkbox :key="option.value" :label="option.label"></el-checkbox>
+            <template v-for="option in exportSelectOptions" :key="option.value">
+                <el-checkbox :label="option.label"></el-checkbox>
             </template>
         </el-checkbox-group>
 
-        <el-dropdown trigger="click" size="small" @click.native.stop>
-            <el-button size="mini">
+        <el-dropdown trigger="click" size="small">
+            <el-button size="small">
                 <span v-if="avatarExportFavoriteGroup">
                     {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{
                         avatarExportFavoriteGroup.capacity
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
                 <span v-else>
                     All Favorites
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="display: block; margin: 10px 0" @click.native="selectAvatarExportGroup(null)">
-                    All Favorites
-                </el-dropdown-item>
-                <template v-for="groupAPI in favoriteAvatarGroups">
-                    <el-dropdown-item
-                        :key="groupAPI.name"
-                        style="display: block; margin: 10px 0"
-                        @click.native="selectAvatarExportGroup(groupAPI)">
-                        {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item style="display: block; margin: 10px 0" @click="selectAvatarExportGroup(null)">
+                        All Favorites
                     </el-dropdown-item>
-                </template>
-            </el-dropdown-menu>
+                    <template v-for="groupAPI in favoriteAvatarGroups" :key="groupAPI.name">
+                        <el-dropdown-item
+                            style="display: block; margin: 10px 0"
+                            @click="selectAvatarExportGroup(groupAPI)">
+                            {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                        </el-dropdown-item>
+                    </template>
+                </el-dropdown-menu>
+            </template>
         </el-dropdown>
 
-        <el-dropdown trigger="click" size="small" style="margin-left: 10px" @click.native.stop>
-            <el-button size="mini">
+        <el-dropdown trigger="click" size="small" style="margin-left: 10px">
+            <el-button size="small">
                 <span v-if="avatarExportLocalFavoriteGroup">
                     {{ avatarExportLocalFavoriteGroup }} ({{
                         getLocalAvatarFavoriteGroupLength(avatarExportLocalFavoriteGroup)
                     }})
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
                 <span v-else>
                     Select Group
-                    <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </span>
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                    style="display: block; margin: 10px 0"
-                    @click.native="selectAvatarExportLocalGroup(null)">
-                    None
-                </el-dropdown-item>
-                <template v-for="group in localAvatarFavoriteGroups">
+            <template #dropdown>
+                <el-dropdown-menu>
                     <el-dropdown-item
-                        :key="group"
                         style="display: block; margin: 10px 0"
-                        @click.native="selectAvatarExportLocalGroup(group)">
-                        {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                        @click="selectAvatarExportLocalGroup(null)">
+                        None
                     </el-dropdown-item>
-                </template>
-            </el-dropdown-menu>
+                    <template v-for="group in localAvatarFavoriteGroups" :key="group">
+                        <el-dropdown-item
+                            style="display: block; margin: 10px 0"
+                            @click="selectAvatarExportLocalGroup(group)">
+                            {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                        </el-dropdown-item>
+                    </template>
+                </el-dropdown-menu>
+            </template>
         </el-dropdown>
         <br />
         <el-input
             v-model="avatarExportContent"
             type="textarea"
-            size="mini"
-            rows="15"
+            size="small"
+            :rows="15"
             resize="none"
             readonly
             style="margin-top: 15px"
-            @click.native="handleCopyAvatarExportData"></el-input>
-    </safe-dialog>
+            @click="handleCopyAvatarExportData"></el-input>
+    </el-dialog>
 </template>
 
 <script setup>
-    import { ref, computed, watch, getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { ArrowDown } from '@element-plus/icons-vue';
+    import { ref, computed, watch } from 'vue';
+    import { ElMessage } from 'element-plus';
+
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { useAvatarStore, useFavoriteStore } from '../../../stores';
 
     const { t } = useI18n();
-    const { proxy } = getCurrentInstance();
 
     const props = defineProps({
         avatarExportDialogVisible: {
@@ -106,8 +110,7 @@
         localAvatarFavoriteGroups
     } = storeToRefs(favoriteStore);
     const { getLocalAvatarFavoriteGroupLength } = favoriteStore;
-    const avatarStore = useAvatarStore();
-    const { cachedAvatars } = storeToRefs(avatarStore);
+    const { cachedAvatars } = useAvatarStore();
 
     const avatarExportContent = ref('');
     const avatarExportFavoriteGroup = ref(null);
@@ -151,7 +154,7 @@
         navigator.clipboard
             .writeText(avatarExportContent.value)
             .then(() => {
-                proxy.$message({
+                ElMessage({
                     message: 'Copied successfully!',
                     type: 'success',
                     duration: 2000
@@ -159,7 +162,7 @@
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                proxy.$message.error('Copy failed!');
+                ElMessage.error('Copy failed!');
             });
     }
     function updateAvatarExportDialog() {
@@ -209,7 +212,7 @@
             });
             for (let i = 0; i < localAvatarFavoritesList.value.length; ++i) {
                 const avatarId = localAvatarFavoritesList.value[i];
-                const ref = cachedAvatars.value.get(avatarId);
+                const ref = cachedAvatars.get(avatarId);
                 if (typeof ref !== 'undefined') {
                     lines.push(resText(ref));
                 }

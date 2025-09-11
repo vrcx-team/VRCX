@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch, nextTick } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import {
     groupRequest,
@@ -7,7 +8,6 @@ import {
     userRequest,
     worldRequest
 } from '../api';
-import { $app } from '../app';
 import configRepository from '../service/config';
 import { watchState } from '../service/watchState';
 import { database } from '../service/database.js';
@@ -83,11 +83,12 @@ export const useGroupStore = defineStore('Group', () => {
             auditLogTypes: [],
             openWithUserId: ''
         },
-        cachedGroups: new Map(),
         inGameGroupOrder: [],
         groupInstances: [],
         currentUserGroupsInit: false
     });
+
+    let cachedGroups = new Map();
 
     const groupDialog = computed({
         get: () => state.groupDialog,
@@ -124,13 +125,6 @@ export const useGroupStore = defineStore('Group', () => {
         }
     });
 
-    const cachedGroups = computed({
-        get: () => state.cachedGroups,
-        set: (value) => {
-            state.cachedGroups = value;
-        }
-    });
-
     const inGameGroupOrder = computed({
         get: () => state.inGameGroupOrder,
         set: (value) => {
@@ -160,7 +154,7 @@ export const useGroupStore = defineStore('Group', () => {
             state.moderateGroupDialog.visible = false;
             state.groupMemberModeration.visible = false;
             state.currentUserGroupsInit = false;
-            state.cachedGroups.clear();
+            cachedGroups.clear();
             state.currentUserGroups.clear();
             if (isLoggedIn) {
                 initUserGroups();
@@ -198,7 +192,7 @@ export const useGroupStore = defineStore('Group', () => {
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                $app.$message({
+                ElMessage({
                     message: 'Failed to load group',
                     type: 'error'
                 });
@@ -506,7 +500,7 @@ export const useGroupStore = defineStore('Group', () => {
                             });
                     }
                 }
-                $app.$nextTick(() => (D.isGetGroupDialogGroupLoading = false));
+                nextTick(() => (D.isGetGroupDialogGroupLoading = false));
                 return args;
             });
     }
@@ -566,16 +560,19 @@ export const useGroupStore = defineStore('Group', () => {
     }
 
     function leaveGroupPrompt(groupId) {
-        $app.$confirm('Are you sure you want to leave this group?', 'Confirm', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    leaveGroup(groupId);
-                }
+        ElMessageBox.confirm(
+            'Are you sure you want to leave this group?',
+            'Confirm',
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info'
             }
-        });
+        )
+            .then(() => {
+                leaveGroup(groupId);
+            })
+            .catch(() => {});
     }
 
     function updateGroupPostSearch() {
@@ -602,7 +599,7 @@ export const useGroupStore = defineStore('Group', () => {
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                $app.$message({
+                ElMessage({
                     message: 'Group visibility updated',
                     type: 'success'
                 });
@@ -616,7 +613,7 @@ export const useGroupStore = defineStore('Group', () => {
      * @returns {object} ref
      */
     function applyGroup(json) {
-        let ref = state.cachedGroups.get(json.id);
+        let ref = cachedGroups.get(json.id);
         if (json.rules) {
             json.rules = replaceBioSymbols(json.rules);
         }
@@ -684,7 +681,7 @@ export const useGroupStore = defineStore('Group', () => {
                 $languages: [],
                 ...json
             };
-            state.cachedGroups.set(ref.id, ref);
+            cachedGroups.set(ref.id, ref);
         } else {
             if (state.currentUserGroups.has(ref.id)) {
                 // compare group props
@@ -845,7 +842,7 @@ export const useGroupStore = defineStore('Group', () => {
         const json = args.json;
         for (const groupId in json) {
             const permissions = json[groupId];
-            const group = state.cachedGroups.get(groupId);
+            const group = cachedGroups.get(groupId);
             if (group) {
                 group.myMember.permissions = permissions;
             }
@@ -896,7 +893,7 @@ export const useGroupStore = defineStore('Group', () => {
                 json.$fetchedAt = args.json.fetchedAt;
             }
             const instanceRef = instanceStore.applyInstance(json);
-            const groupRef = state.cachedGroups.get(json.ownerId);
+            const groupRef = cachedGroups.get(json.ownerId);
             if (typeof groupRef === 'undefined') {
                 if (watchState.isFriendsLoaded) {
                     const args = await groupRequest.getGroup({
@@ -936,7 +933,7 @@ export const useGroupStore = defineStore('Group', () => {
         }
         // update myMember without fetching member
         if (json?.userId === userStore.currentUser.id) {
-            ref = state.cachedGroups.get(json.groupId);
+            ref = cachedGroups.get(json.groupId);
             if (typeof ref !== 'undefined') {
                 const newJson = {
                     id: json.groupId,
@@ -980,7 +977,7 @@ export const useGroupStore = defineStore('Group', () => {
                 '[]'
             )
         );
-        state.cachedGroups.clear();
+        cachedGroups.clear();
         state.currentUserGroups.clear();
         for (const group of savedGroups) {
             const json = {
@@ -999,7 +996,7 @@ export const useGroupStore = defineStore('Group', () => {
 
         if (groups) {
             const promises = groups.map(async (groupId) => {
-                const groupRef = state.cachedGroups.get(groupId);
+                const groupRef = cachedGroups.get(groupId);
 
                 if (
                     typeof groupRef !== 'undefined' &&
@@ -1096,6 +1093,7 @@ export const useGroupStore = defineStore('Group', () => {
 
     return {
         state,
+
         groupDialog,
         currentUserGroups,
         inviteGroupDialog,

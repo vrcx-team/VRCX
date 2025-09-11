@@ -152,7 +152,7 @@ export const useVrStore = defineStore('Vr', () => {
                 hmdOverlay,
                 wristOverlay: wristOverlaySettingsStore.overlayWrist,
                 menuButton: wristOverlaySettingsStore.overlaybutton,
-                overlayHand: wristOverlaySettingsStore.overlayHand
+                overlayHand: parseInt(wristOverlaySettingsStore.overlayHand, 10)
             };
         }
 
@@ -179,6 +179,7 @@ export const useVrStore = defineStore('Vr', () => {
 
     return {
         state,
+
         vrInit,
         saveOpenVROption,
         updateVrNowPlaying,

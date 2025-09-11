@@ -1,48 +1,37 @@
 <template>
-    <safe-dialog
-        ref="groupDialogRef"
-        :visible.sync="groupDialog.visible"
+    <el-dialog
+        :z-index="groupDialogIndex"
+        v-model="groupDialog.visible"
         :show-close="false"
         width="770px"
         class="x-dialog x-group-dialog">
-        <div class="group-banner-image">
-            <el-popover placement="right" width="500px" trigger="click">
-                <img
-                    slot="reference"
-                    v-lazy="groupDialog.ref.bannerUrl"
-                    style="flex: none; width: 100%; aspect-ratio: 6/1; object-fit: cover; border-radius: 4px"
-                    class="x-link" />
-                <img
-                    v-lazy="groupDialog.ref.bannerUrl"
-                    style="width: 854px; height: 480px"
-                    class="x-link"
-                    @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" />
-            </el-popover>
-        </div>
         <div v-loading="groupDialog.loading" class="group-body">
             <div style="display: flex">
-                <el-popover placement="right" width="500px" trigger="click">
+                <el-popover placement="right" :width="500" trigger="click">
+                    <template #reference>
+                        <img
+                            :src="groupDialog.ref.iconUrl"
+                            style="flex: none; width: 120px; height: 120px; border-radius: 12px"
+                            class="x-link"
+                            loading="lazy" />
+                    </template>
                     <img
-                        slot="reference"
-                        v-lazy="groupDialog.ref.iconUrl"
-                        style="flex: none; width: 120px; height: 120px; border-radius: 12px"
-                        class="x-link" />
-                    <img
-                        v-lazy="groupDialog.ref.iconUrl"
-                        style="width: 500px; height: 500px"
-                        class="x-link"
-                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)" />
+                        :src="groupDialog.ref.iconUrl"
+                        :class="['x-link', 'x-popover-image']"
+                        @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)"
+                        loading="lazy" />
                 </el-popover>
                 <div style="flex: 1; display: flex; align-items: center; margin-left: 15px">
                     <div class="group-header" style="flex: 1">
                         <span v-if="groupDialog.ref.ownerId === currentUser.id" style="margin-right: 5px">👑</span>
                         <el-popover placement="top" trigger="click">
-                            <span
-                                slot="reference"
-                                class="dialog-title"
-                                style="margin-right: 5px; cursor: pointer"
-                                v-text="groupDialog.ref.name"
-                                @click="copyToClipboard(groupDialog.ref.name)"></span>
+                            <template #reference>
+                                <span
+                                    class="dialog-title"
+                                    style="margin-right: 5px; cursor: pointer"
+                                    v-text="groupDialog.ref.name"
+                                    @click="copyToClipboard(groupDialog.ref.name)"></span>
+                            </template>
                             <span style="display: block; text-align: center; font-family: monospace">{{
                                 textToHex(groupDialog.ref.name)
                             }}</span>
@@ -53,7 +42,7 @@
                             {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                         </span>
                         <el-tooltip v-for="item in groupDialog.ref.$languages" :key="item.key" placement="top">
-                            <template slot="content">
+                            <template #content>
                                 <span>{{ item.value }} ({{ item.key }})</span>
                             </template>
                             <span
@@ -73,7 +62,7 @@
                                 v-if="groupDialog.ref.isVerified"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.verified') }}
                             </el-tag>
@@ -81,7 +70,7 @@
                                 v-if="groupDialog.ref.privacy === 'private'"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.private') }}
                             </el-tag>
@@ -89,7 +78,7 @@
                                 v-if="groupDialog.ref.privacy === 'default'"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.public') }}
                             </el-tag>
@@ -97,7 +86,7 @@
                                 v-if="groupDialog.ref.joinState === 'open'"
                                 type="success"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.open') }}
                             </el-tag>
@@ -105,7 +94,7 @@
                                 v-else-if="groupDialog.ref.joinState === 'request'"
                                 type="warning"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.request') }}
                             </el-tag>
@@ -113,7 +102,7 @@
                                 v-else-if="groupDialog.ref.joinState === 'invite'"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.invite') }}
                             </el-tag>
@@ -121,7 +110,7 @@
                                 v-else-if="groupDialog.ref.joinState === 'closed'"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.closed') }}
                             </el-tag>
@@ -129,7 +118,7 @@
                                 v-if="groupDialog.inGroup"
                                 type="info"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.joined') }}
                             </el-tag>
@@ -137,7 +126,7 @@
                                 v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt"
                                 type="danger"
                                 effect="plain"
-                                size="mini"
+                                size="small"
                                 style="margin-right: 5px; margin-top: 5px">
                                 {{ t('dialog.group.tags.banned') }}
                             </el-tag>
@@ -146,7 +135,7 @@
                                     v-if="groupDialog.ref.myMember.visibility === 'visible'"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.visible') }}
                                 </el-tag>
@@ -154,7 +143,7 @@
                                     v-else-if="groupDialog.ref.myMember.visibility === 'friends'"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.friends') }}
                                 </el-tag>
@@ -162,7 +151,7 @@
                                     v-else-if="groupDialog.ref.myMember.visibility === 'hidden'"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.hidden') }}
                                 </el-tag>
@@ -170,7 +159,7 @@
                                     v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
                                     type="info"
                                     effect="plain"
-                                    size="mini"
+                                    size="small"
                                     style="margin-right: 5px; margin-top: 5px">
                                     {{ t('dialog.group.tags.subscribed') }}
                                 </el-tag>
@@ -188,24 +177,21 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.myMember?.isRepresenting"
                                 placement="top"
-                                :content="t('dialog.group.actions.unrepresent_tooltip')"
-                                :disabled="hideTooltips">
+                                :content="t('dialog.group.actions.unrepresent_tooltip')">
                                 <el-button
                                     type="warning"
-                                    icon="el-icon-star-on"
+                                    :icon="Star"
+                                    size="large"
                                     circle
                                     style="margin-left: 5px"
                                     @click="clearGroupRepresentation(groupDialog.id)"></el-button>
                             </el-tooltip>
-                            <el-tooltip
-                                v-else
-                                placement="top"
-                                :content="t('dialog.group.actions.represent_tooltip')"
-                                :disabled="hideTooltips">
+                            <el-tooltip v-else placement="top" :content="t('dialog.group.actions.represent_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-star-off"
+                                        :icon="StarFilled"
+                                        size="large"
                                         circle
                                         style="margin-left: 5px"
                                         :disabled="groupDialog.ref.privacy === 'private'"
@@ -216,12 +202,12 @@
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'requested'">
                             <el-tooltip
                                 placement="top"
-                                :content="t('dialog.group.actions.cancel_join_request_tooltip')"
-                                :disabled="hideTooltips">
+                                :content="t('dialog.group.actions.cancel_join_request_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-close"
+                                        :icon="Close"
+                                        size="large"
                                         circle
                                         style="margin-left: 5px"
                                         @click="cancelGroupRequest(groupDialog.id)"></el-button>
@@ -229,14 +215,12 @@
                             </el-tooltip>
                         </template>
                         <template v-else-if="groupDialog.ref.myMember?.membershipStatus === 'invited'">
-                            <el-tooltip
-                                placement="top"
-                                :content="t('dialog.group.actions.pending_request_tooltip')"
-                                :disabled="hideTooltips">
+                            <el-tooltip placement="top" :content="t('dialog.group.actions.pending_request_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-check"
+                                        :icon="Check"
+                                        size="large"
                                         circle
                                         style="margin-left: 5px"
                                         @click="joinGroup(groupDialog.id)"></el-button>
@@ -247,11 +231,11 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.joinState === 'request'"
                                 placement="top"
-                                :content="t('dialog.group.actions.request_join_tooltip')"
-                                :disabled="hideTooltips">
+                                :content="t('dialog.group.actions.request_join_tooltip')">
                                 <el-button
                                     type="default"
-                                    icon="el-icon-message"
+                                    :icon="Message"
+                                    size="large"
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
@@ -259,12 +243,12 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.joinState === 'invite'"
                                 placement="top"
-                                :content="t('dialog.group.actions.invite_required_tooltip')"
-                                :disabled="hideTooltips">
+                                :content="t('dialog.group.actions.invite_required_tooltip')">
                                 <span>
                                     <el-button
                                         type="default"
-                                        icon="el-icon-message"
+                                        :icon="Message"
+                                        size="large"
                                         disabled
                                         circle
                                         style="margin-left: 5px"></el-button>
@@ -273,11 +257,11 @@
                             <el-tooltip
                                 v-if="groupDialog.ref.joinState === 'open'"
                                 placement="top"
-                                :content="t('dialog.group.actions.join_group_tooltip')"
-                                :disabled="hideTooltips">
+                                :content="t('dialog.group.actions.join_group_tooltip')">
                                 <el-button
                                     type="default"
-                                    icon="el-icon-check"
+                                    :icon="Check"
+                                    size="large"
                                     circle
                                     style="margin-left: 5px"
                                     @click="joinGroup(groupDialog.id)"></el-button>
@@ -290,117 +274,124 @@
                             @command="groupDialogCommand">
                             <el-button
                                 :type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'"
-                                icon="el-icon-more"
+                                :icon="MoreFilled"
+                                size="large"
                                 circle></el-button>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item icon="el-icon-refresh" command="Refresh">
-                                    {{ t('dialog.group.actions.refresh') }}
-                                </el-dropdown-item>
-                                <el-dropdown-item icon="el-icon-share" command="Share">
-                                    {{ t('dialog.group.actions.share') }}
-                                </el-dropdown-item>
-                                <template v-if="groupDialog.inGroup">
-                                    <template v-if="groupDialog.ref.myMember">
-                                        <el-dropdown-item
-                                            v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
-                                            icon="el-icon-close"
-                                            command="Unsubscribe To Announcements"
-                                            divided>
-                                            {{ t('dialog.group.actions.unsubscribe') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-else
-                                            icon="el-icon-check"
-                                            command="Subscribe To Announcements"
-                                            divided>
-                                            {{ t('dialog.group.actions.subscribe') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item
-                                            v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
-                                            icon="el-icon-message"
-                                            command="Invite To Group">
-                                            {{ t('dialog.group.actions.invite_to_group') }}
-                                        </el-dropdown-item>
-                                        <template
-                                            v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                            <el-dropdown-item icon="el-icon-tickets" command="Create Post">
-                                                {{ t('dialog.group.actions.create_post') }}
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :icon="Refresh" command="Refresh">
+                                        {{ t('dialog.group.actions.refresh') }}
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :icon="Share" command="Share">
+                                        {{ t('dialog.group.actions.share') }}
+                                    </el-dropdown-item>
+                                    <template v-if="groupDialog.inGroup">
+                                        <template v-if="groupDialog.ref.myMember">
+                                            <el-dropdown-item
+                                                v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements"
+                                                :icon="Close"
+                                                command="Unsubscribe To Announcements"
+                                                divided>
+                                                {{ t('dialog.group.actions.unsubscribe') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item
+                                                v-else
+                                                :icon="Check"
+                                                command="Subscribe To Announcements"
+                                                divided>
+                                                {{ t('dialog.group.actions.subscribe') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item
+                                                v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')"
+                                                :icon="Message"
+                                                command="Invite To Group">
+                                                {{ t('dialog.group.actions.invite_to_group') }}
+                                            </el-dropdown-item>
+                                            <template
+                                                v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
+                                                <el-dropdown-item :icon="Tickets" command="Create Post">
+                                                    {{ t('dialog.group.actions.create_post') }}
+                                                </el-dropdown-item>
+                                            </template>
+                                            <el-dropdown-item
+                                                :disabled="!hasGroupModerationPermission(groupDialog.ref)"
+                                                :icon="Operation"
+                                                command="Moderation Tools">
+                                                {{ t('dialog.group.actions.moderation_tools') }}
+                                            </el-dropdown-item>
+                                            <template
+                                                v-if="
+                                                    groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'
+                                                ">
+                                                <el-dropdown-item :icon="View" command="Visibility Everyone" divided>
+                                                    <el-icon v-if="groupDialog.ref.myMember.visibility === 'visible'"
+                                                        ><Check
+                                                    /></el-icon>
+                                                    {{ t('dialog.group.actions.visibility_everyone') }}
+                                                </el-dropdown-item>
+                                                <el-dropdown-item :icon="View" command="Visibility Friends">
+                                                    <el-icon v-if="groupDialog.ref.myMember.visibility === 'friends'"
+                                                        ><Check
+                                                    /></el-icon>
+                                                    {{ t('dialog.group.actions.visibility_friends') }}
+                                                </el-dropdown-item>
+                                                <el-dropdown-item :icon="View" command="Visibility Hidden">
+                                                    <el-icon v-if="groupDialog.ref.myMember.visibility === 'hidden'"
+                                                        ><Check
+                                                    /></el-icon>
+                                                    {{ t('dialog.group.actions.visibility_hidden') }}
+                                                </el-dropdown-item>
+                                            </template>
+                                            <el-dropdown-item
+                                                :icon="Delete"
+                                                command="Leave Group"
+                                                style="color: #f56c6c"
+                                                divided>
+                                                {{ t('dialog.group.actions.leave') }}
                                             </el-dropdown-item>
                                         </template>
+                                    </template>
+                                    <template v-else>
                                         <el-dropdown-item
-                                            :disabled="!hasGroupModerationPermission(groupDialog.ref)"
-                                            icon="el-icon-s-operation"
-                                            command="Moderation Tools">
-                                            {{ t('dialog.group.actions.moderation_tools') }}
-                                        </el-dropdown-item>
-                                        <template
-                                            v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'">
-                                            <el-dropdown-item icon="el-icon-view" command="Visibility Everyone" divided>
-                                                <i
-                                                    v-if="groupDialog.ref.myMember.visibility === 'visible'"
-                                                    class="el-icon-check"></i>
-                                                {{ t('dialog.group.actions.visibility_everyone') }}
-                                            </el-dropdown-item>
-                                            <el-dropdown-item icon="el-icon-view" command="Visibility Friends">
-                                                <i
-                                                    v-if="groupDialog.ref.myMember.visibility === 'friends'"
-                                                    class="el-icon-check"></i>
-                                                {{ t('dialog.group.actions.visibility_friends') }}
-                                            </el-dropdown-item>
-                                            <el-dropdown-item icon="el-icon-view" command="Visibility Hidden">
-                                                <i
-                                                    v-if="groupDialog.ref.myMember.visibility === 'hidden'"
-                                                    class="el-icon-check"></i>
-                                                {{ t('dialog.group.actions.visibility_hidden') }}
-                                            </el-dropdown-item>
-                                        </template>
-                                        <el-dropdown-item
-                                            icon="el-icon-delete"
-                                            command="Leave Group"
+                                            v-if="groupDialog.ref.membershipStatus === 'userblocked'"
+                                            :icon="CircleCheck"
+                                            command="Unblock Group"
                                             style="color: #f56c6c"
                                             divided>
-                                            {{ t('dialog.group.actions.leave') }}
+                                            {{ t('dialog.group.actions.unblock') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item v-else :icon="CircleClose" command="Block Group" divided>
+                                            {{ t('dialog.group.actions.block') }}
                                         </el-dropdown-item>
                                     </template>
-                                </template>
-                                <template v-else>
-                                    <el-dropdown-item
-                                        v-if="groupDialog.ref.membershipStatus === 'userblocked'"
-                                        icon="el-icon-circle-check"
-                                        command="Unblock Group"
-                                        style="color: #f56c6c"
-                                        divided>
-                                        {{ t('dialog.group.actions.unblock') }}
-                                    </el-dropdown-item>
-                                    <el-dropdown-item v-else icon="el-icon-circle-close" command="Block Group" divided>
-                                        {{ t('dialog.group.actions.block') }}
-                                    </el-dropdown-item>
-                                </template>
-                            </el-dropdown-menu>
+                                </el-dropdown-menu>
+                            </template>
                         </el-dropdown>
                     </div>
                 </div>
             </div>
-            <el-tabs v-model="groupDialogTabCurrentName" @tab-click="groupDialogTabClick">
-                <el-tab-pane :label="t('dialog.group.info.header')">
+            <el-tabs v-model="groupDialogLastActiveTab" @tab-click="groupDialogTabClick">
+                <el-tab-pane name="Info" :label="t('dialog.group.info.header')">
                     <div class="group-banner-image-info">
-                        <el-popover placement="right" width="500px" trigger="click">
+                        <el-popover placement="bottom" :width="1000" trigger="click">
+                            <template #reference>
+                                <img
+                                    :src="groupDialog.ref.bannerUrl"
+                                    class="x-link"
+                                    style="
+                                        flex: none;
+                                        width: 100%;
+                                        aspect-ratio: 6/1;
+                                        object-fit: cover;
+                                        border-radius: 4px;
+                                    "
+                                    loading="lazy" />
+                            </template>
                             <img
-                                slot="reference"
-                                v-lazy="groupDialog.ref.bannerUrl"
-                                class="x-link"
-                                style="
-                                    flex: none;
-                                    width: 100%;
-                                    aspect-ratio: 6/1;
-                                    object-fit: cover;
-                                    border-radius: 4px;
-                                " />
-                            <img
-                                v-lazy="groupDialog.ref.bannerUrl"
-                                class="x-link"
-                                style="width: 854px; height: 480px"
-                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)" />
+                                :src="groupDialog.ref.bannerUrl"
+                                :class="['x-link', 'x-popover-image']"
+                                @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)"
+                                loading="lazy" />
                         </el-popover>
                     </div>
                     <div class="x-friend-list" style="max-height: none">
@@ -413,10 +404,10 @@
                             <div style="margin: 5px 0">
                                 <Location :location="room.tag" style="display: inline-block" />
                                 <InviteYourself :location="room.tag" style="margin-left: 5px" />
-                                <el-tooltip placement="top" content="Refresh player count" :disabled="hideTooltips">
+                                <el-tooltip placement="top" content="Refresh player count">
                                     <el-button
-                                        size="mini"
-                                        icon="el-icon-refresh"
+                                        size="small"
+                                        :icon="Refresh"
                                         style="margin-left: 5px"
                                         circle
                                         @click="refreshInstancePlayerCount(room.tag)" />
@@ -437,7 +428,7 @@
                                     class="x-friend-item x-friend-item-border"
                                     @click="showUserDialog(user.id)">
                                     <div class="avatar" :class="userStatusClass(user)">
-                                        <img v-lazy="userImage(user)" />
+                                        <img :src="userImage(user)" loading="lazy" />
                                     </div>
                                     <div class="detail">
                                         <span
@@ -445,7 +436,7 @@
                                             :style="{ color: user.$userColour }"
                                             v-text="user.displayName" />
                                         <span v-if="user.location === 'traveling'" class="extra">
-                                            <i class="el-icon-loading" style="margin-right: 5px" />
+                                            <el-icon class="is-loading" style="margin-right: 3px"><Loading /></el-icon>
                                             <Timer :epoch="user.$travelingToTime" />
                                         </span>
                                         <span v-else class="extra">
@@ -462,23 +453,25 @@
                                 <div
                                     v-if="groupDialog.announcement.imageUrl"
                                     style="display: inline-block; margin-right: 5px">
-                                    <el-popover placement="right" width="500px" trigger="click">
+                                    <el-popover placement="right" :width="500" trigger="click">
+                                        <template #reference>
+                                            <img
+                                                :src="groupDialog.announcement.imageUrl"
+                                                class="x-link"
+                                                style="
+                                                    flex: none;
+                                                    width: 60px;
+                                                    height: 60px;
+                                                    border-radius: 4px;
+                                                    object-fit: cover;
+                                                "
+                                                loading="lazy" />
+                                        </template>
                                         <img
-                                            slot="reference"
-                                            v-lazy="groupDialog.announcement.imageUrl"
-                                            class="x-link"
-                                            style="
-                                                flex: none;
-                                                width: 60px;
-                                                height: 60px;
-                                                border-radius: 4px;
-                                                object-fit: cover;
-                                            " />
-                                        <img
-                                            v-lazy="groupDialog.announcement.imageUrl"
-                                            class="x-link"
-                                            style="height: 500px"
-                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)" />
+                                            :src="groupDialog.announcement.imageUrl"
+                                            :class="['x-link', 'x-popover-image']"
+                                            @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)"
+                                            loading="lazy" />
                                     </el-popover>
                                 </div>
                                 <pre
@@ -502,15 +495,11 @@
                                         <template #content>
                                             <span>{{ t('dialog.group.posts.visibility') }}</span>
                                             <br />
-                                            <template v-for="roleId in groupDialog.announcement.roleIds">
-                                                <template v-for="role in groupDialog.ref.roles"
-                                                    ><span
-                                                        v-if="role.id === roleId"
-                                                        :key="roleId + role.id"
-                                                        v-text="role.name"
+                                            <template v-for="roleId in groupDialog.announcement.roleIds" :key="roleId">
+                                                <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"
+                                                    ><span v-if="role.id === roleId" v-text="role.name"
                                                 /></template>
                                                 <span
-                                                    :key="roleId"
                                                     v-if="
                                                         groupDialog.announcement.roleIds.indexOf(roleId) <
                                                         groupDialog.announcement.roleIds.length - 1
@@ -519,7 +508,7 @@
                                                 </span>
                                             </template>
                                         </template>
-                                        <i class="el-icon-view" style="margin-right: 5px" />
+                                        <el-icon style="margin-right: 5px"><View /></el-icon>
                                     </el-tooltip>
                                     <DisplayName
                                         :userid="groupDialog.announcement.authorId"
@@ -551,27 +540,21 @@
                                         <Timer :epoch="Date.parse(groupDialog.announcement.updatedAt)" />
                                     </el-tooltip>
                                     <template v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                        <el-tooltip
-                                            placement="top"
-                                            :content="t('dialog.group.posts.edit_tooltip')"
-                                            :disabled="hideTooltips">
+                                        <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
                                             <el-button
                                                 type="text"
-                                                icon="el-icon-edit"
-                                                size="mini"
+                                                :icon="Edit"
+                                                size="small"
                                                 style="margin-left: 5px"
                                                 @click="
                                                     showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)
                                                 " />
                                         </el-tooltip>
-                                        <el-tooltip
-                                            placement="top"
-                                            :content="t('dialog.group.posts.delete_tooltip')"
-                                            :disabled="hideTooltips">
+                                        <el-tooltip placement="top" :content="t('dialog.group.posts.delete_tooltip')">
                                             <el-button
                                                 type="text"
-                                                icon="el-icon-delete"
-                                                size="mini"
+                                                :icon="Delete"
+                                                size="small"
                                                 style="margin-left: 5px"
                                                 @click="confirmDeleteGroupPost(groupDialog.announcement)" />
                                         </el-tooltip>
@@ -608,20 +591,13 @@
                                 <span class="extra">{{ formatDateFilter(groupDialog.ref.createdAt, 'long') }}</span>
                             </div>
                         </div>
-                        <el-tooltip
-                            :disabled="hideTooltips"
-                            placement="top"
-                            :content="t('dialog.user.info.open_previous_instance')">
+                        <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
                             <div class="x-friend-item" @click="showPreviousInstancesGroupDialog(groupDialog.ref)">
                                 <div class="detail">
                                     <span class="name">
                                         {{ t('dialog.group.info.last_visited') }}
-                                        <el-tooltip
-                                            v-if="!hideTooltips"
-                                            placement="top"
-                                            style="margin-left: 5px"
-                                            :content="t('dialog.user.info.accuracy_notice')">
-                                            <i class="el-icon-warning"></i>
+                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                         </el-tooltip>
                                     </span>
                                     <span class="extra">{{ formatDateFilter(groupDialog.lastVisit, 'long') }}</span>
@@ -634,21 +610,24 @@
                                 <div
                                     v-if="groupDialog.ref.links && groupDialog.ref.links.length > 0"
                                     style="margin-top: 5px">
-                                    <el-tooltip v-for="(link, index) in groupDialog.ref.links" v-if="link" :key="index">
-                                        <template #content>
-                                            <span v-text="link" />
-                                        </template>
-                                        <img
-                                            :src="getFaviconUrl(link)"
-                                            style="
-                                                width: 16px;
-                                                height: 16px;
-                                                vertical-align: middle;
-                                                margin-right: 5px;
-                                                cursor: pointer;
-                                            "
-                                            @click.stop="openExternalLink(link)" />
-                                    </el-tooltip>
+                                    <template v-for="(link, index) in groupDialog.ref.links" :key="index">
+                                        <el-tooltip v-if="link">
+                                            <template #content>
+                                                <span v-text="link" />
+                                            </template>
+                                            <img
+                                                :src="getFaviconUrl(link)"
+                                                style="
+                                                    width: 16px;
+                                                    height: 16px;
+                                                    vertical-align: middle;
+                                                    margin-right: 5px;
+                                                    cursor: pointer;
+                                                "
+                                                @click.stop="openExternalLink(link)"
+                                                loading="lazy" />
+                                        </el-tooltip>
+                                    </template>
                                 </div>
                                 <div v-else class="extra">-</div>
                             </div>
@@ -658,14 +637,11 @@
                                 <span class="name">{{ t('dialog.group.info.url') }}</span>
                                 <span class="extra"
                                     >{{ groupDialog.ref.$url }}
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.group.info.url_tooltip')"
-                                        :disabled="hideTooltips">
+                                    <el-tooltip placement="top" :content="t('dialog.group.info.url_tooltip')">
                                         <el-button
                                             type="default"
-                                            size="mini"
-                                            icon="el-icon-s-order"
+                                            size="small"
+                                            :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
                                             @click="copyToClipboard(groupDialog.ref.$url)" /> </el-tooltip
@@ -677,14 +653,11 @@
                                 <span class="name">{{ t('dialog.group.info.id') }}</span>
                                 <span class="extra"
                                     >{{ groupDialog.id }}
-                                    <el-tooltip
-                                        placement="top"
-                                        :content="t('dialog.group.info.id_tooltip')"
-                                        :disabled="hideTooltips">
+                                    <el-tooltip placement="top" :content="t('dialog.group.info.id_tooltip')">
                                         <el-button
                                             type="default"
-                                            size="mini"
-                                            icon="el-icon-s-order"
+                                            size="small"
+                                            :icon="CopyDocument"
                                             circle
                                             style="margin-left: 5px"
                                             @click="copyToClipboard(groupDialog.id)" /> </el-tooltip
@@ -708,8 +681,8 @@
                                         <span class="name">{{ t('dialog.group.info.roles') }}</span>
                                         <span v-if="groupDialog.memberRoles.length === 0" class="extra"> - </span>
                                         <span v-else class="extra">
-                                            <template v-for="(role, rIndex) in groupDialog.memberRoles">
-                                                <el-tooltip :key="rIndex" placement="top">
+                                            <template v-for="(role, rIndex) in groupDialog.memberRoles" :key="rIndex">
+                                                <el-tooltip placement="top">
                                                     <template #content>
                                                         <span>{{ t('dialog.group.info.role') }} {{ role.name }}</span>
                                                         <br />
@@ -729,9 +702,11 @@
                                                         <br />
                                                         <span>{{ t('dialog.group.info.role_permissions') }}</span>
                                                         <br />
-                                                        <template v-for="(permission, pIndex) in role.permissions">
-                                                            <span :key="pIndex">{{ permission }}</span>
-                                                            <br :key="pIndex + permission" />
+                                                        <template
+                                                            v-for="(permission, pIndex) in role.permissions"
+                                                            :key="pIndex">
+                                                            <span>{{ permission }}</span>
+                                                            <br />
                                                         </template>
                                                     </template>
                                                     <span
@@ -749,7 +724,7 @@
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.posts.header')" lazy>
+                <el-tab-pane name="Posts" :label="t('dialog.group.posts.header')" lazy>
                     <template v-if="groupDialog.visible">
                         <span style="margin-right: 10px"
                             >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
@@ -757,7 +732,7 @@
                         <el-input
                             v-model="groupDialog.postsSearch"
                             clearable
-                            size="mini"
+                            size="small"
                             :placeholder="t('dialog.group.posts.search_placeholder')"
                             style="width: 89%; margin-bottom: 10px"
                             @input="updateGroupPostSearch" />
@@ -770,23 +745,25 @@
                                 <div class="detail">
                                     <span style="display: block" v-text="post.title" />
                                     <div v-if="post.imageUrl" style="display: inline-block; margin-right: 5px">
-                                        <el-popover placement="right" width="500px" trigger="click">
+                                        <el-popover placement="right" :width="500" trigger="click">
+                                            <template #reference>
+                                                <img
+                                                    :src="post.imageUrl"
+                                                    class="x-link"
+                                                    style="
+                                                        flex: none;
+                                                        width: 60px;
+                                                        height: 60px;
+                                                        border-radius: 4px;
+                                                        object-fit: cover;
+                                                    "
+                                                    loading="lazy" />
+                                            </template>
                                             <img
-                                                slot="reference"
-                                                v-lazy="post.imageUrl"
-                                                class="x-link"
-                                                style="
-                                                    flex: none;
-                                                    width: 60px;
-                                                    height: 60px;
-                                                    border-radius: 4px;
-                                                    object-fit: cover;
-                                                " />
-                                            <img
-                                                v-lazy="post.imageUrl"
-                                                class="x-link"
-                                                style="height: 500px"
-                                                @click="showFullscreenImageDialog(post.imageUrl)" />
+                                                :src="post.imageUrl"
+                                                :class="['x-link', 'x-popover-image']"
+                                                @click="showFullscreenImageDialog(post.imageUrl)"
+                                                loading="lazy" />
                                         </el-popover>
                                     </div>
                                     <pre
@@ -804,23 +781,22 @@
                                     <br />
                                     <div v-if="post.authorId" class="extra" style="float: right; margin-left: 5px">
                                         <el-tooltip v-if="post.roleIds.length" placement="top">
-                                            <template slot="content">
+                                            <template #content>
                                                 <span>{{ t('dialog.group.posts.visibility') }}</span>
                                                 <br />
-                                                <template v-for="roleId in post.roleIds">
-                                                    <template v-for="role in groupDialog.ref.roles"
-                                                        ><span
-                                                            v-if="role.id === roleId"
-                                                            :key="role.id + roleId"
-                                                            v-text="role.name" />
+                                                <template v-for="roleId in post.roleIds" :key="roleId">
+                                                    <template
+                                                        v-for="role in groupDialog.ref.roles"
+                                                        :key="role.id + roleId"
+                                                        ><span v-if="role.id === roleId" v-text="role.name" />
                                                     </template>
                                                     <template
                                                         v-if="post.roleIds.indexOf(roleId) < post.roleIds.length - 1"
-                                                        ><span :key="roleId">,&nbsp;</span></template
+                                                        ><span>,&nbsp;</span></template
                                                     >
                                                 </template>
                                             </template>
-                                            <i class="el-icon-view" style="margin-right: 5px" />
+                                            <el-icon style="margin-right: 5px"><View /></el-icon>
                                         </el-tooltip>
                                         <DisplayName :userid="post.authorId" style="margin-right: 5px" />
                                         <span v-if="post.editorId" style="margin-right: 5px"
@@ -828,7 +804,7 @@
                                             <DisplayName :userid="post.editorId" />)</span
                                         >
                                         <el-tooltip placement="bottom">
-                                            <template slot="content">
+                                            <template #content>
                                                 <span
                                                     >{{ t('dialog.group.posts.created_at') }}
                                                     {{ formatDateFilter(post.createdAt, 'long') }}</span
@@ -845,25 +821,21 @@
                                         </el-tooltip>
                                         <template
                                             v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')">
-                                            <el-tooltip
-                                                placement="top"
-                                                :content="t('dialog.group.posts.edit_tooltip')"
-                                                :disabled="hideTooltips">
+                                            <el-tooltip placement="top" :content="t('dialog.group.posts.edit_tooltip')">
                                                 <el-button
                                                     type="text"
-                                                    icon="el-icon-edit"
-                                                    size="mini"
+                                                    :icon="Edit"
+                                                    size="small"
                                                     style="margin-left: 5px"
                                                     @click="showGroupPostEditDialog(groupDialog.id, post)" />
                                             </el-tooltip>
                                             <el-tooltip
                                                 placement="top"
-                                                :content="t('dialog.group.posts.delete_tooltip')"
-                                                :disabled="hideTooltips">
+                                                :content="t('dialog.group.posts.delete_tooltip')">
                                                 <el-button
                                                     type="text"
-                                                    icon="el-icon-delete"
-                                                    size="mini"
+                                                    :icon="Delete"
+                                                    size="small"
                                                     style="margin-left: 5px"
                                                     @click="confirmDeleteGroupPost(post)" />
                                             </el-tooltip>
@@ -874,7 +846,7 @@
                         </div>
                     </template>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.members.header')" lazy>
+                <el-tab-pane name="Members" :label="t('dialog.group.members.header')" lazy>
                     <template v-if="groupDialog.visible">
                         <span
                             v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')"
@@ -887,15 +859,15 @@
                         <div style="margin-top: 10px">
                             <el-button
                                 type="default"
-                                size="mini"
-                                icon="el-icon-refresh"
+                                size="small"
+                                :icon="Refresh"
                                 :loading="isGroupMembersLoading"
                                 circle
                                 @click="loadAllGroupMembers" />
                             <el-button
                                 type="default"
-                                size="mini"
-                                icon="el-icon-download"
+                                size="small"
+                                :icon="Download"
                                 circle
                                 style="margin-left: 5px"
                                 @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)" />
@@ -915,54 +887,56 @@
                                     trigger="click"
                                     size="small"
                                     style="margin-right: 5px"
-                                    :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length"
-                                    @click.native.stop>
-                                    <el-button size="mini">
+                                    :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length">
+                                    <el-button size="small" @click.stop>
                                         <span
                                             >{{ t(groupDialog.memberSortOrder.name) }}
-                                            <i class="el-icon-arrow-down el-icon--right"
-                                        /></span>
+                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon>
+                                        </span>
                                     </el-button>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item
-                                            v-for="item in groupDialogSortingOptions"
-                                            :key="item.name"
-                                            @click.native="setGroupMemberSortOrder(item)"
-                                            v-text="t(item.name)" />
-                                    </el-dropdown-menu>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item
+                                                v-for="item in groupDialogSortingOptions"
+                                                :key="item.name"
+                                                @click="setGroupMemberSortOrder(item)"
+                                                v-text="t(item.name)" />
+                                        </el-dropdown-menu>
+                                    </template>
                                 </el-dropdown>
                                 <span style="margin-right: 5px">{{ t('dialog.group.members.filter') }}</span>
                                 <el-dropdown
                                     trigger="click"
                                     size="small"
                                     style="margin-right: 5px"
-                                    :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length"
-                                    @click.native.stop>
-                                    <el-button size="mini">
+                                    :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length">
+                                    <el-button size="small" @click.stop>
                                         <span
                                             >{{ t(groupDialog.memberFilter.name) }}
-                                            <i class="el-icon-arrow-down el-icon--right"
-                                        /></span>
+                                            <el-icon style="margin-left: 5px"><ArrowDown /></el-icon
+                                        ></span>
                                     </el-button>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item
-                                            v-for="item in groupDialogFilterOptions"
-                                            :key="item.name"
-                                            @click.native="setGroupMemberFilter(item)"
-                                            v-text="t(item.name)" />
-                                        <el-dropdown-item
-                                            v-for="item in groupDialog.ref.roles"
-                                            v-if="!item.defaultRole"
-                                            :key="item.name"
-                                            @click.native="setGroupMemberFilter(item)"
-                                            v-text="item.name" />
-                                    </el-dropdown-menu>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item
+                                                v-for="item in groupDialogFilterOptions"
+                                                :key="item.name"
+                                                @click="setGroupMemberFilter(item)"
+                                                v-text="t(item.name)" />
+                                            <template v-for="role in groupDialog.ref.roles" :key="role.name">
+                                                <el-dropdown-item
+                                                    v-if="!role.defaultRole"
+                                                    @click="setGroupMemberFilter(role)"
+                                                    v-text="role.name" />
+                                            </template>
+                                        </el-dropdown-menu>
+                                    </template>
                                 </el-dropdown>
                             </div>
                             <el-input
                                 v-model="groupDialog.memberSearch"
                                 clearable
-                                size="mini"
+                                size="small"
                                 :placeholder="t('dialog.group.members.search')"
                                 style="margin-top: 10px; margin-bottom: 10px"
                                 @input="groupMembersSearch" />
@@ -978,7 +952,7 @@
                                 class="x-friend-item x-friend-item-border"
                                 @click="showUserDialog(user.userId)">
                                 <div class="avatar">
-                                    <img v-lazy="userImage(user.user)" />
+                                    <img :src="userImage(user.user)" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span
@@ -991,40 +965,37 @@
                                                 v-if="user.isRepresenting"
                                                 placement="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <i class="el-icon-collection-tag" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
                                             </el-tooltip>
                                             <el-tooltip v-if="user.visibility !== 'visible'" placement="top">
-                                                <template slot="content">
+                                                <template #content>
                                                     <span
                                                         >{{ t('dialog.group.members.visibility') }}
                                                         {{ user.visibility }}</span
                                                     >
                                                 </template>
-                                                <i class="el-icon-view" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><View /></el-icon>
                                             </el-tooltip>
                                             <el-tooltip
                                                 v-if="!user.isSubscribedToAnnouncements"
                                                 placement="top"
                                                 :content="t('dialog.group.members.unsubscribed_announcements')">
-                                                <i class="el-icon-chat-line-square" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><ChatLineSquare /></el-icon>
                                             </el-tooltip>
                                             <el-tooltip v-if="user.managerNotes" placement="top">
-                                                <template slot="content">
+                                                <template #content>
                                                     <span>{{ t('dialog.group.members.manager_notes') }}</span>
                                                     <br />
                                                     <span>{{ user.managerNotes }}</span>
                                                 </template>
-                                                <i class="el-icon-edit-outline" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><Edit /></el-icon>
                                             </el-tooltip>
                                         </template>
-                                        <template v-for="roleId in user.roleIds">
-                                            <template v-for="role in groupDialog.ref.roles"
-                                                ><span
-                                                    v-if="role.id === roleId"
-                                                    :key="role.id + roleId"
-                                                    v-text="role.name" /></template
+                                        <template v-for="roleId in user.roleIds" :key="roleId">
+                                            <template v-for="role in groupDialog.ref.roles" :key="role.id + roleId"
+                                                ><span v-if="role.id === roleId" v-text="role.name" /></template
                                             ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                ><span :key="roleId">,&nbsp;</span></template
+                                                ><span>,&nbsp;</span></template
                                             >
                                         </template>
                                     </span>
@@ -1042,7 +1013,7 @@
                                 class="infinite-list-item x-friend-item x-friend-item-border"
                                 @click="showUserDialog(user.userId)">
                                 <div class="avatar">
-                                    <img v-lazy="userImage(user.user)" />
+                                    <img :src="userImage(user.user)" loading="lazy" />
                                 </div>
                                 <div class="detail">
                                     <span
@@ -1055,40 +1026,37 @@
                                                 v-if="user.isRepresenting"
                                                 placement="top"
                                                 :content="t('dialog.group.members.representing')">
-                                                <i class="el-icon-collection-tag" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><CollectionTag /></el-icon>
                                             </el-tooltip>
                                             <el-tooltip v-if="user.visibility !== 'visible'" placement="top">
-                                                <template slot="content">
+                                                <template #content>
                                                     <span
                                                         >{{ t('dialog.group.members.visibility') }}
                                                         {{ user.visibility }}</span
                                                     >
                                                 </template>
-                                                <i class="el-icon-view" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><View /></el-icon>
                                             </el-tooltip>
                                             <el-tooltip
                                                 v-if="!user.isSubscribedToAnnouncements"
                                                 placement="top"
                                                 :content="t('dialog.group.members.unsubscribed_announcements')">
-                                                <i class="el-icon-chat-line-square" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><ChatLineSquare /></el-icon>
                                             </el-tooltip>
                                             <el-tooltip v-if="user.managerNotes" placement="top">
-                                                <template slot="content">
+                                                <template #content>
                                                     <span>{{ t('dialog.group.members.manager_notes') }}</span>
                                                     <br />
                                                     <span>{{ user.managerNotes }}</span>
                                                 </template>
-                                                <i class="el-icon-edit-outline" style="margin-right: 5px" />
+                                                <el-icon style="margin-right: 5px"><Edit /></el-icon>
                                             </el-tooltip>
                                         </template>
-                                        <template v-for="roleId in user.roleIds">
-                                            <template v-for="role in groupDialog.ref.roles"
-                                                ><span
-                                                    v-if="role.id === roleId"
-                                                    :key="roleId + role"
-                                                    v-text="role.name" /></template
+                                        <template v-for="roleId in user.roleIds" :key="roleId">
+                                            <template v-for="role in groupDialog.ref.roles" :key="roleId + role.id"
+                                                ><span v-if="role.id === roleId" v-text="role.name" /></template
                                             ><template v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1"
-                                                ><span :key="roleId">&nbsp;</span></template
+                                                ><span>&nbsp;</span></template
                                             >
                                         </template>
                                     </span>
@@ -1107,11 +1075,11 @@
                         </ul>
                     </template>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.gallery.header')" lazy>
+                <el-tab-pane name="Photos" :label="t('dialog.group.gallery.header')" lazy>
                     <el-button
                         type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
+                        size="small"
+                        :icon="Refresh"
                         :loading="isGroupGalleryLoading"
                         circle
                         @click="getGroupGalleries" />
@@ -1120,9 +1088,9 @@
                         v-loading="isGroupGalleryLoading"
                         type="card"
                         style="margin-top: 10px">
-                        <template v-for="(gallery, index) in groupDialog.ref.galleries">
-                            <el-tab-pane :key="index">
-                                <span slot="label">
+                        <template v-for="(gallery, index) in groupDialog.ref.galleries" :key="index">
+                            <el-tab-pane>
+                                <template #label>
                                     <span style="font-weight: bold; font-size: 16px" v-text="gallery.name" />
                                     <i
                                         class="x-status-icon"
@@ -1131,23 +1099,25 @@
                                     <span style="color: #909399; font-size: 12px; margin-left: 5px">{{
                                         groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0
                                     }}</span>
-                                </span>
+                                </template>
                                 <span style="color: #c7c7c7; padding: 10px" v-text="gallery.description" />
                                 <el-carousel :interval="0" height="600px" style="margin-top: 10px">
                                     <el-carousel-item
                                         v-for="image in groupDialog.galleries[gallery.id]"
                                         :key="image.id">
-                                        <el-popover placement="top" width="700px" trigger="click">
+                                        <el-popover placement="top" :width="700" trigger="click">
+                                            <template #reference>
+                                                <img
+                                                    :src="image.imageUrl"
+                                                    class="x-link"
+                                                    style="width: 100%; height: 100%; object-fit: contain"
+                                                    loading="lazy" />
+                                            </template>
                                             <img
-                                                slot="reference"
-                                                v-lazy="image.imageUrl"
-                                                class="x-link"
-                                                style="width: 100%; height: 100%; object-fit: contain" />
-                                            <img
-                                                v-lazy="image.imageUrl"
-                                                class="x-link"
-                                                style="height: 700px"
-                                                @click="showFullscreenImageDialog(image.imageUrl)" />
+                                                :src="image.imageUrl"
+                                                :class="['x-link', 'x-popover-image']"
+                                                @click="showFullscreenImageDialog(image.imageUrl)"
+                                                loading="lazy" />
                                         </el-popover>
                                     </el-carousel-item>
                                 </el-carousel>
@@ -1155,22 +1125,22 @@
                         </template>
                     </el-tabs>
                 </el-tab-pane>
-                <el-tab-pane :label="t('dialog.group.json.header')" lazy>
+                <el-tab-pane name="JSON" :label="t('dialog.group.json.header')" lazy>
                     <el-button
                         type="default"
-                        size="mini"
-                        icon="el-icon-refresh"
+                        size="small"
+                        :icon="Refresh"
                         circle
                         @click="refreshGroupDialogTreeData()" />
                     <el-button
                         type="default"
-                        size="mini"
-                        icon="el-icon-download"
+                        size="small"
+                        :icon="Download"
                         circle
                         style="margin-left: 5px"
                         @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)" />
                     <el-tree :data="groupDialog.treeData" style="margin-top: 5px; font-size: 12px">
-                        <template slot-scope="scope">
+                        <template #default="scope">
                             <span>
                                 <span style="font-weight: bold; margin-right: 5px" v-text="scope.data.key" />
                                 <span v-if="!scope.data.children" v-text="scope.data.value" />
@@ -1180,25 +1150,50 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
-        <!--Nested-->
-        <GroupPostEditDialog :dialog-data.sync="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
+        <GroupPostEditDialog :dialog-data="groupPostEditDialog" :selected-gallery-file="selectedGalleryFile" />
         <InviteGroupDialog />
         <PreviousInstancesGroupDialog
-            :previous-instances-group-dialog.sync="previousInstancesGroupDialog"
+            :previous-instances-group-dialog="previousInstancesGroupDialog"
             :current-user="currentUser" />
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage, ElMessageBox } from 'element-plus';
+
+    import {
+        Check,
+        View,
+        Star,
+        StarFilled,
+        Close,
+        Message,
+        MoreFilled,
+        Refresh,
+        Share,
+        Tickets,
+        Delete,
+        CircleCheck,
+        CircleClose,
+        Edit,
+        CopyDocument,
+        Download,
+        Operation,
+        Loading,
+        Warning,
+        ArrowDown,
+        CollectionTag,
+        ChatLineSquare
+    } from '@element-plus/icons-vue';
+
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance, nextTick, reactive, ref, watch } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { nextTick, reactive, ref, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import * as workerTimers from 'worker-timers';
     import { groupRequest } from '../../../api';
-    import { $app } from '../../../app';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import {
-        adjustDialogZ,
+        getNextDialogIndex,
         buildTreeData,
         copyToClipboard,
         downloadAndSaveJson,
@@ -1215,20 +1210,13 @@
         textToHex,
         debounce
     } from '../../../shared/utils';
-    import {
-        useAppearanceSettingsStore,
-        useGalleryStore,
-        useGroupStore,
-        useLocationStore,
-        useUserStore
-    } from '../../../stores';
+    import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';
     import PreviousInstancesGroupDialog from '../PreviousInstancesDialog/PreviousInstancesGroupDialog.vue';
 
     const { t } = useI18n();
 
-    const { hideTooltips } = storeToRefs(useAppearanceSettingsStore());
     const { showUserDialog } = useUserStore();
     const { currentUser } = storeToRefs(useUserStore());
     const { groupDialog, inviteGroupDialog } = storeToRefs(useGroupStore());
@@ -1247,11 +1235,8 @@
     const { lastLocation } = storeToRefs(useLocationStore());
     const { showFullscreenImageDialog } = useGalleryStore();
 
-    const instance = getCurrentInstance();
-    const $confirm = instance.proxy.$confirm;
-    const $message = instance.proxy.$message;
-
-    const groupDialogRef = ref(null);
+    const groupDialogLastActiveTab = ref('Info');
+    const groupDialogIndex = ref(2000);
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
     const groupDialogGalleryCurrentName = ref('0');
@@ -1291,7 +1276,9 @@
         () => groupDialog.value.loading,
         () => {
             if (groupDialog.value.visible) {
-                nextTick(() => adjustDialogZ(groupDialogRef.value.$el));
+                nextTick(() => {
+                    groupDialogIndex.value = getNextDialogIndex();
+                });
             }
         }
     );
@@ -1300,7 +1287,7 @@
         () => groupDialog.value.isGetGroupDialogGroupLoading,
         (val) => {
             if (val) {
-                getCurrentTabData();
+                loadLastActiveTab();
             }
         }
     );
@@ -1389,18 +1376,19 @@
             .cancelGroupRequest({
                 groupId: id
             })
-            .then((args) => {
+            .then(() => {
                 if (groupDialog.value.visible && groupDialog.value.id === id) {
                     getGroupDialogGroup(id);
                 }
             });
     }
     function confirmDeleteGroupPost(post) {
-        $confirm('Are you sure you want to delete this post?', 'Confirm', {
+        ElMessageBox.confirm('Are you sure you want to delete this post?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     groupRequest
                         .deleteGroupPost({
@@ -1432,8 +1420,8 @@
                             updateGroupPostSearch();
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function groupGalleryStatus(gallery) {
@@ -1503,7 +1491,7 @@
             })
             .then((args) => {
                 handleGroupMemberProps(args);
-                $app.$message({
+                ElMessage({
                     message: 'Group subscription updated',
                     type: 'success'
                 });
@@ -1512,11 +1500,12 @@
     }
 
     function blockGroup(groupId) {
-        $app.$confirm('Are you sure you want to block this group?', 'Confirm', {
+        ElMessageBox.confirm('Are you sure you want to block this group?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     groupRequest
                         .blockGroup({
@@ -1528,16 +1517,17 @@
                             }
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function unblockGroup(groupId) {
-        $app.$confirm('Are you sure you want to unblock this group?', 'Confirm', {
+        ElMessageBox.confirm('Are you sure you want to unblock this group?', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            type: 'info',
-            callback: (action) => {
+            type: 'info'
+        })
+            .then((action) => {
                 if (action === 'confirm') {
                     groupRequest
                         .unblockGroup({
@@ -1550,8 +1540,8 @@
                             }
                         });
                 }
-            }
-        });
+            })
+            .catch(() => {});
     }
 
     function joinGroup(id) {
@@ -1572,12 +1562,12 @@
                     getGroupDialogGroup(id);
                 }
                 if (args.json.membershipStatus === 'member') {
-                    $message({
+                    ElMessage({
                         message: 'Group joined',
                         type: 'success'
                     });
                 } else if (args.json.membershipStatus === 'requested') {
-                    $message({
+                    ElMessage({
                         message: 'Group join request sent',
                         type: 'success'
                     });
@@ -1585,14 +1575,27 @@
                 return args;
             });
     }
-    function groupDialogTabClick(obj) {
-        if (obj.label === t('dialog.group.members.header')) {
+
+    function handleGroupDialogTab(tabName) {
+        if (tabName === 'Members') {
             getGroupDialogGroupMembers();
-        } else if (obj.label === t('dialog.group.gallery.header')) {
+        } else if (tabName === 'Photos') {
             getGroupGalleries();
-        } else if (obj.label === t('dialog.group.json.header')) {
+        } else if (tabName === 'JSON') {
             refreshGroupDialogTreeData();
         }
+    }
+
+    function loadLastActiveTab() {
+        handleGroupDialogTab(groupDialogLastActiveTab.value);
+    }
+
+    function groupDialogTabClick(obj) {
+        if (obj.props.name === groupDialogTabCurrentName.value) {
+            return;
+        }
+        handleGroupDialogTab(obj.props.name);
+        groupDialogTabCurrentName.value = obj.props.name;
     }
 
     function showGroupPostEditDialog(groupId, post) {
@@ -1632,7 +1635,7 @@
         D.members = [];
         isGroupMembersDone.value = false;
         loadMoreGroupMembersParams.value = {
-            sort: '',
+            sort: 'joinedAt:desc',
             roleId: '',
             n: 100,
             offset: 0,
@@ -1711,16 +1714,6 @@
                 isGroupMembersDone.value = true;
                 throw err;
             });
-    }
-
-    function getCurrentTabData() {
-        if (groupDialogTabCurrentName.value === '2') {
-            getGroupDialogGroupMembers();
-        } else if (groupDialogTabCurrentName.value === '3') {
-            getGroupGalleries();
-        } else if (groupDialogTabCurrentName.value === '4') {
-            refreshGroupDialogTreeData();
-        }
     }
 
     async function getGroupGalleries() {

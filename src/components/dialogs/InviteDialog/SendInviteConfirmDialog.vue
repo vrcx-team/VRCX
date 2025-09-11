@@ -1,7 +1,7 @@
 <template>
-    <safe-dialog
+    <el-dialog
         class="x-dialog"
-        :visible="visible"
+        :model-value="visible"
         :title="t('dialog.invite_message.header')"
         width="400px"
         append-to-body
@@ -18,21 +18,18 @@
                 {{ t('dialog.invite_message.confirm') }}
             </el-button>
         </template>
-    </safe-dialog>
+    </el-dialog>
 </template>
 
 <script setup>
+    import { ElMessage } from 'element-plus';
     import { storeToRefs } from 'pinia';
-    import { getCurrentInstance } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
+    import { useI18n } from 'vue-i18n';
     import { instanceRequest, notificationRequest } from '../../../api';
     import { parseLocation } from '../../../shared/utils';
     import { useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
-
-    const instance = getCurrentInstance();
-    const $message = instance.proxy.$message;
 
     const { uploadImage } = storeToRefs(useGalleryStore());
     const { clearInviteImageUpload } = useGalleryStore();
@@ -54,10 +51,10 @@
         }
     });
 
-    const emit = defineEmits(['update:visible', 'closeInviteDialog']);
+    const emit = defineEmits(['update:model-value', 'closeInviteDialog']);
 
     function cancelInviteConfirm() {
-        emit('update:visible', false);
+        emit('update:model-value', false);
     }
 
     function sendInviteConfirm() {
@@ -106,7 +103,7 @@
                 } else {
                     J.loading = false;
                     J.visible = false;
-                    $message({
+                    ElMessage({
                         message: 'Invite message sent',
                         type: 'success'
                     });
@@ -122,7 +119,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Invite photo message sent',
                             type: 'success'
                         });
@@ -135,7 +132,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Invite message sent',
                             type: 'success'
                         });
@@ -152,7 +149,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Request invite photo message sent',
                             type: 'success'
                         });
@@ -165,7 +162,7 @@
                         throw err;
                     })
                     .then((args) => {
-                        $message({
+                        ElMessage({
                             message: 'Request invite message sent',
                             type: 'success'
                         });
