@@ -251,14 +251,32 @@
 
     reloadData = async function () {
         isLoading.value = true;
-        await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
-            handleIntersectionObserver(activityDetailChartRef)
-        );
-        getWorldNameData();
-        // possibility past 24:00
-        getAllDateOfActivity();
-        if (echartsInstance.value) {
-            echartsInstance.value.setOption(activityData.value.length ? getNewOption() : {}, { notMerge: true });
+        try {
+            await getActivityData(selectedDate, currentUser, friends, localFavoriteFriends, () =>
+                handleIntersectionObserver(activityDetailChartRef)
+            );
+            await getWorldNameData();
+            // possibility past 24:00
+            getAllDateOfActivity();
+
+            await nextTick();
+
+            if (echartsInstance.value && activityData.value.length) {
+                const chartsHeight = activityData.value.length * (barWidth.value + 10) + 200;
+                echartsInstance.value.resize({
+                    height: chartsHeight,
+                    animation: {
+                        duration: 300
+                    }
+                });
+                echartsInstance.value.setOption(getNewOption(), { notMerge: true });
+            } else if (echartsInstance.value) {
+                echartsInstance.value.clear();
+            }
+        } catch (error) {
+            console.error('Error in reloadData:', error);
+        } finally {
+            isLoading.value = false;
         }
     };
 
@@ -299,11 +317,16 @@
                 }
             };
 
-            const options = activityData.value.length ? getNewOption() : {};
+            echartsInstance.value.off('click');
 
-            echartsInstance.value.clear();
-            echartsInstance.value.setOption(options, { notMerge: true });
-            echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+            if (activityData.value.length && worldNameArray.value.length) {
+                const options = getNewOption();
+                echartsInstance.value.clear();
+                echartsInstance.value.setOption(options, { notMerge: true });
+                echartsInstance.value.on('click', 'yAxis', handleClickYAxisLabel);
+            } else {
+                echartsInstance.value.clear();
+            }
             isLoading.value = false;
         };
 
@@ -328,7 +351,6 @@
             initEchartsInstance();
         }
         afterInit();
-        isLoading.value = false;
     }
     function getNewOption() {
         const getTooltip = (params) => {
