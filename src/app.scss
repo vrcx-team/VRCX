@@ -12,6 +12,7 @@
 @use './assets/scss/animated-emoji.scss';
 @use 'element-plus/theme-chalk/src/index.scss' as *;
 
+@import 'element-plus/theme-chalk/src/dark/css-vars.scss';
 @import 'animate.css/animate.min.css';
 @import 'noty/lib/noty.css';
 @import 'remixicon/fonts/remixicon.css';
@@ -446,7 +447,7 @@ img.friends-list-avatar {
 .x-friend-item > .avatar.joinme.mobile > img,
 .x-friend-item > .avatar.askme.mobile > img,
 .x-friend-item > .avatar.busy.mobile > img {
-    mask-image: url(assets/images/masks/usercutoutmobile.svg);
+    mask-image: url(./assets/images/masks/usercutoutmobile.svg);
 }
 
 .x-friend-item > .avatar.online.mobile::after,
@@ -460,7 +461,7 @@ img.friends-list-avatar {
     height: 14px;
     content: '';
     border-radius: 0px;
-    mask-image: url(assets/images/masks/phone.svg);
+    mask-image: url(./assets/images/masks/phone.svg);
 }
 
 .x-friend-item > .avatar.active > img,
@@ -469,7 +470,7 @@ img.friends-list-avatar {
 .x-friend-item > .avatar.askme > img,
 .x-friend-item > .avatar.busy > img,
 .x-friend-item > .avatar.offline > img {
-    mask-image: url(assets/images/masks/usercutout.svg);
+    mask-image: url(./assets/images/masks/usercutout.svg);
 }
 
 .x-friend-item > .avatar.active::after,
@@ -498,17 +499,17 @@ img.friends-list-avatar {
 
 .x-friend-item > .avatar.joinme::after {
     background: #409eff;
-    mask-image: url(assets/images/masks/joinme.svg);
+    mask-image: url(./assets/images/masks/joinme.svg);
 }
 
 .x-friend-item > .avatar.askme::after {
     background: #ff9500;
-    mask-image: url(assets/images/masks/askme.svg);
+    mask-image: url(./assets/images/masks/askme.svg);
 }
 
 .x-friend-item > .avatar.busy::after {
     background: #ff2c2c;
-    mask-image: url(assets/images/masks/busy.svg);
+    mask-image: url(./assets/images/masks/busy.svg);
 }
 
 .x-friend-item > .avatar.offline::after {
@@ -624,17 +625,17 @@ i.x-user-status.online {
 
 i.x-user-status.joinme {
     background: #409eff;
-    mask-image: url(assets/images/masks/joinme.svg);
+    mask-image: url(./assets/images/masks/joinme.svg);
 }
 
 i.x-user-status.askme {
     background: #ff9500;
-    mask-image: url(assets/images/masks/askme.svg);
+    mask-image: url(./assets/images/masks/askme.svg);
 }
 
 i.x-user-status.busy {
     background: #ff2c2c;
-    mask-image: url(assets/images/masks/busy.svg);
+    mask-image: url(./assets/images/masks/busy.svg);
 }
 
 i.x-status-icon.green {
@@ -721,12 +722,12 @@ i.x-status-icon.red {
 //     color: #c8c8c8;
 // }
 
-.x-user-dialog .el-textarea__inner {
-    padding: 0;
-    background: none;
-    border: 0;
-    border-radius: 2px;
-}
+// .x-user-dialog .el-textarea__inner {
+//     padding: 0;
+//     background: none;
+//     border: 0;
+//     border-radius: 2px;
+// }
 
 .options-container {
     margin-top: 30px;
@@ -996,3 +997,8 @@ i.x-status-icon.red {
 //     text-align: left;
 //     word-break: break-word;
 // }
+
+.el-dropdown-menu__item:not(.is-disabled):focus {
+    // dropdown item focus blue background looks bad
+    background-color: unset;
+}

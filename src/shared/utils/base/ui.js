@@ -23,8 +23,15 @@ function changeAppDarkStyle(isDark) {
 }
 
 function changeAppThemeStyle(themeMode) {
+    if (themeMode === 'system') {
+        themeMode = systemIsDarkMode() ? 'dark' : 'light';
+    }
+
     const themeConfig = THEME_CONFIG[themeMode];
-    if (!themeConfig) return;
+    if (!themeConfig) {
+        console.error('Invalid theme mode:', themeMode);
+        return;
+    }
 
     let filePathPrefix = 'file://vrcx/';
     if (LINUX) {
@@ -44,31 +51,29 @@ function changeAppThemeStyle(themeMode) {
     }
     $appThemeStyle.href = themeConfig.cssFile ? themeConfig.cssFile : '';
 
-    let $appThemeDarkStyle = document.getElementById('app-theme-dark-style');
-    const darkThemeCssPath = `${filePathPrefix}theme.dark.css`;
-    const shouldApplyDarkBase =
-        themeConfig.requiresDarkBase ||
-        (themeMode === 'system' && systemIsDarkMode());
-
-    if (shouldApplyDarkBase) {
-        if (!$appThemeDarkStyle) {
-            $appThemeDarkStyle = document.createElement('link');
-            $appThemeDarkStyle.setAttribute('id', 'app-theme-dark-style');
-            $appThemeDarkStyle.rel = 'stylesheet';
-            $appThemeDarkStyle.href = darkThemeCssPath;
-            document.head.insertBefore($appThemeDarkStyle, $appThemeStyle);
-        } else if ($appThemeDarkStyle.href !== darkThemeCssPath) {
-            $appThemeDarkStyle.href = darkThemeCssPath;
-        }
+    if (themeConfig.isDark) {
+        document.documentElement.classList.add('dark');
     } else {
-        $appThemeDarkStyle && $appThemeDarkStyle.remove();
+        document.documentElement.classList.remove('dark');
     }
+    changeAppDarkStyle(themeConfig.isDark);
 
-    let isDarkForExternalApp = themeConfig.isDark;
-    if (isDarkForExternalApp === 'system') {
-        isDarkForExternalApp = systemIsDarkMode();
-    }
-    changeAppDarkStyle(isDarkForExternalApp);
+    // let $appThemeDarkStyle = document.getElementById('app-theme-dark-style');
+    // const darkThemeCssPath = `${filePathPrefix}theme.dark.css`;
+    // const shouldApplyDarkBase = themeConfig.isDark;
+    // if (shouldApplyDarkBase) {
+    //     if (!$appThemeDarkStyle) {
+    //         $appThemeDarkStyle = document.createElement('link');
+    //         $appThemeDarkStyle.setAttribute('id', 'app-theme-dark-style');
+    //         $appThemeDarkStyle.rel = 'stylesheet';
+    //         $appThemeDarkStyle.href = darkThemeCssPath;
+    //         document.head.insertBefore($appThemeDarkStyle, $appThemeStyle);
+    //     } else if ($appThemeDarkStyle.href !== darkThemeCssPath) {
+    //         $appThemeDarkStyle.href = darkThemeCssPath;
+    //     }
+    // } else {
+    //     $appThemeDarkStyle && $appThemeDarkStyle.remove();
+    // }
 }
 
 /**

@@ -634,6 +634,7 @@
                                 <span class="name">{{ t('dialog.user.info.note') }}</span>
                                 <el-input
                                     v-model="userDialog.note"
+                                    class="extra"
                                     type="textarea"
                                     maxlength="256"
                                     :rows="2"
