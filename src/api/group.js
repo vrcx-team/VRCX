@@ -84,11 +84,11 @@ const groupReq = {
             if (typeof ref === 'undefined') {
                 groupReq
                     .getGroup(params)
-                    .catch(reject)
                     .then((args) => {
                         args.ref = groupStore.applyGroup(args.json);
                         resolve(args);
-                    });
+                    })
+                    .catch(reject);
             } else {
                 resolve({
                     cache: true,
