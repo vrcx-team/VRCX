@@ -1,7 +1,7 @@
 <template>
     <div id="chart" class="x-container" v-show="isShowToolsTab">
         <div class="options-container" style="margin-top: 0">
-            <span class="header">Tools</span>
+            <span class="header">{{ t('view.tools.header') }}</span>
 
             <div class="tool-categories">
                 <div class="tool-category">
@@ -9,7 +9,7 @@
                         <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['group'] }"
                             ><ArrowRight
                         /></el-icon>
-                        <span class="category-title">Group</span>
+                        <span class="category-title">{{ t('view.tools.group.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['group']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
@@ -18,8 +18,8 @@
                                     <i class="ri-calendar-event-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">Calendar</div>
-                                    <div class="tool-description">Group Events Calendar</div>
+                                    <div class="tool-name">{{ t('view.tools.group.calendar') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.group.calendar_description') }}</div>
                                 </div>
                             </div>
                         </el-card>
@@ -31,7 +31,7 @@
                         <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }"
                             ><ArrowRight
                         /></el-icon>
-                        <span class="category-title">Image</span>
+                        <span class="category-title">{{ t('view.tools.image.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
@@ -40,8 +40,8 @@
                                     <i class="ri-screenshot-2-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">Screenshot Management</div>
-                                    <div class="tool-description">Manage screenshots and view metadata</div>
+                                    <div class="tool-name">{{ t('view.tools.image.screenshot') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.image.screenshot_description') }}</div>
                                 </div>
                             </div>
                         </el-card>
@@ -51,8 +51,8 @@
                                     <i class="ri-multi-image-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">VRC+ Images & Inventory Management</div>
-                                    <div class="tool-description">Manage VRC+ Images & Inventory</div>
+                                    <div class="tool-name">{{ t('view.tools.image.inventory') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.image.inventory_description') }}</div>
                                 </div>
                             </div>
                         </el-card>
@@ -64,7 +64,7 @@
                         <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }"
                             ><ArrowRight
                         /></el-icon>
-                        <span class="category-title">User</span>
+                        <span class="category-title">{{ t('view.tools.user.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
@@ -73,8 +73,8 @@
                                     <i class="ri-user-shared-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">Export User Notes</div>
-                                    <div class="tool-description">Export VRCX user memos to VRChat notes</div>
+                                    <div class="tool-name">{{ t('view.tools.user.export_notes') }}</div>
+                                    <div class="tool-description">{{ t('view.tools.user.export_notes_description') }}</div>
                                 </div>
                             </div>
                         </el-card>
@@ -100,6 +100,7 @@
 <script setup>
     import { ArrowRight } from '@element-plus/icons-vue';
     import { ref, defineAsyncComponent, computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { useUiStore, useGalleryStore } from '../../stores';
 
@@ -107,6 +108,8 @@
     const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
     const GalleryDialog = defineAsyncComponent(() => import('./dialogs/GalleryDialog.vue'));
+
+    const { t } = useI18n();
 
     const uiStore = useUiStore();
     const { showGalleryDialog } = useGalleryStore();

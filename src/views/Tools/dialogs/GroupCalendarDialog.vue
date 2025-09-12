@@ -3,7 +3,6 @@
         class="x-dialog"
         :model-value="visible"
         :title="t('dialog.group_calendar.header')"
-        :show-close="false"
         width="90vw"
         height="80vh"
         @close="closeDialog">
@@ -11,7 +10,7 @@
             <div class="dialog-title-container">
                 <span>{{ t('dialog.group_calendar.header') }}</span>
                 <el-button @click="toggleViewMode" type="primary" size="small" class="view-toggle-btn">
-                    {{ viewMode === 'timeline' ? 'List View' : 'Calendar View' }}
+                    {{ viewMode === 'timeline' ? t('dialog.group_calendar.list_view') : t('dialog.group_calendar.calendar_view') }}
                 </el-button>
             </div>
         </template>
@@ -36,7 +35,7 @@
                                 </div>
                             </el-timeline-item>
                         </el-timeline>
-                        <div v-else>No events found</div>
+                        <div v-else>{{ t('dialog.group_calendar.no_events') }}</div>
                     </div>
 
                     <div class="calendar-container">
@@ -69,7 +68,7 @@
                     <div class="search-container">
                         <el-input
                             v-model="searchQuery"
-                            placeholder="Search groups or events..."
+                            :placeholder="t('dialog.group_calendar.search_placeholder')"
                             clearable
                             size="small"
                             prefix-:icon="Search"
@@ -99,7 +98,7 @@
                             </div>
                         </div>
                         <div v-else class="no-events">
-                            {{ searchQuery ? 'No matching events found' : 'No events this month' }}
+                            {{ searchQuery ? t('dialog.group_calendar.search_no_matching') : t('dialog.group_calendar.search_no_this_month') }}
                         </div>
                     </div>
                 </div>
