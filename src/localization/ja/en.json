@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp",
+    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca",
     "nav_tooltip": {
         "feed": "フィード",
         "game_log": "ゲームログ",
@@ -250,6 +250,26 @@
                 }
             }
         },
+        "tools": {
+            "header": "ツール",
+            "group": {
+                "header": "グループ",
+                "calendar": "カレンダー",
+                "calendar_description": "グループのイベントカレンダー"
+            },
+            "image": {
+                "header": "写真",
+                "screenshot": "スクリーンショットの管理",
+                "screenshot_description": "スクリーンショットの管理、メタデータを表示",
+                "inventory": "VRC+ インベントリの管理",
+                "inventory_description": "VRC+ ギャラリーとインベントリを管理"
+            },
+            "user": {
+                "header": "ユーザー",
+                "export_notes": "ユーザーメモのエクスポート",
+                "export_notes_description": "VRCX ユーザーメモを VRChat ノートにエクスポート"
+            }
+        },
         "profile": {
             "profile": {
                 "header": "プロフィール",
@@ -260,7 +280,7 @@
                 "vrchat_credits": "VRChatクレジット",
                 "refresh": "クリックして更新",
                 "logout": "ログアウト",
-                "manage_gallery_inventory_icon": "写真/アイコン/絵文字を管理",
+                "manage_gallery_inventory_icon": "ギャラリー/インベントリを管理",
                 "export_friend_list": "フレンドリストをエクスポート",
                 "export_own_avatars": "自分のアバターをエクスポート",
                 "discord_names": "Discordの名前",
@@ -332,7 +352,7 @@
                     "disable_vr_overlay_gpu_acceleration": "VRオーバーレイのGPUアクセラレーション無効化",
                     "disable_vr_overlay_gpu_acceleration_tooltip": "GPUアクセラレーションの無効化は、VRCXのクラッシュやメモリリークを引き起こす可能性があります。問題が発生した場合は、このオプションを有効に戻して再起動してください。",
                     "proxy": "プロキシ設定",
-                    "startup_linux": "起動時のVRCX.desktopファイルに\"--startup\"アーギュを追加し、システム起動時にVRCXを最小化して起動する。"
+                    "startup_linux": "システムの起動時にVRCXを最小化した状態で起動するには、自動起動用のVRCX.desktopファイルに \"--startup\" 引数を追加します。"
                 },
                 "favorites": {
                     "header": "お気に入りのフレンド",
@@ -414,7 +434,7 @@
                         "alphabetical": "アルファベット順",
                         "private_to_bottom": "プライベートを下に",
                         "status": "ステータス",
-                        "status_and_private_to_bottom": "ステータスとプライベートを下",
+                        "status_and_private_to_bottom": "ステータスとプライベートを下に",
                         "location": "場所",
                         "last_active": "最終活動時間",
                         "last_seen": "最後に見た日時",
@@ -443,7 +463,7 @@
                 },
                 "friend_log": {
                     "header": "フレンドログ",
-                    "hide_unfriends": "フレンド解除を隠す"
+                    "hide_unfriends": "フレンド解除を非表示にする"
                 }
             },
             "notifications": {
@@ -524,7 +544,7 @@
                     "show_details_in_private": "プライベートでもワールド詳細を表示",
                     "show_images": "ワールド画像を表示",
                     "show_current_platform": "現在のプラットフォームを表示",
-                    "world_integration": "ワールド統合",
+                    "world_integration": "ワールドとの統合",
                     "world_integration_tooltip": "Popcorn Palace, PyPyDance, VRDancing, LS Media で \"Watching/Listening to\" を表示",
                     "display_world_name_as_discord_status": "ワールド名をDiscordステータスに表示"
                 },
@@ -550,7 +570,7 @@
                 "advanced": {
                     "header": "詳細設定",
                     "launch_options": "起動オプション",
-                    "screenshot_metadata": "スクリーンショットのメタデータ",
+                    "screenshot_metadata": "スクリーンショットの管理",
                     "vrc_registry_backup": "VRChatのレジストリをバックアップ",
                     "common_folders": "共通フォルダ",
                     "primary_password": {
@@ -570,14 +590,14 @@
                         "description": "旧バージョンのキャッシュを自動削除"
                     },
                     "self_invite": {
-                        "header": "セルフインバイト",
-                        "description": "インスタンスをVRChatで開く代わりに自分宛てに招待を送信"
+                        "header": "自分を招待",
+                        "description": "VRChatを起動する代わりに、自分を招待する"
                     },
                     "save_instance_prints_to_file": {
                         "header": "インスタンス内にあるプリントを、ローカルファイルに保存",
                         "header_tooltip": "「--enable-sdk-log-levels」オプションをつけて、VRChatを起動する必要があります。",
                         "description": "印刷されたプリントを、VRChatの画像フォルダに保存する",
-                        "crop": "自動で写真の外枠 (白い部分) をトリミングする",
+                        "crop": "自動でプリントの外枠 (白い部分) をトリミングする",
                         "crop_convert_old": "今までに保存したプリントすべてにも、トリミングを実行しますか？",
                         "crop_convert_old_confirm": "はい",
                         "crop_convert_old_cancel": "いいえ"
@@ -593,8 +613,8 @@
                     "delete_all_screenshot_metadata": {
                         "button": "スクリーンショットのメタデータを削除",
                         "ask": "VRChatの写真フォルダ内の全てのVRC & VRCXスクリーンショットメタデータを本当に削除しますか？",
-                        "confirm": "全てのスクリーンショットメタデータを削除する操作は元に戻せません！プリント、サブフォルダ、その他無関係な画像も含まれます。大切な写真がある場合は続行前にバックアップしてください。",
-                        "confirm_yes": "はい",
+                        "confirm": "全てのスクリーンショットメタデータを削除する操作は元に戻せません！プリント、サブフォルダ、その他無関係な画像も含まれます。大切な写真がある場合は、削除する前にバックアップしてください。",
+                        "confirm_yes": "削除する",
                         "confirm_no": "いいえ"
                     },
                     "remote_database": {
@@ -606,7 +626,7 @@
                         "header": "YouTube API",
                         "enable": "有効化する",
                         "youtube_api_key": "YouTube APIキー",
-                        "enable_tooltip": "ゲームログに表示する動画のタイトルと、オーバーレイに表示する動画の長さを取得します。"
+                        "enable_tooltip": "ゲームログに表示する動画のタイトルと、動画の時間(長さ)を取得します。"
                     },
                     "video_progress_pie": {
                         "header": "動画のプログレスをオーバーレイ表示",
@@ -617,9 +637,9 @@
                     "launch_commands": {
                         "header": "VRCXの起動コマンド (Deep Links)",
                         "docs": "起動コマンドドキュメント",
-                        "show_confirmation_on_switch_avatar_enable": "アバターの切り替え時に確認ダイアログを表示",
+                        "show_confirmation_on_switch_avatar_enable": "アバターの切り替え時に、確認ダイアログを表示",
                         "show_confirmation_on_switch_avatar_tooltip": "無効の場合、アバターの切り替え時にVRCXが確認を求める事はありません。",
-                        "website_userscript": "VRC WebサイトUserscript"
+                        "website_userscript": "VRC Webサイト Userscript"
                     },
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
@@ -737,8 +757,8 @@
             "pronouns": "代名詞",
             "tags": {
                 "friend_no": "フレンド No.{number}",
-                "vrchat_team": "VRChatの運営",
-                "18_plus_verified": "18+認証済み",
+                "vrchat_team": "VRChat 開発チーム",
+                "18_plus_verified": "18歳以上確認済み",
                 "age_verified": "年齢認証済み"
             },
             "badges": {
@@ -756,9 +776,9 @@
                 "request_invite": "招待リクエストを送信",
                 "request_invite_with_message": "メッセージ付き招待リクエストを送信",
                 "invite_to_group": "グループに招待",
-                "group_moderation": "グループモデレーション",
+                "group_moderation": "グループの管理",
                 "send_boop": "Boopを送信",
-                "manage_gallery_inventory_icon": "ギャラリー/アイコンを管理",
+                "manage_gallery_inventory_icon": "ギャラリー/インベントリを管理",
                 "accept_friend_request": "フレンドリクエストを許可",
                 "decline_friend_request": "フレンドリクエストを拒否",
                 "cancel_friend_request": "フレンドリクエストをキャンセル",
@@ -844,7 +864,7 @@
                 "exit_edit_mode": "編集モード終了",
                 "hold_shift": "Shiftキーを押し続けることで、確認なしに終了できます",
                 "own_groups": "自分のグループ",
-                "mutual_groups": "共通グループ",
+                "mutual_groups": "共通のグループ",
                 "groups": "グループ",
                 "sorting": {
                     "alphabetical": "アルファベット順",
@@ -924,7 +944,7 @@
                 "change_warnings_settings_tags": "コンテンツ警告・設定・タグを変更",
                 "change_image": "画像を変更",
                 "change_allowed_video_player_domains": "許可されたビデオプレーヤードメインを変更する",
-                "download_package": "Unity Packageをダウンロード",
+                "download_package": "Unitypackageをダウンロード",
                 "publish_to_labs": "ラボに公開",
                 "unpublish": "非公開化",
                 "delete_persistent_data": "ユーザーデータをリセット",
@@ -1054,8 +1074,8 @@
                 "subscribed": "お知らせ受信可能"
             },
             "actions": {
-                "represent_tooltip": "ネームプレートに表示",
-                "unrepresent_tooltip": "ネームプレートから外す",
+                "represent_tooltip": "ネームプレートに掲示",
+                "unrepresent_tooltip": "ネームプレートの掲示をやめる",
                 "cancel_join_request_tooltip": "参加リクエストをキャンセル",
                 "pending_request_tooltip": "保留中の招待",
                 "request_join_tooltip": "参加リクエストを送信",
@@ -1064,7 +1084,7 @@
                 "refresh": "更新",
                 "share": "共有",
                 "unsubscribe": "お知らせの受信を停止",
-                "subscribe": "お知らせを受信可能に設定",
+                "subscribe": "お知らせを受け取る",
                 "invite_to_group": "グループに招待",
                 "manage_selected": "選択したグループを管理",
                 "select_all": "全て選択",
@@ -1098,7 +1118,7 @@
                 "role_updated_at": "更新日:",
                 "role_created_at": "作成日:",
                 "role_permissions": "権限:",
-                "last_visited": "最終訪問"
+                "last_visited": "最後に訪問した日時"
             },
             "posts": {
                 "header": "投稿",
@@ -1511,7 +1531,7 @@
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "アニメーション絵文字として使用する1024x1024pxのPNGスプライトシート画像を選択 (最大 64FPS)",
             "note": "ノート",
-            "crop_print_border": "プリントの枠をトリミング",
+            "crop_print_border": "プリントの外枠をトリミング",
             "consume_bundle": "バンドルを消費"
         },
         "change_content_image": {
@@ -1554,7 +1574,7 @@
             "ok": "OK"
         },
         "screenshot_metadata": {
-            "header": "スクリーンショットのメタデータ",
+            "header": "スクリーンショットの管理",
             "drag": "画像をここにドラッグ",
             "browse": "参照",
             "last_screenshot": "最後に見た画像",
@@ -1656,13 +1676,26 @@
             "save": "保存"
         },
         "group_calendar": {
-            "header": "グループカレンダー"
+            "header": "グループカレンダー",
+            "list_view": "リスト表示",
+            "calendar_view": "カレンダー表示",
+            "no_events": "イベントが見つかりません",
+            "search_placeholder": "グループまたはイベントを検索...",
+            "search_no_matching": "一致するイベントが見つかりません",
+            "search_no_this_month": "今月のイベントはありません",
+            "event_card": {
+                "category": "カテゴリ",
+                "interested_user": "興味のあるユーザー",
+                "close_time": "終了後にインスタンスを閉じる時間",
+                "created": "イベント作成日",
+                "description": "このイベントについて"
+            }
         },
         "moderate_group": {
             "header": "グループメンバーを管理",
             "choose_group_placeholder": "グループを選択",
             "groups_with_moderation_permission": "モデレーション権限のあるグループ",
-            "moderation_tools": "モデレーションツール"
+            "moderation_tools": "選択したグループの管理"
         }
     },
     "confirm": {
@@ -2029,7 +2062,7 @@
             "joinCount": "Joinした回数",
             "timeTogether": "一緒に居た時間",
             "lastSeen": "最後に見た日時",
-            "lastActivity": "最終活動時間",
+            "lastActivity": "最後に活動した時間",
             "lastLogin": "最後のログイン",
             "dateJoined": "参加日時",
             "unfriend": "フレンド解除"
