@@ -1993,7 +1993,7 @@
             "action": "動作"
         },
         "friendList": {
-            "no": "不。",
+            "no": "編號",
             "avatar": "角色",
             "displayName": "顯示名稱",
             "rank": "階級",
@@ -2021,7 +2021,7 @@
             }
         },
         "social_status": {
-            "no": "No.",
+            "no": "編號",
             "status": "狀態"
         },
         "download_history": {
