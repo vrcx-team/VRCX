@@ -585,24 +585,24 @@ img.friends-list-avatar {
 //     height: 180px;
 // }
 
-.x-dialog > .el-dialog {
-    max-width: 100%;
-}
+// .x-dialog {
+//     max-width: 100%;
+// }
 
-.x-user-dialog > .el-dialog > .el-dialog__header,
-.x-world-dialog > .el-dialog > .el-dialog__header,
-.x-avatar-dialog > .el-dialog > .el-dialog__header,
-.x-group-dialog > .el-dialog > .el-dialog__header {
+.x-user-dialog > .el-dialog__header,
+.x-world-dialog > .el-dialog__header,
+.x-avatar-dialog > .el-dialog__header,
+.x-group-dialog > .el-dialog__header {
     display: none;
     padding: 0;
 }
 
-.x-user-dialog > .el-dialog > .el-dialog__body,
-.x-world-dialog > .el-dialog > .el-dialog__body,
-.x-avatar-dialog > .el-dialog > .el-dialog__body,
-.x-group-dialog > .el-dialog > .el-dialog__body {
-    padding: 20px;
-}
+// .x-user-dialog > .el-dialog__body,
+// .x-world-dialog > .el-dialog__body,
+// .x-avatar-dialog > .el-dialog__body,
+// .x-group-dialog > .el-dialog__body {
+//     padding: 20px;
+// }
 
 // .el-popper.hex {
 //     min-width: auto;
@@ -812,7 +812,6 @@ i.x-status-icon.red {
 // }
 
 .avatar-info {
-    margin-top: 2px;
     cursor: pointer;
     width: fit-content;
     vertical-align: top;

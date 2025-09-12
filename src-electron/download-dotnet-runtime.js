@@ -4,7 +4,7 @@ const https = require('https');
 const { spawnSync } = require('child_process');
 const { getArchAndPlatform } = require('./utils');
 
-const DOTNET_VERSION = '9.0.8';
+const DOTNET_VERSION = '9.0.9';
 const DOTNET_RUNTIME_DIR = path.join(
     __dirname,
     '..',
