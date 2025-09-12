@@ -391,28 +391,21 @@ function openExternalLink(link) {
         distinguishCancelAndClose: true,
         confirmButtonText: 'Open',
         cancelButtonText: 'Copy',
-        type: 'info'
+        type: 'info',
+        beforeClose: (action, instance, done) => {
+            if (action === 'cancel') {
+                copyToClipboard(link);
+            }
+            done();
+        }
     })
         .then((action) => {
+            console.log(action);
             if (action === 'confirm') {
                 AppApi.OpenLink(link);
-            } else if (action === 'cancel') {
-                copyLink(link);
             }
         })
         .catch(() => {});
-}
-
-/**
- *
- * @param {string} text
- */
-function copyLink(text) {
-    ElMessage({
-        message: 'Link copied to clipboard',
-        type: 'success'
-    });
-    copyToClipboard(text);
 }
 
 /**
@@ -541,7 +534,6 @@ export {
     buildTreeData,
     replaceBioSymbols,
     openExternalLink,
-    copyLink,
     getBundleDateSize,
     openFolderGeneric,
     debounce

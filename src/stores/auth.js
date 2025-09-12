@@ -662,6 +662,9 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputErrorMessage: t('prompt.totp.input_error'),
                 beforeClose: (action, instance, done) => {
                     state.twoFactorAuthDialogVisible = false;
+                    if (action === 'cancel') {
+                        promptOTP();
+                    }
                     done();
                 }
             }
@@ -672,15 +675,12 @@ export const useAuthStore = defineStore('Auth', () => {
                         code: value.trim()
                     })
                     .catch((err) => {
+                        console.error(err);
                         clearCookiesTryLogin();
-                        throw err;
                     })
-                    .then((args) => {
+                    .then(() => {
                         userStore.getCurrentUser();
-                        return args;
                     });
-            } else if (action === 'cancel') {
-                promptOTP();
             }
         });
     }
@@ -702,6 +702,9 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputErrorMessage: t('prompt.otp.input_error'),
                 beforeClose: (action, instance, done) => {
                     state.twoFactorAuthDialogVisible = false;
+                    if (action === 'cancel') {
+                        promptTOTP();
+                    }
                     done();
                 }
             }
@@ -712,15 +715,12 @@ export const useAuthStore = defineStore('Auth', () => {
                         code: value.trim()
                     })
                     .catch((err) => {
+                        console.error(err);
                         clearCookiesTryLogin();
-                        throw err;
                     })
-                    .then((args) => {
+                    .then(() => {
                         userStore.getCurrentUser();
-                        return args;
                     });
-            } else if (action === 'cancel') {
-                promptTOTP();
             }
         });
     }
@@ -743,6 +743,10 @@ export const useAuthStore = defineStore('Auth', () => {
                 inputErrorMessage: t('prompt.email_otp.input_error'),
                 beforeClose: (action, instance, done) => {
                     state.twoFactorAuthDialogVisible = false;
+                    if (action === 'cancel') {
+                        resendEmail2fa();
+                        return;
+                    }
                     done();
                 }
             }
@@ -753,15 +757,12 @@ export const useAuthStore = defineStore('Auth', () => {
                         code: value.trim()
                     })
                     .catch((err) => {
+                        console.error(err);
                         promptEmailOTP();
-                        throw err;
                     })
-                    .then((args) => {
+                    .then(() => {
                         userStore.getCurrentUser();
-                        return args;
                     });
-            } else if (action === 'cancel') {
-                resendEmail2fa();
             }
         });
     }
