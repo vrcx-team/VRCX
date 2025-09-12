@@ -250,6 +250,26 @@
                 }
             }
         },
+        "tools": {
+            "header": "Tools",
+            "group": {
+                "header": "Group",
+                "calendar": "Calendar",
+                "calendar_description": "Group Events Calendar"
+            },
+            "image": {
+                "header": "Image",
+                "screenshot": "Screenshot Management",
+                "screenshot_description": "Manage screenshots and view metadata",
+                "inventory": "VRC+ Images & Inventory Management",
+                "inventory_description": "Manage VRC+ Images & Inventory"
+            },
+            "user": {
+                "header": "User",
+                "export_notes": "Export User Notes",
+                "export_notes_description": "Export VRCX user memos to VRChat notes"
+            }
+        },
         "profile": {
             "profile": {
                 "header": "Profile",
@@ -1650,7 +1670,20 @@
             "save": "Save"
         },
         "group_calendar": {
-            "header": "Group Calendar"
+            "header": "Group Calendar",
+            "list_view": "List View",
+            "calendar_view": "Calendar View",
+            "no_events": "No events found",
+            "search_placeholder": "Search groups or events...",
+            "search_no_matching": "No matching events found",
+            "search_no_this_month": "No events this month",
+            "event_card": {
+                "category": "Category",
+                "interested_user": "Interested User",
+                "close_time": "Close Instance After End",
+                "created": "Created Date",
+                "description": "Description"
+            }
         },
         "moderate_group": {
             "header": "Moderate Group Member",

@@ -1,6 +1,6 @@
 {
     "language": "日本語 (ja)",
-    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp",
+    "translator": "Assault1892, Yuu198, paralleltree, kazu3jp, Cayahuanca",
     "nav_tooltip": {
         "feed": "フィード",
         "game_log": "ゲームログ",
@@ -250,6 +250,26 @@
                 }
             }
         },
+        "tools": {
+            "header": "ツール",
+            "group": {
+                "header": "グループ",
+                "calendar": "カレンダー",
+                "calendar_description": "グループのイベントカレンダー"
+            },
+            "image": {
+                "header": "写真",
+                "screenshot": "スクリーンショットの管理",
+                "screenshot_description": "スクリーンショットの管理、メタデータを表示",
+                "inventory": "VRC+ インベントリの管理",
+                "inventory_description": "VRC+ ギャラリーとインベントリを管理"
+            },
+            "user": {
+                "header": "ユーザー",
+                "export_notes": "ユーザーメモのエクスポート",
+                "export_notes_description": "VRCX ユーザーメモを VRChat ノートにエクスポート"
+            }
+        },
         "profile": {
             "profile": {
                 "header": "プロフィール",
@@ -260,7 +280,7 @@
                 "vrchat_credits": "VRChatクレジット",
                 "refresh": "クリックして更新",
                 "logout": "ログアウト",
-                "manage_gallery_inventory_icon": "写真/アイコン/絵文字を管理",
+                "manage_gallery_inventory_icon": "ギャラリー/インベントリを管理",
                 "export_friend_list": "フレンドリストをエクスポート",
                 "export_own_avatars": "自分のアバターをエクスポート",
                 "discord_names": "Discordの名前",
@@ -550,7 +570,7 @@
                 "advanced": {
                     "header": "詳細設定",
                     "launch_options": "起動オプション",
-                    "screenshot_metadata": "スクリーンショットのメタデータ",
+                    "screenshot_metadata": "スクリーンショットの管理",
                     "vrc_registry_backup": "VRChatのレジストリをバックアップ",
                     "common_folders": "共通フォルダ",
                     "primary_password": {
@@ -756,9 +776,9 @@
                 "request_invite": "招待リクエストを送信",
                 "request_invite_with_message": "メッセージ付き招待リクエストを送信",
                 "invite_to_group": "グループに招待",
-                "group_moderation": "グループモデレーション",
+                "group_moderation": "グループの管理",
                 "send_boop": "Boopを送信",
-                "manage_gallery_inventory_icon": "ギャラリー/アイコンを管理",
+                "manage_gallery_inventory_icon": "ギャラリー/インベントリを管理",
                 "accept_friend_request": "フレンドリクエストを許可",
                 "decline_friend_request": "フレンドリクエストを拒否",
                 "cancel_friend_request": "フレンドリクエストをキャンセル",
@@ -1554,7 +1574,7 @@
             "ok": "OK"
         },
         "screenshot_metadata": {
-            "header": "スクリーンショットのメタデータ",
+            "header": "スクリーンショットの管理",
             "drag": "画像をここにドラッグ",
             "browse": "参照",
             "last_screenshot": "最後に見た画像",
@@ -1656,7 +1676,20 @@
             "save": "保存"
         },
         "group_calendar": {
-            "header": "グループカレンダー"
+            "header": "グループカレンダー",
+            "list_view": "リスト表示",
+            "calendar_view": "カレンダー表示",
+            "no_events": "イベントが見つかりません",
+            "search_placeholder": "グループまたはイベントを検索...",
+            "search_no_matching": "一致するイベントが見つかりません",
+            "search_no_this_month": "今月のイベントはありません",
+            "event_card": {
+                "category": "カテゴリ",
+                "interested_user": "興味のあるユーザー",
+                "close_time": "終了後にインスタンスを閉じる時間",
+                "created": "イベント作成日",
+                "description": "このイベントについて"
+            }
         },
         "moderate_group": {
             "header": "グループメンバーを管理",
