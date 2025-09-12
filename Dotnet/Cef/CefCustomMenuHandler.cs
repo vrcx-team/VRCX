@@ -11,6 +11,11 @@ namespace VRCX
     {
         public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
         {
+            if (!browser.IsSame(MainForm.Instance.Browser?.GetBrowser()))
+            {
+                // allow devtools
+                return;
+            }
             // remove default right click when not in debug mode
             if (!Program.LaunchDebug &&
                 !parameters.TypeFlags.HasFlag(ContextMenuType.Selection) &&

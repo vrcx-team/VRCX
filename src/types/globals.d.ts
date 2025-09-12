@@ -20,6 +20,8 @@ declare global {
         AssetBundleManager: AssetBundleManager;
         webApiService: webApiService;
         request: any;
+        utils: any;
+        dayjs: any;
         configRepository: any;
         datebase: any;
         gameLogService: any;

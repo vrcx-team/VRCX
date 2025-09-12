@@ -1,4 +1,6 @@
 import { reactive } from 'vue';
+import dayjs from 'dayjs';
+import * as utils from '../shared/utils';
 
 const AppDebug = reactive({
     debug: false,
@@ -17,5 +19,7 @@ const AppDebug = reactive({
 });
 
 window.$debug = AppDebug;
+window.utils = utils;
+window.dayjs = dayjs;
 
 export { AppDebug };
