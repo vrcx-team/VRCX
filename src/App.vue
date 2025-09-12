@@ -140,8 +140,8 @@
     import cs from 'element-plus/es/locale/lang/cs';
     import ru from 'element-plus/es/locale/lang/ru';
     import vi from 'element-plus/es/locale/lang/vi';
-    import zhCN from 'element-plus/es/locale/lang/zh-CN';
-    import zhTW from 'element-plus/es/locale/lang/zh-TW';
+    import zhCN from 'element-plus/es/locale/lang/zh-cn';
+    import zhTW from 'element-plus/es/locale/lang/zh-tw';
     import th from 'element-plus/es/locale/lang/th';
 
     const langMap = {
