@@ -1530,7 +1530,11 @@
             "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
             "note": "Note",
             "crop_print_border": "Crop Print Border",
-            "consume_bundle": "Consume"
+            "consume_bundle": "Consume",
+            "item": "Item",
+            "sticker": "Sticker",
+            "drone_skin": "Drone Skin",
+            "emoji": "Emoji"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",

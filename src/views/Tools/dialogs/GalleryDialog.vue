@@ -510,7 +510,13 @@
                             style="color: #909399; font-family: monospace; font-size: 11px; display: block">
                             {{ formatDateFilter(item.created_at, 'long') }}
                         </span>
-                        <span v-text="item.itemType" style="display: block"></span>
+                        <span v-if="item.itemType === 'prop'">{{ t('dialog.gallery_icons.item') }}</span>
+                        <span v-else-if="item.itemType === 'sticker'">{{ t('dialog.gallery_icons.sticker') }}</span>
+                        <span v-else-if="item.itemType === 'droneskin'">{{
+                            t('dialog.gallery_icons.drone_skin')
+                        }}</span>
+                        <span v-else-if="item.itemType === 'emoji'">{{ t('dialog.gallery_icons.emoji') }}</span>
+                        <span v-else v-text="item.itemTypeLabel"></span>
                     </div>
                     <el-button
                         v-if="item.itemType === 'bundle'"
