@@ -267,7 +267,7 @@
             "user": {
                 "header": "用户",
                 "export_notes": "导出备注",
-                "export_notes_description": "导出好友备注到文本文件中"
+                "export_notes_description": "导出备注到文本文件中"
             }
         },
         "profile": {
