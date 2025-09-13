@@ -1,4 +1,10 @@
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAppearanceSettingsStore } from '../../../stores';
+
+dayjs.extend(localizedFormat);
+dayjs.extend(customParseFormat);
 
 /**
  * @param {string} dateStr
@@ -17,61 +23,36 @@ function formatDateFilter(dateStr, format) {
         return '-';
     }
 
-    const dt = new Date(dateStr);
-    if (isNaN(dt.getTime())) {
+    const dt = dayjs(dateStr);
+    if (!dt.isValid()) {
         return '-';
     }
 
-    function padZero(num) {
-        return String(num).padStart(2, '0');
-    }
-
     function toIsoLong(date) {
-        const y = date.getFullYear();
-        const m = padZero(date.getMonth() + 1);
-        const d = padZero(date.getDate());
-        const hh = padZero(date.getHours());
-        const mm = padZero(date.getMinutes());
-        const ss = padZero(date.getSeconds());
-        return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+        return date.format('YYYY-MM-DD HH:mm:ss');
     }
 
     function toLocalShort(date) {
-        return date
-            .toLocaleDateString(isoFormat ? 'en-nz' : currentCulture, {
-                month: '2-digit',
-                day: '2-digit',
-                hour: 'numeric',
-                minute: 'numeric',
-                hourCycle: hour12 ? 'h12' : 'h23'
-            })
-            .replace(' AM', 'am')
-            .replace(' PM', 'pm')
-            .replace(',', '');
+        // Use localized format for short date
+        let fmt = 'MM/DD HH:mm';
+        if (!isoFormat) {
+            fmt = hour12 ? 'L LT' : 'L HH:mm';
+        }
+        let str = date.locale(currentCulture).format(fmt);
+        // Lowercase AM/PM
+        str = str.replace(' AM', 'am').replace(' PM', 'pm').replace(',', '');
+        return str;
     }
 
-    if (isoFormat) {
-        if (format === 'long') {
+    if (format === 'long') {
+        if (isoFormat) {
             return toIsoLong(dt);
         }
-        if (format === 'short') {
-            return toLocalShort(dt);
-        }
-    } else {
-        if (format === 'long') {
-            return dt.toLocaleDateString(currentCulture, {
-                month: '2-digit',
-                day: '2-digit',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                hourCycle: hour12 ? 'h12' : 'h23'
-            });
-        }
-        if (format === 'short') {
-            return toLocalShort(dt);
-        }
+        const fmt = hour12 ? 'L LTS' : 'L HH:mm:ss';
+        return dt.locale(currentCulture).format(fmt);
+    }
+    if (format === 'short') {
+        return toLocalShort(dt);
     }
 
     return '-';
