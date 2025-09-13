@@ -1677,10 +1677,10 @@
             "header": "活动日历",
             "list_view": "列表视图",
             "calendar_view": "日历视图",
-            "no_events": "这天没有任何活动",
+            "no_events": "目前没有任何活动",
             "search_placeholder": "搜索群组或活动...",
             "search_no_matching": "没有找到任何符合条件的活动",
-            "search_no_this_month": "这个月没有活动举行",
+            "search_no_this_month": "这个月没有符合搜索条件的活动举行",
             "event_card": {
                 "category": "类别",
                 "interested_user": "感兴趣的人数",
