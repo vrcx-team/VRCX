@@ -1,6 +1,6 @@
 {
     "language": "简体中文 (zh-CN)",
-    "translator": "flower_elf,Yingxue,Map1en",
+    "translator": "flower_elf,Yingxue,Map1en,Stabrinai",
     "nav_tooltip": {
         "feed": "好友动态",
         "game_log": "游戏日志",
@@ -43,7 +43,7 @@
                 "Offline": "下线",
                 "Status": "状态变动",
                 "Avatar": "模型变动",
-                "Bio": "Bio 变更"
+                "Bio": "简介变更"
             }
         },
         "game_log": {
@@ -248,6 +248,26 @@
                     "show_no_friend_instance": "显示没有好友的房间",
                     "show_detail": "显示更多信息"
                 }
+            }
+        },
+        "tools": {
+            "header": "工具",
+            "group": {
+                "header": "组织",
+                "calendar": "日历",
+                "calendar_description": "组织活动日历"
+            },
+            "image": {
+                "header": "相册",
+                "screenshot": "截屏管理",
+                "screenshot_description": "管理截图或查看截图元数据",
+                "inventory": "拍立得 & 库存管理",
+                "inventory_description": "管理拍立得 & 库存"
+            },
+            "user": {
+                "header": "用户",
+                "export_notes": "导出备注",
+                "export_notes_description": "导出好友备注到文本文件"
             }
         },
         "profile": {
@@ -569,6 +589,10 @@
                         "header": "缓存自动清理",
                         "description": "退出游戏时自动从缓存中删除过期数据"
                     },
+                    "self_invite": {
+                        "header": "自我邀请",
+                        "description": "自我邀请，而不是在 VRChat 中打开房间"
+                    },
                     "save_instance_prints_to_file": {
                         "header": "“拍立得”照片保存选项",
                         "header_tooltip": "需要使用 \"--enable-sdk-log-levels\" 启动选项启动VRChat",
@@ -599,9 +623,9 @@
                         "avatar_database_provider": "数据库提供方设置"
                     },
                     "youtube_api": {
-                        "header": "Youtube API",
+                        "header": "YouTube API",
                         "enable": "启用",
-                        "youtube_api_key": "Youtube API 密钥",
+                        "youtube_api_key": "YouTube API 密钥",
                         "enable_tooltip": "获取视频标题以供日志记录使用，会一并获取进度条的时间"
                     },
                     "video_progress_pie": {
@@ -649,6 +673,7 @@
                         "avatar_name_cache": "模型名称缓存：",
                         "instance_cache": "房间信息缓存：",
                         "clear_cache": "清除缓存",
+                        "refresh_cache": "刷新缓存",
                         "auto_clear_cache": "自动清理",
                         "show_console": "显示界面调试工具"
                     },
@@ -657,7 +682,7 @@
                         "refresh": "刷新",
                         "gps": "位置变动：",
                         "status": "状态变动：",
-                        "bio": "Bio 记录：",
+                        "bio": "简介变动：",
                         "avatar": "模型变动：",
                         "online_offline": "上线 / 下线：",
                         "friend_log_history": "好友变动：",
@@ -762,7 +787,6 @@
                 "show_avatar_author": "显示模型信息",
                 "show_fallback_avatar": "显示备用模型信息",
                 "show_previous_instances": "显示一起加入过的房间",
-                "show_previous_images": "显示使用过的封面",
                 "moderation_block": "屏蔽",
                 "moderation_unblock": "取消屏蔽",
                 "moderation_mute": "静音",
@@ -911,7 +935,6 @@
                 "make_home": "设为出生点",
                 "reset_home": "重置出生点为默认",
                 "show_previous_instances": "显示加入过的房间",
-                "show_previous_images": "显示使用过的封面",
                 "rename": "重命名",
                 "change_description": "更改描述",
                 "change_capacity": "更改人数上限",
@@ -998,7 +1021,6 @@
                 "select_fallback": "用作后备模型",
                 "block": "屏蔽模型",
                 "unblock": "取消屏蔽模型",
-                "show_previous_images": "显示曾使用的封面",
                 "make_public": "设为公开",
                 "make_private": "设为私人",
                 "rename": "重命名",
@@ -1114,7 +1136,6 @@
                 "load_more": "载入更多……",
                 "sort_by": "排序设置：",
                 "sorting": {
-                    "user_id": "玩家 ID（顺序）",
                     "joined_at_asc": "加入时间（顺序）",
                     "joined_at_desc": "加入时间（倒序）"
                 },
@@ -1222,7 +1243,9 @@
             "normal": "普通",
             "group": "群组",
             "legacy": "传统",
-            "roles": "身份组"
+            "roles": "身份组",
+            "open_ingame": "在 VRChat 中打开",
+            "display_name": "昵称 (VRC+)"
         },
         "launch_options": {
             "header": "启动选项",
@@ -1324,7 +1347,11 @@
             "info": "信息",
             "invite": "邀请",
             "launch": "启动",
-            "open_ingame": "在 VRChat 中打开"
+            "open_ingame": "在 VRChat 中打开",
+            "self_invite": "自我邀请",
+            "game_running_warning": "你确定要启动第二个 VRChat 程序吗？",
+            "confirm_yes": "是，确认启动",
+            "confirm_no": "否，我再想想"
         },
         "export_friends_list": {
             "header": "导出好友列表",
@@ -1417,7 +1444,7 @@
             "header": "邀请好友加入群组",
             "description": "请不要滥用邀请功能，短时间内邀请大量玩家加入群组会导致你的账号被封禁。",
             "choose_group_placeholder": "选择群组",
-            "groups": "群组",
+            "groups_with_invite_permission": "有邀请权限的群组",
             "choose_friends_placeholder": "选择好友",
             "selected_users": "已选择的玩家",
             "invite": "邀请"
@@ -1509,11 +1536,7 @@
             "avatar": "更改模型封面",
             "world": "更改世界封面",
             "description": "推荐图片尺寸：1200 像素 x 900 像素 (4:3)",
-            "refresh": "刷新",
             "upload": "上传图片"
-        },
-        "previous_images": {
-            "header": "曾使用过的封面"
         },
         "previous_instances": {
             "header": "曾加入的房间",
@@ -1647,13 +1670,30 @@
             "save": "保存"
         },
         "group_calendar": {
-            "header": "活动日历"
+            "header": "组织日历",
+            "list_view": "列表视图",
+            "calendar_view": "日历视图",
+            "no_events": "没有发现任何活动",
+            "search_placeholder": "搜索组织或活动...",
+            "search_no_matching": "没有找到任何活动",
+            "search_no_this_month": "这个月没有任何活动",
+            "event_card": {
+                "category": "类别",
+                "interested_user": "感兴趣的用户",
+                "close_time": "结束后关闭房间",
+                "created": "创建日期",
+                "description": "描述"
+            }
         },
         "moderate_group": {
             "header": "管理群组成员",
             "choose_group_placeholder": "选择群组....",
             "groups_with_moderation_permission": "拥有管理权限的群组",
             "moderation_tools": "管理工具"
+        },
+        "fullscreen_image": {
+            "download_and_save_image": "下载并保存图像",
+            "copy_image_to_clipboard": "将图像复制到剪贴板"
         }
     },
     "confirm": {
