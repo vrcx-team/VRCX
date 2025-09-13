@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "vue.volar",
+        "lokalise.i18n-ally",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "lllllllqw.jsdoc",
+        "mgmcdermott.vscode-language-babel"
+    ]
+}
