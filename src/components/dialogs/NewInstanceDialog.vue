@@ -498,7 +498,6 @@
     import { groupRequest, instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
     import {
-        getNextDialogIndex,
         copyToClipboard,
         getLaunchURL,
         hasGroupPermission,
@@ -507,6 +506,7 @@
         userImage,
         userStatusClass
     } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import {
         useFriendStore,
         useGroupStore,

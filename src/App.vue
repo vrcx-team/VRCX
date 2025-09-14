@@ -89,11 +89,6 @@
     import { createGlobalStores } from './stores';
     import { watchState } from './service/watchState';
 
-    import '@fontsource/noto-sans-kr';
-    import '@fontsource/noto-sans-jp';
-    import '@fontsource/noto-sans-sc';
-    import '@fontsource/noto-sans-tc';
-
     import Login from './views/Login/Login.vue';
     import NavMenu from './components/NavMenu.vue';
     import Sidebar from './views/Sidebar/Sidebar.vue';

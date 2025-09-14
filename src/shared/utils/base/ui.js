@@ -217,6 +217,11 @@ function getNextDialogIndex() {
     return z + 1;
 }
 
+function changeHtmlLangAttribute(language) {
+    const htmlElement = document.documentElement;
+    htmlElement.setAttribute('lang', language);
+}
+
 export {
     systemIsDarkMode,
     changeAppDarkStyle,
@@ -226,5 +231,6 @@ export {
     refreshCustomScript,
     HueToHex,
     HSVtoRGB,
-    getNextDialogIndex
+    getNextDialogIndex,
+    changeHtmlLangAttribute
 };

@@ -6,14 +6,15 @@ import { ElMessageBox } from 'element-plus';
 import configRepository from '../../service/config';
 import { database } from '../../service/database';
 import { watchState } from '../../service/watchState';
+import { getNameColour } from '../../shared/utils';
 import {
     changeAppDarkStyle,
     changeAppThemeStyle,
-    getNameColour,
     HueToHex,
     systemIsDarkMode,
-    updateTrustColorClasses
-} from '../../shared/utils';
+    updateTrustColorClasses,
+    changeHtmlLangAttribute
+} from '../../shared/utils/base/ui';
 import { useFeedStore } from '../feed';
 import { useFriendStore } from '../friend';
 import { useGameLogStore } from '../gameLog';
@@ -277,8 +278,7 @@ export const useAppearanceSettingsStore = defineStore(
             state.appLanguage = language;
             configRepository.setString('VRCX_appLanguage', language);
             locale.value = state.appLanguage;
-            const htmlElement = document.documentElement;
-            htmlElement.setAttribute('lang', state.appLanguage);
+            changeHtmlLangAttribute(language);
         }
 
         /**

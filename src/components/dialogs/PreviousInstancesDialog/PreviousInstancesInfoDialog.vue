@@ -63,13 +63,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
-    import {
-        getNextDialogIndex,
-        compareByCreatedAt,
-        parseLocation,
-        timeToText,
-        formatDateFilter
-    } from '../../../shared/utils';
+    import { compareByCreatedAt, parseLocation, timeToText, formatDateFilter } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useGameLogStore, useInstanceStore, useUserStore } from '../../../stores';
 
     const { lookupUser } = useUserStore();

@@ -29,6 +29,38 @@ body {
     margin: 0;
 }
 
+html[lang='ja'] body,
+html[lang='ja'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='ko'] body,
+html[lang='ko'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-CN'] body,
+html[lang='zh-CN'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-TW'] body,
+html[lang='zh-TW'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
 .noty_body {
     display: block;
 }

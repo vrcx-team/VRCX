@@ -607,7 +607,6 @@
     import { avatarModerationRequest, avatarRequest, favoriteRequest, miscRequest } from '../../../api';
     import { database } from '../../../service/database';
     import {
-        getNextDialogIndex,
         buildTreeData,
         commaNumber,
         copyToClipboard,
@@ -621,6 +620,7 @@
         formatDateFilter,
         textToHex
     } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
 
     const ChangeAvatarImageDialog = defineAsyncComponent(() => import('./ChangeAvatarImageDialog.vue'));

@@ -1193,7 +1193,6 @@
     import { groupRequest } from '../../../api';
     import { groupDialogFilterOptions, groupDialogSortingOptions } from '../../../shared/constants';
     import {
-        getNextDialogIndex,
         buildTreeData,
         copyToClipboard,
         downloadAndSaveJson,
@@ -1210,6 +1209,7 @@
         textToHex,
         debounce
     } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useGalleryStore, useGroupStore, useLocationStore, useUserStore } from '../../../stores';
     import InviteGroupDialog from '../InviteGroupDialog.vue';
     import GroupPostEditDialog from './GroupPostEditDialog.vue';

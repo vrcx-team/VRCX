@@ -1810,14 +1810,11 @@
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import {
-        getNextDialogIndex,
         checkCanInvite,
         compareByMemberCount,
         compareByName,
         copyToClipboard,
         downloadAndSaveJson,
-        extractFileId,
-        getFaviconUrl,
         isFriendOnline,
         isRealInstance,
         languageClass,
@@ -1834,6 +1831,7 @@
         textToHex,
         formatDateFilter
     } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,

@@ -65,15 +65,15 @@
     import { DataLine, Close } from '@element-plus/icons-vue';
 
     import { ElMessageBox } from 'element-plus';
-    import { ref, reactive, computed, watch, nextTick, getCurrentInstance } from 'vue';
+    import { ref, reactive, computed, watch, nextTick } from 'vue';
     import {
         parseLocation,
         compareByCreatedAt,
         timeToText,
         removeFromArray,
-        getNextDialogIndex,
         formatDateFilter
     } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { database } from '../../../service/database';
     import { useI18n } from 'vue-i18n';
     import { useInstanceStore, useUiStore } from '../../../stores';
