@@ -1,6 +1,6 @@
 import Noty from 'noty';
 
-function initNoty(isVrOverlay) {
+export function initNoty(isVrOverlay = false) {
     if (isVrOverlay) {
         Noty.overrideDefaults({
             animation: {
@@ -23,5 +23,3 @@ function initNoty(isVrOverlay) {
         });
     }
 }
-
-export { initNoty };

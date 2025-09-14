@@ -222,6 +222,51 @@ function changeHtmlLangAttribute(language) {
     htmlElement.setAttribute('lang', language);
 }
 
+// prevent flicker on login page
+function setLoginContainerStyle(isDarkMode) {
+    const loginContainerStyle = document.createElement('style');
+    loginContainerStyle.id = 'login-container-style';
+    loginContainerStyle.type = 'text/css';
+
+    const backgroundColor = isDarkMode ? '#101010' : '#ffffff';
+    const inputBackgroundColor = isDarkMode ? '#333333' : '#ffffff';
+    const inputBorder = isDarkMode ? '1px solid #3b3b3b' : '1px solid #DCDFE6';
+
+    loginContainerStyle.innerHTML = `
+    .x-login-container {
+        background-color: ${backgroundColor} !important;
+        transition: background-color 0.3s ease;
+    }
+
+    .x-login-container .el-input__inner {
+        background-color: ${inputBackgroundColor} !important;
+        border: ${inputBorder} !important;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+        `;
+
+    document.head.insertBefore(loginContainerStyle, document.head.firstChild);
+}
+
+async function getThemeMode(configRepository) {
+    const initThemeMode = await configRepository.getString(
+        'VRCX_ThemeMode',
+        'system'
+    );
+
+    let isDarkMode;
+
+    if (initThemeMode === 'light') {
+        isDarkMode = false;
+    } else if (initThemeMode === 'system') {
+        isDarkMode = systemIsDarkMode();
+    } else {
+        isDarkMode = true;
+    }
+
+    return { initThemeMode, isDarkMode };
+}
+
 export {
     systemIsDarkMode,
     changeAppDarkStyle,
@@ -232,5 +277,7 @@ export {
     HueToHex,
     HSVtoRGB,
     getNextDialogIndex,
-    changeHtmlLangAttribute
+    changeHtmlLangAttribute,
+    setLoginContainerStyle,
+    getThemeMode
 };
