@@ -8,11 +8,13 @@ import webApiService from '../../service/webapi';
 import { watchState } from '../../service/watchState';
 import { useGameStore } from '../game';
 import { useVrcxStore } from '../vrcx';
+import { useVRCXUpdaterStore } from '../vrcxUpdater';
 import { AppDebug } from '../../service/appConfig';
 
 export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     const gameStore = useGameStore();
     const vrcxStore = useVrcxStore();
+    const VRCXUpdaterStore = useVRCXUpdaterStore();
 
     const { t } = useI18n();
 
@@ -47,7 +49,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         isVRChatConfigDialogVisible: false,
         saveInstanceEmoji: false,
         vrcRegistryAutoBackup: true,
-        vrcRegistryAskRestore: true
+        vrcRegistryAskRestore: true,
+        sentryErrorReporting: false
     });
 
     async function initAdvancedSettings() {
@@ -78,7 +81,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             notificationOpacity,
             saveInstanceEmoji,
             vrcRegistryAutoBackup,
-            vrcRegistryAskRestore
+            vrcRegistryAskRestore,
+            sentryErrorReporting
         ] = await Promise.all([
             configRepository.getBool('enablePrimaryPassword', false),
             configRepository.getBool('VRCX_relaunchVRChatAfterCrash', false),
@@ -118,7 +122,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getFloat('VRCX_notificationOpacity', 100),
             configRepository.getBool('VRCX_saveInstanceEmoji', false),
             configRepository.getBool('VRCX_vrcRegistryAutoBackup', true),
-            configRepository.getBool('VRCX_vrcRegistryAskRestore', true)
+            configRepository.getBool('VRCX_vrcRegistryAskRestore', true),
+            configRepository.getString('VRCX_SentryEnabled', 'false')
         ]);
 
         state.enablePrimaryPassword = enablePrimaryPassword;
@@ -148,8 +153,18 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.saveInstanceEmoji = saveInstanceEmoji;
         state.vrcRegistryAutoBackup = vrcRegistryAutoBackup;
         state.vrcRegistryAskRestore = vrcRegistryAskRestore;
+        state.sentryErrorReporting = sentryErrorReporting === 'true';
 
         handleSetAppLauncherSettings();
+
+        setTimeout(() => {
+            if (
+                VRCXUpdaterStore.branch === 'Nightly' &&
+                sentryErrorReporting === ''
+            ) {
+                checkSentryConsent();
+            }
+        }, 2000);
     }
 
     initAdvancedSettings();
@@ -225,6 +240,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     });
     const vrcRegistryAutoBackup = computed(() => state.vrcRegistryAutoBackup);
     const vrcRegistryAskRestore = computed(() => state.vrcRegistryAskRestore);
+    const sentryErrorReporting = computed(() => state.sentryErrorReporting);
 
     /**
      * @param {boolean} value
@@ -420,6 +436,69 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             'VRCX_vrcRegistryAskRestore',
             state.vrcRegistryAskRestore
         );
+    }
+
+    async function checkSentryConsent() {
+        ElMessageBox.confirm(
+            'Help improve VRCX by allowing anonymous error reporting?\n\n' +
+                '• Only collects crash and error information\n' +
+                '• No personal data or VRChat information is collected\n' +
+                '• Only enabled in nightly builds\n' +
+                '• Can be disabled anytime in Advanced Settings',
+            'Anonymous Error Reporting',
+            {
+                type: 'info',
+                center: true
+            }
+        )
+            .then(() => {
+                state.sentryErrorReporting = true;
+                configRepository.setString('VRCX_SentryEnabled', 'true');
+
+                ElMessageBox.confirm(
+                    'Error reporting setting has been enabled. Would you like to restart VRCX now for the change to take effect?',
+                    'Restart Required',
+                    {
+                        confirmButtonText: 'Restart Now',
+                        cancelButtonText: 'Later',
+                        type: 'info',
+                        center: true
+                    }
+                ).then(() => {
+                    VRCXUpdaterStore.restartVRCX(false);
+                });
+            })
+            .catch(() => {
+                state.sentryErrorReporting = false;
+                configRepository.setString('VRCX_SentryEnabled', 'false');
+            });
+    }
+
+    async function setSentryErrorReporting() {
+        if (VRCXUpdaterStore.branch !== 'Nightly') {
+            return;
+        }
+
+        state.sentryErrorReporting = !state.sentryErrorReporting;
+        await configRepository.setString(
+            'VRCX_SentryEnabled',
+            state.sentryErrorReporting ? 'true' : 'false'
+        );
+
+        ElMessageBox.confirm(
+            'Error reporting setting has been disabled. Would you like to restart VRCX now for the change to take effect?',
+            'Restart Required',
+            {
+                confirmButtonText: 'Restart Now',
+                cancelButtonText: 'Later',
+                type: 'info',
+                center: true
+            }
+        )
+            .then(() => {
+                VRCXUpdaterStore.restartVRCX(false);
+            })
+            .catch(() => {});
     }
 
     async function getSqliteTableSizes() {
@@ -726,6 +805,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         saveInstanceEmoji,
         vrcRegistryAutoBackup,
         vrcRegistryAskRestore,
+        sentryErrorReporting,
 
         setEnablePrimaryPasswordConfigRepository,
         setRelaunchVRChatAfterCrash,
@@ -764,6 +844,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         setSaveInstanceEmoji,
         setVrcRegistryAutoBackup,
         setVrcRegistryAskRestore,
+        setSentryErrorReporting,
+        checkSentryConsent,
         askDeleteAllScreenshotMetadata
     };
 });
