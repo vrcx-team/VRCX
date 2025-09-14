@@ -1486,6 +1486,17 @@
                             setSelfInviteOverride();
                             saveOpenVROption();
                         " />
+
+                    <!--//- Sentry Error Reporting (Nightly Only)-->
+                    <div v-if="isNightlyBuild">
+                        <span class="sub-header">Anonymous Error Reporting (Nightly Only)</span>
+                        <simple-switch
+                            label="Help improve VRCX by sending anonymous error reports. Only collects crash and error information, no personal data or VRChat information is collected."
+                            :value="sentryErrorReporting"
+                            :long-label="true"
+                            @change="setSentryErrorReporting()" />
+                    </div>
+
                     <!--//- Advanced | Disable local world database-->
                 </div>
 
@@ -2164,7 +2175,9 @@
         ugcFolderPath,
         notificationOpacity,
         autoDeleteOldPrints,
-        saveInstanceEmoji
+        saveInstanceEmoji,
+        sentryErrorReporting,
+        isNightlyBuild
     } = storeToRefs(advancedSettingsStore);
 
     const {
@@ -2192,6 +2205,7 @@
         showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
         setSaveInstanceEmoji,
+        setSentryErrorReporting,
         askDeleteAllScreenshotMetadata
     } = advancedSettingsStore;
 

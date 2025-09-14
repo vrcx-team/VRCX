@@ -8,10 +8,6 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@use './assets/scss/flags.scss';
-@use './assets/scss/animated-emoji.scss';
-@use 'element-plus/theme-chalk/src/index.scss' as *;
-
 @use '@fontsource/noto-sans-kr/korean.css';
 @use '@fontsource/noto-sans-jp/japanese.css';
 @use '@fontsource/noto-sans-sc/chinese-simplified.css';
@@ -20,6 +16,10 @@
 @use '@fontsource/noto-sans-jp';
 @use '@fontsource/noto-sans-sc';
 @use '@fontsource/noto-sans-tc';
+
+@use './assets/scss/flags.scss';
+@use './assets/scss/animated-emoji.scss';
+@use 'element-plus/theme-chalk/src/index.scss' as *;
 
 @use 'element-plus/theme-chalk/src/dark/css-vars.scss';
 @use 'animate.css/animate.min.css';
