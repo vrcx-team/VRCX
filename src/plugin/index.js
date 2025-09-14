@@ -1,0 +1,13 @@
+import { initInteropApi } from './interopApi';
+import { initDayjs } from './dayjs';
+import { initNoty } from './noty';
+import { initUi } from './ui';
+
+export async function initPlugins(isVrOverlay = false) {
+    await initInteropApi(isVrOverlay);
+    if (!isVrOverlay) {
+        await initUi();
+    }
+    initDayjs();
+    initNoty(isVrOverlay);
+}

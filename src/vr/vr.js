@@ -5,22 +5,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 import { createApp } from 'vue';
-import { initNoty } from '../plugin/noty';
+import { initPlugins } from '../plugin';
 import { i18n } from '../plugin/i18n';
-import InteropApi from '../ipc-electron/interopApi.js';
 import Vr from './Vr.vue';
 
-initNoty(true);
+initPlugins(true);
 
-if (WINDOWS) {
-    await CefSharp.BindObjectAsync('AppApiVr');
-} else {
-    // @ts-ignore
-    window.AppApiVr = InteropApi.AppApiVrElectron;
-}
+const vr = createApp(Vr);
+vr.use(i18n);
 
-const $app = createApp(Vr);
-
-$app.use(i18n);
-
-$app.mount('#root');
+vr.mount('#root');

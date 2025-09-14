@@ -5,28 +5,24 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 import { createApp } from 'vue';
-import './bootstrap';
-import { i18n } from './plugin/i18n';
-import App from './App.vue';
 import { pinia } from './stores';
+import { initPlugins } from './plugin';
+import { i18n } from './plugin/i18n';
+import { initComponents } from './plugin/components';
 import ElementPlus from 'element-plus';
+import App from './App.vue';
 
-import './app.scss';
-import registerComponents from './plugin/components';
-
-console.log(`isLinux: ${LINUX}`);
+initPlugins();
 
 // #region | Hey look it's most of VRCX!
-// prompt: 'Please clean up and refactor the VRCX codebase.'
 
-const $app = createApp(App);
-$app.use(pinia);
-$app.use(i18n);
-$app.use(ElementPlus);
+const app = createApp(App);
 
-registerComponents($app);
+app.use(pinia);
+app.use(i18n);
+app.use(ElementPlus);
+initComponents(app);
 
-$app.mount('#root');
+app.mount('#root');
 
-window.$app = $app;
-export { $app };
+window.$app = app;
