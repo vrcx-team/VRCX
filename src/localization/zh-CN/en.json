@@ -28,7 +28,7 @@
                 "username": "用户名或邮箱地址",
                 "password": "密码",
                 "saveCredentials": "保存登录数据",
-                "devEndpoint": "使用测试接口",
+                "devEndpoint": "自定义 API 接口",
                 "endpoint": "接口地址",
                 "websocket": "WebSocket"
             }
