@@ -673,7 +673,7 @@
                         "avatar_name_cache": "模型名称缓存：",
                         "instance_cache": "房间信息缓存：",
                         "clear_cache": "清除缓存",
-                        "refresh_cache": "刷新缓存",
+                        "refresh_cache": "刷新",
                         "auto_clear_cache": "自动清理",
                         "show_console": "显示界面调试工具"
                     },
