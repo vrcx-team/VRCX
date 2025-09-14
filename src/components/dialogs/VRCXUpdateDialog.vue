@@ -67,7 +67,7 @@
     import { nextTick, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { branches } from '../../shared/constants';
-    import { getNextDialogIndex } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useVRCXUpdaterStore } from '../../stores';
 
     const VRCXUpdaterStore = useVRCXUpdaterStore();

@@ -1,3 +1,13 @@
+import '@fontsource/noto-sans-kr/korean.css';
+import '@fontsource/noto-sans-jp/japanese.css';
+import '@fontsource/noto-sans-sc/chinese-simplified.css';
+import '@fontsource/noto-sans-tc/chinese-traditional.css';
+
+import '@fontsource/noto-sans-kr';
+import '@fontsource/noto-sans-jp';
+import '@fontsource/noto-sans-sc';
+import '@fontsource/noto-sans-tc';
+
 import configRepository from './service/config';
 import vrcxJsonStorage from './service/jsonStorage';
 
@@ -7,7 +17,7 @@ import {
     refreshCustomCss,
     refreshCustomScript,
     systemIsDarkMode
-} from './shared/utils';
+} from './shared/utils/base/ui';
 import { i18n } from './plugin/i18n';
 import { initNoty } from './plugin/noty';
 import './plugin/ipc';

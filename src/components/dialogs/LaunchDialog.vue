@@ -113,13 +113,8 @@
     import { useI18n } from 'vue-i18n';
     import { instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
-    import {
-        getNextDialogIndex,
-        checkCanInvite,
-        getLaunchURL,
-        isRealInstance,
-        parseLocation
-    } from '../../shared/utils';
+    import { checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import {
         useFriendStore,
         useInviteStore,

@@ -3,7 +3,6 @@ export * from './base/devtool';
 export * from './base/format';
 export * from './base/date';
 export * from './base/string';
-export * from './base/ui';
 export * from './avatar';
 export * from './chart';
 export * from './common';

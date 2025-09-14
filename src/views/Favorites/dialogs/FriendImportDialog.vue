@@ -130,7 +130,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { favoriteRequest, userRequest } from '../../../api';
-    import { getNextDialogIndex, removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { removeFromArray, userImage, userImageFull } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();

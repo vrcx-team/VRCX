@@ -786,7 +786,6 @@
     import { favoriteRequest, miscRequest, userRequest, worldRequest } from '../../../api';
     import { database } from '../../../service/database.js';
     import {
-        getNextDialogIndex,
         buildTreeData,
         downloadAndSaveJson,
         openExternalLink,
@@ -802,6 +801,8 @@
         textToHex,
         copyToClipboard
     } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+
     import {
         useAppearanceSettingsStore,
         useFavoriteStore,

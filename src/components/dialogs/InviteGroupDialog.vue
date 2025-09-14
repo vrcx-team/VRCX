@@ -170,7 +170,8 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { groupRequest, userRequest } from '../../api';
-    import { getNextDialogIndex, hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
+    import { hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useFriendStore, useGroupStore } from '../../stores';
 
     const { vipFriends, onlineFriends, activeFriends, offlineFriends } = storeToRefs(useFriendStore());
