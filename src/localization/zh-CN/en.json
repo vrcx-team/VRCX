@@ -130,7 +130,7 @@
             "copy": "复制",
             "clear": "清除",
             "bulk_unfavorite": "批量取消收藏",
-            "refresh_tooltip": "刷新所有收藏",
+            "refresh_favorites_tooltip": "刷新所有收藏",
             "export": "导出",
             "import": "导入",
             "move_tooltip": "移动",
@@ -599,8 +599,8 @@
                         "description": "将生成的“拍立得”照片保存到 VRChat 图片文件夹中",
                         "crop": "自动裁剪“拍立得”照片的白边",
                         "crop_convert_old": "要同时为已保存的所有“拍立得”照片进行裁剪操作吗？",
-                        "crop_convert_old_confirm": "是",
-                        "crop_convert_old_cancel": "否"
+                        "crop_convert_old_confirm": "是，开始裁剪",
+                        "crop_convert_old_cancel": "否，我再想想"
                     },
                     "save_instance_stickers_to_file": {
                         "header": "保存“表情贴纸”至图片",
@@ -931,7 +931,7 @@
                 "share": "分享",
                 "new_instance": "创建新房间",
                 "new_instance_and_self_invite": "创建新房间并邀请自己",
-                "new_instance_and_open_in_vrchat": "创建新房间并在 VRChat 中打开",
+                "new_instance_and_open_ingame": "创建新房间并在 VRChat 中打开",
                 "make_home": "设为出生点",
                 "reset_home": "重置出生点为默认",
                 "show_previous_instances": "显示加入过的房间",
@@ -1592,7 +1592,7 @@
             "name": "名称",
             "date": "日期",
             "action": "操作",
-            "auto_backup": "只要 VRCX 在运行，就会每周自动备份一次 VRChat 的设置数据，你也可以在这里手动备份和恢复你的设置数据",
+            "auto_backup": "开启自动备份（每三天备份一次，同时删除超过两周的备份）",
             "ask_to_restore": "当未检测到本地 VRC 设置数据时，询问是否恢复",
             "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复数据，可以在此处进行恢复。"
         },
@@ -1880,7 +1880,7 @@
             "ok": "确定",
             "input_error": "请输入有效的名称",
             "message": {
-                "success": "已重命名模型"
+                "success": "模型名称更改成功"
             }
         },
         "change_avatar_description": {
@@ -1890,7 +1890,7 @@
             "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
-                "success": "已更改模型的描述"
+                "success": "模型描述更改成功"
             }
         },
         "rename_world": {
@@ -1900,7 +1900,7 @@
             "ok": "确定",
             "input_error": "请输入有效的名称",
             "message": {
-                "success": "已重命名世界"
+                "success": "世界名称更改成功"
             }
         },
         "change_world_description": {
@@ -1910,7 +1910,7 @@
             "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
-                "success": "已更改世界的描述"
+                "success": "世界描述更改成功"
             }
         },
         "change_world_capacity": {
@@ -1920,7 +1920,7 @@
             "ok": "确定",
             "input_error": "请输入有效的人数",
             "message": {
-                "success": "已更改世界的最大人数"
+                "success": "最大容纳人数更改成功"
             }
         },
         "change_world_recommended_capacity": {
@@ -1930,7 +1930,7 @@
             "ok": "确定",
             "input_error": "请输入有效的数字",
             "message": {
-                "success": "已更改推荐进入的人数"
+                "success": "推荐进入人数更改成功"
             }
         },
         "change_world_preview": {
@@ -1941,7 +1941,7 @@
             "input_error": "请输入有效的 Youtube 链接",
             "message": {
                 "error": "无效的 Youtube 链接",
-                "success": "已更改世界的 YouTube 预览"
+                "success": "世界的 YouTube 预览已成功更改"
             }
         },
         "change_table_size": {
@@ -2054,7 +2054,7 @@
             "action": "操作"
         },
         "friendList": {
-            "no": "No.",
+            "no": "序号",
             "avatar": "模型",
             "displayName": "昵称",
             "rank": "信誉等级",
