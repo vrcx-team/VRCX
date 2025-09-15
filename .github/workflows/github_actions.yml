@@ -1,9 +1,7 @@
 name: VRCX
 
 on:
-    push:
-        branches:
-            - Nightly
+    - workflow_dispatch
 
 concurrency:
     group: ${{ github.ref }}
