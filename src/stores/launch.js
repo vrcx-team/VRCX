@@ -9,6 +9,7 @@ import { parseLocation } from '../shared/utils';
 export const useLaunchStore = defineStore('Launch', () => {
     const state = reactive({
         isLaunchOptionsDialogVisible: false,
+        isOpeningInstance: false,
         launchDialogData: {
             visible: false,
             loading: false,
@@ -21,6 +22,13 @@ export const useLaunchStore = defineStore('Launch', () => {
         get: () => state.isLaunchOptionsDialogVisible,
         set: (value) => {
             state.isLaunchOptionsDialogVisible = value;
+        }
+    });
+
+    const isOpeningInstance = computed({
+        get: () => state.isOpeningInstance,
+        set: (value) => {
+            state.isOpeningInstance = value;
         }
     });
 
@@ -102,9 +110,14 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @returns {Promise<void>}
      */
     async function tryOpenInstanceInVrc(location, shortName) {
-        const launchUrl = await getLaunchUrl(location, shortName);
+        if (state.isOpeningInstance) {
+            return;
+        }
+        state.isOpeningInstance = true;
+        let launchUrl = '';
         let result = false;
         try {
+            launchUrl = await getLaunchUrl(location, shortName);
             result = await AppApi.TryOpenInstanceInVrc(launchUrl);
         } catch (e) {
             console.error(e);
@@ -117,17 +130,24 @@ export const useLaunchStore = defineStore('Launch', () => {
                 type: 'warning'
             });
             // self invite fallback
-            const L = parseLocation(location);
-            await instanceRequest.selfInvite({
-                instanceId: L.instanceId,
-                worldId: L.worldId,
-                shortName
-            });
-            ElMessage({
-                message: 'Self invite sent',
-                type: 'success'
-            });
+            try {
+                const L = parseLocation(location);
+                await instanceRequest.selfInvite({
+                    instanceId: L.instanceId,
+                    worldId: L.worldId,
+                    shortName
+                });
+                ElMessage({
+                    message: 'Self invite sent',
+                    type: 'success'
+                });
+            } catch (e) {
+                console.error(e);
+            }
         }
+        setTimeout(() => {
+            state.isOpeningInstance = false;
+        }, 1000);
     }
 
     /**
@@ -192,6 +212,7 @@ export const useLaunchStore = defineStore('Launch', () => {
         state,
 
         isLaunchOptionsDialogVisible,
+        isOpeningInstance,
         launchDialogData,
         showLaunchOptions,
         showLaunchDialog,

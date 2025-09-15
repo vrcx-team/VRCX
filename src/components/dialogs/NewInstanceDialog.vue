@@ -531,10 +531,9 @@
     const { currentUserGroups } = storeToRefs(useGroupStore());
     const { cachedGroups, handleGroupPermissions } = useGroupStore();
     const { lastLocation } = storeToRefs(useLocationStore());
-    const { showLaunchDialog } = useLaunchStore();
+    const { showLaunchDialog, tryOpenInstanceInVrc } = useLaunchStore();
     const { createNewInstance } = useInstanceStore();
     const { currentUser } = storeToRefs(useUserStore());
-    const { tryOpenInstanceInVrc } = useLaunchStore();
     const { canOpenInstanceInGame } = useInviteStore();
 
     const newInstanceDialogIndex = ref(2000);
