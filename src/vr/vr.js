@@ -9,7 +9,7 @@ import { initPlugins } from '../plugin';
 import { i18n } from '../plugin/i18n';
 import Vr from './Vr.vue';
 
-initPlugins(true);
+await initPlugins(true);
 
 const vr = createApp(Vr);
 vr.use(i18n);

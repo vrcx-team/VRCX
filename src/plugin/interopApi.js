@@ -34,7 +34,7 @@ export async function initInteropApi(isVrOverlay = false) {
             window.AppApiVrElectron = InteropApi.AppApiVrElectron;
         }
 
-        configRepository.init();
+        await configRepository.init();
         new vrcxJsonStorage(VRCXStorage);
 
         AppApi.SetUserAgent();
