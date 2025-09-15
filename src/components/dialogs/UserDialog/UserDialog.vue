@@ -1829,7 +1829,8 @@
         userOnlineForTimestamp,
         userStatusClass,
         textToHex,
-        formatDateFilter
+        formatDateFilter,
+        getFaviconUrl
     } from '../../../shared/utils';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import {
