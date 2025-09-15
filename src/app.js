@@ -12,7 +12,7 @@ import { initComponents } from './plugin/components';
 import ElementPlus from 'element-plus';
 import App from './App.vue';
 
-initPlugins();
+await initPlugins();
 
 // #region | Hey look it's most of VRCX!
 
