@@ -699,9 +699,10 @@
                             </el-table-column>
                             <el-table-column :label="t('dialog.group_member_moderation.data')" prop="data">
                                 <template #default="scope">
-                                    <span
-                                        v-if="Object.keys(scope.row.data).length"
-                                        v-text="JSON.stringify(scope.row.data)"></span>
+                                    <span v-if="Object.keys(scope.row.data).length">{{
+                                        JSON.stringify(scope.row.data)
+                                    }}</span>
+                                    <span v-else></span>
                                 </template>
                             </el-table-column>
                         </DataTable>
