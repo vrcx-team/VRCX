@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        v-model="inviteDialog.visible"
+        :model-value="inviteDialog.visible"
         :title="t('dialog.invite.header')"
         width="500px"
         append-to-body>
@@ -148,23 +148,19 @@
         </div>
 
         <template #footer>
-            <el-button
-                size="small"
-                :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
-                @click="showSendInviteDialog"
-                >{{ t('dialog.invite.invite_with_message') }}</el-button
-            >
+            <el-button :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog">{{
+                t('dialog.invite.invite_with_message')
+            }}</el-button>
             <el-button
                 type="primary"
-                size="small"
                 :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
                 @click="sendInvite"
                 >{{ t('dialog.invite.invite') }}</el-button
             >
         </template>
         <SendInviteDialog
-            :send-invite-dialog-visible="sendInviteDialogVisible"
-            :send-invite-dialog="sendInviteDialog"
+            v-model:sendInviteDialogVisible="sendInviteDialogVisible"
+            v-model:sendInviteDialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
     </el-dialog>

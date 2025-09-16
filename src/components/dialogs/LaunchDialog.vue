@@ -60,25 +60,22 @@
             {{ t('dialog.launch.start_as_desktop') }}
         </el-checkbox>
         <template #footer>
-            <el-button size="small" @click="showPreviousInstancesInfoDialog(launchDialog.location)">
+            <el-button @click="showPreviousInstancesInfoDialog(launchDialog.location)">
                 {{ t('dialog.launch.info') }}
             </el-button>
             <el-button
-                size="small"
                 :disabled="!checkCanInvite(launchDialog.location)"
                 @click="showInviteDialog(launchDialog.location)">
                 {{ t('dialog.launch.invite') }}
             </el-button>
             <template v-if="canOpenInstanceInGame()">
                 <el-button
-                    size="small"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
                     {{ t('dialog.launch.launch') }}
                 </el-button>
                 <el-button
                     type="primary"
-                    size="small"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="handleAttachGame(launchDialog.location, launchDialog.shortName)">
                     {{ t('dialog.launch.open_ingame') }}
@@ -86,14 +83,12 @@
             </template>
             <template v-else>
                 <el-button
-                    size="small"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="selfInvite(launchDialog.location, launchDialog.shortName)">
                     {{ t('dialog.launch.self_invite') }}
                 </el-button>
                 <el-button
                     type="primary"
-                    size="small"
                     :disabled="!launchDialog.secureOrShortName"
                     @click="handleLaunchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)">
                     {{ t('dialog.launch.launch') }}
@@ -113,13 +108,8 @@
     import { useI18n } from 'vue-i18n';
     import { instanceRequest, worldRequest } from '../../api';
     import configRepository from '../../service/config';
-    import {
-        getNextDialogIndex,
-        checkCanInvite,
-        getLaunchURL,
-        isRealInstance,
-        parseLocation
-    } from '../../shared/utils';
+    import { checkCanInvite, getLaunchURL, isRealInstance, parseLocation } from '../../shared/utils';
+    import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import {
         useFriendStore,
         useInviteStore,

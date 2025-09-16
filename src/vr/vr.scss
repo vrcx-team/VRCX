@@ -10,9 +10,18 @@
 
 @use '../assets/scss/flags.scss';
 
-@import 'animate.css/animate.min.css';
-@import 'noty/lib/noty.css';
-@import 'remixicon/fonts/remixicon.css';
+@use '@fontsource/noto-sans-kr/korean.css';
+@use '@fontsource/noto-sans-jp/japanese.css';
+@use '@fontsource/noto-sans-sc/chinese-simplified.css';
+@use '@fontsource/noto-sans-tc/chinese-traditional.css';
+@use '@fontsource/noto-sans-kr';
+@use '@fontsource/noto-sans-jp';
+@use '@fontsource/noto-sans-sc';
+@use '@fontsource/noto-sans-tc';
+
+@use 'animate.css/animate.min.css';
+@use 'noty/lib/noty.css';
+@use 'remixicon/fonts/remixicon.css';
 
 /*
     마지노선인듯
@@ -27,6 +36,38 @@
 
 body {
     margin: 0;
+}
+
+html[lang='ja'] body,
+html[lang='ja'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='ko'] body,
+html[lang='ko'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-CN'] body,
+html[lang='zh-CN'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-TW'] body,
+html[lang='zh-TW'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
 }
 
 .noty_body {

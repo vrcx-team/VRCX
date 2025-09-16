@@ -2,7 +2,8 @@
     <el-dialog
         ref="setAvatarTagsDialog"
         class="x-dialog"
-        v-model="setAvatarTagsDialog.visible"
+        :model-value="setAvatarTagsDialog.visible"
+        @close="closeSetAvatarTagsDialog"
         :title="t('dialog.set_avatar_tags.header')"
         width="770px"
         append-to-body>
@@ -82,10 +83,8 @@
             </div>
         </template>
         <template #footer>
-            <el-button size="small" @click="setAvatarTagsDialog.visible = false">{{
-                t('dialog.set_avatar_tags.cancel')
-            }}</el-button>
-            <el-button type="primary" size="small" @click="saveSetAvatarTagsDialog">{{
+            <el-button @click="closeSetAvatarTagsDialog">{{ t('dialog.set_avatar_tags.cancel') }}</el-button>
+            <el-button type="primary" @click="saveSetAvatarTagsDialog">{{
                 t('dialog.set_avatar_tags.save')
             }}</el-button>
         </template>
@@ -96,7 +95,7 @@
     import { Loading } from '@element-plus/icons-vue';
     import { ElMessage } from 'element-plus';
 
-    import { watch } from 'vue';
+    import { watch, defineEmits } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
@@ -111,6 +110,8 @@
         }
     });
 
+    const emit = defineEmits(['update:setAvatarTagsDialog']);
+
     watch(
         () => props.setAvatarTagsDialog.visible,
         (newVal) => {
@@ -121,6 +122,13 @@
             }
         }
     );
+
+    function closeSetAvatarTagsDialog() {
+        emit('update:setAvatarTagsDialog', {
+            ...props.setAvatarTagsDialog,
+            visible: false
+        });
+    }
 
     function updateSelectedAvatarTags() {
         const D = props.setAvatarTagsDialog;
@@ -186,7 +194,6 @@
                 }
             }
         }
-        // props.setAvatarTagsDialog.forceUpdate++;
     }
 
     function setAvatarTagsSelectToggle() {

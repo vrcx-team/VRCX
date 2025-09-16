@@ -185,6 +185,8 @@ export const useNotificationsSettingsStore = defineStore(
                 }, 5000);
             }
         }
+        // some workaround for failing to get voice list first run
+        speechSynthesis.getVoices();
 
         initNotificationsSettings();
 

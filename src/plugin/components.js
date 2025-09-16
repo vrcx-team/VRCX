@@ -11,7 +11,7 @@ import SimpleSwitch from '../components/SimpleSwitch.vue';
 import Timer from '../components/Timer.vue';
 import DataTable from '../components/DataTable.vue';
 
-export default function registerComponents(app) {
+export function initComponents(app) {
     app.component('SimpleSwitch', SimpleSwitch);
     app.component('Location', Location);
     app.component('Timer', Timer);

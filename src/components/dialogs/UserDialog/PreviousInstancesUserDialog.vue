@@ -80,13 +80,13 @@
     import { useI18n } from 'vue-i18n';
     import { database } from '../../../service/database';
     import {
-        getNextDialogIndex,
         compareByCreatedAt,
         parseLocation,
         removeFromArray,
         timeToText,
         formatDateFilter
     } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useInstanceStore, useLaunchStore, useUiStore } from '../../../stores';
 
     const props = defineProps({

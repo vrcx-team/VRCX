@@ -12,10 +12,19 @@
 @use './assets/scss/animated-emoji.scss';
 @use 'element-plus/theme-chalk/src/index.scss' as *;
 
-@import 'element-plus/theme-chalk/src/dark/css-vars.scss';
-@import 'animate.css/animate.min.css';
-@import 'noty/lib/noty.css';
-@import 'remixicon/fonts/remixicon.css';
+@use '@fontsource/noto-sans-kr/korean.css';
+@use '@fontsource/noto-sans-jp/japanese.css';
+@use '@fontsource/noto-sans-sc/chinese-simplified.css';
+@use '@fontsource/noto-sans-tc/chinese-traditional.css';
+@use '@fontsource/noto-sans-kr';
+@use '@fontsource/noto-sans-jp';
+@use '@fontsource/noto-sans-sc';
+@use '@fontsource/noto-sans-tc';
+
+@use 'element-plus/theme-chalk/src/dark/css-vars.scss';
+@use 'animate.css/animate.min.css';
+@use 'noty/lib/noty.css';
+@use 'remixicon/fonts/remixicon.css';
 
 .color-palettes {
     background: #409eff;
@@ -162,10 +171,42 @@ html {
 
 body {
     font-family:
-        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
+        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
         'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
         sans-serif;
     margin: 0;
+}
+
+html[lang='ja'] body,
+html[lang='ja'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='ko'] body,
+html[lang='ko'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans TC',
+        'Noto Sans SC', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-CN'] body,
+html[lang='zh-CN'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
+}
+
+html[lang='zh-TW'] body,
+html[lang='zh-TW'] * {
+    font-family:
+        'ellipsis-font', 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans JP',
+        'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', system-ui,
+        sans-serif;
 }
 
 a {

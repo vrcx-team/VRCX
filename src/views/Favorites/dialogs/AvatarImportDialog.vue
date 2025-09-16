@@ -183,7 +183,8 @@
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
     import { avatarRequest, favoriteRequest } from '../../../api';
-    import { getNextDialogIndex, removeFromArray } from '../../../shared/utils';
+    import { removeFromArray } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const emit = defineEmits(['update:avatarImportDialogInput']);

@@ -27,7 +27,6 @@
         <template #footer>
             <el-button
                 type="primary"
-                size="small"
                 :disabled="
                     enablePrimaryPasswordDialog.password.length === 0 ||
                     enablePrimaryPasswordDialog.password !== enablePrimaryPasswordDialog.rePassword

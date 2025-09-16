@@ -1727,12 +1727,12 @@
             </el-tabs>
         </div>
         <SendInviteDialog
-            :send-invite-dialog-visible="sendInviteDialogVisible"
-            :send-invite-dialog="sendInviteDialog"
+            v-model:sendInviteDialogVisible="sendInviteDialogVisible"
+            v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteRequestDialog
-            :send-invite-request-dialog-visible="sendInviteRequestDialogVisible"
-            :send-invite-dialog="sendInviteDialog"
+            v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
+            v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <template v-if="userDialog.visible">
             <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />
@@ -1810,14 +1810,11 @@
     import { userDialogGroupSortingOptions } from '../../../shared/constants';
     import { userDialogWorldOrderOptions, userDialogWorldSortingOptions } from '../../../shared/constants/';
     import {
-        getNextDialogIndex,
         checkCanInvite,
         compareByMemberCount,
         compareByName,
         copyToClipboard,
         downloadAndSaveJson,
-        extractFileId,
-        getFaviconUrl,
         isFriendOnline,
         isRealInstance,
         languageClass,
@@ -1832,8 +1829,10 @@
         userOnlineForTimestamp,
         userStatusClass,
         textToHex,
-        formatDateFilter
+        formatDateFilter,
+        getFaviconUrl
     } from '../../../shared/utils';
+    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,

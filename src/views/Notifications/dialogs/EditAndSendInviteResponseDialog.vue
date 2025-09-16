@@ -1,7 +1,8 @@
 <template>
     <el-dialog
         class="x-dialog"
-        v-model="editAndSendInviteResponseDialog.visible"
+        :model-value="editAndSendInviteResponseDialog.visible"
+        @close="cancelEditAndSendInviteResponse"
         :title="t('dialog.edit_send_invite_response_message.header')"
         width="400px"
         append-to-body>
@@ -22,7 +23,7 @@
             <el-button @click="cancelEditAndSendInviteResponse">{{
                 t('dialog.edit_send_invite_response_message.cancel')
             }}</el-button>
-            <el-button type="primary" size="small" @click="saveEditAndSendInviteResponse">{{
+            <el-button type="primary" @click="saveEditAndSendInviteResponse">{{
                 t('dialog.edit_send_invite_response_message.send')
             }}</el-button>
         </template>
@@ -52,10 +53,10 @@
         }
     });
 
-    const emit = defineEmits(['closeInviteDialog', 'update:editAndSendInviteResponseDialog']);
+    const emit = defineEmits(['closeInviteDialog', 'closeResponseConfirmDialog']);
 
     function cancelEditAndSendInviteResponse() {
-        emit('update:editAndSendInviteResponseDialog', { ...props.editAndSendInviteResponseDialog, visible: false });
+        emit('closeResponseConfirmDialog');
     }
 
     async function saveEditAndSendInviteResponse() {

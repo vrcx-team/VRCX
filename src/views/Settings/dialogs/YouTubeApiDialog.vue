@@ -18,12 +18,10 @@
 
         <template #footer>
             <div style="display: flex">
-                <el-button
-                    size="small"
-                    @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')">
+                <el-button @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')">
                     {{ t('dialog.youtube_api.guide') }}
                 </el-button>
-                <el-button type="primary" size="small" style="margin-left: auto" @click="testYouTubeApiKey">
+                <el-button type="primary" style="margin-left: auto" @click="testYouTubeApiKey">
                     {{ t('dialog.youtube_api.save') }}
                 </el-button>
             </div>

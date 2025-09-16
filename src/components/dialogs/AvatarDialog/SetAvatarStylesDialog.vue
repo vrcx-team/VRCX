@@ -2,7 +2,8 @@
     <el-dialog
         ref="setAvatarStylesDialog"
         class="x-dialog"
-        v-model="setAvatarStylesDialog.visible"
+        :model-value="setAvatarStylesDialog.visible"
+        @close="closeSetAvatarStylesDialog"
         :title="t('dialog.set_avatar_styles.header')"
         width="400px"
         append-to-body>
@@ -50,10 +51,8 @@
                 style="margin-top: 10px"></el-input>
         </template>
         <template #footer>
-            <el-button size="small" @click="setAvatarStylesDialog.visible = false">{{
-                t('dialog.set_avatar_styles.cancel')
-            }}</el-button>
-            <el-button type="primary" size="small" @click="saveSetAvatarStylesDialog">{{
+            <el-button @click="closeSetAvatarStylesDialog">{{ t('dialog.set_avatar_styles.cancel') }}</el-button>
+            <el-button type="primary" @click="saveSetAvatarStylesDialog">{{
                 t('dialog.set_avatar_styles.save')
             }}</el-button>
         </template>
@@ -61,12 +60,13 @@
 </template>
 
 <script setup>
-    import { watch } from 'vue';
+    import { watch, defineEmits } from 'vue';
 
     import { useI18n } from 'vue-i18n';
     import { arraysMatch } from '../../../shared/utils';
     import { avatarRequest } from '../../../api';
     import { useAvatarStore } from '../../../stores';
+    import { ElMessage } from 'element-plus';
 
     const { t } = useI18n();
     const { applyAvatar } = useAvatarStore();
@@ -77,6 +77,8 @@
             required: true
         }
     });
+
+    const emit = defineEmits(['update:setAvatarStylesDialog']);
 
     watch(
         () => props.setAvatarStylesDialog.visible,
@@ -97,6 +99,13 @@
         }
         props.setAvatarStylesDialog.availableAvatarStyles = styles;
         props.setAvatarStylesDialog.availableAvatarStylesMap = stylesMap;
+    }
+
+    function closeSetAvatarStylesDialog() {
+        emit('update:setAvatarStylesDialog', {
+            ...props.setAvatarStylesDialog,
+            visible: false
+        });
     }
 
     function saveSetAvatarStylesDialog() {
@@ -127,7 +136,7 @@
             props.setAvatarStylesDialog.initialSecondaryStyle === props.setAvatarStylesDialog.secondaryStyle &&
             arraysMatch(props.setAvatarStylesDialog.initialTags, tags)
         ) {
-            props.setAvatarStylesDialog.visible = false;
+            closeSetAvatarStylesDialog();
             return;
         }
 
@@ -141,11 +150,11 @@
             .saveAvatar(params)
             .then((args) => {
                 applyAvatar(args.json);
-                $message.success(t('dialog.set_avatar_styles.save_success'));
-                props.setAvatarStylesDialog.visible = false;
+                ElMessage({ message: t('dialog.set_avatar_styles.save_success'), type: 'success' });
+                closeSetAvatarStylesDialog();
             })
             .catch((error) => {
-                $message.error(t('dialog.set_avatar_styles.save_failed'));
+                ElMessage({ message: t('dialog.set_avatar_styles.save_failed'), type: 'error' });
                 console.error('Error saving avatar styles:', error);
             });
     }

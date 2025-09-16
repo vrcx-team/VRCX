@@ -1207,37 +1207,40 @@
                 <template v-if="nowPlaying.playing">
                     <span style="float: right; padding-left: 10px">{{ nowPlaying.remainingText }}</span>
                     <MarqueeText>{{ nowPlaying.name }}</MarqueeText>
-                    <div class="np-progress-bar" style="margin-left: 5px" :style="{ width: nowPlaying.percentage + '%' }"></div>
+                    <div
+                        class="np-progress-bar"
+                        style="margin-left: 5px"
+                        :style="{ width: nowPlaying.percentage + '%' }"></div>
                 </template>
-                <div style="float: right"
-                    >
+                <div style="float: right">
                     <span v-if="!config?.minimalFeed" style="display: inline-block">{{ t('vr.status.timer') }}</span>
                     <span v-if="lastLocationTimer" style="display: inline-block">{{ lastLocationTimer }}</span>
-                    <span v-if="lastLocationTimer && (onlineForTimer || pcUptime)" style="display: inline-block"> | </span>
-                    <span v-if="onlineForTimer" style="display: inline-block; margin-left: 5px">{{ onlineForTimer }}</span>
+                    <span v-if="lastLocationTimer && (onlineForTimer || pcUptime)" style="display: inline-block">
+                        |
+                    </span>
+                    <span v-if="onlineForTimer" style="display: inline-block; margin-left: 5px">{{
+                        onlineForTimer
+                    }}</span>
                     <span v-if="pcUptime && onlineForTimer" style="display: inline-block; margin-left: 5px"> | </span>
                     <span v-if="pcUptime" style="display: inline-block; margin-left: 5px">{{ pcUptime }}</span>
                 </div>
                 <template v-if="lastLocation.playerList.length">
-                    <span v-if="!config?.minimalFeed" style="display: inline-block"
-                        >{{ t('vr.status.players') }}</span
-                    >
-                    <span style="display: inline-block"
-                        >{{ lastLocation.playerList.length }}</span>
+                    <span v-if="!config?.minimalFeed" style="display: inline-block">{{ t('vr.status.players') }}</span>
+                    <span style="display: inline-block">{{ lastLocation.playerList.length }}</span>
                 </template>
-                <span v-if="lastLocation.friendList.length" style="display: inline-block; font-weight: bold; margin-left: 5px">({{lastLocation.friendList.length}})</span>
+                <span
+                    v-if="lastLocation.friendList.length"
+                    style="display: inline-block; font-weight: bold; margin-left: 5px"
+                    >({{ lastLocation.friendList.length }})</span
+                >
                 <!-- Bottom row -->
                 <br />
                 <span style="position: absolute; right: 10px">{{ currentTime }}</span>
                 <span v-if="config && cpuUsageEnabled" style="display: inline-block; margin-right: 5px"
                     >{{ t('vr.status.cpu') }} {{ cpuUsage }}%</span
                 >
-                <span style="display: inline-block"
-                    >{{ t('vr.status.online') }} {{ onlineFriendCount }}</span
-                >
-                <span style="display: inline-block; margin-left: 5px"
-                    >{{ customInfo }}</span
-                >
+                <span style="display: inline-block">{{ t('vr.status.online') }} {{ onlineFriendCount }}</span>
+                <span style="display: inline-block; margin-left: 5px">{{ customInfo }}</span>
             </div>
         </template>
         <!-- HMD Overlay -->
@@ -1368,10 +1371,6 @@
 
 <script setup>
     import './vr.scss';
-    import '@fontsource/noto-sans-kr';
-    import '@fontsource/noto-sans-jp';
-    import '@fontsource/noto-sans-sc';
-    import '@fontsource/noto-sans-tc';
     import { onMounted, reactive, toRefs, nextTick } from 'vue';
     import Noty from 'noty';
     import * as workerTimers from 'worker-timers';
@@ -1381,6 +1380,7 @@
     import { escapeTag, escapeTagRecursive } from '../shared/utils/base/string';
     import { removeFromArray } from '../shared/utils/base/array';
     import { timeToText } from '../shared/utils/base/format';
+    import { changeHtmlLangAttribute } from '../shared/utils/base/ui';
 
     import { useI18n } from 'vue-i18n';
 
@@ -1974,7 +1974,8 @@
         }
         if (appLanguage !== vrState.appLanguage) {
             vrState.appLanguage = appLanguage;
-            // @ts-ignore
+            changeHtmlLangAttribute(vrState.appLanguage);
+            //@ts-ignore
             i18n.locale = vrState.appLanguage;
         }
     }

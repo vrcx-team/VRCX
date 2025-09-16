@@ -94,13 +94,13 @@
             </el-form>
         </div>
         <template #footer>
-            <el-button size="small" @click="groupPostEditDialog.visible = false">
+            <el-button @click="groupPostEditDialog.visible = false">
                 {{ t('dialog.group_post_edit.cancel') }}
             </el-button>
-            <el-button v-if="groupPostEditDialog.postId" size="small" @click="editGroupPost">
+            <el-button v-if="groupPostEditDialog.postId" @click="editGroupPost">
                 {{ t('dialog.group_post_edit.edit_post') }}
             </el-button>
-            <el-button v-else size="small" @click="createGroupPost">
+            <el-button v-else @click="createGroupPost">
                 {{ t('dialog.group_post_edit.create_post') }}
             </el-button>
         </template>

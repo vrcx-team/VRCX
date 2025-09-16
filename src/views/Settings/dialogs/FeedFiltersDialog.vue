@@ -49,10 +49,8 @@
         </div>
 
         <template #footer>
-            <el-button size="small" @click="currentResetFunction">{{
-                t('dialog.shared_feed_filters.reset')
-            }}</el-button>
-            <el-button size="small" type="primary" style="margin-left: 10px" @click="handleDialogClose">{{
+            <el-button @click="currentResetFunction">{{ t('dialog.shared_feed_filters.reset') }}</el-button>
+            <el-button type="primary" style="margin-left: 10px" @click="handleDialogClose">{{
                 t('dialog.shared_feed_filters.close')
             }}</el-button>
         </template>

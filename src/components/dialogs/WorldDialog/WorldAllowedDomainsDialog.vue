@@ -19,11 +19,7 @@
             </el-button>
         </div>
         <template #footer>
-            <el-button
-                type="primary"
-                size="small"
-                :disabled="!worldAllowedDomainsDialog.worldId"
-                @click="saveWorldAllowedDomains">
+            <el-button type="primary" :disabled="!worldAllowedDomainsDialog.worldId" @click="saveWorldAllowedDomains">
                 {{ t('dialog.allowed_video_player_domains.save') }}
             </el-button>
         </template>
