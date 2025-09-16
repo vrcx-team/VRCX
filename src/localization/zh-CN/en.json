@@ -1712,7 +1712,7 @@
             "failed_install": "无法安装更新",
             "checking_hash": "正在校验文件..."
         },
-        "api_headler": {
+        "api_handler": {
             "avatar_private_or_deleted": "这个模型是私人的，或其已被删除"
         },
         "badge": {
