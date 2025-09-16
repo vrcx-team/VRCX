@@ -37,7 +37,7 @@
 
         <template #footer>
             <div style="display: flex">
-                <el-button type="primary" size="small" style="margin-left: auto" @click="closeDialog">
+                <el-button type="primary" style="margin-left: auto" @click="closeDialog">
                     {{ t('dialog.notification_position.ok') }}
                 </el-button>
             </div>

@@ -17,7 +17,7 @@
             </el-input>
         </div>
         <template #footer>
-            <el-button type="primary" size="small" :disabled="pronounsDialog.loading" @click="savePronouns">
+            <el-button type="primary" :disabled="pronounsDialog.loading" @click="savePronouns">
                 {{ t('dialog.pronouns.update') }}
             </el-button>
         </template>

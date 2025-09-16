@@ -165,15 +165,13 @@
         <template #footer>
             <div style="display: flex; align-items: center; justify-content: space-between">
                 <div>
-                    <el-button
-                        size="small"
-                        @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')"
-                        >{{ t('dialog.config_json.vrchat_docs') }}</el-button
-                    >
+                    <el-button @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')">{{
+                        t('dialog.config_json.vrchat_docs')
+                    }}</el-button>
                 </div>
                 <div>
-                    <el-button size="small" @click="closeDialog">{{ t('dialog.config_json.cancel') }}</el-button>
-                    <el-button size="small" type="primary" :disabled="loading" @click="saveVRChatConfigFile">{{
+                    <el-button @click="closeDialog">{{ t('dialog.config_json.cancel') }}</el-button>
+                    <el-button type="primary" :disabled="loading" @click="saveVRChatConfigFile">{{
                         t('dialog.config_json.save')
                     }}</el-button>
                 </div>

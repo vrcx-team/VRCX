@@ -48,7 +48,6 @@
         <template #footer>
             <el-button
                 type="primary"
-                size="small"
                 :disabled="!moderateGroupDialog.userId || !moderateGroupDialog.groupId"
                 @click="
                     showGroupMemberModerationDialog(moderateGroupDialog.groupId, moderateGroupDialog.userId);

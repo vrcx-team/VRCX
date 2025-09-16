@@ -406,14 +406,13 @@
         </el-tabs>
         <template v-if="newInstanceDialog.selectedTab === 'Normal'" #footer>
             <template v-if="newInstanceDialog.instanceCreated">
-                <el-button size="small" @click="copyInstanceUrl(newInstanceDialog.location)">{{
+                <el-button @click="copyInstanceUrl(newInstanceDialog.location)">{{
                     t('dialog.new_instance.copy_url')
                 }}</el-button>
-                <el-button size="small" @click="selfInvite(newInstanceDialog.location)">{{
+                <el-button @click="selfInvite(newInstanceDialog.location)">{{
                     t('dialog.new_instance.self_invite')
                 }}</el-button>
                 <el-button
-                    size="small"
                     :disabled="
                         (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
                         newInstanceDialog.userId !== currentUser.id
@@ -422,41 +421,35 @@
                     >{{ t('dialog.new_instance.invite') }}</el-button
                 >
                 <template v-if="canOpenInstanceInGame()">
-                    <el-button
-                        size="small"
-                        @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
-                        >{{ t('dialog.new_instance.launch') }}</el-button
-                    >
-                    <el-button
-                        size="small"
-                        @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
+                    <el-button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
+                        t('dialog.new_instance.launch')
+                    }}</el-button>
+                    <el-button @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
                         {{ t('dialog.new_instance.open_ingame') }}
                     </el-button>
                 </template>
                 <template v-else>
                     <el-button
                         type="primary"
-                        size="small"
                         @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
                         >{{ t('dialog.new_instance.launch') }}</el-button
                     >
                 </template>
             </template>
             <template v-else>
-                <el-button type="primary" size="small" @click="handleCreateNewInstance">{{
+                <el-button type="primary" @click="handleCreateNewInstance">{{
                     t('dialog.new_instance.create_instance')
                 }}</el-button>
             </template>
         </template>
         <template v-else-if="newInstanceDialog.selectedTab === 'Legacy'" #footer>
-            <el-button size="small" @click="copyInstanceUrl(newInstanceDialog.location)">{{
+            <el-button @click="copyInstanceUrl(newInstanceDialog.location)">{{
                 t('dialog.new_instance.copy_url')
             }}</el-button>
-            <el-button size="small" @click="selfInvite(newInstanceDialog.location)">{{
+            <el-button @click="selfInvite(newInstanceDialog.location)">{{
                 t('dialog.new_instance.self_invite')
             }}</el-button>
             <el-button
-                size="small"
                 :disabled="
                     (newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') &&
                     newInstanceDialog.userId !== currentUser.id
@@ -465,14 +458,11 @@
                 >{{ t('dialog.new_instance.invite') }}</el-button
             >
             <template v-if="canOpenInstanceInGame()">
-                <el-button
-                    size="small"
-                    @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
-                    >{{ t('dialog.new_instance.launch') }}</el-button
-                >
+                <el-button @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)">{{
+                    t('dialog.new_instance.launch')
+                }}</el-button>
                 <el-button
                     type="primary"
-                    size="small"
                     @click="handleAttachGame(newInstanceDialog.location, newInstanceDialog.shortName)">
                     {{ t('dialog.new_instance.open_ingame') }}
                 </el-button>
@@ -480,7 +470,6 @@
             <template v-else>
                 <el-button
                     type="primary"
-                    size="small"
                     @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)"
                     >{{ t('dialog.new_instance.launch') }}</el-button
                 >

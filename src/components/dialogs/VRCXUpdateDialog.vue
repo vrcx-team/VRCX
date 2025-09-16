@@ -40,22 +40,17 @@
         </div>
 
         <template #footer>
-            <el-button v-if="updateInProgress" type="primary" size="small" @click="cancelUpdate">
+            <el-button v-if="updateInProgress" type="primary" @click="cancelUpdate">
                 {{ t('dialog.vrcx_updater.cancel') }}
             </el-button>
             <el-button
                 v-if="VRCXUpdateDialog.release !== pendingVRCXInstall"
                 :disabled="updateInProgress"
                 type="primary"
-                size="small"
                 @click="installVRCXUpdate">
                 {{ t('dialog.vrcx_updater.download') }}
             </el-button>
-            <el-button
-                v-if="!updateInProgress && pendingVRCXInstall"
-                type="primary"
-                size="small"
-                @click="restartVRCX(true)">
+            <el-button v-if="!updateInProgress && pendingVRCXInstall" type="primary" @click="restartVRCX(true)">
                 {{ t('dialog.vrcx_updater.install') }}
             </el-button>
         </template>
