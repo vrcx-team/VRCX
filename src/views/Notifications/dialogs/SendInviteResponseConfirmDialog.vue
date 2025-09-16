@@ -12,7 +12,7 @@
 
         <template #footer>
             <el-button @click="cancelInviteResponseConfirm">{{ t('dialog.invite_response_message.cancel') }}</el-button>
-            <el-button type="primary" size="small" @click="sendInviteResponseConfirm">{{
+            <el-button type="primary" @click="sendInviteResponseConfirm">{{
                 t('dialog.invite_response_message.confirm')
             }}</el-button>
         </template>
@@ -42,11 +42,10 @@
         }
     });
 
-    const emit = defineEmits(['update:sendInviteResponseConfirmDialog', 'closeInviteDialog']);
+    const emit = defineEmits(['closeResponseConfirmDialog', 'closeInviteDialog']);
 
     function cancelInviteResponseConfirm() {
-        emit('update:sendInviteResponseConfirmDialog', { visible: false });
-        props.sendInviteResponseConfirmDialog.visible = false;
+        emit('closeResponseConfirmDialog');
     }
 
     function sendInviteResponseConfirm() {
@@ -57,7 +56,7 @@
         };
         if (uploadImage.value) {
             notificationRequest
-                .sendInviteResponsePhoto(params, D.invite.id, D.messageSlot.messageType)
+                .sendInviteResponsePhoto(params, D.invite.id)
                 .catch((err) => {
                     throw err;
                 })
@@ -76,7 +75,7 @@
                 });
         } else {
             notificationRequest
-                .sendInviteResponse(params, D.invite.id, D.messageSlot.messageType)
+                .sendInviteResponse(params, D.invite.id)
                 .catch((err) => {
                     throw err;
                 })

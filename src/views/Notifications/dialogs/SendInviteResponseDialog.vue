@@ -46,13 +46,12 @@
         <EditAndSendInviteResponseDialog
             :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
             :send-invite-response-dialog="sendInviteResponseDialog"
-            @update:edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog = $event"
-            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
+            @closeResponseConfirmDialog="closeResponseConfirmDialog"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteResponseConfirmDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
             :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
-            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
+            @closeResponseConfirmDialog="closeResponseConfirmDialog"
             @closeInviteDialog="closeInviteDialog" />
     </el-dialog>
 </template>
@@ -92,7 +91,7 @@
         newMessage: ''
     });
 
-    const emit = defineEmits(['update:sendInviteResponseDialogVisible']);
+    const emit = defineEmits(['update:sendInviteResponseDialogVisible', 'update:sendInviteResponseDialog']);
 
     const sendInviteResponseConfirmDialog = ref({
         visible: false
@@ -106,15 +105,19 @@
         emit('update:sendInviteResponseDialogVisible', false);
     }
 
+    function closeResponseConfirmDialog() {
+        sendInviteResponseConfirmDialog.value.visible = false;
+    }
+
     function showEditAndSendInviteResponseDialog(row) {
-        props.sendInviteResponseDialog.messageSlot = row;
+        emit('update:sendInviteResponseDialog', { ...props.sendInviteResponseDialog, messageSlot: row });
         editAndSendInviteResponseDialog.value = {
             newMessage: row.message,
             visible: true
         };
     }
     function showSendInviteResponseConfirmDialog(row) {
-        props.sendInviteResponseDialog.messageSlot = row;
+        emit('update:sendInviteResponseDialog', { ...props.sendInviteResponseDialog, messageSlot: row });
         sendInviteResponseConfirmDialog.value.visible = true;
     }
 </script>

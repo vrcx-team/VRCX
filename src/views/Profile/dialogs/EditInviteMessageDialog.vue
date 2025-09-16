@@ -72,7 +72,7 @@
                         });
                         throw new Error("VRChat API didn't update message, try again");
                     } else {
-                        ElMessage.success('Invite message updated');
+                        ElMessage({ message: 'Invite message updated', type: 'success' });
                     }
                     return args;
                 });
