@@ -568,8 +568,8 @@
             </el-tabs>
         </div>
         <template v-if="avatarDialog.visible">
-            <SetAvatarTagsDialog :set-avatar-tags-dialog="setAvatarTagsDialog" />
-            <SetAvatarStylesDialog :set-avatar-styles-dialog="setAvatarStylesDialog" />
+            <SetAvatarTagsDialog v-model:setAvatarTagsDialog="setAvatarTagsDialog" />
+            <SetAvatarStylesDialog v-model:setAvatarStylesDialog="setAvatarStylesDialog" />
             <ChangeAvatarImageDialog
                 v-model:changeAvatarImageDialogVisible="changeAvatarImageDialogVisible"
                 v-model:previousImageUrl="previousImageUrl" />
@@ -649,7 +649,7 @@
     const treeData = ref([]);
     const timeSpent = ref(0);
     const memo = ref('');
-    const setAvatarTagsDialog = reactive({
+    const setAvatarTagsDialog = ref({
         visible: false,
         loading: false,
         ownAvatars: [],
@@ -663,7 +663,7 @@
         contentAdult: false,
         contentSex: false
     });
-    const setAvatarStylesDialog = reactive({
+    const setAvatarStylesDialog = ref({
         visible: false,
         loading: false,
         avatarId: '',
@@ -1063,7 +1063,7 @@
     }
 
     function showSetAvatarTagsDialog(avatarId) {
-        const D = setAvatarTagsDialog;
+        const D = setAvatarTagsDialog.value;
         D.visible = true;
         D.loading = true;
         D.ownAvatars = [];
@@ -1130,7 +1130,7 @@
     }
 
     function showSetAvatarStylesDialog() {
-        const D = setAvatarStylesDialog;
+        const D = setAvatarStylesDialog.value;
         D.visible = true;
         D.loading = true;
         D.avatarId = avatarDialog.value.id;

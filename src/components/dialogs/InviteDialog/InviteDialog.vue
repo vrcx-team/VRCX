@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        v-model="inviteDialog.visible"
+        :model-value="inviteDialog.visible"
         :title="t('dialog.invite.header')"
         width="500px"
         append-to-body>
@@ -163,8 +163,8 @@
             >
         </template>
         <SendInviteDialog
-            :send-invite-dialog-visible="sendInviteDialogVisible"
-            :send-invite-dialog="sendInviteDialog"
+            v-model:sendInviteDialogVisible="sendInviteDialogVisible"
+            v-model:sendInviteDialog="sendInviteDialog"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
     </el-dialog>

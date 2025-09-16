@@ -75,13 +75,15 @@
             </el-button>
         </template>
         <SendInviteConfirmDialog
-            v-model="isSendInviteConfirmDialogVisible"
-            :send-invite-dialog="sendInviteDialog"
+            v-model:isSendInviteConfirmDialogVisible="isSendInviteConfirmDialogVisible"
+            :sendInviteDialog="sendInviteDialog"
+            @update:sendInviteDialog="emit('update:sendInviteDialog', $event)"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <EditAndSendInviteDialog
             :edit-and-send-invite-dialog="editAndSendInviteDialog"
-            :send-invite-dialog="sendInviteDialog"
+            :sendInviteDialog="sendInviteDialog"
+            @update:sendInviteDialog="emit('update:sendInviteDialog', $event)"
             :invite-dialog="inviteDialog"
             @closeInviteDialog="closeInviteDialog" />
     </el-dialog>
@@ -120,7 +122,7 @@
         }
     });
 
-    const emit = defineEmits(['closeInviteDialog', 'update:sendInviteDialogVisible']);
+    const emit = defineEmits(['closeInviteDialog', 'update:sendInviteDialogVisible', 'update:sendInviteDialog']);
 
     const isSendInviteConfirmDialogVisible = ref(false);
 
@@ -130,12 +132,12 @@
     });
 
     function showSendInviteConfirmDialog(row) {
-        props.sendInviteDialog.messageSlot = row;
+        emit('update:sendInviteDialog', { ...props.sendInviteDialog, messageSlot: row });
         isSendInviteConfirmDialogVisible.value = true;
     }
 
     function showEditAndSendInviteDialog(row) {
-        props.sendInviteDialog.messageSlot = row;
+        emit('update:sendInviteDialog', { ...props.sendInviteDialog, messageSlot: row });
         editAndSendInviteDialog.value = {
             newMessage: row.message,
             visible: true

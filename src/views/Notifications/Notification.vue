@@ -318,11 +318,11 @@
                             <el-tooltip placement="top" content="Decline">
                                 <el-button
                                     v-if="shiftHeld"
-                                    style="color: #f56c6c; margin-left: 5px"
+                                    style="color: #f56c6c"
                                     type="text"
                                     :icon="Close"
                                     size="small"
-                                    class="button-pd-0"
+                                    :class="['button-pd-0', 'ml-5']"
                                     @click="hideNotification(scope.row)" />
                                 <el-button
                                     v-else
@@ -338,11 +338,11 @@
                         <el-tooltip placement="top" content="Delete log">
                             <el-button
                                 v-if="shiftHeld"
-                                style="color: #f56c6c; margin-left: 5px"
+                                style="color: #f56c6c"
                                 type="text"
-                                :icon="Close"
+                                :icon="Delete"
                                 size="small"
-                                class="button-pd-0"
+                                :class="['button-pd-0', 'ml-5']"
                                 @click="deleteNotificationLog(scope.row)" />
                             <el-button
                                 v-else
@@ -383,11 +383,11 @@
             </el-table-column>
         </DataTable>
         <SendInviteResponseDialog
-            :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-response-dialog-visible="sendInviteResponseDialogVisible" />
+            v-model:send-invite-response-dialog="sendInviteResponseDialog"
+            v-model:sendInviteResponseDialogVisible="sendInviteResponseDialogVisible" />
         <SendInviteRequestResponseDialog
-            :send-invite-response-dialog="sendInviteResponseDialog"
-            :send-invite-request-response-dialog-visible="sendInviteRequestResponseDialogVisible" />
+            v-model:send-invite-response-dialog="sendInviteResponseDialog"
+            v-model:sendInviteRequestResponseDialogVisible="sendInviteRequestResponseDialogVisible" />
     </div>
 </template>
 

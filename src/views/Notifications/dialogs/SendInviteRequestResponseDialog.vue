@@ -50,14 +50,13 @@
         <EditAndSendInviteResponseDialog
             :edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog"
             :send-invite-response-dialog="sendInviteResponseDialog"
-            @update:edit-and-send-invite-response-dialog="editAndSendInviteResponseDialog = $event"
-            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
-            @closeInviteDialog="closeInviteDialog" />
+            @closeInviteDialog="closeInviteDialog"
+            @closeResponseConfirmDialog="closeResponseConfirmDialog" />
         <SendInviteResponseConfirmDialog
             :send-invite-response-dialog="sendInviteResponseDialog"
             :send-invite-response-confirm-dialog="sendInviteResponseConfirmDialog"
-            @update:send-invite-response-dialog="sendInviteResponseDialog = $event"
-            @closeInviteDialog="closeInviteDialog" />
+            @closeInviteDialog="closeInviteDialog"
+            @closeResponseConfirmDialog="closeResponseConfirmDialog" />
     </el-dialog>
 </template>
 
@@ -90,7 +89,7 @@
         }
     });
 
-    const emit = defineEmits(['update:sendInviteRequestResponseDialogVisible']);
+    const emit = defineEmits(['update:sendInviteRequestResponseDialogVisible', 'update:sendInviteResponseDialog']);
 
     const editAndSendInviteResponseDialog = ref({
         visible: false,
@@ -102,7 +101,7 @@
     });
 
     function showEditAndSendInviteResponseDialog(row) {
-        props.sendInviteResponseDialog.messageSlot = row;
+        emit('update:sendInviteResponseDialog', { ...props.sendInviteResponseDialog, messageSlot: row });
         editAndSendInviteResponseDialog.value = {
             newMessage: row.message,
             visible: true
@@ -110,12 +109,16 @@
     }
 
     function showSendInviteResponseConfirmDialog(row) {
-        props.sendInviteResponseDialog.messageSlot = row;
+        emit('update:sendInviteResponseDialog', { ...props.sendInviteResponseDialog, messageSlot: row });
         sendInviteResponseConfirmDialog.value.visible = true;
     }
 
     function closeInviteDialog() {
         cancelSendInviteRequestResponse();
+    }
+
+    function closeResponseConfirmDialog() {
+        sendInviteResponseConfirmDialog.value.visible = false;
     }
 
     // function refreshInviteMessageTableData(...arg) {

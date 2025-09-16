@@ -726,7 +726,7 @@
                 </el-tab-pane>
                 <el-tab-pane name="Posts" :label="t('dialog.group.posts.header')" lazy>
                     <template v-if="groupDialog.visible">
-                        <span style="margin-right: 10px"
+                        <span style="margin-right: 10px; vertical-align: top"
                             >{{ t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}</span
                         >
                         <el-input

@@ -238,7 +238,7 @@ function setLoginContainerStyle(isDarkMode) {
         transition: background-color 0.3s ease;
     }
 
-    .x-login-container .el-input__inner {
+    .x-login-container .el-input__wrapper {
         background-color: ${inputBackgroundColor} !important;
         border: ${inputBorder} !important;
         transition: background-color 0.3s ease, border-color 0.3s ease;

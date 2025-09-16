@@ -524,8 +524,7 @@
                         @click="consumeInventoryBundle(item.id)"
                         size="small"
                         :icon="Plus"
-                        style="float: right"
-                        circle>
+                        style="float: right">
                         {{ t('dialog.gallery_icons.consume_bundle') }}
                     </el-button>
                 </div>
@@ -540,13 +539,7 @@
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import {
-        // inventoryRequest,
-        miscRequest,
-        userRequest,
-        vrcPlusIconRequest,
-        vrcPlusImageRequest
-    } from '../../../api';
+    import { miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest, inventoryRequest } from '../../../api';
     import { AppDebug } from '../../../service/appConfig';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
     import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
@@ -1059,9 +1052,9 @@
 
     async function consumeInventoryBundle(inventoryId) {
         try {
-            // const args = await inventoryRequest.consumeInventoryBundle({
-            //     inventoryId
-            // });
+            await inventoryRequest.consumeInventoryBundle({
+                inventoryId
+            });
             currentUserInventory.value.delete(inventoryId);
             const array = inventoryTable.value;
             const { length } = array;
@@ -1075,6 +1068,7 @@
         } catch (error) {
             console.error('Error consuming inventory bundle:', error);
         }
+        // -- response --
         // errors: []
         // inventoryItems : []
         // inventoryItemsCreated: 0

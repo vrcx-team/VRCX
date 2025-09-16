@@ -109,7 +109,10 @@
             })
             .catch((err) => {
                 console.error('Copy failed:', err);
-                ElMessage.error('Copy failed!');
+                ElMessage({
+                    message: 'Copy failed!',
+                    type: 'error'
+                });
             });
     }
 

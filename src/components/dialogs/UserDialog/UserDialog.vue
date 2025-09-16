@@ -1727,12 +1727,12 @@
             </el-tabs>
         </div>
         <SendInviteDialog
-            :send-invite-dialog-visible="sendInviteDialogVisible"
-            :send-invite-dialog="sendInviteDialog"
+            v-model:sendInviteDialogVisible="sendInviteDialogVisible"
+            v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <SendInviteRequestDialog
-            :send-invite-request-dialog-visible="sendInviteRequestDialogVisible"
-            :send-invite-dialog="sendInviteDialog"
+            v-model:sendInviteRequestDialogVisible="sendInviteRequestDialogVisible"
+            v-model:sendInviteDialog="sendInviteDialog"
             @closeInviteDialog="closeInviteDialog" />
         <template v-if="userDialog.visible">
             <PreviousInstancesUserDialog v-model:previous-instances-user-dialog="previousInstancesUserDialog" />

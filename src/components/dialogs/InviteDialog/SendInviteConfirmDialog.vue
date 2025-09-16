@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         class="x-dialog"
-        :model-value="visible"
+        :model-value="isSendInviteConfirmDialogVisible"
         :title="t('dialog.invite_message.header')"
         width="400px"
         append-to-body
@@ -11,10 +11,10 @@
         </div>
 
         <template #footer>
-            <el-button type="small" @click="cancelInviteConfirm">
+            <el-button type="default" @click="cancelInviteConfirm">
                 {{ t('dialog.invite_message.cancel') }}
             </el-button>
-            <el-button type="primary" size="small" @click="sendInviteConfirm">
+            <el-button type="primary" @click="sendInviteConfirm">
                 {{ t('dialog.invite_message.confirm') }}
             </el-button>
         </template>
@@ -36,7 +36,7 @@
     const { currentUser } = storeToRefs(useUserStore());
 
     const props = defineProps({
-        visible: {
+        isSendInviteConfirmDialogVisible: {
             type: Boolean,
             required: true
         },
@@ -51,10 +51,10 @@
         }
     });
 
-    const emit = defineEmits(['update:model-value', 'closeInviteDialog']);
+    const emit = defineEmits(['update:isSendInviteConfirmDialogVisible', 'closeInviteDialog']);
 
     function cancelInviteConfirm() {
-        emit('update:model-value', false);
+        emit('update:isSendInviteConfirmDialogVisible', false);
     }
 
     function sendInviteConfirm() {
@@ -110,7 +110,8 @@
                 }
             };
             inviteLoop();
-        } else if (messageType === 'invite') {
+        } else if (messageType === 'message') {
+            // invite message
             D.params.messageSlot = slot;
             if (uploadImage.value) {
                 notificationRequest
