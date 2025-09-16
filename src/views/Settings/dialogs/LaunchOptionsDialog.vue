@@ -39,15 +39,13 @@
 
         <template #footer>
             <div style="display: flex">
-                <el-button size="small" @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')">
+                <el-button @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')">
                     {{ t('dialog.launch_options.vrchat_docs') }}
                 </el-button>
-                <el-button
-                    size="small"
-                    @click="openExternalLink('https://docs.unity3d.com/Manual/CommandLineArguments.html')">
+                <el-button @click="openExternalLink('https://docs.unity3d.com/Manual/CommandLineArguments.html')">
                     {{ t('dialog.launch_options.unity_manual') }}
                 </el-button>
-                <el-button type="primary" size="small" style="margin-left: auto" @click="updateLaunchOptions">
+                <el-button type="primary" style="margin-left: auto" @click="updateLaunchOptions">
                     {{ t('dialog.launch_options.save') }}
                 </el-button>
             </div>

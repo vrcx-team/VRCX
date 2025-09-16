@@ -148,15 +148,11 @@
         </div>
 
         <template #footer>
-            <el-button
-                size="small"
-                :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
-                @click="showSendInviteDialog"
-                >{{ t('dialog.invite.invite_with_message') }}</el-button
-            >
+            <el-button :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog">{{
+                t('dialog.invite.invite_with_message')
+            }}</el-button>
             <el-button
                 type="primary"
-                size="small"
                 :disabled="inviteDialog.loading || !inviteDialog.userIds.length"
                 @click="sendInvite"
                 >{{ t('dialog.invite.invite') }}</el-button

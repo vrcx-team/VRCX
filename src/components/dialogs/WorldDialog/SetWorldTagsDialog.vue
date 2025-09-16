@@ -73,10 +73,10 @@
         </el-checkbox>
         <template #footer>
             <div style="display: flex">
-                <el-button size="small" @click="isVisible = false">
+                <el-button @click="isVisible = false">
                     {{ t('dialog.set_world_tags.cancel') }}
                 </el-button>
-                <el-button type="primary" size="small" @click="saveSetWorldTagsDialog">
+                <el-button type="primary" @click="saveSetWorldTagsDialog">
                     {{ t('dialog.set_world_tags.save') }}
                 </el-button>
             </div>

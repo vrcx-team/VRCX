@@ -37,7 +37,7 @@
         </div>
 
         <template #footer>
-            <el-button type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio">
+            <el-button type="primary" :disabled="bioDialog.loading" @click="saveBio">
                 {{ t('dialog.bio.update') }}
             </el-button>
         </template>

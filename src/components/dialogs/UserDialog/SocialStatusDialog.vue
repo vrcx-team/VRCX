@@ -49,7 +49,7 @@
         </div>
 
         <template #footer>
-            <el-button type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus">
+            <el-button type="primary" :disabled="socialStatusDialog.loading" @click="saveSocialStatus">
                 {{ t('dialog.social_status.update') }}
             </el-button>
         </template>

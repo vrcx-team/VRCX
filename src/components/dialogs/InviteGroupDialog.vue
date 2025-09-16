@@ -155,7 +155,6 @@
         <template #footer>
             <el-button
                 type="primary"
-                size="small"
                 :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length || !inviteGroupDialog.groupId"
                 @click="sendGroupInvite">
                 {{ t('dialog.invite_to_group.invite') }}
