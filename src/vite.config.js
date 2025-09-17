@@ -5,18 +5,21 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const url = process.env.SENTRY_URL;
+const authToken = process.env.SENTRY_AUTH_TOKEN;
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
     base: '',
     plugins: [
         vue(),
-        sentryVitePlugin({
-            authToken: process.env.SENTRY_AUTH_TOKEN,
-            org: 'example',
-            project: 'vrcx-web',
-            url: 'https://example.example.example/'
-        })
+        url &&
+            sentryVitePlugin({
+                url,
+                authToken,
+                org: 'vrcx',
+                project: 'vrcx-web'
+            })
     ],
     define: {
         LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),

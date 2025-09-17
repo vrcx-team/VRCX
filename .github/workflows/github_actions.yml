@@ -121,6 +121,9 @@ jobs:
             - name: Restore dependencies
               run: npm ci
             - name: Build Cef-html
+              env:
+                  SENTRY_URL: ${{ secrets.SentryUrl }}
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SentryAuthToken }}
               run: npm run prod
             - name: Upload Cef-html artifacts
               uses: actions/upload-artifact@v4
