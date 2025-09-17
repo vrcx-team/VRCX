@@ -14,18 +14,14 @@ export function initSentry(app) {
                     app,
                     dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0',
                     environment: 'nightly',
-                    sampleRate: 0.1,
-                    beforeSend(event) {
-                        if (
-                            event.message &&
-                            (event.message.toLowerCase().includes('password') ||
-                                event.message.toLowerCase().includes('token'))
-                        ) {
-                            return null;
-                        }
-                        return event;
-                    },
-                    integrations: []
+                    replaysSessionSampleRate: 0.1,
+                    replaysOnErrorSampleRate: 1.0,
+                    integrations: [
+                        Sentry.replayIntegration({
+                            maskAllText: true,
+                            blockAllMedia: true
+                        })
+                    ]
                 });
                 console.log('Sentry initialized');
             }

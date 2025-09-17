@@ -376,7 +376,6 @@
             backgroundColor: 'transparent'
         };
 
-        console.log(echartsOption);
         return echartsOption;
     }
 

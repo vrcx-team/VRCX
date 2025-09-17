@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
@@ -8,7 +9,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // https://vite.dev/config/
 export default defineConfig(() => ({
     base: '',
-    plugins: [vue()],
+    plugins: [
+        vue(),
+        sentryVitePlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: 'example',
+            project: 'vrcx-web',
+            url: 'https://example.example.example/'
+        })
+    ],
     define: {
         LINUX: JSON.stringify(process.env.PLATFORM === 'linux'),
         WINDOWS: JSON.stringify(process.env.PLATFORM === 'windows')
@@ -29,6 +38,7 @@ export default defineConfig(() => ({
                 index: resolve(__dirname, 'index.html'),
                 vr: resolve(__dirname, 'vr.html')
             }
-        }
+        },
+        sourcemap: true
     }
 }));
