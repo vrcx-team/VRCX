@@ -3,22 +3,35 @@ import vue from '@vitejs/plugin-vue';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import fs from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const url = process.env.SENTRY_URL;
+
 const authToken = process.env.SENTRY_AUTH_TOKEN;
+const buildAndUploadSourceMaps = authToken ? true : false;
+const vrcxVersion = fs
+    .readFileSync(resolve(__dirname, '../Version'), 'utf-8')
+    .trim();
+if (buildAndUploadSourceMaps) {
+    console.log('Source maps will be built and uploaded to Sentry');
+}
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
     base: '',
     plugins: [
         vue(),
-        url &&
+        buildAndUploadSourceMaps &&
             sentryVitePlugin({
-                url,
                 authToken,
-                org: 'vrcx',
-                project: 'vrcx-web'
+                project: 'vrcx-web',
+                release: {
+                    name: vrcxVersion
+                },
+                sourcemaps: {
+                    assets: './build/html/**',
+                    filesToDeleteAfterUpload: './build/html/**/*.js.map'
+                }
             })
     ],
     define: {
@@ -42,6 +55,6 @@ export default defineConfig(() => ({
                 vr: resolve(__dirname, 'vr.html')
             }
         },
-        sourcemap: true
+        sourcemap: buildAndUploadSourceMaps
     }
 }));
