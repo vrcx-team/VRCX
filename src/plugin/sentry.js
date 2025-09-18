@@ -34,6 +34,7 @@ export async function initSentry(app) {
             app,
             dsn,
             environment: 'nightly',
+            release: version,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
             beforeSend(event, hint) {

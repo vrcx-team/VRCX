@@ -20,7 +20,7 @@ app.use(pinia);
 app.use(i18n);
 app.use(ElementPlus);
 initComponents(app);
-initSentry(app);
+await initSentry(app);
 
 app.mount('#root');
 
