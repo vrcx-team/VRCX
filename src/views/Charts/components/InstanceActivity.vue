@@ -89,13 +89,12 @@
                     v-model="selectedDate"
                     type="date"
                     :clearable="false"
-                    align="right"
                     :default-value="dayjs().toDate()"
                     :disabled-date="getDatePickerDisabledDate"
                     @change="reloadData"></el-date-picker>
             </div>
         </div>
-        <div style="position: relative">
+        <div class="status-online">
             <el-statistic
                 :title="t('view.charts.instance_activity.online_time')"
                 :formatter="(val) => timeToText(val, true)"
@@ -615,5 +614,14 @@
     .el-divider__text {
         padding-left: 10px;
         padding-right: 10px;
+    }
+
+    .status-online {
+        display: flex;
+        justify-content: center;
+        ::v-deep .el-statistic__head {
+            display: flex;
+            justify-content: center;
+        }
     }
 </style>
