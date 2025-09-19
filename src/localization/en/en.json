@@ -1534,7 +1534,8 @@
             "item": "Item",
             "sticker": "Sticker",
             "drone_skin": "Drone Skin",
-            "emoji": "Emoji"
+            "emoji": "Emoji",
+            "redeem": "Redeem"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
@@ -1998,6 +1999,15 @@
             "placeholder": "127.0.0.1:8080",
             "close": "Close",
             "restart": "Restart"
+        },
+        "redeem": {
+            "header": "Redeem Code",
+            "description": "Enter your code to redeem",
+            "cancel": "Cancel",
+            "redeem": "Redeem",
+            "input_placeholder": "Code",
+            "input_error": "Code is required",
+            "success": "Code redeemed successfully"
         }
     },
     "table": {

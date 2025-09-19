@@ -486,6 +486,9 @@
                         <el-button type="default" size="small" @click="getInventory" :icon="Refresh">
                             {{ t('dialog.gallery_icons.refresh') }}
                         </el-button>
+                        <el-button type="default" size="small" @click="redeemReward" :icon="Present">
+                            {{ t('dialog.gallery_icons.redeem') }}
+                        </el-button>
                     </el-button-group>
                 </div>
                 <br />
@@ -534,8 +537,8 @@
 </template>
 
 <script setup>
-    import { ElMessage } from 'element-plus';
-    import { Refresh, Upload, Close, Picture, Delete, Plus } from '@element-plus/icons-vue';
+    import { ElMessage, ElMessageBox } from 'element-plus';
+    import { Refresh, Upload, Close, Picture, Delete, Plus, Present } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
@@ -1072,5 +1075,34 @@
         // errors: []
         // inventoryItems : []
         // inventoryItemsCreated: 0
+    }
+
+    async function redeemReward() {
+        ElMessageBox.prompt(t('prompt.redeem.description'), t('prompt.redeem.header'), {
+            confirmButtonText: t('prompt.redeem.redeem'),
+            cancelButtonText: t('prompt.redeem.cancel')
+        })
+            .then(({ value }) => {
+                if (value) {
+                    inventoryRequest
+                        .redeemReward({
+                            code: value.trim()
+                        })
+                        .then((args) => {
+                            ElMessage({
+                                message: t('prompt.redeem.success'),
+                                type: 'success'
+                            });
+                            getInventory();
+                            return args;
+                        })
+                        .catch((error) => {
+                            console.error('Error redeeming reward:', error);
+                        });
+                }
+            })
+            .catch(() => {
+                // on cancel
+            });
     }
 </script>
