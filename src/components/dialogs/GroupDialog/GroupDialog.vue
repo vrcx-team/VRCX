@@ -1293,8 +1293,12 @@
     );
 
     function showInviteGroupDialog(groupId, userId) {
-        inviteGroupDialog.value.groupId = groupId;
-        inviteGroupDialog.value.userId = userId;
+        if (groupId) {
+            inviteGroupDialog.value.groupId = groupId;
+        }
+        if (userId) {
+            inviteGroupDialog.value.userId = userId;
+        }
         inviteGroupDialog.value.visible = true;
     }
 
