@@ -1,8 +1,0 @@
-languageIds:
-  - jade
-  - javascript
-  - vue
-
-usageMatchRegex: "\\$t\\(['\"`]({key})['\"`]"
-
-monoonly: true
