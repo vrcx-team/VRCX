@@ -35,7 +35,7 @@ textarea {
 .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
     background-color: transparent;
 }
-.el-table--mini .el-table__expanded-cell[class*='cell']:hover {
+.el-table--small.el-table__expanded-cell[class*='cell']:hover {
     background-color: transparent !important;
 }
 .el-button.is-disabled,
