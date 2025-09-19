@@ -299,13 +299,13 @@ input[type='number'],
     font-weight: var(--md-sys-typescale-body-large-weight);
     letter-spacing: var(--md-sys-typescale-body-large-tracking);
 }
-.el-input--mini .el-input__inner {
+.el-input--small .el-input__inner {
     height: 36px;
 }
 .el-pagination--small button,
 .el-pagination--small span:not([class*='suffix']),
 .el-pagination .el-select .el-input .el-input__inner,
-.el-input--mini .el-input__icon,
+.el-input--small .el-input__icon,
 .el-pagination--small .btn-next,
 .el-pagination--small .btn-prev,
 .el-pagination--small .el-pager li,
@@ -316,7 +316,7 @@ input[type='number'],
     line-height: 32px !important;
 }
 .el-pagination .el-select .el-input .el-input__inner,
-.el-input--mini .el-input__icon {
+.el-input--small .el-input__icon {
     border-radius: 8px;
 }
 .el-pagination button.btn-prev,
@@ -828,7 +828,7 @@ input[type='number'],
     grid-auto-columns: 1fr;
 }
 
-.el-radio-button--mini .el-radio-button__inner {
+.el-radio-button--small .el-radio-button__inner {
     width: 100%;
     padding: 6px;
     border: none;
@@ -857,7 +857,7 @@ input[type='number'],
     border-right: 1px solid rgb(var(--md-sys-color-outline));
 }
 
-.el-radio-button--mini
+.el-radio-button--small
     .el-radio-button__orig-radio:not(:disabled):checked
     + .el-radio-button__inner {
     background-color: rgb(var(--md-sys-color-secondary-container));
@@ -866,14 +866,14 @@ input[type='number'],
     box-shadow: none;
 }
 
-.el-radio-button--mini
+.el-radio-button--small
     .el-radio-button__orig-radio:not(:checked)
     + .el-radio-button__inner {
     padding: 6px 16px;
 }
 
 /* icon */
-.el-radio-button--mini
+.el-radio-button--small
     .el-radio-button__orig-radio:not(:disabled):checked
     + .el-radio-button__inner:before {
     content: 'done';
@@ -884,10 +884,10 @@ input[type='number'],
 }
 
 /* hover */
-.el-radio-button--mini:hover .el-radio-button__inner {
+.el-radio-button--small:hover .el-radio-button__inner {
     background: rgba(var(--md-sys-color-on-surface), 0.08);
 }
-.el-radio-button--mini:hover
+.el-radio-button--small:hover
     .el-radio-button__orig-radio:not(:disabled):checked
     + .el-radio-button__inner {
     background: rgb(87, 80, 101);
@@ -899,12 +899,12 @@ input[type='number'],
 }
 
 /* press */
-.el-radio-button--mini:active
+.el-radio-button--small:active
     .el-radio-button__orig-radio:not(:disabled)
     + .el-radio-button__inner {
     background: rgba(var(--md-sys-color-on-surface), 0.12);
 }
-.el-radio-button--mini:active
+.el-radio-button--small:active
     .el-radio-button__orig-radio:not(:disabled):checked
     + .el-radio-button__inner {
     background: rgb(93, 86, 107);
@@ -1564,7 +1564,7 @@ img.x-link.el-popover__reference {
     line-height: 32px;
     margin-right: 16px !important;
 }
-.el-color-picker--mini .el-color-picker__trigger {
+.el-color-picker--small .el-color-picker__trigger {
     height: 32px;
     width: 32px;
 }
