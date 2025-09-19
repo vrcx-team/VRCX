@@ -66,7 +66,11 @@ export const useGroupStore = defineStore('Group', () => {
             groupName: '',
             userId: '',
             userIds: [],
-            userObject: {}
+            userObject: {
+                id: '',
+                displayName: '',
+                $userColour: ''
+            }
         },
         moderateGroupDialog: {
             visible: false,

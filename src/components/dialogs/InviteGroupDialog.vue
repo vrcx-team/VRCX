@@ -47,6 +47,7 @@
                         :key="inviteGroupDialog.userObject.id"
                         :label="inviteGroupDialog.userObject.displayName"
                         :value="inviteGroupDialog.userObject.id"
+                        style="height: auto"
                         class="x-friend-item">
                         <template v-if="inviteGroupDialog.userObject.id">
                             <div class="avatar" :class="userStatusClass(inviteGroupDialog.userObject)">
@@ -169,6 +170,7 @@
     import { storeToRefs } from 'pinia';
     import { useI18n } from 'vue-i18n';
     import { groupRequest, userRequest } from '../../api';
+    import configRepository from '../../service/config';
     import { hasGroupPermission, userImage, userStatusClass } from '../../shared/utils';
     import { getNextDialogIndex } from '../../shared/utils/base/ui';
     import { useFriendStore, useGroupStore } from '../../stores';
@@ -182,9 +184,12 @@
         () => {
             return inviteGroupDialog.value.visible;
         },
-        (value) => {
+        (value) => async () => {
             if (value) {
+                inviteGroupDialog.value.groupId = await configRepository.getString('inviteGroupLastGroup', '');
                 initDialog();
+            } else {
+                await configRepository.setString('inviteGroupLastGroup', inviteGroupDialog.value.groupId);
             }
         }
     );
