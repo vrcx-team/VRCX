@@ -285,6 +285,7 @@ export function $throw(code, error, endpoint) {
         (endpoint.startsWith('users/') ||
             endpoint.startsWith('worlds/') ||
             endpoint.startsWith('avatars/') ||
+            endpoint.startsWith('groups/') ||
             endpoint.startsWith('file/'))
     ) {
         ignoreError = true;
