@@ -1,11 +1,11 @@
 import { request } from '../service/request';
-import { useGroupStore, useNotificationStore } from '../stores';
+import { useGalleryStore, useNotificationStore } from '../stores';
 
 /**
  * @returns {any}
  */
 function getGalleryStore() {
-    return useGroupStore();
+    return useGalleryStore();
 }
 
 const notificationReq = {
@@ -158,8 +158,7 @@ const notificationReq = {
     sendInviteResponse(params, inviteId) {
         return request(`invite/${inviteId}/response`, {
             method: 'POST',
-            params,
-            inviteId
+            params
         }).then((json) => {
             const args = {
                 json,

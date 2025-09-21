@@ -237,7 +237,7 @@
                 <el-tabs type="card">
                     <el-tab-pane :label="t('view.player_list.photon.current')">
                         <DataTable v-bind="photonEventTable" style="margin-bottom: 10px">
-                            <el-table-column :label="t('table.playerList.date')" prop="created_at" width="120">
+                            <el-table-column :label="t('table.playerList.date')" prop="created_at" width="130">
                                 <template #default="scope">
                                     <el-tooltip placement="right">
                                         <template #content>
@@ -438,7 +438,7 @@
                     </el-tab-pane>
                     <el-tab-pane :label="t('view.player_list.photon.previous')">
                         <DataTable v-bind="photonEventTablePrevious" style="margin-bottom: 10px">
-                            <el-table-column :label="t('table.playerList.date')" prop="created_at" width="120">
+                            <el-table-column :label="t('table.playerList.date')" prop="created_at" width="130">
                                 <template #default="scope">
                                     <el-tooltip placement="right">
                                         <template #content>
