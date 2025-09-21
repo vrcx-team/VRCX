@@ -1273,22 +1273,28 @@ export const useUserStore = defineStore('User', () => {
             }
             newCount++;
             state.instancePlayerCount.set(newLocation, newCount);
-        }
-        if (props.location && ref.id === state.userDialog.id) {
-            // update user dialog instance occupants
-            applyUserDialogLocation(true);
-        }
-        if (
-            props.location &&
-            ref.$location.worldId === worldStore.worldDialog.id
-        ) {
-            instanceStore.applyWorldDialogInstances();
-        }
-        if (
-            props.location &&
-            ref.$location.groupId === groupStore.groupDialog.id
-        ) {
-            instanceStore.applyGroupDialogInstances();
+
+            const previousLocationL = parseLocation(previousLocation);
+            const newLocationL = parseLocation(newLocation);
+            if (
+                previousLocationL.tag === state.userDialog.$location.tag ||
+                newLocationL.tag === state.userDialog.$location.tag
+            ) {
+                // update user dialog instance occupants
+                applyUserDialogLocation(true);
+            }
+            if (
+                previousLocationL.worldId === worldStore.worldDialog.id ||
+                newLocationL.worldId === worldStore.worldDialog.id
+            ) {
+                instanceStore.applyWorldDialogInstances();
+            }
+            if (
+                previousLocationL.groupId === groupStore.groupDialog.id ||
+                newLocationL.groupId === groupStore.groupDialog.id
+            ) {
+                instanceStore.applyGroupDialogInstances();
+            }
         }
         if (
             !props.state &&
