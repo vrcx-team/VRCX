@@ -1214,7 +1214,9 @@
                 </template>
                 <div style="float: right">
                     <span v-if="!config?.minimalFeed" style="display: inline-block">{{ t('vr.status.timer') }}</span>
-                    <span v-if="lastLocationTimer" style="display: inline-block">{{ lastLocationTimer }}</span>
+                    <span v-if="lastLocationTimer" style="display: inline-block; margin-left: 5px">{{
+                        lastLocationTimer
+                    }}</span>
                     <span v-if="lastLocationTimer && (onlineForTimer || pcUptime)" style="display: inline-block">
                         |
                     </span>

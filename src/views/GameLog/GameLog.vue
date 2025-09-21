@@ -42,7 +42,7 @@
         </div>
 
         <DataTable v-loading="gameLogTable.loading" v-bind="gameLogTable">
-            <el-table-column :label="t('table.gameLog.date')" prop="created_at" :sortable="true" width="120">
+            <el-table-column :label="t('table.gameLog.date')" prop="created_at" :sortable="true" width="130">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>
