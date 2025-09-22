@@ -619,7 +619,7 @@
     .status-online {
         display: flex;
         justify-content: center;
-        ::v-deep .el-statistic__head {
+        :deep(.el-statistic__head) {
             display: flex;
             justify-content: center;
         }
