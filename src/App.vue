@@ -13,38 +13,41 @@
             <VRCXUpdateDialog></VRCXUpdateDialog>
 
             <template v-if="watchState.isLoggedIn">
-                <!-- ### Menu ### -->
                 <NavMenu></NavMenu>
 
-                <!-- ### Sidebar ### -->
-                <Sidebar></Sidebar>
+                <el-splitter @resize-end="setAsideWidth" v-show="isSideBarTabShow">
+                    <el-splitter-panel>
+                        <Feed></Feed>
 
-                <!-- ### Tabs ### -->
-                <Feed></Feed>
+                        <GameLog></GameLog>
 
-                <GameLog></GameLog>
+                        <PlayerList></PlayerList>
 
-                <PlayerList></PlayerList>
+                        <Search></Search>
 
-                <Search></Search>
+                        <Favorites></Favorites>
 
-                <Favorites></Favorites>
+                        <FriendLog></FriendLog>
 
-                <FriendLog></FriendLog>
+                        <Moderation></Moderation>
 
-                <Moderation></Moderation>
+                        <Notification></Notification>
 
-                <Notification></Notification>
+                        <Tools></Tools>
+
+                        <Profile></Profile>
+
+                        <Settings></Settings>
+                    </el-splitter-panel>
+
+                    <el-splitter-panel :min="200" :max="700" :size="asideWidth">
+                        <Sidebar></Sidebar>
+                    </el-splitter-panel>
+                </el-splitter>
 
                 <FriendList></FriendList>
 
                 <Charts></Charts>
-
-                <Tools></Tools>
-
-                <Profile></Profile>
-
-                <Settings></Settings>
 
                 <!-- ## Dialogs ## -->
                 <UserDialog></UserDialog>
@@ -137,9 +140,10 @@
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
 
     import { onMounted, computed, onBeforeMount } from 'vue';
-    import { createGlobalStores } from './stores';
-    import { watchState } from './service/watchState';
     import { useI18n } from 'vue-i18n';
+    import { storeToRefs } from 'pinia';
+    import { createGlobalStores, useAppearanceSettingsStore } from './stores';
+    import { watchState } from './service/watchState';
     import { initNoty } from './plugin/noty';
 
     console.log(`isLinux: ${LINUX}`);
@@ -186,4 +190,8 @@
         store.vrcx.checkAutoBackupRestoreVrcRegistry();
         store.game.checkVRChatDebugLogging();
     });
+
+    const appearanceStore = useAppearanceSettingsStore();
+    const { setAsideWidth } = appearanceStore;
+    const { asideWidth, isSideBarTabShow } = storeToRefs(appearanceStore);
 </script>

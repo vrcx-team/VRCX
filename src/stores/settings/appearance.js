@@ -23,6 +23,7 @@ import { useNotificationStore } from '../notification';
 import { useUserStore } from '../user';
 import { useVrStore } from '../vr';
 import { useVrcxStore } from '../vrcx';
+import { useUiStore } from '../ui';
 
 export const useAppearanceSettingsStore = defineStore(
     'AppearanceSettings',
@@ -36,6 +37,7 @@ export const useAppearanceSettingsStore = defineStore(
         const gameLogStore = useGameLogStore();
         const vrcxStore = useVrcxStore();
         const userStore = useUserStore();
+        const uiStore = useUiStore();
 
         const { t, availableLocales, locale } = useI18n();
 
@@ -250,6 +252,12 @@ export const useAppearanceSettingsStore = defineStore(
         const randomUserColours = computed(() => state.randomUserColours);
         const trustColor = computed(() => state.trustColor);
         const currentCulture = computed(() => state.currentCulture);
+        const isSideBarTabShow = computed(() => {
+            return !(
+                uiStore.menuActiveIndex === 'friendList' ||
+                uiStore.menuActiveIndex === 'charts'
+            );
+        });
 
         watch(
             () => watchState.isFriendsLoaded,
@@ -521,13 +529,19 @@ export const useAppearanceSettingsStore = defineStore(
             );
         }
         /**
-         * @param {number} width
+         * @param {number} panelNumber
+         * @param {Array<number>} widthArray
          */
-        function setAsideWidth(width) {
-            requestAnimationFrame(() => {
-                state.asideWidth = width;
-                configRepository.setInt('VRCX_sidePanelWidth', width);
-            });
+        function setAsideWidth(panelNumber, widthArray) {
+            if (Array.isArray(widthArray) && widthArray[1]) {
+                requestAnimationFrame(() => {
+                    state.asideWidth = widthArray[1];
+                    configRepository.setInt(
+                        'VRCX_sidePanelWidth',
+                        widthArray[1]
+                    );
+                });
+            }
         }
         function setIsSidebarGroupByInstance() {
             state.isSidebarGroupByInstance = !state.isSidebarGroupByInstance;
@@ -735,6 +749,7 @@ export const useAppearanceSettingsStore = defineStore(
             randomUserColours,
             trustColor,
             currentCulture,
+            isSideBarTabShow,
 
             setAppLanguage,
             setDisplayVRCPlusIconsAsAvatar,
