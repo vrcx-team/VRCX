@@ -1349,7 +1349,6 @@
             "location": "地点",
             "copy_tooltip": "复制到剪贴板",
             "start_as_desktop": "以桌面模式启动游戏（不使用 VR）",
-            "info": "信息",
             "invite": "邀请",
             "launch": "启动",
             "open_ingame": "在 VRChat 中打开",

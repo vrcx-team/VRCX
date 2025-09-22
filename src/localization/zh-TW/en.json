@@ -1321,7 +1321,6 @@
             "location": "地點",
             "copy_tooltip": "複製到剪貼簿",
             "start_as_desktop": "以桌面模式啟動（無 VR）",
-            "info": "資訊",
             "invite": "邀請",
             "launch": "啟動"
         },

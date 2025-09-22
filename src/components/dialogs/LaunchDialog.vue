@@ -60,9 +60,6 @@
             {{ t('dialog.launch.start_as_desktop') }}
         </el-checkbox>
         <template #footer>
-            <el-button @click="showPreviousInstancesInfoDialog(launchDialog.location)">
-                {{ t('dialog.launch.info') }}
-            </el-button>
             <el-button
                 :disabled="!checkCanInvite(launchDialog.location)"
                 @click="showInviteDialog(launchDialog.location)">

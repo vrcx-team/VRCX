@@ -84,13 +84,6 @@
                             "
                             @change="buildInstance"></el-checkbox>
                     </el-form-item>
-                    <el-form-item :label="t('dialog.new_instance.world_id')">
-                        <el-input
-                            v-model="newInstanceDialog.worldId"
-                            size="small"
-                            @click="$event.target.tagName === 'INPUT' && $event.target.select()"
-                            @change="buildInstance"></el-input>
-                    </el-form-item>
                     <!-- <el-form-item :label="t('dialog.new_instance.display_name')">
                         <el-input
                             :disabled="!isLocalUserVrcplusSupporter"

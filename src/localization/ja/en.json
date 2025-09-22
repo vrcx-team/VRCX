@@ -1350,7 +1350,6 @@
             "location": "場所",
             "copy_tooltip": "クリップボードにコピー",
             "start_as_desktop": "デスクトップモードで起動 (VR無し)",
-            "info": "情報",
             "invite": "招待",
             "launch": "起動",
             "open_ingame": "ゲーム内で開く",
