@@ -1922,6 +1922,8 @@
     import { redirectToToolsTab } from '../../shared/utils/base/ui';
     import { THEME_CONFIG } from '../../shared/constants';
 
+    import SimpleSwitch from './components/SimpleSwitch.vue';
+
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
         () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')
     );

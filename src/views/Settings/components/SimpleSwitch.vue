@@ -2,8 +2,8 @@
     <div class="simple-switch">
         <div class="name" :style="{ width: longLabel ? '300px' : undefined }">
             {{ label }}
-            <el-tooltip v-if="tooltip" placement="top" class="tooltip" :content="tooltip"
-                ><el-icon><InfoFilled /></el-icon
+            <el-tooltip v-if="tooltip" placement="top" :content="tooltip"
+                ><el-icon size="small" class="tooltip"><InfoFilled /></el-icon
             ></el-tooltip>
         </div>
 
@@ -38,11 +38,13 @@
         min-width: 225px;
         word-wrap: break-word;
         padding-top: 7px;
+        display: flex;
+        align-items: center;
     }
     .simple-switch > .switch {
         margin-left: 10px;
     }
     .simple-switch .tooltip {
-        margin-left: 5px;
+        margin-left: 3px;
     }
 </style>
