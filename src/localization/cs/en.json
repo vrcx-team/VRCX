@@ -1134,7 +1134,6 @@
             "location": "Location",
             "copy_tooltip": "Copy to clipboard",
             "start_as_desktop": "Start as Desktop (No VR)",
-            "info": "Info",
             "invite": "Invite",
             "launch": "Launch"
         },

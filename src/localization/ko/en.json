@@ -1077,7 +1077,6 @@
             "location": "위치",
             "copy_tooltip": "클립보드에 복사",
             "start_as_desktop": "데스크톱 모드로 시작 (No VR)",
-            "info": "정보",
             "invite": "초대",
             "launch": "실행"
         },
