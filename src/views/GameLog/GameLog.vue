@@ -1,6 +1,5 @@
 <template>
     <div v-show="menuActiveIndex === 'gameLog'" class="x-container">
-        <!-- 工具栏 -->
         <div style="margin: 0 0 10px; display: flex; align-items: center">
             <div style="flex: none; margin-right: 10px; display: flex; align-items: center">
                 <el-tooltip placement="bottom" :content="t('view.feed.favorites_only_tooltip')">
@@ -36,7 +35,7 @@
                 v-model="gameLogTable.search"
                 :placeholder="t('view.game_log.search_placeholder')"
                 clearable
-                style="flex: none; width: 150px; margin-left: 10px"
+                style="flex: 0.4; margin-left: 10px"
                 @keyup.enter="gameLogTableLookup"
                 @change="gameLogTableLookup"></el-input>
         </div>

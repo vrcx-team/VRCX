@@ -23,7 +23,7 @@
                 v-model="feedTable.search"
                 :placeholder="t('view.feed.search_placeholder')"
                 clearable
-                style="flex: none; width: 150px; margin-left: 10px"
+                style="flex: 0.4; margin-left: 10px"
                 @keyup.enter="feedTableLookup"
                 @change="feedTableLookup"></el-input>
         </div>

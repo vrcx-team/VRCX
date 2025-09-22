@@ -62,7 +62,7 @@
                     multiple
                     clearable
                     collapse-tags
-                    style="flex: none; width: 200px; margin: 0 10px"
+                    style="flex: 0.3; margin: 0 10px"
                     :placeholder="t('view.friend_list.filter_placeholder')"
                     @change="friendsListSearchChange">
                     <el-option
