@@ -1172,218 +1172,12 @@
 
             <!--//- Discord Presence Tab-->
             <el-tab-pane lazy :label="t('view.settings.category.discord_presence')">
-                <div class="options-container" style="margin-top: 0">
-                    <span class="header">{{ t('view.settings.discord_presence.discord_presence.header') }}</span>
-                    <div class="options-container-item">
-                        <span>{{ t('view.settings.discord_presence.discord_presence.description') }}</span>
-                    </div>
-                    <div class="options-container-item" @click="showVRChatConfig" style="cursor: pointer">
-                        <span>{{ t('view.settings.discord_presence.discord_presence.enable_tooltip') }}</span>
-                    </div>
-                    <br />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.enable')"
-                        :value="discordActive"
-                        @change="
-                            setDiscordActive();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.world_integration')"
-                        :value="discordWorldIntegration"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordWorldIntegration();
-                            saveDiscordOption();
-                        "
-                        :tooltip="t('view.settings.discord_presence.discord_presence.world_integration_tooltip')" />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')"
-                        :value="discordInstance"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordInstance();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.show_current_platform')"
-                        :value="discordShowPlatform"
-                        :disabled="!discordActive || !discordInstance"
-                        @change="
-                            setDiscordShowPlatform();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')"
-                        :value="!discordHideInvite"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordHideInvite();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.join_button')"
-                        :value="discordJoinButton"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordJoinButton();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.show_images')"
-                        :value="!discordHideImage"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordHideImage();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="
-                            t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')
-                        "
-                        :value="discordWorldNameAsDiscordStatus"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordWorldNameAsDiscordStatus();
-                            saveDiscordOption();
-                        " />
-                </div>
+                <DiscordSettings />
             </el-tab-pane>
 
             <!--//- "Pictures" Tab-->
             <el-tab-pane lazy :label="t('view.settings.category.pictures')">
-                <!-- redirect to tools tab -->
-                <div class="options-container" style="margin-top: 0">
-                    <span class="header">{{ t('view.settings.category.pictures') }}</span>
-                    <div class="options-container-item" style="margin-top: 15px">
-                        <el-button-group
-                            ><el-button size="small" :icon="Picture" @click="redirectToToolsTab">{{
-                                t('view.settings.advanced.advanced.screenshot_metadata')
-                            }}</el-button>
-                        </el-button-group>
-                    </div>
-                </div>
-                <!-- redirect to tools tab end -->
-
-                <div class="options-container">
-                    <span class="header">{{ t('view.tools.pictures.pictures.open_folder') }}</span>
-                    <div class="options-container-item" style="margin-top: 15px">
-                        <el-button-group>
-                            <el-button size="small" :icon="Folder" @click="redirectToToolsTab">{{
-                                t('view.tools.pictures.pictures.vrc_photos')
-                            }}</el-button>
-                            <el-button size="small" :icon="Folder" @click="redirectToToolsTab">{{
-                                t('view.tools.pictures.pictures.steam_screenshots')
-                            }}</el-button>
-                        </el-button-group>
-                    </div>
-                </div>
-
-                <!--//- Pictures | Screenshot Helper-->
-                <div class="options-container">
-                    <span class="header">{{ t('view.settings.advanced.advanced.screenshot_helper.header') }}</span>
-                    <div class="options-container-item">
-                        <span class="name">{{
-                            t('view.settings.advanced.advanced.screenshot_helper.description')
-                        }}</span>
-                    </div>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.screenshot_helper.enable')"
-                        :value="screenshotHelper"
-                        @change="setScreenshotHelper()"
-                        :tooltip="t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')"
-                        :long-label="true" />
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.screenshot_helper.modify_filename')"
-                        :value="screenshotHelperModifyFilename"
-                        @change="setScreenshotHelperModifyFilename()"
-                        :disabled="!screenshotHelper"
-                        :tooltip="t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')"
-                        :long-label="true" />
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard')"
-                        :value="screenshotHelperCopyToClipboard"
-                        @change="setScreenshotHelperCopyToClipboard()"
-                        :long-label="true" />
-                    <el-button size="small" :icon="Delete" @click="askDeleteAllScreenshotMetadata()">{{
-                        t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
-                    }}</el-button>
-                </div>
-
-                <div class="options-container">
-                    <span class="header">{{ t('view.settings.pictures.pictures.auto_delete_old_prints') }}</span>
-                    <simple-switch
-                        :label="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')"
-                        :value="autoDeleteOldPrints"
-                        @change="setAutoDeleteOldPrints()"
-                        :long-label="true" />
-                </div>
-
-                <!-- //- Pictures | User Generated Content -->
-                <div class="options-container">
-                    <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
-                    <br />
-                    <div class="options-container-item" style="margin-bottom: 5px">
-                        <span class="name" style="min-width: 300px">{{
-                            t('view.settings.advanced.advanced.user_generated_content.description')
-                        }}</span>
-                    </div>
-                    <el-button size="small" :icon="Folder" @click="openUGCFolder()">{{
-                        t('view.settings.advanced.advanced.user_generated_content.folder')
-                    }}</el-button>
-                    <el-button size="small" :icon="FolderOpened" @click="openUGCFolderSelector()">{{
-                        t('view.settings.advanced.advanced.user_generated_content.set_folder')
-                    }}</el-button>
-                    <el-button size="small" :icon="Delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
-                        t('view.settings.advanced.advanced.user_generated_content.reset_override')
-                    }}</el-button>
-                    <br />
-                    <br />
-                    <br />
-                    <span class="sub-header">{{
-                        t('view.settings.advanced.advanced.save_instance_prints_to_file.header')
-                    }}</span>
-                    <el-tooltip
-                        placement="top"
-                        style="margin-left: 5px"
-                        :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <el-icon><InfoFilled /></el-icon>
-                    </el-tooltip>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
-                        :value="saveInstancePrints"
-                        @change="setSaveInstancePrints()"
-                        :long-label="true" />
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')"
-                        :value="cropInstancePrints"
-                        @change="setCropInstancePrints()"
-                        :long-label="true" />
-                    <br />
-                    <span class="sub-header">{{
-                        t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')
-                    }}</span>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')"
-                        :value="saveInstanceStickers"
-                        @change="setSaveInstanceStickers()"
-                        :long-label="true" />
-                    <br />
-                    <span class="sub-header"
-                        >{{ t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
-                    </span>
-                    <el-tooltip
-                        placement="top"
-                        style="margin-left: 5px"
-                        :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <el-icon><InfoFilled /></el-icon>
-                    </el-tooltip>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
-                        :value="saveInstanceEmoji"
-                        @change="setSaveInstanceEmoji()"
-                        :long-label="true" />
-                </div>
+                <PictureSettings />
             </el-tab-pane>
 
             <!--//- "Advanced" Tab-->
@@ -1597,9 +1391,7 @@
                         >
                     </div>
                 </div>
-                <template v-if="photonLoggingEnabled">
-                    <Photon-Settings />
-                </template>
+
                 <!--//- Advanced | VRCX Instance Cache/Debug-->
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.cache_debug.header') }}</span>
@@ -1753,6 +1545,9 @@
         <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
         <ChangelogDialog />
         <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
+        <template v-if="photonLoggingEnabled">
+            <PhotonSettings />
+        </template>
     </div>
 </template>
 
@@ -1764,8 +1559,6 @@
         ArrowRight,
         Upload,
         Folder,
-        Delete,
-        FolderOpened,
         User,
         Tickets,
         Refresh,
@@ -1774,7 +1567,6 @@
         Document,
         Connection,
         ChatSquare,
-        Picture,
         CaretRight,
         DeleteFilled,
         Timer,
@@ -1797,7 +1589,6 @@
         useVRCXUpdaterStore,
         useNotificationsSettingsStore,
         useWristOverlaySettingsStore,
-        useDiscordPresenceSettingsStore,
         useAdvancedSettingsStore,
         useFriendStore,
         useAvatarProviderStore,
@@ -1825,6 +1616,8 @@
     import { THEME_CONFIG } from '../../shared/constants';
 
     import SimpleSwitch from './components/SimpleSwitch.vue';
+    import DiscordSettings from './components/DiscordSettings.vue';
+    import PictureSettings from './components/PictureSettings.vue';
 
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
         () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')
@@ -1848,28 +1641,7 @@
     const { cachedGroups } = useGroupStore();
     const { cachedAvatars, cachedAvatarNames } = useAvatarStore();
     const { showConsole } = useVrcxStore();
-    const {
-        discordActive,
-        discordInstance,
-        discordHideInvite,
-        discordJoinButton,
-        discordHideImage,
-        discordShowPlatform,
-        discordWorldIntegration,
-        discordWorldNameAsDiscordStatus
-    } = storeToRefs(useDiscordPresenceSettingsStore());
     const { disableGameLogDialog } = useGameLogStore();
-    const {
-        setDiscordActive,
-        setDiscordInstance,
-        setDiscordHideInvite,
-        setDiscordJoinButton,
-        setDiscordHideImage,
-        setDiscordShowPlatform,
-        setDiscordWorldIntegration,
-        setDiscordWorldNameAsDiscordStatus,
-        saveDiscordOption
-    } = useDiscordPresenceSettingsStore();
     const { photonLoggingEnabled } = storeToRefs(usePhotonStore());
     const { saveSidebarSortOrder } = useFriendStore();
     const { cachedWorlds } = useWorldStore();
@@ -2032,26 +1804,17 @@
         vrcQuitFix,
         autoSweepVRChatCache,
         selfInviteOverride,
-        saveInstancePrints,
-        cropInstancePrints,
-        saveInstanceStickers,
         avatarRemoteDatabase,
         enableAppLauncher,
         enableAppLauncherAutoClose,
         enableAppLauncherRunProcessOnce,
-        screenshotHelper,
-        screenshotHelperModifyFilename,
-        screenshotHelperCopyToClipboard,
         youTubeApi,
         progressPie,
         progressPieFilter,
         showConfirmationOnSwitchAvatar,
         gameLogDisabled,
         sqliteTableSizes,
-        ugcFolderPath,
         notificationOpacity,
-        autoDeleteOldPrints,
-        saveInstanceEmoji,
         sentryErrorReporting
     } = storeToRefs(advancedSettingsStore);
 
@@ -2060,28 +1823,16 @@
         setVrcQuitFix,
         setAutoSweepVRChatCache,
         setSelfInviteOverride,
-        setSaveInstancePrints,
-        setCropInstancePrints,
-        setSaveInstanceStickers,
         setAvatarRemoteDatabase,
         setEnableAppLauncher,
         setEnableAppLauncherAutoClose,
         setEnableAppLauncherRunProcessOnce,
-        setScreenshotHelper,
-        setScreenshotHelperModifyFilename,
-        setScreenshotHelperCopyToClipboard,
         setShowConfirmationOnSwitchAvatar,
         getSqliteTableSizes,
         setNotificationOpacity,
-        setAutoDeleteOldPrints,
-        resetUGCFolder,
-        openUGCFolder,
-        openUGCFolderSelector,
         showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
-        setSaveInstanceEmoji,
-        setSentryErrorReporting,
-        askDeleteAllScreenshotMetadata
+        setSentryErrorReporting
     } = advancedSettingsStore;
 
     const instanceTypes = ref([
