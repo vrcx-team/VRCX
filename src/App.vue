@@ -60,7 +60,7 @@
 
                 <GroupMemberModerationDialog></GroupMemberModerationDialog>
 
-                <FullscreenImageDialog></FullscreenImageDialog>
+                <FullscreenImagePreview></FullscreenImagePreview>
 
                 <PreviousInstancesInfoDialog></PreviousInstancesInfoDialog>
 
@@ -126,7 +126,7 @@
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
     import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
-    import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
+    import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
     import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import LaunchDialog from './components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
