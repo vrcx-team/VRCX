@@ -1101,26 +1101,27 @@
                                     }}</span>
                                 </template>
                                 <span style="color: #c7c7c7; padding: 10px" v-text="gallery.description" />
-                                <el-carousel :interval="0" height="600px" style="margin-top: 10px">
-                                    <el-carousel-item
+                                <div
+                                    style="
+                                        display: grid;
+                                        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                                        gap: 15px;
+                                        margin-top: 10px;
+                                        max-height: 600px;
+                                        overflow-y: auto;
+                                    ">
+                                    <el-card
                                         v-for="image in groupDialog.galleries[gallery.id]"
-                                        :key="image.id">
-                                        <el-popover placement="top" :width="700" trigger="click">
-                                            <template #reference>
-                                                <img
-                                                    :src="image.imageUrl"
-                                                    class="x-link"
-                                                    style="width: 100%; height: 100%; object-fit: contain"
-                                                    loading="lazy" />
-                                            </template>
-                                            <img
-                                                :src="image.imageUrl"
-                                                :class="['x-link', 'x-popover-image']"
-                                                @click="showFullscreenImageDialog(image.imageUrl)"
-                                                loading="lazy" />
-                                        </el-popover>
-                                    </el-carousel-item>
-                                </el-carousel>
+                                        :key="image.id"
+                                        :body-style="{ padding: '0' }"
+                                        shadow="hover">
+                                        <img
+                                            :src="image.imageUrl"
+                                            :class="['x-link', 'x-popover-image']"
+                                            @click="showFullscreenImageDialog(image.imageUrl)"
+                                            loading="lazy" />
+                                    </el-card>
+                                </div>
                             </el-tab-pane>
                         </template>
                     </el-tabs>

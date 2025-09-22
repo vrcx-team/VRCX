@@ -822,22 +822,32 @@
                                     <span class="extra">{{ formatDateFilter(userDialog.lastSeen, 'long') }}</span>
                                 </div>
                             </div>
-                            <el-tooltip placement="top" :content="t('dialog.user.info.open_previous_instance')">
-                                <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
-                                    <div class="detail">
-                                        <span class="name">
+
+                            <div class="x-friend-item" @click="showPreviousInstancesUserDialog(userDialog.ref)">
+                                <div class="detail">
+                                    <div
+                                        class="name"
+                                        style="display: flex; justify-content: space-between; align-items: center">
+                                        <div>
                                             {{ t('dialog.user.info.join_count') }}
                                             <el-tooltip
                                                 placement="top"
                                                 :content="t('dialog.user.info.accuracy_notice')">
                                                 <el-icon style="margin-left: 3px"><Warning /></el-icon>
                                             </el-tooltip>
-                                        </span>
-                                        <span v-if="userDialog.joinCount === 0" class="extra">-</span>
-                                        <span v-else class="extra" v-text="userDialog.joinCount"></span>
+                                        </div>
+
+                                        <el-tooltip
+                                            placement="top"
+                                            :content="t('dialog.user.info.open_previous_instance')">
+                                            <el-icon style="margin-right: 16px"><MoreFilled /></el-icon>
+                                        </el-tooltip>
                                     </div>
+                                    <span v-if="userDialog.joinCount === 0" class="extra">-</span>
+                                    <span v-else class="extra" v-text="userDialog.joinCount"></span>
                                 </div>
-                            </el-tooltip>
+                            </div>
+
                             <div class="x-friend-item" style="cursor: default">
                                 <div class="detail">
                                     <span class="name">
@@ -925,29 +935,21 @@
                             </div>
                         </div>
                         <div v-if="currentUser.id !== userDialog.id" class="x-friend-item" style="cursor: default">
-                            <el-tooltip placement="top" :disabled="!userDialog.dateFriendedInfo.length">
-                                <template v-if="userDialog.dateFriendedInfo.length" #content>
-                                    <template v-for="ref in userDialog.dateFriendedInfo" :key="ref.userId">
-                                        <span>{{ ref.type }}: {{ formatDateFilter(ref.created_at, 'long') }}</span
-                                        ><br />
-                                    </template>
-                                </template>
-                                <div class="detail">
-                                    <span v-if="userDialog.unFriended" class="name">
-                                        {{ t('dialog.user.info.unfriended') }}
-                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
-                                        </el-tooltip>
-                                    </span>
-                                    <span v-else class="name">
-                                        {{ t('dialog.user.info.friended') }}
-                                        <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
-                                            <el-icon style="margin-left: 3px"><Warning /></el-icon>
-                                        </el-tooltip>
-                                    </span>
-                                    <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
-                                </div>
-                            </el-tooltip>
+                            <div class="detail">
+                                <span v-if="userDialog.unFriended" class="name">
+                                    {{ t('dialog.user.info.unfriended') }}
+                                    <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                    </el-tooltip>
+                                </span>
+                                <span v-else class="name">
+                                    {{ t('dialog.user.info.friended') }}
+                                    <el-tooltip placement="top" :content="t('dialog.user.info.accuracy_notice')">
+                                        <el-icon style="margin-left: 3px"><Warning /></el-icon>
+                                    </el-tooltip>
+                                </span>
+                                <span class="extra">{{ formatDateFilter(userDialog.dateFriended, 'long') }}</span>
+                            </div>
                         </div>
                         <template v-if="currentUser.id === userDialog.id">
                             <div class="x-friend-item" @click="toggleAvatarCopying">
