@@ -1,6 +1,15 @@
 <template>
     <div v-show="menuActiveIndex === 'favorite'" class="x-container">
-        <div style="font-size: 13px; position: absolute; display: flex; right: 0; z-index: 1; margin-right: 15px">
+        <div
+            style="
+                font-size: 13px;
+                position: absolute;
+                display: flex;
+                align-items: center;
+                right: 0;
+                z-index: 1;
+                margin-right: 15px;
+            ">
             <div v-if="editFavoritesMode" style="display: inline-block; margin-right: 10px">
                 <el-button size="small" @click="clearBulkFavoriteSelection">{{ t('view.favorite.clear') }}</el-button>
                 <el-button size="small" @click="handleBulkCopyFavoriteSelection">{{

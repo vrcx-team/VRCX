@@ -7,12 +7,10 @@ import LastJoin from '../components/LastJoin.vue';
 import Launch from '../components/Launch.vue';
 import Location from '../components/Location.vue';
 import LocationWorld from '../components/LocationWorld.vue';
-import SimpleSwitch from '../components/SimpleSwitch.vue';
 import Timer from '../components/Timer.vue';
 import DataTable from '../components/DataTable.vue';
 
 export function initComponents(app) {
-    app.component('SimpleSwitch', SimpleSwitch);
     app.component('Location', Location);
     app.component('Timer', Timer);
     app.component('InstanceInfo', InstanceInfo);
