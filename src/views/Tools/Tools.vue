@@ -31,7 +31,7 @@
                         <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['image'] }"
                             ><ArrowRight
                         /></el-icon>
-                        <span class="category-title">{{ t('view.tools.image.header') }}</span>
+                        <span class="category-title">{{ t('view.tools.pictures.header') }}</span>
                     </div>
                     <div class="tools-grid" v-show="!categoryCollapsed['image']">
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
@@ -40,8 +40,10 @@
                                     <i class="ri-screenshot-2-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.image.screenshot') }}</div>
-                                    <div class="tool-description">{{ t('view.tools.image.screenshot_description') }}</div>
+                                    <div class="tool-name">{{ t('view.tools.pictures.screenshot') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.pictures.screenshot_description') }}
+                                    </div>
                                 </div>
                             </div>
                         </el-card>
@@ -51,8 +53,38 @@
                                     <i class="ri-multi-image-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.image.inventory') }}</div>
-                                    <div class="tool-description">{{ t('view.tools.image.inventory_description') }}</div>
+                                    <div class="tool-name">{{ t('view.tools.pictures.inventory') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.pictures.inventory_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </el-card>
+                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                            <div class="tool-content" @click="openVrcPhotosFolder">
+                                <div class="tool-icon">
+                                    <i class="ri-folder-image-line"></i>
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.pictures.pictures.vrc_photos') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.pictures.pictures.vrc_photos_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </el-card>
+                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                            <div class="tool-content" @click="openVrcScreenshotsFolder">
+                                <div class="tool-icon">
+                                    <i class="ri-folder-image-line"></i>
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">
+                                        {{ t('view.tools.pictures.pictures.steam_screenshots') }}
+                                    </div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.pictures.pictures.steam_screenshots_description') }}
+                                    </div>
                                 </div>
                             </div>
                         </el-card>
@@ -64,17 +96,60 @@
                         <el-icon class="rotation-transition" :class="{ 'is-rotated': !categoryCollapsed['user'] }"
                             ><ArrowRight
                         /></el-icon>
-                        <span class="category-title">{{ t('view.tools.user.header') }}</span>
+                        <span class="category-title">{{ t('view.tools.export.header') }}</span>
                     </div>
+
                     <div class="tools-grid" v-show="!categoryCollapsed['user']">
+                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                            <div class="tool-content" @click="showExportDiscordNamesDialog">
+                                <div class="tool-icon">
+                                    <i class="ri-discord-line"></i>
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.export.discord_names') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.user.discord_names_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </el-card>
                         <el-card :body-style="{ padding: '0px' }" class="tool-card">
                             <div class="tool-content" @click="showNoteExportDialog">
                                 <div class="tool-icon">
                                     <i class="ri-user-shared-line"></i>
                                 </div>
                                 <div class="tool-info">
-                                    <div class="tool-name">{{ t('view.tools.user.export_notes') }}</div>
-                                    <div class="tool-description">{{ t('view.tools.user.export_notes_description') }}</div>
+                                    <div class="tool-name">{{ t('view.tools.export.export_notes') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.export.export_notes_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </el-card>
+
+                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                            <div class="tool-content" @click="showExportFriendsListDialog">
+                                <div class="tool-icon">
+                                    <i class="ri-user-shared-line"></i>
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.export.export_friend_list') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.user.export_friend_list_description') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </el-card>
+                        <el-card :body-style="{ padding: '0px' }" class="tool-card">
+                            <div class="tool-content" @click="showExportAvatarsListDialog">
+                                <div class="tool-icon">
+                                    <i class="ri-user-shared-line"></i>
+                                </div>
+                                <div class="tool-info">
+                                    <div class="tool-name">{{ t('view.tools.export.export_own_avatars') }}</div>
+                                    <div class="tool-description">
+                                        {{ t('view.tools.user.export_own_avatars_description') }}
+                                    </div>
                                 </div>
                             </div>
                         </el-card>
@@ -93,27 +168,40 @@
                 :isNoteExportDialogVisible="isNoteExportDialogVisible"
                 @close="isNoteExportDialogVisible = false" />
             <GalleryDialog />
+            <ExportDiscordNamesDialog
+                v-model:discordNamesDialogVisible="isExportDiscordNamesDialogVisible"
+                :friends="friends" />
+            <ExportFriendsListDialog
+                v-model:isExportFriendsListDialogVisible="isExportFriendsListDialogVisible"
+                :friends="friends" />
+            <ExportAvatarsListDialog v-model:isExportAvatarsListDialogVisible="isExportAvatarsListDialogVisible" />
         </template>
     </div>
 </template>
 
 <script setup>
     import { ArrowRight } from '@element-plus/icons-vue';
+    import { ElMessage } from 'element-plus';
     import { ref, defineAsyncComponent, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { storeToRefs } from 'pinia';
-    import { useUiStore, useGalleryStore } from '../../stores';
+    import { useUiStore, useGalleryStore, useFriendStore } from '../../stores';
 
     const GroupCalendarDialog = defineAsyncComponent(() => import('./dialogs/GroupCalendarDialog.vue'));
     const ScreenshotMetadataDialog = defineAsyncComponent(() => import('./dialogs/ScreenshotMetadataDialog.vue'));
     const NoteExportDialog = defineAsyncComponent(() => import('./dialogs/NoteExportDialog.vue'));
     const GalleryDialog = defineAsyncComponent(() => import('./dialogs/GalleryDialog.vue'));
 
+    const ExportDiscordNamesDialog = defineAsyncComponent(() => import('./dialogs/ExportDiscordNamesDialog.vue'));
+    const ExportFriendsListDialog = defineAsyncComponent(() => import('./dialogs/ExportFriendsListDialog.vue'));
+    const ExportAvatarsListDialog = defineAsyncComponent(() => import('./dialogs/ExportAvatarsListDialog.vue'));
+
     const { t } = useI18n();
 
     const uiStore = useUiStore();
     const { showGalleryDialog } = useGalleryStore();
     const { menuActiveIndex } = storeToRefs(uiStore);
+    const { friends } = storeToRefs(useFriendStore());
 
     const categoryCollapsed = ref({
         group: false,
@@ -124,6 +212,9 @@
     const isGroupCalendarDialogVisible = ref(false);
     const isScreenshotMetadataDialogVisible = ref(false);
     const isNoteExportDialogVisible = ref(false);
+    const isExportDiscordNamesDialogVisible = ref(false);
+    const isExportFriendsListDialogVisible = ref(false);
+    const isExportAvatarsListDialogVisible = ref(false);
 
     const isShowToolsTab = computed(() => menuActiveIndex.value === 'tools');
 
@@ -142,6 +233,50 @@
     const toggleCategory = (category) => {
         categoryCollapsed.value[category] = !categoryCollapsed.value[category];
     };
+
+    function showExportDiscordNamesDialog() {
+        isExportDiscordNamesDialogVisible.value = true;
+    }
+
+    function showExportFriendsListDialog() {
+        isExportFriendsListDialogVisible.value = true;
+    }
+
+    function showExportAvatarsListDialog() {
+        isExportAvatarsListDialogVisible.value = true;
+    }
+
+    function openVrcPhotosFolder() {
+        AppApi.OpenVrcPhotosFolder().then((result) => {
+            if (result) {
+                ElMessage({
+                    message: 'Folder opened',
+                    type: 'success'
+                });
+            } else {
+                ElMessage({
+                    message: "Folder dosn't exist",
+                    type: 'error'
+                });
+            }
+        });
+    }
+
+    function openVrcScreenshotsFolder() {
+        AppApi.OpenVrcScreenshotsFolder().then((result) => {
+            if (result) {
+                ElMessage({
+                    message: 'Folder opened',
+                    type: 'success'
+                });
+            } else {
+                ElMessage({
+                    message: "Folder dosn't exist",
+                    type: 'error'
+                });
+            }
+        });
+    }
 </script>
 
 <style lang="scss" scoped>

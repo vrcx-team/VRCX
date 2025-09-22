@@ -258,9 +258,6 @@
                 "refresh": "คลิกเพื่อรีเฟรช",
                 "logout": "ออกจากระบบ",
                 "manage_gallery_inventory_icon": "จัดการรูปภาพและไอเทม VRC+",
-                "export_friend_list": "ส่งออกรายชื่อเพื่อน",
-                "export_own_avatars": "ส่งออกอวาตาร์ของตัวเอง",
-                "discord_names": "ชื่อ Discord",
                 "export_notes": "ส่งออกโน้ต"
             },
             "game_info": {
@@ -521,9 +518,6 @@
             "pictures": {
                 "pictures": {
                     "header": "รูปภาพ",
-                    "open_folder": "เปิดโฟลเดอร์",
-                    "vrc_photos": "รูปภาพ VRChat",
-                    "steam_screenshots": "สกรีนช็อตของ Steam",
                     "auto_delete_old_prints": "ลบ Prints เก่าอัตโนมัติ",
                     "auto_delete_prints_from_vrc": "ลบ Prints เก่าจาก VRC เมื่อถึงขีดจำกัด"
                 }
@@ -672,6 +666,20 @@
                         "filter_everyone": "ทุกคน",
                         "timeout_threshold": "เกณฑ์การหมดเวลา"
                     }
+                }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "ชื่อ Discord",
+                "export_friend_list": "ส่งออกรายชื่อเพื่อน",
+                "export_own_avatars": "ส่งออกอวาตาร์ของตัวเอง"
+            },
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "รูปภาพ VRChat",
+                    "steam_screenshots": "สกรีนช็อตของ Steam",
+                    "open_folder": "เปิดโฟลเดอร์"
                 }
             }
         }

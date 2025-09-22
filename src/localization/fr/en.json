@@ -227,9 +227,6 @@
                 "refresh": "Cliquez pour actualiser",
                 "logout": "Se déconnecter",
                 "manage_gallery_inventory_icon": "Gérer les Photos/Icônes/Emojis",
-                "export_friend_list": "Exporter la liste d'amis",
-                "export_own_avatars": "Exporter ses propres avatars",
-                "discord_names": "Pseudonymes Discord",
                 "export_notes": "Exporter des notes"
             },
             "game_info": {
@@ -609,6 +606,13 @@
                         "timeout_threshold": "Délai d'attente des seuils"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Pseudonymes Discord",
+                "export_friend_list": "Exporter la liste d'amis",
+                "export_own_avatars": "Exporter ses propres avatars"
             }
         }
     },

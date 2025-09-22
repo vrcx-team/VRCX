@@ -153,9 +153,6 @@
                 "refresh": "Kliknij, aby odświeżyć",
                 "logout": "Wyloguj się",
                 "manage_gallery_inventory_icon": "Zarządzaj obrazkami/ikonami/emoji",
-                "export_friend_list": "Eksportuj listę znajomych",
-                "export_own_avatars": "Eksportuj własne awatary",
-                "discord_names": "Nazwy Discord",
                 "export_notes": "Eksportuj notatki"
             },
             "game_info": {
@@ -519,6 +516,13 @@
                         "timeout_threshold": "Próg limitu czasu"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Nazwy Discord",
+                "export_friend_list": "Eksportuj listę znajomych",
+                "export_own_avatars": "Eksportuj własne awatary"
             }
         }
     },

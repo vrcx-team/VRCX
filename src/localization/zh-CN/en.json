@@ -252,22 +252,33 @@
         },
         "tools": {
             "header": "工具",
+            "redirect_message": "",
             "group": {
                 "header": "组织",
                 "calendar": "日历",
                 "calendar_description": "组织活动日历"
             },
-            "image": {
+            "image": {},
+            "user": {},
+            "export": {
+                "header": "导出",
+                "export_notes": "导出备注",
+                "export_notes_description": "导出好友备注到文本文件",
+                "discord_names": "查看好友的 Discord 名称",
+                "export_friend_list": "导出好友列表",
+                "export_own_avatars": "导出自己创建的模型 ID 列表"
+            },
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "VRChat 截图",
+                    "steam_screenshots": "Steam 截图",
+                    "open_folder": "打开文件夹"
+                },
                 "header": "相册",
                 "screenshot": "截屏管理",
                 "screenshot_description": "管理截图或查看截图元数据",
                 "inventory": "拍立得 & 库存管理",
                 "inventory_description": "管理拍立得 & 库存"
-            },
-            "user": {
-                "header": "用户",
-                "export_notes": "导出备注",
-                "export_notes_description": "导出好友备注到文本文件"
             }
         },
         "profile": {
@@ -281,9 +292,6 @@
                 "refresh": "点击以刷新",
                 "logout": "退出登录",
                 "manage_gallery_inventory_icon": "管理相册与库存",
-                "export_friend_list": "导出好友列表",
-                "export_own_avatars": "导出自己创建的模型 ID 列表",
-                "discord_names": "查看好友的 Discord 名称",
                 "export_notes": "导出备注"
             },
             "game_info": {
@@ -559,9 +567,6 @@
             "pictures": {
                 "pictures": {
                     "header": "截图管理",
-                    "open_folder": "打开文件夹",
-                    "vrc_photos": "VRChat 截图",
-                    "steam_screenshots": "Steam 截图",
                     "auto_delete_old_prints": "自动清理最旧的“拍立得”",
                     "auto_delete_prints_from_vrc": "当达到存储上限时自动删除最旧的“拍立得”照片"
                 }
