@@ -1051,3 +1051,7 @@ i.x-status-icon.red {
     // dropdown item focus blue background looks bad
     background-color: unset;
 }
+
+:root {
+    --el-overlay-color-lighter: rgba(0, 0, 0, 0.15);
+}
