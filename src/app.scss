@@ -241,6 +241,8 @@ a {
     padding: 10px;
     overflow: hidden auto;
     background: #fff;
+    box-sizing: border-box;
+    height: 100%;
 }
 
 .x-login-container {
@@ -366,6 +368,8 @@ hr.x-vertical-divider {
     background: #f8f8f8;
     padding: 5px;
     order: 99;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 // .el-popper.x-quick-search {

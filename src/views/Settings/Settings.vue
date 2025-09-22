@@ -586,19 +586,6 @@
                             </el-option-group>
                         </el-select>
                     </div>
-                    <div class="options-container-item">
-                        <span class="name" style="vertical-align: top; padding-top: 10px">{{
-                            t('view.settings.appearance.side_panel.width')
-                        }}</span>
-                        <el-slider
-                            :model-value="asideWidth"
-                            :show-tooltip="false"
-                            :marks="{ 300: '' }"
-                            :min="200"
-                            :max="500"
-                            style="display: inline-block; width: 300px; padding-top: 16px"
-                            @input="setAsideWidth"></el-slider>
-                    </div>
                     <simple-switch
                         :label="t('view.settings.appearance.side_panel.group_by_instance')"
                         :value="isSidebarGroupByInstance"
@@ -2075,7 +2062,6 @@
         setSidebarSortMethod1,
         setSidebarSortMethod2,
         setSidebarSortMethod3,
-        setAsideWidth,
         setIsSidebarGroupByInstance,
         setIsHideFriendsInSameInstance,
         setIsSidebarDivideByFriendGroup,
