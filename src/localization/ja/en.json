@@ -257,17 +257,27 @@
                 "calendar": "カレンダー",
                 "calendar_description": "グループのイベントカレンダー"
             },
-            "image": {
+            "image": {},
+            "user": {},
+            "export": {
+                "header": "エクスポート",
+                "export_notes": "ユーザーメモのエクスポート",
+                "export_notes_description": "VRCX ユーザーメモを VRChat ノートにエクスポート",
+                "discord_names": "Discordの名前",
+                "export_friend_list": "フレンドリストをエクスポート",
+                "export_own_avatars": "自分のアバターをエクスポート"
+            },
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "VRChatの写真",
+                    "steam_screenshots": "Steamのスクリーンショット",
+                    "open_folder": "フォルダを開く"
+                },
                 "header": "写真",
                 "screenshot": "スクリーンショットの管理",
                 "screenshot_description": "スクリーンショットの管理、メタデータを表示",
                 "inventory": "VRC+ インベントリの管理",
                 "inventory_description": "VRC+ ギャラリーとインベントリを管理"
-            },
-            "user": {
-                "header": "ユーザー",
-                "export_notes": "ユーザーメモのエクスポート",
-                "export_notes_description": "VRCX ユーザーメモを VRChat ノートにエクスポート"
             }
         },
         "profile": {
@@ -281,9 +291,6 @@
                 "refresh": "クリックして更新",
                 "logout": "ログアウト",
                 "manage_gallery_inventory_icon": "ギャラリー/インベントリを管理",
-                "export_friend_list": "フレンドリストをエクスポート",
-                "export_own_avatars": "自分のアバターをエクスポート",
-                "discord_names": "Discordの名前",
                 "export_notes": "ノートをエクスポート"
             },
             "game_info": {
@@ -559,9 +566,6 @@
             "pictures": {
                 "pictures": {
                     "header": "写真",
-                    "open_folder": "フォルダを開く",
-                    "vrc_photos": "VRChatの写真",
-                    "steam_screenshots": "Steamのスクリーンショット",
                     "auto_delete_old_prints": "古いプリントを自動削除",
                     "auto_delete_prints_from_vrc": "プリント上限に達したときVRCから古いプリントを削除"
                 }

@@ -153,9 +153,6 @@
                 "refresh": "Kattints ide a frissítéshez",
                 "logout": "Kijelentkezés",
                 "manage_gallery_inventory_icon": "Képek/ikonok/emojik kezelése",
-                "export_friend_list": "Barátlista exportálása",
-                "export_own_avatars": "Saját avatarok exportálása",
-                "discord_names": "Discord nevek",
                 "export_notes": "Jegyzetek exportálása"
             },
             "game_info": {
@@ -519,6 +516,13 @@
                         "timeout_threshold": "Timeout Threshold"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Discord nevek",
+                "export_friend_list": "Barátlista exportálása",
+                "export_own_avatars": "Saját avatarok exportálása"
             }
         }
     },

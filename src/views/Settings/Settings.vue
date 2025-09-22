@@ -637,7 +637,7 @@
                             size="small"
                             :icon="DocumentCopy"
                             style="margin-top: 5px"
-                            @click="showNoteExportDialog"
+                            @click="redirectToToolsTab"
                             >{{ t('view.settings.appearance.user_dialog.export_notes') }}</el-button
                         >
                     </div>
@@ -1270,7 +1270,7 @@
                     <span class="header">{{ t('view.settings.category.pictures') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group
-                            ><el-button size="small" :icon="Picture" @click="showScreenshotMetadataDialog()">{{
+                            ><el-button size="small" :icon="Picture" @click="redirectToToolsTab">{{
                                 t('view.settings.advanced.advanced.screenshot_metadata')
                             }}</el-button>
                         </el-button-group>
@@ -1279,14 +1279,14 @@
                 <!-- redirect to tools tab end -->
 
                 <div class="options-container">
-                    <span class="header">{{ t('view.settings.pictures.pictures.open_folder') }}</span>
+                    <span class="header">{{ t('view.tools.pictures.pictures.open_folder') }}</span>
                     <div class="options-container-item" style="margin-top: 15px">
                         <el-button-group>
-                            <el-button size="small" :icon="Folder" @click="openVrcPhotosFolder()">{{
-                                t('view.settings.pictures.pictures.vrc_photos')
+                            <el-button size="small" :icon="Folder" @click="redirectToToolsTab">{{
+                                t('view.tools.pictures.pictures.vrc_photos')
                             }}</el-button>
-                            <el-button size="small" :icon="Folder" @click="openVrcScreenshotsFolder()">{{
-                                t('view.settings.pictures.pictures.steam_screenshots')
+                            <el-button size="small" :icon="Folder" @click="redirectToToolsTab">{{
+                                t('view.tools.pictures.pictures.steam_screenshots')
                             }}</el-button>
                         </el-button-group>
                     </div>
@@ -1488,7 +1488,7 @@
                         " />
 
                     <!--//- Sentry Error Reporting (Nightly Only)-->
-                    <div v-if="isNightlyBuild">
+                    <div v-if="branch === 'Nightly'">
                         <span class="sub-header">Anonymous Error Reporting (Nightly Only)</span>
                         <simple-switch
                             label="Help improve VRCX by sending anonymous error reports. Only collects crash and error information, no personal data or VRChat information is collected."
@@ -1932,6 +1932,7 @@
     import FeedFiltersDialog from './dialogs/FeedFiltersDialog.vue';
     import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
     import { openExternalLink } from '../../shared/utils';
+    import { redirectToToolsTab } from '../../shared/utils/base/ui';
     import { THEME_CONFIG } from '../../shared/constants';
 
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
@@ -2003,6 +2004,7 @@
     const { saveOpenVROption, updateVRLastLocation, updateOpenVR, updateVRConfigVars } = useVrStore();
     const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
     const { setLocalFavoriteFriendsGroups } = useGeneralSettingsStore();
+    const { branch } = storeToRefs(useVRCXUpdaterStore());
 
     const {
         isStartAtWindowsStartup,
@@ -2176,8 +2178,7 @@
         notificationOpacity,
         autoDeleteOldPrints,
         saveInstanceEmoji,
-        sentryErrorReporting,
-        isNightlyBuild
+        sentryErrorReporting
     } = storeToRefs(advancedSettingsStore);
 
     const {
@@ -2274,18 +2275,8 @@
         feedFiltersDialogMode.value = 'wrist';
     }
 
-    // redirect to tools tab
-    function showNoteExportDialog() {
-        menuActiveIndex.value = 'tools';
-    }
-
     function showNotificationPositionDialog() {
         isNotificationPositionDialogVisible.value = true;
-    }
-
-    // redirect to tools tab
-    function showScreenshotMetadataDialog() {
-        menuActiveIndex.value = 'tools';
     }
 
     function openVrcxAppDataFolder() {
@@ -2306,38 +2297,6 @@
 
     function openVrcAppDataFolder() {
         AppApi.OpenVrcAppDataFolder().then((result) => {
-            if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
-            } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
-            }
-        });
-    }
-
-    function openVrcPhotosFolder() {
-        AppApi.OpenVrcPhotosFolder().then((result) => {
-            if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
-            } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
-            }
-        });
-    }
-
-    function openVrcScreenshotsFolder() {
-        AppApi.OpenVrcScreenshotsFolder().then((result) => {
             if (result) {
                 ElMessage({
                     message: 'Folder opened',

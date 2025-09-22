@@ -255,9 +255,6 @@
                 "refresh": "Haz clic para actualizar",
                 "logout": "Cerrar Sesión",
                 "manage_gallery_inventory_icon": "Gestionar Imágenes de VRC+",
-                "export_friend_list": "Exportar Lista de Amigos",
-                "export_own_avatars": "Exportar Avatares Propios",
-                "discord_names": "Nombres de Discord",
                 "export_notes": "Exportar Notas"
             },
             "game_info": {
@@ -653,6 +650,13 @@
                         "timeout_threshold": "Umbral de Tiempo de Espera"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Nombres de Discord",
+                "export_friend_list": "Exportar Lista de Amigos",
+                "export_own_avatars": "Exportar Avatares Propios"
             }
         }
     },

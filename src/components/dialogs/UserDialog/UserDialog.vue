@@ -1832,7 +1832,7 @@
         formatDateFilter,
         getFaviconUrl
     } from '../../../shared/utils';
-    import { getNextDialogIndex } from '../../../shared/utils/base/ui';
+    import { getNextDialogIndex, redirectToToolsTab } from '../../../shared/utils/base/ui';
     import {
         useAdvancedSettingsStore,
         useAppearanceSettingsStore,
@@ -1894,7 +1894,7 @@
     const { logout } = useAuthStore();
     const { cachedConfig } = storeToRefs(useAuthStore());
     const { applyPlayerModeration, handlePlayerModerationDelete } = useModerationStore();
-    const { shiftHeld, menuActiveIndex } = storeToRefs(useUiStore());
+    const { shiftHeld } = storeToRefs(useUiStore());
 
     watch(
         () => userDialog.value.loading,
@@ -2309,9 +2309,8 @@
         } else if (command === 'Previous Instances') {
             showPreviousInstancesUserDialog(D.ref);
         } else if (command === 'Manage Gallery') {
-            // redirect to tools tab
             userDialog.value.visible = false;
-            menuActiveIndex.value = 'tools';
+            redirectToToolsTab();
         } else if (command === 'Invite To Group') {
             showInviteGroupDialog('', D.id);
             // } else if (command === 'Send Boop') {

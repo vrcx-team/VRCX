@@ -153,9 +153,6 @@
                 "refresh": "새로고침",
                 "logout": "로그아웃",
                 "manage_gallery_inventory_icon": "Manage Photos/Icons/Emojis",
-                "export_friend_list": "친구 목록 내보내기",
-                "export_own_avatars": "내 아바타 목록 내보내기",
-                "discord_names": "디스코드 아이디",
                 "export_notes": "메모 내보내기"
             },
             "game_info": {
@@ -519,6 +516,13 @@
                         "timeout_threshold": "표시 시간 설정"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "디스코드 아이디",
+                "export_friend_list": "친구 목록 내보내기",
+                "export_own_avatars": "내 아바타 목록 내보내기"
             }
         }
     },

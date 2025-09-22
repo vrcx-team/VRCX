@@ -161,9 +161,6 @@
                 "refresh": "Obnovit",
                 "logout": "Odhlásit se",
                 "manage_gallery_inventory_icon": "Manage Photos/Icons/Emojis/Stickers",
-                "export_friend_list": "Exportovat seznam přátel",
-                "export_own_avatars": "Exportovat vlastní avatary",
-                "discord_names": "Discord Jména",
                 "export_notes": "Exportovat Poznámky "
             },
             "game_info": {
@@ -541,6 +538,13 @@
                         "timeout_threshold": "Timeout Threshold"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Discord Jména",
+                "export_friend_list": "Exportovat seznam přátel",
+                "export_own_avatars": "Exportovat vlastní avatary"
             }
         }
     },

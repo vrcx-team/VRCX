@@ -153,9 +153,6 @@
                 "refresh": "Bấm để làm mới",
                 "logout": "Đăng xuất",
                 "manage_gallery_inventory_icon": "Quản lý Ảnh/Icons/Emojis",
-                "export_friend_list": "Xuất dữ liệu danh sách bạn bè",
-                "export_own_avatars": "Xuất dữ liệu avatar cá nhân",
-                "discord_names": "Tên Discord",
                 "export_notes": "Xuất dữ liệu ghi chú"
             },
             "game_info": {
@@ -519,6 +516,13 @@
                         "timeout_threshold": "Timeout Threshold"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Tên Discord",
+                "export_friend_list": "Xuất dữ liệu danh sách bạn bè",
+                "export_own_avatars": "Xuất dữ liệu avatar cá nhân"
             }
         }
     },

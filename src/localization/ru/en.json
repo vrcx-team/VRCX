@@ -258,9 +258,6 @@
                 "refresh": "Нажмите, чтобы обновить",
                 "logout": "Выйти",
                 "manage_gallery_inventory_icon": "Управление Фото/Иконки/Эмодзи",
-                "export_friend_list": "Экспорт списка друзей",
-                "export_own_avatars": "Экспортировать свои аватары",
-                "discord_names": "Имена Discord",
                 "export_notes": "Экспорт заметок"
             },
             "game_info": {
@@ -656,6 +653,13 @@
                         "timeout_threshold": "Порог таймаута"
                     }
                 }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Имена Discord",
+                "export_friend_list": "Экспорт списка друзей",
+                "export_own_avatars": "Экспортировать свои аватары"
             }
         }
     },

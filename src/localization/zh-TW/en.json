@@ -261,9 +261,6 @@
                 "refresh": "點擊以重新整理",
                 "logout": "登出",
                 "manage_gallery_inventory_icon": "管理相簿 / 圖示 / 表情符號",
-                "export_friend_list": "匯出好友列表",
-                "export_own_avatars": "匯出私有角色",
-                "discord_names": "Discord 名稱",
                 "export_notes": "匯出備註"
             },
             "game_info": {
@@ -535,9 +532,6 @@
             "pictures": {
                 "pictures": {
                     "header": "照片",
-                    "open_folder": "開啟資料夾",
-                    "vrc_photos": "VRChat 照片",
-                    "steam_screenshots": "Steam 截圖",
                     "auto_delete_old_prints": "自動刪除舊拍立得",
                     "auto_delete_prints_from_vrc": "達到拍立得上限時，從 VRC 刪除舊拍立得"
                 }
@@ -693,6 +687,20 @@
                         "filter_everyone": "所有人",
                         "timeout_threshold": "超時閾值"
                     }
+                }
+            }
+        },
+        "tools": {
+            "export": {
+                "discord_names": "Discord 名稱",
+                "export_friend_list": "匯出好友列表",
+                "export_own_avatars": "匯出私有角色"
+            },
+            "pictures": {
+                "pictures": {
+                    "vrc_photos": "VRChat 照片",
+                    "steam_screenshots": "Steam 截圖",
+                    "open_folder": "開啟資料夾"
                 }
             }
         }
