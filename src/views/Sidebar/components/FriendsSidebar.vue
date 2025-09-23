@@ -139,7 +139,7 @@
             <el-icon class="rotation-transition" :class="{ 'is-rotated': isActiveFriends }"><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.active') }} &horbar; {{ activeFriends.length }}</span>
         </div>
-        <div v-show="isActiveFriends">
+        <div v-if="isActiveFriends">
             <friend-item
                 v-for="friend in activeFriends"
                 :key="friend.id"
@@ -157,7 +157,7 @@
             <el-icon class="rotation-transition" :class="{ 'is-rotated': isOfflineFriends }"><ArrowRight /></el-icon>
             <span style="margin-left: 5px">{{ t('side_panel.offline') }} &horbar; {{ offlineFriends.length }}</span>
         </div>
-        <div v-show="isOfflineFriends">
+        <div v-if="isOfflineFriends">
             <friend-item
                 v-for="friend in offlineFriends"
                 :key="friend.id"
