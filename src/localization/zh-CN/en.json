@@ -591,7 +591,7 @@
                     },
                     "self_invite": {
                         "header": "自我邀请",
-                        "description": "给自己发送一个邀请通知，而不是在 VRChat 中直接打开对应房间"
+                        "description": "直接给自己发送邀请，而不是在游戏中打开房间页面"
                     },
                     "save_instance_prints_to_file": {
                         "header": "“拍立得”照片保存选项",
