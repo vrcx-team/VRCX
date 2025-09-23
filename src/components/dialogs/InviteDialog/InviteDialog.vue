@@ -2,6 +2,7 @@
     <el-dialog
         class="x-dialog"
         :model-value="inviteDialog.visible"
+        @close="closeInviteDialog"
         :title="t('dialog.invite.header')"
         width="500px"
         append-to-body>
