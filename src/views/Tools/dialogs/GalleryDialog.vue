@@ -6,6 +6,13 @@
         width="97vw"
         append-to-body
         @close="closeGalleryDialog">
+        <el-progress
+            v-if="isUploading"
+            :show-text="false"
+            :indeterminate="true"
+            :percentage="100"
+            :stroke-width="3"
+            style="margin-bottom: 12px" />
         <el-tabs type="card" ref="galleryTabs">
             <el-tab-pane v-loading="galleryDialogGalleryLoading">
                 <template #label>
@@ -34,7 +41,7 @@
                         size="small"
                         @click="displayGalleryUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus">
+                        :disabled="!currentUser.$isVRCPlus || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                     <el-button
@@ -108,7 +115,7 @@
                         size="small"
                         @click="displayVRCPlusIconUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus">
+                        :disabled="!currentUser.$isVRCPlus || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                     <el-button
@@ -183,7 +190,7 @@
                             size="small"
                             @click="displayEmojiUpload"
                             :icon="Upload"
-                            :disabled="!currentUser.$isVRCPlus">
+                            :disabled="!currentUser.$isVRCPlus || isUploading">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
@@ -331,7 +338,7 @@
                         size="small"
                         @click="displayStickerUpload"
                         :icon="Upload"
-                        :disabled="!currentUser.$isVRCPlus">
+                        :disabled="!currentUser.$isVRCPlus || isUploading">
                         {{ t('dialog.gallery_icons.upload') }}
                     </el-button>
                 </el-button-group>
@@ -398,7 +405,7 @@
                             size="small"
                             @click="displayPrintUpload"
                             :icon="Upload"
-                            :disabled="!currentUser.$isVRCPlus">
+                            :disabled="!currentUser.$isVRCPlus || isUploading">
                             {{ t('dialog.gallery_icons.upload') }}
                         </el-button>
                     </el-button-group>
@@ -540,12 +547,13 @@
     import { ElMessage, ElMessageBox } from 'element-plus';
     import { Refresh, Upload, Close, Picture, Delete, Plus, Present } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { miscRequest, userRequest, vrcPlusIconRequest, vrcPlusImageRequest, inventoryRequest } from '../../../api';
     import { AppDebug } from '../../../service/appConfig';
     import { emojiAnimationStyleList, emojiAnimationStyleUrl } from '../../../shared/constants';
     import { extractFileId, formatDateFilter, getEmojiFileName, getPrintFileName } from '../../../shared/utils';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { useAdvancedSettingsStore, useAuthStore, useGalleryStore, useUserStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -589,52 +597,65 @@
     const emojiAnimationStyle = ref('Stop');
     const emojiAnimLoopPingPong = ref(false);
 
+    const pendingUploads = ref(0);
+    const isUploading = computed(() => pendingUploads.value > 0);
+
+    function startUpload() {
+        pendingUploads.value += 1;
+    }
+
+    function finishUpload() {
+        pendingUploads.value = Math.max(0, pendingUploads.value - 1);
+    }
+
     function closeGalleryDialog() {
         galleryDialogVisible.value = false;
     }
 
     function onFileChangeGallery(e) {
-        const clearFile = function () {
-            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#GalleryUploadButton'));
-            if (fileInput) {
-                fileInput.value = '';
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#GalleryUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
+            return;
+        }
+        startUpload();
+        const r = new FileReader();
+        const handleReaderError = () => finishUpload();
+        r.onerror = handleReaderError;
+        r.onabort = handleReaderError;
+        r.onload = function () {
+            try {
+                const base64Body = btoa(r.result.toString());
+                vrcPlusImageRequest
+                    .uploadGalleryImage(base64Body)
+                    .then((args) => {
+                        handleGalleryImageAdd(args);
+                        ElMessage({
+                            message: t('message.gallery.uploaded'),
+                            type: 'success'
+                        });
+                        return args;
+                    })
+                    .catch((error) => {
+                        console.error('Failed to upload', error);
+                    })
+                    .finally(() => finishUpload());
+            } catch (error) {
+                finishUpload();
+                console.error('Failed to process image', error);
             }
         };
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length) {
-            return;
+        try {
+            r.readAsBinaryString(file);
+        } catch (error) {
+            clearInput();
+            finishUpload();
+            console.error('Failed to read file', error);
         }
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        const r = new FileReader();
-        r.onload = function () {
-            const base64Body = btoa(r.result.toString());
-            vrcPlusImageRequest.uploadGalleryImage(base64Body).then((args) => {
-                handleGalleryImageAdd(args);
-                ElMessage({
-                    message: t('message.gallery.uploaded'),
-                    type: 'success'
-                });
-                return args;
-            });
-        };
-        r.readAsBinaryString(files[0]);
-        clearFile();
+        clearInput();
     }
 
     function displayGalleryUpload() {
@@ -693,49 +714,51 @@
     }
 
     function onFileChangeVRCPlusIcon(e) {
-        const clearFile = function () {
-            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#VRCPlusIconUploadButton'));
-            if (fileInput) {
-                fileInput.value = '';
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#VRCPlusIconUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
+            return;
+        }
+        startUpload();
+        const r = new FileReader();
+        const handleReaderError = () => finishUpload();
+        r.onerror = handleReaderError;
+        r.onabort = handleReaderError;
+        r.onload = function () {
+            try {
+                const base64Body = btoa(r.result.toString());
+                vrcPlusIconRequest
+                    .uploadVRCPlusIcon(base64Body)
+                    .then((args) => {
+                        if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
+                            VRCPlusIconsTable.value.unshift(args.json);
+                        }
+                        ElMessage({
+                            message: t('message.icon.uploaded'),
+                            type: 'success'
+                        });
+                        return args;
+                    })
+                    .catch((error) => {
+                        console.error('Failed to upload VRC+ icon', error);
+                    })
+                    .finally(() => finishUpload());
+            } catch (error) {
+                finishUpload();
+                console.error('Failed to process upload', error);
             }
         };
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length) {
-            return;
+        try {
+            r.readAsBinaryString(file);
+        } catch (error) {
+            clearInput();
+            finishUpload();
+            console.error('Failed to read file', error);
         }
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        const r = new FileReader();
-        r.onload = function () {
-            const base64Body = btoa(r.result.toString());
-            vrcPlusIconRequest.uploadVRCPlusIcon(base64Body).then((args) => {
-                if (Object.keys(VRCPlusIconsTable.value).length !== 0) {
-                    VRCPlusIconsTable.value.unshift(args.json);
-                }
-                ElMessage({
-                    message: t('message.icon.uploaded'),
-                    type: 'success'
-                });
-                return args;
-            });
-        };
-        r.readAsBinaryString(files[0]);
-        clearFile();
+        clearInput();
     }
 
     function displayVRCPlusIconUpload() {
@@ -816,63 +839,65 @@
     }
 
     function onFileChangeEmoji(e) {
-        const clearFile = function () {
-            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#EmojiUploadButton'));
-            if (fileInput) {
-                fileInput.value = '';
-            }
-        };
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length) {
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#EmojiUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
             return;
         }
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
+        startUpload();
         // set Emoji settings from fileName
-        parseEmojiFileName(files[0].name);
+        parseEmojiFileName(file.name);
         const r = new FileReader();
+        const handleReaderError = () => finishUpload();
+        r.onerror = handleReaderError;
+        r.onabort = handleReaderError;
         r.onload = function () {
-            const params = {
-                tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
-                animationStyle: emojiAnimationStyle.value.toLowerCase(),
-                maskTag: 'square'
-            };
-            if (emojiAnimType.value) {
-                params.frames = emojiAnimFrameCount.value;
-                params.framesOverTime = emojiAnimFps.value;
-            }
-            if (emojiAnimLoopPingPong.value) {
-                params.loopStyle = 'pingpong';
-            }
-            const base64Body = btoa(r.result.toString());
-            vrcPlusImageRequest.uploadEmoji(base64Body, params).then((args) => {
-                if (Object.keys(emojiTable.value).length !== 0) {
-                    emojiTable.value.unshift(args.json);
+            try {
+                const params = {
+                    tag: emojiAnimType.value ? 'emojianimated' : 'emoji',
+                    animationStyle: emojiAnimationStyle.value.toLowerCase(),
+                    maskTag: 'square'
+                };
+                if (emojiAnimType.value) {
+                    params.frames = emojiAnimFrameCount.value;
+                    params.framesOverTime = emojiAnimFps.value;
                 }
-                ElMessage({
-                    message: t('message.emoji.uploaded'),
-                    type: 'success'
-                });
-                return args;
-            });
+                if (emojiAnimLoopPingPong.value) {
+                    params.loopStyle = 'pingpong';
+                }
+                const base64Body = btoa(r.result.toString());
+                vrcPlusImageRequest
+                    .uploadEmoji(base64Body, params)
+                    .then((args) => {
+                        if (Object.keys(emojiTable.value).length !== 0) {
+                            emojiTable.value.unshift(args.json);
+                        }
+                        ElMessage({
+                            message: t('message.emoji.uploaded'),
+                            type: 'success'
+                        });
+                        return args;
+                    })
+                    .catch((error) => {
+                        console.error('Failed to upload', error);
+                    })
+                    .finally(() => finishUpload());
+            } catch (error) {
+                finishUpload();
+                console.error('Failed to process upload', error);
+            }
         };
-        r.readAsBinaryString(files[0]);
-        clearFile();
+        try {
+            r.readAsBinaryString(file);
+        } catch (error) {
+            clearInput();
+            finishUpload();
+            console.error('Failed to read file', error);
+        }
+        clearInput();
     }
 
     function displayEmojiUpload() {
@@ -913,51 +938,53 @@
     }
 
     function onFileChangeSticker(e) {
-        const clearFile = function () {
-            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#StickerUploadButton'));
-            if (fileInput) {
-                fileInput.value = '';
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#StickerUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
+            return;
+        }
+        startUpload();
+        const r = new FileReader();
+        const handleReaderError = () => finishUpload();
+        r.onerror = handleReaderError;
+        r.onabort = handleReaderError;
+        r.onload = function () {
+            try {
+                const params = {
+                    tag: 'sticker',
+                    maskTag: 'square'
+                };
+                const base64Body = btoa(r.result.toString());
+                vrcPlusImageRequest
+                    .uploadSticker(base64Body, params)
+                    .then((args) => {
+                        handleStickerAdd(args);
+                        ElMessage({
+                            message: t('message.sticker.uploaded'),
+                            type: 'success'
+                        });
+                        return args;
+                    })
+                    .catch((error) => {
+                        console.error('Failed to upload', error);
+                    })
+                    .finally(() => finishUpload());
+            } catch (error) {
+                finishUpload();
+                console.error('Failed to process upload', error);
             }
         };
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length) {
-            return;
+        try {
+            r.readAsBinaryString(file);
+        } catch (error) {
+            clearInput();
+            finishUpload();
+            console.error('Failed to read file', error);
         }
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        const r = new FileReader();
-        r.onload = function () {
-            const params = {
-                tag: 'sticker',
-                maskTag: 'square'
-            };
-            const base64Body = btoa(r.result.toString());
-            vrcPlusImageRequest.uploadSticker(base64Body, params).then((args) => {
-                handleStickerAdd(args);
-                ElMessage({
-                    message: t('message.sticker.uploaded'),
-                    type: 'success'
-                });
-                return args;
-            });
-        };
-        r.readAsBinaryString(files[0]);
-        clearFile();
+        clearInput();
     }
 
     function displayStickerUpload() {
@@ -980,60 +1007,62 @@
     }
 
     function onFileChangePrint(e) {
-        const clearFile = function () {
-            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#PrintUploadButton'));
-            if (fileInput) {
-                fileInput.value = '';
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#PrintUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
+            return;
+        }
+        startUpload();
+        const r = new FileReader();
+        const handleReaderError = () => finishUpload();
+        r.onerror = handleReaderError;
+        r.onabort = handleReaderError;
+        r.onload = function () {
+            try {
+                const date = new Date();
+                // why the fuck isn't this UTC
+                date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+                const timestamp = date.toISOString().slice(0, 19);
+                const params = {
+                    note: printUploadNote.value,
+                    // worldId: '',
+                    timestamp
+                };
+                const base64Body = btoa(r.result.toString());
+                const cropWhiteBorder = printCropBorder.value;
+                vrcPlusImageRequest
+                    .uploadPrint(base64Body, cropWhiteBorder, params)
+                    .then((args) => {
+                        ElMessage({
+                            message: t('message.print.uploaded'),
+                            type: 'success'
+                        });
+                        if (Object.keys(printTable.value).length !== 0) {
+                            printTable.value.unshift(args.json);
+                        }
+
+                        return args;
+                    })
+                    .catch((error) => {
+                        console.error('Failed to upload', error);
+                    })
+                    .finally(() => finishUpload());
+            } catch (error) {
+                finishUpload();
+                console.error('Failed to process upload', error);
             }
         };
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length) {
-            return;
+        try {
+            r.readAsBinaryString(file);
+        } catch (error) {
+            clearInput();
+            finishUpload();
+            console.error('Failed to read file', error);
         }
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        const r = new FileReader();
-        r.onload = function () {
-            const date = new Date();
-            // why the fuck isn't this UTC
-            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-            const timestamp = date.toISOString().slice(0, 19);
-            const params = {
-                note: printUploadNote.value,
-                // worldId: '',
-                timestamp
-            };
-            const base64Body = btoa(r.result.toString());
-            const cropWhiteBorder = printCropBorder.value;
-            vrcPlusImageRequest.uploadPrint(base64Body, cropWhiteBorder, params).then((args) => {
-                ElMessage({
-                    message: t('message.print.uploaded'),
-                    type: 'success'
-                });
-                if (Object.keys(printTable.value).length !== 0) {
-                    printTable.value.unshift(args.json);
-                }
-
-                return args;
-            });
-        };
-        r.readAsBinaryString(files[0]);
-        clearFile();
+        clearInput();
     }
 
     function displayPrintUpload() {

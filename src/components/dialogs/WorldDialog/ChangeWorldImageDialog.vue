@@ -6,17 +6,30 @@
         width="850px"
         append-to-body
         @close="closeDialog">
-        <div v-loading="changeWorldImageDialogLoading">
+        <div>
             <input
                 id="WorldImageUploadButton"
                 type="file"
                 accept="image/*"
                 style="display: none"
                 @change="onFileChangeWorldImage" />
+            <el-progress
+                v-if="changeWorldImageDialogLoading"
+                :show-text="false"
+                :indeterminate="true"
+                :percentage="100"
+                :stroke-width="3"
+                style="margin-bottom: 12px" />
             <span>{{ t('dialog.change_content_image.description') }}</span>
             <br />
             <el-button-group style="padding-bottom: 10px; padding-top: 10px">
-                <el-button type="default" size="small" :icon="Upload" @click="uploadWorldImage">
+                <el-button
+                    type="default"
+                    size="small"
+                    :icon="Upload"
+                    :loading="changeWorldImageDialogLoading"
+                    :disabled="changeWorldImageDialogLoading"
+                    @click="uploadWorldImage">
                     {{ t('dialog.change_content_image.upload') }}
                 </el-button>
             </el-button-group>
@@ -35,6 +48,7 @@
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { worldRequest } from '../../../api';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { useWorldStore } from '../../../stores';
 
     const { t } = useI18n();
@@ -42,7 +56,7 @@
     const { worldDialog } = storeToRefs(useWorldStore());
     const { applyWorld } = useWorldStore();
 
-    const props = defineProps({
+    defineProps({
         changeWorldImageDialogVisible: {
             type: Boolean,
             required: true
@@ -67,39 +81,26 @@
     }
 
     function onFileChangeWorldImage(e) {
-        const clearFile = function () {
-            changeWorldImageDialogLoading.value = false;
-            const fileInput = /** @type{HTMLInputElement} */ (document.querySelector('#WorldImageUploadButton'));
-            if (fileInput) {
-                fileInput.value = '';
-            }
-        };
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length || !worldDialog.value.visible || worldDialog.value.loading) {
-            clearFile();
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#WorldImageUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
             return;
         }
-
-        // validate file
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearFile();
+        if (!worldDialog.value.visible || worldDialog.value.loading) {
+            clearInput();
             return;
         }
 
         const r = new FileReader();
+        const finalize = () => {
+            changeWorldImageDialogLoading.value = false;
+            clearInput();
+        };
+        r.onerror = finalize;
+        r.onabort = finalize;
         r.onload = async function () {
             try {
                 const base64File = await resizeImageToFitLimits(btoa(r.result.toString()));
@@ -108,12 +109,17 @@
             } catch (error) {
                 console.error('World image upload process failed:', error);
             } finally {
-                clearFile();
+                finalize();
             }
         };
 
         changeWorldImageDialogLoading.value = true;
-        r.readAsBinaryString(files[0]);
+        try {
+            r.readAsBinaryString(file);
+        } catch (error) {
+            console.error('Failed to read file', error);
+            finalize();
+        }
     }
 
     async function initiateUpload(base64File) {

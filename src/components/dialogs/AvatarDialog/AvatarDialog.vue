@@ -371,10 +371,18 @@
                                 :disabled="!!avatarDialog.galleryLoading"
                                 size="small"
                                 :icon="Upload"
+                                :loading="!!avatarDialog.galleryLoading"
                                 style="margin-left: 5px"
                                 @click="displayAvatarGalleryUpload"
                                 >{{ t('dialog.screenshot_metadata.upload') }}</el-button
                             >
+                            <el-progress
+                                v-if="avatarDialog.galleryLoading"
+                                :show-text="false"
+                                :indeterminate="true"
+                                :percentage="100"
+                                :stroke-width="3"
+                                style="margin: 10px 0; max-width: 240px" />
                             <el-carousel
                                 v-if="avatarDialog.galleryImages.length"
                                 type="card"
@@ -620,6 +628,7 @@
         formatDateFilter,
         textToHex
     } from '../../../shared/utils';
+    import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { getNextDialogIndex } from '../../../shared/utils/base/ui';
     import { useAvatarStore, useFavoriteStore, useGalleryStore, useGameStore, useUserStore } from '../../../stores';
 
@@ -1158,54 +1167,51 @@
     }
 
     function onFileChangeAvatarGallery(e) {
-        const clearFile = function () {
-            const fileInput = /** @type {HTMLInputElement} */ (document.querySelector('#AvatarGalleryUploadButton'));
-            if (fileInput) {
-                fileInput.value = '';
-            }
-        };
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length) {
-            return;
-        }
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearFile();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearFile();
+        const { file, clearInput } = handleImageUploadInput(e, {
+            inputSelector: '#AvatarGalleryUploadButton',
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image')
+        });
+        if (!file) {
             return;
         }
         const r = new FileReader();
-        r.onload = function () {
-            avatarDialog.value.galleryLoading = true;
-            const base64Body = btoa(r.result.toString());
-            avatarRequest
-                .uploadAvatarGalleryImage(base64Body, avatarDialog.value.id)
-                .then(async (args) => {
-                    ElMessage({
-                        message: t('message.avatar_gallery.uploaded'),
-                        type: 'success'
-                    });
-                    console.log(args);
-                    avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
-                    return args;
-                })
-                .finally(() => {
-                    avatarDialog.value.galleryLoading = false;
-                });
+        const resetLoading = () => {
+            avatarDialog.value.galleryLoading = false;
+            clearInput();
         };
-        r.readAsBinaryString(files[0]);
-        clearFile();
+        r.onerror = resetLoading;
+        r.onabort = resetLoading;
+        r.onload = function () {
+            try {
+                avatarDialog.value.galleryLoading = true;
+                const base64Body = btoa(r.result.toString());
+                avatarRequest
+                    .uploadAvatarGalleryImage(base64Body, avatarDialog.value.id)
+                    .then(async (args) => {
+                        ElMessage({
+                            message: t('message.avatar_gallery.uploaded'),
+                            type: 'success'
+                        });
+                        console.log(args);
+                        avatarDialog.value.galleryImages = await getAvatarGallery(avatarDialog.value.id);
+                        return args;
+                    })
+                    .catch((error) => {
+                        console.error('Failed to upload image', error);
+                    })
+                    .finally(resetLoading);
+            } catch (error) {
+                console.error('Failed to process image', error);
+                resetLoading();
+            }
+        };
+        try {
+            r.readAsBinaryString(file);
+        } catch (error) {
+            console.error('Failed to read file', error);
+            resetLoading();
+        }
     }
 
     function reorderAvatarGalleryImage(imageUrl, direction) {
