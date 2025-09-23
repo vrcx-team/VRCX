@@ -125,8 +125,17 @@ export const useSearchStore = defineStore('Search', () => {
             return;
         }
 
+        if (query.length < 2) {
+            state.quickSearchItems = quickSearchUserHistory();
+            return;
+        }
+
         const results = [];
         const cleanQuery = removeWhitespace(query);
+        if (!cleanQuery) {
+            state.quickSearchItems = quickSearchUserHistory();
+            return;
+        }
 
         for (const ctx of friendStore.friends.values()) {
             if (typeof ctx.ref === 'undefined') {
