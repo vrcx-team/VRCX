@@ -28,14 +28,6 @@ namespace VRCX
             }
         };
 
-        public string MD5File(string blob)
-        {
-            var fileData = Convert.FromBase64CharArray(blob.ToCharArray(), 0, blob.Length);
-            using var md5 = MD5.Create();
-            var md5Hash = md5.ComputeHash(fileData);
-            return Convert.ToBase64String(md5Hash);
-        }
-
         public int GetColourFromUserID(string userId)
         {
             var hash = _hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));

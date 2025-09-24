@@ -21,6 +21,7 @@ import groupRequest from './group';
 import authRequest from './auth';
 import inventoryRequest from './inventory';
 import propRequest from './prop';
+import imageRequest from './image';
 
 window.request = {
     request,
@@ -40,7 +41,8 @@ window.request = {
     authRequest,
     groupRequest,
     inventoryRequest,
-    propRequest
+    propRequest,
+    imageRequest
 };
 
 export {
@@ -61,5 +63,6 @@ export {
     authRequest,
     groupRequest,
     inventoryRequest,
-    propRequest
+    propRequest,
+    imageRequest
 };
