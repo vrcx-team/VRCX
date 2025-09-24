@@ -259,7 +259,7 @@
     import { ElMessageBox } from 'element-plus';
     import { Loading, Refresh, Close, RefreshLeft } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { nextTick, reactive, ref, watch } from 'vue';
+    import { nextTick, onMounted, reactive, ref, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { friendRequest, userRequest } from '../../api';
     import removeConfusables, { removeWhitespace } from '../../service/confusables';
@@ -311,6 +311,10 @@
 
     watch(menuActiveIndex, (val) => {
         if (val === 'friendList') nextTick(friendsListSearchChange);
+    });
+
+    onMounted(() => {
+        friendsListSearchChange();
     });
 
     function friendsListSearchChange() {
