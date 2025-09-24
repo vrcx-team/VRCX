@@ -51,7 +51,8 @@ export const useDiscordPresenceSettingsStore = defineStore(
                 joinUrl: '',
                 worldLink: '',
                 accessName: '',
-                groupAccessType: ''
+                groupAccessType: '',
+                groupAccessName: ''
             }
         });
 
@@ -190,7 +191,8 @@ export const useDiscordPresenceSettingsStore = defineStore(
                     joinUrl: '',
                     worldLink: '',
                     accessName: '',
-                    groupAccessType: ''
+                    groupAccessType: '',
+                    groupAccessName: ''
                 };
                 try {
                     const args = await worldRequest.getCachedWorld({
@@ -234,13 +236,14 @@ export const useDiscordPresenceSettingsStore = defineStore(
                         }
                     }
                 }
+                state.lastLocationDetails.groupAccessType = L.groupAccessType;
                 if (L.groupAccessType) {
                     if (L.groupAccessType === 'public') {
-                        state.lastLocationDetails.groupAccessType = t(
+                        state.lastLocationDetails.groupAccessName = t(
                             'dialog.new_instance.group_access_type_public'
                         );
                     } else if (L.groupAccessType === 'plus') {
-                        state.lastLocationDetails.groupAccessType = t(
+                        state.lastLocationDetails.groupAccessName = t(
                             'dialog.new_instance.group_access_type_plus'
                         );
                     }
@@ -267,7 +270,7 @@ export const useDiscordPresenceSettingsStore = defineStore(
                         try {
                             const groupName = await getGroupName(L.groupId);
                             if (groupName) {
-                                state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_group')}${state.lastLocationDetails.groupAccessType}(${groupName}) #${L.instanceName}${platform}`;
+                                state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_group')}${state.lastLocationDetails.groupAccessName}(${groupName}) #${L.instanceName}${platform}`;
                             }
                         } catch (e) {
                             console.error(
