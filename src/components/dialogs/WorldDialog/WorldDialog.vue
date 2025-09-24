@@ -283,7 +283,7 @@
                                         <el-dropdown-item :icon="Edit" command="Change Allowed Domains">
                                             {{ t('dialog.world.actions.change_allowed_video_player_domains') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item :icon="Picture" command="Change Image">
+                                        <el-dropdown-item v-if="isWindows" :icon="Picture" command="Change Image">
                                             {{ t('dialog.world.actions.change_image') }}
                                         </el-dropdown-item>
                                         <el-dropdown-item
@@ -862,6 +862,8 @@
         }
     });
 
+    const isWindows = computed(() => WINDOWS);
+
     const memo = computed({
         get() {
             return worldDialog.value.memo;
@@ -966,7 +968,7 @@
         treeData.value = [];
     }
 
-    function showChangeAvatarImageDialog() {
+    function showChangeWorldImageDialog() {
         const { imageUrl } = worldDialog.value.ref;
         previousImageUrl.value = imageUrl;
         changeWorldImageDialogVisible.value = true;
@@ -1120,7 +1122,7 @@
                 openExternalLink(replaceVrcPackageUrl(worldDialog.value.ref.unityPackageUrl));
                 break;
             case 'Change Image':
-                showChangeAvatarImageDialog();
+                showChangeWorldImageDialog();
                 break;
             case 'Refresh':
                 showWorldDialog(D.id);

@@ -35,7 +35,7 @@
             </el-button-group>
             <br />
             <div class="x-change-image-item">
-                <img :src="currentImageUrl" class="img-size" loading="lazy" />
+                <img :src="previousImageUrl" class="img-size" loading="lazy" />
             </div>
         </div>
     </el-dialog>
@@ -45,18 +45,21 @@
     import { ElMessage } from 'element-plus';
     import { Upload } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { computed, ref } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { avatarRequest } from '../../../api';
+    import { avatarRequest, imageRequest } from '../../../api';
     import { handleImageUploadInput } from '../../../shared/utils/imageUpload';
     import { useAvatarStore } from '../../../stores';
+    import { $throw } from '../../../service/request';
+    import { AppDebug } from '../../../service/appConfig';
+    import { extractFileId } from '../../../shared/utils';
 
     const { t } = useI18n();
 
     const { avatarDialog } = storeToRefs(useAvatarStore());
     const { applyAvatar } = useAvatarStore();
 
-    const props = defineProps({
+    defineProps({
         changeAvatarImageDialogVisible: {
             type: Boolean,
             required: true
@@ -68,7 +71,14 @@
     });
 
     const changeAvatarImageDialogLoading = ref(false);
-    const currentImageUrl = computed(() => props.previousImageUrl);
+    const avatarImage = ref({
+        base64File: '',
+        fileMd5: '',
+        base64SignatureFile: '',
+        signatureMd5: '',
+        fileId: '',
+        avatarId: ''
+    });
 
     const emit = defineEmits(['update:changeAvatarImageDialogVisible', 'update:previousImageUrl']);
 
@@ -106,9 +116,15 @@
             try {
                 const base64File = await resizeImageToFitLimits(btoa(r.result.toString()));
                 // 10MB
-                await initiateUpload(base64File);
+                if (LINUX) {
+                    // use new website upload process on Linux, we're missing the needed libraries for Unity method
+                    // website method clears avatar name and is missing world image uploading
+                    await initiateUpload(base64File);
+                    return;
+                }
+                await initiateUploadLegacy(base64File, file);
             } catch (error) {
-                console.error('Avatar image upload process failed:', error);
+                console.error('avatar image upload process failed:', error);
             } finally {
                 finalize();
             }
@@ -123,6 +139,164 @@
         }
     }
 
+    async function initiateUploadLegacy(base64File, file) {
+        const fileMd5 = await AppApi.MD5File(base64File);
+        const fileSizeInBytes = parseInt(file.size, 10);
+        const base64SignatureFile = await AppApi.SignFile(base64File);
+        const signatureMd5 = await AppApi.MD5File(base64SignatureFile);
+        const signatureSizeInBytes = parseInt(await AppApi.FileLength(base64SignatureFile), 10);
+        const avatarId = avatarDialog.value.id;
+        const { imageUrl } = avatarDialog.value.ref;
+        const fileId = extractFileId(imageUrl);
+        avatarImage.value = {
+            base64File,
+            fileMd5,
+            base64SignatureFile,
+            signatureMd5,
+            fileId,
+            avatarId
+        };
+        const params = {
+            fileMd5,
+            fileSizeInBytes,
+            signatureMd5,
+            signatureSizeInBytes
+        };
+        const res = await imageRequest.uploadAvatarImage(params, fileId);
+        return avatarImageInit(res);
+    }
+
+    async function avatarImageInit(args) {
+        const fileId = args.json.id;
+        const fileVersion = args.json.versions[args.json.versions.length - 1].version;
+        const params = {
+            fileId,
+            fileVersion
+        };
+        const res = await imageRequest.uploadAvatarImageFileStart(params);
+        return avatarImageFileStart(res);
+    }
+
+    async function avatarImageFileStart(args) {
+        const { url } = args.json;
+        const { fileId, fileVersion } = args.params;
+        const params = {
+            url,
+            fileId,
+            fileVersion
+        };
+        return uploadAvatarImageFileAWS(params);
+    }
+
+    async function uploadAvatarImageFileAWS(params) {
+        const json = await webApiService.execute({
+            url: params.url,
+            uploadFilePUT: true,
+            fileData: avatarImage.value.base64File,
+            fileMIME: 'image/png',
+            headers: {
+                'Content-MD5': avatarImage.value.fileMd5
+            }
+        });
+
+        if (json.status !== 200) {
+            changeAvatarImageDialogLoading.value = false;
+            $throw(json.status, 'avatar image upload failed', params.url);
+        }
+        const args = {
+            json,
+            params
+        };
+        return avatarImageFileAWS(args);
+    }
+
+    async function avatarImageFileAWS(args) {
+        const { fileId, fileVersion } = args.params;
+        const params = {
+            fileId,
+            fileVersion
+        };
+        const res = await imageRequest.uploadAvatarImageFileFinish(params);
+        return avatarImageFileFinish(res);
+    }
+
+    async function avatarImageFileFinish(args) {
+        const { fileId, fileVersion } = args.params;
+        const params = {
+            fileId,
+            fileVersion
+        };
+        const res = await imageRequest.uploadAvatarImageSigStart(params);
+        return avatarImageSigStart(res);
+    }
+
+    async function avatarImageSigStart(args) {
+        const { url } = args.json;
+        const { fileId, fileVersion } = args.params;
+        const params = {
+            url,
+            fileId,
+            fileVersion
+        };
+        return uploadAvatarImageSigAWS(params);
+    }
+
+    async function uploadAvatarImageSigAWS(params) {
+        const json = await webApiService.execute({
+            url: params.url,
+            uploadFilePUT: true,
+            fileData: avatarImage.value.base64SignatureFile,
+            fileMIME: 'application/x-rsync-signature',
+            headers: {
+                'Content-MD5': avatarImage.value.signatureMd5
+            }
+        });
+
+        if (json.status !== 200) {
+            changeAvatarImageDialogLoading.value = false;
+            $throw(json.status, 'avatar image upload failed', params.url);
+        }
+        const args = {
+            json,
+            params
+        };
+        return avatarImageSigAWS(args);
+    }
+
+    async function avatarImageSigAWS(args) {
+        const { fileId, fileVersion } = args.params;
+        const params = {
+            fileId,
+            fileVersion
+        };
+        const res = await imageRequest.uploadAvatarImageSigFinish(params);
+        return avatarImageSigFinish(res);
+    }
+    async function avatarImageSigFinish(args) {
+        const { fileId, fileVersion } = args.params;
+        const params = {
+            id: avatarImage.value.avatarId,
+            imageUrl: `${AppDebug.endpointDomain}/file/${fileId}/${fileVersion}/file`
+        };
+        const res = await imageRequest.setAvatarImage(params);
+        return avatarImageSet(res);
+    }
+
+    function avatarImageSet(args) {
+        changeAvatarImageDialogLoading.value = false;
+        if (args.json.imageUrl === args.params.imageUrl) {
+            ElMessage({
+                message: t('message.avatar.image_changed'),
+                type: 'success'
+            });
+            emit('update:previousImageUrl', args.json.imageUrl);
+        } else {
+            $throw(0, 'avatar image change failed', args.params.imageUrl);
+        }
+    }
+
+    // ------------ Upload Process End ------------
+
     async function initiateUpload(base64File) {
         const args = await avatarRequest.uploadAvatarImage(base64File);
         const fileUrl = args.json.versions[args.json.versions.length - 1].file.url;
@@ -131,8 +305,8 @@
             imageUrl: fileUrl
         });
         const ref = applyAvatar(avatarArgs.json);
-        emit('update:previousImageUrl', ref.imageUrl);
         changeAvatarImageDialogLoading.value = false;
+        emit('update:previousImageUrl', ref.imageUrl);
         ElMessage({
             message: t('message.avatar.image_changed'),
             type: 'success'
