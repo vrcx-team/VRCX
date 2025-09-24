@@ -123,7 +123,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getBool('VRCX_saveInstanceEmoji', false),
             configRepository.getBool('VRCX_vrcRegistryAutoBackup', true),
             configRepository.getBool('VRCX_vrcRegistryAskRestore', true),
-            configRepository.getString('VRCX_SentryEnabled', 'false')
+            configRepository.getString('VRCX_SentryEnabled', '')
         ]);
 
         state.enablePrimaryPassword = enablePrimaryPassword;
@@ -440,15 +440,16 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
     async function checkSentryConsent() {
         ElMessageBox.confirm(
-            'Help improve VRCX by allowing anonymous error reporting?\n\n' +
-                '• Only collects crash and error information\n' +
-                '• No personal data or VRChat information is collected\n' +
-                '• Only enabled in nightly builds\n' +
-                '• Can be disabled anytime in Advanced Settings',
+            'Help improve VRCX by allowing anonymous error reporting?</br></br>' +
+                '• Only collects crash and error information.</br>' +
+                '• No personal data or VRChat information is collected.</br>' +
+                '• Only enabled in nightly builds.</br>' +
+                '• Can be disabled at anytime in Advanced Settings.',
             'Anonymous Error Reporting',
             {
                 type: 'info',
-                center: true
+                center: true,
+                dangerouslyUseHTMLString: true
             }
         )
             .then(() => {
