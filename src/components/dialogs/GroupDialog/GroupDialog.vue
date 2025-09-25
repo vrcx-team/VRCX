@@ -887,7 +887,7 @@
                                     trigger="click"
                                     size="small"
                                     style="margin-right: 5px"
-                                    :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length">
+                                    :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
                                     <el-button size="small" @click.stop>
                                         <span
                                             >{{ t(groupDialog.memberSortOrder.name) }}
@@ -909,7 +909,7 @@
                                     trigger="click"
                                     size="small"
                                     style="margin-right: 5px"
-                                    :disabled="isGroupMembersLoading || !!groupDialog.memberSearch.length">
+                                    :disabled="isGroupMembersLoading || groupDialog.memberSearch.length > 0">
                                     <el-button size="small" @click.stop>
                                         <span
                                             >{{ t(groupDialog.memberFilter.name) }}
