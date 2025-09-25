@@ -447,9 +447,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 '• Can be disabled at anytime in Advanced Settings.',
             'Anonymous Error Reporting',
             {
-                type: 'info',
+                type: 'warning',
                 center: true,
-                dangerouslyUseHTMLString: true
+                dangerouslyUseHTMLString: true,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                distinguishCancelAndClose: true
             }
         )
             .then(() => {
@@ -462,16 +465,22 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     {
                         confirmButtonText: 'Restart Now',
                         cancelButtonText: 'Later',
-                        type: 'info',
-                        center: true
+                        type: 'warning',
+                        center: true,
+                        closeOnClickModal: false,
+                        closeOnPressEscape: false
                     }
                 ).then(() => {
                     VRCXUpdaterStore.restartVRCX(false);
                 });
             })
-            .catch(() => {
-                state.sentryErrorReporting = false;
-                configRepository.setString('VRCX_SentryEnabled', 'false');
+            .catch((action) => {
+                const act =
+                    typeof action === 'string' ? action : action?.action;
+                if (act === 'cancel') {
+                    state.sentryErrorReporting = false;
+                    configRepository.setString('VRCX_SentryEnabled', 'false');
+                }
             });
     }
 
