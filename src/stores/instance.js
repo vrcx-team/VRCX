@@ -646,7 +646,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 L.shortName = instance.shortName;
             }
             instance.$location = L;
-            L.user = null;
+            L.user = {};
             if (L.userId) {
                 ref = userStore.cachedUsers.get(L.userId);
                 if (typeof ref === 'undefined') {

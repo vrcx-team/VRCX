@@ -122,18 +122,13 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                     }
                 }
                 if (LINUX && --state.nextGameRunningCheck <= 0) {
-                    if (WINDOWS) {
-                        state.nextGameRunningCheck = 3;
-                        AppApi.CheckGameRunning();
-                    } else {
-                        state.nextGameRunningCheck = 1;
-                        gameStore.updateIsGameRunning(
-                            await AppApi.IsGameRunning(),
-                            await AppApi.IsSteamVRRunning(),
-                            false
-                        );
-                        vrStore.vrInit(); // TODO: make this event based
-                    }
+                    state.nextGameRunningCheck = 1;
+                    gameStore.updateIsGameRunning(
+                        await AppApi.IsGameRunning(),
+                        await AppApi.IsSteamVRRunning(),
+                        false
+                    );
+                    vrStore.vrInit(); // TODO: make this event based
                 }
                 if (--state.nextDatabaseOptimize <= 0) {
                     state.nextDatabaseOptimize = 86400; // 1 day
