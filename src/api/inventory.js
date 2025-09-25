@@ -86,6 +86,24 @@ const inventoryReq = {
             };
             return args;
         });
+    },
+
+    /**
+     * @param {{ code: string }} params
+     * @returns {Promise<{json: any, params}>}
+     * Note: Do not redeem
+     */
+    redeemReward(params) {
+        return request('reward/redeem', {
+            method: 'POST',
+            params
+        }).then((json) => {
+            const args = {
+                json,
+                params
+            };
+            return args;
+        });
     }
 };
 

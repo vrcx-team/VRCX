@@ -22,6 +22,8 @@
                 :key="index"
                 v-model="bioDialog.bioLinks[index]"
                 size="small"
+                maxlength="64"
+                show-word-limit
                 style="margin-top: 5px">
                 <img :src="getFaviconUrl(link)" style="width: 16px; height: 16px; vertical-align: middle" />
                 <el-button :icon="Delete" @click="bioDialog.bioLinks.splice(index, 1)" />

@@ -186,7 +186,6 @@ declare global {
         SetUserAgent(): Promise<void>;
 
         // Common Functions
-        MD5File(blob: string): Promise<string>;
         GetColourFromUserID(userId: string): Promise<number>;
         OpenLink(url: string): Promise<void>;
         GetLaunchCommand(): Promise<string>;
@@ -206,6 +205,11 @@ declare global {
         ): Promise<void>;
         GetFileBase64(path: string): Promise<string | null>;
         TryOpenInstanceInVrc(launchUrl: string): Promise<boolean>;
+
+        // Image Upload (Cef Only)
+        MD5File(blob: string): Promise<string>;
+        SignFile(blob: string): Promise<string>;
+        FileLength(blob: string): Promise<string>;
 
         // Folders
         GetVRChatAppDataLocation(): Promise<string>;

@@ -13,38 +13,41 @@
             <VRCXUpdateDialog></VRCXUpdateDialog>
 
             <template v-if="watchState.isLoggedIn">
-                <!-- ### Menu ### -->
                 <NavMenu></NavMenu>
 
-                <!-- ### Sidebar ### -->
-                <Sidebar></Sidebar>
+                <el-splitter @resize-end="setAsideWidth" v-show="isSideBarTabShow">
+                    <el-splitter-panel>
+                        <Feed></Feed>
 
-                <!-- ### Tabs ### -->
-                <Feed></Feed>
+                        <GameLog></GameLog>
 
-                <GameLog></GameLog>
+                        <PlayerList></PlayerList>
 
-                <PlayerList></PlayerList>
+                        <Search></Search>
 
-                <Search></Search>
+                        <Favorites></Favorites>
 
-                <Favorites></Favorites>
+                        <FriendLog></FriendLog>
 
-                <FriendLog></FriendLog>
+                        <Moderation></Moderation>
 
-                <Moderation></Moderation>
+                        <Notification></Notification>
 
-                <Notification></Notification>
+                        <Tools></Tools>
+
+                        <Profile></Profile>
+
+                        <Settings></Settings>
+                    </el-splitter-panel>
+
+                    <el-splitter-panel :min="200" :max="700" :size="asideWidth">
+                        <Sidebar></Sidebar>
+                    </el-splitter-panel>
+                </el-splitter>
 
                 <FriendList></FriendList>
 
                 <Charts></Charts>
-
-                <Tools></Tools>
-
-                <Profile></Profile>
-
-                <Settings></Settings>
 
                 <!-- ## Dialogs ## -->
                 <UserDialog></UserDialog>
@@ -57,7 +60,7 @@
 
                 <GroupMemberModerationDialog></GroupMemberModerationDialog>
 
-                <FullscreenImageDialog></FullscreenImageDialog>
+                <FullscreenImagePreview></FullscreenImagePreview>
 
                 <PreviousInstancesInfoDialog></PreviousInstancesInfoDialog>
 
@@ -106,24 +109,25 @@
     import Sidebar from './views/Sidebar/Sidebar.vue';
     import Feed from './views/Feed/Feed.vue';
     import GameLog from './views/GameLog/GameLog.vue';
-    import PlayerList from './views/PlayerList/PlayerList.vue';
-    import Search from './views/Search/Search.vue';
-    import Favorites from './views/Favorites/Favorites.vue';
-    import FriendLog from './views/FriendLog/FriendLog.vue';
-    import Moderation from './views/Moderation/Moderation.vue';
-    import Notification from './views/Notifications/Notification.vue';
-    import FriendList from './views/FriendList/FriendList.vue';
-    import Charts from './views/Charts/Charts.vue';
-    import Tools from './views/Tools/Tools.vue';
-    import Profile from './views/Profile/Profile.vue';
     import Settings from './views/Settings/Settings.vue';
+
+    const PlayerList = defineAsyncComponent(() => import('./views/PlayerList/PlayerList.vue'));
+    const Search = defineAsyncComponent(() => import('./views/Search/Search.vue'));
+    const Favorites = defineAsyncComponent(() => import('./views/Favorites/Favorites.vue'));
+    const Notification = defineAsyncComponent(() => import('./views/Notifications/Notification.vue'));
+    const Tools = defineAsyncComponent(() => import('./views/Tools/Tools.vue'));
+    const Profile = defineAsyncComponent(() => import('./views/Profile/Profile.vue'));
+    const FriendLog = defineAsyncComponent(() => import('./views/FriendLog/FriendLog.vue'));
+    const Moderation = defineAsyncComponent(() => import('./views/Moderation/Moderation.vue'));
+    const FriendList = defineAsyncComponent(() => import('./views/FriendList/FriendList.vue'));
+    const Charts = defineAsyncComponent(() => import('./views/Charts/Charts.vue'));
 
     import UserDialog from './components/dialogs/UserDialog/UserDialog.vue';
     import WorldDialog from './components/dialogs/WorldDialog/WorldDialog.vue';
     import AvatarDialog from './components/dialogs/AvatarDialog/AvatarDialog.vue';
     import GroupDialog from './components/dialogs/GroupDialog/GroupDialog.vue';
     import GroupMemberModerationDialog from './components/dialogs/GroupDialog/GroupMemberModerationDialog.vue';
-    import FullscreenImageDialog from './components/dialogs/FullscreenImageDialog.vue';
+    import FullscreenImagePreview from './components/FullscreenImagePreview.vue';
     import PreviousInstancesInfoDialog from './components/dialogs/PreviousInstancesDialog/PreviousInstancesInfoDialog.vue';
     import LaunchDialog from './components/dialogs/LaunchDialog.vue';
     import LaunchOptionsDialog from './views/Settings/dialogs/LaunchOptionsDialog.vue';
@@ -135,11 +139,11 @@
     import VRCXUpdateDialog from './components/dialogs/VRCXUpdateDialog.vue';
     import VRChatConfigDialog from './views/Settings/dialogs/VRChatConfigDialog.vue';
     import PrimaryPasswordDialog from './views/Settings/dialogs/PrimaryPasswordDialog.vue';
-
-    import { onMounted, computed, onBeforeMount } from 'vue';
-    import { createGlobalStores } from './stores';
-    import { watchState } from './service/watchState';
+    import { defineAsyncComponent, onMounted, computed, onBeforeMount } from 'vue';
     import { useI18n } from 'vue-i18n';
+    import { storeToRefs } from 'pinia';
+    import { createGlobalStores, useAppearanceSettingsStore } from './stores';
+    import { watchState } from './service/watchState';
     import { initNoty } from './plugin/noty';
 
     console.log(`isLinux: ${LINUX}`);
@@ -186,4 +190,8 @@
         store.vrcx.checkAutoBackupRestoreVrcRegistry();
         store.game.checkVRChatDebugLogging();
     });
+
+    const appearanceStore = useAppearanceSettingsStore();
+    const { setAsideWidth } = appearanceStore;
+    const { asideWidth, isSideBarTabShow } = storeToRefs(appearanceStore);
 </script>

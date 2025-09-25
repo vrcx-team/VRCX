@@ -25,7 +25,7 @@
             <el-input
                 v-model="friendLogTable.filters[1].value"
                 :placeholder="t('view.friend_log.search_placeholder')"
-                style="flex: none; width: 150px; margin-left: 10px" />
+                style="flex: 0.4; margin-left: 10px" />
         </div>
 
         <DataTable v-bind="friendLogTable">

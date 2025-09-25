@@ -8,3 +8,5 @@ obj1/
 .vs/
 Installer/version_define.nsh
 bun.lock
+
+.env.sentry-build-plugin

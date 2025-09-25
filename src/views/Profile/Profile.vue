@@ -49,29 +49,29 @@
                     size="small"
                     :icon="Picture"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showGalleryDialog()"
+                    @click="redirectToToolsTab"
                     >{{ t('view.profile.profile.manage_gallery_inventory_icon') }}</el-button
                 >
                 <el-button
                     size="small"
                     :icon="ChatDotRound"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showDiscordNamesDialog()"
-                    >{{ t('view.profile.profile.discord_names') }}</el-button
+                    @click="redirectToToolsTab"
+                    >{{ t('view.tools.export.discord_names') }}</el-button
                 >
                 <el-button
                     size="small"
                     :icon="Printer"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showExportFriendsListDialog()"
-                    >{{ t('view.profile.profile.export_friend_list') }}</el-button
+                    @click="redirectToToolsTab"
+                    >{{ t('view.tools.export.export_friend_list') }}</el-button
                 >
                 <el-button
                     size="small"
                     :icon="User"
                     style="margin-left: 0; margin-right: 5px; margin-top: 10px"
-                    @click="showExportAvatarsListDialog()"
-                    >{{ t('view.profile.profile.export_own_avatars') }}</el-button
+                    @click="redirectToToolsTab"
+                    >{{ t('view.tools.export.export_own_avatars') }}</el-button
                 >
             </div>
         </div>
@@ -481,11 +481,6 @@
                 </template>
             </el-tree>
         </div>
-        <DiscordNamesDialog v-model:discordNamesDialogVisible="discordNamesDialogVisible" :friends="friends" />
-        <ExportFriendsListDialog
-            v-model:isExportFriendsListDialogVisible="isExportFriendsListDialogVisible"
-            :friends="friends" />
-        <ExportAvatarsListDialog v-model:isExportAvatarsListDialogVisible="isExportAvatarsListDialogVisible" />
     </div>
 </template>
 
@@ -506,20 +501,11 @@
         parseUserUrl,
         formatDateFilter
     } from '../../shared/utils';
+    import { redirectToToolsTab } from '../../shared/utils/base/ui';
     import { useAuthStore } from '../../stores';
-    import DiscordNamesDialog from './dialogs/DiscordNamesDialog.vue';
-    import ExportFriendsListDialog from './dialogs/ExportFriendsListDialog.vue';
-    import ExportAvatarsListDialog from './dialogs/ExportAvatarsListDialog.vue';
-    import {
-        useSearchStore,
-        useFriendStore,
-        useUserStore,
-        useAvatarStore,
-        useInviteStore,
-        useUiStore
-    } from '../../stores';
 
-    const { friends } = storeToRefs(useFriendStore());
+    import { useSearchStore, useUserStore, useAvatarStore, useInviteStore, useUiStore } from '../../stores';
+
     const { pastDisplayNameTable, currentUser } = storeToRefs(useUserStore());
     const { showUserDialog, lookupUser, getCurrentUser } = useUserStore();
     const { showAvatarDialog } = useAvatarStore();
@@ -542,16 +528,7 @@
     const currentUserTreeData = ref([]);
     const currentUserFeedbackData = ref([]);
 
-    const discordNamesDialogVisible = ref(false);
-    const isExportFriendsListDialogVisible = ref(false);
-    const isExportAvatarsListDialogVisible = ref(false);
-
     const visits = ref(0);
-
-    // redirect to tools tab
-    function showGalleryDialog() {
-        menuActiveIndex.value = 'tools';
-    }
 
     function getVisits() {
         miscRequest.getVisits().then((args) => {
@@ -563,17 +540,6 @@
         miscRequest.getVRChatCredits().then((args) => (vrchatCredit.value = args.json?.balance));
     }
 
-    function showDiscordNamesDialog() {
-        discordNamesDialogVisible.value = true;
-    }
-
-    function showExportFriendsListDialog() {
-        isExportFriendsListDialogVisible.value = true;
-    }
-
-    function showExportAvatarsListDialog() {
-        isExportAvatarsListDialogVisible.value = true;
-    }
     function promptUsernameDialog() {
         ElMessageBox.prompt(t('prompt.direct_access_username.description'), t('prompt.direct_access_username.header'), {
             distinguishCancelAndClose: true,

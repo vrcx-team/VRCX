@@ -36,7 +36,7 @@
             :tableProps="tableProps"
             :paginationProps="paginationProps"
             v-loading="isPlayerModerationsLoading">
-            <el-table-column :label="t('table.moderation.date')" prop="created" :sortable="true" width="120">
+            <el-table-column :label="t('table.moderation.date')" prop="created" :sortable="true" width="130">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>

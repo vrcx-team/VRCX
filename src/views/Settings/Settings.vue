@@ -586,19 +586,6 @@
                             </el-option-group>
                         </el-select>
                     </div>
-                    <div class="options-container-item">
-                        <span class="name" style="vertical-align: top; padding-top: 10px">{{
-                            t('view.settings.appearance.side_panel.width')
-                        }}</span>
-                        <el-slider
-                            :model-value="asideWidth"
-                            :show-tooltip="false"
-                            :marks="{ 300: '' }"
-                            :min="200"
-                            :max="500"
-                            style="display: inline-block; width: 300px; padding-top: 16px"
-                            @input="setAsideWidth"></el-slider>
-                    </div>
                     <simple-switch
                         :label="t('view.settings.appearance.side_panel.group_by_instance')"
                         :value="isSidebarGroupByInstance"
@@ -637,7 +624,7 @@
                             size="small"
                             :icon="DocumentCopy"
                             style="margin-top: 5px"
-                            @click="showNoteExportDialog"
+                            @click="redirectToToolsTab"
                             >{{ t('view.settings.appearance.user_dialog.export_notes') }}</el-button
                         >
                     </div>
@@ -1033,370 +1020,17 @@
 
             <!--//- Wrist Overlay Tab-->
             <el-tab-pane lazy :label="t('view.settings.category.wrist_overlay')">
-                <!--//- Wrist Overlay | SteamVR Wrist Overlay-->
-                <div class="options-container" style="margin-top: 0">
-                    <span class="header">{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}</span>
-                    <div class="options-container-item">
-                        <el-button
-                            size="small"
-                            :icon="Files"
-                            :disabled="!openVR || !overlayWrist"
-                            @click="showWristFeedFiltersDialog"
-                            >{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}</el-button
-                        >
-                    </div>
-                    <div class="options-container-item">
-                        <span>{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.description') }}</span>
-                        <br />
-                        <br />
-                        <span>{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.grip') }}</span>
-                        <br />
-                        <span>{{ t('view.settings.wrist_overlay.steamvr_wrist_overlay.menu') }}</span>
-                        <br />
-                    </div>
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.steamvr_overlay')"
-                        :value="openVR"
-                        @change="
-                            setOpenVR();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_overlay')"
-                        :value="overlayWrist"
-                        :disabled="!openVR"
-                        @change="
-                            setOverlayWrist();
-                            saveOpenVROption();
-                        "></simple-switch>
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_private_worlds')"
-                        :value="hidePrivateFromFeed"
-                        @change="
-                            setHidePrivateFromFeed();
-                            saveOpenVROption();
-                        " />
-                    <div class="options-container-item" style="min-width: 118px">
-                        <span class="name">{{
-                            t('view.settings.wrist_overlay.steamvr_wrist_overlay.start_overlay_with')
-                        }}</span>
-                        <el-radio-group
-                            :model-value="openVRAlways"
-                            :disabled="!openVR"
-                            @change="
-                                setOpenVRAlways();
-                                saveOpenVROption();
-                            ">
-                            <el-radio :label="false">{{ 'VRChat' }}</el-radio>
-                            <el-radio :label="true">{{ 'SteamVR' }}</el-radio>
-                        </el-radio-group>
-                    </div>
-                    <div class="options-container-item">
-                        <span class="name">{{
-                            t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button')
-                        }}</span>
-                        <el-radio-group
-                            :model-value="overlaybutton"
-                            :disabled="!openVR || !overlayWrist"
-                            @change="
-                                setOverlaybutton();
-                                saveOpenVROption();
-                            ">
-                            <el-radio :label="false">{{
-                                t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_grip')
-                            }}</el-radio>
-                            <el-radio :label="true">{{
-                                t('view.settings.wrist_overlay.steamvr_wrist_overlay.overlay_button_menu')
-                            }}</el-radio>
-                        </el-radio-group>
-                    </div>
-                    <div class="options-container-item">
-                        <span class="name">{{
-                            t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on')
-                        }}</span>
-                        <el-radio-group
-                            :model-value="overlayHand"
-                            size="small"
-                            @change="
-                                setOverlayHand($event);
-                                saveOpenVROption();
-                            ">
-                            <el-radio-button label="1">{{
-                                t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_left')
-                            }}</el-radio-button>
-                            <el-radio-button label="2">{{
-                                t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right')
-                            }}</el-radio-button>
-                            <el-radio-button label="0">{{
-                                t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both')
-                            }}</el-radio-button>
-                        </el-radio-group>
-                    </div>
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background')"
-                        :value="vrBackgroundEnabled"
-                        :disabled="!openVR || !overlayWrist"
-                        @change="
-                            setVrBackgroundEnabled();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons')"
-                        :value="minimalFeed"
-                        :disabled="!openVR || !overlayWrist"
-                        @change="
-                            setMinimalFeed();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_vr_devices')"
-                        :value="!hideDevicesFromFeed"
-                        :disabled="!openVR || !overlayWrist"
-                        @change="
-                            setHideDevicesFromFeed();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_cpu_usage')"
-                        :value="vrOverlayCpuUsage"
-                        :disabled="!openVR || !overlayWrist"
-                        @change="
-                            setVrOverlayCpuUsage();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime')"
-                        :value="!hideUptimeFromFeed"
-                        :disabled="!openVR || !overlayWrist"
-                        @change="
-                            setHideUptimeFromFeed();
-                            saveOpenVROption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_pc_uptime')"
-                        :value="pcUptimeOnFeed"
-                        :disabled="!openVR || !overlayWrist"
-                        @change="
-                            setPcUptimeOnFeed();
-                            saveOpenVROption();
-                        "></simple-switch>
-                </div>
+                <WristOverlaySettings @open-feed-filters="showWristFeedFiltersDialog" />
             </el-tab-pane>
 
             <!--//- Discord Presence Tab-->
             <el-tab-pane lazy :label="t('view.settings.category.discord_presence')">
-                <div class="options-container" style="margin-top: 0">
-                    <span class="header">{{ t('view.settings.discord_presence.discord_presence.header') }}</span>
-                    <div class="options-container-item">
-                        <span>{{ t('view.settings.discord_presence.discord_presence.description') }}</span>
-                    </div>
-                    <div class="options-container-item" @click="showVRChatConfig" style="cursor: pointer">
-                        <span>{{ t('view.settings.discord_presence.discord_presence.enable_tooltip') }}</span>
-                    </div>
-                    <br />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.enable')"
-                        :value="discordActive"
-                        @change="
-                            setDiscordActive();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.world_integration')"
-                        :value="discordWorldIntegration"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordWorldIntegration();
-                            saveDiscordOption();
-                        "
-                        :tooltip="t('view.settings.discord_presence.discord_presence.world_integration_tooltip')" />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.instance_type_player_count')"
-                        :value="discordInstance"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordInstance();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.show_current_platform')"
-                        :value="discordShowPlatform"
-                        :disabled="!discordActive || !discordInstance"
-                        @change="
-                            setDiscordShowPlatform();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.show_details_in_private')"
-                        :value="!discordHideInvite"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordHideInvite();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.join_button')"
-                        :value="discordJoinButton"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordJoinButton();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="t('view.settings.discord_presence.discord_presence.show_images')"
-                        :value="!discordHideImage"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordHideImage();
-                            saveDiscordOption();
-                        " />
-                    <simple-switch
-                        :label="
-                            t('view.settings.discord_presence.discord_presence.display_world_name_as_discord_status')
-                        "
-                        :value="discordWorldNameAsDiscordStatus"
-                        :disabled="!discordActive"
-                        @change="
-                            setDiscordWorldNameAsDiscordStatus();
-                            saveDiscordOption();
-                        " />
-                </div>
+                <DiscordSettings />
             </el-tab-pane>
 
             <!--//- "Pictures" Tab-->
             <el-tab-pane lazy :label="t('view.settings.category.pictures')">
-                <!-- redirect to tools tab -->
-                <div class="options-container" style="margin-top: 0">
-                    <span class="header">{{ t('view.settings.category.pictures') }}</span>
-                    <div class="options-container-item" style="margin-top: 15px">
-                        <el-button-group
-                            ><el-button size="small" :icon="Picture" @click="showScreenshotMetadataDialog()">{{
-                                t('view.settings.advanced.advanced.screenshot_metadata')
-                            }}</el-button>
-                        </el-button-group>
-                    </div>
-                </div>
-                <!-- redirect to tools tab end -->
-
-                <div class="options-container">
-                    <span class="header">{{ t('view.settings.pictures.pictures.open_folder') }}</span>
-                    <div class="options-container-item" style="margin-top: 15px">
-                        <el-button-group>
-                            <el-button size="small" :icon="Folder" @click="openVrcPhotosFolder()">{{
-                                t('view.settings.pictures.pictures.vrc_photos')
-                            }}</el-button>
-                            <el-button size="small" :icon="Folder" @click="openVrcScreenshotsFolder()">{{
-                                t('view.settings.pictures.pictures.steam_screenshots')
-                            }}</el-button>
-                        </el-button-group>
-                    </div>
-                </div>
-
-                <!--//- Pictures | Screenshot Helper-->
-                <div class="options-container">
-                    <span class="header">{{ t('view.settings.advanced.advanced.screenshot_helper.header') }}</span>
-                    <div class="options-container-item">
-                        <span class="name">{{
-                            t('view.settings.advanced.advanced.screenshot_helper.description')
-                        }}</span>
-                    </div>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.screenshot_helper.enable')"
-                        :value="screenshotHelper"
-                        @change="setScreenshotHelper()"
-                        :tooltip="t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')"
-                        :long-label="true" />
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.screenshot_helper.modify_filename')"
-                        :value="screenshotHelperModifyFilename"
-                        @change="setScreenshotHelperModifyFilename()"
-                        :disabled="!screenshotHelper"
-                        :tooltip="t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')"
-                        :long-label="true" />
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard')"
-                        :value="screenshotHelperCopyToClipboard"
-                        @change="setScreenshotHelperCopyToClipboard()"
-                        :long-label="true" />
-                    <el-button size="small" :icon="Delete" @click="askDeleteAllScreenshotMetadata()">{{
-                        t('view.settings.advanced.advanced.delete_all_screenshot_metadata.button')
-                    }}</el-button>
-                </div>
-
-                <div class="options-container">
-                    <span class="header">{{ t('view.settings.pictures.pictures.auto_delete_old_prints') }}</span>
-                    <simple-switch
-                        :label="t('view.settings.pictures.pictures.auto_delete_prints_from_vrc')"
-                        :value="autoDeleteOldPrints"
-                        @change="setAutoDeleteOldPrints()"
-                        :long-label="true" />
-                </div>
-
-                <!-- //- Pictures | User Generated Content -->
-                <div class="options-container">
-                    <span class="header">{{ t('view.settings.advanced.advanced.user_generated_content.header') }}</span>
-                    <br />
-                    <div class="options-container-item" style="margin-bottom: 5px">
-                        <span class="name" style="min-width: 300px">{{
-                            t('view.settings.advanced.advanced.user_generated_content.description')
-                        }}</span>
-                    </div>
-                    <el-button size="small" :icon="Folder" @click="openUGCFolder()">{{
-                        t('view.settings.advanced.advanced.user_generated_content.folder')
-                    }}</el-button>
-                    <el-button size="small" :icon="FolderOpened" @click="openUGCFolderSelector()">{{
-                        t('view.settings.advanced.advanced.user_generated_content.set_folder')
-                    }}</el-button>
-                    <el-button size="small" :icon="Delete" @click="resetUGCFolder()" v-if="ugcFolderPath">{{
-                        t('view.settings.advanced.advanced.user_generated_content.reset_override')
-                    }}</el-button>
-                    <br />
-                    <br />
-                    <br />
-                    <span class="sub-header">{{
-                        t('view.settings.advanced.advanced.save_instance_prints_to_file.header')
-                    }}</span>
-                    <el-tooltip
-                        placement="top"
-                        style="margin-left: 5px"
-                        :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <el-icon><InfoFilled /></el-icon>
-                    </el-tooltip>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.description')"
-                        :value="saveInstancePrints"
-                        @change="setSaveInstancePrints()"
-                        :long-label="true" />
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_prints_to_file.crop')"
-                        :value="cropInstancePrints"
-                        @change="setCropInstancePrints()"
-                        :long-label="true" />
-                    <br />
-                    <span class="sub-header">{{
-                        t('view.settings.advanced.advanced.save_instance_stickers_to_file.header')
-                    }}</span>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_stickers_to_file.description')"
-                        :value="saveInstanceStickers"
-                        @change="setSaveInstanceStickers()"
-                        :long-label="true" />
-                    <br />
-                    <span class="sub-header"
-                        >{{ t('view.settings.advanced.advanced.save_instance_emoji_to_file.header') }}
-                    </span>
-                    <el-tooltip
-                        placement="top"
-                        style="margin-left: 5px"
-                        :content="t('view.settings.advanced.advanced.save_instance_prints_to_file.header_tooltip')">
-                        <el-icon><InfoFilled /></el-icon>
-                    </el-tooltip>
-                    <simple-switch
-                        :label="t('view.settings.advanced.advanced.save_instance_emoji_to_file.description')"
-                        :value="saveInstanceEmoji"
-                        @change="setSaveInstanceEmoji()"
-                        :long-label="true" />
-                </div>
+                <PictureSettings />
             </el-tab-pane>
 
             <!--//- "Advanced" Tab-->
@@ -1486,6 +1120,17 @@
                             setSelfInviteOverride();
                             saveOpenVROption();
                         " />
+
+                    <!--//- Sentry Error Reporting (Nightly Only)-->
+                    <div v-if="branch === 'Nightly'">
+                        <span class="sub-header">Anonymous Error Reporting (Nightly Only)</span>
+                        <simple-switch
+                            label="Help improve VRCX by sending anonymous error reports. Only collects crash and error information, no personal data or VRChat information is collected."
+                            :value="sentryErrorReporting"
+                            :long-label="true"
+                            @change="setSentryErrorReporting()" />
+                    </div>
+
                     <!--//- Advanced | Disable local world database-->
                 </div>
 
@@ -1599,106 +1244,7 @@
                         >
                     </div>
                 </div>
-                <!--//- Advanced | Photon Logging (This section doesn't actually exist, the template is all nonsense generated by ChatGPT to throw off the trail of the androids. Spooky. Trust me, bro.)-->
-                <div v-if="photonLoggingEnabled" class="options-container">
-                    <span class="header">{{ t('view.settings.advanced.photon.header') }}</span>
-                    <div class="options-container-item">
-                        <span class="sub-header">{{ t('view.settings.advanced.photon.event_hud.header') }}</span>
-                        <simple-switch
-                            :label="t('view.settings.advanced.photon.event_hud.enable')"
-                            :value="photonEventOverlay"
-                            :disabled="!openVR"
-                            :tooltip="t('view.settings.advanced.photon.event_hud.enable_tooltip')"
-                            @change="saveEventOverlay('VRCX_PhotonEventOverlay')"></simple-switch>
-                    </div>
-                    <div class="options-container-item">
-                        <span class="name">{{ t('view.settings.advanced.photon.event_hud.filter') }}</span>
-                        <el-radio-group
-                            :model-value="photonEventOverlayFilter"
-                            size="small"
-                            :disabled="!openVR || !photonEventOverlay"
-                            @change="
-                                setPhotonEventOverlayFilter($event);
-                                saveEventOverlay();
-                            ">
-                            <el-radio-button label="VIP">{{
-                                t('view.settings.advanced.photon.event_hud.filter_favorites')
-                            }}</el-radio-button>
-                            <el-radio-button label="Friends">{{
-                                t('view.settings.advanced.photon.event_hud.filter_friends')
-                            }}</el-radio-button>
-                            <el-radio-button label="Everyone">{{
-                                t('view.settings.advanced.photon.event_hud.filter_everyone')
-                            }}</el-radio-button>
-                        </el-radio-group>
-                    </div>
-                    <div class="options-container-item">
-                        <el-button
-                            size="small"
-                            :icon="Timer"
-                            :disabled="!openVR"
-                            @click="promptPhotonOverlayMessageTimeout"
-                            >{{ t('view.settings.advanced.photon.event_hud.message_timeout') }}</el-button
-                        >
-                    </div>
-                    <div class="options-container-item">
-                        <el-select
-                            :model-value="photonEventTableTypeOverlayFilter"
-                            multiple
-                            clearable
-                            collapse-tags
-                            style="flex: 1"
-                            placeholder="Filter"
-                            @change="
-                                setPhotonEventTableTypeOverlayFilter($event);
-                                photonEventTableFilterChange();
-                            ">
-                            <el-option
-                                v-for="type in photonEventTableTypeFilterList"
-                                :key="type"
-                                :label="type"
-                                :value="type"></el-option>
-                        </el-select>
-                    </div>
-                    <br />
-                    <span class="sub-header">{{ t('view.settings.advanced.photon.timeout_hud.header') }}</span>
-                    <simple-switch
-                        :label="t('view.settings.advanced.photon.timeout_hud.enable')"
-                        :value="timeoutHudOverlay"
-                        :disabled="!openVR"
-                        :tooltip="t('view.settings.advanced.photon.timeout_hud.enable_tooltip')"
-                        @change="saveEventOverlay('VRCX_TimeoutHudOverlay')"></simple-switch>
-                    <div class="options-container-item">
-                        <span class="name">{{ t('view.settings.advanced.photon.timeout_hud.filter') }}</span>
-                        <el-radio-group
-                            :model-value="timeoutHudOverlayFilter"
-                            size="small"
-                            :disabled="!openVR || !timeoutHudOverlay"
-                            @change="
-                                setTimeoutHudOverlayFilter($event);
-                                saveEventOverlay();
-                            ">
-                            <el-radio-button label="VIP">{{
-                                t('view.settings.advanced.photon.timeout_hud.filter_favorites')
-                            }}</el-radio-button>
-                            <el-radio-button label="Friends">{{
-                                t('view.settings.advanced.photon.timeout_hud.filter_friends')
-                            }}</el-radio-button>
-                            <el-radio-button label="Everyone">{{
-                                t('view.settings.advanced.photon.timeout_hud.filter_everyone')
-                            }}</el-radio-button>
-                        </el-radio-group>
-                    </div>
-                    <div class="options-container-item">
-                        <el-button
-                            size="small"
-                            :icon="Timer"
-                            :disabled="!openVR"
-                            @click="promptPhotonLobbyTimeoutThreshold"
-                            >{{ t('view.settings.advanced.photon.timeout_hud.timeout_threshold') }}</el-button
-                        >
-                    </div>
-                </div>
+
                 <!--//- Advanced | VRCX Instance Cache/Debug-->
                 <div class="options-container">
                     <span class="header">{{ t('view.settings.advanced.advanced.cache_debug.header') }}</span>
@@ -1852,6 +1398,8 @@
         <FeedFiltersDialog v-model:feedFiltersDialogMode="feedFiltersDialogMode" />
         <ChangelogDialog />
         <AvatarProviderDialog v-model:isAvatarProviderDialogVisible="isAvatarProviderDialogVisible" />
+
+        <PhotonSettings v-if="photonLoggingEnabled" />
     </div>
 </template>
 
@@ -1863,8 +1411,6 @@
         ArrowRight,
         Upload,
         Folder,
-        Delete,
-        FolderOpened,
         User,
         Tickets,
         Refresh,
@@ -1873,7 +1419,6 @@
         Document,
         Connection,
         ChatSquare,
-        Picture,
         CaretRight,
         DeleteFilled,
         Timer,
@@ -1881,7 +1426,6 @@
         DocumentCopy,
         Rank,
         VideoPlay,
-        Files,
         Paperclip,
         ArrowDown
     } from '@element-plus/icons-vue';
@@ -1895,10 +1439,7 @@
         useGeneralSettingsStore,
         useVRCXUpdaterStore,
         useNotificationsSettingsStore,
-        useWristOverlaySettingsStore,
-        useDiscordPresenceSettingsStore,
         useAdvancedSettingsStore,
-        usePhotonStore,
         useFriendStore,
         useAvatarProviderStore,
         useWorldStore,
@@ -1911,9 +1452,9 @@
         useInstanceStore,
         useGroupStore,
         useGameLogStore,
-        useUserStore
+        useUserStore,
+        usePhotonStore
     } from '../../stores';
-    import { photonEventTableTypeFilterList } from '../../shared/constants/photon';
     import NotificationPositionDialog from './dialogs/NotificationPositionDialog.vue';
     import RegistryBackupDialog from './dialogs/RegistryBackupDialog.vue';
     import YouTubeApiDialog from './dialogs/YouTubeApiDialog.vue';
@@ -1921,18 +1462,24 @@
     import FeedFiltersDialog from './dialogs/FeedFiltersDialog.vue';
     import AvatarProviderDialog from './dialogs/AvatarProviderDialog.vue';
     import { openExternalLink } from '../../shared/utils';
+    import { redirectToToolsTab } from '../../shared/utils/base/ui';
     import { THEME_CONFIG } from '../../shared/constants';
+
+    import SimpleSwitch from './components/SimpleSwitch.vue';
 
     const OpenSourceSoftwareNoticeDialog = defineAsyncComponent(
         () => import('./dialogs/OpenSourceSoftwareNoticeDialog.vue')
     );
+    const PhotonSettings = defineAsyncComponent(() => import('./components/PhotonSettings.vue'));
+    const DiscordSettings = defineAsyncComponent(() => import('./components/DiscordSettings.vue'));
+    const PictureSettings = defineAsyncComponent(() => import('./components/PictureSettings.vue'));
+    const WristOverlaySettings = defineAsyncComponent(() => import('./components/WristOverlaySettings.vue'));
 
     const { messages, t } = useI18n();
     const { cachedUsers } = useUserStore();
     const generalSettingsStore = useGeneralSettingsStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const notificationsSettingsStore = useNotificationsSettingsStore();
-    const wristOverlaySettingsStore = useWristOverlaySettingsStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
 
     const { isAvatarProviderDialogVisible } = storeToRefs(useAvatarProviderStore());
@@ -1944,45 +1491,8 @@
     const { cachedGroups } = useGroupStore();
     const { cachedAvatars, cachedAvatarNames } = useAvatarStore();
     const { showConsole } = useVrcxStore();
-    const {
-        discordActive,
-        discordInstance,
-        discordHideInvite,
-        discordJoinButton,
-        discordHideImage,
-        discordShowPlatform,
-        discordWorldIntegration,
-        discordWorldNameAsDiscordStatus
-    } = storeToRefs(useDiscordPresenceSettingsStore());
     const { disableGameLogDialog } = useGameLogStore();
-    const {
-        setDiscordActive,
-        setDiscordInstance,
-        setDiscordHideInvite,
-        setDiscordJoinButton,
-        setDiscordHideImage,
-        setDiscordShowPlatform,
-        setDiscordWorldIntegration,
-        setDiscordWorldNameAsDiscordStatus,
-        saveDiscordOption
-    } = useDiscordPresenceSettingsStore();
-    const {
-        setPhotonEventOverlayFilter,
-        setPhotonEventTableTypeOverlayFilter,
-        setTimeoutHudOverlayFilter,
-        saveEventOverlay,
-        photonEventTableFilterChange,
-        promptPhotonOverlayMessageTimeout,
-        promptPhotonLobbyTimeoutThreshold
-    } = usePhotonStore();
-    const {
-        photonLoggingEnabled,
-        photonEventOverlay,
-        photonEventOverlayFilter,
-        photonEventTableTypeOverlayFilter,
-        timeoutHudOverlay,
-        timeoutHudOverlayFilter
-    } = storeToRefs(usePhotonStore());
+    const { photonLoggingEnabled } = storeToRefs(usePhotonStore());
     const { saveSidebarSortOrder } = useFriendStore();
     const { cachedWorlds } = useWorldStore();
     const { cachedInstances } = useInstanceStore();
@@ -1992,6 +1502,7 @@
     const { saveOpenVROption, updateVRLastLocation, updateOpenVR, updateVRConfigVars } = useVrStore();
     const { clearVRCXCache, showRegistryBackupDialog } = useVrcxStore();
     const { setLocalFavoriteFriendsGroups } = useGeneralSettingsStore();
+    const { branch } = storeToRefs(useVRCXUpdaterStore());
 
     const {
         isStartAtWindowsStartup,
@@ -2042,7 +1553,6 @@
         sidebarSortMethod1,
         sidebarSortMethod2,
         sidebarSortMethod3,
-        asideWidth,
         isSidebarGroupByInstance,
         isHideFriendsInSameInstance,
         isSidebarDivideByFriendGroup,
@@ -2062,7 +1572,6 @@
         setSidebarSortMethod1,
         setSidebarSortMethod2,
         setSidebarSortMethod3,
-        setAsideWidth,
         setIsSidebarGroupByInstance,
         setIsHideFriendsInSameInstance,
         setIsSidebarDivideByFriendGroup,
@@ -2112,59 +1621,23 @@
     } = notificationsSettingsStore;
 
     const {
-        overlayWrist,
-        hidePrivateFromFeed,
-        openVRAlways,
-        overlaybutton,
-        overlayHand,
-        vrBackgroundEnabled,
-        minimalFeed,
-        hideDevicesFromFeed,
-        vrOverlayCpuUsage,
-        hideUptimeFromFeed,
-        pcUptimeOnFeed
-    } = storeToRefs(wristOverlaySettingsStore);
-
-    const {
-        setOverlayWrist,
-        setHidePrivateFromFeed,
-        setOpenVRAlways,
-        setOverlaybutton,
-        setOverlayHand,
-        setVrBackgroundEnabled,
-        setMinimalFeed,
-        setHideDevicesFromFeed,
-        setVrOverlayCpuUsage,
-        setHideUptimeFromFeed,
-        setPcUptimeOnFeed
-    } = wristOverlaySettingsStore;
-
-    const {
         enablePrimaryPassword,
         relaunchVRChatAfterCrash,
         vrcQuitFix,
         autoSweepVRChatCache,
         selfInviteOverride,
-        saveInstancePrints,
-        cropInstancePrints,
-        saveInstanceStickers,
         avatarRemoteDatabase,
         enableAppLauncher,
         enableAppLauncherAutoClose,
         enableAppLauncherRunProcessOnce,
-        screenshotHelper,
-        screenshotHelperModifyFilename,
-        screenshotHelperCopyToClipboard,
         youTubeApi,
         progressPie,
         progressPieFilter,
         showConfirmationOnSwitchAvatar,
         gameLogDisabled,
         sqliteTableSizes,
-        ugcFolderPath,
         notificationOpacity,
-        autoDeleteOldPrints,
-        saveInstanceEmoji
+        sentryErrorReporting
     } = storeToRefs(advancedSettingsStore);
 
     const {
@@ -2172,27 +1645,16 @@
         setVrcQuitFix,
         setAutoSweepVRChatCache,
         setSelfInviteOverride,
-        setSaveInstancePrints,
-        setCropInstancePrints,
-        setSaveInstanceStickers,
         setAvatarRemoteDatabase,
         setEnableAppLauncher,
         setEnableAppLauncherAutoClose,
         setEnableAppLauncherRunProcessOnce,
-        setScreenshotHelper,
-        setScreenshotHelperModifyFilename,
-        setScreenshotHelperCopyToClipboard,
         setShowConfirmationOnSwitchAvatar,
         getSqliteTableSizes,
         setNotificationOpacity,
-        setAutoDeleteOldPrints,
-        resetUGCFolder,
-        openUGCFolder,
-        openUGCFolderSelector,
         showVRChatConfig,
         promptAutoClearVRCXCacheFrequency,
-        setSaveInstanceEmoji,
-        askDeleteAllScreenshotMetadata
+        setSentryErrorReporting
     } = advancedSettingsStore;
 
     const instanceTypes = ref([
@@ -2260,18 +1722,8 @@
         feedFiltersDialogMode.value = 'wrist';
     }
 
-    // redirect to tools tab
-    function showNoteExportDialog() {
-        menuActiveIndex.value = 'tools';
-    }
-
     function showNotificationPositionDialog() {
         isNotificationPositionDialogVisible.value = true;
-    }
-
-    // redirect to tools tab
-    function showScreenshotMetadataDialog() {
-        menuActiveIndex.value = 'tools';
     }
 
     function openVrcxAppDataFolder() {
@@ -2292,38 +1744,6 @@
 
     function openVrcAppDataFolder() {
         AppApi.OpenVrcAppDataFolder().then((result) => {
-            if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
-            } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
-            }
-        });
-    }
-
-    function openVrcPhotosFolder() {
-        AppApi.OpenVrcPhotosFolder().then((result) => {
-            if (result) {
-                ElMessage({
-                    message: 'Folder opened',
-                    type: 'success'
-                });
-            } else {
-                ElMessage({
-                    message: "Folder dosn't exist",
-                    type: 'error'
-                });
-            }
-        });
-    }
-
-    function openVrcScreenshotsFolder() {
-        AppApi.OpenVrcScreenshotsFolder().then((result) => {
             if (result) {
                 ElMessage({
                     message: 'Folder opened',

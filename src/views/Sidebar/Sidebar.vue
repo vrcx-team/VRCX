@@ -1,5 +1,5 @@
 <template>
-    <div v-show="isSideBarTabShow" id="aside" class="x-aside-container" :style="{ width: `${asideWidth}px` }">
+    <div class="x-aside-container">
         <div style="display: flex; align-items: baseline">
             <el-select
                 clearable
@@ -81,31 +81,18 @@
 <script setup>
     import { Refresh, Compass } from '@element-plus/icons-vue';
     import { storeToRefs } from 'pinia';
-    import { computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { userImage } from '../../shared/utils';
-    import {
-        useAppearanceSettingsStore,
-        useFriendStore,
-        useGroupStore,
-        useSearchStore,
-        useUiStore
-    } from '../../stores';
+    import { useFriendStore, useGroupStore, useSearchStore } from '../../stores';
     import FriendsSidebar from './components/FriendsSidebar.vue';
     import GroupsSidebar from './components/GroupsSidebar.vue';
 
     const { friends, isRefreshFriendsLoading, onlineFriendCount } = storeToRefs(useFriendStore());
     const { refreshFriendsList, confirmDeleteFriend } = useFriendStore();
-    const { asideWidth } = storeToRefs(useAppearanceSettingsStore());
-    const { menuActiveIndex } = storeToRefs(useUiStore());
     const { quickSearchRemoteMethod, quickSearchChange, directAccessPaste } = useSearchStore();
     const { quickSearchItems } = storeToRefs(useSearchStore());
     const { inGameGroupOrder, groupInstances } = storeToRefs(useGroupStore());
     const { t } = useI18n();
-
-    const isSideBarTabShow = computed(() => {
-        return !(menuActiveIndex.value === 'friendList' || menuActiveIndex.value === 'charts');
-    });
 </script>
 
 <style scoped>

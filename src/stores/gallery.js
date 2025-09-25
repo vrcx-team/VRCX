@@ -1,7 +1,6 @@
 import Noty from 'noty';
 import { defineStore } from 'pinia';
 import { computed, reactive, watch } from 'vue';
-import { ElMessage } from 'element-plus';
 import * as workerTimers from 'worker-timers';
 import {
     inventoryRequest,
@@ -16,6 +15,7 @@ import {
     getPrintFileName,
     getPrintLocalDate
 } from '../shared/utils';
+import { handleImageUploadInput } from '../shared/utils/imageUpload';
 import { useAdvancedSettingsStore } from './settings/advanced';
 import { useI18n } from 'vue-i18n';
 
@@ -266,32 +266,20 @@ export const useGalleryStore = defineStore('Gallery', () => {
     }
 
     function inviteImageUpload(e) {
-        const files = e.target.files || e.dataTransfer.files;
-        if (!files.length) {
-            return;
-        }
-        if (files[0].size >= 100000000) {
-            // 100MB
-            ElMessage({
-                message: t('message.file.too_large'),
-                type: 'error'
-            });
-            clearInviteImageUpload();
-            return;
-        }
-        if (!files[0].type.match(/image.*/)) {
-            ElMessage({
-                message: t('message.file.not_image'),
-                type: 'error'
-            });
-            clearInviteImageUpload();
+        const { file } = handleImageUploadInput(e, {
+            inputSelector: null,
+            tooLargeMessage: () => t('message.file.too_large'),
+            invalidTypeMessage: () => t('message.file.not_image'),
+            onClear: clearInviteImageUpload
+        });
+        if (!file) {
             return;
         }
         const r = new FileReader();
         r.onload = function () {
             state.uploadImage = btoa(r.result);
         };
-        r.readAsBinaryString(files[0]);
+        r.readAsBinaryString(file);
     }
 
     function clearInviteImageUpload() {

@@ -50,7 +50,7 @@
         </div>
 
         <DataTable v-bind="notificationTable" ref="notificationTableRef" class="notification-table">
-            <el-table-column :label="t('table.notification.date')" prop="created_at" :sortable="true" width="120">
+            <el-table-column :label="t('table.notification.date')" prop="created_at" :sortable="true" width="130">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>

@@ -23,7 +23,7 @@
                 v-model="feedTable.search"
                 :placeholder="t('view.feed.search_placeholder')"
                 clearable
-                style="flex: none; width: 150px; margin-left: 10px"
+                style="flex: 0.4; margin-left: 10px"
                 @keyup.enter="feedTableLookup"
                 @change="feedTableLookup"></el-input>
         </div>
@@ -181,7 +181,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column :label="t('table.feed.date')" prop="created_at" :sortable="true" width="120">
+            <el-table-column :label="t('table.feed.date')" prop="created_at" :sortable="true" width="130">
                 <template #default="scope">
                     <el-tooltip placement="right">
                         <template #content>

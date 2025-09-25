@@ -1,6 +1,8 @@
 import { storeToRefs } from 'pinia';
-import { useAppearanceSettingsStore } from '../../../stores';
+import { useAppearanceSettingsStore, useUiStore } from '../../../stores';
 import { THEME_CONFIG } from '../../constants';
+import { ElMessage } from 'element-plus';
+import { i18n } from '../../../plugin/i18n';
 
 /**
  *
@@ -267,6 +269,16 @@ async function getThemeMode(configRepository) {
     return { initThemeMode, isDarkMode };
 }
 
+function redirectToToolsTab() {
+    const uiStore = useUiStore();
+    uiStore.menuActiveIndex = 'tools';
+    ElMessage({
+        message: i18n.global.t('view.tools.redirect_message'),
+        type: 'primary',
+        duration: 3000
+    });
+}
+
 export {
     systemIsDarkMode,
     changeAppDarkStyle,
@@ -279,5 +291,6 @@ export {
     getNextDialogIndex,
     changeHtmlLangAttribute,
     setLoginContainerStyle,
-    getThemeMode
+    getThemeMode,
+    redirectToToolsTab
 };

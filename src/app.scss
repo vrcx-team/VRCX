@@ -8,10 +8,6 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@use './assets/scss/flags.scss';
-@use './assets/scss/animated-emoji.scss';
-@use 'element-plus/theme-chalk/src/index.scss' as *;
-
 @use '@fontsource/noto-sans-kr/korean.css';
 @use '@fontsource/noto-sans-jp/japanese.css';
 @use '@fontsource/noto-sans-sc/chinese-simplified.css';
@@ -20,6 +16,10 @@
 @use '@fontsource/noto-sans-jp';
 @use '@fontsource/noto-sans-sc';
 @use '@fontsource/noto-sans-tc';
+
+@use './assets/scss/flags.scss';
+@use './assets/scss/animated-emoji.scss';
+@use 'element-plus/theme-chalk/src/index.scss' as *;
 
 @use 'element-plus/theme-chalk/src/dark/css-vars.scss';
 @use 'animate.css/animate.min.css';
@@ -241,6 +241,8 @@ a {
     padding: 10px;
     overflow: hidden auto;
     background: #fff;
+    box-sizing: border-box;
+    height: 100%;
 }
 
 .x-login-container {
@@ -366,6 +368,8 @@ hr.x-vertical-divider {
     background: #f8f8f8;
     padding: 5px;
     order: 99;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 // .el-popper.x-quick-search {
@@ -1046,4 +1050,8 @@ i.x-status-icon.red {
 .el-dropdown-menu__item:not(.is-disabled):focus {
     // dropdown item focus blue background looks bad
     background-color: unset;
+}
+
+:root {
+    --el-overlay-color-lighter: rgba(0, 0, 0, 0.15);
 }

@@ -32,7 +32,10 @@ import { useVrcxStore } from './vrcx';
 import { useVRCXUpdaterStore } from './vrcxUpdater';
 import { useWorldStore } from './world';
 
+import { createSentryPiniaPlugin } from '@sentry/vue';
+
 export const pinia = createPinia();
+pinia.use(createSentryPiniaPlugin());
 
 export function createGlobalStores() {
     return {

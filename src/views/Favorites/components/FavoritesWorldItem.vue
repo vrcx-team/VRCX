@@ -58,8 +58,8 @@
                         <template #content>
                             {{
                                 canOpenInstanceInGame()
-                                    ? $t('dialog.world.actions.new_instance_and_open_ingame')
-                                    : $t('dialog.world.actions.new_instance_and_self_invite')
+                                    ? t('dialog.world.actions.new_instance_and_open_ingame')
+                                    : t('dialog.world.actions.new_instance_and_self_invite')
                             }}
                         </template>
                         <el-button
