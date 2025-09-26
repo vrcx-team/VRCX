@@ -13,7 +13,7 @@
                 <span class="name" style="margin-right: 5px; line-height: 10px">
                     {{ t('view.favorite.sort_by') }}
                 </span>
-                <el-radio-group v-model="sortFav" style="margin-right: 12px" @change="saveSortFavoritesOption">
+                <el-radio-group v-model="sortFav" style="margin-right: 12px">
                     <el-radio :label="false">
                         {{ t('view.settings.appearance.appearance.sort_favorite_by_name') }}
                     </el-radio>
